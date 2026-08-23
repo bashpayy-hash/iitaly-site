@@ -422,6 +422,68 @@ section{padding:64px 0}
   border-radius:999px;padding:4px 10px;margin-bottom:10px}
 .pkg.flag .sv-tag{background:rgba(126,224,163,.12);color:#7ee0a3;border-color:#7ee0a3}
 
+
+/* ---------- лимит бесплатного чата и сбор контакта ---------- */
+.chat-hint{font-size:11.5px;color:#8b9bb0;text-align:center;padding:8px 12px;margin:4px 0;
+  border-top:1px dashed rgba(255,255,255,.14);border-bottom:1px dashed rgba(255,255,255,.14);line-height:1.5}
+.lead-form{background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px;margin:10px 0 4px;
+  box-shadow:3px 3px 0 var(--shadow)}
+.lead-form b{font-size:14.5px;display:block;margin-bottom:5px;letter-spacing:-.2px}
+.lead-form p{font-size:12.5px;color:#5d5346;line-height:1.55;margin-bottom:12px}
+.lead-form input{width:100%;background:var(--cream);border:2px solid var(--ink);border-radius:12px;
+  padding:11px 14px;font-size:15px;font-family:inherit;color:var(--ink);margin-bottom:9px}
+.lead-form input:focus{outline:none;border-color:var(--red)}
+.lead-form .btn{width:100%;padding:12px;font-size:12.5px;box-shadow:3px 3px 0 var(--shadow)}
+.lead-form .btn:disabled{background:#cbbfae;border-color:#cbbfae;color:#8a7f70;box-shadow:none;cursor:default}
+.lead-alt{display:block;text-align:center;font-size:12px;color:#6f6455;margin-top:9px}
+.lead-alt a{color:var(--red);font-weight:700}
+
+
+/* ---------- безопасность данных ---------- */
+.dc-safe{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:880px){.dc-safe{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.dc-safe{grid-template-columns:1fr}}
+.dc-safe-item{background:var(--cream);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px}
+.dc-safe-item b{display:block;font-size:12.5px;letter-spacing:-.1px;margin-bottom:2px}
+.dc-safe-item span{font-size:11.5px;color:#6f6455;line-height:1.45;display:block}
+
+
+/* ---------- приглашение к проверке документа ---------- */
+.try-check{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;
+  background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:26px;
+  box-shadow:4px 4px 0 var(--shadow);cursor:pointer;transition:transform .25s cubic-bezier(.25,.1,.25,1),box-shadow .25s}
+.try-check:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--shadow)}
+@media(max-width:820px){.try-check{grid-template-columns:1fr}}
+.tc-left h3{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-.6px;line-height:1.15;margin-bottom:8px}
+.tc-left p{font-size:13.5px;color:#5d5346;line-height:1.6;margin-bottom:12px}
+.tc-demo{position:relative}
+.tc-doc{position:relative;background:var(--cream);border:2px solid var(--ink);border-radius:14px;padding:16px;overflow:hidden}
+.tc-line{height:7px;background:var(--line);border-radius:4px;margin-bottom:8px}
+.tc-line.w70{width:70%} .tc-line.w40{width:40%;margin-bottom:14px}
+.tc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;font-weight:600;
+  padding:7px 10px;border-radius:9px;margin-bottom:6px;border:1.5px solid}
+.tc-row i{font-style:normal;font-weight:900;flex-shrink:0}
+.tc-row.ok{border-color:rgba(63,107,79,.35);background:rgba(63,107,79,.07);color:var(--green)}
+.tc-row.bad{border-color:var(--red);background:rgba(180,38,43,.08);color:var(--red-deep)}
+.tc-row.warn{border-color:rgba(178,80,0,.4);background:rgba(178,80,0,.07);color:var(--warn)}
+.tc-scan{position:absolute;left:0;right:0;height:36%;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(180,38,43,.10),transparent);
+  animation:tcScan 3.2s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes tcScan{0%{top:-36%}100%{top:100%}}
+.tc-verdict{margin-top:10px;text-align:center;font-size:12px;font-weight:800;color:var(--red-deep);
+  background:rgba(180,38,43,.07);border:2px solid var(--red);border-radius:999px;padding:7px 12px}
+@media(prefers-reduced-motion:reduce){.tc-scan{animation:none;opacity:0}}
+
+
+/* ---------- разгруженный первый экран ---------- */
+.hero{padding:84px 0 44px}
+@media(max-width:720px){.hero{padding:56px 0 32px}}
+.hero .mega{margin-bottom:6px}
+.hero-sub{font-size:clamp(16px,2.4vw,20px);line-height:1.5;max-width:600px;margin:22px 0 30px;color:#5d5346}
+.hero .usp{margin:26px 0 6px}
+.hero-ctas{gap:14px;margin-top:6px}
+.hero-ctas .btn{padding:16px 32px;font-size:14px}
+
 .w{stroke-linecap:round}
 .w1{animation:waveMove 12s linear infinite}
 .w2{animation:waveMove 16s linear infinite reverse}
@@ -705,7 +767,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
     <div class="usp">
       <span>ИИ ведёт поступление</span><i>·</i><span>эксперт — на критичных точках</span><i>·</i><span>без агентской наценки</span>
     </div>
-    <p class="sub">Мы автоматизировали работу, за которую агентства берут сотни тысяч тенге. Система сама подбирает программы, считает шансы на DSU, собирает чек-листы, готовит черновики и проверяет твои документы — от аттестата до permesso di soggiorno.</p>
+    <p class="sub hero-sub">Мы автоматизировали работу, за которую агентства берут сотни тысяч тенге.</p>
     <div class="hero-ctas">
       <button class="btn primary" onclick="nav('plan')">Составить мой план</button>
       <button class="btn ghost" onclick="nav('unis')">Смотреть университеты</button>
@@ -762,9 +824,10 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           <p>Подбор программ, чек-листы, черновики, контроль дедлайнов и сверка твоих файлов с правилами — это работа системы, и она идёт без очереди. Эксперт подключается на критичных точках: ISEEU parificato, финальный пакет на DSU, визовое досье, нестандартный случай.</p>
         </div>
         <div class="trust-who">
-          <div class="tw-name">Что это значит на практике</div>
-          <div class="tw-role">честные границы</div>
-          <p>Мы не приставляем к тебе персонального менеджера — именно поэтому цена такая. В тарифах Standard и Flagship экспертные проверки заложены на ключевых этапах; во Flagship они идут вне очереди. Нужна дополнительная человеческая работа — её можно докупить отдельной опцией.</p>
+          <div class="tw-name">Кто проверяет</div>
+          <div class="tw-role">квалификация эксперта</div>
+          <p>Проверки ведут люди, которые сами прошли поступление в Италию из Казахстана и знают процесс изнутри: CIMEA, Universitaly, ISEEU parificato, виза D. База правил, по которой работает система, собрана из реальных комплектов документов, дошедших до подачи.</p>
+          <p>Персонального менеджера в тарифах нет — именно поэтому цена такая. Экспертные проверки заложены на ключевых этапах, во Flagship идут вне очереди, дополнительная живая помощь докупается отдельно.</p>
           <div class="tw-honest">Решение о зачислении принимает университет, о стипендии — регион Италии. Мы отвечаем за корректность документов и соблюдение сроков, но не гарантируем результат: тот, кто гарантирует, вводит в заблуждение.</div>
         </div>
       </div>
@@ -780,6 +843,31 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
       </div>
       <div style="text-align:center;margin-top:26px">
         <button class="btn ghost rv" onclick="nav('guide')">Узнать больше: апостиль, ЦОН, документы →</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="try-check rv" onclick="nav('plan')">
+        <div class="tc-left">
+          <div class="eyebrow">Попробуй прямо сейчас · бесплатно</div>
+          <h3>Загрузи документ — ИИ найдёт ошибку до подачи</h3>
+          <p>Не демонстрация и не запись экрана: система сверит твою справку с правилами DSU и ISU и покажет, что не так. Референсный год, цепочка «апостиль → перевод → нотариус», реквизиты, арифметика.</p>
+          <span class="arrow-link">Проверить документ →</span>
+        </div>
+        <div class="tc-demo" aria-hidden="true">
+          <div class="tc-doc">
+            <div class="tc-line w70"></div>
+            <div class="tc-line w40"></div>
+            <div class="tc-row bad"><span>Доходы за 2025</span><i>✕</i></div>
+            <div class="tc-row ok"><span>Апостиль до перевода</span><i>✓</i></div>
+            <div class="tc-row ok"><span>Все 12 месяцев</span><i>✓</i></div>
+            <div class="tc-row warn"><span>Подпись без расшифровки</span><i>!</i></div>
+            <div class="tc-scan"></div>
+          </div>
+          <div class="tc-verdict">Найдена ошибка: нужен 2024 год</div>
+        </div>
       </div>
     </div>
   </section>
@@ -898,6 +986,13 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           </div>
         </div>
 
+        <div class="dc-safe">
+          <div class="dc-safe-item"><b>Соединение зашифровано</b><span>файл идёт по HTTPS, как в банковском приложении</span></div>
+          <div class="dc-safe-item"><b>Не публикуем и не продаём</b><span>документ виден только тебе и проверяющему эксперту</span></div>
+          <div class="dc-safe-item"><b>Не идёт на обучение моделей</b><span>используется один раз — для твоего разбора</span></div>
+          <div class="dc-safe-item"><b>Удалим по запросу</b><span>напиши, и данные сотрём</span></div>
+        </div>
+
         <label class="dc-drop" id="dcDrop">
           <input type="file" id="dcFile" accept="image/*" hidden>
           <div class="dc-drop-in">
@@ -918,7 +1013,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 
         <div class="dc-result" id="dcResult" style="display:none"></div>
 
-        <p class="dc-note">Документ передаётся на проверку и не публикуется. Решение о стипендии принимает регион Италии — проверка помогает не подать документ с ошибкой, но результат не гарантирует.</p>
+        <p class="dc-note">Проверка помогает не подать документ с ошибкой, но результат не гарантирует: решение о стипендии принимает регион Италии. Подробнее о работе с данными — в <a href="privacy.html" style="color:var(--red);font-weight:700">политике конфиденциальности</a>.</p>
       </div>
 
       <div id="planInput">
@@ -1567,7 +1662,17 @@ function scene(id){
     ,messina:`<rect x="52" y="52" width="16" height="44" fill="${ink}"/><rect x="55" y="58" width="10" height="10" rx="5" fill="${sky}"/><circle cx="60" cy="63" r="3.4" fill="${red}"/><path d="M50 52 L60 42 L70 52 Z" fill="${ink}"/><rect x="74" y="66" width="52" height="30" fill="${ink}"/><path d="M74 66 L100 50 L126 66 Z" fill="${ink}"/><circle cx="100" cy="70" r="4" fill="${sky}"/><path d="M144 88 q22 -10 44 0 L188 96 L144 96 Z" fill="${ink}"/><rect x="158" y="78" width="4" height="12" fill="${ink}"/><path d="M140 96 L196 96" stroke="${ink}" stroke-width="3"/><circle cx="176" cy="30" r="8" fill="${red}"/>`
   ,palermo:`<rect x="70" y="58" width="70" height="38" fill="${ink}"/><ellipse cx="105" cy="56" rx="17" ry="13" fill="${ink}"/><rect x="70" y="44" width="9" height="52" fill="${ink}"/><rect x="131" y="44" width="9" height="52" fill="${ink}"/><path d="M170 96 L170 66 M170 66 Q158 58 152 64 M170 66 Q182 58 188 64 M170 66 Q162 50 170 46 M170 66 Q178 50 170 46" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="38" cy="28" r="9" fill="${red}"/>`
   }[id];
-  return `<svg viewBox="0 0 208 100" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="pcbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#182130"/><stop offset="1" stop-color="#11161f"/></linearGradient></defs><rect width="208" height="100" fill="url(#pcbg)"/>${art}<rect x="0" y="0" width="208" height="100" fill="none" stroke="${ink}" stroke-width="0"/></svg>`;
+  // Для городов без отдельной иллюстрации берём силуэт из иконки пина и увеличиваем.
+  // Иконка нарисована в системе 22x22, поэтому масштабируем и центруем в 208x100.
+  const fallback = () => {
+    const g = CITY_ICONS[id];
+    if(!g) return '';
+    const k = 4.4, w = 22*k, h = 22*k;
+    const dx = (208 - w)/2, dy = (100 - h)/2 + 6;
+    return `<g transform="translate(${dx.toFixed(1)},${dy.toFixed(1)}) scale(${k})" fill="${ink}" color="${ink}">${g}</g>`;
+  };
+  const artwork = art || fallback();
+  return `<svg viewBox="0 0 208 100" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="pcbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#182130"/><stop offset="1" stop-color="#11161f"/></linearGradient></defs><rect width="208" height="100" fill="url(#pcbg)"/>${artwork}<rect x="0" y="0" width="208" height="100" fill="none" stroke="${ink}" stroke-width="0"/></svg>`;
 }
 let mapBuilt = false;
 function finishIntro(){          // мгновенно завершить вступление
@@ -1920,6 +2025,19 @@ const DEMO_ANSWERS = [
 ];
 let chatHistory = [];
 let chatBusy = false;
+
+/* Бесплатный чат ограничен: это защита баланса API и переход к продукту.
+   Счётчик живёт в сессии браузера. */
+const FREE_LIMIT = 10;
+function askedCount(){
+  try{ return parseInt(sessionStorage.getItem('iitaly_asked') || '0', 10) || 0; }catch(e){ return 0; }
+}
+function bumpAsked(){
+  try{ sessionStorage.setItem('iitaly_asked', String(askedCount() + 1)); }catch(e){}
+}
+function leadCaptured(){
+  try{ return sessionStorage.getItem('iitaly_lead') === '1'; }catch(e){ return false; }
+}
 function openChat(){ document.getElementById('chatPanel').classList.add('on'); document.getElementById('chatFab').style.display='none'; track('chat_open'); }
 function closeChat(){ document.getElementById('chatPanel').classList.remove('on'); document.getElementById('chatFab').style.display='block'; }
 function addMsg(text, who){
@@ -1946,9 +2064,17 @@ async function askDemo(){
   const inp = document.getElementById('chatInput');
   const text = inp.value.trim();
   if(!text || chatBusy) return;
+
+  if(askedCount() >= FREE_LIMIT && !leadCaptured()){
+    inp.value='';
+    showLeadForm();
+    return;
+  }
+
   inp.value='';
   addMsg(text,'user');
-  track('chat_message_sent');
+  bumpAsked();
+  track('chat_message_sent', { n: askedCount() });
   const t = typingOn();
 
   // Демо-режим: backend не подключён
@@ -1970,6 +2096,7 @@ async function askDemo(){
     const reply = (data && data.reply) ? data.reply : 'Не удалось получить ответ. Попробуй ещё раз.';
     addMsg(reply, 'ai');
     if(data && data.reply) chatHistory.push({ role:'assistant', content:reply });
+    remainingHint();
   }catch(e){
     t.remove();
     addMsg('Не получилось соединиться с сервером. Проверь интернет и попробуй ещё раз.', 'ai');
@@ -2240,6 +2367,59 @@ renderVisaDocs(); setVYears(3);
     }
   });
 })();
+
+
+/* ---------- Мягкий переход от бесплатного чата к продукту ---------- */
+function remainingHint(){
+  const left = FREE_LIMIT - askedCount();
+  if(leadCaptured() || left > 3 || left <= 0) return;
+  const log = document.getElementById('chatlog');
+  const d = document.createElement('div');
+  d.className = 'chat-hint';
+  d.textContent = left === 1
+    ? 'Остался один бесплатный вопрос. Дальше оставь номер — пришлём план и напоминания о дедлайнах.'
+    : 'Бесплатных вопросов осталось: ' + left;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+function showLeadForm(){
+  const log = document.getElementById('chatlog');
+  if(document.getElementById('leadForm')) return;
+  const d = document.createElement('div');
+  d.className = 'lead-form';
+  d.id = 'leadForm';
+  d.innerHTML = '<b>Бесплатные вопросы закончились</b>'
+    + '<p>Оставь номер — пришлём твой план, напоминания о дедлайнах Universitaly и DSU и ответим на оставшиеся вопросы. Без спама.</p>'
+    + '<input id="leadPhone" placeholder="+7 ___ ___ __ __" inputmode="tel">'
+    + '<button class="btn" id="leadSend">Получить план</button>'
+    + '<span class="lead-alt">Или сразу <a href="#" id="leadToPrices">посмотреть тарифы</a></span>';
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  track('chat_limit_reached');
+
+  document.getElementById('leadToPrices').addEventListener('click', function(e){
+    e.preventDefault(); closeChat(); nav('prices');
+  });
+
+  document.getElementById('leadSend').addEventListener('click', async function(){
+    const phone = document.getElementById('leadPhone').value.trim();
+    if(!/^[+0-9() -]{10,18}$/.test(phone)){ alert('Проверь номер телефона.'); return; }
+    const btn = document.getElementById('leadSend');
+    btn.disabled = true; btn.textContent = 'Отправляю…';
+    if(BACKEND_URL){
+      try{
+        await fetch(BACKEND_URL + '/api/lead', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ phone: phone, education:'из чата на сайте', goal:'—', budget:'—' })
+        });
+      }catch(e){}
+    }
+    try{ sessionStorage.setItem('iitaly_lead','1'); }catch(e){}
+    track('lead_captured', { from:'chat' });
+    d.innerHTML = '<b>Записали</b><p>Напишем в WhatsApp на ' + phone + '. Можешь продолжать спрашивать — лимит снят.</p>';
+  });
+}
 
 /* ================= INIT ================= */
 function safe(name, fn){ try{ fn(); }catch(e){ console.error(name + ' failed:', e); revealAll(); } }
