@@ -484,6 +484,24 @@ section{padding:64px 0}
 .hero-ctas{gap:14px;margin-top:6px}
 .hero-ctas .btn{padding:16px 32px;font-size:14px}
 
+
+/* ---------- оплата переводом ---------- */
+.pay-title{font-size:19px;font-weight:900;text-transform:uppercase;margin-top:8px;letter-spacing:-.3px}
+.pay-sub{font-size:13.5px;color:#5d5346;line-height:1.55;margin:6px 0 16px}
+.pay-step{display:flex;gap:12px;align-items:flex-start;background:var(--cream);border:2px solid var(--ink);
+  border-radius:14px;padding:14px;margin-bottom:10px;text-align:left}
+.pay-num{width:26px;height:26px;flex-shrink:0;border-radius:50%;background:var(--ink);color:var(--cream);
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12.5px}
+.pay-step b{display:block;font-size:14px;margin-bottom:6px;letter-spacing:-.2px}
+.pay-hint{display:block;font-size:12px;color:#6f6455;line-height:1.5;margin-top:5px}
+.pay-req{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pay-phone{font-size:18px;font-weight:900;letter-spacing:-.3px;background:var(--paper);
+  border:2px solid var(--ink);border-radius:10px;padding:7px 12px}
+.pay-copy{border:2px solid var(--ink);background:var(--paper);border-radius:10px;padding:8px 12px;
+  font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;cursor:pointer;font-family:inherit}
+.pay-copy:active{transform:translate(1px,1px)}
+.pay-note{font-size:11.5px;color:#6f6455;line-height:1.5;text-align:center;margin-top:12px}
+
 .w{stroke-linecap:round}
 .w1{animation:waveMove 12s linear infinite}
 .w2{animation:waveMove 16s linear infinite reverse}
@@ -1375,6 +1393,15 @@ setTimeout(revealAll, 2500);                             // и подстрах�
    заработают вживую. Без слэша в конце. */
 const BACKEND_URL = "https://web-production-9faf3.up.railway.app";
 
+/* ---------- Приём оплаты ----------
+   Пока нет Kaspi Pay для бизнеса, принимаем переводом по номеру.
+   Когда появятся платёжные ссылки: PAY_MODE = "kaspi" и заполнить KASPI_LINKS. */
+const PAY_MODE  = "transfer";                 // "transfer" | "kaspi"
+const PAY_PHONE = "+7 775 937 0598";          // номер для перевода Kaspi
+const PAY_NAME  = "Алихан Б.";                // как подписан получатель
+const PAY_WA    = "77759370598";              // WhatsApp для чека, без плюса и пробелов
+const KASPI_LINKS = { default: "" };
+
 /* Лёгкая аналитика воронки (шлётся только если BACKEND_URL задан) */
 function track(event, props){
   if(!BACKEND_URL) return;
@@ -1975,8 +2002,8 @@ function openBuy(name, price){
     ${price>=45900?`<div class="lock-note">🔒 Ты в числе первых 30 — стартовая цена зафиксируется за тобой навсегда. Взамен попросим отзыв, когда поступишь.</div>`:''}
     <input id="buyName" placeholder="Имя" style="margin-bottom:10px">
     <input id="buyPhone" placeholder="Телефон / WhatsApp" inputmode="tel" style="margin-bottom:14px">
-    <button class="btn" style="width:100%" onclick="submitBuy('${name}',${price})">Оплатить через Kaspi</button>
-    <p style="font-size:11.5px;color:var(--sec);text-align:center;margin-top:10px;line-height:1.5">Оплата откроется в приложении Kaspi. Продукт придёт в WhatsApp после оплаты.</p>`;
+    <button class="btn" style="width:100%" onclick="submitBuy('${name}',${price})">${PAY_MODE === "kaspi" ? "Оплатить через Kaspi" : "Оформить заказ"}</button>
+    <p style="font-size:11.5px;color:var(--sec);text-align:center;margin-top:10px;line-height:1.5">${PAY_MODE === "kaspi" ? "Оплата откроется в приложении Kaspi. Продукт придёт в WhatsApp после оплаты." : "После оформления покажем реквизиты для перевода. Продукт придёт в WhatsApp после оплаты."}</p>`;
   document.getElementById('buyOverlay').classList.add('on');
   track('buy_open', { product: name });
 }
@@ -2002,17 +2029,71 @@ async function submitBuy(name, price){
   }
   track('order_submitted', { product: name, price });
 
-  const tail = BACKEND_URL ? '' : '<br><br>(Демо: в продукте открылась бы ссылка Kaspi Pay, а основателю в Telegram прилетел бы заказ.)';
+  const waText = encodeURIComponent('Здравствуйте! Оформил заказ: ' + name + ' — ' + fmt(price) + ' ₸. Отправляю чек об оплате.');
+
+  if(PAY_MODE === "kaspi" && KASPI_LINKS.default){
+    // режим платёжных ссылок Kaspi Pay
+    const link = KASPI_LINKS[name] || KASPI_LINKS.default;
+    window.open(link, '_blank');
+    document.getElementById('buyModal').innerHTML = `
+      <button class="close" onclick="closeOverlay('buyOverlay')">✕</button>
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:42px">✅</div>
+        <div class="pay-title">Заказ принят</div>
+        <p class="pay-sub">Оплати по открывшейся ссылке Kaspi. ${isPkg ? 'Куратор напишет' : 'Продукт придёт'} в WhatsApp на ${p} в течение часа.</p>
+        <button class="btn" style="width:100%" onclick="closeOverlay('buyOverlay')">Готово</button>
+      </div>`;
+    return;
+  }
+
+  // режим перевода по номеру
   document.getElementById('buyModal').innerHTML = `
     <button class="close" onclick="closeOverlay('buyOverlay')">✕</button>
-    <div style="text-align:center;padding:8px 0">
-      <div style="font-size:42px">✅</div>
-      <div style="font-size:19px;font-weight:900;text-transform:uppercase;margin-top:8px">Заказ принят</div>
-      <p style="font-size:13.5px;color:var(--sec);line-height:1.55;margin:8px 0 16px">
-        ${isPkg ? 'Оплати по ссылке Kaspi. Куратор напишет в WhatsApp на '+p+' в течение часа.'
-                : 'Оплати по ссылке Kaspi. Продукт придёт в WhatsApp на '+p+' в течение часа.'}${tail}</p>
-      <button class="btn" style="width:100%" onclick="closeOverlay('buyOverlay')">Готово</button>
+    <div style="padding:4px 0">
+      <div style="text-align:center"><div style="font-size:42px">✅</div>
+        <div class="pay-title">Заказ принят</div>
+        <p class="pay-sub">Осталось оплатить — два шага, минута времени.</p>
+      </div>
+
+      <div class="pay-step">
+        <div class="pay-num">1</div>
+        <div>
+          <b>Переведи ${fmt(price)} ₸ в Kaspi</b>
+          <div class="pay-req">
+            <div class="pay-phone" id="payPhone">${PAY_PHONE}</div>
+            <button class="pay-copy" id="payCopy">Копировать</button>
+          </div>
+          <span class="pay-hint">Получатель: ${PAY_NAME} · в комментарии укажи «${name}»</span>
+        </div>
+      </div>
+
+      <div class="pay-step">
+        <div class="pay-num">2</div>
+        <div>
+          <b>Пришли скриншот чека в WhatsApp</b>
+          <span class="pay-hint">${isPkg ? 'Куратор ответит' : 'Продукт придёт'} в течение часа на ${p}</span>
+          <a class="btn" style="display:block;text-align:center;margin-top:10px" target="_blank" rel="noopener"
+             href="https://wa.me/${PAY_WA}?text=${waText}">Открыть WhatsApp</a>
+        </div>
+      </div>
+
+      <p class="pay-note">Мы работаем без предоплаты «в никуда»: если передумаешь до начала работы, вернём деньги полностью.</p>
+      <button class="btn ghost" style="width:100%;margin-top:8px" onclick="closeOverlay('buyOverlay')">Закрыть</button>
     </div>`;
+
+  const copyBtn = document.getElementById('payCopy');
+  if(copyBtn) copyBtn.addEventListener('click', function(){
+    const num = PAY_PHONE.replace(/[^0-9+]/g,'');
+    const done = () => { copyBtn.textContent = 'Скопировано'; setTimeout(()=>copyBtn.textContent='Копировать', 1800); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(num).then(done).catch(()=>{});
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = num; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){}
+      document.body.removeChild(ta);
+    }
+  });
 }
 
 /* ================= ЧАТ ================= */
