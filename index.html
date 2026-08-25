@@ -502,6 +502,71 @@ section{padding:64px 0}
 .pay-copy:active{transform:translate(1px,1px)}
 .pay-note{font-size:11.5px;color:#6f6455;line-height:1.5;text-align:center;margin-top:12px}
 
+
+/* ---------- личный кабинет ---------- */
+.portal-login{display:flex;gap:10px;flex-wrap:wrap}
+.portal-login input{flex:1;min-width:180px;background:var(--paper);border:2px solid var(--ink);border-radius:14px;
+  padding:14px 16px;font-size:16px;font-family:inherit;color:var(--ink)}
+#portalCode{letter-spacing:.08em;text-transform:uppercase}
+.portal-login input:focus{outline:none;border-color:var(--red)}
+.portal-login .btn{padding:14px 30px}
+.portal-err{margin-top:12px;border:2px solid var(--red);background:rgba(180,38,43,.06);color:var(--red-deep);
+  border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.5}
+
+.pt-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.pt-exit{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:9px 18px;
+  font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;font-family:inherit}
+
+.pt-progress{background:var(--ink);color:var(--cream);border-radius:18px;padding:20px 22px;margin-bottom:16px}
+.pt-prog-top{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.pt-prog-top b{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-.5px}
+.pt-prog-top span{font-size:12.5px;color:#a89b89}
+.pt-track{height:8px;background:rgba(255,255,255,.14);border-radius:4px;overflow:hidden}
+.pt-bar{height:100%;background:var(--green);border-radius:4px;transition:width .5s cubic-bezier(.25,.1,.25,1)}
+
+.pt-next{background:var(--paper);border:2px solid var(--red);border-radius:16px;padding:16px 18px;margin-bottom:20px;
+  box-shadow:3px 3px 0 var(--shadow)}
+.pt-next b{display:block;font-size:15.5px;letter-spacing:-.2px;margin:2px 0 4px}
+.pt-next span{font-size:12.5px;color:#6f6455}
+
+.pt-stage{background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:16px 18px;margin-bottom:12px;
+  box-shadow:3px 3px 0 var(--shadow)}
+.pt-stage.complete{opacity:.72}
+.pt-stage-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:10px;
+  border-bottom:2px solid var(--line);margin-bottom:6px}
+.pt-stage-head b{font-size:15.5px;letter-spacing:-.2px}
+.pt-stage-head span{font-size:12px;font-weight:800;color:#6f6455}
+
+.pt-task{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.pt-task:last-child{border-bottom:none}
+.pt-task.busy{opacity:.5;pointer-events:none}
+.pt-check{width:22px;height:22px;flex-shrink:0;border:2px solid var(--ink);border-radius:7px;background:var(--cream);
+  margin-top:1px;transition:background .25s cubic-bezier(.25,.1,.25,1),border-color .25s;position:relative}
+.pt-task.done .pt-check{background:var(--green);border-color:var(--green)}
+.pt-task.done .pt-check::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:900;font-size:13px}
+.pt-task-body{flex:1;display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.pt-title{font-size:13.5px;line-height:1.5;width:100%}
+.pt-task.done .pt-title{color:#8a7f70;text-decoration:line-through}
+.pt-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:999px;padding:3px 9px;border:1.5px solid}
+.pt-tag.ai{color:var(--green);border-color:var(--green);background:rgba(63,107,79,.07)}
+.pt-tag.exp{color:var(--warn);border-color:var(--warn);background:rgba(178,80,0,.07)}
+.pt-tag.dl{color:var(--red);border-color:var(--red);background:rgba(180,38,43,.06)}
+.pt-note{font-size:12px;color:#6f6455;width:100%;line-height:1.45}
+.pt-warn{font-size:12px;color:var(--red-deep);width:100%;line-height:1.45}
+.pt-warn::before{content:"⚠ ";font-weight:900}
+
+.pt-help{background:var(--ink);color:var(--cream);border-radius:18px;padding:20px 22px;margin-top:18px}
+.pt-help b{font-size:16px;font-weight:900;display:block;margin-bottom:4px}
+.pt-help span{font-size:13px;color:#a89b89;line-height:1.55;display:block;margin-bottom:14px}
+.pt-help-btns{display:flex;gap:10px;flex-wrap:wrap}
+.pt-help-btns .btn{padding:12px 22px}
+.pt-help-btns .btn.ghost{background:transparent;color:var(--cream);border-color:rgba(255,255,255,.3);box-shadow:none}
+
+
+.dc-fileicon{width:160px;height:200px;border:2px solid var(--ink);border-radius:12px;background:var(--cream);
+  display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;letter-spacing:.06em;color:var(--ink)}
+
 .w{stroke-linecap:round}
 .w1{animation:waveMove 12s linear infinite}
 .w2{animation:waveMove 16s linear infinite reverse}
@@ -772,6 +837,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
       <button data-p="guide" onclick="nav('guide')">Гайды</button>
       <button data-p="visa" onclick="nav('visa')">Виза</button>
       <button data-p="faq" onclick="nav('faq')">FAQ</button>
+      <button data-p="portal" onclick="nav('portal')">Кабинет</button>
     </nav>
     <button class="nav-cta" onclick="openChat()">Спросить ИИ</button>
   </div>
@@ -1012,16 +1078,17 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
         </div>
 
         <label class="dc-drop" id="dcDrop">
-          <input type="file" id="dcFile" accept="image/*" hidden>
+          <input type="file" id="dcFile" accept="image/*,application/pdf,.pdf,.doc,.docx,.txt,.rtf" hidden>
           <div class="dc-drop-in">
             <div class="dc-icon">📄</div>
-            <b>Выбрать фото документа</b>
-            <span>или перетащи сюда · JPG, PNG до 5 МБ</span>
+            <b>Выбрать документ</b>
+            <span>или перетащи сюда · фото, PDF, Word до 5 МБ</span>
           </div>
         </label>
 
         <div class="dc-preview" id="dcPreview" style="display:none">
           <img id="dcImg" alt="документ">
+          <div id="dcFileIcon" class="dc-fileicon" style="display:none"></div>
           <div class="dc-pv-side">
             <div class="dc-fname" id="dcName"></div>
             <button class="btn" id="dcRun">Проверить документ</button>
@@ -1333,6 +1400,29 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 </div>
 
 <!-- ==================== FAQ ==================== -->
+<div class="page" id="page-portal">
+  <section style="padding-top:44px">
+    <div class="wrap" style="max-width:860px">
+
+      <div id="portalLogin">
+        <div class="eyebrow">Личный кабинет</div>
+        <div class="h2">Твой маршрут поступления</div>
+        <p class="sub" style="margin-bottom:20px">Система ведёт тебя по шагам: что сделано, что горит, какой документ нужен следующим. Вход как проверка брони: фамилия и код, который приходит в WhatsApp после оплаты.</p>
+        <div class="portal-login">
+          <input id="portalSurname" placeholder="Фамилия" autocomplete="family-name">
+          <input id="portalCode" placeholder="Код брони, например ABCD-1234" autocomplete="off">
+          <button class="btn" id="portalEnter">Войти</button>
+        </div>
+        <div id="portalErr" class="portal-err" style="display:none"></div>
+        <p class="sub" style="font-size:12.5px;margin-top:14px">Ещё нет кода? <a href="#" onclick="nav('prices');return false;" style="color:var(--red);font-weight:700">Посмотреть тарифы</a> — кабинет открывается сразу после оплаты.</p>
+      </div>
+
+      <div id="portalView" style="display:none"></div>
+
+    </div>
+  </section>
+</div>
+
 <div class="page" id="page-faq">
   <section style="padding-top:44px">
     <div class="wrap faq" style="max-width:720px">
@@ -2302,6 +2392,7 @@ renderVisaDocs(); setVYears(3);
   const input = document.getElementById('dcFile');
   const preview = document.getElementById('dcPreview');
   const img = document.getElementById('dcImg');
+  const fileIcon = document.getElementById('dcFileIcon');
   const nameEl = document.getElementById('dcName');
   const runBtn = document.getElementById('dcRun');
   const resetBtn = document.getElementById('dcReset');
@@ -2336,26 +2427,111 @@ renderVisaDocs(); setVYears(3);
     });
   }
 
+  /* Читаем файл целиком в base64 — для PDF отправляем как есть */
+  function readBase64(file){
+    return new Promise((resolve, reject)=>{
+      const r = new FileReader();
+      r.onerror = () => reject(new Error('read'));
+      r.onload = () => resolve(String(r.result).split(',')[1]);
+      r.readAsDataURL(file);
+    });
+  }
+  function readText(file){
+    return new Promise((resolve, reject)=>{
+      const r = new FileReader();
+      r.onerror = () => reject(new Error('read'));
+      r.onload = () => resolve(String(r.result));
+      r.readAsText(file);
+    });
+  }
+  /* Из .docx достаём текст без сторонних библиотек: это zip, внутри document.xml.
+     Читаем как бинарную строку и вытаскиваем текстовые узлы. */
+  async function readDocx(file){
+    const buf = await file.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    let raw = '';
+    for(let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
+    const chunks = raw.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+    if(!chunks || chunks.length < 3) return '';
+    const txt = chunks.map(c => c.replace(/<[^>]+>/g, '')).join(' ');
+    try{ return decodeURIComponent(escape(txt)); }catch(e){ return txt; }
+  }
+
+  function setReady(file, icon){
+    nameEl.textContent = file.name;
+    drop.style.display = 'none';
+    preview.style.display = 'flex';
+    runBtn.disabled = false;
+    runBtn.textContent = 'Проверить документ';
+    if(icon){ img.style.display = 'none'; fileIcon.style.display = 'flex'; fileIcon.textContent = icon; }
+    else { img.style.display = ''; fileIcon.style.display = 'none'; }
+  }
+  function fail(msg){
+    // важно обнулить: иначе кнопка останется активной и проверится ПРЕДЫДУЩИЙ файл
+    payload = null;
+    input.value = '';
+    runBtn.disabled = true;
+    preview.style.display = 'none';
+    drop.style.display = 'block';
+    img.style.display = ''; fileIcon.style.display = 'none';
+    result.style.display = 'block';
+    result.innerHTML = '<div class="dc-err">' + msg + '</div>';
+  }
+
   async function accept(file){
     if(!file) return;
-    if(!/^image\//.test(file.type)){
-      result.style.display = 'block';
-      result.innerHTML = '<div class="dc-err">Нужно фото документа: JPG или PNG. PDF пока не поддерживается — сфотографируй страницу.</div>';
+    result.style.display = 'none';
+    const name = (file.name || '').toLowerCase();
+    const isPdf   = file.type === 'application/pdf' || name.endsWith('.pdf');
+    const isImage = /^image\//.test(file.type);
+    const isDocx  = name.endsWith('.docx');
+    const isDoc   = name.endsWith('.doc');
+    const isText  = file.type === 'text/plain' || name.endsWith('.txt') || name.endsWith('.rtf');
+
+    if(file.size > 5 * 1024 * 1024 && !isImage){
+      fail('Файл больше 5 МБ. Раздели документ или пришли только нужные страницы.');
       return;
     }
-    result.style.display = 'none';
+
     try{
-      payload = await compress(file);
-      img.src = payload.preview;
-      nameEl.textContent = file.name;
-      drop.style.display = 'none';
-      preview.style.display = 'flex';
-      runBtn.disabled = false;
-      runBtn.textContent = 'Проверить документ';
-      track('doc_upload');
+      if(isImage){
+        payload = await compress(file);
+        payload.kind = 'image';
+        img.src = payload.preview;
+        setReady(file, null);
+
+      } else if(isPdf){
+        const b64 = await readBase64(file);
+        if(b64.length > 7000000){ fail('PDF слишком большой. Пришли только нужные страницы.'); return; }
+        payload = { kind:'pdf', base64: b64, fileName: file.name };
+        setReady(file, 'PDF');
+
+      } else if(isDocx){
+        const txt = await readDocx(file);
+        if(txt.trim().length < 20){
+          fail('Не удалось прочитать текст из документа. Сохрани его в PDF или сфотографируй.');
+          return;
+        }
+        payload = { kind:'text', text: txt, fileName: file.name };
+        setReady(file, 'DOC');
+
+      } else if(isText){
+        const txt = await readText(file);
+        if(txt.trim().length < 20){ fail('Файл пустой или слишком короткий.'); return; }
+        payload = { kind:'text', text: txt, fileName: file.name };
+        setReady(file, 'TXT');
+
+      } else if(isDoc){
+        fail('Старый формат .doc не читается. Пересохрани в .docx или PDF — в Word это «Сохранить как».');
+        return;
+
+      } else {
+        fail('Поддерживаем фото, PDF, Word и текстовые файлы.');
+        return;
+      }
+      track('doc_upload', { kind: payload.kind });
     }catch(e){
-      result.style.display = 'block';
-      result.innerHTML = '<div class="dc-err">Не удалось прочитать фото. Попробуй другое изображение.</div>';
+      fail('Не удалось прочитать файл. Попробуй другой формат.');
     }
   }
 
@@ -2369,6 +2545,8 @@ renderVisaDocs(); setVYears(3);
 
   resetBtn.addEventListener('click', () => {
     payload = null; input.value = '';
+    runBtn.disabled = true;
+    img.style.display = ''; fileIcon.style.display = 'none';
     preview.style.display = 'none';
     drop.style.display = 'block';
     result.style.display = 'none';
@@ -2418,7 +2596,7 @@ renderVisaDocs(); setVYears(3);
   }
 
   runBtn.addEventListener('click', async () => {
-    if(!payload) return;
+    if(!payload){ fail('Сначала выбери документ.'); return; }
     runBtn.disabled = true;
     result.style.display = 'block';
     result.innerHTML = '<div class="dc-loading"><span class="dc-spin"></span>Сверяю с правилами DSU и ISU — это занимает 10–20 секунд</div>';
@@ -2430,9 +2608,14 @@ renderVisaDocs(); setVYears(3);
       return;
     }
     try{
+      const body = { fileName: payload.fileName || '' };
+      if(payload.kind === 'pdf')       body.pdf = payload.base64;
+      else if(payload.kind === 'text') body.text = payload.text;
+      else { body.image = payload.base64; body.mediaType = payload.mediaType; }
+
       const r = await fetch(BACKEND_URL + '/api/check-document', {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ image: payload.base64, mediaType: payload.mediaType })
+        body: JSON.stringify(body)
       });
       const data = await r.json();
       if(!data || !data.ok) throw new Error((data && data.error) || 'fail');
@@ -2501,6 +2684,144 @@ function showLeadForm(){
     d.innerHTML = '<b>Записали</b><p>Напишем в WhatsApp на ' + phone + '. Можешь продолжать спрашивать — лимит снят.</p>';
   });
 }
+
+
+/* ================= ЛИЧНЫЙ КАБИНЕТ =================
+   Код доступа хранится локально, чтобы не вводить его каждый раз. */
+(function(){
+  const KEY = 'iitaly_portal_code';
+  const KEY_SN = 'iitaly_portal_surname';
+  const loginBox = document.getElementById('portalLogin');
+  const view = document.getElementById('portalView');
+  const errBox = document.getElementById('portalErr');
+  if(!loginBox || !view) return;
+
+  function showErr(msg){
+    errBox.textContent = msg;
+    errBox.style.display = msg ? 'block' : 'none';
+  }
+
+  async function load(code, surname, silent){
+    if(!BACKEND_URL){ showErr('Кабинет заработает после подключения сервера.'); return; }
+    try{
+      const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(code)
+        + '?surname=' + encodeURIComponent(surname));
+      const d = await r.json();
+      if(!d || !d.ok){ if(!silent) showErr((d && d.error) || 'Не нашли бронь.'); return; }
+      try{ localStorage.setItem(KEY, code); localStorage.setItem(KEY_SN, surname); }catch(e){}
+      render(code, surname, d);
+      track('portal_open', { tier: d.client.tier });
+    }catch(e){
+      if(!silent) showErr('Нет связи с сервером. Проверь интернет.');
+    }
+  }
+
+  async function toggle(code, surname, taskId, value, el){
+    el.classList.add('busy');
+    try{
+      const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(code) + '/task', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ task: taskId, value: value, surname: surname })
+      });
+      const d = await r.json();
+      if(d && d.ok){
+        el.classList.toggle('done', value);
+        const bar = document.getElementById('ptBar');
+        const num = document.getElementById('ptNum');
+        if(bar) bar.style.width = d.progress.pct + '%';
+        if(num) num.textContent = d.progress.done + ' из ' + d.progress.total;
+        track('portal_task', { done: value });
+      }
+    }catch(e){}
+    el.classList.remove('busy');
+  }
+
+  function render(code, surname, d){
+    loginBox.style.display = 'none';
+    view.style.display = 'block';
+
+    let html = '<div class="pt-head">'
+      + '<div><div class="eyebrow">' + d.client.tier + ' · маршрут поступления</div>'
+      + '<h2 class="h2" style="margin-bottom:4px">Привет, ' + d.client.name + '</h2>'
+      + '<p class="sub" style="margin:0">Отмечай сделанное — система пересчитает прогресс и подскажет, что дальше.</p></div>'
+      + '<button class="pt-exit" id="ptExit">Выйти</button></div>';
+
+    html += '<div class="pt-progress"><div class="pt-prog-top"><b id="ptNum">'
+      + d.progress.done + ' из ' + d.progress.total + '</b><span>шагов пройдено</span></div>'
+      + '<div class="pt-track"><div class="pt-bar" id="ptBar" style="width:' + d.progress.pct + '%"></div></div></div>';
+
+    // ближайший невыполненный шаг с дедлайном
+    let nextTask = null;
+    for(const st of d.roadmap) for(const t of st.tasks) if(!d.done[t.id] && !nextTask) nextTask = { st: st.title, t: t };
+    if(nextTask){
+      html += '<div class="pt-next"><div class="eyebrow">Следующий шаг</div><b>' + nextTask.t.t + '</b>'
+        + '<span>' + nextTask.st + (nextTask.t.deadline ? ' · до ' + nextTask.t.deadline : '') + '</span></div>';
+    }
+
+    for(const st of d.roadmap){
+      const total = st.tasks.length;
+      const done = st.tasks.filter(t => d.done[t.id]).length;
+      html += '<div class="pt-stage' + (done === total ? ' complete' : '') + '">'
+        + '<div class="pt-stage-head"><b>' + st.title + '</b><span>' + done + '/' + total + '</span></div>';
+      for(const t of st.tasks){
+        const isDone = !!d.done[t.id];
+        html += '<div class="pt-task' + (isDone ? ' done' : '') + '" data-task="' + t.id + '">'
+          + '<span class="pt-check"></span>'
+          + '<div class="pt-task-body"><span class="pt-title">' + t.t + '</span>'
+          + (t.ai ? '<span class="pt-tag ai">делает ИИ</span>' : '')
+          + (t.expert ? '<span class="pt-tag exp">проверяет эксперт</span>' : '')
+          + (t.deadline ? '<span class="pt-tag dl">до ' + t.deadline + '</span>' : '')
+          + (t.note ? '<span class="pt-note">' + t.note + '</span>' : '')
+          + (t.warn ? '<span class="pt-warn">' + t.warn + '</span>' : '')
+          + '</div></div>';
+      }
+      html += '</div>';
+    }
+
+    html += '<div class="pt-help"><b>Нужна помощь на шаге?</b>'
+      + '<span>Спроси ИИ — он знает твой маршрут. Сложный случай можно разобрать с экспертом отдельной опцией.</span>'
+      + '<div class="pt-help-btns"><button class="btn" onclick="openChat()">Спросить ИИ</button>'
+      + '<button class="btn ghost" onclick="nav(\'plan\')">Проверить документ</button></div></div>';
+
+    view.innerHTML = html;
+
+    document.getElementById('ptExit').addEventListener('click', function(){
+      try{ localStorage.removeItem(KEY); localStorage.removeItem(KEY_SN); }catch(e){}
+      view.style.display = 'none';
+      loginBox.style.display = 'block';
+      document.getElementById('portalCode').value = '';
+      document.getElementById('portalSurname').value = '';
+      showErr('');
+    });
+
+    view.querySelectorAll('.pt-task').forEach(function(el){
+      el.addEventListener('click', function(){
+        if(el.classList.contains('busy')) return;
+        toggle(code, surname, el.dataset.task, !el.classList.contains('done'), el);
+      });
+    });
+  }
+
+  document.getElementById('portalEnter').addEventListener('click', function(){
+    const surname = document.getElementById('portalSurname').value.trim();
+    const code = document.getElementById('portalCode').value.trim().toUpperCase();
+    if(surname.length < 2){ showErr('Введи фамилию, как при оформлении.'); return; }
+    if(code.length < 4){ showErr('Введи код брони из WhatsApp.'); return; }
+    showErr('');
+    load(code, surname, false);
+  });
+  ['portalCode','portalSurname'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){
+      if(e.key === 'Enter') document.getElementById('portalEnter').click();
+    });
+  });
+
+  // автовход по сохранённым данным
+  try{
+    const savedCode = localStorage.getItem(KEY), savedSn = localStorage.getItem(KEY_SN);
+    if(savedCode && savedSn) load(savedCode, savedSn, true);
+  }catch(e){}
+})();
 
 /* ================= INIT ================= */
 function safe(name, fn){ try{ fn(); }catch(e){ console.error(name + ' failed:', e); revealAll(); } }
