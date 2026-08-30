@@ -638,6 +638,83 @@ section{padding:64px 0}
 .ptn-msg{margin-top:10px;font-size:var(--t-xs);color:var(--green);font-weight:700}
 .ptn-msg.bad{color:var(--red)}
 
+
+/* ---------- кабинет: режим рабочего приложения ---------- */
+body.in-portal .nav-links,
+body.in-portal footer{display:none}
+body.in-portal .nav-cta{display:none}
+
+/* этапы сворачиваются: раскрыт текущий */
+.pt-stage{padding:0;overflow:hidden}
+.pt-stage-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 18px;background:none;border:none;font-family:inherit;cursor:pointer;text-align:left;
+  min-height:52px;border-bottom:2px solid transparent}
+.pt-stage.open .pt-stage-head{border-bottom-color:var(--line)}
+.pt-caret{width:9px;height:9px;border-right:2px solid var(--sec);border-bottom:2px solid var(--sec);
+  transform:rotate(-45deg);transition:transform .25s cubic-bezier(.25,.1,.25,1);flex-shrink:0;margin-left:2px}
+.pt-stage.open .pt-caret{transform:rotate(45deg)}
+.pt-stage-body{display:none;padding:4px 18px 12px}
+.pt-stage.open .pt-stage-body{display:block}
+
+/* задачи: вся строка кликабельна, палец попадает */
+.pt-task{min-height:48px;align-items:center;padding:12px 0}
+.pt-task.auto{cursor:pointer}
+.pt-task.auto .pt-check{border-style:dashed;background:transparent}
+.pt-task.auto.done .pt-check{border-style:solid}
+
+/* следующий шаг: действие, а не уведомление. Красный — только риск */
+.pt-next{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);
+  padding:18px 20px;margin-bottom:16px;box-shadow:var(--sh-md)}
+.pt-next.risk{border-color:var(--red)}
+.pt-next.done{border-color:var(--green);box-shadow:none}
+.pt-next b{display:block;font-size:var(--t-md);font-weight:800;letter-spacing:-.3px;margin:4px 0 4px;line-height:1.25}
+.pn-why{display:block;font-size:var(--t-sm);color:#5d5346;line-height:1.5;margin-bottom:10px}
+.pn-meta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.pn-time,.pn-dl,.pn-stage{font-size:var(--t-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  border:1.5px solid var(--line);border-radius:var(--r-pill);padding:5px 10px;color:#6f6455}
+.pn-time{border-color:var(--ink);color:var(--ink)}
+.pn-dl.risk{border-color:var(--red);color:var(--red);background:rgba(180,38,43,.06)}
+.pn-actions{display:flex;gap:10px;flex-wrap:wrap}
+.pn-actions .btn{padding:13px 22px;min-height:46px}
+
+/* дорога компактнее на телефоне */
+@media(max-width:560px){
+  .tl{gap:6px}
+  .tl-node{min-width:112px}
+  .tl-name{font-size:var(--t-2xs)}
+}
+
+
+/* ---------- первый экран: воздух и одно главное действие ---------- */
+.hero{padding:96px 0 52px}
+@media(max-width:720px){.hero{padding:60px 0 36px}}
+.hero .mega{margin-bottom:0}
+.hero-sub{font-size:clamp(16px,2.3vw,19px);line-height:1.55;max-width:640px;margin:26px 0 34px;color:#5d5346}
+.hero-ctas{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.hero-ctas .btn{padding:17px 34px;font-size:var(--t-sm);min-height:54px}
+.hero-alt{background:none;border:none;font-family:inherit;cursor:pointer;padding:8px 0;
+  font-size:var(--t-sm);font-weight:700;color:#6f6455;text-decoration:underline;text-underline-offset:4px}
+.hero-alt:hover{color:var(--ink)}
+/* блок преимуществ ушёл под первый экран — даём ему воздух */
+.usp{margin:0 0 26px}
+.stats{margin-bottom:8px}
+
+
+/* ---------- документы в шагах маршрута ---------- */
+.pt-doc-btn{margin-top:8px;border:2px solid var(--ink);background:var(--paper);border-radius:var(--r-pill);
+  padding:9px 16px;font-size:var(--t-2xs);font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+  cursor:pointer;font-family:inherit;color:var(--ink);min-height:40px}
+.pt-doc-btn:hover{background:var(--cream)}
+.pt-doc-btn:disabled{opacity:.55;cursor:default}
+.pt-tag.doc{border-width:1.5px}
+.pt-tag.doc.ok{color:var(--green);border-color:var(--green);background:rgba(63,107,79,.07)}
+.pt-tag.doc.warn,.pt-tag.doc.unreadable{color:var(--warn);border-color:var(--warn);background:rgba(178,80,0,.07)}
+.pt-tag.doc.error{color:#fff;background:var(--red);border-color:var(--red)}
+.pt-doc-sum{display:block;width:100%;font-size:var(--t-xs);color:#5d5346;line-height:1.5;margin-top:4px}
+.pt-doc-msg{display:block;width:100%;font-size:var(--t-xs);color:var(--green);font-weight:700;margin-top:6px}
+.pt-doc-msg.bad{color:var(--red)}
+.pt-task.checking{opacity:.7}
+
 .w{stroke-linecap:round}
 .w1{animation:waveMove 12s linear infinite}
 .w2{animation:waveMove 16s linear infinite reverse}
@@ -917,21 +994,18 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 <!-- ==================== ГЛАВНАЯ ==================== -->
 <div class="page on" id="page-home">
   <div class="wrap hero">
-    <div class="eyebrow">Приём 2026/27 · Казахстан → Италия</div>
     <div class="mega" id="megaTitle"><span class="row1">Мы помогаем</span><br><span class="row2" id="megaWord"></span></div>
-    <div class="usp">
-      <span>ИИ ведёт поступление</span><i>·</i><span>эксперт — на критичных точках</span><i>·</i><span>без агентской наценки</span>
-    </div>
-    <p class="sub hero-sub">Мы автоматизировали работу, за которую агентства берут сотни тысяч тенге.</p>
+    <p class="sub hero-sub">ИИ ведёт поступление в Италию, эксперт страхует на критичных этапах.<br>Под ключ от 59 900 ₸ — в 4–11 раз дешевле агентства.</p>
     <div class="hero-ctas">
-      <button class="btn primary" onclick="nav('plan')">Составить мой план</button>
-      <button class="btn ghost" onclick="nav('unis')">Смотреть университеты</button>
+      <button class="btn primary" onclick="nav('plan')">Составить план бесплатно</button>
+      <button class="hero-alt" onclick="nav('unis')">или посмотреть университеты →</button>
     </div>
   </div>
 
-  <div class="ticker"><div class="ticker-inner">DSU €7 557 · VISTO D · UNIVERSITALY · CIMEA · MILANO · BOLOGNA · ROMA · TORINO · NAPOLI · PALERMO · MESSINA · ISEEU PARIFICATO · DSU €7 557 · VISTO D · UNIVERSITALY · CIMEA · MILANO · BOLOGNA · ROMA · TORINO · NAPOLI · PALERMO · MESSINA · ISEEU PARIFICATO · </div></div>
-
   <div class="wrap">
+    <div class="usp rv">
+      <span>ИИ ведёт поступление</span><i>·</i><span>эксперт — на критичных точках</span><i>·</i><span>без агентской наценки</span>
+    </div>
     <div class="stats">
       <div class="stat rv"><div class="v"><em>€7 557</em></div><div class="l">стипендия DSU в год + жильё и питание</div></div>
       <div class="stat rv"><div class="v"><em>€0–4К</em></div><div class="l">год обучения в госвузе по ISEE семьи</div></div>
@@ -972,7 +1046,12 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 
   <section style="padding-top:0">
     <div class="wrap">
-      <div class="trust rv">
+</div></section>
+
+  <div class="ticker"><div class="ticker-inner">DSU €7 557 · VISTO D · UNIVERSITALY · CIMEA · ISEEU PARIFICATO · APOSTILLE · TOLC · IMAT · PERMESSO DI SOGGIORNO · KIT GIALLO · CODICE FISCALE · BLS · DSU €7 557 · VISTO D · UNIVERSITALY · CIMEA · ISEEU PARIFICATO · APOSTILLE · TOLC · IMAT · PERMESSO DI SOGGIORNO · KIT GIALLO · CODICE FISCALE · BLS · </div></div>
+
+  <section style="padding-top:34px"><div class="wrap">
+            <div class="trust rv">
         <div class="trust-main">
           <div class="eyebrow">Где заканчивается ИИ</div>
           <h3>Система работает. Человек страхует.</h3>
@@ -1512,7 +1591,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 <footer>
   <div class="wrap">
     <div style="display:flex;gap:10px;align-items:flex-start"><svg class="logo-mark f" viewBox="0 0 44 44" aria-hidden="true"><rect x="4" y="4" width="36" height="36" rx="9" fill="#211a14"/><rect x="1" y="1" width="36" height="36" rx="9" fill="#fffdf8" stroke="#211a14" stroke-width="2.5"/><rect x="10" y="10" width="7" height="18" rx="3" fill="#3f6b4f"/><rect x="21" y="10" width="7" height="18" rx="3" fill="#b4262b"/></svg><div><b>IItaly</b><br>ИИ-сервис поступления · Казахстан</div></div>
-    <div>База: bando DSU 2025/26–2026/27, MUR, CIMEA<br>Ответы ИИ могут содержать ошибки — критичное проверяет эксперт<br><a href="privacy.html" style="color:#cbbfae">Политика конфиденциальности</a></div>
+    <div>База: правила приёма 2026/27 (MUR, CIMEA, bando регионов). Для более поздних наборов уточняем после публикации новых bando<br>Ответы ИИ могут содержать ошибки — критичное проверяет эксперт<br><a href="privacy.html" style="color:#cbbfae">Политика конфиденциальности</a></div>
   </div>
 </footer>
 
@@ -2607,6 +2686,41 @@ renderVisaDocs(); setVYears(3);
   }
 
   input.addEventListener('change', e => accept(e.target.files[0]));
+
+  // кабинет использует тот же разбор файлов: фото сжимается, PDF идёт как есть,
+  // из Word достаётся текст. Возвращает готовое тело запроса или {error}.
+  window.prepareDocPayload = async function(file){
+    if(!file) return { error: 'Файл не выбран' };
+    const name = (file.name || '').toLowerCase();
+    const isPdf = file.type === 'application/pdf' || name.endsWith('.pdf');
+    const isImage = /^image\//.test(file.type);
+    const isDocx = name.endsWith('.docx');
+    const isText = file.type === 'text/plain' || name.endsWith('.txt') || name.endsWith('.rtf');
+    if(file.size > 5 * 1024 * 1024 && !isImage) return { error: 'Файл больше 5 МБ' };
+    try{
+      if(isImage){
+        const p = await compress(file);
+        return { body: { image: p.base64, mediaType: p.mediaType, fileName: file.name } };
+      }
+      if(isPdf){
+        const b64 = await readBase64(file);
+        if(b64.length > 7000000) return { error: 'PDF слишком большой' };
+        return { body: { pdf: b64, fileName: file.name } };
+      }
+      if(isDocx){
+        const txt = await readDocx(file);
+        if(txt.trim().length < 20) return { error: 'Не удалось прочитать текст. Сохрани в PDF или сфотографируй.' };
+        return { body: { text: txt, fileName: file.name } };
+      }
+      if(isText){
+        const txt = await readText(file);
+        if(txt.trim().length < 20) return { error: 'Файл пустой' };
+        return { body: { text: txt, fileName: file.name } };
+      }
+      if(name.endsWith('.doc')) return { error: 'Старый .doc не читается. Пересохрани в .docx или PDF.' };
+      return { error: 'Поддерживаем фото, PDF, Word и текст' };
+    }catch(e){ return { error: 'Не удалось прочитать файл' }; }
+  };
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('over'));
   drop.addEventListener('drop', e => {
@@ -2787,24 +2901,60 @@ function showLeadForm(){
     }
   }
 
-  async function toggle(code, surname, taskId, value, el){
+  /* Состояние кабинета живёт в одном месте: после отметки пересчитываем всё,
+     что от него зависит. Иначе счётчик этапа и «следующий шаг» врут. */
+  let state = null;
+
+  async function toggle(taskId, value, el){
+    if(!state) return;
     el.classList.add('busy');
     try{
-      const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(code) + '/task', {
+      const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(state.code) + '/task', {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ task: taskId, value: value, surname: surname })
+        body: JSON.stringify({ task: taskId, value: value, surname: state.surname })
       });
       const d = await r.json();
       if(d && d.ok){
+        state.data.done = d.done;
+        state.data.progress = d.progress;
         el.classList.toggle('done', value);
-        const bar = document.getElementById('ptBar');
-        const num = document.getElementById('ptNum');
-        if(bar) bar.style.width = d.progress.pct + '%';
-        if(num) num.textContent = d.progress.done + ' из ' + d.progress.total;
+        refresh();
         track('portal_task', { done: value });
       }
     }catch(e){}
     el.classList.remove('busy');
+  }
+
+  /* Пересчёт всего производного от состояния: прогресс, этапы, дорога,
+     блок рисков и следующий шаг. Без пересборки DOM, чтобы не терять прокрутку. */
+  function refresh(){
+    if(!state) return;
+    const d = state.data;
+    const bar = document.getElementById('ptBar');
+    const num = document.getElementById('ptNum');
+    if(bar) bar.style.width = d.progress.pct + '%';
+    if(num) num.textContent = d.progress.done + ' из ' + d.progress.total;
+
+    for(const st of d.roadmap){
+      const total = st.tasks.length;
+      const done = st.tasks.filter(t => d.done[t.id]).length;
+      const box = document.getElementById('st-' + st.id);
+      if(box){
+        box.classList.toggle('complete', done === total);
+        const c = box.querySelector('.pt-stage-head span');
+        if(c) c.textContent = done + '/' + total;
+      }
+      const node = document.querySelector('.tl-node[data-goto="' + st.id + '"]');
+      if(node){
+        const over = st.tasks.some(t => !d.done[t.id] && t.daysLeft !== null && t.daysLeft < 0);
+        const hot = st.tasks.some(t => !d.done[t.id] && t.daysLeft !== null && t.daysLeft >= 0 && t.daysLeft <= 45);
+        node.className = 'tl-node ' + (done === total ? 'ok' : over ? 'over' : hot ? 'hot' : 'calm');
+        const meta = node.querySelector('.tl-meta');
+        if(meta) meta.textContent = meta.textContent.replace(/^\d+\/\d+/, done + '/' + total);
+      }
+    }
+    renderNext();
+    renderAlert();
   }
 
   const MONTHS = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
@@ -2831,28 +2981,189 @@ function showLeadForm(){
     return fmtDate(t.deadline);
   }
 
+  /* Сколько времени займёт шаг и зачем он — чтобы «следующий шаг» был действием,
+     а не уведомлением. Данные простые, но снимают главный вопрос «что делать». */
+  const TASK_META = {
+    profile:    { min:'7 мин',  why:'нужно для подборки программ и расчёта маршрута', act:'Заполнить' },
+    shortlist:  { min:'5 мин',  why:'ИИ отберёт программы под твои баллы и бюджет',   act:'Получить подборку' },
+    chances:    { min:'3 мин',  why:'поймём, реально ли рассчитывать на стипендию',   act:'Проверить шансы' },
+    checkDocs:  { min:'2 мин',  why:'ошибку дешевле найти сейчас, чем после отказа',  act:'Проверить документы' },
+    path12:     { min:'5 мин',  why:'решает, теряешь ли ты год',                      act:'Разобрать варианты' },
+    apostille:  { min:'до 6 недель', why:'без него перевод недействителен',           act:'Как получить' },
+    cimea:      { min:'30–60 дней',  why:'запускать заранее, иначе не успеть',        act:'Как подать' },
+    universitaly:{ min:'40 мин', why:'без этого визу не дадут',                       act:'Как заполнить' },
+    iseeu:      { min:'2 недели', why:'от него зависит размер стипендии',             act:'Что нужно' },
+    money:      { min:'заранее', why:'деньги должны «пожить» на счёте',               act:'Сколько нужно' },
+    blsSlot:    { min:'15 мин', why:'слоты в сезон разбирают за часы',                act:'Как записаться' },
+  };
+  const ACT_PAGE = { checkDocs:'plan', shortlist:'unis', chances:'plan', profile:'plan' };
+
+  /* Задачи, которые подтверждаются документом. Загрузка идёт прямо из шага,
+     результат проверки сохраняется в кабинет и закрывает шаг, если ошибок нет. */
+  const DOC_TASKS = {
+    apostille:  'Аттестат или диплом с апостилем',
+    translate:  'Присяжный перевод',
+    notary:     'Нотариальное заверение перевода',
+    cimea:      'CIMEA Statement of Comparability',
+    familyDocs: 'Справка о доходах или составе семьи',
+    iseeu:      'ISEEU parificato',
+    statements: 'Банковская выписка',
+    insurance:  'Медицинская страховка',
+    housing:    'Подтверждение жилья',
+    universitaly:'Сводка Universitaly',
+  };
+  const V_LABEL = { ok:'проверен', warn:'есть замечания', error:'есть ошибки', unreadable:'плохо видно' };
+
+  function flatTasks(){
+    const d = state.data, out = [];
+    for(const st of d.roadmap) for(const t of st.tasks) out.push({ st: st.title, stId: st.id, t: t, done: !!d.done[t.id] });
+    return out;
+  }
+
+
+  /* Загрузка документа к конкретному шагу маршрута */
+  function pickDocFor(taskId, btn){
+    if(!state) return;
+    let inp = document.getElementById('ptDocFile');
+    if(!inp){
+      inp = document.createElement('input');
+      inp.type = 'file'; inp.id = 'ptDocFile'; inp.style.display = 'none';
+      inp.accept = 'image/*,application/pdf,.pdf,.docx,.txt,.rtf';
+      document.body.appendChild(inp);
+    }
+    inp.value = '';
+    inp.onchange = async function(){
+      const file = inp.files && inp.files[0];
+      if(!file) return;
+      const row = btn.closest('.pt-task');
+      const old = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Проверяю…';
+      row.classList.add('checking');
+
+      const prep = await window.prepareDocPayload(file);
+      if(prep.error){ docMsg(row, prep.error, true); btn.disabled = false; btn.textContent = old; row.classList.remove('checking'); return; }
+
+      try{
+        // 1. проверяем документ
+        const r = await fetch(BACKEND_URL + '/api/check-document', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(Object.assign({ hint: DOC_TASKS[taskId] || '' }, prep.body))
+        });
+        const d = await r.json();
+        if(!d || !d.ok) throw new Error((d && d.error) || 'fail');
+
+        // 2. сохраняем результат в кабинет
+        const r2 = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(state.code) + '/doc', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ surname: state.surname, task: taskId, result: d.result, fileName: file.name })
+        });
+        const d2 = await r2.json();
+        if(!d2 || !d2.ok) throw new Error((d2 && d2.error) || 'save');
+
+        state.data.docs = d2.docs;
+        state.data.done = d2.done;
+        state.data.progress = d2.progress;
+        track('portal_doc', { verdict: d.result.verdict });
+        render(state.code, state.surname, state.data);   // перерисовываем с новым статусом
+        const again = document.querySelector('.pt-task[data-task="' + taskId + '"]');
+        if(again) again.scrollIntoView({ behavior:'smooth', block:'center' });
+      }catch(e){
+        docMsg(row, 'Не удалось проверить. Попробуй ещё раз.', true);
+        btn.disabled = false; btn.textContent = old;
+        row.classList.remove('checking');
+      }
+    };
+    inp.click();
+  }
+
+  function docMsg(row, text, bad){
+    let m = row.querySelector('.pt-doc-msg');
+    if(!m){
+      m = document.createElement('span');
+      m.className = 'pt-doc-msg';
+      row.querySelector('.pt-task-body').appendChild(m);
+    }
+    m.textContent = text;
+    m.classList.toggle('bad', !!bad);
+  }
+
+  function renderNext(){
+    const box = document.getElementById('ptNextBox');
+    if(!box) return;
+    const flat = flatTasks();
+    const x = flat.find(v => !v.done);
+    if(!x){
+      box.innerHTML = '<div class="pt-next done"><b>Все шаги пройдены</b>'
+        + '<span>Маршрут закрыт. Если появятся новые задачи, они появятся здесь.</span></div>';
+      return;
+    }
+    const m = TASK_META[x.t.id] || {};
+    const dl = x.t.deadline ? dlText(x.t, false) : '';
+    const risky = x.t.daysLeft !== null && x.t.daysLeft <= 14;
+    box.innerHTML = '<div class="pt-next' + (risky ? ' risk' : '') + '">'
+      + '<div class="eyebrow">Следующий шаг</div>'
+      + '<b>' + x.t.t + '</b>'
+      + (m.why ? '<span class="pn-why">' + m.why + '</span>' : '')
+      + '<div class="pn-meta">'
+      + (m.min ? '<span class="pn-time">' + m.min + '</span>' : '')
+      + (dl ? '<span class="pn-dl' + (risky ? ' risk' : '') + '">' + dl + '</span>' : '')
+      + '<span class="pn-stage">' + x.st + '</span>'
+      + '</div>'
+      + '<div class="pn-actions">'
+      + '<button class="btn" id="pnGo">' + (m.act || 'Открыть шаг') + '</button>'
+      + (x.t.ai || x.t.expert ? '' : '<button class="btn ghost" id="pnDone">Уже сделал</button>')
+      + '</div></div>';
+
+    const go = document.getElementById('pnGo');
+    if(go) go.addEventListener('click', function(){
+      const page = ACT_PAGE[x.t.id];
+      if(page){ nav(page); return; }
+      openChat();
+      setTimeout(function(){
+        const inp = document.getElementById('chatInput');
+        if(inp){ inp.value = 'Расскажи подробно про шаг: ' + x.t.t; askDemo(); }
+      }, 200);
+    });
+    const dn = document.getElementById('pnDone');
+    if(dn) dn.addEventListener('click', function(){
+      const row = document.querySelector('.pt-task[data-task="' + x.t.id + '"]');
+      if(row) toggle(x.t.id, true, row);
+    });
+  }
+
+  function renderAlert(){
+    const box = document.getElementById('ptAlertBox');
+    if(!box) return;
+    const flat = flatTasks();
+    const over = flat.filter(v => !v.done && v.t.daysLeft !== null && v.t.daysLeft < 0);
+    const hot = flat.filter(v => !v.done && v.t.daysLeft !== null && v.t.daysLeft >= 0 && v.t.daysLeft <= 45);
+    if(!over.length && !hot.length){ box.innerHTML = ''; return; }
+    const list = (over.length ? over : hot).slice(0, 3);
+    box.innerHTML = '<div class="pt-alert' + (over.length ? ' over' : '') + '">'
+      + '<b>' + (over.length ? 'Просрочено: ' + over.length : 'Скоро дедлайн: ' + hot.length) + '</b>'
+      + list.map(v => '<div class="pt-alert-row"><span>' + v.t.t + '</span><i>' + dlText(v.t, false) + '</i></div>').join('')
+      + '</div>';
+  }
+
   function render(code, surname, d){
+    state = { code: code, surname: surname, data: d };
     loginBox.style.display = 'none';
     view.style.display = 'block';
-
-    // собираем все задачи в один список для таймлайна
-    const flat = [];
-    for(const st of d.roadmap) for(const t of st.tasks) flat.push({ st: st.title, t: t, done: !!d.done[t.id] });
-    const overdue = flat.filter(x => !x.done && x.t.daysLeft !== null && x.t.daysLeft < 0);
-    const hot = flat.filter(x => !x.done && x.t.daysLeft !== null && x.t.daysLeft >= 0 && x.t.daysLeft <= 45);
-    const nextTask = flat.find(x => !x.done);
+    document.body.classList.add('in-portal');
 
     let html = '<div class="pt-head">'
       + '<div><div class="eyebrow">' + d.client.tier + ' · набор ' + (d.client.intakeYear || '') + '/' + String((d.client.intakeYear||0)+1).slice(2) + '</div>'
-      + '<h2 class="h2" style="margin-bottom:4px">Привет, ' + d.client.name + '</h2>'
-      + '<p class="sub" style="margin:0">Отмечай сделанное — система пересчитает прогресс и подскажет, что дальше.</p></div>'
+      + '<h2 class="h2" style="margin-bottom:2px">' + d.client.name + '</h2></div>'
       + '<button class="pt-exit" id="ptExit">Выйти</button></div>';
 
     html += '<div class="pt-progress"><div class="pt-prog-top"><b id="ptNum">'
       + d.progress.done + ' из ' + d.progress.total + '</b><span>шагов пройдено</span></div>'
       + '<div class="pt-track"><div class="pt-bar" id="ptBar" style="width:' + d.progress.pct + '%"></div></div></div>';
 
-    // ---- Дорога: этапы во времени ----
+    html += '<div id="ptAlertBox"></div>';
+    html += '<div id="ptNextBox"></div>';
+
+    // компактная дорога
     html += '<div class="tl"><div class="tl-line"></div>';
     for(const st of d.roadmap){
       const total = st.tasks.length;
@@ -2862,54 +3173,50 @@ function showLeadForm(){
       const stHot = st.tasks.some(t => !d.done[t.id] && t.daysLeft !== null && t.daysLeft >= 0 && t.daysLeft <= 45);
       const cls = done === total ? 'ok' : stOver ? 'over' : stHot ? 'hot' : 'calm';
       html += '<div class="tl-node ' + cls + '" data-goto="' + st.id + '">'
-        + '<span class="tl-dot"></span>'
-        + '<span class="tl-name">' + st.title + '</span>'
-        + '<span class="tl-meta">' + done + '/' + total + (dates.length ? ' · до ' + fmtDate(dates[dates.length-1]) : '') + '</span>'
-        + '</div>';
+        + '<span class="tl-dot"></span><span class="tl-name">' + st.title + '</span>'
+        + '<span class="tl-meta">' + done + '/' + total + (dates.length ? ' · до ' + fmtDate(dates[dates.length-1]) : '') + '</span></div>';
     }
     html += '</div>';
 
-    // ---- Что горит ----
-    if(overdue.length || hot.length){
-      html += '<div class="pt-alert' + (overdue.length ? ' over' : '') + '">'
-        + '<b>' + (overdue.length ? 'Просрочено: ' + overdue.length : 'Скоро дедлайн: ' + hot.length) + '</b>';
-      const show = (overdue.length ? overdue : hot).slice(0, 3);
-      for(const x of show){
-        html += '<div class="pt-alert-row"><span>' + x.t.t + '</span><i>' + dlText(x.t, false) + '</i></div>';
-      }
-      html += '</div>';
-    }
-
-    if(nextTask){
-      html += '<div class="pt-next"><div class="eyebrow">Следующий шаг</div><b>' + nextTask.t.t + '</b>'
-        + '<span>' + nextTask.st + (nextTask.t.deadline ? ' · ' + dlText(nextTask.t, false) : '') + '</span></div>';
-    }
-
+    // этапы: текущий раскрыт, остальные свёрнуты
+    const firstOpen = (d.roadmap.find(st => st.tasks.some(t => !d.done[t.id])) || d.roadmap[0] || {}).id;
     for(const st of d.roadmap){
       const total = st.tasks.length;
       const done = st.tasks.filter(t => d.done[t.id]).length;
-      html += '<div class="pt-stage' + (done === total ? ' complete' : '') + '" id="st-' + st.id + '">'
-        + '<div class="pt-stage-head"><b>' + st.title + '</b><span>' + done + '/' + total + '</span></div>';
+      const open = st.id === firstOpen;
+      html += '<div class="pt-stage' + (done === total ? ' complete' : '') + (open ? ' open' : '') + '" id="st-' + st.id + '">'
+        + '<button class="pt-stage-head" data-stage="' + st.id + '"><b>' + st.title + '</b>'
+        + '<span>' + done + '/' + total + '</span><i class="pt-caret"></i></button>'
+        + '<div class="pt-stage-body">';
       for(const t of st.tasks){
         const isDone = !!d.done[t.id];
-        const state = dlState(t, isDone);
-        html += '<div class="pt-task' + (isDone ? ' done' : '') + '" data-task="' + t.id + '">'
+        const stt = dlState(t, isDone);
+        const auto = t.ai || t.expert;   // такие шаги закрывает система, а не галочка
+        const needDoc = DOC_TASKS[t.id];
+        const doc = (d.docs || {})[t.id];
+        html += '<div class="pt-task' + (isDone ? ' done' : '') + (auto ? ' auto' : '') + '" data-task="' + t.id + '">'
           + '<span class="pt-check"></span>'
           + '<div class="pt-task-body"><span class="pt-title">' + t.t + '</span>'
-          + (t.deadline ? '<span class="pt-tag dl ' + state + '">' + dlText(t, isDone) + '</span>' : '')
+          + (t.deadline ? '<span class="pt-tag dl ' + stt + '">' + dlText(t, isDone) + '</span>' : '')
           + (t.ai ? '<span class="pt-tag ai">делает ИИ</span>' : '')
           + (t.expert ? '<span class="pt-tag exp">проверяет эксперт</span>' : '')
+          + (doc ? '<span class="pt-tag doc ' + doc.verdict + '">документ: ' + (V_LABEL[doc.verdict] || '') + '</span>' : '')
           + (t.note ? '<span class="pt-note">' + t.note + '</span>' : '')
           + (t.warn ? '<span class="pt-warn">' + t.warn + '</span>' : '')
+          + (doc && doc.summary ? '<span class="pt-doc-sum">' + doc.summary + '</span>' : '')
+          + (needDoc
+              ? '<button class="pt-doc-btn" data-doc="' + t.id + '">'
+                + (doc ? 'Проверить другой файл' : 'Загрузить и проверить') + '</button>'
+              : '')
           + '</div></div>';
       }
-      html += '</div>';
+      html += '</div></div>';
     }
 
     // ---- Напоминания ----
     const n = d.client.notify || {};
     html += '<div class="pt-notify"><div class="eyebrow">Напоминания о дедлайнах</div>'
-      + '<p>Предупредим за 30, 14, 7, 3 и 1 день до каждого срока — чтобы ничего не пропустить.</p>'
+      + '<p>Еженедельная сводка плюс срочные предупреждения, когда до срока меньше недели.</p>'
       + '<div class="ptn-row"><span class="ptn-ch' + (d.client.tgLinked ? ' on' : '') + '"></span>'
       + '<div><b>Telegram</b><span>' + (d.client.tgLinked ? 'подключён' : 'не подключён') + '</span></div>'
       + (d.client.tgLinked
@@ -2926,55 +3233,29 @@ function showLeadForm(){
       + '</div></div>'
       + '<div id="ptnMsg" class="ptn-msg" style="display:none"></div></div>';
 
-    html += '<div class="pt-help"><b>Нужна помощь на шаге?</b>'
-      + '<span>Спроси ИИ — он знает твой маршрут. Сложный случай можно разобрать с экспертом отдельной опцией.</span>'
-      + '<div class="pt-help-btns"><button class="btn" onclick="openChat()">Спросить ИИ</button>'
-      + '<button class="btn ghost" onclick="nav(\'plan\')">Проверить документ</button></div></div>';
-
     view.innerHTML = html;
+    renderAlert();
+    renderNext();
 
-    // ---- напоминания ----
-    const msg = function(t, bad){
-      const m = document.getElementById('ptnMsg');
-      if(!m) return;
-      m.textContent = t; m.className = 'ptn-msg' + (bad ? ' bad' : '');
-      m.style.display = t ? 'block' : 'none';
-    };
-    async function saveNotify(body){
-      try{
-        const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(code) + '/notify', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(Object.assign({ surname: surname }, body))
-        });
-        const j = await r.json();
-        if(!j || !j.ok){ msg((j && j.error) || 'Не удалось сохранить', true); return null; }
-        return j;
-      }catch(e){ msg('Нет связи с сервером', true); return null; }
-    }
-    const saveBtn = document.getElementById('ptnSave');
-    if(saveBtn) saveBtn.addEventListener('click', async function(){
-      const val = document.getElementById('ptnEmail').value.trim();
-      saveBtn.disabled = true;
-      const j = await saveNotify({ email: val, notifyEmail: !!val });
-      saveBtn.disabled = false;
-      if(j){ msg(val ? 'Будем писать на ' + val : 'Напоминания на почту отключены', false); track('notify_email'); }
-    });
-    const tgOff = document.getElementById('ptnTgOff');
-    if(tgOff) tgOff.addEventListener('click', async function(){
-      const j = await saveNotify({ notifyTelegram: false });
-      if(j){ msg('Telegram отключён', false); load(code, surname, true); }
+    // загрузка документа прямо из шага
+    view.querySelectorAll('.pt-doc-btn').forEach(function(b){
+      b.addEventListener('click', function(e){
+        e.stopPropagation();
+        pickDocFor(b.dataset.doc, b);
+      });
     });
 
-    // клик по узлу дороги — прокрутка к этапу
-    view.querySelectorAll('.tl-node').forEach(function(n){
-      n.addEventListener('click', function(){
-        const el = document.getElementById('st-' + n.dataset.goto);
-        if(el) el.scrollIntoView({ behavior:'smooth', block:'center' });
+    // сворачивание этапов
+    view.querySelectorAll('.pt-stage-head').forEach(function(h){
+      h.addEventListener('click', function(){
+        document.getElementById('st-' + h.dataset.stage).classList.toggle('open');
       });
     });
 
     document.getElementById('ptExit').addEventListener('click', function(){
       try{ localStorage.removeItem(KEY); localStorage.removeItem(KEY_SN); }catch(e){}
+      state = null;
+      document.body.classList.remove('in-portal');
       view.style.display = 'none';
       loginBox.style.display = 'block';
       document.getElementById('portalCode').value = '';
@@ -2985,7 +3266,17 @@ function showLeadForm(){
     view.querySelectorAll('.pt-task').forEach(function(el){
       el.addEventListener('click', function(){
         if(el.classList.contains('busy')) return;
-        toggle(code, surname, el.dataset.task, !el.classList.contains('done'), el);
+        if(el.classList.contains('auto')){
+          // шаг закрывает система: галочкой его не отметить, ведём к действию
+          openChat();
+          setTimeout(function(){
+            const inp = document.getElementById('chatInput');
+            const title = el.querySelector('.pt-title').textContent;
+            if(inp){ inp.value = 'Помоги с шагом: ' + title; askDemo(); }
+          }, 200);
+          return;
+        }
+        toggle(el.dataset.task, !el.classList.contains('done'), el);
       });
     });
   }
