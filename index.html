@@ -715,6 +715,68 @@ body.in-portal .nav-cta{display:none}
 .pt-doc-msg.bad{color:var(--red)}
 .pt-task.checking{opacity:.7}
 
+
+/* ---------- разделы кабинета и нижняя навигация ---------- */
+body.in-portal{padding-bottom:88px}
+.pt-sec{display:none}
+
+.pt-nav{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;
+  background:var(--paper);border-top:2px solid var(--ink);
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(33,26,20,.08)}
+.pt-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;font-family:inherit;cursor:pointer;padding:9px 4px;min-height:56px;
+  font-size:var(--t-2xs);font-weight:700;color:#8a7f70;border-radius:var(--r-sm);letter-spacing:.02em}
+.pt-nav button.on{color:var(--ink);background:var(--cream)}
+.pt-nav i{width:19px;height:19px;display:block;opacity:.75;
+  background:currentColor;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
+.pt-nav button.on i{opacity:1}
+.i-today{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 100 20 10 10 0 000-20zm1 10V6h-2v8h6v-2z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 100 20 10 10 0 000-20zm1 10V6h-2v8h6v-2z'/%3E%3C/svg%3E")}
+.i-plan{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 5h13v2H3zm0 6h13v2H3zm0 6h13v2H3zm16-11l2 2-2 2-2-2zm0 6l2 2-2 2-2-2zm0 6l2 2-2 2-2-2z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 5h13v2H3zm0 6h13v2H3zm0 6h13v2H3zm16-11l2 2-2 2-2-2zm0 6l2 2-2 2-2-2zm0 6l2 2-2 2-2-2z'/%3E%3C/svg%3E")}
+.i-docs{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 2h8l4 4v16H6zm8 1.5V7h3.5zM8 11h8v2H8zm0 4h8v2H8z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 2h8l4 4v16H6zm8 1.5V7h3.5zM8 11h8v2H8zm0 4h8v2H8z'/%3E%3C/svg%3E")}
+.i-help{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2zm1.7-6.2l-.9.9c-.6.6-.8 1.1-.8 2.3h-2v-.5c0-.9.4-1.7 1-2.3l1.2-1.2c.4-.4.6-.9.5-1.5-.1-.7-.7-1.3-1.4-1.4-.9-.1-1.7.5-1.9 1.3H8.5A3.5 3.5 0 0112 6.5a3.5 3.5 0 012.7 5.3z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 100 20 10 10 0 000-20zm1 15h-2v-2h2zm1.7-6.2l-.9.9c-.6.6-.8 1.1-.8 2.3h-2v-.5c0-.9.4-1.7 1-2.3l1.2-1.2c.4-.4.6-.9.5-1.5-.1-.7-.7-1.3-1.4-1.4-.9-.1-1.7.5-1.9 1.3H8.5A3.5 3.5 0 0112 6.5a3.5 3.5 0 012.7 5.3z'/%3E%3C/svg%3E")}
+
+/* раздел «Документы» */
+.pt-docs-head{margin-bottom:16px}
+.pt-docs-head h3{font-size:var(--t-lg);font-weight:800;letter-spacing:-.4px;margin:2px 0 6px}
+.pt-docs-head p{font-size:var(--t-sm);color:#5d5346;line-height:1.55;margin-bottom:12px}
+.pd-sum{display:flex;gap:7px;flex-wrap:wrap}
+.pd-chip{font-size:var(--t-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  border:1.5px solid var(--line);border-radius:var(--r-pill);padding:5px 11px;color:#6f6455}
+.pd-chip.ok{border-color:var(--green);color:var(--green);background:rgba(63,107,79,.07)}
+.pd-chip.bad{border-color:var(--red);color:var(--red);background:rgba(180,38,43,.06)}
+.pd-item{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);
+  padding:15px 17px;margin-bottom:10px;box-shadow:var(--sh-sm)}
+.pd-item.ok{border-color:var(--green)}
+.pd-item.error{border-color:var(--red)}
+.pd-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pd-top b{font-size:var(--t-sm);font-weight:700;letter-spacing:-.1px}
+.pd-none{font-size:var(--t-2xs);color:#8a7f70;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.pd-stage{display:block;font-size:var(--t-xs);color:#8a7f70;margin-top:3px}
+.pd-sumtext{display:block;font-size:var(--t-xs);color:#5d5346;line-height:1.5;margin-top:7px}
+.pd-crit{display:block;font-size:var(--t-xs);color:var(--red);font-weight:700;margin-top:5px}
+.pd-item .pt-doc-btn{margin-top:11px}
+
+
+/* ---------- акция для первых клиентов ---------- */
+.launch{display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between;
+  background:var(--paper);border:2px solid var(--red);border-radius:var(--r-lg);
+  padding:22px 24px;margin-bottom:18px;box-shadow:var(--sh-md)}
+.lc-left{flex:1;min-width:260px}
+.lc-tag{display:inline-block;background:var(--red);color:#fff;border-radius:var(--r-pill);
+  padding:5px 12px;font-size:var(--t-2xs);font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:9px}
+.launch b{display:block;font-size:var(--t-md);font-weight:800;letter-spacing:-.3px;margin-bottom:5px}
+.launch p{font-size:var(--t-xs);color:#5d5346;line-height:1.6}
+.lc-count{text-align:center;flex-shrink:0}
+.lc-num{font-size:clamp(34px,6vw,46px);font-weight:900;letter-spacing:-2px;color:var(--red);line-height:1}
+.lc-of{font-size:var(--t-lg);color:var(--sec);font-weight:800;letter-spacing:-1px}
+.lc-lbl{font-size:var(--t-2xs);color:#6f6455;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.pkg .price s{font-size:var(--t-bd);color:var(--sec);font-weight:700;margin-right:8px}
+.pkg .save{font-size:var(--t-2xs);font-weight:800;color:var(--green);text-transform:uppercase;
+  letter-spacing:.04em;margin:-8px 0 12px}
+.pkg.flag .save{color:#7ee0a3}
+
 .w{stroke-linecap:round}
 .w1{animation:waveMove 12s linear infinite}
 .w2{animation:waveMove 16s linear infinite reverse}
@@ -995,7 +1057,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 <div class="page on" id="page-home">
   <div class="wrap hero">
     <div class="mega" id="megaTitle"><span class="row1">Мы помогаем</span><br><span class="row2" id="megaWord"></span></div>
-    <p class="sub hero-sub">ИИ ведёт поступление в Италию, эксперт страхует на критичных этапах.<br>Под ключ от 59 900 ₸ — в 4–11 раз дешевле агентства.</p>
+    <p class="sub hero-sub">ИИ ведёт поступление в Италию, эксперт страхует на критичных этапах.<br>Под ключ от 47 900 ₸ для первых 20 студентов — в 4–11 раз дешевле агентства.</p>
     <div class="hero-ctas">
       <button class="btn primary" onclick="nav('plan')">Составить план бесплатно</button>
       <button class="hero-alt" onclick="nav('unis')">или посмотреть университеты →</button>
@@ -1031,7 +1093,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
         <table class="vs-table">
           <thead><tr><th></th><th class="us">IItaly</th><th>Агентства</th></tr></thead>
           <tbody>
-            <tr><td>Цена «под ключ»</td><td class="us">59 900 – 149 900 ₸</td><td>650 000 – 1 000 000 ₸</td></tr>
+            <tr><td>Цена «под ключ»</td><td class="us">47 900 – 119 900 ₸</td><td>650 000 – 1 000 000 ₸</td></tr>
             <tr><td>Кто делает работу</td><td class="us">система: подбор, чек-листы, черновики, проверки</td><td>менеджер вручную</td></tr>
             <tr><td>Скорость</td><td class="us">результат за минуты, круглосуточно</td><td>по записи, в рабочие часы</td></tr>
             <tr><td>Знание правил</td><td class="us">весь свод в памяти, база обновляется</td><td>опыт менеджера, зависит от его загрузки</td></tr>
@@ -1110,9 +1172,9 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
     <div class="wrap">
       <div class="price-peek rv">
         <div class="pp-left">
-          <div class="pp-from">Поступление под ключ — от 59 900 ₸</div>
-          <div class="pp-row"><span>Lite · 59 900 ₸</span><i>/</i><span>Standard · 89 900 ₸</span><i>/</i><span>Flagship · 149 900 ₸</span></div>
-          <div class="pp-note">Казахстанские агентства берут за то же 650 000 – 1 000 000 ₸ — работа делается руками. У нас в 4–11 раз дешевле, потому что её выполняет система. Отдельные разборы — от 6 900 ₸.</div>
+          <div class="pp-from">Поступление под ключ — от 47 900 ₸</div>
+          <div class="pp-row"><span>Lite · 47 900 ₸</span><i>/</i><span>Standard · 71 900 ₸</span><i>/</i><span>Flagship · 119 900 ₸</span></div>
+          <div class="pp-note">Цена запуска для первых 20 студентов: −20% от обычной. Казахстанские агентства берут за ту же работу 650 000 – 1 000 000 ₸ — там её делают руками. Отдельные разборы — от 6 900 ₸.</div>
         </div>
         <button class="btn ghost" onclick="nav('prices')">Сравнить тарифы →</button>
       </div>
@@ -1267,14 +1329,14 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
     <div class="wrap">
       <div class="eyebrow">Тарифы</div>
       <div class="h2">Мы автоматизировали то, за что берут сотни тысяч</div>
-      <p class="sub" style="margin-bottom:18px">Цена агентства — это часы менеджера, офис и реклама. У нас эту работу выполняет система, поэтому поступление под ключ стоит от 59 900 ₸, а не от миллиона.</p>
+      <p class="sub" style="margin-bottom:18px">Цена агентства — это часы менеджера, офис и реклама. У нас эту работу выполняет система, поэтому поступление под ключ стоит от 47 900 ₸, а не от миллиона.</p>
 
       <div class="model rv">
         <div class="model-step"><b>Бесплатно</b><span>ИИ объясняет: шансы, риски, что делать дальше</span></div>
         <div class="model-arrow">→</div>
         <div class="model-step"><b>Разборы от 6 900 ₸</b><span>ИИ персонализирует под твою ситуацию</span></div>
         <div class="model-arrow">→</div>
-        <div class="model-step on"><b>Тарифы от 59 900 ₸</b><span>система ведёт поступление до конца</span></div>
+        <div class="model-step on"><b>Тарифы от 47 900 ₸</b><span>система ведёт поступление до конца</span></div>
       </div>
 
       <div class="free-step rv">
@@ -1303,13 +1365,25 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           </div>
           <div class="sv-item mine">
             <div class="sv-label">IItaly, под ключ</div>
-            <div class="sv-price">59 900 – 149 900 ₸</div>
+            <div class="sv-price">47 900 – 119 900 ₸</div>
             <div class="sv-src">ту же работу выполняет система</div>
           </div>
         </div>
         <div class="sv-result">
           Полное сопровождение у нас выходит <b>в 4–11 раз дешевле</b>, чем в агентстве: экономия от 500 000 до 900 000 ₸.
           Разница не в объёме работы, а в том, кто её делает — у нас подбор, чек-листы, черновики и проверки выполняет ИИ, а не менеджер на окладе.
+        </div>
+      </div>
+
+      <div class="launch rv">
+        <div class="lc-left">
+          <div class="lc-tag">Цена запуска</div>
+          <b>Первым 20 студентам — минус 20%</b>
+          <p>Мы новый сервис, и нам нужны первые кейсы. Снижаем цену в обмен на подробный отзыв после того, как ты поступишь. После оплаты стоимость зафиксирована: доплат за сопровождение в рамках тарифа не будет.</p>
+        </div>
+        <div class="lc-count">
+          <div class="lc-num"><span id="spotsLeft">20</span><span class="lc-of">/20</span></div>
+          <div class="lc-lbl">мест осталось</div>
         </div>
       </div>
 
@@ -1322,21 +1396,23 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
         <div class="pkg flag rv">
           <div class="pkg-head"><b>Flagship</b><span class="badge">DSU</span></div>
           <div class="pkg-for">Поступление вместе со стипендией</div>
-          <div class="price">149 900 ₸</div>
+          <div class="price"><s>149 900</s> 119 900 ₸</div>
+          <div class="save">−20% первым 20 · экономия 30 000 ₸</div>
           <div class="sv-tag">экономия от 500 000 ₸ против агентства</div>
           <div class="pkg-result">Всё из Standard плюс полный трек DSU и приоритетные проверки: твои документы смотрят вне очереди, до 75 минут экспертного времени.</div>
           <div class="feat">Весь AI-workflow поступления</div>
           <div class="feat">Трек стипендии DSU: ISEEU, bando региона, подача</div>
           <div class="feat">Приоритетные экспертные проверки — до 75 минут работы эксперта</div>
           <div class="feat">Визовое досье и контроль сроков BLS</div>
-          <div class="inst">≈ 12 492 ₸/мес в рассрочку Kaspi</div>
-          <button class="btn" onclick="openBuy('Пакет Flagship',149900)">Выбрать Flagship</button>
+          <div class="inst">≈ 9 992 ₸/мес в рассрочку Kaspi</div>
+          <button class="btn" onclick="openBuy('Пакет Flagship',119900)">Выбрать Flagship</button>
         </div>
 
         <div class="pkg hero rv">
           <div class="pkg-head"><b>Standard</b><span class="badge popular">Основной тариф</span></div>
           <div class="pkg-for">Полный AI-workflow поступления</div>
-          <div class="price">89 900 ₸</div>
+          <div class="price"><s>89 900</s> 71 900 ₸</div>
+          <div class="save">−20% первым 20 · экономия 18 000 ₸</div>
           <div class="sv-tag">в 7–11 раз дешевле агентства</div>
           <div class="pkg-result">Система ведёт тебя от выбора программы до визы: сроки, документы, подача. Экспертная проверка — на ключевых точках.</div>
           <div class="feat">Всё из Lite</div>
@@ -1344,14 +1420,15 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           <div class="feat">Визовый трек: досье, финансовая гарантия, запись в BLS</div>
           <div class="feat">Автоматические проверки документов на каждом этапе</div>
           <div class="feat">Экспертный checkpoint перед ключевой подачей — письменный вердикт по чек-листу</div>
-          <div class="inst">≈ 7 492 ₸/мес в рассрочку Kaspi</div>
-          <button class="btn" onclick="openBuy('Пакет Standard',89900)">Выбрать Standard</button>
+          <div class="inst">≈ 5 992 ₸/мес в рассрочку Kaspi</div>
+          <button class="btn" onclick="openBuy('Пакет Standard',71900)">Выбрать Standard</button>
         </div>
 
         <div class="pkg rv">
           <div class="pkg-head"><b>Lite</b></div>
           <div class="pkg-for">Самостоятельное поступление с AI-системой</div>
-          <div class="price">59 900 ₸</div>
+          <div class="price"><s>59 900</s> 47 900 ₸</div>
+          <div class="save">−20% первым 20 · экономия 12 000 ₸</div>
           <div class="sv-tag">в 11–16 раз дешевле агентства</div>
           <div class="pkg-result">Ты подаёшься сам, но не вслепую: система даёт маршрут, сроки и проверяет твои документы до подачи.</div>
           <div class="feat">Персональный shortlist программ под твой профиль</div>
@@ -1359,8 +1436,8 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           <div class="feat">Точные чек-листы документов под твой случай</div>
           <div class="feat">AI-проверка загруженных файлов на ошибки</div>
           <div class="feat">Черновики писем и анкет</div>
-          <div class="inst">≈ 4 992 ₸/мес в рассрочку Kaspi</div>
-          <button class="btn" onclick="openBuy('Пакет Lite',59900)">Выбрать Lite</button>
+          <div class="inst">≈ 3 992 ₸/мес в рассрочку Kaspi</div>
+          <button class="btn" onclick="openBuy('Пакет Lite',47900)">Выбрать Lite</button>
         </div>
       </div>
 
@@ -2342,7 +2419,7 @@ const DEMO_ANSWERS = [
   {kw:['dsu','стипенд','дсу','isee'],a:'DSU — до €7 557/год плюс жильё и питание. Казахстанцы всегда fuori sede — максимальная ставка. Ключ — ISEEU parificato: справки семьи с апостилем и переводом. Дедлайны: DiSCo — конец июля, ER.GO — конец августа. Подача ДО приезда.'},
   {kw:['виза','visa','bls'],a:'Виза D через BLS (Алматы, Астана, Атырау, Оскемен, Шымкент), лимит 30 заявок/день. Гарантия €6 947,33/год, выписки 3 мес с QR, страховка, жильё, admission letter. Не позднее 15 дней до выезда.'},
   {kw:['жиль','квартир','аренд','резиденц'],a:'Стипендиатам DSU — резиденция бесплатно или €0–150/мес. Частный рынок: Милан €400–700 комната, Турин и Пиза от €700/мес всё. Никаких предоплат до осмотра.'},
-  {kw:['сколько','цена','стоимост','бюджет'],a:'Госвузы €0–4 000/год по ISEE (Sapienza <€1 000), Bocconi €17 000+. Жизнь: Милан €1 200–1 800/мес, юг от €650. У нас поступление под ключ: Lite 59 900 ₸, Standard 89 900 ₸, Flagship с треком DSU — 149 900 ₸. Отдельные разборы — от 6 900 ₸.'},
+  {kw:['сколько','цена','стоимост','бюджет'],a:'Госвузы €0–4 000/год по ISEE (Sapienza <€1 000), Bocconi €17 000+. Жизнь: Милан €1 200–1 800/мес, юг от €650. Сейчас цена запуска для первых 20 студентов: Lite 47 900 ₸, Standard 71 900 ₸, Flagship с треком DSU — 119 900 ₸ (обычные 59 900 / 89 900 / 149 900). Отдельные разборы — от 6 900 ₸.'},
 ];
 let chatHistory = [];
 let chatBusy = false;
@@ -3021,6 +3098,61 @@ function showLeadForm(){
   }
 
 
+
+  /* Раздел «Документы»: сводка по всем бумагам маршрута */
+  function docsSection(d){
+    const docs = d.docs || {};
+    const rows = [];
+    for(const st of d.roadmap){
+      for(const t of st.tasks){
+        if(!DOC_TASKS[t.id]) continue;
+        rows.push({ id: t.id, title: DOC_TASKS[t.id], task: t.t, doc: docs[t.id] || null, stage: st.title });
+      }
+    }
+    const ready = rows.filter(r => r.doc && r.doc.verdict === 'ok').length;
+    const issues = rows.filter(r => r.doc && r.doc.verdict !== 'ok').length;
+    const missing = rows.filter(r => !r.doc).length;
+
+    let h = '<div class="pt-docs-head"><div class="eyebrow">Документы</div>'
+      + '<h3>' + ready + ' из ' + rows.length + ' готовы</h3>'
+      + '<p>Загрузи файл — ИИ сверит его с правилами и подскажет, что не так. Проверенный документ закрывает шаг маршрута.</p>'
+      + '<div class="pd-sum">'
+      + '<span class="pd-chip ok">' + ready + ' проверено</span>'
+      + (issues ? '<span class="pd-chip bad">' + issues + ' с замечаниями</span>' : '')
+      + '<span class="pd-chip">' + missing + ' не загружено</span>'
+      + '</div></div>';
+
+    for(const r of rows){
+      const v = r.doc ? r.doc.verdict : null;
+      h += '<div class="pd-item' + (v ? ' ' + v : '') + '">'
+        + '<div class="pd-top"><b>' + r.title + '</b>'
+        + (v ? '<span class="pt-tag doc ' + v + '">' + (V_LABEL[v] || '') + '</span>'
+             : '<span class="pd-none">нет файла</span>') + '</div>'
+        + '<span class="pd-stage">' + r.stage + '</span>'
+        + (r.doc && r.doc.summary ? '<span class="pd-sumtext">' + r.doc.summary + '</span>' : '')
+        + (r.doc && r.doc.critical ? '<span class="pd-crit">Критических ошибок: ' + r.doc.critical + '</span>' : '')
+        + '<button class="pt-doc-btn" data-doc="' + r.id + '">'
+        + (r.doc ? 'Проверить другой файл' : 'Загрузить и проверить') + '</button>'
+        + '</div>';
+    }
+    return h;
+  }
+
+  /* Переключение разделов кабинета */
+  let currentSection = 'today';
+  function showSection(name){
+    currentSection = name;
+    ['today','plan','docs','help'].forEach(function(x){
+      const el = document.getElementById('sec-' + x);
+      if(el) el.style.display = (x === name) ? 'block' : 'none';
+    });
+    const nav = document.getElementById('ptNav');
+    if(nav) nav.querySelectorAll('button').forEach(function(b){
+      b.classList.toggle('on', b.dataset.sec === name);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   /* Загрузка документа к конкретному шагу маршрута */
   function pickDocFor(taskId, btn){
     if(!state) return;
@@ -3156,6 +3288,9 @@ function showLeadForm(){
       + '<h2 class="h2" style="margin-bottom:2px">' + d.client.name + '</h2></div>'
       + '<button class="pt-exit" id="ptExit">Выйти</button></div>';
 
+    /* ---------- РАЗДЕЛ «СЕГОДНЯ» ---------- */
+    html += '<div class="pt-sec" id="sec-today">';
+
     html += '<div class="pt-progress"><div class="pt-prog-top"><b id="ptNum">'
       + d.progress.done + ' из ' + d.progress.total + '</b><span>шагов пройдено</span></div>'
       + '<div class="pt-track"><div class="pt-bar" id="ptBar" style="width:' + d.progress.pct + '%"></div></div></div>';
@@ -3178,6 +3313,10 @@ function showLeadForm(){
     }
     html += '</div>';
 
+    html += '</div>';   // конец «Сегодня»
+
+    /* ---------- РАЗДЕЛ «ПЛАН» ---------- */
+    html += '<div class="pt-sec" id="sec-plan">';
     // этапы: текущий раскрыт, остальные свёрнуты
     const firstOpen = (d.roadmap.find(st => st.tasks.some(t => !d.done[t.id])) || d.roadmap[0] || {}).id;
     for(const st of d.roadmap){
@@ -3213,6 +3352,18 @@ function showLeadForm(){
       html += '</div></div>';
     }
 
+    html += '</div>';   // конец «Плана»
+
+    /* ---------- РАЗДЕЛ «ДОКУМЕНТЫ» ---------- */
+    html += '<div class="pt-sec" id="sec-docs">' + docsSection(d) + '</div>';
+
+    /* ---------- РАЗДЕЛ «ПОМОЩЬ» ---------- */
+    html += '<div class="pt-sec" id="sec-help">';
+    html += '<div class="pt-help"><b>Не понимаешь шаг?</b>'
+      + '<span>Спроси ИИ — он знает твой маршрут и правила. Сложный случай можно разобрать с экспертом отдельной опцией.</span>'
+      + '<div class="pt-help-btns"><button class="btn" onclick="openChat()">Спросить ИИ</button>'
+      + '<button class="btn ghost" onclick="nav(\'prices\')">Помощь эксперта</button></div></div>';
+
     // ---- Напоминания ----
     const n = d.client.notify || {};
     html += '<div class="pt-notify"><div class="eyebrow">Напоминания о дедлайнах</div>'
@@ -3232,10 +3383,38 @@ function showLeadForm(){
       + (d.client.email || '') + '"><button class="ptn-btn" id="ptnSave">Сохранить</button></div>'
       + '</div></div>'
       + '<div id="ptnMsg" class="ptn-msg" style="display:none"></div></div>';
+    html += '</div>';   // конец «Помощи»
+
+    // нижняя навигация по разделам
+    html += '<nav class="pt-nav" id="ptNav">'
+      + '<button data-sec="today"><i class="i-today"></i>Сегодня</button>'
+      + '<button data-sec="plan"><i class="i-plan"></i>План</button>'
+      + '<button data-sec="docs"><i class="i-docs"></i>Документы</button>'
+      + '<button data-sec="help"><i class="i-help"></i>Помощь</button>'
+      + '</nav>';
 
     view.innerHTML = html;
+    showSection(currentSection);
     renderAlert();
     renderNext();
+
+    // клик по узлу дороги ведёт к этапу в разделе «План»
+    view.querySelectorAll('.tl-node').forEach(function(n){
+      n.addEventListener('click', function(){
+        showSection('plan');
+        const box = document.getElementById('st-' + n.dataset.goto);
+        if(box){
+          box.classList.add('open');
+          setTimeout(function(){ box.scrollIntoView({ behavior:'smooth', block:'center' }); }, 80);
+        }
+      });
+    });
+
+    // переключение разделов
+    const nav = document.getElementById('ptNav');
+    if(nav) nav.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){ showSection(b.dataset.sec); track('portal_sec', { s: b.dataset.sec }); });
+    });
 
     // загрузка документа прямо из шага
     view.querySelectorAll('.pt-doc-btn').forEach(function(b){
