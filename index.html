@@ -36,6 +36,9 @@
   /* Единая кривая для интерактивных откликов: быстрый, некруглый выход —
      ощущается как критически задемпфированная пружина (Apple HIG), без отскока. */
   --spring:cubic-bezier(.22,1,.36,1);
+  /* Для шторок/панелей, которые "прилетают" сами (не из жеста) — Apple задаёт
+     для sheet небольшой отскок (damping ~0.8), в отличие от обычных hover-откликов. */
+  --spring-bounce:cubic-bezier(.34,1.56,.64,1);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
@@ -163,8 +166,9 @@ section{padding:64px 0}
 /* сплит-CTA */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:880px){.split{grid-template-columns:1fr}}
-.split .card{cursor:pointer;transition:transform .2s var(--spring)}
+.split .card{cursor:pointer;transition:transform .2s var(--spring),box-shadow .2s var(--spring)}
 .split .card:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
+.split .card:active{transform:translate(2px,2px);box-shadow:var(--sh-sm)}
 .split .card h3{font-size:var(--t-lg);font-weight:800;text-transform:uppercase;letter-spacing:-.4px;margin-bottom:8px}
 .split .card h3 span{color:var(--ink-soft)}
 .split .card p{font-size:var(--t-sm);color:var(--sec);margin-bottom:14px}
@@ -489,8 +493,9 @@ section{padding:64px 0}
 /* ---------- приглашение к проверке документа ---------- */
 .try-check{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;
   background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:26px;
-  box-shadow:var(--sh-md);cursor:pointer;transition:transform .25s cubic-bezier(.25,.1,.25,1),box-shadow .25s}
+  box-shadow:var(--sh-md);cursor:pointer;transition:transform .2s var(--spring),box-shadow .2s var(--spring)}
 .try-check:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
+.try-check:active{transform:translate(2px,2px);box-shadow:var(--sh-sm)}
 @media(max-width:880px){.try-check{grid-template-columns:1fr}}
 .tc-left h3{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px}
 .tc-left p{font-size:var(--t-sm);color:#5d5346;line-height:1.6;margin-bottom:12px}
@@ -866,7 +871,7 @@ body.in-portal footer{display:none}
 .cmp-bar{
   position:fixed;left:0;right:0;bottom:0;z-index:70;
   background:var(--ink);color:var(--cream);border-top:3px solid var(--ink-soft);
-  padding:12px 0;transform:translateY(110%);transition:transform .25s ease;
+  padding:12px 0;transform:translateY(110%);transition:transform .32s var(--spring-bounce);
 }
 .cmp-bar.on{transform:none}
 .cmp-inner{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -903,7 +908,8 @@ body.in-portal footer{display:none}
 .doc{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px 16px;margin-bottom:9px;box-shadow:var(--sh-md)}
 .doc b{font-size:var(--t-sm);display:block}
 .doc span{font-size:var(--t-2xs);color:var(--sec);font-weight:600}
-.doc .check{margin-left:auto;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:var(--r-pill);padding:7px 13px;font-size:var(--t-2xs);font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;text-transform:uppercase}
+.doc .check{margin-left:auto;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:var(--r-pill);padding:7px 13px;font-size:var(--t-2xs);font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;text-transform:uppercase;transition:transform .1s var(--spring)}
+.doc .check:active{transform:translate(2px,2px)}
 .doc.ok{border-color:var(--green)} .doc.ok .check{border-color:var(--green);color:var(--green)}
 .doc.err{border-color:var(--red)} .doc.err .check{border-color:var(--red);color:var(--red)}
 .doc-verdict{font-size:var(--t-xs);line-height:1.5;margin:-2px 0 12px;padding:11px 14px;border-radius:var(--r-sm);border:2px solid;font-weight:500}
@@ -930,8 +936,9 @@ body.in-portal footer{display:none}
 .pkg.flag .btn{background:var(--cream);color:var(--ink);border-color:var(--cream);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
 .micro-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px}
 @media(max-width:720px){.micro-grid{grid-template-columns:1fr}}
-.micro{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:16px;cursor:pointer;box-shadow:var(--sh-md);transition:transform .2s var(--spring)}
+.micro{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:16px;cursor:pointer;box-shadow:var(--sh-md);transition:transform .2s var(--spring),box-shadow .2s var(--spring)}
 .micro:hover{transform:translateY(-3px)}
+.micro:active{transform:translateY(0) scale(.98);box-shadow:var(--sh-sm)}
 .micro b{font-size:var(--t-sm);display:block}
 .micro span{font-size:var(--t-2xs);color:var(--sec);font-weight:600}
 .micro .pr{margin-left:auto;background:var(--ink);color:var(--cream);border:2px solid var(--ink);border-radius:var(--r-pill);padding:8px 13px;font-size:var(--t-xs);font-weight:800;flex-shrink:0}
@@ -1005,7 +1012,8 @@ body.in-portal footer{display:none}
 .vg-out{display:flex;gap:28px;flex-wrap:wrap}
 .vg-num{font-size:clamp(24px,4vw,32px);font-weight:900;letter-spacing:-0.02em;color:var(--ink)}
 .vg-lbl{font-size:var(--t-2xs);color:var(--sec);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
-.vdoc{display:flex;align-items:flex-start;gap:13px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px 16px;margin-bottom:9px;box-shadow:var(--sh-md);cursor:pointer;transition:border-color .3s cubic-bezier(.25,.1,.25,1)}
+.vdoc{display:flex;align-items:flex-start;gap:13px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px 16px;margin-bottom:9px;box-shadow:var(--sh-md);cursor:pointer;transition:border-color .3s cubic-bezier(.25,.1,.25,1),transform .1s var(--spring)}
+.vdoc:active{transform:scale(.98)}
 .vdoc .vchk{width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--t-sm);color:#fff;transition:background .3s cubic-bezier(.25,.1,.25,1),border-color .3s}
 .vdoc.done{border-color:var(--green)}
 .vdoc.done .vchk{background:var(--green);border-color:var(--green)}
@@ -1033,7 +1041,11 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
   border:2px solid var(--ink);background:var(--ink);color:var(--cream);border-radius:var(--r-pill);
   padding:14px 22px;font-size:var(--t-sm);font-weight:800;text-transform:uppercase;letter-spacing:.04em;
   font-family:inherit;cursor:pointer;box-shadow:var(--sh-md);
+  transition:transform .12s var(--spring),box-shadow .12s var(--spring);
 }
+/* Единственная плавающая точка входа в чат — должна откликаться на нажатие
+   так же мгновенно, как обычные .btn, а не только по клику. */
+#chatFab:active{transform:translate(3px,3px);box-shadow:var(--sh-sm)}
 #chatPanel{
   position:fixed;right:14px;bottom:14px;z-index:95;width:min(390px,calc(100vw - 28px));
   height:min(560px,calc(100vh - 80px));background:var(--cream);border:3px solid var(--ink);
