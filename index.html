@@ -33,12 +33,16 @@
   /* Тени-стикеры: глубина растёт вместе с важностью блока */
   --sh-sm:2px 2px 0 var(--shadow); --sh-md:4px 4px 0 var(--shadow);
   --sh-lg:6px 6px 0 var(--shadow); --sh-xl:10px 10px 0 var(--shadow);
-  /* Единая кривая для интерактивных откликов: быстрый, некруглый выход —
-     ощущается как критически задемпфированная пружина (Apple HIG), без отскока. */
-  --spring:cubic-bezier(.22,1,.36,1);
-  /* Для шторок/панелей, которые "прилетают" сами (не из жеста) — Apple задаёт
-     для sheet небольшой отскок (damping ~0.8), в отличие от обычных hover-откликов. */
-  --spring-bounce:cubic-bezier(.34,1.56,.64,1);
+
+  /* Пружинные кривые вместо ease: движение начинается быстро и мягко оседает.
+     linear() — нативный CSS, библиотека не нужна. */
+  --spring: linear(0,.0033,.0132,.0295,.052,.0803,.114,.1526,.1957,.2429,.2936,.3474,.4038,.4622,.5222,.5833,.6449,.7066,.7679,.8283,.8875,.9449,1.0002,1.0053,1.0092,1.012,1.0138,1.0146,1.0146,1.0139,1.0127,1.0111,1.0093,1.0074,1.0055,1.0037,1.0021,1.0007,.9997,.9989,.9984,.9982,.9982,.9984,.9987,.9991,.9995,.9999,1.0002,1.0004,1.0005,1.0005,1);
+  --spring-soft: cubic-bezier(.32,.72,0,1);
+  --ease-out: cubic-bezier(.25,.1,.25,1);
+
+  /* Трекинг зависит от размера: крупный текст сжимаем, мелкий разрежаем */
+  --track-xl:-.03em; --track-lg:-.022em; --track-md:-.015em;
+  --track-bd:-.006em; --track-sm:0; --track-xs:.002em; --track-2xs:.08em;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth}
@@ -50,13 +54,13 @@ body{
 
 /* ---------- реюзабельное ---------- */
 .eyebrow{font-size:var(--t-2xs);font-weight:800;color:var(--ink-soft);letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
-.h2{font-size:clamp(26px,4.6vw,40px);font-weight:900;letter-spacing:-0.02em;line-height:1.03;text-transform:uppercase;margin-bottom:12px}
+.h2{font-size:clamp(26px,4.6vw,40px);font-weight:900;letter-spacing:-1px;line-height:1.03;text-transform:uppercase;margin-bottom:12px}
 .sub{font-size:var(--t-bd);color:var(--sec);line-height:1.6;max-width:560px}
 .btn{
   display:inline-block;border:2px solid var(--ink);background:var(--ink);color:var(--cream);
   border-radius:var(--r-pill);padding:14px 28px;font-size:var(--t-sm);font-weight:800;letter-spacing:.05em;text-transform:uppercase;
   font-family:inherit;cursor:pointer;text-align:center;box-shadow:var(--sh-md);
-  transition:transform .12s var(--spring), box-shadow .12s var(--spring);text-decoration:none;
+  transition:transform .08s, box-shadow .08s;text-decoration:none;
 }
 .btn:active{transform:translate(3px,3px);box-shadow:var(--sh-sm)}
 .btn.ghost{background:var(--paper);color:var(--ink)}
@@ -72,31 +76,12 @@ input:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:4px 4
 textarea{min-height:130px;resize:vertical;line-height:1.55}
 /* Блоки скрываются до появления только если скрипт подтвердил поддержку.
    Без этого одна ошибка JS оставляла белый экран. */
-.rv{transition:opacity .6s var(--spring),transform .6s var(--spring)}
-html.js-reveal .rv{opacity:0;transform:translateY(22px)}
+.rv{transition:opacity .34s var(--ease-out),transform .34s var(--ease-out)}
+html.js-reveal .rv{opacity:0;transform:translateY(10px)}
+/* .rv.in — тут же, а не просто .in{}: специфичность должна совпасть с правилом
+   выше (html.js-reveal .rv), иначе оно не победит и контент останется скрытым
+   до срабатывания JS-таймера подстраховки. */
 html.js-reveal .rv.in{opacity:1;transform:none}
-
-/* Fluid feedback должен оставаться отзывчивым, но не вызывать вестибулярный
-   дискомфорт: по prefers-reduced-motion гасим весь декоративный мув в один приём
-   (тикер, интро карты Италии, пульсации, буквенная анимация, переходы страниц),
-   вместо того чтобы точечно чинить каждую @keyframes-анимацию отдельно. */
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  html.js-reveal .rv{opacity:1;transform:none}
-  *,*::before,*::after{
-    animation-duration:.001ms!important;animation-iteration-count:1!important;
-    transition-duration:.001ms!important;scroll-behavior:auto!important;
-  }
-}
-@media(prefers-reduced-transparency:reduce){
-  .overlay{background:var(--cream);backdrop-filter:none}
-  .postcard .stamp{background:#11161f;backdrop-filter:none}
-}
-@media(prefers-contrast:more){
-  :root{--line:#8a7f70}
-  .card,.stat,.stepc,.pkg,.doc,.guide-card,.modal,.chip{border-width:2.5px}
-  .sub,.feat,.inst{color:var(--ink-soft)}
-}
 
 /* ---------- навигация ---------- */
 header{
@@ -125,9 +110,6 @@ header{
 .page{display:none}
 .page.on{display:block;animation:pgIn .3s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* Материализация: поверхность как будто уплотняется из воздуха (блюр+масштаб+сдвиг),
-   а не просто проявляется — так модалки и чат читаются как физический слой, а не слайд. */
-@keyframes materializeIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
 section{padding:64px 0}
 @media(max-width:720px){section{padding:44px 0}}
 
@@ -149,7 +131,7 @@ section{padding:64px 0}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:44px}
 @media(max-width:880px){.stats{grid-template-columns:repeat(2,1fr)}}
 .stat{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:22px 16px;box-shadow:var(--sh-md)}
-.stat .v{font-size:clamp(24px,3.4vw,34px);font-weight:900;letter-spacing:-0.02em}
+.stat .v{font-size:clamp(24px,3.4vw,34px);font-weight:900;letter-spacing:-1px}
 .stat .v em{font-style:normal;color:var(--ink)}
 .stat .l{font-size:var(--t-xs);color:var(--sec);margin-top:4px;font-weight:600;line-height:1.4}
 
@@ -157,7 +139,7 @@ section{padding:64px 0}
 .steps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:34px}
 @media(max-width:880px){.steps-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.steps-grid{grid-template-columns:1fr}}
-.stepc{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:18px;box-shadow:var(--sh-md);transition:transform .2s var(--spring)}
+.stepc{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:18px;box-shadow:var(--sh-md);transition:transform .15s}
 .stepc:hover{transform:translateY(-4px)}
 .stepc .n{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--t-sm);margin-bottom:12px}
 .stepc b{font-size:var(--t-bd);display:block;margin-bottom:4px;letter-spacing:-.2px}
@@ -166,9 +148,8 @@ section{padding:64px 0}
 /* сплит-CTA */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:880px){.split{grid-template-columns:1fr}}
-.split .card{cursor:pointer;transition:transform .2s var(--spring),box-shadow .2s var(--spring)}
+.split .card{cursor:pointer;transition:transform .15s}
 .split .card:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
-.split .card:active{transform:translate(2px,2px);box-shadow:var(--sh-sm)}
 .split .card h3{font-size:var(--t-lg);font-weight:800;text-transform:uppercase;letter-spacing:-.4px;margin-bottom:8px}
 .split .card h3 span{color:var(--ink-soft)}
 .split .card p{font-size:var(--t-sm);color:var(--sec);margin-bottom:14px}
@@ -180,12 +161,12 @@ section{padding:64px 0}
 .map-box{position:sticky;top:82px}
 @media(max-width:880px){.map-box{position:static}}
 #itmap{width:100%;height:auto;display:block}
-.it-halo{fill:none;stroke:#7fb3ff;stroke-width:5;opacity:0;filter:url(#softGlow);animation:haloIn .6s cubic-bezier(.25,.1,.25,1) .45s forwards}
+.it-halo{fill:none;stroke:#7fb3ff;stroke-width:5;opacity:0;filter:url(#softGlow);animation:haloIn .4s cubic-bezier(.25,.1,.25,1) .3s forwards}
 @keyframes haloIn{to{opacity:.16}}
 .it-shape{
   fill:url(#land);stroke:#8fb6e8;stroke-width:.9;
   fill-opacity:0;stroke-dasharray:1;stroke-dashoffset:1;
-  animation:drawIt .75s cubic-bezier(.25,.1,.25,1) forwards, fillIt .45s cubic-bezier(.25,.1,.25,1) .4s forwards;
+  animation:drawIt .5s cubic-bezier(.25,.1,.25,1) forwards, fillIt .32s cubic-bezier(.25,.1,.25,1) .26s forwards;
   stroke-opacity:.75;
 }
 @keyframes drawIt{to{stroke-dashoffset:0}}
@@ -200,7 +181,7 @@ section{padding:64px 0}
   from{opacity:0;transform:translate(var(--tx),calc(var(--ty) + 9px)) scale(.92)}
   to{opacity:1;transform:translate(var(--tx),var(--ty)) scale(1)}
 }
-.city text{opacity:0;animation:labelIn .35s cubic-bezier(.25,.1,.25,1) both;animation-delay:var(--d)}
+.city text{opacity:0;animation:labelIn .26s cubic-bezier(.25,.1,.25,1) both;animation-delay:var(--d)}
 .city .lbl.halo{fill:rgba(13,17,24,.85)}
 @keyframes labelIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .city{cursor:pointer}
@@ -360,7 +341,7 @@ section{padding:64px 0}
 @media(max-width:880px){.trust{grid-template-columns:1fr}}
 .trust-main{background:var(--ink);color:var(--cream);border-radius:var(--r-lg);padding:24px;box-shadow:var(--sh-md)}
 .trust-main .eyebrow{color:#c9b9a4}
-.trust-main h3{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:10px}
+.trust-main h3{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-.6px;line-height:1.15;margin-bottom:10px}
 .trust-main p{font-size:var(--t-sm);color:#cfc3b2;line-height:1.6}
 .trust-who{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:24px;box-shadow:var(--sh-md)}
 .tw-name{font-size:var(--t-md);font-weight:800;letter-spacing:-.3px}
@@ -370,7 +351,7 @@ section{padding:64px 0}
 
 .price-peek{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between;
   background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:22px 24px;box-shadow:var(--sh-md)}
-.pp-from{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-0.02em}
+.pp-from{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-.5px}
 .pp-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 6px;font-size:var(--t-sm);font-weight:700;color:#5d5346}
 .pp-row i{color:var(--line);font-style:normal}
 .pp-note{font-size:var(--t-xs);color:#6f6455;line-height:1.5;max-width:520px}
@@ -392,7 +373,7 @@ section{padding:64px 0}
 
 /* ---------- проверка документов ---------- */
 .doc-check{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:24px;margin-bottom:26px;box-shadow:var(--sh-md)}
-.dc-head h3{font-size:clamp(19px,2.8vw,24px);font-weight:800;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px}
+.dc-head h3{font-size:clamp(19px,2.8vw,24px);font-weight:800;letter-spacing:-.5px;line-height:1.15;margin-bottom:8px}
 .dc-head p{font-size:var(--t-sm);color:#5d5346;line-height:1.6;margin-bottom:18px}
 
 .dc-drop{display:block;border:2px dashed var(--ink);border-radius:var(--r-md);padding:30px 20px;text-align:center;cursor:pointer;
@@ -453,7 +434,7 @@ section{padding:64px 0}
 .sv-item.mine{background:var(--cream);border-color:var(--cream)}
 .sv-label{font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.08em;color:#a89b89;font-weight:700;margin-bottom:6px}
 .sv-item.mine .sv-label{color:var(--red)}
-.sv-price{font-size:clamp(17px,2.4vw,21px);font-weight:800;letter-spacing:-0.02em;line-height:1.15}
+.sv-price{font-size:clamp(17px,2.4vw,21px);font-weight:800;letter-spacing:-.5px;line-height:1.15}
 .sv-item.mine .sv-price{color:var(--ink)}
 .sv-src{font-size:var(--t-2xs);color:#8a7f70;margin-top:5px;line-height:1.45}
 .sv-item.mine .sv-src{color:#6f6455}
@@ -493,11 +474,11 @@ section{padding:64px 0}
 /* ---------- приглашение к проверке документа ---------- */
 .try-check{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:center;
   background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);padding:26px;
-  box-shadow:var(--sh-md);cursor:pointer;transition:transform .2s var(--spring),box-shadow .2s var(--spring)}
+  box-shadow:var(--sh-md);cursor:pointer;transition:transform .2s var(--spring),box-shadow .2s var(--ease-out)}
 .try-check:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-lg)}
-.try-check:active{transform:translate(2px,2px);box-shadow:var(--sh-sm)}
+.try-check:active{transform:scale(.995)}
 @media(max-width:880px){.try-check{grid-template-columns:1fr}}
-.tc-left h3{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px}
+.tc-left h3{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-.6px;line-height:1.15;margin-bottom:8px}
 .tc-left p{font-size:var(--t-sm);color:#5d5346;line-height:1.6;margin-bottom:12px}
 .tc-demo{position:relative}
 .tc-doc{position:relative;background:var(--cream);border:2px solid var(--ink);border-radius:var(--r-sm);padding:16px;overflow:hidden}
@@ -810,13 +791,170 @@ body.in-portal footer{display:none}
   letter-spacing:.04em;margin:-8px 0 12px}
 .pkg.flag .save{color:#7ee0a3}
 
+
+/* ---------- гайды и виза: раскрываются по запросу ---------- */
+.guide-card{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);
+  box-shadow:var(--sh-sm);margin-bottom:10px;overflow:hidden}
+.guide-card summary{display:flex;align-items:center;gap:13px;padding:16px 18px;cursor:pointer;
+  list-style:none;min-height:56px}
+.guide-card summary::-webkit-details-marker{display:none}
+.guide-card .gc-ic{font-size:22px;flex-shrink:0;line-height:1}
+.gc-head{flex:1;min-width:0}
+.gc-head b{display:block;font-size:var(--t-bd);font-weight:800;letter-spacing:-.2px}
+.gc-teaser{display:block;font-size:var(--t-xs);color:#6f6455;line-height:1.5;margin-top:2px}
+.gc-caret{width:9px;height:9px;flex-shrink:0;border-right:2px solid var(--sec);border-bottom:2px solid var(--sec);
+  transform:rotate(45deg);transition:transform .25s cubic-bezier(.25,.1,.25,1);margin-top:-4px}
+details[open] .gc-caret{transform:rotate(-135deg);margin-top:2px}
+.gc-body{padding:0 18px 16px;border-top:2px solid var(--line);margin-top:2px;padding-top:14px}
+.gc-body .gc-lead{font-size:var(--t-sm);color:#5d5346;line-height:1.6;margin-bottom:12px}
+.guide-grid{display:block}
+
+/* виза: ключевые цифры и свёрнутые разделы */
+.visa-key{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+@media(max-width:720px){.visa-key{grid-template-columns:1fr}}
+.vk-item{background:var(--ink);color:var(--cream);border-radius:var(--r-md);padding:16px 18px}
+.vk-item b{display:block;font-size:var(--t-lg);font-weight:900;letter-spacing:-.6px;margin-bottom:3px}
+.vk-item span{font-size:var(--t-xs);color:#a89b89;line-height:1.5;display:block}
+.vsec{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);
+  box-shadow:var(--sh-sm);margin-bottom:10px;overflow:hidden}
+.vsec summary{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 18px;cursor:pointer;list-style:none;min-height:56px}
+.vsec summary::-webkit-details-marker{display:none}
+.vsec summary b{font-size:var(--t-bd);font-weight:800;letter-spacing:-.2px}
+.vsec-body{padding:4px 18px 18px;border-top:2px solid var(--line);padding-top:16px}
+
+
+/* ---------- пошаговый опрос ---------- */
+.wiz{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-lg);
+  padding:22px;box-shadow:var(--sh-md);max-width:620px}
+.wiz-top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.wiz-track{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.wiz-bar{height:100%;width:0;background:var(--ink);border-radius:3px;
+  transition:width .45s cubic-bezier(.25,.1,.25,1)}
+.wiz-count{font-size:var(--t-2xs);font-weight:800;color:#8a7f70;text-transform:uppercase;
+  letter-spacing:.06em;flex-shrink:0}
+.wiz-q{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:16px}
+.wiz-sub{font-size:var(--t-sm);color:#5d5346;line-height:1.55;margin-bottom:16px}
+.wiz-opts{display:flex;flex-direction:column;gap:9px}
+.wiz-opt{width:100%;text-align:left;background:var(--cream);border:2px solid var(--ink);
+  border-radius:var(--r-md);padding:15px 17px;cursor:pointer;font-family:inherit;min-height:60px;
+  transition:background .2s cubic-bezier(.25,.1,.25,1),transform .2s,box-shadow .2s}
+.wiz-opt:hover{background:#f3ead8;transform:translate(-1px,-1px);box-shadow:var(--sh-sm)}
+.wiz-opt:active{transform:translate(1px,1px);box-shadow:none}
+.wiz-opt.on{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.wiz-opt b{display:block;font-size:var(--t-bd);font-weight:700;letter-spacing:-.2px}
+.wiz-opt span{display:block;font-size:var(--t-xs);color:#6f6455;margin-top:2px}
+.wiz-opt.on span{color:#a89b89}
+.wiz-input{width:100%;background:var(--cream);border:2px solid var(--ink);border-radius:var(--r-sm);
+  padding:14px 16px;font-size:16px;font-family:inherit;color:var(--ink)}
+.wiz-input:focus{outline:none;border-color:var(--red)}
+.wiz-skip{width:100%;margin-top:10px;background:none;border:none;font-family:inherit;cursor:pointer;
+  font-size:var(--t-xs);font-weight:700;color:#6f6455;text-decoration:underline;
+  text-underline-offset:3px;padding:10px;min-height:44px}
+.wiz-nav{display:flex;align-items:center;gap:14px;margin-top:18px;
+  border-top:2px solid var(--line);padding-top:14px}
+.wiz-back{background:none;border:none;font-family:inherit;cursor:pointer;padding:8px 0;
+  font-size:var(--t-xs);font-weight:700;color:#6f6455;min-height:40px}
+.wiz-back:hover{color:var(--ink)}
+.wiz-hint{font-size:var(--t-xs);color:#8a7f70;line-height:1.45;flex:1}
+
+
+/* согласие и удаление данных */
+.consent{display:block;font-size:var(--t-2xs);color:#8a7f70;line-height:1.5;margin-top:10px}
+.consent a{color:var(--red);font-weight:700}
+.pt-danger{border:2px dashed var(--line);border-radius:var(--r-md);padding:16px 18px;margin-top:14px}
+.pt-danger b{display:block;font-size:var(--t-sm);font-weight:700;margin-bottom:4px}
+.pt-danger p{font-size:var(--t-xs);color:#6f6455;line-height:1.5;margin-bottom:11px}
+.pt-del{border:2px solid var(--red);background:transparent;color:var(--red);border-radius:var(--r-pill);
+  padding:10px 18px;font-size:var(--t-2xs);font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+  cursor:pointer;font-family:inherit;min-height:42px}
+.pt-del:hover{background:var(--red);color:#fff}
+
+
+/* ============ ПРИНЦИПЫ APPLE: ОТКЛИК, МАТЕРИАЛЫ, ТИПОГРАФИКА ============ */
+
+/* §1 Отклик. Обратная связь на нажатие, а не на отпускание —
+   иначе интерфейс кажется мёртвым. Ощущается мгновенно. */
+button, .btn, .chip, .card, .pkg, .uni-card, .guide-card summary,
+.vsec summary, .pt-task, .wiz-opt, .mini-btn, .pt-stage-head, .tl-node{
+  -webkit-tap-highlight-color:transparent;
+}
+button:active, .btn:active, .chip:active, .mini-btn:active,
+.wiz-opt:active, .pt-doc-btn:active, .ptn-btn:active, .pay-copy:active{
+  transform:scale(.975);
+  transition:transform 90ms var(--ease-out);
+}
+.card:active, .pkg:active, .uni-card:active{ transform:scale(.995) }
+.guide-card summary:active, .vsec summary:active, .pt-stage-head:active{
+  background:rgba(33,26,20,.04);
+}
+
+/* §12 Материалы. Шапка — полупрозрачный слой, контент проходит под ней.
+   Вместо жёсткой линии снизу — мягкий край, появляющийся при прокрутке. */
+header{
+  background:rgba(250,245,236,.78);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:2px solid transparent;
+  transition:border-color .3s var(--ease-out), background .3s var(--ease-out);
+}
+header.scrolled{
+  border-bottom-color:var(--ink);
+  background:rgba(250,245,236,.92);
+}
+
+/* §7 Пространственная связь: окно раскрывается оттуда, откуда его позвали */
+.modal{ transform-origin:center bottom }
+#chatPanel{ transform-origin:bottom right }
+.postcard{ transform-origin:top center }
+
+/* §11 Плавность кадра: анимируем только composited-свойства */
+.city, .plane, #chatPanel, .modal, .pt-bar, .wiz-bar{ will-change:transform }
+.rv{ will-change:opacity, transform }
+.rv.in{ will-change:auto }
+
+/* §15 Типографика: трекинг привязан к размеру, а не один на всё */
+.mega{ letter-spacing:var(--track-xl) }
+.h2, .sv-head b, .pt-docs-head h3{ letter-spacing:var(--track-lg) }
+.pkg .price, .pt-prog-top b, .sv-price, .pp-from, .lc-num{ letter-spacing:var(--track-xl) }
+.split .card h3, .dc-head h3, .tc-left h3, .trust-main h3, .wiz-q,
+.pt-next b, .pkg-head b{ letter-spacing:var(--track-md) }
+.sub, .hero-sub, p{ letter-spacing:var(--track-sm) }
+.badge, .pt-tag, .sv-tag, .pd-chip, .lc-tag{ letter-spacing:var(--track-2xs) }
+
+/* §4 Пружины на том, что человек трогает */
+.wiz-bar, .pt-bar{ transition:width .55s var(--spring-soft) }
+.pt-stage-body, .gc-body, .vsec-body{ transition:opacity .25s var(--ease-out) }
+.wiz-opt{ transition:background .2s var(--ease-out), transform .3s var(--spring) }
+.card, .pkg, .uni-card, .try-check{ transition:transform .35s var(--spring), box-shadow .35s var(--ease-out) }
+
+/* §14 Доступность: три независимых сигнала, а не только движение */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important; animation-iteration-count:1 !important;
+    transition-duration:.15s !important; scroll-behavior:auto !important;
+  }
+  .rv{ opacity:1 !important; transform:none !important }
+  .tc-scan, .w1, .w2, .ticker-inner{ animation:none !important }
+}
+@media (prefers-reduced-transparency: reduce){
+  header{ background:var(--cream); backdrop-filter:none; -webkit-backdrop-filter:none }
+  .postcard .stamp{ backdrop-filter:none; background:rgba(13,17,24,.92) }
+}
+@media (prefers-contrast: more){
+  :root{ --sec:#5d5346; --line:#c9bda9 }
+  .sub, .gc-teaser, .pn-why, .pt-note{ color:#4a4038 }
+  header{ background:var(--cream); backdrop-filter:none; border-bottom-color:var(--ink) }
+  .pt-tag, .badge, .pd-chip{ border-width:2px }
+}
+
 .w{stroke-linecap:round}
 .w1{animation:waveMove 12s linear infinite}
 .w2{animation:waveMove 16s linear infinite reverse}
 @keyframes waveMove{from{transform:translateX(0)}to{transform:translateX(40px)}}
-#flightPath{stroke:#7fb3ff;stroke-width:1.1;stroke-dasharray:4 6;fill:none;opacity:0;animation:fadeIn .5s cubic-bezier(.25,.1,.25,1) .7s forwards}
+#flightPath{stroke:#7fb3ff;stroke-width:1.1;stroke-dasharray:4 6;fill:none;opacity:0;animation:fadeIn .35s cubic-bezier(.25,.1,.25,1) .4s forwards}
 @keyframes fadeIn{to{opacity:.35}}
-.plane{animation:planePop .4s cubic-bezier(.25,.1,.25,1) .7s both}
+.plane{animation:planePop .3s cubic-bezier(.25,.1,.25,1) .45s both}
 @keyframes planePop{from{opacity:0}to{opacity:1}}
 #cityPanel{border-top:1px solid rgba(255,255,255,.08);background:#11161f}
 .panel-hint{font-size:var(--t-xs);color:#8b9bb0;text-align:center;padding:16px;font-weight:500;letter-spacing:.2px}
@@ -840,13 +978,13 @@ body.in-portal footer{display:none}
 .chip{
   border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:var(--r-pill);
   padding:8px 15px;font-size:var(--t-xs);font-weight:700;font-family:inherit;cursor:pointer;
-  box-shadow:var(--sh-sm);transition:transform .12s var(--spring);
+  box-shadow:var(--sh-sm);transition:transform .08s;
 }
 .chip:active{transform:translate(2px,2px);box-shadow:none}
 .chip.active{background:var(--ink);color:var(--cream)}
 .uni-card{
   background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:18px 20px;margin-bottom:12px;
-  box-shadow:var(--sh-md);transition:transform .2s var(--spring);
+  box-shadow:var(--sh-md);transition:transform .15s;
 }
 .uni-card:hover{transform:translateY(-3px)}
 .uni-top{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
@@ -871,7 +1009,7 @@ body.in-portal footer{display:none}
 .cmp-bar{
   position:fixed;left:0;right:0;bottom:0;z-index:70;
   background:var(--ink);color:var(--cream);border-top:3px solid var(--ink-soft);
-  padding:12px 0;transform:translateY(110%);transition:transform .32s var(--spring-bounce);
+  padding:12px 0;transform:translateY(110%);transition:transform .32s var(--spring);
 }
 .cmp-bar.on{transform:none}
 .cmp-inner{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -881,12 +1019,11 @@ body.in-portal footer{display:none}
 .cmp-bar .btn{padding:10px 22px;box-shadow:4px 4px 0 rgba(0,0,0,.4);margin-left:auto;background:var(--red);color:#fff}
 
 /* модалка вуза/сравнения */
-.overlay{position:fixed;inset:0;background:rgba(33,26,20,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:90;padding:18px}
+.overlay{position:fixed;inset:0;background:rgba(33,26,20,.6);display:none;align-items:center;justify-content:center;z-index:90;padding:18px}
 .overlay.on{display:flex}
 .modal{
   background:var(--cream);border:3px solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--sh-xl);
-  max-width:860px;width:100%;max-height:86vh;overflow-y:auto;padding:26px;
-  animation:materializeIn .32s var(--spring);transform-origin:center;
+  max-width:860px;width:100%;max-height:86vh;overflow-y:auto;padding:26px;animation:pgIn .25s ease;
 }
 .modal .close{float:right;border:2px solid var(--ink);background:var(--paper);width:34px;height:34px;border-radius:50%;font-weight:700;cursor:pointer;font-size:var(--t-sm)}
 .modal h3{font-size:var(--t-lg);font-weight:800;text-transform:uppercase;letter-spacing:-.4px;margin-bottom:2px}
@@ -908,8 +1045,7 @@ body.in-portal footer{display:none}
 .doc{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px 16px;margin-bottom:9px;box-shadow:var(--sh-md)}
 .doc b{font-size:var(--t-sm);display:block}
 .doc span{font-size:var(--t-2xs);color:var(--sec);font-weight:600}
-.doc .check{margin-left:auto;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:var(--r-pill);padding:7px 13px;font-size:var(--t-2xs);font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;text-transform:uppercase;transition:transform .1s var(--spring)}
-.doc .check:active{transform:translate(2px,2px)}
+.doc .check{margin-left:auto;border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:var(--r-pill);padding:7px 13px;font-size:var(--t-2xs);font-weight:800;font-family:inherit;cursor:pointer;flex-shrink:0;text-transform:uppercase}
 .doc.ok{border-color:var(--green)} .doc.ok .check{border-color:var(--green);color:var(--green)}
 .doc.err{border-color:var(--red)} .doc.err .check{border-color:var(--red);color:var(--red)}
 .doc-verdict{font-size:var(--t-xs);line-height:1.5;margin:-2px 0 12px;padding:11px 14px;border-radius:var(--r-sm);border:2px solid;font-weight:500}
@@ -936,7 +1072,7 @@ body.in-portal footer{display:none}
 .pkg.flag .btn{background:var(--cream);color:var(--ink);border-color:var(--cream);box-shadow:4px 4px 0 rgba(0,0,0,.35)}
 .micro-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:10px}
 @media(max-width:720px){.micro-grid{grid-template-columns:1fr}}
-.micro{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:16px;cursor:pointer;box-shadow:var(--sh-md);transition:transform .2s var(--spring),box-shadow .2s var(--spring)}
+.micro{display:flex;align-items:center;gap:12px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:16px;cursor:pointer;box-shadow:var(--sh-md);transition:transform .2s var(--spring),box-shadow .2s var(--ease-out)}
 .micro:hover{transform:translateY(-3px)}
 .micro:active{transform:translateY(0) scale(.98);box-shadow:var(--sh-sm)}
 .micro b{font-size:var(--t-sm);display:block}
@@ -961,7 +1097,7 @@ body.in-portal footer{display:none}
 .lb-left b{font-size:var(--t-md);font-weight:800;text-transform:uppercase;letter-spacing:-.3px;display:block;margin-bottom:5px}
 .lb-left p{font-size:var(--t-xs);color:var(--sec);line-height:1.55;max-width:520px}
 .lb-count{text-align:center;flex-shrink:0}
-.lb-num{font-size:46px;font-weight:900;color:var(--red);line-height:1;letter-spacing:-0.03em}
+.lb-num{font-size:46px;font-weight:900;color:var(--red);line-height:1;letter-spacing:-2px}
 .lb-lbl{font-size:var(--t-2xs);color:var(--sec);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
 
 /* зачёркнутая цена + сэйвинг */
@@ -1010,7 +1146,7 @@ body.in-portal footer{display:none}
 /* ---------- виза ---------- */
 .vyears{display:flex;gap:8px}
 .vg-out{display:flex;gap:28px;flex-wrap:wrap}
-.vg-num{font-size:clamp(24px,4vw,32px);font-weight:900;letter-spacing:-0.02em;color:var(--ink)}
+.vg-num{font-size:clamp(24px,4vw,32px);font-weight:900;letter-spacing:-1px;color:var(--ink)}
 .vg-lbl{font-size:var(--t-2xs);color:var(--sec);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
 .vdoc{display:flex;align-items:flex-start;gap:13px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r-md);padding:14px 16px;margin-bottom:9px;box-shadow:var(--sh-md);cursor:pointer;transition:border-color .3s cubic-bezier(.25,.1,.25,1),transform .1s var(--spring)}
 .vdoc:active{transform:scale(.98)}
@@ -1041,19 +1177,13 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
   border:2px solid var(--ink);background:var(--ink);color:var(--cream);border-radius:var(--r-pill);
   padding:14px 22px;font-size:var(--t-sm);font-weight:800;text-transform:uppercase;letter-spacing:.04em;
   font-family:inherit;cursor:pointer;box-shadow:var(--sh-md);
-  transition:transform .12s var(--spring),box-shadow .12s var(--spring);
 }
-/* Единственная плавающая точка входа в чат — должна откликаться на нажатие
-   так же мгновенно, как обычные .btn, а не только по клику. */
-#chatFab:active{transform:translate(3px,3px);box-shadow:var(--sh-sm)}
 #chatPanel{
   position:fixed;right:14px;bottom:14px;z-index:95;width:min(390px,calc(100vw - 28px));
   height:min(560px,calc(100vh - 80px));background:var(--cream);border:3px solid var(--ink);
   border-radius:var(--r-lg);box-shadow:var(--sh-xl);display:none;flex-direction:column;overflow:hidden;
-  transform-origin:bottom right;transition:left .32s var(--spring),top .32s var(--spring);
 }
-/* Появляется из угла, где стоит кнопка-триггер, а не откуда-то абстрактно сверху. */
-#chatPanel.on{display:flex;animation:materializeIn .26s var(--spring)}
+#chatPanel.on{display:flex;animation:pgIn .2s ease}
 .chp-head{padding:13px 16px;border-bottom:2px solid var(--ink);background:var(--paper);display:flex;align-items:center;gap:10px;
   cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
 .chp-head:active{cursor:grabbing}
@@ -1087,8 +1217,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
       <button data-p="unis" onclick="nav('unis')">Университеты</button>
       <button data-p="plan" onclick="nav('plan')">Мой план</button>
       <button data-p="prices" onclick="nav('prices')">Цены</button>
-      <button data-p="guide" onclick="nav('guide')">Гайды</button>
-      <button data-p="visa" onclick="nav('visa')">Виза</button>
+      <button data-p="guide" onclick="nav('guide')">Гайды и виза</button>
       <button data-p="faq" onclick="nav('faq')">FAQ</button>
       <button data-p="portal" onclick="nav('portal')">Кабинет</button>
     </nav>
@@ -1100,7 +1229,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 <div class="page on" id="page-home">
   <div class="wrap hero">
     <div class="mega" id="megaTitle"><span class="row1">Мы помогаем</span><br><span class="row2" id="megaWord"></span></div>
-    <p class="sub hero-sub">ИИ ведёт поступление в Италию, эксперт страхует на критичных этапах.<br>Под ключ от 47 900 ₸ для первых 20 студентов — в 4–11 раз дешевле агентства.</p>
+    <p class="sub hero-sub">ИИ ведёт поступление в Италию, эксперт страхует на критичных этапах.<br>Полное сопровождение за 19 900 ₸ для первых пяти студентов — тестовый запуск.</p>
     <div class="hero-ctas">
       <button class="btn primary" onclick="nav('plan')">Составить план бесплатно</button>
       <button class="hero-alt" onclick="nav('unis')">или посмотреть университеты →</button>
@@ -1136,7 +1265,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
         <table class="vs-table">
           <thead><tr><th></th><th class="us">IItaly</th><th>Агентства</th></tr></thead>
           <tbody>
-            <tr><td>Цена «под ключ»</td><td class="us">47 900 – 119 900 ₸</td><td>650 000 – 1 000 000 ₸</td></tr>
+            <tr><td>Цена «под ключ»</td><td class="us">19 900 ₸ (тестовый запуск)</td><td>650 000 – 1 000 000 ₸</td></tr>
             <tr><td>Кто делает работу</td><td class="us">система: подбор, чек-листы, черновики, проверки</td><td>менеджер вручную</td></tr>
             <tr><td>Скорость</td><td class="us">результат за минуты, круглосуточно</td><td>по записи, в рабочие часы</td></tr>
             <tr><td>Знание правил</td><td class="us">весь свод в памяти, база обновляется</td><td>опыт менеджера, зависит от его загрузки</td></tr>
@@ -1215,9 +1344,9 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
     <div class="wrap">
       <div class="price-peek rv">
         <div class="pp-left">
-          <div class="pp-from">Поступление под ключ — от 47 900 ₸</div>
-          <div class="pp-row"><span>Lite · 47 900 ₸</span><i>/</i><span>Standard · 71 900 ₸</span><i>/</i><span>Flagship · 119 900 ₸</span></div>
-          <div class="pp-note">Цена запуска для первых 20 студентов: −20% от обычной. Казахстанские агентства берут за ту же работу 650 000 – 1 000 000 ₸ — там её делают руками. Отдельные разборы — от 6 900 ₸.</div>
+          <div class="pp-from">Тестовый запуск: под ключ за 19 900 ₸</div>
+          <div class="pp-row"><span>Первым пяти студентам</span><i>·</i><span>обычная цена 71 900 ₸</span></div>
+          <div class="pp-note">Казахстанские агентства берут за ту же работу 650 000 – 1 000 000 ₸ — там её делают руками. Мы отдаём первым пяти почти по себестоимости, потому что нам нужны кейсы.</div>
         </div>
         <button class="btn ghost" onclick="nav('prices')">Сравнить тарифы →</button>
       </div>
@@ -1357,9 +1486,17 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
       </div>
 
       <div id="planInput">
-        <textarea id="situation" placeholder="Например: я в 11 классе обычной школы в Шымкенте, средний балл 4.6, родители зарабатывают около 500 тысяч в месяц, хочу на экономику в Милан, без стипендии не потянем…"></textarea>
-        <button class="btn" style="margin-top:14px" onclick="buildPlan()">Составить план</button>
-        <p class="sub" style="margin-top:16px;font-size:12.5px">На сайте — упрощённая демо-логика. В продукте план строит Claude AI на полном своде правил: ISEEU parificato, bando DSU всех регионов, требования Bocconi и госвузов, циркуляры MUR.</p>
+        <div class="wiz" id="wiz">
+          <div class="wiz-top">
+            <div class="wiz-track"><div class="wiz-bar" id="wizBar"></div></div>
+            <span class="wiz-count" id="wizCount"></span>
+          </div>
+          <div class="wiz-body" id="wizBody"></div>
+          <div class="wiz-nav">
+            <button class="wiz-back" id="wizBack">← Назад</button>
+            <span class="wiz-hint" id="wizHint"></span>
+          </div>
+        </div>
       </div>
       <div id="planResult" style="display:none"></div>
     </div>
@@ -1370,30 +1507,64 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 <div class="page" id="page-prices">
   <section style="padding-top:44px">
     <div class="wrap">
-      <div class="eyebrow">Тарифы</div>
-      <div class="h2">Мы автоматизировали то, за что берут сотни тысяч</div>
-      <p class="sub" style="margin-bottom:18px">Цена агентства — это часы менеджера, офис и реклама. У нас эту работу выполняет система, поэтому поступление под ключ стоит от 47 900 ₸, а не от миллиона.</p>
+      <div class="eyebrow">Тестовый запуск</div>
+      <div class="h2">Полное сопровождение за 19 900 ₸</div>
+      <p class="sub" style="margin-bottom:22px">Мы новый сервис, и публичных кейсов у нас пока нет. Первым пяти студентам отдаём поступление под ключ почти по себестоимости — в обмен на подробный отзыв и право рассказать вашу историю.</p>
+
+      <div class="launch rv">
+        <div class="lc-left">
+          <div class="lc-tag">Первым пяти</div>
+          <b>19 900 ₸ вместо 71 900</b>
+          <p>Это цена тестового запуска, а не постоянная. Мы берём меньше, потому что вы рискуете вместе с нами: сервис молодой. После пяти мест цена вернётся к обычной — тем, кто уже оплатил, доплачивать не придётся.</p>
+        </div>
+        <div class="lc-count">
+          <div class="lc-num"><span id="spotsLeft">5</span><span class="lc-of">/5</span></div>
+          <div class="lc-lbl">мест осталось</div>
+        </div>
+      </div>
 
       <div class="model rv">
         <div class="model-step"><b>Бесплатно</b><span>ИИ объясняет: шансы, риски, что делать дальше</span></div>
         <div class="model-arrow">→</div>
-        <div class="model-step"><b>Разборы от 6 900 ₸</b><span>ИИ персонализирует под твою ситуацию</span></div>
-        <div class="model-arrow">→</div>
-        <div class="model-step on"><b>Тарифы от 47 900 ₸</b><span>система ведёт поступление до конца</span></div>
+        <div class="model-step on"><b>19 900 ₸</b><span>система ведёт поступление до конца</span></div>
       </div>
 
       <div class="free-step rv">
         <div>
           <b>Начни с бесплатного разбора</b>
-          <span>ИИ оценит шансы на DSU, покажет риски и назовёт следующий шаг. Персональный план, точные чек-листы и работа с твоими документами — уже в платной части.</span>
+          <span>ИИ оценит шансы на DSU, покажет риски и назовёт следующий шаг. Ничего платить не нужно.</span>
         </div>
         <button class="btn ghost" onclick="openChat()">Проверить шансы</button>
+      </div>
+
+      <div class="price-grid">
+        <div class="pkg hero rv" style="grid-column:1/-1">
+          <div class="pkg-head"><b>Поступление под ключ</b><span class="badge popular">Тестовый запуск</span></div>
+          <div class="pkg-for">Полный AI-workflow: от выбора программы до визы</div>
+          <div class="price">19 900 ₸</div>
+          <div class="save">первым пяти · обычная цена 71 900 ₸</div>
+          <div class="pkg-result">Система ведёт тебя по шагам, а эксперт проверяет то, где нельзя ошибиться.</div>
+          <div class="feat">Персональный shortlist программ под твой профиль</div>
+          <div class="feat">Календарь дедлайнов с напоминаниями в Telegram</div>
+          <div class="feat">Точные чек-листы документов под твой случай</div>
+          <div class="feat">AI-проверка каждого документа до подачи</div>
+          <div class="feat">Пошаговое ведение через Universitaly</div>
+          <div class="feat">Визовый трек: досье, гарантия, запись в BLS</div>
+          <div class="feat">Экспертный checkpoint перед ключевой подачей</div>
+          <div class="inst">Личный кабинет с маршрутом открывается сразу после оплаты</div>
+          <button class="btn" onclick="openBuy('Поступление под ключ',19900)">Занять место</button>
+        </div>
+      </div>
+
+      <div class="why-cheap rv">
+        <b>Что входит в слово «исполнение»</b>
+        <p>Персональный shortlist программ под твои баллы и бюджет · календарь дедлайнов с напоминаниями · точные чек-листы документов под твой случай · черновики писем и анкет · AI-проверка загруженных файлов на ошибки · пошаговое ведение через Universitaly, DSU и визу · отслеживание прогресса и предупреждения, если что-то идёт не так.</p>
       </div>
 
       <div class="savings rv">
         <div class="sv-head">
           <b>Сколько это стоит на рынке</b>
-          <span>Открытые цены казахстанских агентств на полное сопровождение поступления за рубеж</span>
+          <span>Открытые цены агентств на полное сопровождение поступления за рубеж</span>
         </div>
         <div class="sv-grid">
           <div class="sv-item">
@@ -1407,224 +1578,73 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
             <div class="sv-src">средний пакет $4 000–6 700, опрос IECA</div>
           </div>
           <div class="sv-item mine">
-            <div class="sv-label">IItaly, под ключ</div>
-            <div class="sv-price">47 900 – 119 900 ₸</div>
-            <div class="sv-src">ту же работу выполняет система</div>
+            <div class="sv-label">IItaly, тестовый запуск</div>
+            <div class="sv-price">19 900 ₸</div>
+            <div class="sv-src">первым пяти студентам</div>
           </div>
         </div>
         <div class="sv-result">
-          Полное сопровождение у нас выходит <b>в 4–11 раз дешевле</b>, чем в агентстве: экономия от 500 000 до 900 000 ₸.
-          Разница не в объёме работы, а в том, кто её делает — у нас подбор, чек-листы, черновики и проверки выполняет ИИ, а не менеджер на окладе.
+          Разница не в объёме работы, а в том, кто её делает: подбор, чек-листы, черновики и проверки выполняет система, а не менеджер на окладе. Тестовая цена — ещё и потому, что кейсов у нас пока нет и часть риска мы берём на себя.
         </div>
-      </div>
-
-      <div class="launch rv">
-        <div class="lc-left">
-          <div class="lc-tag">Цена запуска</div>
-          <b>Первым 20 студентам — минус 20%</b>
-          <p>Мы новый сервис, и нам нужны первые кейсы. Снижаем цену в обмен на подробный отзыв после того, как ты поступишь. После оплаты стоимость зафиксирована: доплат за сопровождение в рамках тарифа не будет.</p>
-        </div>
-        <div class="lc-count">
-          <div class="lc-num"><span id="spotsLeft">20</span><span class="lc-of">/20</span></div>
-          <div class="lc-lbl">мест осталось</div>
-        </div>
-      </div>
-
-      <div class="why-cheap rv">
-        <b>Что входит в слово «исполнение»</b>
-        <p>Персональный shortlist программ под твои баллы и бюджет · календарь дедлайнов с напоминаниями · точные чек-листы документов под твой случай · черновики писем и анкет · AI-проверка загруженных файлов на ошибки · пошаговое ведение через Universitaly, DSU и визу · отслеживание прогресса и предупреждения, если что-то идёт не так.</p>
-      </div>
-
-      <div class="price-grid">
-        <div class="pkg flag rv">
-          <div class="pkg-head"><b>Flagship</b><span class="badge">DSU</span></div>
-          <div class="pkg-for">Поступление вместе со стипендией</div>
-          <div class="price"><s>149 900</s> 119 900 ₸</div>
-          <div class="save">−20% первым 20 · экономия 30 000 ₸</div>
-          <div class="sv-tag">экономия от 500 000 ₸ против агентства</div>
-          <div class="pkg-result">Всё из Standard плюс полный трек DSU и приоритетные проверки: твои документы смотрят вне очереди, до 75 минут экспертного времени.</div>
-          <div class="feat">Весь AI-workflow поступления</div>
-          <div class="feat">Трек стипендии DSU: ISEEU, bando региона, подача</div>
-          <div class="feat">Приоритетные экспертные проверки — до 75 минут работы эксперта</div>
-          <div class="feat">Визовое досье и контроль сроков BLS</div>
-          <div class="inst">≈ 9 992 ₸/мес в рассрочку Kaspi</div>
-          <button class="btn" onclick="openBuy('Пакет Flagship',119900)">Выбрать Flagship</button>
-        </div>
-
-        <div class="pkg hero rv">
-          <div class="pkg-head"><b>Standard</b><span class="badge popular">Основной тариф</span></div>
-          <div class="pkg-for">Полный AI-workflow поступления</div>
-          <div class="price"><s>89 900</s> 71 900 ₸</div>
-          <div class="save">−20% первым 20 · экономия 18 000 ₸</div>
-          <div class="sv-tag">в 7–11 раз дешевле агентства</div>
-          <div class="pkg-result">Система ведёт тебя от выбора программы до визы: сроки, документы, подача. Экспертная проверка — на ключевых точках.</div>
-          <div class="feat">Всё из Lite</div>
-          <div class="feat">Пошаговое ведение через Universitaly до подачи</div>
-          <div class="feat">Визовый трек: досье, финансовая гарантия, запись в BLS</div>
-          <div class="feat">Автоматические проверки документов на каждом этапе</div>
-          <div class="feat">Экспертный checkpoint перед ключевой подачей — письменный вердикт по чек-листу</div>
-          <div class="inst">≈ 5 992 ₸/мес в рассрочку Kaspi</div>
-          <button class="btn" onclick="openBuy('Пакет Standard',71900)">Выбрать Standard</button>
-        </div>
-
-        <div class="pkg rv">
-          <div class="pkg-head"><b>Lite</b></div>
-          <div class="pkg-for">Самостоятельное поступление с AI-системой</div>
-          <div class="price"><s>59 900</s> 47 900 ₸</div>
-          <div class="save">−20% первым 20 · экономия 12 000 ₸</div>
-          <div class="sv-tag">в 11–16 раз дешевле агентства</div>
-          <div class="pkg-result">Ты подаёшься сам, но не вслепую: система даёт маршрут, сроки и проверяет твои документы до подачи.</div>
-          <div class="feat">Персональный shortlist программ под твой профиль</div>
-          <div class="feat">Календарь дедлайнов с напоминаниями</div>
-          <div class="feat">Точные чек-листы документов под твой случай</div>
-          <div class="feat">AI-проверка загруженных файлов на ошибки</div>
-          <div class="feat">Черновики писем и анкет</div>
-          <div class="inst">≈ 3 992 ₸/мес в рассрочку Kaspi</div>
-          <button class="btn" onclick="openBuy('Пакет Lite',47900)">Выбрать Lite</button>
-        </div>
-      </div>
-
-      <div class="eyebrow" style="margin-top:40px">Персональные разборы</div>
-      <p class="sub" style="margin-bottom:14px">Нужен ответ по одной задаче, а не полное сопровождение? ИИ разберёт её под твою ситуацию и выдаст готовый документ с выводами.</p>
-      <div class="micro-grid">
-        <div class="micro rv" onclick="openBuy('DSU Roadmap',6900)"><div><b>DSU Roadmap</b><span>Твой путь к стипендии: пороги региона, оценка шансов, список справок, календарь подачи</span></div><div class="pr">6 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Разбор поступления',6900)"><div><b>Разбор поступления</b><span>Твоя ситуация → реальные варианты: 12 лет, тесты, сроки, что делать в этом сезоне</span></div><div class="pr">6 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Shortlist программ',8900)"><div><b>Shortlist программ</b><span>7–10 программ под твои баллы, бюджет и язык, с тестами и дедлайнами каждой</span></div><div class="pr">8 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Разбор документов',9900)"><div><b>Разбор документов</b><span>AI-проверка твоего комплекта: референсный год, апостиль, переводы, чего не хватает</span></div><div class="pr">9 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Визовый разбор',12900)"><div><b>Визовый разбор</b><span>Досье под визу D: расчёт гарантии, проверка выписок, разбор рисков отказа</span></div><div class="pr">12 900 ₸</div></div>
-      </div>
-
-      <div class="eyebrow" style="margin-top:36px">Дополнительная помощь человека</div>
-      <p class="sub" style="margin-bottom:14px">Всё, что делает система, уже входит в тариф. Живое участие эксперта сверх этого — отдельной опцией, чтобы не поднимать цену всем. У каждой опции указан лимит времени: так честнее и для тебя, и для нас.</p>
-      <div class="micro-grid">
-        <div class="micro rv" onclick="openBuy('Созвон с экспертом · 20 мин',20900)"><div><b>Созвон с экспертом · 20 минут</b><span>Разобрать сложный случай голосом, с письменным резюме после</span></div><div class="pr">20 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Срочная проверка документа · 1 документ',16900)"><div><b>Срочная проверка · 1 документ</b><span>Вердикт эксперта в течение 24 часов, до 15 минут работы</span></div><div class="pr">16 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Проверка пакета DSU · до 45 мин',39900)"><div><b>Проверка пакета DSU</b><span>Эксперт вычитывает комплект перед подачей, до 45 минут</span></div><div class="pr">39 900 ₸</div></div>
-        <div class="micro rv" onclick="openBuy('Сопровождение подачи · до 30 мин',28900)"><div><b>Сопровождение одной подачи</b><span>Эксперт на связи в день подачи Universitaly или DSU, до 30 минут</span></div><div class="pr">28 900 ₸</div></div>
       </div>
 
       <div class="honesty rv">
         <b>Честно о цене и о том, чего мы не обещаем</b>
-        <p>Низкая цена — не про урезанное качество, а про отсутствие ручной работы менеджеров: ту же работу выполняет система. Персонального куратора «на связи 24/7» в тарифах нет — есть экспертные проверки на критичных этапах с указанным лимитом времени и опции живой помощи сверх него. Мы называем эти лимиты прямо, а не прячем в договоре. Апостиль и присяжные переводы оплачиваются отдельно по себестоимости (от 25 000 ₸ за документ), наценки на них мы не делаем. Решение о зачислении принимает университет, о стипендии — регион Италии.</p>
+        <p>19 900 ₸ — цена тестового запуска для первых пяти, она не окупает нашу работу и держится ровно до набора кейсов. Персонального куратора «на связи 24/7» нет: есть экспертные проверки на критичных этапах и опции живой помощи. Апостиль и присяжные переводы оплачиваются отдельно по себестоимости (от 25 000 ₸ за документ), наценки на них мы не делаем. Решение о зачислении принимает университет, о стипендии — регион Италии.</p>
       </div>
+
     </div>
   </section>
 </div>
 
-<!-- ==================== ГАЙДЫ ==================== -->
 <div class="page" id="page-guide">
   <section style="padding-top:44px">
     <div class="wrap">
       <div class="eyebrow">Справочник · бесплатно</div>
       <div class="h2">Как пройти бюрократию</div>
-      <p class="sub" style="margin-bottom:28px">Разбираем каждый непонятный шаг простыми словами: что это, где делать в Казахстане, сколько стоит и в каком порядке. Без этих знаний легко потерять месяцы — поэтому мы отдаём их бесплатно.</p>
+      <p class="sub" style="margin-bottom:28px">Восемь тем, в которых чаще всего теряют месяцы, плюс отдельный разбор визы D. Нажми на нужную — раскроются детали: где делать в Казахстане, сколько стоит и в каком порядке. Всё бесплатно.</p>
       <div class="guide-grid">
 
-        <div class="guide-card rv">
-          <div class="gc-ic">📜</div>
-          <h3>Апостиль</h3>
-          <p class="gc-lead">Штамп, подтверждающий подлинность твоего документа за границей. Италия входит в Гаагскую конвенцию, поэтому легализация не нужна — достаточно апостиля.</p>
-          <div class="gc-row"><span>Где в РК</span><b>Минюст / ЦОН; аттестат — в органах образования</b></div>
+        <details class="guide-card rv"><summary><span class="gc-ic">📜</span><span class="gc-head"><b>Апостиль</b><span class="gc-teaser">Штамп, подтверждающий подлинность твоего документа за границей.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><p class="gc-lead">Италия входит в Гаагскую конвенцию, поэтому легализация не нужна — достаточно апостиля.</p><div class="gc-row"><span>Где в РК</span><b>Минюст / ЦОН; аттестат — в органах образования</b></div>
           <div class="gc-row"><span>Стоимость</span><b>госпошлина 0,5 МРП (~2 200 ₸) за документ</b></div>
           <div class="gc-row"><span>Срок</span><b>несколько рабочих дней</b></div>
-          <div class="gc-warn">Порядок строгий: сначала апостиль на оригинал, потом перевод. Перевод, сделанный до апостиля, недействителен — переделывать за свой счёт.</div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">🏛</div>
-          <h3>ЦОН</h3>
-          <p class="gc-lead">Центр обслуживания населения — единое окно госуслуг. Сюда идёшь за справками, которые нужны для стипендии и визы.</p>
-          <div class="gc-row"><span>Что берём</span><b>справка о составе семьи, о доходах, о несудимости</b></div>
+          <div class="gc-warn">Порядок строгий: сначала апостиль на оригинал, потом перевод. Перевод, сделанный до апостиля, недействителен — переделывать за свой счёт.</div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">🏛</span><span class="gc-head"><b>ЦОН</b><span class="gc-teaser">Центр обслуживания населения — единое окно госуслуг.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><p class="gc-lead">Сюда идёшь за справками, которые нужны для стипендии и визы.</p><div class="gc-row"><span>Что берём</span><b>справка о составе семьи, о доходах, о несудимости</b></div>
           <div class="gc-row"><span>Для чего</span><b>состав семьи и доходы — основа ISEEU parificato</b></div>
-          <div class="gc-row"><span>Совет</span><b>заказывай справки заранее — у них свой срок годности</b></div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">🎓</div>
-          <h3>CIMEA</h3>
-          <p class="gc-lead">Итальянская организация, которая официально признаёт твой аттестат или диплом — выдаёт Statement of Comparability. Современная замена долгой Dichiarazione di Valore.</p>
-          <div class="gc-row"><span>Стоимость</span><b>≈ €65–150</b></div>
+          <div class="gc-row"><span>Совет</span><b>заказывай справки заранее — у них свой срок годности</b></div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">🎓</span><span class="gc-head"><b>CIMEA</b><span class="gc-teaser">Итальянская организация, которая официально признаёт твой аттестат или диплом — выдаёт Statement of Comparability.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><p class="gc-lead">Современная замена долгой Dichiarazione di Valore.</p><div class="gc-row"><span>Стоимость</span><b>≈ €65–150</b></div>
           <div class="gc-row"><span>Срок</span><b>30–60 дней — запускай заранее</b></div>
-          <div class="gc-row"><span>Как</span><b>онлайн через портал, загружаешь скан-документы</b></div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">🖋</div>
-          <h3>Присяжный перевод</h3>
-          <p class="gc-lead">Traduzione giurata — перевод на итальянский, заверенный присяжным переводчиком в суде. Обычного нотариального перевода недостаточно.</p>
-          <div class="gc-row"><span>Порядок</span><b>только после апостиля на оригинал</b></div>
+          <div class="gc-row"><span>Как</span><b>онлайн через портал, загружаешь скан-документы</b></div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">🖋</span><span class="gc-head"><b>Присяжный перевод</b><span class="gc-teaser">Traduzione giurata — перевод на итальянский, заверенный присяжным переводчиком в суде.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><p class="gc-lead">Обычного нотариального перевода недостаточно.</p><div class="gc-row"><span>Порядок</span><b>только после апостиля на оригинал</b></div>
           <div class="gc-row"><span>Где</span><b>в Италии у traduttore giurato или аккредитованные бюро в РК</b></div>
-          <div class="gc-warn">Это самая частая ошибка: перевести раньше, чем поставить апостиль. Сначала апостиль — потом перевод.</div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">🛂</div>
-          <h3>Виза D через BLS</h3>
-          <p class="gc-lead">Долгосрочная студенческая виза оформляется в визовом центре BLS International. Слоты в сезон разбирают быстро — лимит 30 заявок в день.</p>
-          <div class="gc-row"><span>Города</span><b>Алматы, Астана, Атырау, Оскемен, Шымкент</b></div>
-          <div class="gc-row"><span>Гарантия</span><b>€6 947,33 на год на счёте</b></div>
-          <div class="gc-row"><span>Выписки</span><b>за 3 месяца с QR — одного Kaspi недостаточно</b></div>
-          <div class="gc-warn">Подача не ранее 6 месяцев и не позднее 15 дней до выезда. Рассмотрение до 90 дней — не тяни.</div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">🏠</div>
-          <h3>Permesso di soggiorno</h3>
-          <p class="gc-lead">Вид на жительство. Подаёшь заявку в первые 8 рабочих дней после въезда — через «жёлтый набор» (kit giallo) на почте Poste Italiane.</p>
-          <div class="gc-row"><span>Стоимость</span><b>≈ €116 всего (marca da bollo, пересылка, карта)</b></div>
-          <div class="gc-row"><span>Потом</span><b>приём в Questura по записи, снятие отпечатков</b></div>
-          <div class="gc-row"><span>Продление</span><b>нужен минимум 1 сданный экзамен за первый год</b></div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">🔢</div>
-          <h3>Codice fiscale</h3>
-          <p class="gc-lead">Итальянский аналог ИИН. Без него не откроешь счёт, не снимешь жильё и не подашь на ISEE. Получают сразу по приезде.</p>
-          <div class="gc-row"><span>Где</span><b>Agenzia delle Entrate (налоговая)</b></div>
-          <div class="gc-row"><span>Стоимость</span><b>бесплатно</b></div>
-          <div class="gc-row"><span>Когда</span><b>одно из первых дел после прилёта</b></div>
-        </div>
-
-        <div class="guide-card rv">
-          <div class="gc-ic">💶</div>
-          <h3>ISEEU parificato</h3>
-          <p class="gc-lead">Расчёт материального положения семьи по итальянским правилам — от него зависит стипендия DSU и размер tuition. Считается в итальянском CAF.</p>
-          <div class="gc-row"><span>Что нужно</span><b>справки о составе семьи, доходах, недвижимости, счетах</b></div>
-          <div class="gc-row"><span>Референсный год</span><b>для 2026/27 — доходы за 2024 год</b></div>
-          <div class="gc-warn">Всё с апостилем и присяжным переводом. Неверный референсный год — самая частая причина отказа в стипендии.</div>
-        </div>
-
+          <div class="gc-warn">Это самая частая ошибка: перевести раньше, чем поставить апостиль. Сначала апостиль — потом перевод.</div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">🛂</span><span class="gc-head"><b>Виза D</b><span class="gc-teaser">Национальная студенческая виза через BLS: гарантия, слоты, сроки.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><div class="gc-row"><span>Где подавать</span><b>BLS в Алматы, Астане, Атырау, Оскемене, Шымкенте</b></div><p class="sub" style="margin-bottom:20px">Три вещи решают всё остальное. Если запомнить только их, уже не пропадёшь — детали ниже раскрываются по нажатию.</p>
+      <div class="visa-key rv">
+        <div class="vk-item"><b>€6 947,33</b><span>на счёте за каждый год обучения</span></div>
+        <div class="vk-item"><b>30 в день</b><span>лимит студенческих заявок в BLS — слот ловить заранее</span></div>
+        <div class="vk-item"><b>до 90 дней</b><span>рассмотрение: подавать в мае-июне под сентябрьский старт</span></div>
       </div>
 
-      <div class="guide-cta rv">
-        <div>
-          <b>Запутался в порядке шагов?</b>
-          <span>Опиши свою ситуацию — ИИ соберёт всё в персональный план и проверит документы.</span>
-        </div>
-        <button class="btn" onclick="nav('plan')">Составить план</button>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- ==================== ВИЗА ==================== -->
-<div class="page" id="page-visa">
-  <section style="padding-top:44px">
-    <div class="wrap" style="max-width:860px">
-      <div class="eyebrow">Виза D · студенческая</div>
-      <div class="h2">Виза без паники</div>
-      <p class="sub" style="margin-bottom:28px">Национальная виза D оформляется через BLS International. Слоты в сезон разлетаются (лимит 30 студенческих заявок в день), а рассмотрение занимает до 90 дней — поэтому здесь всё решает подготовка и тайминг.</p>
-
-      <div class="eyebrow">Таймлайн подачи</div>
+      <details class="vsec rv" open><summary><b>Таймлайн подачи: когда что делать</b><i class="gc-caret"></i></summary><div class="vsec-body">
       <div style="margin-bottom:34px">
         <div class="plan-step"><div class="num">1</div><div><b>За 6 месяцев: копим гарантию</b><p>На счёте должно лежать €6 947,33 на каждый год обучения. Деньги должны «пожить» на счёте — резкое пополнение накануне вызывает вопросы.</p></div></div>
         <div class="plan-step"><div class="num">2</div><div><b>За 3–4 месяца: запись в BLS</b><p>Алматы, Астана, Атырау, Оскемен или Шымкент. Лови слот заранее — в июле-августе их разбирают мгновенно.</p></div></div>
         <div class="plan-step"><div class="num">3</div><div><b>Собираем досье</b><p>Admission letter, сводка Universitaly, выписки за 3 месяца с QR, страховка, подтверждение жилья. Полный список — в чек-листе ниже.</p></div></div>
         <div class="plan-step"><div class="num">4</div><div><b>Подача: не ранее 6 мес и не позднее 15 дней до выезда</b><p>Рассмотрение до 90 дней. Идеальное окно подачи — май-июнь для сентябрьского старта.</p></div></div>
         <div class="plan-step"><div class="num">5</div><div><b>Паспорт с визой → билет → Италия</b><p>После прилёта 8 рабочих дней на kit giallo для permesso di soggiorno — смотри Гайды.</p></div></div>
+      </div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">🏠</span><span class="gc-head"><b>Permesso di soggiorno</b><span class="gc-teaser">Вид на жительство. Подаёшь заявку в первые 8 рабочих дней после въезда — через «жёлтый набор» (kit giallo) на почте Poste Italiane.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><div class="gc-row"><span>Стоимость</span><b>≈ €116 всего (marca da bollo, пересылка, карта)</b></div>
+          <div class="gc-row"><span>Потом</span><b>приём в Questura по записи, снятие отпечатков</b></div>
+          <div class="gc-row"><span>Продление</span><b>нужен минимум 1 сданный экзамен за первый год</b></div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">🔢</span><span class="gc-head"><b>Codice fiscale</b><span class="gc-teaser">Итальянский аналог ИИН. Без него не откроешь счёт, не снимешь жильё и не подашь на ISEE. Получают сразу по приезде.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><div class="gc-row"><span>Где</span><b>Agenzia delle Entrate (налоговая)</b></div>
+          <div class="gc-row"><span>Стоимость</span><b>бесплатно</b></div>
+          <div class="gc-row"><span>Когда</span><b>одно из первых дел после прилёта</b></div></div></details>
+        <details class="guide-card rv"><summary><span class="gc-ic">💶</span><span class="gc-head"><b>ISEEU parificato</b><span class="gc-teaser">Расчёт материального положения семьи по итальянским правилам — от него зависит стипендия DSU и размер tuition.</span></span><i class="gc-caret"></i></summary><div class="gc-body"><p class="gc-lead">Считается в итальянском CAF.</p><div class="gc-row"><span>Что нужно</span><b>справки о составе семьи, доходах, недвижимости, счетах</b></div>
+          <div class="gc-row"><span>Референсный год</span><b>для 2026/27 — доходы за 2024 год</b></div>
+          <div class="gc-warn">Всё с апостилем и присяжным переводом. Неверный референсный год — самая частая причина отказа в стипендии.</div></div></details>
       </div>
 
-      <div class="eyebrow">Калькулятор финансовой гарантии</div>
+      <details class="vsec rv"><summary><b>Калькулятор финансовой гарантии</b><i class="gc-caret"></i></summary><div class="vsec-body">
       <div class="card" style="margin-bottom:34px">
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px">
           <span style="font-size:14px;font-weight:700">Срок обучения:</span>
@@ -1639,9 +1659,8 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           <div><div class="vg-num" id="vgKzt">≈ 11,1 млн ₸</div><div class="vg-lbl">по курсу ~534 ₸/€</div></div>
         </div>
         <p style="font-size:12px;color:var(--sec);margin-top:12px;line-height:1.5">€6 947,33 за каждый год. Выписки за 3 месяца с QR-кодом; одного Kaspi недостаточно — консульство хочет видеть банковские выписки установленного вида. Подойдёт счёт родителей со спонсорским письмом.</p>
-      </div>
-
-      <div class="eyebrow">Чек-лист документов · отмечай собранное</div>
+      </div></div></details>
+      <details class="vsec rv"><summary><b>Чек-лист документов</b><i class="gc-caret"></i></summary><div class="vsec-body">
       <div class="card" style="margin-bottom:12px;padding:16px 20px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
           <span style="font-size:13px;color:var(--sec);font-weight:700" id="visaProgT">0 из 9 собрано</span>
@@ -1650,26 +1669,26 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           <div id="visaProgF" style="height:100%;width:0%;background:var(--green);border-radius:3px;transition:width .45s cubic-bezier(.25,.1,.25,1)"></div>
         </div>
       </div>
-      <div id="visaDocs" style="margin-bottom:30px"></div>
-
-      <div class="eyebrow">Частые причины отказа</div>
+      <div id="visaDocs" style="margin-bottom:30px"></div></div></details>
+      <details class="vsec rv"><summary><b>Частые причины отказа</b><i class="gc-caret"></i></summary><div class="vsec-body">
       <div class="gc-warn" style="margin-bottom:10px">Выписки только из Kaspi или без QR-кода — консульству нужны выписки установленного банковского вида за 3 месяца.</div>
       <div class="gc-warn" style="margin-bottom:10px">Жильё не подтверждено: бронь на неделю не считается — нужен договор аренды, письмо резиденции или приглашение.</div>
       <div class="gc-warn" style="margin-bottom:10px">Подача позже чем за 15 дней до выезда или без pre-enrolment на Universitaly.</div>
       <div class="gc-warn" style="margin-bottom:34px">Деньги «упали» на счёт за день до подачи — происхождение средств должно быть объяснимо.</div>
+      </div></details></div></details>
 
       <div class="guide-cta rv">
         <div>
-          <b>Не хочешь разбираться сам?</b>
-          <span>Пакет Standard ведёт визу за руку: досье, запись в BLS, проверка каждой бумаги.</span>
+          <b>Запутался в порядке шагов?</b>
+          <span>Опиши свою ситуацию — ИИ соберёт всё в персональный план и проверит документы.</span>
         </div>
-        <button class="btn" onclick="nav('prices')">Смотреть пакеты</button>
+        <button class="btn" onclick="nav('plan')">Составить план</button>
       </div>
-    </div>
+    
+          </div>
   </section>
 </div>
 
-<!-- ==================== FAQ ==================== -->
 <div class="page" id="page-portal">
   <section style="padding-top:44px">
     <div class="wrap" style="max-width:860px">
@@ -1732,6 +1751,18 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
   </div>
 </div>
 
+<script type="module">
+  /* Motion загружаем отдельным модулем: если CDN недоступен или заблокирован,
+     сайт продолжает работать — просто без пружинной физики. */
+  try{
+    const m = await import('https://cdn.jsdelivr.net/npm/motion@11.11.17/+esm');
+    window.Motion = { animate: m.animate };
+  }catch(e){
+    console.warn('Motion не загрузился, движение останется на CSS');
+  }
+  window.__motionReady = true;
+  window.dispatchEvent(new Event('motion-ready'));
+</script>
 <script>
 /* ---------- Страховка отображения ----------
    Если браузер старый или где-то упадёт скрипт — контент всё равно показывается. */
@@ -1745,7 +1776,7 @@ if (typeof IntersectionObserver === 'function' && document.documentElement.class
   document.documentElement.classList.add('js-reveal');   // поддержка есть — можно анимировать
 } 
 window.addEventListener('error', revealAll);             // любая ошибка — показать всё
-setTimeout(revealAll, 2500);                             // и подстраховка по времени
+setTimeout(revealAll, 1600);                             // и подстраховка по времени
 
 /* ================= КОНФИГ BACKEND =================
    Пусто = демо-режим (чат по ключевым словам, заказ без отправки).
@@ -1775,6 +1806,7 @@ function track(event, props){
 
 /* ================= НАВИГАЦИЯ ================= */
 function nav(p){
+  if(p === 'visa') p = 'guide';   // виза переехала в гайды
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('on'));
   document.getElementById('page-'+p).classList.add('on');
   track('tab_'+p);
@@ -2069,7 +2101,7 @@ function finishIntro(){          // мгновенно завершить вст
 function renderMap(){
   if (mapBuilt){ finishIntro(); updateCities(); return; }   // второй заход — без анимации
   mapBuilt = true;
-  setTimeout(finishIntro, 1400);                            // после показа анимация больше не нужна
+  setTimeout(finishIntro, 900);                            // после показа анимация больше не нужна
   document.getElementById('mapShape').innerHTML =
     `<path class="it-halo" d="${ITALY_PATH}"/>` +
     `<path class="it-shape" pathLength="1" d="${ITALY_PATH}"/>`;
@@ -2079,7 +2111,7 @@ function renderMap(){
     <path id="flightPath" d="${fp}"/>
     <g class="plane"><g>
       <path d="M0 -7 L2 -1 L9 1 L2 3 L0 9 L-2 3 L-9 1 L-2 -1 Z" fill="#b4262b" stroke="#211a14" stroke-width="1.2" transform="rotate(90)"/>
-      <animateMotion dur="2.4s" begin=".7s" fill="freeze" rotate="auto" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 0.2 1" path="${fp}"/>
+      <animateMotion dur=".85s" begin=".4s" fill="freeze" rotate="auto" calcMode="spline" keyTimes="0;1" keySplines="0.42 0 0.2 1" path="${fp}"/>
     </g></g>`;
   buildCities();
   renderCityPanel();
@@ -2095,7 +2127,7 @@ function buildCities(){
       const big = c.tier===1;
       const r = big ? 11 : 7;
       const gs = 17;
-      return `<g class="city ${big?'big':'small'}" id="ct-${id}" style="--d:${(.45+ci*.015).toFixed(3)}s" data-id="${id}">
+      return `<g class="city ${big?'big':'small'}" id="ct-${id}" style="--d:${(.3+ci*.007).toFixed(3)}s" data-id="${id}">
         <circle class="glow" cx="${c.x}" cy="${c.y}" r="${r+4}"/>
         <circle class="bg" cx="${c.x}" cy="${c.y}" r="${r}"/>
         <g class="glyph" transform="translate(${c.x-gs/2},${c.y-gs/2}) scale(${(gs/22).toFixed(3)})">${CITY_ICONS[id]}</g>
@@ -2278,9 +2310,155 @@ function openCmp(){
 function closeOverlay(id){ document.getElementById(id).classList.remove('on'); }
 
 /* ================= МОЙ ПЛАН ================= */
-function buildPlan(){
-  const sit = document.getElementById('situation').value.trim();
-  if(sit.length < 15){ alert('Опиши ситуацию чуть подробнее — хотя бы пару предложений.'); return; }
+
+/* ================= ПОШАГОВЫЙ ОПРОС =================
+   Один вопрос на экран вместо пустого поля «опиши ситуацию».
+   Для телефона это проще: тап вместо набора текста. */
+const WIZ = [
+  { id:'education', q:'Что заканчиваешь?',
+    hint:'От этого зависит, нужен ли дополнительный год',
+    opts:[
+      { v:'11 классов', t:'11 классов', s:'обычная школа' },
+      { v:'НИШ / 12 лет', t:'НИШ, БИЛ или 12 лет', s:'международная программа' },
+      { v:'Студент вуза КЗ', t:'Учусь в вузе в Казахстане', s:'уже есть курс' },
+      { v:'Бакалавр', t:'Есть диплом бакалавра', s:'иду в магистратуру' },
+    ]},
+  { id:'grades', q:'Какой средний балл?',
+    hint:'Примерно, точность не нужна',
+    opts:[
+      { v:'отличник', t:'4,7 и выше', s:'почти отличник' },
+      { v:'хорошист', t:'4,0 – 4,6', s:'хорошист' },
+      { v:'средний', t:'3,5 – 3,9', s:'средний' },
+      { v:'ниже среднего', t:'ниже 3,5', s:'бывает по-разному' },
+    ]},
+  { id:'goal', q:'Куда поступаешь?',
+    opts:[
+      { v:'Бакалавриат', t:'Бакалавриат', s:'первое высшее' },
+      { v:'Магистратура', t:'Магистратура', s:'после диплома' },
+    ]},
+  { id:'budget', q:'Сколько семья может платить в год?',
+    hint:'Считая жильё и еду. Это влияет на выбор города и на стратегию со стипендией',
+    opts:[
+      { v:'Только со стипендией', t:'Без стипендии не потянем', s:'нужен DSU' },
+      { v:'До 1 млн ₸/год', t:'До 1 млн ₸ в год', s:'юг и небольшие города' },
+      { v:'До 3 млн ₸/год', t:'До 3 млн ₸ в год', s:'почти любой госвуз' },
+      { v:'Без ограничений', t:'Бюджет не главное', s:'включая частные вузы' },
+    ]},
+  { id:'field', q:'Какое направление?',
+    opts:[
+      { v:'Экономика и бизнес', t:'Экономика, бизнес', s:'' },
+      { v:'Инженерия и IT', t:'Инженерия, IT', s:'' },
+      { v:'Медицина', t:'Медицина', s:'нужен IMAT' },
+      { v:'Дизайн и гуманитарные', t:'Дизайн, гуманитарные', s:'' },
+      { v:'Ещё не решил', t:'Пока не решил', s:'поможем выбрать' },
+    ]},
+  { id:'lang', q:'Как у тебя с английским?',
+    hint:'Большинство программ на английском требуют B2',
+    opts:[
+      { v:'есть сертификат', t:'Есть IELTS или TOEFL', s:'' },
+      { v:'уровень есть, сертификата нет', t:'Язык знаю, сертификата нет', s:'' },
+      { v:'нужно подтянуть', t:'Нужно подтягивать', s:'' },
+      { v:'хочу на итальянском', t:'Хочу учиться на итальянском', s:'обучение дешевле' },
+    ]},
+];
+
+let wizStep = 0;
+const wizAns = {};
+
+function wizRender(){
+  const body = document.getElementById('wizBody');
+  const bar = document.getElementById('wizBar');
+  const cnt = document.getElementById('wizCount');
+  const back = document.getElementById('wizBack');
+  const hint = document.getElementById('wizHint');
+  if(!body) return;
+
+  bar.style.width = (wizStep / WIZ.length * 100) + '%';
+  cnt.textContent = Math.min(wizStep + 1, WIZ.length) + ' из ' + WIZ.length;
+  back.style.visibility = wizStep > 0 ? 'visible' : 'hidden';
+
+  // последний экран: телефон и запуск плана
+  if(wizStep >= WIZ.length){
+    bar.style.width = '100%';
+    cnt.textContent = 'Готово';
+    hint.textContent = '';
+    body.innerHTML = '<div class="wiz-q">Куда прислать план?</div>'
+      + '<p class="wiz-sub">Пришлём маршрут и напоминания о дедлайнах в WhatsApp. Можно пропустить — план всё равно откроется прямо здесь.</p>'
+      + '<input class="wiz-input" id="wizPhone" placeholder="+7 ___ ___ __ __" inputmode="tel">'
+      + '<button class="btn" id="wizGo" style="width:100%;margin-top:12px">Составить план</button>'
+      + '<button class="wiz-skip" id="wizSkip">Пропустить и посмотреть план</button>'
+      + '<p class="consent">Оставляя номер, ты соглашаешься, что мы напишем по поводу поступления. '
+      + 'Рассылок и передачи третьим лицам не будет, отписаться можно в любой момент. '
+      + '<a href="privacy.html" target="_blank" rel="noopener">Как мы работаем с данными</a>. '
+      + 'Если тебе меньше 18, заполняй вместе с родителем.</p>';
+
+    const run = async function(withPhone){
+      const phone = withPhone ? (document.getElementById('wizPhone').value || '').trim() : '';
+      if(withPhone && !/^[+0-9() -]{10,18}$/.test(phone)){ alert('Проверь номер телефона.'); return; }
+      if(phone && BACKEND_URL){
+        try{
+          await fetch(BACKEND_URL + '/api/lead', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ phone: phone, education: wizAns.education || '—',
+              goal: wizAns.goal || '—', budget: wizAns.budget || '—' })
+          });
+          track('lead_captured', { from:'wizard' });
+        }catch(e){}
+      }
+      buildPlanFrom(wizAns);
+    };
+    document.getElementById('wizGo').addEventListener('click', function(){ run(true); });
+    document.getElementById('wizSkip').addEventListener('click', function(){ run(false); });
+    return;
+  }
+
+  const step = WIZ[wizStep];
+  hint.textContent = step.hint || '';
+  body.innerHTML = '<div class="wiz-q">' + step.q + '</div>'
+    + '<div class="wiz-opts">'
+    + step.opts.map(function(o){
+        const on = wizAns[step.id] === o.v ? ' on' : '';
+        return '<button class="wiz-opt' + on + '" data-v="' + o.v + '">'
+          + '<b>' + o.t + '</b>' + (o.s ? '<span>' + o.s + '</span>' : '') + '</button>';
+      }).join('')
+    + '</div>';
+
+  body.querySelectorAll('.wiz-opt').forEach(function(b){
+    b.addEventListener('click', function(){
+      wizAns[step.id] = b.dataset.v;
+      track('wiz_step', { s: step.id });
+      wizStep++;
+      wizRender();
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const back = document.getElementById('wizBack');
+  if(back) back.addEventListener('click', function(){ if(wizStep > 0){ wizStep--; wizRender(); } });
+  wizRender();
+});
+
+/* Собираем из ответов текст ситуации и отдаём в существующую логику плана */
+function buildPlanFrom(a){
+  const parts = [];
+  if(a.education) parts.push(a.education);
+  if(a.grades) parts.push('средний балл ' + a.grades);
+  if(a.goal) parts.push(a.goal.toLowerCase());
+  if(a.field) parts.push('направление: ' + a.field.toLowerCase());
+  if(a.budget) parts.push('бюджет: ' + a.budget.toLowerCase());
+  if(a.lang) parts.push('английский: ' + a.lang);
+  const sit = parts.join(', ');
+  const box = document.getElementById('situation');
+  if(box) box.value = sit;
+  window.__wizProfile = a;
+  buildPlan(sit);
+}
+
+function buildPlan(input){
+  const sit = (typeof input === 'string' && input) ? input
+            : ((document.getElementById('situation') || {}).value || '').trim();
+  if(sit.length < 10){ alert('Ответь на вопросы — по ним построим план.'); return; }
   const low = sit.toLowerCase();
   const is11 = /11 ?класс|одиннадц/.test(low);
   const isNIS = /ниш|12 ?лет|12 ?класс/.test(low);
@@ -2462,7 +2640,7 @@ const DEMO_ANSWERS = [
   {kw:['dsu','стипенд','дсу','isee'],a:'DSU — до €7 557/год плюс жильё и питание. Казахстанцы всегда fuori sede — максимальная ставка. Ключ — ISEEU parificato: справки семьи с апостилем и переводом. Дедлайны: DiSCo — конец июля, ER.GO — конец августа. Подача ДО приезда.'},
   {kw:['виза','visa','bls'],a:'Виза D через BLS (Алматы, Астана, Атырау, Оскемен, Шымкент), лимит 30 заявок/день. Гарантия €6 947,33/год, выписки 3 мес с QR, страховка, жильё, admission letter. Не позднее 15 дней до выезда.'},
   {kw:['жиль','квартир','аренд','резиденц'],a:'Стипендиатам DSU — резиденция бесплатно или €0–150/мес. Частный рынок: Милан €400–700 комната, Турин и Пиза от €700/мес всё. Никаких предоплат до осмотра.'},
-  {kw:['сколько','цена','стоимост','бюджет'],a:'Госвузы €0–4 000/год по ISEE (Sapienza <€1 000), Bocconi €17 000+. Жизнь: Милан €1 200–1 800/мес, юг от €650. Сейчас цена запуска для первых 20 студентов: Lite 47 900 ₸, Standard 71 900 ₸, Flagship с треком DSU — 119 900 ₸ (обычные 59 900 / 89 900 / 149 900). Отдельные разборы — от 6 900 ₸.'},
+  {kw:['сколько','цена','стоимост','бюджет'],a:'Госвузы €0–4 000/год по ISEE (Sapienza <€1 000), Bocconi €17 000+. Жизнь: Милан €1 200–1 800/мес, юг от €650. Сейчас идёт тестовый запуск: полное сопровождение за 19 900 ₸ для первых пяти студентов вместо обычных 71 900 ₸. Бесплатно можно проверить шансы на стипендию прямо в этом чате.'},
 ];
 let chatHistory = [];
 let chatBusy = false;
@@ -2481,6 +2659,15 @@ function leadCaptured(){
 }
 function openChat(){ document.getElementById('chatPanel').classList.add('on'); document.getElementById('chatFab').style.display='none'; track('chat_open'); }
 function closeChat(){ document.getElementById('chatPanel').classList.remove('on'); document.getElementById('chatFab').style.display='block'; }
+
+/* Экранирование текста, который приходит извне: ответы ИИ, ввод пользователя,
+   данные с сервера. Без него текст из документа может стать разметкой на странице. */
+function esc(v){
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function addMsg(text, who){
   const log = document.getElementById('chatlog');
   const d = document.createElement('div');
@@ -2584,70 +2771,105 @@ renderVisaDocs(); setVYears(3);
 
 
 /* ---------- Перетаскивание окна чата ----------
-   Работает мышью и пальцем. Позиция запоминается на время сессии,
-   при изменении размера окна панель возвращается в границы экрана. */
+   По принципам fluid-интерфейсов: движение 1:1 с пальцем, на границах
+   упругое сопротивление вместо жёсткого стопа, после броска — инерция
+   с проекцией точки остановки и пружинным приземлением. */
 (function(){
   const panel = document.getElementById('chatPanel');
   const head  = document.getElementById('chpHead');
   if(!panel || !head) return;
 
-  let dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0, moved = false;
+  let dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0;
+  let hist = [];                       // история точек: нужна для скорости в момент отпускания
 
-  function currentPos(){
+  const M = 6;                         // отступ от края экрана
+  function box(){
     const r = panel.getBoundingClientRect();
     return { x: r.left, y: r.top, w: r.width, h: r.height };
   }
-  // Мягкая граница вместо жёсткого упора: чем дальше палец тянет панель
-  // за край экрана, тем меньше она следует за ним (см. Apple rubber-banding).
-  function rubberband(overshoot, dimension, constant){
-    constant = constant || 0.55;
-    return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot));
+  function bounds(){
+    const p = box();
+    return { minX: M, minY: M,
+             maxX: Math.max(M, window.innerWidth  - p.w - M),
+             maxY: Math.max(M, window.innerHeight - p.h - M) };
   }
-  function place(x, y, live){
-    const p = currentPos();
-    const minX = 6, minY = 6;
-    const maxX = Math.max(minX, window.innerWidth  - p.w - 6);
-    const maxY = Math.max(minY, window.innerHeight - p.h - 6);
-    if(live){
-      if(x < minX) x = minX - rubberband(minX - x, p.w);
-      else if(x > maxX) x = maxX + rubberband(x - maxX, p.w);
-      if(y < minY) y = minY - rubberband(minY - y, p.h);
-      else if(y > maxY) y = maxY + rubberband(y - maxY, p.h);
-    } else {
-      x = Math.max(minX, Math.min(x, maxX));
-      y = Math.max(minY, Math.min(y, maxY));
-    }
-    panel.style.left   = x + 'px';
-    panel.style.top    = y + 'px';
-    panel.style.right  = 'auto';
-    panel.style.bottom = 'auto';
+  /* Чем дальше за границу тянут, тем меньше окно следует за пальцем.
+     Реальные предметы замедляются перед остановкой, а не упираются в стену. */
+  function rubber(over, dim, c){
+    c = c || 0.55;
+    return (over * dim * c) / (dim + c * Math.abs(over));
   }
+  function clampSoft(x, y){
+    const b = bounds();
+    if(x < b.minX) x = b.minX - rubber(b.minX - x, window.innerWidth);
+    if(x > b.maxX) x = b.maxX + rubber(x - b.maxX, window.innerWidth);
+    if(y < b.minY) y = b.minY - rubber(b.minY - y, window.innerHeight);
+    if(y > b.maxY) y = b.maxY + rubber(y - b.maxY, window.innerHeight);
+    return { x, y };
+  }
+  function put(x, y){
+    panel.style.left = x + 'px'; panel.style.top = y + 'px';
+    panel.style.right = 'auto';  panel.style.bottom = 'auto';
+  }
+  /* Куда бросок «долетит» сам: экспоненциальное затухание, как у прокрутки */
+  function project(v, rate){
+    rate = rate || 0.998;
+    return (v / 1000) * rate / (1 - rate);
+  }
+
   function down(e){
-    // на крестик не реагируем, иначе окно нельзя будет закрыть
     if(e.target.closest('.close')) return;
     const t = e.touches ? e.touches[0] : e;
-    const p = currentPos();
-    dragging = true; moved = false;
+    const p = box();
+    dragging = true;
     startX = t.clientX; startY = t.clientY;
     baseX = p.x; baseY = p.y;
-    place(p.x, p.y);                 // фиксируем текущее место перед перетаскиванием
+    hist = [{ x: t.clientX, y: t.clientY, t: performance.now() }];
+    put(p.x, p.y);
     panel.classList.add('dragging');
     e.preventDefault();
   }
   function move(e){
     if(!dragging) return;
     const t = e.touches ? e.touches[0] : e;
-    const dx = t.clientX - startX, dy = t.clientY - startY;
-    if(Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
-    place(baseX + dx, baseY + dy, true);   // во время жеста — с резиной за краями
+    const now = performance.now();
+    hist.push({ x: t.clientX, y: t.clientY, t: now });
+    if(hist.length > 6) hist.shift();          // держим короткую историю
+    const pos = clampSoft(baseX + (t.clientX - startX), baseY + (t.clientY - startY));
+    put(pos.x, pos.y);
     e.preventDefault();
   }
   function up(){
     if(!dragging) return;
     dragging = false;
     panel.classList.remove('dragging');
-    const p = currentPos();
-    place(p.x, p.y);                 // отпустили — плавно оседает обратно в границы (см. #chatPanel transition)
+
+    // скорость по последним точкам, а не по одной — так стабильнее
+    const last = hist[hist.length - 1], first = hist[0];
+    const dt = last && first ? (last.t - first.t) : 0;
+    let vx = 0, vy = 0;
+    if(dt > 8){ vx = (last.x - first.x) / dt * 1000; vy = (last.y - first.y) / dt * 1000; }
+
+    const p = box(), b = bounds();
+    // куда долетит с текущей скоростью, и уже это прижимаем к границам
+    const tx = Math.min(b.maxX, Math.max(b.minX, p.x + project(vx)));
+    const ty = Math.min(b.maxY, Math.max(b.minY, p.y + project(vy)));
+
+    if(Math.abs(tx - p.x) < 0.5 && Math.abs(ty - p.y) < 0.5) return;
+
+    if(window.Motion && window.Motion.animate){
+      // бросок был — допускаем лёгкий перелёт; спокойное отпускание оседает без него
+      const flick = Math.hypot(vx, vy) > 300;
+      window.Motion.animate(panel,
+        { left: tx + 'px', top: ty + 'px' },
+        { type: 'spring', bounce: flick ? 0.18 : 0, duration: 0.45,
+          velocity: Math.hypot(vx, vy) });
+    } else {
+      // запасной путь: без библиотеки просто плавно доводим
+      panel.style.transition = 'left .4s cubic-bezier(.32,.72,0,1), top .4s cubic-bezier(.32,.72,0,1)';
+      put(tx, ty);
+      setTimeout(function(){ panel.style.transition = ''; }, 420);
+    }
   }
 
   head.addEventListener('mousedown', down);
@@ -2657,15 +2879,14 @@ renderVisaDocs(); setVYears(3);
   window.addEventListener('touchmove', move, { passive:false });
   window.addEventListener('touchend', up);
 
-  // двойной клик по шапке — вернуть в угол
   head.addEventListener('dblclick', function(){
     panel.style.left = ''; panel.style.top = '';
     panel.style.right = ''; panel.style.bottom = '';
   });
-
-  // при изменении размера окна не даём панели уехать за экран
   window.addEventListener('resize', function(){
-    if(panel.style.left){ const p = currentPos(); place(p.x, p.y); }
+    if(!panel.style.left) return;
+    const p = box(), b = bounds();
+    put(Math.min(b.maxX, Math.max(b.minX, p.x)), Math.min(b.maxY, Math.max(b.minY, p.y)));
   });
 })();
 
@@ -2880,15 +3101,15 @@ renderVisaDocs(); setVYears(3);
     const v = r.verdict || 'warn';
     let html = '<div class="dc-verdict">'
       + '<span class="dc-badge ' + v + '">' + (LABEL[v] || 'Результат') + '</span>'
-      + '<span class="dc-title">' + (r.docTitle || 'Документ') + '</span></div>';
-    if(r.summary) html += '<div class="dc-summary">' + r.summary + '</div>';
+      + '<span class="dc-title">' + esc(r.docTitle || 'Документ') + '</span></div>';
+    if(r.summary) html += '<div class="dc-summary">' + esc(r.summary) + '</div>';
 
     if(Array.isArray(r.checks) && r.checks.length){
       html += '<div class="dc-checks">';
       for(const c of r.checks){
         const st = c.status || 'unknown';
         html += '<div class="dc-check-row"><span class="dc-mark ' + st + '">' + (MARK[st] || '?') + '</span>'
-             +  '<span><b>' + (c.label || '') + '.</b> ' + (c.note || '') + '</span></div>';
+             +  '<span><b>' + esc(c.label || '') + '.</b> ' + esc(c.note || '') + '</span></div>';
       }
       html += '</div>';
     }
@@ -2898,15 +3119,15 @@ renderVisaDocs(); setVYears(3);
       for(const p of r.problems){
         const sev = p.severity === 'critical' ? 'critical' : 'minor';
         html += '<div class="dc-prob ' + sev + '"><b>'
-             + (sev === 'critical' ? 'Критично: ' : 'Замечание: ') + (p.text || '') + '</b>'
-             + (p.fix ? '<span class="fix">Что делать: ' + p.fix + '</span>' : '') + '</div>';
+             + (sev === 'critical' ? 'Критично: ' : 'Замечание: ') + esc(p.text || '') + '</b>'
+             + (p.fix ? '<span class="fix">Что делать: ' + esc(p.fix) + '</span>' : '') + '</div>';
       }
       html += '</div>';
     }
 
     if(Array.isArray(r.nextSteps) && r.nextSteps.length){
       html += '<div class="dc-steps"><b>Что дальше</b>';
-      for(const n of r.nextSteps) html += '<div>→ ' + n + '</div>';
+      for(const n of r.nextSteps) html += '<div>→ ' + esc(n) + '</div>';
       html += '</div>';
     }
 
@@ -2978,7 +3199,9 @@ function showLeadForm(){
     + '<p>Оставь номер — пришлём твой план, напоминания о дедлайнах Universitaly и DSU и ответим на оставшиеся вопросы. Без спама.</p>'
     + '<input id="leadPhone" placeholder="+7 ___ ___ __ __" inputmode="tel">'
     + '<button class="btn" id="leadSend">Получить план</button>'
-    + '<span class="lead-alt">Или сразу <a href="#prices" id="leadToPrices">посмотреть тарифы</a></span>';
+    + '<span class="lead-alt">Или сразу <a href="#prices" id="leadToPrices">посмотреть тарифы</a></span>'
+    + '<span class="consent">Напишем только по поводу поступления. '
+    + '<a href="privacy.html" target="_blank" rel="noopener">Как мы работаем с данными</a></span>';
   log.appendChild(d);
   log.scrollTop = log.scrollHeight;
   track('chat_limit_reached');
@@ -3002,7 +3225,7 @@ function showLeadForm(){
     }
     try{ sessionStorage.setItem('iitaly_lead','1'); }catch(e){}
     track('lead_captured', { from:'chat' });
-    d.innerHTML = '<b>Записали</b><p>Напишем в WhatsApp на ' + phone + '. Можешь продолжать спрашивать — лимит снят.</p>';
+    d.innerHTML = '<b>Записали</b><p>Напишем в WhatsApp на ' + esc(phone) + '. Можешь продолжать спрашивать — лимит снят.</p>';
   });
 }
 
@@ -3184,11 +3407,11 @@ function showLeadForm(){
     for(const r of rows){
       const v = r.doc ? r.doc.verdict : null;
       h += '<div class="pd-item' + (v ? ' ' + v : '') + '">'
-        + '<div class="pd-top"><b>' + r.title + '</b>'
+        + '<div class="pd-top"><b>' + esc(r.title) + '</b>'
         + (v ? '<span class="pt-tag doc ' + v + '">' + (V_LABEL[v] || '') + '</span>'
              : '<span class="pd-none">нет файла</span>') + '</div>'
         + '<span class="pd-stage">' + r.stage + '</span>'
-        + (r.doc && r.doc.summary ? '<span class="pd-sumtext">' + r.doc.summary + '</span>' : '')
+        + (r.doc && r.doc.summary ? '<span class="pd-sumtext">' + esc(r.doc.summary) + '</span>' : '')
         + (r.doc && r.doc.critical ? '<span class="pd-crit">Критических ошибок: ' + r.doc.critical + '</span>' : '')
         + '<button class="pt-doc-btn" data-doc="' + r.id + '">'
         + (r.doc ? 'Проверить другой файл' : 'Загрузить и проверить') + '</button>'
@@ -3344,7 +3567,7 @@ function showLeadForm(){
 
     let html = '<div class="pt-head">'
       + '<div><div class="eyebrow">' + d.client.tier + ' · набор ' + (d.client.intakeYear || '') + '/' + String((d.client.intakeYear||0)+1).slice(2) + '</div>'
-      + '<h2 class="h2" style="margin-bottom:2px">' + d.client.name + '</h2></div>'
+      + '<h2 class="h2" style="margin-bottom:2px">' + esc(d.client.name) + '</h2></div>'
       + '<button class="pt-exit" id="ptExit">Выйти</button></div>';
 
     // переключатель разделов — под шапкой, липнет при прокрутке
@@ -3409,7 +3632,7 @@ function showLeadForm(){
           + (doc ? '<span class="pt-tag doc ' + doc.verdict + '">документ: ' + (V_LABEL[doc.verdict] || '') + '</span>' : '')
           + (t.note ? '<span class="pt-note">' + t.note + '</span>' : '')
           + (t.warn ? '<span class="pt-warn">' + t.warn + '</span>' : '')
-          + (doc && doc.summary ? '<span class="pt-doc-sum">' + doc.summary + '</span>' : '')
+          + (doc && doc.summary ? '<span class="pt-doc-sum">' + esc(doc.summary) + '</span>' : '')
           + (needDoc
               ? '<button class="pt-doc-btn" data-doc="' + t.id + '">'
                 + (doc ? 'Проверить другой файл' : 'Загрузить и проверить') + '</button>'
@@ -3450,12 +3673,68 @@ function showLeadForm(){
       + (d.client.email || '') + '"><button class="ptn-btn" id="ptnSave">Сохранить</button></div>'
       + '</div></div>'
       + '<div id="ptnMsg" class="ptn-msg" style="display:none"></div></div>';
+
+    html += '<div class="pt-danger"><b>Удалить мои данные</b>'
+      + '<p>Сотрём профиль, прогресс и результаты проверок. Отменить нельзя, доступ в кабинет пропадёт.</p>'
+      + '<button class="pt-del" id="ptDel">Удалить данные</button></div>';
     html += '</div>';   // конец «Помощи»
 
     view.innerHTML = html;
     showSection(currentSection);
     renderAlert();
     renderNext();
+
+    /* ---- напоминания и удаление данных ----
+       Эти обработчики терялись при переделке кабинета: кнопки рисовались,
+       но не реагировали. Держим их рядом с разметкой, чтобы не потерять снова. */
+    const msg = function(t, bad){
+      const m = document.getElementById('ptnMsg');
+      if(!m) return;
+      m.textContent = t;
+      m.className = 'ptn-msg' + (bad ? ' bad' : '');
+      m.style.display = t ? 'block' : 'none';
+    };
+    async function saveNotify(payload){
+      try{
+        const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(code) + '/notify', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(Object.assign({ surname: surname }, payload))
+        });
+        const j = await r.json();
+        if(!j || !j.ok){ msg((j && j.error) || 'Не удалось сохранить', true); return null; }
+        return j;
+      }catch(e){ msg('Нет связи с сервером', true); return null; }
+    }
+    const saveBtn = document.getElementById('ptnSave');
+    if(saveBtn) saveBtn.addEventListener('click', async function(){
+      const val = (document.getElementById('ptnEmail').value || '').trim();
+      saveBtn.disabled = true;
+      const j = await saveNotify({ email: val, notifyEmail: !!val });
+      saveBtn.disabled = false;
+      if(j){ msg(val ? 'Будем писать на ' + val : 'Письма отключены', false); track('notify_email'); }
+    });
+    const tgOff = document.getElementById('ptnTgOff');
+    if(tgOff) tgOff.addEventListener('click', async function(){
+      const j = await saveNotify({ notifyTelegram: false });
+      if(j){ msg('Telegram отключён', false); load(code, surname, true); }
+    });
+    const del = document.getElementById('ptDel');
+    if(del) del.addEventListener('click', async function(){
+      if(!confirm('Удалить все данные без возможности восстановления?')) return;
+      if(prompt('Для подтверждения введи слово УДАЛИТЬ') !== 'УДАЛИТЬ') return;
+      try{
+        const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(code) + '/delete', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ surname: surname, confirm: 'УДАЛИТЬ' })
+        });
+        const j = await r.json();
+        if(j && j.ok){
+          try{ localStorage.removeItem(KEY); localStorage.removeItem(KEY_SN); }catch(e){}
+          alert('Данные удалены.');
+          location.reload();
+        } else msg((j && j.error) || 'Не удалось удалить', true);
+      }catch(e){ msg('Нет связи с сервером', true); }
+    });
 
     // клик по узлу дороги ведёт к этапу в разделе «План»
     view.querySelectorAll('.tl-node').forEach(function(n){
@@ -3538,6 +3817,20 @@ function showLeadForm(){
     const savedCode = localStorage.getItem(KEY), savedSn = localStorage.getItem(KEY_SN);
     if(savedCode && savedSn) load(savedCode, savedSn, true);
   }catch(e){}
+})();
+
+
+/* §12 Край шапки появляется, только когда под неё уходит контент */
+(function(){
+  const h = document.querySelector('header');
+  if(!h) return;
+  let on = false;
+  const check = () => {
+    const should = window.scrollY > 8;
+    if(should !== on){ on = should; h.classList.toggle('scrolled', should); }
+  };
+  window.addEventListener('scroll', check, { passive: true });
+  check();
 })();
 
 /* ================= INIT ================= */
