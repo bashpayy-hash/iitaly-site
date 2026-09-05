@@ -296,7 +296,7 @@ section{padding:64px 0}
 .pkg.flag .pkg-result{color:#d9cfc0;border-bottom-color:rgba(255,255,255,.14)}
 
 /* Standard — основной выбор */
-.pkg.hero{border-color:var(--green);box-shadow:6px 6px 0 var(--green);position:relative}
+.pkg.hero{border-color:var(--green);box-shadow:6px 6px 0 var(--green), 0 16px 36px -8px var(--shadow-soft-green);position:relative}
 .pkg.hero .btn{background:var(--green);color:#fff;border-color:var(--ink)}
 .badge.popular{background:var(--green);color:#fff;letter-spacing:.02em;text-transform:none;font-size:var(--t-2xs);padding:4px 10px}
 
@@ -347,7 +347,7 @@ section{padding:64px 0}
 .pp-row i{color:var(--line);font-style:normal}
 .pp-note{font-size:var(--t-xs);color:#6f6455;line-height:1.5;max-width:520px}
 
-.card.primary-card{border-color:var(--red);box-shadow:6px 6px 0 var(--red)}
+.card.primary-card{border-color:var(--red);box-shadow:6px 6px 0 var(--red), 0 16px 36px -8px var(--shadow-soft-red)}
 .card.primary-card .eyebrow{color:var(--red)}
 
 
@@ -3821,6 +3821,50 @@ function showLeadForm(){
   };
   window.addEventListener('scroll', check, { passive: true });
   check();
+})();
+
+/* ================= 3D-НАКЛОН КЛЮЧЕВЫХ КАРТОЧЕК =================
+   Курсор двигает карточку в перспективе — только там, где есть точная
+   мышь (hover:hover + pointer:fine, тач не трогаем) и только на
+   нескольких «геройских» элементах, а не на всём подряд (список вузов,
+   например, нарочно не включён — 40+ карточек с постоянным
+   will-change это уже не деталь, а нагрузка). Во время движения
+   transition выключен — трекинг должен быть 1:1, а не догонять
+   с запозданием; при уходе курсора — пружинный возврат. */
+(function(){
+  try{
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var SEL = '.pkg.hero, .card.primary-card, .split .card, .try-check, .stat';
+
+    function bind(el){
+      if (el.__tiltBound) return;
+      el.__tiltBound = true;
+      var pressed = false;
+      function apply(rx, ry, s){
+        el.style.transform = 'perspective(800px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) scale(' + s + ')';
+      }
+      el.addEventListener('mouseenter', function(){ el.style.transition = 'none'; });
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        apply(py * -8, px * 8, pressed ? .985 : 1);
+      });
+      el.addEventListener('mousedown', function(){ pressed = true; });
+      el.addEventListener('mouseup',   function(){ pressed = false; });
+      el.addEventListener('mouseleave', function(){
+        pressed = false;
+        el.style.transition = 'transform .5s var(--spring)';
+        el.style.transform = '';
+      });
+    }
+    function bindAll(){ document.querySelectorAll(SEL).forEach(bind); }
+    bindAll();
+    var t;
+    new MutationObserver(function(){ clearTimeout(t); t = setTimeout(bindAll, 150); })
+      .observe(document.body, { childList: true, subtree: true });
+  }catch(e){}
 })();
 
 /* ================= INIT ================= */
