@@ -17,34 +17,19 @@
 <meta name="twitter:title" content="IItaly — поступление в Италию ведёт ИИ">
 <meta name="twitter:description" content="Поступление в Италию из Казахстана: ИИ подбирает программы, считает шансы на стипендию DSU, ведёт документы и визу. Под ключ за 27 000 ₸ вместо 650 000 – 1 000 000 ₸ у агентства.">
 <title>IItaly — ИИ-поступление в Италию для студентов из Казахстана</title>
+<link rel="stylesheet" href="tokens.css">
 <style>
-:root{
-  --cream:#faf5ec; --paper:#fffdf8; --ink:#211a14; --sec:#8a7f70;
-  --red:#b4262b; --red-deep:#8f1d21; --green:#3f6b4f;
-  --ink-soft:#4a4038; --accent:#211a14; --warn:#b25000;
-  --line:#e9dfcf; --shadow:#211a14;
-
-  /* Типографическая шкала: семь ступеней вместо двадцати пяти.
-     Поля ввода остаются 16px — иначе iOS зумит страницу при фокусе. */
-  --t-xl:30px; --t-lg:22px; --t-md:18px; --t-bd:15px;
-  --t-sm:13.5px; --t-xs:12px; --t-2xs:10.5px;
-  /* Радиусы: пять ступеней вместо тринадцати */
-  --r-pill:999px; --r-lg:20px; --r-md:16px; --r-sm:12px; --r-xs:6px;
-  /* Тени-стикеры: глубина растёт вместе с важностью блока */
-  --sh-sm:2px 2px 0 var(--shadow); --sh-md:4px 4px 0 var(--shadow);
-  --sh-lg:6px 6px 0 var(--shadow); --sh-xl:10px 10px 0 var(--shadow);
-
-  /* Пружинные кривые вместо ease: движение начинается быстро и мягко оседает.
-     linear() — нативный CSS, библиотека не нужна. */
-  --spring: linear(0,.0033,.0132,.0295,.052,.0803,.114,.1526,.1957,.2429,.2936,.3474,.4038,.4622,.5222,.5833,.6449,.7066,.7679,.8283,.8875,.9449,1.0002,1.0053,1.0092,1.012,1.0138,1.0146,1.0146,1.0139,1.0127,1.0111,1.0093,1.0074,1.0055,1.0037,1.0021,1.0007,.9997,.9989,.9984,.9982,.9982,.9984,.9987,.9991,.9995,.9999,1.0002,1.0004,1.0005,1.0005,1);
-  --spring-soft: cubic-bezier(.32,.72,0,1);
-  --ease-out: cubic-bezier(.25,.1,.25,1);
-
-  /* Трекинг зависит от размера: крупный текст сжимаем, мелкий разрежаем */
-  --track-xl:-.03em; --track-lg:-.022em; --track-md:-.015em;
-  --track-bd:-.006em; --track-sm:0; --track-xs:.002em; --track-2xs:.08em;
-}
+/* Hallmark · redesign: tokens extracted to tokens.css (OKLCH, spacing scale,
+   named easing triad + durations) · macrostructure/copy/brand unchanged */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* Клавиатурная навигация: раньше фокус не был виден нигде на сайте.
+   Кольцо анимировать нельзя (Hallmark motion discipline) — оно должно
+   появляться мгновенно, иначе теряется как навигационный сигнал. */
+:focus{outline:none}
+:focus-visible{
+  outline:2.5px solid var(--color-focus);
+  outline-offset:2px;
+}
 html{scroll-behavior:smooth}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
@@ -60,7 +45,8 @@ body{
   display:inline-block;border:2px solid var(--ink);background:var(--ink);color:var(--cream);
   border-radius:var(--r-pill);padding:14px 28px;font-size:var(--t-sm);font-weight:800;letter-spacing:.05em;text-transform:uppercase;
   font-family:inherit;cursor:pointer;text-align:center;box-shadow:var(--sh-md);
-  transition:transform .08s, box-shadow .08s;text-decoration:none;
+  transition:transform .12s var(--spring), box-shadow .12s var(--spring);text-decoration:none;
+  white-space:nowrap;flex-shrink:0;
 }
 .btn:active{transform:translate(3px,3px);box-shadow:var(--sh-sm)}
 .btn.ghost{background:var(--paper);color:var(--ink)}
@@ -156,11 +142,11 @@ section{padding:64px 0}
 .arrow-link{font-weight:800;font-size:var(--t-sm);text-transform:uppercase;letter-spacing:.04em;color:var(--ink)}
 
 /* ---------- университеты ---------- */
-.uni-layout{display:grid;grid-template-columns:0.9fr 1.1fr;gap:26px;align-items:start}
-@media(max-width:880px){.uni-layout{grid-template-columns:1fr}}
-.map-box{position:sticky;top:82px}
+.uni-layout{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);gap:26px;align-items:start}
+@media(max-width:880px){.uni-layout{grid-template-columns:minmax(0,1fr)}}
+.map-box{position:sticky;top:82px;min-width:0}
 @media(max-width:880px){.map-box{position:static}}
-#itmap{width:100%;height:auto;display:block}
+#itmap{width:100%;height:auto;display:block;min-width:0}
 .it-halo{fill:none;stroke:#7fb3ff;stroke-width:5;opacity:0;filter:url(#softGlow);animation:haloIn .4s cubic-bezier(.25,.1,.25,1) .3s forwards}
 @keyframes haloIn{to{opacity:.16}}
 .it-shape{
@@ -245,7 +231,12 @@ section{padding:64px 0}
 #itmap.instant .plane{animation:none;opacity:1}
 
 /* ---------- dark theme: universities page ---------- */
-#page-unis{background:#0b0e14;color:#e8eef7;margin:0 -22px;padding:0 22px}
+/* .page уже прямой потомок body без своего паддинга — компенсировать
+   отрицательным margin нечего. margin:0 -22px тут раздувал страницу
+   на 22px при любой ширине экрана (постоянный, не зависящий от viewport
+   горизонтальный скролл — Hallmark non-negotiable #1). Фон и так во всю
+   ширину без этого трюка. */
+#page-unis{background:#0b0e14;color:#e8eef7}
 #page-unis .h2{color:#f2f6fb;font-weight:700;letter-spacing:-1px;text-transform:none}
 #page-unis .eyebrow{color:#7fb3ff;font-weight:600}
 #page-unis .sub{color:#94a5bb}
@@ -978,7 +969,8 @@ header.scrolled{
 .chip{
   border:2px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:var(--r-pill);
   padding:8px 15px;font-size:var(--t-xs);font-weight:700;font-family:inherit;cursor:pointer;
-  box-shadow:var(--sh-sm);transition:transform .08s;
+  box-shadow:var(--sh-sm);transition:transform .12s var(--spring);
+  white-space:nowrap;flex-shrink:0;
 }
 .chip:active{transform:translate(2px,2px);box-shadow:none}
 .chip.active{background:var(--ink);color:var(--cream)}
@@ -1310,7 +1302,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
         <div class="stepc rv"><div class="n">5</div><b>Виза D и переезд</b><p>BLS, гарантия €6 947, kit giallo за 8 дней после прилёта.</p></div>
       </div>
       <div style="text-align:center;margin-top:26px">
-        <button class="btn ghost rv" onclick="nav('guide')">Узнать больше: апостиль, ЦОН, документы →</button>
+        <button class="btn ghost rv" onclick="nav('guide')">Гайды по документам →</button>
       </div>
     </div>
   </section>
