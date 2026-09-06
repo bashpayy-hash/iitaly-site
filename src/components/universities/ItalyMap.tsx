@@ -99,9 +99,10 @@ export function ItalyMap({
       {cityIds.map((id) => {
         const c = CITIES[id];
         const active = id === activeCity;
+        const big = c.tier === 1 || active;
         const dimmed = matchedCities.size > 0 && !matchedCities.has(id) && !active;
         const r = active ? 14 : c.tier === 1 ? 11 : 7;
-        const gs = 17;
+        const gs = big ? 22 : 17;
         const label = labels[id];
 
         return (
@@ -133,11 +134,15 @@ export function ItalyMap({
               filter={active ? "url(#mapPinGlow)" : undefined}
               className="transition-colors"
             />
-            <g
-              transform={`translate(${c.x - gs / 2},${c.y - gs / 2}) scale(${(gs / 22).toFixed(3)})`}
-              fill={active ? "#fff" : "#cfe0f5"}
-              dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
-            />
+            {big ? (
+              <g
+                transform={`translate(${c.x - gs / 2},${c.y - gs / 2}) scale(${(gs / 22).toFixed(3)})`}
+                fill={active ? "#fff" : "#cfe0f5"}
+                dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
+              />
+            ) : (
+              <circle cx={c.x} cy={c.y} r={2.6} fill="#8fb6e8" />
+            )}
             {label && (
               <text
                 x={label.x}

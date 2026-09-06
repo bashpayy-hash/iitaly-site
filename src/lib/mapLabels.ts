@@ -146,15 +146,16 @@ export function placeLabel(
 
 export function placeAllLabels(activeCity: CityId | null = null): Record<CityId, LabelPos | null> {
   const cityIds = Object.keys(CITIES) as CityId[];
-  const sorted = [...cityIds].sort((a, b) => {
-    const ta = CITIES[a].tier === 1 ? 1 : 0;
-    const tb = CITIES[b].tier === 1 ? 1 : 0;
-    return tb - ta; // крупные города размещаются первыми
-  });
+  // Как на старом сайте: подпись держат только крупные (tier 1) города и
+  // выбранный город — иначе все 30 подписей забивают карту. Активный город
+  // размещается первым, чтобы забрать себе лучшую позицию.
+  const priority = (id: CityId) => (id === activeCity ? 2 : CITIES[id].tier === 1 ? 1 : 0);
+  const sorted = [...cityIds].sort((a, b) => priority(b) - priority(a));
   const placed: Box[] = [];
   const result = {} as Record<CityId, LabelPos | null>;
   for (const id of sorted) {
-    result[id] = placeLabel(id, placed, activeCity);
+    const wantLabel = id === activeCity || CITIES[id].tier === 1;
+    result[id] = wantLabel ? placeLabel(id, placed, activeCity) : null;
   }
   return result;
 }
