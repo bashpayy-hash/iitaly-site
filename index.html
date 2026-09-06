@@ -2246,7 +2246,7 @@ function renderUniList(){
       <div class="uni-actions">
         <button class="mini-btn red" onclick="openUni('${u.id}')">Условия поступления</button>
         <button class="mini-btn ${cmp.includes(u.id)?'added':''}" onclick="toggleCmp('${u.id}')"
-          ${!cmp.includes(u.id)&&cmp.length>=3?'disabled':''}>${cmp.includes(u.id)?'✓ В сравнении':'+ Сравнить'}</button>
+          ${!cmp.includes(u.id)&&cmp.length>=3?'disabled title="Можно сравнить максимум 3 вуза — сначала убери один в панели снизу"':''}>${cmp.includes(u.id)?'✓ В сравнении':'+ Сравнить'}</button>
       </div>
     </div>`).join('')
     : `<div class="empty">Ничего не нашлось — сбрось фильтр или выбери другой город.</div>`;
@@ -2286,7 +2286,7 @@ function renderCmpBar(){
       return `<span class="cmp-slot filled">${u.name}<button onclick="toggleCmp('${id}')" aria-label="Убрать ${u.name} из сравнения">✕</button></span>`;
     }).join('') +
     (cmp.length<3 ? `<span class="cmp-slot">можно ещё ${3-cmp.length}</span>` : '') +
-    `<button class="btn" onclick="openCmp()" ${cmp.length<2?'disabled':''}>Сравнить</button>`;
+    `<button class="btn" onclick="openCmp()" ${cmp.length<2?'disabled title="Выбери ещё минимум один вуз, чтобы сравнить"':''}>Сравнить</button>`;
 }
 function openCmp(){
   if(cmp.length<2) return;
@@ -3267,6 +3267,7 @@ function showLeadForm(){
   async function toggle(taskId, value, el){
     if(!state) return;
     el.classList.add('busy');
+    const row = el.closest('.pt-task');
     try{
       const r = await fetch(BACKEND_URL + '/api/portal/' + encodeURIComponent(state.code) + '/task', {
         method:'POST', headers:{'Content-Type':'application/json'},
@@ -3279,8 +3280,14 @@ function showLeadForm(){
         el.classList.toggle('done', value);
         refresh();
         track('portal_task', { done: value });
+      } else if(row){
+        // раньше здесь ничего не показывали: отметка молча не сохранялась,
+        // а чекбокс выглядел так, будто клик вообще не сработал
+        docMsg(row, (d && d.error) || 'Не удалось сохранить отметку', true);
       }
-    }catch(e){}
+    }catch(e){
+      if(row) docMsg(row, 'Нет связи с сервером — отметка не сохранена', true);
+    }
     el.classList.remove('busy');
   }
 
