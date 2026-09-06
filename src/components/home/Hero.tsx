@@ -5,7 +5,10 @@ export function Hero() {
     <section className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
-          <h1 className="font-display text-[10vw] leading-[0.88] font-black tracking-tight uppercase sm:text-[8vw] lg:text-[6vw]">
+          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
+            Абитуриентам Казахстана 16–18 лет и их родителям
+          </p>
+          <h1 className="mt-3 font-display text-[10vw] leading-[0.88] font-black tracking-tight uppercase sm:text-[8vw] lg:text-[6vw]">
             Поступать
             <br />
             <span className="relative inline-block text-red">
