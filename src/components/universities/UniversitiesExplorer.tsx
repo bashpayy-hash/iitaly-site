@@ -9,10 +9,9 @@ import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
 
-function matchesFilters(u: University, type: TypeFilter, engOnly: boolean, cheapOnly: boolean) {
+function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
   if (type !== "all" && u.type !== type) return false;
   if (engOnly && !u.eng) return false;
-  if (cheapOnly && !u.cheap) return false;
   return true;
 }
 
@@ -20,21 +19,20 @@ export function UniversitiesExplorer() {
   const [activeCity, setActiveCity] = useState<CityId | null>(null);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
-  const [cheapOnly, setCheapOnly] = useState(false);
   const [openUniId, setOpenUniId] = useState<string | null>(null);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
 
   const filteredUnis = useMemo(
-    () => UNIS.filter((u) => matchesFilters(u, typeFilter, engOnly, cheapOnly)),
-    [typeFilter, engOnly, cheapOnly],
+    () => UNIS.filter((u) => matchesFilters(u, typeFilter, engOnly)),
+    [typeFilter, engOnly],
   );
 
   const matchedCities = useMemo(() => {
-    const active = typeFilter !== "all" || engOnly || cheapOnly;
+    const active = typeFilter !== "all" || engOnly;
     if (!active) return new Set<CityId>();
     return new Set(filteredUnis.map((u) => u.city));
-  }, [filteredUnis, typeFilter, engOnly, cheapOnly]);
+  }, [filteredUnis, typeFilter, engOnly]);
 
   const cityUnis = useMemo(
     () => (activeCity ? filteredUnis.filter((u) => u.city === activeCity) : []),
@@ -77,13 +75,11 @@ export function UniversitiesExplorer() {
             onTypeChange={setTypeFilter}
             engOnly={engOnly}
             onEngChange={setEngOnly}
-            cheapOnly={cheapOnly}
-            onCheapChange={setCheapOnly}
           />
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div className="lg:sticky lg:top-24">
-              <div className="rounded-xl border-2 border-ink bg-paper p-3 shadow-lg sm:p-5">
+              <div className="overflow-hidden rounded-xl border border-white/10 shadow-[0_24px_60px_rgba(13,17,24,.45)]">
                 <ItalyMap
                   activeCity={activeCity}
                   onSelectCity={(id) => setActiveCity(id)}

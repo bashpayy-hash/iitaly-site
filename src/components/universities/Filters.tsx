@@ -14,15 +14,11 @@ export function Filters({
   onTypeChange,
   engOnly,
   onEngChange,
-  cheapOnly,
-  onCheapChange,
 }: {
   typeFilter: TypeFilter;
   onTypeChange: (t: TypeFilter) => void;
   engOnly: boolean;
   onEngChange: (v: boolean) => void;
-  cheapOnly: boolean;
-  onCheapChange: (v: boolean) => void;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -51,16 +47,6 @@ export function Filters({
         }`}
       >
         На английском
-      </button>
-      <button
-        type="button"
-        onClick={() => onCheapChange(!cheapOnly)}
-        aria-pressed={cheapOnly}
-        className={`rounded-pill border-2 border-ink px-3.5 py-1.5 text-xs font-extrabold whitespace-nowrap uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red ${
-          cheapOnly ? "bg-warn text-cream" : "bg-paper text-ink hover:bg-cream"
-        }`}
-      >
-        Дешёвая жизнь
       </button>
     </div>
   );
