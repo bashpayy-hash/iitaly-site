@@ -537,7 +537,7 @@ section{padding:64px 0}
 .pt-prog-top b{font-size:clamp(20px,3vw,26px);font-weight:900;letter-spacing:-.5px}
 .pt-prog-top span{font-size:var(--t-xs);color:#a89b89}
 .pt-track{height:8px;background:rgba(255,255,255,.14);border-radius:var(--r-xs);overflow:hidden}
-.pt-bar{height:100%;background:var(--green);border-radius:var(--r-xs);transition:width .5s cubic-bezier(.25,.1,.25,1)}
+.pt-bar{height:100%;width:100%;background:var(--green);border-radius:var(--r-xs);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.25,.1,.25,1)}
 
 .pt-next{background:var(--paper);border:2px solid var(--red);border-radius:var(--r-md);padding:16px 18px;margin-bottom:20px;
   box-shadow:var(--sh-md)}
@@ -657,8 +657,18 @@ body.in-portal footer{display:none}
 .pt-caret{width:9px;height:9px;border-right:2px solid var(--sec);border-bottom:2px solid var(--sec);
   transform:rotate(-45deg);transition:transform .25s cubic-bezier(.25,.1,.25,1);flex-shrink:0;margin-left:2px}
 .pt-stage.open .pt-caret{transform:rotate(45deg)}
-.pt-stage-body{display:none;padding:4px 18px 12px}
-.pt-stage.open .pt-stage-body{display:block}
+/* Раньше открытие этапа было display:none→block — снаружи это выглядело
+   как мгновенный скачок высоты, никакой transition тут сработать не может.
+   grid-template-rows 0fr→1fr — стандартный способ анимировать «до auto»
+   без измерения scrollHeight в JS; .pt-stage-body-in — обёртка на случай,
+   если внутри несколько соседних узлов (иначе grid развалит их по своим
+   ячейкам вместо одной). */
+.pt-stage-body{
+  display:grid;grid-template-rows:0fr;opacity:0;overflow:hidden;
+  transition:grid-template-rows .3s var(--ease-out), opacity .2s var(--ease-out);
+}
+.pt-stage-body-in{min-height:0;padding:4px 18px 12px}
+.pt-stage.open .pt-stage-body{grid-template-rows:1fr;opacity:1}
 
 /* задачи: вся строка кликабельна, палец попадает */
 .pt-task{min-height:48px;align-items:center;padding:12px 0}
@@ -820,8 +830,8 @@ details[open] .gc-caret{transform:rotate(-135deg);margin-top:2px}
   padding:22px;box-shadow:var(--sh-md);max-width:620px}
 .wiz-top{display:flex;align-items:center;gap:12px;margin-bottom:20px}
 .wiz-track{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden}
-.wiz-bar{height:100%;width:0;background:var(--ink);border-radius:3px;
-  transition:width .45s cubic-bezier(.25,.1,.25,1)}
+.wiz-bar{height:100%;width:100%;background:var(--ink);border-radius:3px;
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.25,.1,.25,1)}
 .wiz-count{font-size:var(--t-2xs);font-weight:800;color:#8a7f70;text-transform:uppercase;
   letter-spacing:.06em;flex-shrink:0}
 .wiz-q{font-size:clamp(19px,3vw,24px);font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:16px}
@@ -914,8 +924,8 @@ header.scrolled{
 .badge, .pt-tag, .sv-tag, .pd-chip, .lc-tag{ letter-spacing:var(--track-2xs) }
 
 /* §4 Пружины на том, что человек трогает */
-.wiz-bar, .pt-bar{ transition:width .55s var(--spring-soft) }
-.pt-stage-body, .gc-body, .vsec-body{ transition:opacity .25s var(--ease-out) }
+.wiz-bar, .pt-bar{ transition:transform .55s var(--spring-soft) }
+.gc-body, .vsec-body{ transition:opacity .25s var(--ease-out) }
 .wiz-opt{ transition:background .2s var(--ease-out), transform .3s var(--spring) }
 .card, .pkg, .uni-card, .try-check{ transition:transform .35s var(--spring), box-shadow .35s var(--ease-out) }
 
@@ -1656,7 +1666,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           <span style="font-size:13px;color:var(--sec);font-weight:700" id="visaProgT">0 из 9 собрано</span>
         </div>
         <div class="track" style="height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px">
-          <div id="visaProgF" style="height:100%;width:0%;background:var(--green);border-radius:3px;transition:width .45s cubic-bezier(.25,.1,.25,1)"></div>
+          <div id="visaProgF" style="height:100%;width:100%;background:var(--green);border-radius:3px;transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.25,.1,.25,1)"></div>
         </div>
       </div>
       <div id="visaDocs" style="margin-bottom:30px"></div></div></details>
@@ -2363,13 +2373,13 @@ function wizRender(){
   const hint = document.getElementById('wizHint');
   if(!body) return;
 
-  bar.style.width = (wizStep / WIZ.length * 100) + '%';
+  bar.style.transform = 'scaleX(' + (wizStep / WIZ.length) + ')';
   cnt.textContent = Math.min(wizStep + 1, WIZ.length) + ' из ' + WIZ.length;
   back.style.visibility = wizStep > 0 ? 'visible' : 'hidden';
 
   // последний экран: телефон и запуск плана
   if(wizStep >= WIZ.length){
-    bar.style.width = '100%';
+    bar.style.transform = 'scaleX(1)';
     cnt.textContent = 'Готово';
     hint.textContent = '';
     body.innerHTML = '<div class="wiz-q">Куда прислать план?</div>'
@@ -2744,7 +2754,7 @@ function renderVisaDocs(){
       <div><b>${d[0]}</b><span>${d[1]}</span></div>
     </div>`).join('');
   document.getElementById('visaProgT').textContent = visaDone.size + ' из ' + VISA_DOCS.length + ' собрано';
-  document.getElementById('visaProgF').style.width = (visaDone.size/VISA_DOCS.length*100) + '%';
+  document.getElementById('visaProgF').style.transform = 'scaleX(' + (visaDone.size/VISA_DOCS.length) + ')';
 }
 function toggleVisaDoc(i){
   visaDone.has(i) ? visaDone.delete(i) : visaDone.add(i);
@@ -3281,7 +3291,7 @@ function showLeadForm(){
     const d = state.data;
     const bar = document.getElementById('ptBar');
     const num = document.getElementById('ptNum');
-    if(bar) bar.style.width = d.progress.pct + '%';
+    if(bar) bar.style.transform = 'scaleX(' + (d.progress.pct / 100) + ')';
     if(num) num.textContent = d.progress.done + ' из ' + d.progress.total;
 
     for(const st of d.roadmap){
@@ -3573,7 +3583,7 @@ function showLeadForm(){
 
     html += '<div class="pt-progress"><div class="pt-prog-top"><b id="ptNum">'
       + d.progress.done + ' из ' + d.progress.total + '</b><span>шагов пройдено</span></div>'
-      + '<div class="pt-track"><div class="pt-bar" id="ptBar" style="width:' + d.progress.pct + '%"></div></div></div>';
+      + '<div class="pt-track"><div class="pt-bar" id="ptBar" style="transform:scaleX(' + (d.progress.pct / 100) + ')"></div></div></div>';
 
     html += '<div id="ptAlertBox"></div>';
     html += '<div id="ptNextBox"></div>';
@@ -3606,7 +3616,7 @@ function showLeadForm(){
       html += '<div class="pt-stage' + (done === total ? ' complete' : '') + (open ? ' open' : '') + '" id="st-' + st.id + '">'
         + '<button class="pt-stage-head" data-stage="' + st.id + '"><b>' + st.title + '</b>'
         + '<span>' + done + '/' + total + '</span><i class="pt-caret"></i></button>'
-        + '<div class="pt-stage-body">';
+        + '<div class="pt-stage-body"><div class="pt-stage-body-in">';
       for(const t of st.tasks){
         const isDone = !!d.done[t.id];
         const stt = dlState(t, isDone);
@@ -3629,7 +3639,7 @@ function showLeadForm(){
               : '')
           + '</div></div>';
       }
-      html += '</div></div>';
+      html += '</div></div></div>';
     }
 
     html += '</div>';   // конец «Плана»
