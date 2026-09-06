@@ -1,26 +1,100 @@
 @import "tailwindcss";
 
+/* IItaly — дизайн-токены
+   Тот же фирменный язык, что и на текущем сайте (кремовый фон, чернильные
+   обводки, жёсткие офсетные тени, капслок в заголовках), переведённый в
+   OKLCH и в Tailwind v4 @theme — значения --color, --radius и --shadow
+   становятся утилитами (bg-ink, rounded-lg, shadow-md) автоматически. */
+@theme {
+  --color-cream: oklch(97.16% 0.0131 82.4);
+  --color-paper: oklch(99.42% 0.0069 88.64);
+  --color-ink: oklch(22.41% 0.0158 62.49);
+  --color-ink-soft: oklch(37.92% 0.0192 60.85);
+  --color-sec: oklch(50.92% 0.0269 75.6);
+  --color-sec-deep: oklch(44.81% 0.0244 74.34);
+  --color-red: oklch(50.45% 0.1777 24.86);
+  --color-red-deep: oklch(42.69% 0.1492 24.73);
+  --color-green: oklch(48.73% 0.0668 155.13);
+  --color-warn: oklch(54.74% 0.1471 48.89);
+  --color-line: oklch(90.73% 0.0241 79.74);
+
+  --font-display: var(--font-unbounded), "Arial Black", sans-serif;
+  --font-sans: var(--font-golos), "Helvetica Neue", Arial, sans-serif;
+
+  --radius-pill: 999px;
+  --radius-xl: 20px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 6px;
+
+  /* Тени-стикеры: жёсткий офсет (силуэт бренда) + мягкая рассеянная
+     подложка снизу для настоящей глубины — тот же приём, что уже
+     обкатан и проверен на текущем сайте. */
+  --shadow-color-sticker: oklch(22.41% 0.0158 62.49);
+  --shadow-sm: 2px 2px 0 oklch(22.41% 0.0158 62.49), 0 2px 6px -2px oklch(22.41% 0.0158 62.49 / 0.14);
+  --shadow-md: 4px 4px 0 oklch(22.41% 0.0158 62.49), 0 6px 14px -4px oklch(22.41% 0.0158 62.49 / 0.2);
+  --shadow-lg: 6px 6px 0 oklch(22.41% 0.0158 62.49), 0 10px 24px -6px oklch(22.41% 0.0158 62.49 / 0.24);
+  --shadow-xl: 10px 10px 0 oklch(22.41% 0.0158 62.49), 0 18px 42px -8px oklch(22.41% 0.0158 62.49 / 0.3);
+  --shadow-red: 6px 6px 0 oklch(50.45% 0.1777 24.86), 0 16px 36px -8px oklch(50.45% 0.1777 24.86 / 0.28);
+  --shadow-green: 6px 6px 0 oklch(48.73% 0.0668 155.13), 0 16px 36px -8px oklch(48.73% 0.0668 155.13 / 0.24);
+
+  --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+/* Клавиатурная навигация: кольцо появляется мгновенно, без анимации —
+   иначе теряется как навигационный сигнал в момент, когда он важнее всего. */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2.5px solid var(--color-red);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.15s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-line: oklch(70% 0.02 75);
+  }
 }
