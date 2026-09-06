@@ -1423,7 +1423,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
             <button class="chip" data-t="cheap" onclick="setType('cheap')">Дешёвая жизнь</button>
             <button class="chip" data-t="med" onclick="setType('med')">Медицина (англ.)</button>
           </div>
-          <div id="uniList"></div>
+          <div id="uniList" aria-live="polite"></div>
         </div>
       </div>
     </div>
@@ -1472,7 +1472,7 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
           </div>
         </div>
 
-        <div class="dc-result" id="dcResult" style="display:none"></div>
+        <div class="dc-result" id="dcResult" style="display:none" aria-live="polite"></div>
 
         <p class="dc-note">Проверка помогает не подать документ с ошибкой, но результат не гарантирует: решение о стипендии принимает регион Италии. Подробнее о работе с данными — в <a href="privacy.html" style="color:var(--red);font-weight:700">политике конфиденциальности</a>.</p>
       </div>
@@ -1688,11 +1688,11 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
         <div class="h2">Твой маршрут поступления</div>
         <p class="sub" style="margin-bottom:20px">Система ведёт тебя по шагам: что сделано, что горит, какой документ нужен следующим. Вход как проверка брони: фамилия и код, который приходит в WhatsApp после оплаты.</p>
         <div class="portal-login">
-          <input id="portalSurname" placeholder="Фамилия" autocomplete="family-name">
-          <input id="portalCode" placeholder="Код брони, например ABCD-1234" autocomplete="off">
+          <input id="portalSurname" placeholder="Фамилия" autocomplete="family-name" aria-label="Фамилия">
+          <input id="portalCode" placeholder="Код брони, например ABCD-1234" autocomplete="off" aria-label="Код брони">
           <button class="btn" id="portalEnter">Войти</button>
         </div>
-        <div id="portalErr" class="portal-err" style="display:none"></div>
+        <div id="portalErr" class="portal-err" style="display:none" aria-live="polite"></div>
         <p class="sub" style="font-size:12.5px;margin-top:14px">Ещё нет кода? <a href="#prices" onclick="nav('prices');return false;" style="color:var(--red);font-weight:700">Посмотреть тарифы</a> — кабинет открывается сразу после оплаты.</p>
       </div>
 
@@ -1726,17 +1726,17 @@ footer b{color:var(--cream);text-transform:uppercase;letter-spacing:.04em}
 
 <!-- сравнение: бар и модалки -->
 <div class="cmp-bar" id="cmpBar"><div class="wrap cmp-inner" id="cmpInner"></div></div>
-<div class="overlay" id="uniOverlay" onclick="if(event.target===this)closeOverlay('uniOverlay')"><div class="modal" id="uniModal"></div></div>
-<div class="overlay" id="cmpOverlay" onclick="if(event.target===this)closeOverlay('cmpOverlay')"><div class="modal" id="cmpModal" style="max-width:960px"></div></div>
-<div class="overlay" id="buyOverlay" onclick="if(event.target===this)closeOverlay('buyOverlay')"><div class="modal" id="buyModal" style="max-width:440px"></div></div>
+<div class="overlay" id="uniOverlay" onclick="if(event.target===this)closeOverlay('uniOverlay')"><div class="modal" id="uniModal" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="overlay" id="cmpOverlay" onclick="if(event.target===this)closeOverlay('cmpOverlay')"><div class="modal" id="cmpModal" role="dialog" aria-modal="true" tabindex="-1" style="max-width:960px"></div></div>
+<div class="overlay" id="buyOverlay" onclick="if(event.target===this)closeOverlay('buyOverlay')"><div class="modal" id="buyModal" role="dialog" aria-modal="true" tabindex="-1" style="max-width:440px"></div></div>
 
 <!-- чат -->
 <button id="chatFab" onclick="openChat()">✦ Спросить ИИ</button>
 <div id="chatPanel">
-  <div class="chp-head" id="chpHead"><span class="grip"><i></i><i></i><i></i></span><b>ИИ-консультант</b><span class="st">· база 2026</span><button class="close" onclick="closeChat()">✕</button></div>
-  <div id="chatlog"></div>
+  <div class="chp-head" id="chpHead"><span class="grip"><i></i><i></i><i></i></span><b>ИИ-консультант</b><span class="st">· база 2026</span><button class="close" onclick="closeChat()" aria-label="Закрыть чат">✕</button></div>
+  <div id="chatlog" aria-live="polite"></div>
   <div class="chp-input">
-    <input id="chatInput" placeholder="Спроси про поступление…" onkeydown="if(event.key==='Enter')askDemo()">
+    <input id="chatInput" placeholder="Спроси про поступление…" onkeydown="if(event.key==='Enter')askDemo()" aria-label="Вопрос ИИ-консультанту">
     <button onclick="askDemo()" aria-label="Отправить">↑</button>
   </div>
 </div>
@@ -2244,7 +2244,7 @@ function renderUniList(){
 function openUni(id){
   const u = UNIS.find(x=>x.id===id);
   document.getElementById('uniModal').innerHTML = `
-    <button class="close" onclick="closeOverlay('uniOverlay')">✕</button>
+    <button class="close" onclick="closeOverlay('uniOverlay')" aria-label="Закрыть карточку университета">✕</button>
     <h3>${u.name}</h3>
     <div class="meta">${CITIES[u.city].name} · ${CITIES[u.city].region}</div>
     <div class="spec"><span>Тип</span><b>${u.tp}</b></div>
@@ -2273,7 +2273,7 @@ function renderCmpBar(){
   document.getElementById('cmpInner').innerHTML =
     cmp.map(id=>{
       const u = UNIS.find(x=>x.id===id);
-      return `<span class="cmp-slot filled">${u.name}<button onclick="toggleCmp('${id}')">✕</button></span>`;
+      return `<span class="cmp-slot filled">${u.name}<button onclick="toggleCmp('${id}')" aria-label="Убрать ${u.name} из сравнения">✕</button></span>`;
     }).join('') +
     (cmp.length<3 ? `<span class="cmp-slot">можно ещё ${3-cmp.length}</span>` : '') +
     `<button class="btn" onclick="openCmp()" ${cmp.length<2?'disabled':''}>Сравнить</button>`;
@@ -2288,7 +2288,7 @@ function openCmp(){
     ['Жизнь/мес', u=>u.life], ['Сильные стороны', u=>u.strong],
   ];
   document.getElementById('cmpModal').innerHTML = `
-    <button class="close" onclick="closeOverlay('cmpOverlay')">✕</button>
+    <button class="close" onclick="closeOverlay('cmpOverlay')" aria-label="Закрыть сравнение университетов">✕</button>
     <h3>Сравнение</h3>
     <div class="meta">${us.map(u=>u.name).join(' · ')}</div>
     <div class="tbl-wrap"><table class="cmp-table">
@@ -2374,7 +2374,7 @@ function wizRender(){
     hint.textContent = '';
     body.innerHTML = '<div class="wiz-q">Куда прислать план?</div>'
       + '<p class="wiz-sub">Пришлём маршрут и напоминания о дедлайнах в WhatsApp. Можно пропустить — план всё равно откроется прямо здесь.</p>'
-      + '<input class="wiz-input" id="wizPhone" placeholder="+7 ___ ___ __ __" inputmode="tel">'
+      + '<input class="wiz-input" id="wizPhone" placeholder="+7 ___ ___ __ __" inputmode="tel" aria-label="Номер телефона для WhatsApp">'
       + '<button class="btn" id="wizGo" style="width:100%;margin-top:12px">Составить план</button>'
       + '<button class="wiz-skip" id="wizSkip">Пропустить и посмотреть план</button>'
       + '<p class="consent">Оставляя номер, ты соглашаешься, что мы напишем по поводу поступления. '
@@ -2524,12 +2524,12 @@ function checkDoc(i,hasErr){
 const fmt = n => n.toLocaleString('ru-RU');
 function openBuy(name, price){
   document.getElementById('buyModal').innerHTML = `
-    <button class="close" onclick="closeOverlay('buyOverlay')">✕</button>
+    <button class="close" onclick="closeOverlay('buyOverlay')" aria-label="Закрыть окно заказа">✕</button>
     <h3 style="font-size:19px">${name}</h3>
     <div style="font-size:28px;font-weight:900;color:var(--red);margin:4px 0 16px">${fmt(price)} ₸</div>
     ${price>=45900?`<div class="lock-note">🔒 Ты в числе первых 30 — стартовая цена зафиксируется за тобой навсегда. Взамен попросим отзыв, когда поступишь.</div>`:''}
-    <input id="buyName" placeholder="Имя" style="margin-bottom:10px">
-    <input id="buyPhone" placeholder="Телефон / WhatsApp" inputmode="tel" style="margin-bottom:14px">
+    <input id="buyName" placeholder="Имя" style="margin-bottom:10px" aria-label="Имя">
+    <input id="buyPhone" placeholder="Телефон / WhatsApp" inputmode="tel" style="margin-bottom:14px" aria-label="Телефон / WhatsApp">
     <button class="btn" style="width:100%" onclick="submitBuy('${name}',${price})">${PAY_MODE === "kaspi" ? "Оплатить через Kaspi" : "Оформить заказ"}</button>
     <p style="font-size:11.5px;color:var(--sec);text-align:center;margin-top:10px;line-height:1.5">${PAY_MODE === "kaspi" ? "Оплата откроется в приложении Kaspi. Продукт придёт в WhatsApp после оплаты." : "После оформления покажем реквизиты для перевода. Продукт придёт в WhatsApp после оплаты."}</p>`;
   document.getElementById('buyOverlay').classList.add('on');
@@ -2564,7 +2564,7 @@ async function submitBuy(name, price){
     const link = KASPI_LINKS[name] || KASPI_LINKS.default;
     window.open(link, '_blank');
     document.getElementById('buyModal').innerHTML = `
-      <button class="close" onclick="closeOverlay('buyOverlay')">✕</button>
+      <button class="close" onclick="closeOverlay('buyOverlay')" aria-label="Закрыть окно заказа">✕</button>
       <div style="text-align:center;padding:8px 0">
         <div style="font-size:42px">✅</div>
         <div class="pay-title">Заказ принят</div>
@@ -2576,7 +2576,7 @@ async function submitBuy(name, price){
 
   // режим перевода по номеру
   document.getElementById('buyModal').innerHTML = `
-    <button class="close" onclick="closeOverlay('buyOverlay')">✕</button>
+    <button class="close" onclick="closeOverlay('buyOverlay')" aria-label="Закрыть окно заказа">✕</button>
     <div style="padding:4px 0">
       <div style="text-align:center"><div style="font-size:42px">✅</div>
         <div class="pay-title">Заказ принят</div>
@@ -3187,7 +3187,7 @@ function showLeadForm(){
   d.id = 'leadForm';
   d.innerHTML = '<b>Бесплатные вопросы закончились</b>'
     + '<p>Оставь номер — пришлём твой план, напоминания о дедлайнах Universitaly и DSU и ответим на оставшиеся вопросы. Без спама.</p>'
-    + '<input id="leadPhone" placeholder="+7 ___ ___ __ __" inputmode="tel">'
+    + '<input id="leadPhone" placeholder="+7 ___ ___ __ __" inputmode="tel" aria-label="Номер телефона для WhatsApp">'
     + '<button class="btn" id="leadSend">Получить план</button>'
     + '<span class="lead-alt">Или сразу <a href="#prices" id="leadToPrices">посмотреть тарифы</a></span>'
     + '<span class="consent">Напишем только по поводу поступления. '
@@ -3659,10 +3659,10 @@ function showLeadForm(){
       + '</div>'
       + '<div class="ptn-row"><span class="ptn-ch' + (d.client.email && n.email !== false ? ' on' : '') + '"></span>'
       + '<div style="flex:1"><b>Почта</b><span>' + (d.client.email || 'не указана') + '</span>'
-      + '<div class="ptn-mail"><input id="ptnEmail" type="email" placeholder="you@mail.com" value="'
+      + '<div class="ptn-mail"><input id="ptnEmail" type="email" placeholder="you@mail.com" aria-label="Почта для уведомлений" value="'
       + (d.client.email || '') + '"><button class="ptn-btn" id="ptnSave">Сохранить</button></div>'
       + '</div></div>'
-      + '<div id="ptnMsg" class="ptn-msg" style="display:none"></div></div>';
+      + '<div id="ptnMsg" class="ptn-msg" style="display:none" aria-live="polite"></div></div>';
 
     html += '<div class="pt-danger"><b>Удалить мои данные</b>'
       + '<p>Сотрём профиль, прогресс и результаты проверок. Отменить нельзя, доступ в кабинет пропадёт.</p>'
@@ -3821,6 +3821,87 @@ function showLeadForm(){
   };
   window.addEventListener('scroll', check, { passive: true });
   check();
+})();
+
+/* ================= ДОСТУПНОСТЬ: div/span С onclick =================
+   Целые карточки и логотип навигируются кликом мыши, но это <div>, а не
+   <button>/<a> — без role+tabindex+обработчика клавиш они физически
+   недостижимы с клавиатуры (Tab их просто пропускает). Часть уже
+   рендерится в статичной разметке, часть — динамически (например
+   .vdoc в чек-листе визы), поэтому довязываем через MutationObserver,
+   как и с наклоном карточек ниже. */
+(function(){
+  try{
+    var SEL = '.logo, .try-check, .split .card, .micro, .vdoc';
+    function wire(el){
+      if (el.__a11yWired) return;
+      el.__a11yWired = true;
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.hasAttribute('role')) el.setAttribute('role', el.classList.contains('logo') ? 'link' : 'button');
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          el.click();
+        }
+      });
+    }
+    function wireAll(){ document.querySelectorAll(SEL).forEach(wire); }
+    wireAll();
+    var t;
+    new MutationObserver(function(){ clearTimeout(t); t = setTimeout(wireAll, 150); })
+      .observe(document.body, { childList: true, subtree: true });
+  }catch(e){}
+})();
+
+/* ================= ДОСТУПНОСТЬ: focus trap в модалках =================
+   Раньше открытие .uniOverlay/.cmpOverlay/.buyOverlay никак не двигало
+   фокус: клавиатура продолжала листать список позади модалки, будто
+   она не открывалась вообще. Ловим появление класса .on на каждом
+   .overlay, переносим фокус внутрь, запираем Tab внутри модалки,
+   Escape закрывает и возвращает фокус туда, откуда открыли. */
+(function(){
+  try{
+    var lastTrigger = null;
+    function focusablesIn(root){
+      return Array.prototype.slice.call(
+        root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      ).filter(function(el){ return el.offsetWidth || el.offsetHeight; });
+    }
+    function trapKeydown(e){
+      var overlay = e.currentTarget;
+      if (e.key === 'Escape'){ closeOverlay(overlay.id); return; }
+      if (e.key !== 'Tab') return;
+      var modal = overlay.querySelector('.modal') || overlay;
+      var f = focusablesIn(modal);
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+    function onOverlayOpen(overlay){
+      lastTrigger = document.activeElement;
+      overlay.addEventListener('keydown', trapKeydown);
+      var modal = overlay.querySelector('.modal') || overlay;
+      setTimeout(function(){
+        var f = focusablesIn(modal);
+        (f[0] || modal).focus();
+      }, 30); // даём openX() дорендерить innerHTML модалки
+    }
+    function onOverlayClose(overlay){
+      overlay.removeEventListener('keydown', trapKeydown);
+      if (lastTrigger && document.body.contains(lastTrigger)) lastTrigger.focus();
+      lastTrigger = null;
+    }
+    document.querySelectorAll('.overlay').forEach(function(overlay){
+      var wasOn = overlay.classList.contains('on');
+      new MutationObserver(function(){
+        var isOn = overlay.classList.contains('on');
+        if (isOn && !wasOn) onOverlayOpen(overlay);
+        else if (!isOn && wasOn) onOverlayClose(overlay);
+        wasOn = isOn;
+      }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    });
+  }catch(e){}
 })();
 
 /* ================= 3D-НАКЛОН КЛЮЧЕВЫХ КАРТОЧЕК =================
