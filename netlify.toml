@@ -1,5 +1,10 @@
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_PUBLIC_BACKEND_URL = "https://web-production-9faf3.up.railway.app"
 
 [[headers]]
   for = "/*"
@@ -7,8 +12,3 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "SAMEORIGIN"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
