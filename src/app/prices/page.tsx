@@ -1,0 +1,22 @@
+import type { Metadata } from "next";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { PricesExplorer } from "@/components/prices/PricesExplorer";
+
+export const metadata: Metadata = {
+  title: "Цены — 27 000 ₸ за поступление под ключ",
+  description:
+    "Один платёж 27 000 ₸ вместо 650 000 – 1 000 000 ₸ у агентства: подбор вузов, документы, стипендия DSU и виза D ведёт система. Платные опции с живым экспертом.",
+};
+
+export default function PricesPage() {
+  return (
+    <>
+      <Header />
+      <main>
+        <PricesExplorer />
+      </main>
+      <Footer />
+    </>
+  );
+}

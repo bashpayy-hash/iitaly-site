@@ -13,11 +13,12 @@ export interface DocCheckResult {
   nextSteps?: string[];
 }
 
-export async function checkDocument(payload: DocPayload): Promise<DocCheckResult> {
+export async function checkDocument(payload: DocPayload, hint?: string): Promise<DocCheckResult> {
   if (!BACKEND_URL) {
     throw new Error("no-backend");
   }
   const body: Record<string, unknown> = { fileName: payload.fileName || "" };
+  if (hint) body.hint = hint;
   if (payload.kind === "pdf") body.pdf = payload.base64;
   else if (payload.kind === "text") body.text = payload.text;
   else {
