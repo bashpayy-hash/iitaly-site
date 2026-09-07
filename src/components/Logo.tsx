@@ -1,15 +1,30 @@
-// Логотип IItaly — тот же Альдо (паста-ракушка), упрощённый до знака:
-// без рёбер веера, которые пропадают в фавиконе на 16px, но с тем же
-// двухцветным разломом по центру и точками-глазами, что и у маскота.
+// Логотип IItaly — портрет Альдо (паста-ракушка в поварском колпаке),
+// срисован с референсного character sheet, минимально упрощён под
+// значок: убраны руки/ноги/постамент, оставлены форма ракушки с
+// рёбрами, колпак, глаза-пуговки и румянец — то, что держит узнаваемость
+// даже на 16px.
 export function Logo({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 44 44" aria-hidden className={className}>
-      <rect x="4" y="4" width="36" height="36" rx="9" fill="#211a14" />
-      <rect x="1" y="1" width="36" height="36" rx="9" fill="#fffdf8" stroke="#211a14" strokeWidth="2.5" />
-      <path d="M22,9 C14,10 9,17 9,25 Q9,29 13,30 Q22,33 22,26 L22,9 Z" fill="#913a00" />
-      <path d="M22,9 C30,10 35,17 35,25 Q35,29 31,30 Q22,33 22,26 L22,9 Z" fill="#b25000" />
-      <circle cx="18" cy="20" r="1.9" fill="#fffdf8" />
-      <circle cx="26" cy="20" r="1.9" fill="#fffdf8" />
+      <path
+        d="M22,10 C14,12 9,18 9,24 C9,31 14,38 22,40 C30,38 35,31 35,24 C35,18 30,12 22,10 Z"
+        fill="#e3a940"
+        stroke="#211a14"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <ellipse cx="22" cy="24" rx="6.6" ry="13.6" fill="#f6e2b8" />
+      <path d="M18.3,16.5 Q20,24 18.3,32.5" stroke="#dfc48a" strokeWidth="1" fill="none" opacity="0.9" />
+      <path d="M25.7,16.5 Q24,24 25.7,32.5" stroke="#dfc48a" strokeWidth="1" fill="none" opacity="0.9" />
+      <ellipse cx="22" cy="6" rx="8.5" ry="5.5" fill="#fffdf8" stroke="#211a14" strokeWidth="1.6" />
+      <rect x="16" y="9" width="12" height="4" rx="1.6" fill="#211a14" />
+      <ellipse cx="14" cy="27.5" rx="2" ry="1.3" fill="#f2a08c" opacity="0.85" />
+      <ellipse cx="30" cy="27.5" rx="2" ry="1.3" fill="#f2a08c" opacity="0.85" />
+      <circle cx="17.5" cy="23" r="2.5" fill="#211a14" />
+      <circle cx="26.5" cy="23" r="2.5" fill="#211a14" />
+      <circle cx="16.7" cy="22.1" r="0.7" fill="#fffdf8" />
+      <circle cx="25.7" cy="22.1" r="0.7" fill="#fffdf8" />
+      <path d="M18,29 Q22,32.5 26,29" stroke="#211a14" strokeWidth="1.6" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
