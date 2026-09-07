@@ -95,48 +95,22 @@ body {
   }
 }
 
-/* Альдо — маскот: полёт (лёгкий бобинг), приветственный взмах крылом,
-   искры на праздничной позе. prefers-reduced-motion уже глушится общим
-   правилом выше (animation-duration: 0.01ms !important). */
-@keyframes aldo-bob {
+/* Три точки «печатает…» в чате. prefers-reduced-motion уже глушится
+   общим правилом выше (animation-duration: 0.01ms !important). */
+@keyframes chp-dot {
   0%,
+  60%,
   100% {
-    transform: translateY(0) rotate(-3deg);
+    opacity: 0.3;
+    transform: translateY(0);
   }
-  50% {
-    transform: translateY(-6px) rotate(2deg);
-  }
-}
-.aldo-bob {
-  animation: aldo-bob 3.2s ease-in-out infinite;
-}
-
-@keyframes aldo-wave {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(-16deg);
-  }
-}
-.aldo-wave {
-  animation: aldo-wave 1.6s ease-in-out infinite;
-}
-
-@keyframes aldo-sparkle {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(0.85);
-  }
-  50% {
+  30% {
     opacity: 1;
-    transform: scale(1.1);
+    transform: translateY(-3px);
   }
 }
-.aldo-sparkle {
-  animation: aldo-sparkle 1.6s ease-in-out infinite;
+.chp-dot {
+  animation: chp-dot 1.1s ease-in-out infinite;
 }
 
 @media (prefers-contrast: more) {

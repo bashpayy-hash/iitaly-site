@@ -1,34 +1,13 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "motion/react";
 import { ButtonLink } from "@/components/Button";
-import { Aldo } from "@/components/Aldo";
 
 export function Hero() {
-  // Lazy initializer runs during the client's own mount render (where
-  // `window` exists), not during the server-rendered pass — so this reads
-  // correctly without an effect/extra render.
-  const [reduceMotion] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false,
-  );
-
   return (
     <section className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
-          <div className="flex items-center gap-2">
-            <motion.div
-              initial={reduceMotion ? false : { x: -36, y: -22, rotate: -30, opacity: 0 }}
-              animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-              transition={{ duration: 0.85, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Aldo pose="flying" className="h-8 w-8 shrink-0" />
-            </motion.div>
-            <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-              Абитуриентам Казахстана 16–18 лет и их родителям
-            </p>
-          </div>
+          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
+            Абитуриентам Казахстана 16–18 лет и их родителям
+          </p>
           <h1 className="mt-3 font-display text-[10vw] leading-[0.88] font-black tracking-tight uppercase sm:text-[8vw] lg:text-[6vw]">
             Поступать
             <br />
