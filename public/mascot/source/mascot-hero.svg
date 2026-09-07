@@ -1,6 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 170" role="img" aria-hidden="true">
+<style>
+@media (prefers-reduced-motion: no-preference) {
+  .ribbon { animation: ribbon-flutter 2.4s ease-in-out infinite; transform-origin: 139px 28px; }
+  @keyframes ribbon-flutter { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-3deg); } }
+  .idle-bob { animation: idle-bob 3.4s ease-in-out infinite; transform-origin: 118px 130px; }
+  @keyframes idle-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  .sparkle { animation: sparkle-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes sparkle-pulse { 0%, 100% { opacity: 0.35; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.05); } }
+}
+</style>
 <ellipse cx="118" cy="156" rx="96" ry="8" fill="#211a14" opacity="0.12"/>
-<g>
+<g class="idle-bob">
 
   <circle cx="64" cy="132" r="23" fill="#211a14"/>
   <circle cx="64" cy="132" r="7.5" fill="#fffdf8"/>
@@ -26,10 +36,10 @@
         fill="#b4262b" stroke="#211a14" stroke-width="4" stroke-linejoin="round"/>
   <path d="M178,44 C176,36 172,30 165,26" stroke="#211a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
   <path d="M165,26 C158,23 150,23 144,27" stroke="#211a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <circle cx="144" cy="27" r="5.5" fill="#fffdf8" stroke="#211a14" stroke-width="3"/>
+  <circle cx="144" cy="27" r="5.5" fill="#fffdf8" stroke="#211a14" stroke-width="3"/><g class="ribbon">
     <path d="M139,28 C122,26 104,32 88,26 C76,22 66,26 56,20" stroke="#211a14" stroke-width="5.5" fill="none" stroke-linecap="round"/>
     <path d="M139,28 C122,26 104,32 88,26 C76,22 66,26 56,20" stroke="#fffdf8" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-    <circle cx="54" cy="19" r="3.4" fill="#b25000" stroke="#211a14" stroke-width="1.6"/><circle cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M164,64 Q174,56 184,64" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <circle cx="54" cy="19" r="3.4" fill="#b25000" stroke="#211a14" stroke-width="1.6"/></g><circle cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M164,64 Q174,56 184,64" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
 </g>
 
 </svg>
