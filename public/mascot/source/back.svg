@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" role="img" aria-hidden="true">
+  <ellipse cx="100" cy="156" rx="80" ry="8" fill="#211a14" opacity="0.12"/>
+  <circle cx="58" cy="138" r="20" fill="#211a14"/><circle cx="58" cy="138" r="6.5" fill="#fffdf8"/>
+  <circle cx="142" cy="138" r="20" fill="#211a14"/><circle cx="142" cy="138" r="6.5" fill="#fffdf8"/>
+  <path d="M62,132 C58,105 60,78 68,62 C76,48 124,48 132,62 C140,78 142,105 138,132
+           C134,142 118,146 100,146 C82,146 66,142 62,132 Z"
+        fill="#b4262b" stroke="#211a14" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M70,130 C68,112 70,96 76,84 L124,84 C130,96 132,112 130,130
+           C124,136 112,138 100,138 C88,138 76,136 70,130 Z"
+        fill="#8f1d21"/>
+  <!-- seat hump visible from behind -->
+  <path d="M78,52 C82,42 118,42 122,52 C124,58 120,62 100,62 C80,62 76,58 78,52 Z"
+        fill="#b4262b" stroke="#211a14" stroke-width="4" stroke-linejoin="round"/>
+  <!-- mirrors just visible at the sides, no handlebar face -->
+  <circle cx="60" cy="40" r="5" fill="#fffdf8" stroke="#211a14" stroke-width="3"/>
+  <circle cx="140" cy="40" r="5" fill="#fffdf8" stroke="#211a14" stroke-width="3"/>
+  <path d="M65,40 C78,44 86,40 96,44" stroke="#211a14" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M65,40 C78,44 86,40 96,44" stroke="#fffdf8" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <circle cx="98" cy="45" r="3" fill="#b25000" stroke="#211a14" stroke-width="1.4"/>
+  <!-- taillight, no face -->
+  <circle cx="100" cy="112" r="7" fill="#211a14"/>
+  <circle cx="100" cy="112" r="3" fill="#b25000"/>
+</svg>

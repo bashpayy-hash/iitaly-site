@@ -6,6 +6,7 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, type DocCheckResult } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { Button } from "@/components/Button";
+import { Vespa } from "@/components/Vespa";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
@@ -176,10 +177,7 @@ export function DocCheck() {
         )}
         {state.step === "checking" && (
           <div className="flex items-center gap-3 rounded-md border-2 border-line px-4 py-3 text-sm text-ink-soft">
-            <span
-              aria-hidden
-              className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-ink-soft border-t-transparent"
-            />
+            <Vespa pose="documents" className="h-9 w-auto shrink-0" />
             Сверяю с правилами DSU и ISU — это занимает 10–20 секунд
           </div>
         )}
@@ -206,6 +204,7 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
   return (
     <div className="rounded-lg border-2 border-ink p-4">
       <div className="flex flex-wrap items-center gap-2.5">
+        {v === "ok" && <Vespa pose="success" className="h-9 w-auto shrink-0" />}
         <span
           className={`rounded-pill px-3 py-1 text-xs font-extrabold uppercase ${
             v === "ok"

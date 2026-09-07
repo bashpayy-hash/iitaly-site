@@ -1,0 +1,168 @@
+# IItaly — конфигурация консистентности маскота «Веспа и Нить»
+# Источник правды по смыслу: /docs/mascot-bible.md — этот файл описывает
+# те же правила машиночитаемо, для регенерации новых поз без потери
+# идентичности персонажа через месяцы.
+
+name: "Веспа"
+motif_name: "Нить"
+version: 1
+
+base_prompt: >
+  Flat 2D vector-style illustration of a stylized Vespa scooter character,
+  ¾ front-left view, single round headlight as the only facial feature (no
+  mouth, no extra eyes), thin curved "eyelid" line over the headlight for
+  subtle expression, two wheels (front slightly smaller, offset forward),
+  simple handlebar with two round mirrors, one thin ribbon tied to the left
+  mirror flowing backward. Rounded geometric body, wide "wasp-waist" between
+  front shield and rear fender, proportions approx. 1.6:1 width:height. Bold
+  uniform ink outline (#211a14), rounded line joins, flat solid fills only —
+  no gradients, no gloss, no drop shadow baked into the image. Color palette
+  strictly limited to: body #b4262b, body shadow panel #8f1d21, outline
+  #211a14, headlight and ribbon #fffdf8, ribbon tip accent #b25000.
+  Background: transparent. Clean silhouette readable as flat black shape.
+  No text, no logos, no license plates, no additional characters, no
+  scenery, no cast shadow on ground.
+
+negative_prompt: >
+  mouth, smile, teeth, extra eyes, eyebrows, gradient, glossy, metallic
+  reflection, chrome, photorealistic, 3d render, drop shadow, cast shadow,
+  background scenery, text, watermark, logo, license plate, extra limbs,
+  extra wheels, helmet, sunglasses, luggage, flag, multiple characters,
+  motion blur, speed lines unless specified, low detail sketch, rough
+  linework, asymmetric mirrors, missing ribbon
+
+palette:
+  body: "#b4262b"        # --color-red
+  body_shadow: "#8f1d21" # --color-red-deep
+  outline: "#211a14"     # --color-ink
+  headlight_ribbon: "#fffdf8" # --color-paper
+  accent: "#b25000"       # --color-warn
+  background_default: "#faf5ec" # --color-cream
+  success_indicator: "#3f6b4f"  # --color-green
+  reserve_unused:
+    - "#913a00" # --color-warn-deep
+    - "#c97339" # --color-warn-light
+
+proportions:
+  body_width_to_height: "1.6:1"
+  wheel_diameter_ratio: 0.28   # от общей ширины силуэта
+  front_wheel: smaller_and_forward_offset
+
+immutable_traits:
+  - "два колеса, ровно"
+  - "одна фара = единственный 'взгляд', рта нет"
+  - "два зеркала, симметричны"
+  - "лента у левого зеркала — обязательна в каждой позе"
+  - "контур: ink #211a14, 3-4px в 1024px, round join"
+  - "заливки только плоские, без градиентов и глянца"
+  - "ракурс ¾ по умолчанию, если поза не требует иного"
+
+forbidden_changes:
+  - "новые аксессуары (шлем, очки, багаж, флаг)"
+  - "рот, брови, дополнительные глаза"
+  - "иная одежда/облицовка корпуса"
+  - "иные пропорции (bobblehead, удлинение)"
+  - "дополнительные колёса или конечности"
+  - "градиенты, объёмный рендер, хром, фотореализм"
+  - "случайный текст, номерные знаки, сторонние логотипы"
+  - "чрезмерно детская мимика"
+
+master_reference: "public/mascot/source/mascot-master.svg"
+
+poses:
+  - id: mascot-master
+    prompt_suffix: "confident upright stance, ribbon flowing steadily backward, eyelid relaxed and level"
+    file: public/mascot/source/mascot-master.svg
+  - id: mascot-hero
+    prompt_suffix: "confident upright stance, ribbon flowing steadily backward, eyelid relaxed and level"
+    file: public/mascot/source/mascot-hero.svg
+  - id: mascot-avatar
+    prompt_suffix: "cropped tight to front ¾ headlight and handlebar area, square composition"
+    file: public/mascot/source/mascot-avatar.svg
+  - id: mascot-wave
+    prompt_suffix: "handlebar turned slightly toward viewer as if gesturing hello, eyelid softly raised"
+    file: public/mascot/source/mascot-wave.svg
+  - id: mascot-compare
+    prompt_suffix: "parked at a slight angle, kickstand down, ribbon resting still, neutral eyelid"
+    file: public/mascot/source/mascot-compare.svg
+  - id: mascot-documents
+    prompt_suffix: "headlight tilted slightly downward as if reading, eyelid narrowed in focus, front wheel turned inward"
+    file: public/mascot/source/mascot-documents.svg
+  - id: mascot-deadline
+    prompt_suffix: "headlight blinking implied by half-closed eyelid shape, ribbon taut and straight"
+    file: public/mascot/source/mascot-deadline.svg
+  - id: mascot-visa
+    prompt_suffix: "upright, steady, ribbon calm, no urgency in posture"
+    file: public/mascot/source/mascot-visa.svg
+  - id: mascot-dsu
+    prompt_suffix: "upright, steady, headlight level, neutral confident posture"
+    file: public/mascot/source/mascot-dsu.svg
+  - id: mascot-plan
+    prompt_suffix: "three-quarter turn as if about to move forward, ribbon starting to lift"
+    file: public/mascot/source/mascot-plan.svg
+  - id: mascot-thinking
+    prompt_suffix: "front wheel turned slightly away, headlight angled up-and-away, eyelid softly narrowed"
+    file: public/mascot/source/mascot-thinking.svg
+  - id: mascot-empty
+    prompt_suffix: "parked, kickstand down, ribbon resting, calm waiting posture"
+    file: public/mascot/source/mascot-empty.svg
+  - id: mascot-success
+    prompt_suffix: "ribbon tied in a small loose knot near the tip, eyelid relaxed-open"
+    file: public/mascot/source/mascot-success.svg
+  - id: mascot-warning
+    prompt_suffix: "headlight eyelid raised alert (not wide panic), body upright, ribbon slightly taut"
+    file: public/mascot/source/mascot-warning.svg
+  - id: mascot-error
+    prompt_suffix: "headlight eyelid narrowed, front wheel turned slightly aside, ribbon drooping slightly at tip"
+    file: public/mascot/source/mascot-error.svg
+  - id: mascot-404
+    prompt_suffix: "turned away from viewer as if looking for the road, ribbon trailing loosely"
+    file: public/mascot/source/mascot-404.svg
+  - id: mascot-celebrate
+    prompt_suffix: "ribbon fully extended and looped, eyelid raised in quiet satisfaction, headlight bright"
+    file: public/mascot/source/mascot-celebrate.svg
+  - id: front
+    prompt_suffix: "head-on front view, symmetric wheels and mirrors, ribbon trailing to one side"
+    file: public/mascot/source/front.svg
+  - id: back
+    prompt_suffix: "rear view, small taillight only, no facial features, seat visible from behind"
+    file: public/mascot/source/back.svg
+  - id: profile-left
+    prompt_suffix: "flat left-side silhouette profile, mirrored from profile-right"
+    file: public/mascot/source/profile-left.svg
+  - id: profile-right
+    prompt_suffix: "flat right-side silhouette profile"
+    file: public/mascot/source/profile-right.svg
+
+motif_nastro:
+  description: "Отдельный переиспользуемый UI-мотив — лента без персонажа. Не масштаб персонажа, самостоятельный SVG."
+  prompt: >
+    Flat 2D vector ribbon/thread shape, single continuous curved band with
+    rounded ends, no character, no face. Bold ink outline (#211a14), fill
+    #fffdf8, one end accented with #b25000. No gradients, no shadow, no
+    background, no text. Clean silhouette suitable as a reusable UI motif
+    (progress bar fill, route line, breadcrumb).
+  file: public/mascot/source/mascot-nastro.svg
+
+reference_image_rules:
+  - "Каждая новая генерация ссылается на master_reference, не только на текстовый prompt."
+  - "При image-to-image/reference-conditioning — вес референса не ниже уровня, сохраняющего силуэт."
+  - "Без reference-conditioning — генерировать 3-4 варианта, выбирать по visual_qa_checklist."
+  - "Никогда не описывать персонажа заново своими словами — только base_prompt + prompt_suffix позы."
+
+visual_qa_checklist:
+  - "Два колеса, одна фара, два зеркала — ничего лишнего, ничего не пропало"
+  - "Рта нет"
+  - "Лента у зеркала присутствует"
+  - "Пропорции корпуса ~1.6:1, талия между щитком и крылом видна"
+  - "Только цвета из palette — ни одного нового HEX"
+  - "Контур сплошной, ink, без разрывов и градиента"
+  - "Фон прозрачный, нет наземной тени в самом файле (тень — отдельный UI-слой)"
+  - "Силуэт в 100% ink остаётся узнаваемым как мотороллер"
+  - "Эмоция читается по наклону века/корпуса/руля, не по added-мимике"
+  - "Нет текста, водяных знаков, номерных знаков, посторонних логотипов"
+
+output_paths:
+  source: "public/mascot/source/"     # SVG, источник правды
+  web: "public/mascot/web/"           # WebP-экспорт для контекстов без поддержки SVG
+  sheets: "public/mascot/sheets/"     # сборный character-sheet для ревью
