@@ -57,6 +57,24 @@ immutable_traits:
   - "заливки только плоские, без градиентов и глянца"
   - "ракурс ¾ по умолчанию, если поза не требует иного"
 
+animation:
+  method: "встроенный <style> внутри самого SVG (работает через <img src>, внешний CSS сайта до него не достаёт)"
+  respects: "prefers-reduced-motion: no-preference"
+  idle_bob: { poses: [mascot-master, mascot-hero], amplitude: "3px", duration: "3.4s" }
+  ribbon_flutter: { poses: [mascot-master, mascot-hero, mascot-wave, mascot-plan, mascot-thinking, mascot-documents, mascot-visa, mascot-dsu, mascot-celebrate], amplitude: "3deg", duration: "2.4s" }
+  sparkle_pulse: { poses: [mascot-celebrate], duration: "1.4s", staggered: true }
+  nastro_glint: { poses: [mascot-nastro], technique: "offset-path motion, дорожка сама не меняет форму", duration: "2.8s" }
+  intentionally_static:
+    - mascot-avatar   # постоянный элемент UI-хрома
+    - mascot-compare
+    - mascot-deadline
+    - mascot-empty
+    - mascot-success
+    - mascot-warning
+    - mascot-error
+    - mascot-404
+  web_export: "WebP статичен (растр не хранит анимацию) — только fallback, сайт всегда получает анимированный SVG"
+
 forbidden_changes:
   - "новые аксессуары (шлем, очки, багаж, флаг)"
   - "рот, брови, дополнительные глаза"

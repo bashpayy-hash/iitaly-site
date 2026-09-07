@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 170" role="img" aria-hidden="true">
+
 <ellipse cx="118" cy="156" rx="96" ry="8" fill="#211a14" opacity="0.12"/>
-<g>
+<g class="">
 
   <circle cx="64" cy="132" r="23" fill="#211a14"/>
   <circle cx="64" cy="132" r="7.5" fill="#fffdf8"/>
