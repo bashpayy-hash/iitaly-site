@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
 import { Button } from "@/components/Button";
-import { Aldo } from "@/components/Aldo";
 
 type DocState = "idle" | "checking" | "ok" | "err";
 
@@ -32,7 +31,6 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
   return (
     <div>
       <div className="flex items-start gap-3 rounded-lg border-2 border-red bg-paper p-4 shadow-red">
-        <Aldo pose="celebrating" className="h-12 w-12 shrink-0" />
         <div>
           <p className="text-xs font-extrabold tracking-[0.14em] text-red uppercase">
             Персональный план готов

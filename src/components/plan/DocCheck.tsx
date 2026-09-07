@@ -6,7 +6,6 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, type DocCheckResult } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { Button } from "@/components/Button";
-import { Aldo } from "@/components/Aldo";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
@@ -177,7 +176,10 @@ export function DocCheck() {
         )}
         {state.step === "checking" && (
           <div className="flex items-center gap-3 rounded-md border-2 border-line px-4 py-3 text-sm text-ink-soft">
-            <Aldo pose="flying" className="h-9 w-9 shrink-0" />
+            <span
+              aria-hidden
+              className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-ink-soft border-t-transparent"
+            />
             Сверяю с правилами DSU и ISU — это занимает 10–20 секунд
           </div>
         )}
@@ -204,7 +206,6 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
   return (
     <div className="rounded-lg border-2 border-ink p-4">
       <div className="flex flex-wrap items-center gap-2.5">
-        {v === "ok" && <Aldo pose="celebrating" className="h-10 w-10 shrink-0" />}
         <span
           className={`rounded-pill px-3 py-1 text-xs font-extrabold uppercase ${
             v === "ok"
