@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { UNIS, type CityId, type University } from "@/data/italy";
-import { ItalyMap } from "./ItalyMap";
+import { MapView } from "./MapView";
 import { CityPanel } from "./CityPanel";
 import { Filters, type TypeFilter } from "./Filters";
 import { UniModal } from "./UniModal";
@@ -79,16 +79,11 @@ export function UniversitiesExplorer() {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
             <div className="lg:sticky lg:top-24">
-              <div className="overflow-hidden rounded-xl border border-white/10 shadow-[0_24px_60px_rgba(13,17,24,.45)]">
-                <ItalyMap
-                  activeCity={activeCity}
-                  onSelectCity={(id) => setActiveCity(id)}
-                  matchedCities={matchedCities}
-                />
-              </div>
-              <p className="mt-3 text-center text-xs text-ink-soft">
-                Крупные точки — города с несколькими университетами
-              </p>
+              <MapView
+                activeCity={activeCity}
+                onSelectCity={(id) => setActiveCity(id)}
+                matchedCities={matchedCities}
+              />
             </div>
 
             <div>
