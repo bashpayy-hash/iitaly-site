@@ -1,13 +1,17 @@
 import { ButtonLink } from "@/components/Button";
+import { Vespa } from "@/components/Vespa";
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
-          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-            Абитуриентам Казахстана 16–18 лет и их родителям
-          </p>
+          <div className="flex items-center gap-2">
+            <Vespa pose="hero" className="h-8 w-auto shrink-0" priority />
+            <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
+              Абитуриентам Казахстана 16–18 лет и их родителям
+            </p>
+          </div>
           <h1 className="mt-3 font-display text-[10vw] leading-[0.88] font-black tracking-tight uppercase sm:text-[8vw] lg:text-[6vw]">
             Поступать
             <br />

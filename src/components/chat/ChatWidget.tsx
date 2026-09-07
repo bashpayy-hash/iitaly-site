@@ -7,6 +7,7 @@ import { demoReply } from "@/data/chatDemo";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
+import { Vespa } from "@/components/Vespa";
 
 interface Msg {
   who: "user" | "ai";
@@ -16,7 +17,7 @@ interface Msg {
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { who: "ai", text: "Ciao! Я ИИ-консультант IItaly. Спроси про аттестат, документы, визу D или стипендию DSU." },
+    { who: "ai", text: "Ciao! Я Веспа, ИИ-консультант IItaly. Спроси про аттестат, документы, визу D или стипендию DSU." },
   ]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -140,7 +141,10 @@ export function ChatWidget() {
             ref={headRef}
             className="flex shrink-0 cursor-grab touch-none items-center gap-2 border-b-2 border-ink bg-ink px-4 py-3 text-cream select-none active:cursor-grabbing"
           >
-            <b className="text-sm">ИИ-консультант</b>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream/10">
+              <Vespa pose="avatar" className="h-6 w-6" />
+            </span>
+            <b className="text-sm">Веспа</b>
             <span className="text-xs text-cream/50">· база 2026</span>
             <button
               type="button"
@@ -164,10 +168,13 @@ export function ChatWidget() {
               </div>
             ))}
             {typing && (
-              <div className="flex w-fit items-center gap-1.5 rounded-lg bg-cream px-3.5 py-3">
-                <span className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft" style={{ animationDelay: "0s" }} />
-                <span className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft" style={{ animationDelay: "0.15s" }} />
-                <span className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft" style={{ animationDelay: "0.3s" }} />
+              <div className="flex w-fit items-center gap-2 rounded-lg bg-cream px-3 py-2">
+                <Vespa pose="thinking" className="h-7 w-auto shrink-0" />
+                <span className="flex items-center gap-1.5">
+                  <span className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft" style={{ animationDelay: "0s" }} />
+                  <span className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft" style={{ animationDelay: "0.15s" }} />
+                  <span className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft" style={{ animationDelay: "0.3s" }} />
+                </span>
               </div>
             )}
             {showLead && <LeadForm onDone={() => setShowLead(false)} />}
@@ -225,11 +232,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   if (done) {
     return (
       <div className="flex items-start gap-2.5 rounded-lg border-2 border-green bg-green/10 p-4 text-sm">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green text-cream" aria-hidden>
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 13l4 4L19 7" />
-          </svg>
-        </span>
+        <Vespa pose="success" className="h-10 w-auto shrink-0" />
         <div>
           <b className="block">Записали</b>
           <p className="mt-1 text-ink-soft">Напишем в WhatsApp на {phone}. Можешь продолжать спрашивать — лимит снят.</p>
