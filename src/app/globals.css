@@ -139,56 +139,6 @@ body {
   animation: aldo-sparkle 1.6s ease-in-out infinite;
 }
 
-/* Подписи и кликабельные зоны городов на 3D-карте (рендерятся через
-   drei Html поверх WebGL-канваса как обычный DOM — сохраняет клавиатурную
-   доступность, которая в чистом WebGL была бы недостижима). */
-.map3d-pin {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 2px 5px;
-  font-family: var(--font-sans);
-  white-space: nowrap;
-  line-height: 1;
-}
-.map3d-pin--labeled {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #cfd9e6;
-  text-shadow:
-    0 0 4px rgba(13, 17, 24, 0.9),
-    0 0 4px rgba(13, 17, 24, 0.9);
-  border-radius: 999px;
-}
-.map3d-pin--dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-}
-.map3d-pin.is-active {
-  color: #fff;
-}
-.map3d-pin.is-dimmed {
-  opacity: 0.35;
-}
-.map3d-pin:focus-visible {
-  outline: 2px solid #e0654f;
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-.sr-only-map {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 @media (prefers-contrast: more) {
   :root {
     --color-line: oklch(70% 0.02 75);
