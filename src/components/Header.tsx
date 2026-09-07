@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 const links = [
   { href: "/", label: "Главная" },
@@ -17,21 +18,7 @@ export function Header() {
           href="/"
           className="flex shrink-0 items-center gap-2 font-display text-lg font-bold uppercase tracking-tight"
         >
-          <svg viewBox="0 0 44 44" aria-hidden className="h-8 w-8 shrink-0">
-            <rect x="4" y="4" width="36" height="36" rx="9" fill="#211a14" />
-            <rect
-              x="1"
-              y="1"
-              width="36"
-              height="36"
-              rx="9"
-              fill="#fffdf8"
-              stroke="#211a14"
-              strokeWidth="2.5"
-            />
-            <rect x="10" y="10" width="7" height="18" rx="3" fill="#3f6b4f" />
-            <rect x="21" y="10" width="7" height="18" rx="3" fill="#b4262b" />
-          </svg>
+          <Logo className="h-8 w-8 shrink-0" />
           <span>
             <span className="text-green">I</span>
             <span className="text-red">I</span>
