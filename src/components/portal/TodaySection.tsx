@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { PortalData } from "@/lib/portalApi";
 import { ACT_PAGE, TASK_META, dlText, fmtDate } from "@/lib/portalMeta";
+import { Aldo } from "@/components/Aldo";
 
 function flatTasks(d: PortalData) {
   const out: { st: string; stId: string; t: PortalData["roadmap"][number]["tasks"][number]; done: boolean }[] = [];
@@ -58,11 +59,14 @@ export function TodaySection({
 
       <div className="mt-4">
         {!next ? (
-          <div className="rounded-lg border-2 border-green bg-green/5 p-4">
-            <b className="text-sm">Все шаги пройдены</b>
-            <p className="mt-1 text-sm text-ink-soft">
-              Маршрут закрыт. Если появятся новые задачи, они появятся здесь.
-            </p>
+          <div className="flex items-start gap-3 rounded-lg border-2 border-green bg-green/5 p-4">
+            <Aldo pose="celebrating" className="h-11 w-11 shrink-0" />
+            <div>
+              <b className="text-sm">Все шаги пройдены</b>
+              <p className="mt-1 text-sm text-ink-soft">
+                Маршрут закрыт. Если появятся новые задачи, они появятся здесь.
+              </p>
+            </div>
           </div>
         ) : (
           <NextStepCard

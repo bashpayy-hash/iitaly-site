@@ -38,7 +38,7 @@ export function PricesExplorer() {
         <div className="mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
           <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-black tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
-            27 000 ₸ — и система ведёт тебя до конца
+            25 000 ₸ — и система ведёт тебя до конца
           </h1>
           <p className="mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
             Один платёж за всё поступление. Не подписка, не тарифы, без доплат
@@ -61,7 +61,7 @@ export function PricesExplorer() {
               →
             </span>
             <div className="flex-1 rounded-lg border-2 border-ink bg-ink p-5 text-cream shadow-red">
-              <b className="block font-display text-lg font-black">27 000 ₸</b>
+              <b className="block font-display text-lg font-black">25 000 ₸</b>
               <span className="text-sm text-cream/70">
                 система ведёт поступление от выбора вуза до permesso
               </span>
@@ -89,7 +89,7 @@ export function PricesExplorer() {
               </span>
             </div>
             <p className="mt-2 text-sm text-ink-soft">Всё, что делает система, входит в цену</p>
-            <p className="mt-3 font-display text-5xl font-black sm:text-6xl">27 000 ₸</p>
+            <p className="mt-3 font-display text-5xl font-black sm:text-6xl">25 000 ₸</p>
             <p className="mt-1 text-sm text-ink-soft">разово · без подписки и доплат</p>
             <p className="mt-4 rounded-md bg-cream px-4 py-3 text-sm">
               Личный кабинет с маршрутом открывается сразу после оплаты и ведёт
@@ -109,7 +109,7 @@ export function PricesExplorer() {
             <Button
               type="button"
               variant="primary"
-              onClick={() => openBuy("Поступление под ключ", 27000)}
+              onClick={() => openBuy("Поступление под ключ", 25000)}
               className="mt-4 w-full sm:w-auto"
             >
               Оплатить и начать

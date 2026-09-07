@@ -230,9 +230,12 @@ function LeadForm({ onDone }: { onDone: () => void }) {
 
   if (done) {
     return (
-      <div className="rounded-lg border-2 border-green bg-green/10 p-4 text-sm">
-        <b className="block">Записали</b>
-        <p className="mt-1 text-ink-soft">Напишем в WhatsApp на {phone}. Можешь продолжать спрашивать — лимит снят.</p>
+      <div className="flex items-start gap-2.5 rounded-lg border-2 border-green bg-green/10 p-4 text-sm">
+        <Aldo pose="celebrating" className="h-9 w-9 shrink-0" />
+        <div>
+          <b className="block">Записали</b>
+          <p className="mt-1 text-ink-soft">Напишем в WhatsApp на {phone}. Можешь продолжать спрашивать — лимит снят.</p>
+        </div>
       </div>
     );
   }
