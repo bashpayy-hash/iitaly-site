@@ -40,8 +40,12 @@ export function ItalyMap({
           <stop offset="1" stopColor="#0d1118" />
         </radialGradient>
         <linearGradient id="mapLand" x1="0" y1="0" x2="0.3" y2="1">
-          <stop offset="0" stopColor="#2f3a49" />
-          <stop offset="1" stopColor="#232c38" />
+          <stop offset="0" stopColor="#37455a" />
+          <stop offset="1" stopColor="#1e2632" />
+        </linearGradient>
+        <linearGradient id="mapEdge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#c3ddfb" stopOpacity="0.95" />
+          <stop offset="1" stopColor="#5f7d9c" stopOpacity="0.55" />
         </linearGradient>
         <filter id="mapPinGlow" x="-120%" y="-120%" width="340%" height="340%">
           <feGaussianBlur stdDeviation="4" result="b" />
@@ -50,6 +54,12 @@ export function ItalyMap({
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <filter id="mapLandShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="6" />
+        </filter>
+        <clipPath id="mapLandClip">
+          <path d={ITALY_PATH} />
+        </clipPath>
       </defs>
 
       <rect width={MAP_W_PX} height={MAP_H_PX} fill="url(#mapSea)" />
@@ -89,12 +99,21 @@ export function ItalyMap({
 
       <path
         d={ITALY_PATH}
+        fill="#04060a"
+        opacity={0.55}
+        transform="translate(1,7)"
+        filter="url(#mapLandShadow)"
+      />
+      <path
+        d={ITALY_PATH}
         fill="url(#mapLand)"
-        stroke="#8fb6e8"
+        stroke="url(#mapEdge)"
         strokeWidth={0.9}
-        strokeOpacity={0.75}
         strokeLinejoin="round"
       />
+      <g clipPath="url(#mapLandClip)">
+        <ellipse cx={120} cy={80} rx={150} ry={120} fill="#fff" opacity={0.05} />
+      </g>
 
       {cityIds.map((id) => {
         const c = CITIES[id];
@@ -124,6 +143,7 @@ export function ItalyMap({
             }`}
           >
             {active && <circle cx={c.x} cy={c.y} r={r + 6} fill="#e0654f" opacity={0.22} />}
+            <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#000" opacity={0.3} />
             <circle
               cx={c.x}
               cy={c.y}
