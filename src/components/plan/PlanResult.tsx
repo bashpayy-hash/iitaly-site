@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
 import { Button } from "@/components/Button";
+import { Aldo } from "@/components/Aldo";
 
 type DocState = "idle" | "checking" | "ok" | "err";
 
@@ -30,14 +31,17 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
 
   return (
     <div>
-      <div className="rounded-lg border-2 border-red bg-paper p-4 shadow-red">
-        <p className="text-xs font-extrabold tracking-[0.14em] text-red uppercase">
-          Персональный план готов
-        </p>
-        <p className="mt-1 text-sm text-ink-soft">
-          В продукте план строит Claude AI по полному своду правил ISEEU, DSU
-          и вузов.
-        </p>
+      <div className="flex items-start gap-3 rounded-lg border-2 border-red bg-paper p-4 shadow-red">
+        <Aldo pose="celebrating" className="h-12 w-12 shrink-0" />
+        <div>
+          <p className="text-xs font-extrabold tracking-[0.14em] text-red uppercase">
+            Персональный план готов
+          </p>
+          <p className="mt-1 text-sm text-ink-soft">
+            В продукте план строит Claude AI по полному своду правил ISEEU, DSU
+            и вузов.
+          </p>
+        </div>
       </div>
 
       <p className="mt-8 text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Твои шаги</p>

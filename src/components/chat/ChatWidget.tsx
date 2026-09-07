@@ -7,6 +7,7 @@ import { demoReply } from "@/data/chatDemo";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
+import { Aldo } from "@/components/Aldo";
 
 interface Msg {
   who: "user" | "ai";
@@ -16,7 +17,7 @@ interface Msg {
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { who: "ai", text: "Ciao! Я ИИ-консультант IItaly. Спроси про аттестат, документы, визу D или стипендию DSU." },
+    { who: "ai", text: "Ciao! Я Альдо, ИИ-консультант IItaly. Спроси про аттестат, документы, визу D или стипендию DSU." },
   ]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -140,12 +141,13 @@ export function ChatWidget() {
             ref={headRef}
             className="flex shrink-0 cursor-grab touch-none items-center gap-2 border-b-2 border-ink bg-ink px-4 py-3 text-cream select-none active:cursor-grabbing"
           >
-            <span aria-hidden className="flex gap-0.5 opacity-50">
-              <i className="h-3 w-0.5 bg-cream" />
-              <i className="h-3 w-0.5 bg-cream" />
-              <i className="h-3 w-0.5 bg-cream" />
+            <span
+              aria-hidden
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red/90"
+            >
+              <Aldo pose="greeting" animate={false} className="h-4 w-4" />
             </span>
-            <b className="text-sm">ИИ-консультант</b>
+            <b className="text-sm">Альдо</b>
             <span className="text-xs text-cream/50">· база 2026</span>
             <button
               type="button"
@@ -169,10 +171,9 @@ export function ChatWidget() {
               </div>
             ))}
             {typing && (
-              <div className="flex w-fit gap-1 rounded-lg bg-cream px-3.5 py-3">
-                <i className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-soft [animation-delay:0ms]" />
-                <i className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-soft [animation-delay:150ms]" />
-                <i className="h-1.5 w-1.5 animate-bounce rounded-full bg-ink-soft [animation-delay:300ms]" />
+              <div className="flex w-fit items-center gap-2 rounded-lg bg-cream px-3 py-2">
+                <Aldo pose="flying" className="h-7 w-7 shrink-0" />
+                <span className="text-xs text-ink-soft">печатает…</span>
               </div>
             )}
             {showLead && <LeadForm onDone={() => setShowLead(false)} />}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
+import { Aldo } from "@/components/Aldo";
 
 export function PortalLogin({
   onSubmit,
@@ -32,7 +33,8 @@ export function PortalLogin({
   return (
     <section className="overflow-hidden px-5 pt-10 pb-16 sm:pt-14">
       <div className="mx-auto max-w-[500px]">
-        <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Личный кабинет</p>
+        <Aldo pose="greeting" className="h-14 w-14" />
+        <p className="mt-3 text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Личный кабинет</p>
         <h1 className="mt-2 font-display text-[9vw] leading-[0.95] font-black tracking-tight uppercase sm:text-[5vw] lg:text-[2.6vw]">
           Твой маршрут поступления
         </h1>
