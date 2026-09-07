@@ -4,6 +4,10 @@
 // левое/правое крыло — отдельные path с общим швом по x=100 (как раньше
 // у ракушки), чтобы можно было анимировать одно крыло отдельно —
 // взмах крыла у приветствия буквально "бабочка машет крылом".
+// Детали (брови, румянец, блик, защипы по краю, шов по центру) добавлены
+// по запросу заказчика поверх исходной "радикально простой" версии —
+// каждая деталь крыла живёт внутри WingLeft/WingRight, чтобы двигаться
+// вместе с крылом при взмахе/повороте, а не всплывать над ним.
 // Появляется точечно: приветствие в чате, состояния загрузки, «план
 // готов» / «документ проверен». Не используется в навигации, на кнопках
 // или карточках вузов.
@@ -13,13 +17,20 @@ export type AldoPose = "flying" | "greeting" | "celebrating";
 const WING_LEFT = "M100,86 Q73,45 36,55 Q18,100 36,145 Q73,155 100,114 L100,86 Z";
 const WING_RIGHT = "M100,86 Q127,45 164,55 Q182,100 164,145 Q127,155 100,114 L100,86 Z";
 
-// Глаз — часть своего крыла (а не общего лица), чтобы при взмахе/повороте
-// крыла глаз двигался вместе с ним и не "всплывал" над фоном.
 function WingLeft() {
   return (
     <>
       <path d={WING_LEFT} fill="var(--color-warn-deep)" stroke="var(--color-ink)" strokeWidth="4" strokeLinejoin="round" />
+      <ellipse cx="55" cy="68" rx="9" ry="5" fill="var(--color-paper)" opacity="0.35" transform="rotate(-25 55 68)" />
+      <g stroke="var(--color-ink)" strokeWidth="1.6" opacity="0.55" strokeLinecap="round">
+        <line x1="26.25" y1="74.5" x2="32.25" y2="80.5" />
+        <line x1="24" y1="97" x2="30" y2="103" />
+        <line x1="26.25" y1="119.5" x2="32.25" y2="125.5" />
+      </g>
+      <path d="M56,76 Q68,68 80,76" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round" />
       <circle cx="68" cy="91" r="10" fill="var(--color-ink)" />
+      <circle cx="65" cy="88" r="2" fill="var(--color-paper)" />
+      <ellipse cx="60" cy="112" rx="7" ry="4.5" fill="var(--color-red)" opacity="0.28" transform="rotate(-15 60 112)" />
     </>
   );
 }
@@ -28,19 +39,31 @@ function WingRight() {
   return (
     <>
       <path d={WING_RIGHT} fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="4" strokeLinejoin="round" />
+      <ellipse cx="145" cy="68" rx="9" ry="5" fill="var(--color-paper)" opacity="0.35" transform="rotate(25 145 68)" />
+      <g stroke="var(--color-ink)" strokeWidth="1.6" opacity="0.55" strokeLinecap="round">
+        <line x1="173.75" y1="74.5" x2="167.75" y2="80.5" />
+        <line x1="176" y1="97" x2="170" y2="103" />
+        <line x1="173.75" y1="119.5" x2="167.75" y2="125.5" />
+      </g>
+      <path d="M120,76 Q132,68 144,76" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round" />
       <circle cx="132" cy="91" r="10" fill="var(--color-ink)" />
+      <circle cx="129" cy="88" r="2" fill="var(--color-paper)" />
+      <ellipse cx="140" cy="112" rx="7" ry="4.5" fill="var(--color-red)" opacity="0.28" transform="rotate(15 140 112)" />
     </>
   );
 }
 
 function PleatMarks() {
   return (
-    <g opacity="0.35" stroke="var(--color-ink)" strokeWidth="2" strokeLinecap="round">
-      <path d="M92,92 L80,82" />
-      <path d="M108,92 L120,82" />
-      <path d="M92,108 L80,118" />
-      <path d="M108,108 L120,118" />
-    </g>
+    <>
+      <g opacity="0.35" stroke="var(--color-ink)" strokeWidth="2" strokeLinecap="round">
+        <path d="M92,92 L80,82" />
+        <path d="M108,92 L120,82" />
+        <path d="M92,108 L80,118" />
+        <path d="M108,108 L120,118" />
+      </g>
+      <line x1="100" y1="88" x2="100" y2="112" stroke="var(--color-ink)" strokeWidth="2" strokeDasharray="3 3" opacity="0.4" />
+    </>
   );
 }
 
