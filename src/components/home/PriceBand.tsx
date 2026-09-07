@@ -9,7 +9,7 @@ export function PriceBand() {
             Один платёж, без подписки
           </p>
           <p className="mt-3 font-display text-6xl font-black tracking-tight sm:text-7xl">
-            27 000 ₸
+            25 000 ₸
           </p>
           <p className="mt-3 max-w-md text-cream/70">
             Агентства в Казахстане берут 650 000 – 1 000 000 ₸ за ту же работу —
