@@ -1,74 +1,86 @@
-// Альдо — маскот IItaly: фарфалле ("бабочки", парная бабочка-паста), не
-// ракушка и не самолётик — форма по прямому запросу заказчика. Силуэт с
-// пинчем по центру сверху/снизу и крыльями, расширяющимися влево-вправо;
-// левое/правое крыло — отдельные path с общим швом по x=100 (как раньше
-// у ракушки), чтобы можно было анимировать одно крыло отдельно —
-// взмах крыла у приветствия буквально "бабочка машет крылом".
-// Детали (брови, румянец, блик, защипы по краю, шов по центру) добавлены
-// по запросу заказчика поверх исходной "радикально простой" версии —
-// каждая деталь крыла живёт внутри WingLeft/WingRight, чтобы двигаться
-// вместе с крылом при взмахе/повороте, а не всплывать над ним.
-// Появляется точечно: приветствие в чате, состояния загрузки, «план
-// готов» / «документ проверен». Не используется в навигации, на кнопках
-// или карточках вузов.
+// Альдо — маскот IItaly: фузилли (спиральная паста), стоящий персонаж
+// с руками и ногами — по образцу живых маскотов вроде Duo (Duolingo)
+// или Wumpus (Discord), а не плоская форма-иконка с лицом. Тело —
+// один плоский цвет с диагональными полосами-витками (штопор фузилли)
+// и светлым "животом"-пятном, крупные выразительные глаза как у
+// референсов. Появляется точечно: приветствие в чате, состояния
+// загрузки, «план готов» / «документ проверен». Не используется в
+// навигации, на кнопках или карточках вузов.
 
 export type AldoPose = "flying" | "greeting" | "celebrating";
 
-const WING_LEFT = "M100,86 Q73,45 36,55 Q18,100 36,145 Q73,155 100,114 L100,86 Z";
-const WING_RIGHT = "M100,86 Q127,45 164,55 Q182,100 164,145 Q127,155 100,114 L100,86 Z";
-
-function WingLeft() {
+function Body() {
   return (
     <>
-      <path d={WING_LEFT} fill="var(--color-warn-deep)" stroke="var(--color-ink)" strokeWidth="4" strokeLinejoin="round" />
-      <ellipse cx="55" cy="68" rx="9" ry="5" fill="var(--color-paper)" opacity="0.35" transform="rotate(-25 55 68)" />
-      <g stroke="var(--color-ink)" strokeWidth="1.6" opacity="0.55" strokeLinecap="round">
-        <line x1="26.25" y1="74.5" x2="32.25" y2="80.5" />
-        <line x1="24" y1="97" x2="30" y2="103" />
-        <line x1="26.25" y1="119.5" x2="32.25" y2="125.5" />
+      <ellipse cx="100" cy="102" rx="52" ry="58" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="4.5" />
+      <g stroke="var(--color-ink)" strokeWidth="2" opacity="0.4" fill="none" strokeLinecap="round">
+        <path d="M55,130 Q100,110 145,88" />
+        <path d="M50,105 Q100,85 150,63" />
+        <path d="M55,78 Q100,60 145,42" />
+        <path d="M58,155 Q100,138 142,118" />
       </g>
-      <path d="M56,76 Q68,68 80,76" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round" />
-      <circle cx="68" cy="91" r="10" fill="var(--color-ink)" />
-      <circle cx="65" cy="88" r="2" fill="var(--color-paper)" />
-      <ellipse cx="60" cy="112" rx="7" ry="4.5" fill="var(--color-red)" opacity="0.28" transform="rotate(-15 60 112)" />
+      <ellipse cx="100" cy="134" rx="26" ry="21" fill="var(--color-warn-light)" stroke="var(--color-ink)" strokeWidth="2.5" />
     </>
   );
 }
 
-function WingRight() {
+function Face() {
   return (
     <>
-      <path d={WING_RIGHT} fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="4" strokeLinejoin="round" />
-      <ellipse cx="145" cy="68" rx="9" ry="5" fill="var(--color-paper)" opacity="0.35" transform="rotate(25 145 68)" />
-      <g stroke="var(--color-ink)" strokeWidth="1.6" opacity="0.55" strokeLinecap="round">
-        <line x1="173.75" y1="74.5" x2="167.75" y2="80.5" />
-        <line x1="176" y1="97" x2="170" y2="103" />
-        <line x1="173.75" y1="119.5" x2="167.75" y2="125.5" />
-      </g>
-      <path d="M120,76 Q132,68 144,76" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round" />
-      <circle cx="132" cy="91" r="10" fill="var(--color-ink)" />
-      <circle cx="129" cy="88" r="2" fill="var(--color-paper)" />
-      <ellipse cx="140" cy="112" rx="7" ry="4.5" fill="var(--color-red)" opacity="0.28" transform="rotate(15 140 112)" />
+      <ellipse cx="78" cy="90" rx="14" ry="17" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="3" />
+      <ellipse cx="122" cy="90" rx="14" ry="17" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="3" />
+      <circle cx="81" cy="94" r="7" fill="var(--color-ink)" />
+      <circle cx="125" cy="94" r="7" fill="var(--color-ink)" />
+      <circle cx="78.5" cy="90.5" r="1.8" fill="var(--color-paper)" />
+      <circle cx="122.5" cy="90.5" r="1.8" fill="var(--color-paper)" />
+      <path d="M90,116 Q100,121 110,116" stroke="var(--color-ink)" strokeWidth="3" fill="none" strokeLinecap="round" />
     </>
   );
 }
 
-function PleatMarks() {
+function Legs() {
   return (
     <>
-      <g opacity="0.35" stroke="var(--color-ink)" strokeWidth="2" strokeLinecap="round">
-        <path d="M92,92 L80,82" />
-        <path d="M108,92 L120,82" />
-        <path d="M92,108 L80,118" />
-        <path d="M108,108 L120,118" />
-      </g>
-      <line x1="100" y1="88" x2="100" y2="112" stroke="var(--color-ink)" strokeWidth="2" strokeDasharray="3 3" opacity="0.4" />
+      <rect x="72" y="148" width="16" height="24" rx="8" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="3.5" />
+      <rect x="112" y="148" width="16" height="24" rx="8" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="3.5" />
     </>
   );
 }
 
-function Mouth() {
-  return <path d="M77,116 Q100,130 123,116" fill="none" stroke="var(--color-ink)" strokeWidth="3.5" strokeLinecap="round" />;
+function ArmLeft({ up = false }: { up?: boolean }) {
+  const cx = up ? 48 : 42;
+  const cy = up ? 78 : 118;
+  const rotate = up ? -65 : -20;
+  return (
+    <ellipse
+      cx={cx}
+      cy={cy}
+      rx="13"
+      ry="20"
+      fill="var(--color-warn)"
+      stroke="var(--color-ink)"
+      strokeWidth="3.5"
+      transform={`rotate(${rotate} ${cx} ${cy})`}
+    />
+  );
+}
+
+function ArmRight({ up = false }: { up?: boolean }) {
+  const cx = up ? 152 : 158;
+  const cy = up ? 78 : 118;
+  const rotate = up ? 65 : 20;
+  return (
+    <ellipse
+      cx={cx}
+      cy={cy}
+      rx="13"
+      ry="20"
+      fill="var(--color-warn)"
+      stroke="var(--color-ink)"
+      strokeWidth="3.5"
+      transform={`rotate(${rotate} ${cx} ${cy})`}
+    />
+  );
 }
 
 export function Aldo({
@@ -91,44 +103,44 @@ export function Aldo({
             <line x1="18" y1="150" x2="42" y2="146" />
             <line x1="12" y1="132" x2="34" y2="129" />
           </g>
-          <WingLeft />
-          <WingRight />
-          <PleatMarks />
-          <Mouth />
+          <Legs />
+          <ArmLeft />
+          <ArmRight />
+          <Body />
+          <Face />
         </g>
       )}
 
       {pose === "greeting" && (
         <g>
-          <ellipse cx="100" cy="172" rx="58" ry="8" fill="var(--color-ink)" opacity="0.14" />
-          <WingLeft />
-          <g className={animate ? "aldo-wave" : ""} style={{ transformOrigin: "100px 100px" }}>
-            <WingRight />
+          <ellipse cx="100" cy="180" rx="55" ry="8" fill="var(--color-ink)" opacity="0.14" />
+          <Legs />
+          <ArmLeft />
+          <g className={animate ? "aldo-wave" : ""} style={{ transformOrigin: "150px 105px" }}>
+            <ArmRight />
           </g>
-          <PleatMarks />
-          <Mouth />
+          <Body />
+          <Face />
         </g>
       )}
 
       {pose === "celebrating" && (
         <g>
           <g className={animate ? "aldo-sparkle" : ""} style={{ animationDelay: "0s" }}>
-            <circle cx="36" cy="52" r="6" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="1.5" />
+            <circle cx="30" cy="45" r="6" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="1.5" />
           </g>
           <g className={animate ? "aldo-sparkle" : ""} style={{ animationDelay: "0.3s" }}>
-            <circle cx="164" cy="66" r="5.5" fill="var(--color-green)" stroke="var(--color-ink)" strokeWidth="1.5" />
+            <circle cx="170" cy="55" r="5.5" fill="var(--color-green)" stroke="var(--color-ink)" strokeWidth="1.5" />
           </g>
           <g className={animate ? "aldo-sparkle" : ""} style={{ animationDelay: "0.6s" }}>
-            <circle cx="156" cy="134" r="5" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="1.5" />
+            <circle cx="160" cy="140" r="5" fill="var(--color-warn)" stroke="var(--color-ink)" strokeWidth="1.5" />
           </g>
-          <g transform="rotate(-10 100 100)">
-            <WingLeft />
-          </g>
-          <g transform="rotate(10 100 100)">
-            <WingRight />
-          </g>
-          <PleatMarks />
-          <Mouth />
+          <ellipse cx="100" cy="180" rx="55" ry="8" fill="var(--color-ink)" opacity="0.14" />
+          <Legs />
+          <ArmLeft up />
+          <ArmRight up />
+          <Body />
+          <Face />
         </g>
       )}
     </svg>
