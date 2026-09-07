@@ -114,7 +114,36 @@ export function PricesExplorer() {
             </Button>
           </div>
 
-          <div className="mt-8 rounded-lg border-2 border-ink bg-paper p-5">
+          <div className="mt-8 rounded-lg border-2 border-green bg-green/5 p-5 sm:p-6">
+            <b className="block text-sm font-extrabold tracking-[0.1em] text-green uppercase">
+              Гарантии и как мы снимаем риск
+            </b>
+            <ul className="mt-3 space-y-3 text-sm text-ink-soft">
+              <li>
+                <b className="text-ink">Возврат.</b> Не начал работать с планом или чек-листом — до
+                7 дней с оплаты вернём деньги полностью, без объяснений. Дальше система уже строит
+                твой персональный маршрут и ведёт по нему — это и есть работа, которую покрывает
+                платёж.
+              </li>
+              <li>
+                <b className="text-ink">Мы не обещаем поступление, визу или стипендию.</b> Это
+                решают университет, консульство и регион Италии — не мы и не ИИ. Мы обещаем другое:
+                правильный маршрут, проверенные документы и ничего не упущенное по срокам.
+              </li>
+              <li>
+                <b className="text-ink">Если вуз отказал.</b> Это не конец доступа — кабинет
+                остаётся открытым, и система пересобирает план: другие университеты, следующий
+                интейк, донабор. Отдельно за это не платишь.
+              </li>
+              <li>
+                <b className="text-ink">Без доплат.</b> Цена одна и разовая на весь цикл поступления
+                — от выбора вуза до permesso di soggiorno. Платные консультации ниже — по желанию,
+                не часть обязательного пути.
+              </li>
+            </ul>
+          </div>
+
+          <div className="mt-6 rounded-lg border-2 border-ink bg-paper p-5">
             <b className="block text-sm">Что система делает сама, а где решаешь ты</b>
             <p className="mt-2 text-sm text-ink-soft">
               Подбор программ, сроки, чек-листы, черновики и проверку

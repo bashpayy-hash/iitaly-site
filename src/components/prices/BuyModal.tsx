@@ -189,8 +189,8 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               </div>
 
               <p className="mt-5 text-xs text-ink-soft">
-                Мы работаем без предоплаты «в никуда»: если передумаешь до начала работы, вернём
-                деньги полностью.
+                Без предоплаты «в никуда»: до 7 дней с оплаты, если ещё не начал работать с планом
+                — вернём деньги полностью, без объяснений.
               </p>
               <Button type="button" variant="ghost" onClick={close} className="mt-3 w-full">
                 Закрыть
