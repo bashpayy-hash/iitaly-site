@@ -1,6 +1,6 @@
 import { ButtonLink } from "@/components/Button";
 import { Vespa } from "@/components/Vespa";
-import { RouteRibbon } from "@/components/home/RouteRibbon";
+import { RouteRibbon } from "@/components/RouteRibbon";
 
 export function Hero() {
   return (

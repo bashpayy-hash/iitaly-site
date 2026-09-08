@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
+import { RouteRibbon } from "@/components/RouteRibbon";
 import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 
@@ -21,6 +22,25 @@ const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: 16900 },
 ];
 
+const GUARANTEES = [
+  {
+    title: "Возврат",
+    body: "Не начал работать с планом или чек-листом — до 7 дней с оплаты вернём деньги полностью, без объяснений. Дальше система уже строит твой персональный маршрут и ведёт по нему — это и есть работа, которую покрывает платёж.",
+  },
+  {
+    title: "Мы не обещаем поступление, визу или стипендию",
+    body: "Это решают университет, консульство и регион Италии — не мы и не ИИ. Мы обещаем другое: правильный маршрут, проверенные документы и ничего не упущенное по срокам.",
+  },
+  {
+    title: "Если вуз отказал",
+    body: "Это не конец доступа — кабинет остаётся открытым, и система пересобирает план: другие университеты, следующий интейк, донабор. Отдельно за это не платишь.",
+  },
+  {
+    title: "Без доплат",
+    body: "Цена одна и разовая на весь цикл поступления — от выбора вуза до permesso di soggiorno. Платные консультации ниже — по желанию, не часть обязательного пути.",
+  },
+];
+
 export function PricesExplorer() {
   const router = useRouter();
   const [buy, setBuy] = useState<BuyProduct | null>(null);
@@ -32,8 +52,16 @@ export function PricesExplorer() {
 
   return (
     <>
-      <section className="overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14">
-        <div className="mx-auto max-w-[900px]">
+      <section
+        className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14"
+        style={{
+          backgroundImage:
+            "radial-gradient(75% 65% at 102% -8%, color-mix(in oklch, var(--color-red) 32%, transparent) 0%, transparent 62%)",
+          backgroundColor: "var(--color-cream)",
+        }}
+      >
+        <RouteRibbon className="opacity-60" />
+        <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
           <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-black tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
             25 000 ₸ — и система ведёт тебя до конца
@@ -130,29 +158,22 @@ export function PricesExplorer() {
             <b className="block text-sm font-extrabold tracking-[0.1em] text-green uppercase">
               Гарантии и как мы снимаем риск
             </b>
-            <ul className="mt-3 space-y-3 text-sm text-ink-soft">
-              <li>
-                <b className="text-ink">Возврат.</b> Не начал работать с планом или чек-листом — до
-                7 дней с оплаты вернём деньги полностью, без объяснений. Дальше система уже строит
-                твой персональный маршрут и ведёт по нему — это и есть работа, которую покрывает
-                платёж.
-              </li>
-              <li>
-                <b className="text-ink">Мы не обещаем поступление, визу или стипендию.</b> Это
-                решают университет, консульство и регион Италии — не мы и не ИИ. Мы обещаем другое:
-                правильный маршрут, проверенные документы и ничего не упущенное по срокам.
-              </li>
-              <li>
-                <b className="text-ink">Если вуз отказал.</b> Это не конец доступа — кабинет
-                остаётся открытым, и система пересобирает план: другие университеты, следующий
-                интейк, донабор. Отдельно за это не платишь.
-              </li>
-              <li>
-                <b className="text-ink">Без доплат.</b> Цена одна и разовая на весь цикл поступления
-                — от выбора вуза до permesso di soggiorno. Платные консультации ниже — по желанию,
-                не часть обязательного пути.
-              </li>
-            </ul>
+            <div className="mt-3 divide-y divide-green/20">
+              {GUARANTEES.map((g) => (
+                <details key={g.title} className="group py-3 first:pt-0 last:pb-0">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-ink marker:content-none [&::-webkit-details-marker]:hidden">
+                    {g.title}
+                    <span
+                      aria-hidden
+                      className="shrink-0 font-display text-lg leading-none text-green transition-transform duration-200 group-open:rotate-45"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-2 text-sm text-ink-soft">{g.body}</p>
+                </details>
+              ))}
+            </div>
           </div>
 
           <div className="mt-6 rounded-lg border-2 border-ink bg-paper p-5">

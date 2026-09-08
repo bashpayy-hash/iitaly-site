@@ -5,14 +5,23 @@ import { GUIDES } from "@/data/guides";
 import { GuideCard } from "./GuideCard";
 import { VisaSection } from "./VisaSection";
 import { Button } from "@/components/Button";
+import { RouteRibbon } from "@/components/RouteRibbon";
 
 export function GuidesExplorer() {
   const router = useRouter();
 
   return (
     <>
-      <section className="overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14">
-        <div className="mx-auto max-w-[900px]">
+      <section
+        className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14"
+        style={{
+          backgroundImage:
+            "radial-gradient(70% 60% at -4% -10%, color-mix(in oklch, var(--color-green) 26%, transparent) 0%, transparent 60%)",
+          backgroundColor: "var(--color-cream)",
+        }}
+      >
+        <RouteRibbon className="opacity-60" />
+        <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
             Справочник · бесплатно
           </p>
