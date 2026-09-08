@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/home/Hero";
 import { Ticker } from "@/components/home/Ticker";
-import { ItalySignal } from "@/components/home/ItalySignal";
+import { VespaMoment } from "@/components/home/VespaMoment";
 import { Stats } from "@/components/home/Stats";
 import { Steps } from "@/components/home/Steps";
 import { Split } from "@/components/home/Split";
@@ -16,7 +16,7 @@ export default function Home() {
       <main>
         <Hero />
         <Ticker />
-        <ItalySignal />
+        <VespaMoment />
         <Stats />
         <Steps />
         <Split />

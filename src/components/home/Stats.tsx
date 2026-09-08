@@ -9,7 +9,6 @@ export function Stats() {
         </p>
 
         <DataPanel
-          watermark="€"
           hero={{ value: "€7 557", label: "Стипендия DSU в год — покрывает жильё и питание" }}
           stats={[
             { value: "€0–4К", label: "Год в госвузе по ISEE семьи" },

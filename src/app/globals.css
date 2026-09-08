@@ -20,8 +20,8 @@
   --color-warn-light: oklch(64% 0.13 52);
   --color-line: oklch(90.73% 0.0241 79.74);
 
-  --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-golos), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sans);
 
   --radius-pill: 999px;
   --radius-xl: 20px;
@@ -93,29 +93,6 @@ body {
 }
 .progress-ribbon-dot {
   transition: offset-distance 0.5s ease-out;
-}
-
-/* Полосы-«скан» в блоке ItalySignal. Текст под ними всегда полностью
-   виден — полосы лишь декоративно пробегают сверху, motion не скрывает
-   контент, поэтому безопасно оставлять активной по умолчанию. */
-.italy-scan-bar {
-  opacity: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .italy-scan-bar {
-    animation: italy-scan 2.6s ease-in-out infinite;
-  }
-  @keyframes italy-scan {
-    0%,
-    100% {
-      opacity: 0;
-      transform: scaleY(0.3);
-    }
-    50% {
-      opacity: 0.5;
-      transform: scaleY(1);
-    }
-  }
 }
 
 @keyframes ticker {

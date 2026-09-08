@@ -3,13 +3,7 @@ import { Vespa } from "@/components/Vespa";
 
 export function PriceBand() {
   return (
-    <section
-      className="relative overflow-hidden border-b-2 border-ink px-5 py-16 text-cream"
-      style={{
-        backgroundImage:
-          "radial-gradient(120% 140% at 12% 0%, var(--color-red-deep) 0%, var(--color-ink) 42%, var(--color-ink) 100%)",
-      }}
-    >
+    <section className="border-b-2 border-ink bg-ink px-5 py-16 text-cream">
       <div className="mx-auto flex max-w-[1200px] flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
         <div className="flex items-end gap-5">
           <Vespa pose="celebrate" className="hidden h-24 w-auto shrink-0 sm:block" />
