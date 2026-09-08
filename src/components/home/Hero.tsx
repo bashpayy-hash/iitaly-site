@@ -35,8 +35,11 @@ export function Hero() {
               </svg>
             </span>
           </h1>
-          <p className="mt-6 max-w-md text-lg text-ink-soft sm:text-xl">
-            Подбор вузов, документы и виза — ведёт система. Один платёж 25&nbsp;000&nbsp;₸.
+          <p className="mt-5 max-w-lg font-editorial text-2xl text-ink-soft italic sm:text-3xl">
+            Подбор вузов, документы и виза — ведёт система.
+          </p>
+          <p className="mt-3 max-w-md text-lg text-ink-soft sm:text-xl">
+            Один платёж 25&nbsp;000&nbsp;₸ — без агентских наценок и подписок.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <ButtonLink href="/plan" variant="primary">
@@ -48,20 +51,22 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="relative hidden lg:block">
-          <div className="-rotate-3 rounded-xl border-2 border-ink bg-paper p-5 shadow-lg">
-            <p className="text-xs font-extrabold tracking-[0.14em] text-sec uppercase">
-              Стипендия DSU
-            </p>
-            <p className="mt-1 font-display text-4xl font-black">€7 557</p>
-            <p className="mt-1 text-sm text-ink-soft">в год + жильё и питание</p>
-          </div>
-          <div className="mt-4 ml-8 rotate-2 rounded-xl border-2 border-ink bg-ink p-5 text-cream shadow-red">
-            <p className="text-xs font-extrabold tracking-[0.14em] text-cream/60 uppercase">
-              Вместо агентства
-            </p>
-            <p className="mt-1 font-display text-3xl font-black">25 000 ₸</p>
-            <p className="mt-1 text-sm text-cream/70">вместо 650 000 – 1 000 000 ₸</p>
+        <div className="hidden lg:block">
+          <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-lg">
+            <div className="p-5">
+              <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
+                Стипендия DSU
+              </p>
+              <p className="mt-1.5 font-display text-4xl font-black">€7 557</p>
+              <p className="mt-1 text-sm text-ink-soft">в год + жильё и питание</p>
+            </div>
+            <div className="border-t-2 border-ink bg-ink p-5 text-cream">
+              <p className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
+                Вместо агентства
+              </p>
+              <p className="mt-1.5 font-display text-3xl font-black text-red">25 000 ₸</p>
+              <p className="mt-1 text-sm text-cream/70">вместо 650 000 – 1 000 000 ₸</p>
+            </div>
           </div>
         </div>
       </div>

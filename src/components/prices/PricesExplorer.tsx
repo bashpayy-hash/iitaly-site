@@ -89,6 +89,18 @@ export function PricesExplorer() {
             <p className="mt-2 text-sm text-ink-soft">Всё, что делает система, входит в цену</p>
             <p className="mt-3 font-display text-5xl font-black sm:text-6xl">25 000 ₸</p>
             <p className="mt-1 text-sm text-ink-soft">разово · без подписки и доплат</p>
+            <div className="mt-5 grid grid-cols-3 divide-x-2 divide-ink/10 overflow-hidden rounded-md border-2 border-ink/10">
+              {[
+                { v: "28", l: "шагов в маршруте" },
+                { v: "43", l: "университета" },
+                { v: "30", l: "городов" },
+              ].map((s) => (
+                <div key={s.l} className="px-3 py-2.5 text-center sm:px-4">
+                  <p className="font-display text-lg font-black sm:text-xl">{s.v}</p>
+                  <p className="mt-0.5 font-mono text-[9px] tracking-[0.05em] text-sec-deep uppercase">{s.l}</p>
+                </div>
+              ))}
+            </div>
             <p className="mt-4 rounded-md bg-cream px-4 py-3 text-sm">
               Личный кабинет с маршрутом открывается сразу после оплаты и ведёт
               весь путь — от выбора программ до первых дней в Италии.

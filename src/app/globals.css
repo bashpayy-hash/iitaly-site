@@ -22,6 +22,8 @@
 
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-golos), "Helvetica Neue", Arial, sans-serif;
+  --font-editorial: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-space-mono), "SF Mono", "Courier New", monospace;
 
   --radius-pill: 999px;
   --radius-xl: 20px;
