@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Кабинеты — IItaly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#faf5ec; --paper:#fffdf8; --ink:#211a14; --ink-soft:#4a4038;
+    --sec:#6f6455; --sec-deep:#5d5346; --red:#b4262b; --red-deep:#8f1d21;
+    --green:#3f6b4f; --line:#e7ddc9;
+    --font-display:'Unbounded','Arial Black',sans-serif;
+    --font-sans:'Golos Text','Helvetica Neue',Arial,sans-serif;
+    --shadow-sm:2px 2px 0 var(--ink); --shadow-md:4px 4px 0 var(--ink);
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--cream); color:var(--ink);
+    font-family:var(--font-sans); font-size:15px; line-height:1.5;
+    padding:32px 20px 80px;
+  }
+  .wrap{max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:20px}
+
+  header{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+  h1{
+    font-family:var(--font-display); font-size:22px; font-weight:800; margin:0;
+    letter-spacing:-0.01em; text-wrap:balance;
+  }
+  .status{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.06em; padding:5px 10px 5px 8px;
+    border:2px solid var(--ink); border-radius:999px; background:var(--paper); white-space:nowrap;
+  }
+  .status .dot{width:8px; height:8px; border-radius:999px; background:var(--sec)}
+  .status[data-state="ok"] .dot{background:var(--green)}
+  .status[data-state="err"] .dot{background:var(--red)}
+
+  .card{
+    background:var(--paper); border:3px solid var(--ink); border-radius:16px;
+    box-shadow:var(--shadow-md); padding:20px;
+  }
+  .card + .card{margin-top:0}
+  .card h2{
+    font-family:var(--font-display); font-size:13px; font-weight:700; margin:0 0 14px;
+    text-transform:uppercase; letter-spacing:.08em; color:var(--sec-deep);
+  }
+
+  .field{display:flex; flex-direction:column; gap:6px; margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media (max-width:520px){.row{grid-template-columns:1fr}}
+  label{font-size:12px; font-weight:600; color:var(--ink-soft)}
+  label .req{color:var(--red)}
+  input, select{
+    font-family:var(--font-sans); font-size:14px; color:var(--ink);
+    background:var(--cream); border:2px solid var(--line); border-radius:10px;
+    padding:10px 12px; outline:none; width:100%;
+  }
+  input:focus, select:focus{border-color:var(--ink)}
+  input::placeholder{color:var(--sec)}
+
+  .btn{
+    font-family:var(--font-sans); font-weight:700; font-size:14px; cursor:pointer;
+    border:2px solid var(--ink); border-radius:10px; padding:11px 18px;
+    background:var(--paper); color:var(--ink); box-shadow:var(--shadow-sm);
+    transition:transform .08s ease;
+  }
+  .btn:active{transform:translate(2px,2px); box-shadow:none}
+  .btn:focus-visible{outline:3px solid var(--sec); outline-offset:2px}
+  .btn-primary{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+  .btn-ghost{background:transparent; box-shadow:none}
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+  .btn[disabled]{opacity:.5; cursor:not-allowed}
+
+  .hint{font-size:12px; color:var(--sec-deep); margin:2px 0 0}
+
+  .result{
+    border:2px dashed var(--ink); border-radius:12px; padding:16px; margin-top:16px;
+    display:none; background:var(--cream);
+  }
+  .result.show{display:block}
+  .result.is-error{border-color:var(--red); background:oklch(50.45% 0.1777 24.86 / 0.06)}
+  .code-big{
+    font-family:var(--font-display); font-size:28px; font-weight:800; letter-spacing:.04em;
+    color:var(--ink); margin:4px 0 10px;
+  }
+  .muted{color:var(--ink-soft); font-size:13px}
+
+  .history{display:flex; flex-direction:column; gap:0}
+  .history-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 0; border-bottom:1px solid var(--line); font-size:13px;
+  }
+  .history-row:last-child{border-bottom:none}
+  .history-code{font-family:var(--font-display); font-weight:700; letter-spacing:.03em}
+  .history-empty{color:var(--sec); font-size:13px; padding:6px 0}
+
+  a{color:var(--red); font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Кабинеты IItaly</h1>
+    <span class="status" id="connStatus" data-state="unknown"><span class="dot"></span><span id="connLabel">проверка…</span></span>
+  </header>
+
+  <section class="card">
+    <h2>Подключение к серверу</h2>
+    <div class="field">
+      <label for="backendUrl">Адрес бэкенда</label>
+      <input id="backendUrl" type="text" value="https://web-production-9faf3.up.railway.app" spellcheck="false">
+    </div>
+    <div class="field">
+      <label for="statsKey">Ключ владельца (STATS_KEY)</label>
+      <input id="statsKey" type="password" placeholder="вставь ключ из Railway → Variables" spellcheck="false">
+    </div>
+    <div class="btn-row">
+      <button class="btn" id="saveConn">Сохранить и проверить</button>
+    </div>
+    <p class="hint">Хранится только в этом браузере (localStorage), никуда не отправляется, кроме твоего же сервера.</p>
+  </section>
+
+  <section class="card">
+    <h2>Выдать доступ клиенту</h2>
+    <form id="createForm">
+      <div class="row">
+        <div class="field">
+          <label for="fName">Имя <span class="req">*</span></label>
+          <input id="fName" required placeholder="Аружан">
+        </div>
+        <div class="field">
+          <label for="fSurname">Фамилия <span class="req">*</span></label>
+          <input id="fSurname" required placeholder="Ахметова">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="fPhone">Телефон</label>
+          <input id="fPhone" placeholder="+7 700 000 00 00">
+        </div>
+        <div class="field">
+          <label for="fEmail">Почта</label>
+          <input id="fEmail" type="email" placeholder="client@mail.com">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="fEducation">Образование</label>
+          <select id="fEducation">
+            <option value="11 классов">11 классов</option>
+            <option value="НИШ / 12 лет">НИШ, БИЛ или 12 лет</option>
+            <option value="Студент вуза КЗ">Учится в вузе в КЗ</option>
+            <option value="Бакалавр">Есть диплом бакалавра</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fGoal">Цель</label>
+          <select id="fGoal">
+            <option value="Бакалавриат">Бакалавриат</option>
+            <option value="Магистратура">Магистратура</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="fBudget">Бюджет семьи в год</label>
+          <select id="fBudget">
+            <option value="Только со стипендией">Только со стипендией</option>
+            <option value="До 1 млн ₸/год">До 1 млн ₸</option>
+            <option value="До 3 млн ₸/год">До 3 млн ₸</option>
+            <option value="Без ограничений">Без ограничений</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fYear">Год поступления</label>
+          <input id="fYear" type="number" placeholder="авто">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="submitBtn">Создать кабинет</button>
+        <button type="button" class="btn btn-ghost" id="fillSelf">Заполнить тестовыми данными</button>
+      </div>
+    </form>
+
+    <div class="result" id="result">
+      <div class="muted">Код доступа</div>
+      <div class="code-big" id="resultCode">—</div>
+      <div class="muted" id="resultMsg"></div>
+      <div class="btn-row">
+        <button class="btn" id="copyCode">Скопировать код</button>
+        <a href="https://iitaly.netlify.app/portal" target="_blank" rel="noopener">Открыть кабинет →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Недавно созданные</h2>
+    <div class="history" id="history">
+      <div class="history-empty">Пока пусто — первый созданный код появится здесь.</div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var LS_KEY = "iitaly_admin_conn", LS_HIST = "iitaly_admin_history";
+
+  function loadJSON(key, fallback){
+    try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch(e){ return fallback; }
+  }
+  function saveJSON(key, val){
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){}
+  }
+
+  var conn = loadJSON(LS_KEY, {});
+  if (conn.backendUrl) $("backendUrl").value = conn.backendUrl;
+  if (conn.statsKey) $("statsKey").value = conn.statsKey;
+
+  function backendUrl(){ return $("backendUrl").value.trim().replace(/\/+$/, ""); }
+  function statsKey(){ return $("statsKey").value.trim(); }
+
+  function setStatus(state, label){
+    $("connStatus").setAttribute("data-state", state);
+    $("connLabel").textContent = label;
+  }
+
+  function checkHealth(){
+    var url = backendUrl();
+    if (!url) { setStatus("err", "нет адреса"); return; }
+    setStatus("unknown", "проверка…");
+    fetch(url + "/health", { method: "GET" })
+      .then(function(r){ return r.ok ? setStatus("ok", "сервер на связи") : setStatus("err", "сервер ответил ошибкой"); })
+      .catch(function(){ setStatus("err", "нет связи с сервером"); });
+  }
+
+  $("saveConn").addEventListener("click", function(){
+    saveJSON(LS_KEY, { backendUrl: backendUrl(), statsKey: statsKey() });
+    checkHealth();
+  });
+
+  function renderHistory(){
+    var list = loadJSON(LS_HIST, []);
+    var el = $("history");
+    if (!list.length) { el.innerHTML = '<div class="history-empty">Пока пусто — первый созданный код появится здесь.</div>'; return; }
+    el.innerHTML = list.slice(0, 8).map(function(item){
+      return '<div class="history-row"><span>' + item.name + '</span><span class="history-code">' + item.code + '</span></div>';
+    }).join("");
+  }
+  renderHistory();
+
+  $("fillSelf").addEventListener("click", function(){
+    $("fName").value = "Тест";
+    $("fSurname").value = "Тестов";
+    $("fPhone").value = "+7 775 937 05 98";
+    $("fEmail").value = "";
+  });
+
+  $("copyCode").addEventListener("click", function(){
+    var code = $("resultCode").textContent;
+    if (!code || code === "—") return;
+    navigator.clipboard && navigator.clipboard.writeText(code).catch(function(){});
+    $("copyCode").textContent = "Скопировано";
+    setTimeout(function(){ $("copyCode").textContent = "Скопировать код"; }, 1500);
+  });
+
+  $("createForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var url = backendUrl(), key = statsKey();
+    var resultEl = $("result"), codeEl = $("resultCode"), msgEl = $("resultMsg");
+
+    if (!url) { alert("Укажи адрес бэкенда выше."); return; }
+    if (!key) { alert("Укажи STATS_KEY выше — без него сервер откажет."); return; }
+
+    var name = $("fName").value.trim(), surname = $("fSurname").value.trim();
+    if (name.length < 2 || surname.length < 2) { alert("Имя и фамилия — минимум 2 символа каждое."); return; }
+
+    var payload = {
+      key: key,
+      name: name,
+      surname: surname,
+      phone: $("fPhone").value.trim(),
+      email: $("fEmail").value.trim(),
+      profile: {
+        education: $("fEducation").value,
+        goal: $("fGoal").value,
+        budget: $("fBudget").value
+      }
+    };
+    var year = $("fYear").value.trim();
+    if (year) payload.intakeYear = Number(year);
+
+    var btn = $("submitBtn");
+    btn.disabled = true; btn.textContent = "Создаю…";
+
+    fetch(url + "/api/portal/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, data: data }; }); })
+      .then(function(res){
+        resultEl.classList.add("show");
+        if (res.data && res.data.ok) {
+          resultEl.classList.remove("is-error");
+          codeEl.textContent = res.data.code;
+          msgEl.textContent = surname + " " + name + " — код выдан. Скажи клиенту открыть /portal и ввести фамилию и этот код.";
+          var hist = loadJSON(LS_HIST, []);
+          hist.unshift({ name: surname + " " + name, code: res.data.code, at: new Date().toISOString() });
+          saveJSON(LS_HIST, hist);
+          renderHistory();
+          $("createForm").reset();
+          $("fEducation").value = "11 классов"; $("fGoal").value = "Бакалавриат"; $("fBudget").value = "Только со стипендией";
+        } else {
+          resultEl.classList.add("is-error");
+          codeEl.textContent = "Ошибка";
+          var err = (res.data && res.data.error) || ("HTTP " + (res.status || "?"));
+          msgEl.textContent = err === "forbidden"
+            ? "Сервер отклонил ключ — проверь STATS_KEY выше, он должен совпадать с Railway Variables → STATS_KEY."
+            : "Сервер ответил: " + err;
+        }
+      })
+      .catch(function(){
+        resultEl.classList.add("show", "is-error");
+        codeEl.textContent = "Нет связи";
+        msgEl.textContent = "Не удалось достучаться до " + url + " — проверь адрес бэкенда и что сервер запущен (Railway → Deployments → Online).";
+      })
+      .finally(function(){
+        btn.disabled = false; btn.textContent = "Создать кабинет";
+      });
+  });
+
+  checkHealth();
+})();
+</script>
+</body>
+</html>
