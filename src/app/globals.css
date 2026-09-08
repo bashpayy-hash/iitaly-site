@@ -22,8 +22,6 @@
 
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-golos), "Helvetica Neue", Arial, sans-serif;
-  --font-editorial: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
-  --font-mono: var(--font-space-mono), "SF Mono", "Courier New", monospace;
 
   --radius-pill: 999px;
   --radius-xl: 20px;
@@ -95,6 +93,29 @@ body {
 }
 .progress-ribbon-dot {
   transition: offset-distance 0.5s ease-out;
+}
+
+/* Полосы-«скан» в блоке ItalySignal. Текст под ними всегда полностью
+   виден — полосы лишь декоративно пробегают сверху, motion не скрывает
+   контент, поэтому безопасно оставлять активной по умолчанию. */
+.italy-scan-bar {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .italy-scan-bar {
+    animation: italy-scan 2.6s ease-in-out infinite;
+  }
+  @keyframes italy-scan {
+    0%,
+    100% {
+      opacity: 0;
+      transform: scaleY(0.3);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scaleY(1);
+    }
+  }
 }
 
 @keyframes ticker {

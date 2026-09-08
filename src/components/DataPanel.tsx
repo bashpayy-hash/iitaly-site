@@ -40,7 +40,7 @@ export function DataPanel({
           <p className="relative font-display text-6xl leading-[0.95] font-black tracking-tight sm:text-7xl">
             {hero.value}
           </p>
-          <p className="relative mt-3 max-w-[26ch] font-mono text-[11px] tracking-[0.06em] text-sec-deep uppercase">
+          <p className="relative mt-3 max-w-[26ch] font-sans font-bold text-[11px] tracking-[0.06em] text-sec-deep uppercase">
             {hero.label}
           </p>
         </div>
@@ -56,7 +56,7 @@ export function DataPanel({
               <p className="font-display text-2xl font-black tracking-tight sm:text-3xl">
                 {s.value}
               </p>
-              <p className="font-mono text-[10px] tracking-[0.05em] text-sec-deep uppercase text-right">
+              <p className="font-sans font-bold text-[10px] tracking-[0.05em] text-sec-deep uppercase text-right">
                 {s.label}
               </p>
             </div>

@@ -45,7 +45,7 @@ export function Hero() {
               </svg>
             </span>
           </h1>
-          <p className="mt-5 max-w-lg font-editorial text-2xl text-ink-soft italic sm:text-3xl">
+          <p className="mt-5 max-w-lg font-sans font-medium text-2xl text-ink-soft italic sm:text-3xl">
             Подбор вузов, документы и виза — ведёт система.
           </p>
           <p className="mt-3 max-w-md text-lg text-ink-soft sm:text-xl">
@@ -64,7 +64,7 @@ export function Hero() {
         <div className="hidden lg:block">
           <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-lg">
             <div className="p-5">
-              <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
+              <p className="font-sans font-bold text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                 Стипендия DSU
               </p>
               <p className="mt-1.5 font-display text-4xl font-black">€7 557</p>
@@ -77,7 +77,7 @@ export function Hero() {
                   "linear-gradient(135deg, var(--color-red-deep) 0%, var(--color-ink) 55%)",
               }}
             >
-              <p className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
+              <p className="font-sans font-bold text-[10px] tracking-[0.08em] text-cream/55 uppercase">
                 Вместо агентства
               </p>
               <p className="mt-1.5 font-display text-3xl font-black">25 000 ₸</p>

@@ -125,7 +125,7 @@ export function PricesExplorer() {
               ].map((s) => (
                 <div key={s.l} className="px-3 py-2.5 text-center sm:px-4">
                   <p className="font-display text-lg font-black sm:text-xl">{s.v}</p>
-                  <p className="mt-0.5 font-mono text-[9px] tracking-[0.05em] text-sec-deep uppercase">{s.l}</p>
+                  <p className="mt-0.5 font-sans font-bold text-[9px] tracking-[0.05em] text-sec-deep uppercase">{s.l}</p>
                 </div>
               ))}
             </div>
