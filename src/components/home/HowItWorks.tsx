@@ -1,3 +1,5 @@
+import { Vespa } from "@/components/Vespa";
+
 const STAGES = [
   {
     n: "1",
@@ -39,8 +41,11 @@ export function HowItWorks() {
         </h2>
 
         <div className="mt-10 grid gap-px overflow-hidden rounded-lg border-2 border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
-          {STAGES.map((s) => (
-            <div key={s.n} className="flex flex-col bg-paper p-6">
+          {STAGES.map((s, i) => (
+            <div key={s.n} className="relative flex flex-col bg-paper p-6">
+              {i === 0 && (
+                <Vespa pose="wave" className="absolute top-4 right-4 h-14 w-auto opacity-95" />
+              )}
               <span className="font-display text-3xl font-black text-red">{s.n}</span>
               <h3 className="mt-3 text-base font-extrabold tracking-tight uppercase">{s.title}</h3>
               <p className="mt-2 flex-1 text-sm text-ink-soft">{s.body}</p>

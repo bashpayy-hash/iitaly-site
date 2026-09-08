@@ -1,10 +1,12 @@
 import { ButtonLink } from "@/components/Button";
 import { Vespa } from "@/components/Vespa";
+import { RouteRibbon } from "@/components/home/RouteRibbon";
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+      <RouteRibbon className="opacity-70" />
+      <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
           <div className="flex items-center gap-2">
             <Vespa pose="hero" className="h-8 w-auto shrink-0" priority />
