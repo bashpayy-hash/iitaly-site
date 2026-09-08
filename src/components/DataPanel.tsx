@@ -22,7 +22,13 @@ export function DataPanel({
       className={`overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-md ${className}`}
     >
       <div className="grid grid-cols-1 sm:grid-cols-[1.15fr_1fr]">
-        <div className="relative flex flex-col justify-end overflow-hidden border-b-2 border-ink p-6 sm:border-r-2 sm:border-b-0 sm:p-8">
+        <div
+          className="relative flex flex-col justify-end overflow-hidden border-b-2 border-ink p-6 sm:border-r-2 sm:border-b-0 sm:p-8"
+          style={{
+            backgroundImage:
+              "radial-gradient(120% 100% at 100% 0%, color-mix(in oklch, var(--color-red) 16%, transparent) 0%, transparent 65%)",
+          }}
+        >
           {watermark && (
             <span
               aria-hidden

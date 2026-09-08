@@ -4,7 +4,15 @@ import { RouteRibbon } from "@/components/home/RouteRibbon";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20">
+    <section
+      className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20"
+      style={{
+        backgroundImage:
+          "radial-gradient(75% 65% at 102% -8%, color-mix(in oklch, var(--color-red) 38%, transparent) 0%, transparent 62%), " +
+          "radial-gradient(60% 55% at -5% 108%, color-mix(in oklch, var(--color-green) 30%, transparent) 0%, transparent 60%)",
+        backgroundColor: "var(--color-cream)",
+      }}
+    >
       <RouteRibbon className="opacity-70" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
@@ -62,11 +70,17 @@ export function Hero() {
               <p className="mt-1.5 font-display text-4xl font-black">€7 557</p>
               <p className="mt-1 text-sm text-ink-soft">в год + жильё и питание</p>
             </div>
-            <div className="border-t-2 border-ink bg-ink p-5 text-cream">
+            <div
+              className="border-t-2 border-ink p-5 text-cream"
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, var(--color-red-deep) 0%, var(--color-ink) 55%)",
+              }}
+            >
               <p className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
                 Вместо агентства
               </p>
-              <p className="mt-1.5 font-display text-3xl font-black text-red">25 000 ₸</p>
+              <p className="mt-1.5 font-display text-3xl font-black">25 000 ₸</p>
               <p className="mt-1 text-sm text-cream/70">вместо 650 000 – 1 000 000 ₸</p>
             </div>
           </div>
