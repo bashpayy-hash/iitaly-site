@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import type { PortalData } from "@/lib/portalApi";
 import { ACT_PAGE, TASK_META, dlText, fmtDate } from "@/lib/portalMeta";
 import { Vespa } from "@/components/Vespa";
+import { ProgressRibbon } from "@/components/portal/ProgressRibbon";
 
 function flatTasks(d: PortalData) {
   const out: { st: string; stId: string; t: PortalData["roadmap"][number]["tasks"][number]; done: boolean }[] = [];
@@ -35,11 +36,8 @@ export function TodaySection({
           </b>
           <span className="text-sm text-ink-soft">шагов пройдено</span>
         </div>
-        <div className="mt-2.5 h-2 overflow-hidden rounded-pill bg-line">
-          <div
-            className="h-full origin-left rounded-pill bg-red transition-transform duration-300 ease-out motion-reduce:transition-none"
-            style={{ transform: `scaleX(${data.progress.pct / 100})` }}
-          />
+        <div className="mt-2.5">
+          <ProgressRibbon pct={data.progress.pct} />
         </div>
       </div>
 
