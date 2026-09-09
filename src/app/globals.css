@@ -45,6 +45,51 @@
   --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
   --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  /* Мягкая (blur-only, без офсета) шкала возвышения — дефолт для карточек и
+     навигации. Жёсткие "тени-стикеры" выше (--shadow-md/lg/xl/red/green)
+     остаются, но теперь это осознанный акцент на 1-2 элементах, а не фон
+     для каждой рамки на странице. */
+  --shadow-soft-sm: 0 1px 2px oklch(22.41% 0.0158 62.49 / 0.06), 0 1px 1px oklch(22.41% 0.0158 62.49 / 0.04);
+  --shadow-soft-md: 0 8px 24px -8px oklch(22.41% 0.0158 62.49 / 0.14), 0 2px 8px -2px oklch(22.41% 0.0158 62.49 / 0.06);
+  --shadow-soft-lg: 0 20px 48px -12px oklch(22.41% 0.0158 62.49 / 0.18), 0 6px 16px -4px oklch(22.41% 0.0158 62.49 / 0.08);
+
+  /* Motion-токены: fast — состояния контролов, normal — появление мелких
+     элементов, slow — крупные композиционные переходы. Стандартная кривая —
+     симметричная, спокойная; expressive — для hero/reveal, где нужен
+     уверенный, но не "прыгающий" акцент. */
+  --duration-fast: 180ms;
+  --duration-normal: 320ms;
+  --duration-slow: 560ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Типографическая система: именованные роли вместо произвольных text-*
+     размеров на местах. Fluid clamp() между ~390px и ~1440px — Dynamic-Type
+     дух HIG, переведённый в CSS. Ориентиры по диапазонам, не точные px. */
+  --text-display: clamp(2.75rem, 1.9rem + 4.4vw, 7rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-title: clamp(2.25rem, 1.7rem + 2.4vw, 4.5rem);
+  --text-title--line-height: 1.03;
+  --text-title--letter-spacing: -0.015em;
+
+  --text-heading: clamp(1.375rem, 1.2rem + 0.8vw, 2rem);
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -0.005em;
+
+  --text-body-lg: clamp(1.25rem, 1.15rem + 0.5vw, 1.75rem);
+  --text-body-lg--line-height: 1.45;
+
+  --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.1875rem);
+  --text-body--line-height: 1.55;
+
+  --text-caption: clamp(0.75rem, 0.72rem + 0.15vw, 0.875rem);
+  --text-caption--line-height: 1.4;
+
+  --text-button: 0.9375rem;
+  --text-button--line-height: 1;
 }
 
 :root {

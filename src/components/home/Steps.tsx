@@ -26,21 +26,23 @@ const steps = [
   },
 ];
 
+import { Title, Heading, Body } from "@/components/Typography";
+
 export function Steps() {
   return (
-    <section className="border-b-2 border-ink bg-cream px-5 py-16">
+    <section className="border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
       <div className="mx-auto max-w-[1200px]">
-        <h2 className="font-display text-4xl font-black tracking-tight uppercase sm:text-5xl">
+        <Title as="h2">
           Пять шагов
           <br />
           до Италии
-        </h2>
+        </Title>
 
-        <div className="mt-10 flex flex-col">
+        <div className="mt-12 flex flex-col">
           {steps.map((s, i) => (
             <div
               key={s.n}
-              className="border-t-2 border-ink py-6 last:border-b-2"
+              className="border-t border-line py-7 last:border-b"
               style={{
                 marginLeft: `min(${i * 3}vw, ${i * 40}px)`,
               }}
@@ -50,10 +52,10 @@ export function Steps() {
                   {s.n}
                 </span>
                 <div>
-                  <h3 className="text-lg font-extrabold tracking-tight uppercase">
-                    {s.title}
-                  </h3>
-                  <p className="mt-1 max-w-lg text-sm text-ink-soft">{s.body}</p>
+                  <Heading as="h3">{s.title}</Heading>
+                  <Body as="p" className="mt-1.5 max-w-lg">
+                    {s.body}
+                  </Body>
                 </div>
               </div>
             </div>

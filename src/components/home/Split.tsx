@@ -1,50 +1,62 @@
 import Link from "next/link";
+import { Heading, Body, Caption } from "@/components/Typography";
+
+const chevron = (
+  <svg aria-hidden viewBox="0 0 16 10" className="h-2.5 w-4 shrink-0 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-standard)] group-hover:translate-x-[3px]">
+    <path
+      d="M1 5h13m0 0L9.5 1M14 5l-4.5 4"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 export function Split() {
   return (
-    <section className="border-b-2 border-ink px-5 py-14">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <section className="border-b-2 border-ink px-5 py-16 sm:py-20">
+      <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-5 lg:grid-cols-[1.4fr_1fr]">
         <Link
           href="/universities"
-          className="group relative overflow-hidden rounded-lg border-2 border-ink p-8 text-cream shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg sm:p-10"
+          className="group relative overflow-hidden rounded-xl border-2 border-ink p-8 text-cream shadow-soft-md transition-[transform,box-shadow] duration-[var(--duration-normal)] ease-[var(--ease-standard)] hover:-translate-y-1 hover:shadow-soft-lg sm:p-10"
           style={{
             backgroundImage:
               "linear-gradient(135deg, var(--color-ink) 0%, var(--color-ink) 55%, var(--color-red-deep) 130%)",
           }}
         >
-          <p className="text-xs font-extrabold tracking-[0.16em] text-cream/60 uppercase">
+          <Caption as="p" className="text-cream/60">
             Интерактивная карта
-          </p>
-          <h3 className="mt-3 font-display text-3xl font-black tracking-tight uppercase sm:text-4xl">
+          </Caption>
+          <Heading as="h3" className="mt-3 text-title!">
             Найди свой <span className="text-red">университет</span>
-          </h3>
-          <p className="mt-3 max-w-md text-sm text-cream/70">
+          </Heading>
+          <Body as="p" className="mt-3 max-w-md text-cream/70">
             30 городов и 43 вуза: цены по ISEE, тесты, дедлайны и стипендия региона.
-          </p>
-          <span className="mt-6 inline-block text-sm font-extrabold tracking-wide uppercase underline-offset-4 group-hover:underline">
-            Смотреть карту →
+          </Body>
+          <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold">
+            Смотреть карту {chevron}
           </span>
         </Link>
 
         <Link
           href="/plan"
-          className="group relative overflow-hidden rounded-lg border-2 border-ink p-8 shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg sm:p-10"
+          className="group relative overflow-hidden rounded-xl border-2 border-ink p-8 shadow-soft-md transition-[transform,box-shadow] duration-[var(--duration-normal)] ease-[var(--ease-standard)] hover:-translate-y-1 hover:shadow-soft-lg sm:p-10"
           style={{
             backgroundImage:
               "linear-gradient(135deg, var(--color-paper) 0%, var(--color-paper) 60%, var(--color-cream) 140%)",
           }}
         >
-          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-            Бесплатно
-          </p>
-          <h3 className="mt-3 font-display text-2xl font-black tracking-tight uppercase sm:text-3xl">
+          <Caption as="p">Бесплатно</Caption>
+          <Heading as="h3" className="mt-3 text-heading!">
             Получи <span className="text-red">маршрут</span>
-          </h3>
-          <p className="mt-3 text-sm text-ink-soft">
+          </Heading>
+          <Body as="p" className="mt-3">
             Шесть вопросов о твоей ситуации — и персональный план поступления.
-          </p>
-          <span className="mt-6 inline-block text-sm font-extrabold tracking-wide uppercase underline-offset-4 group-hover:underline">
-            Составить план →
+          </Body>
+          <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink">
+            Составить план {chevron}
           </span>
         </Link>
       </div>

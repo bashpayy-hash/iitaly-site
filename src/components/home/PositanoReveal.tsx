@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { ButtonLink } from "@/components/Button";
+import { Title, Body, Caption } from "@/components/Typography";
 
 /**
  * Фото побережья превращается в узор из тонких вертикальных линий:
@@ -312,29 +314,45 @@ export function PositanoReveal() {
   }, []);
 
   return (
-    <section className="border-b-2 border-ink bg-cream px-5 py-12 sm:py-16">
-      <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-xl border-2 border-ink shadow-red sm:max-w-[460px]">
-        <div ref={sectionRef} className="relative aspect-[600/1075] w-full overflow-hidden bg-cream">
-          {/* Реальное фото: источник пикселей для анализа + доступный fallback
-             (alt-текст, показывается если JS/canvas недоступны). */}
-          <img
-            ref={imgRef}
-            src={IMAGE_SRC}
-            alt={IMAGE_ALT}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <canvas
-            ref={canvasRef}
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full bg-cream"
-          />
+    <section className="border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_0.85fr] lg:gap-16">
+        <div className="max-w-lg">
+          <Caption as="p">Прибрежная Италия</Caption>
+          <Title as="h2" className="mt-3">
+            Италия шире Рима
+          </Title>
+          <Body as="p" className="mt-5">
+            На интерактивной карте — 30 городов и 43 университета: от
+            мегаполисов до побережья, как Позитано на этой иллюстрации.
+          </Body>
+          <ButtonLink href="/universities" variant="tertiary" className="mt-7">
+            Смотреть карту вузов
+          </ButtonLink>
         </div>
-        <div className="border-t-2 border-ink bg-cream px-4 py-3">
-          <p className="text-xs font-extrabold tracking-[0.16em] text-ink uppercase">
-            Позитано · Амальфитанское побережье
-          </p>
+
+        <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-xl border-2 border-ink shadow-red lg:mx-0 lg:max-w-none">
+          <div ref={sectionRef} className="relative aspect-[600/1075] w-full overflow-hidden bg-cream">
+            {/* Реальное фото: источник пикселей для анализа + доступный fallback
+               (alt-текст, показывается если JS/canvas недоступны). */}
+            <img
+              ref={imgRef}
+              src={IMAGE_SRC}
+              alt={IMAGE_ALT}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <canvas
+              ref={canvasRef}
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full bg-cream"
+            />
+          </div>
+          <div className="border-t-2 border-ink bg-cream px-4 py-3">
+            <p className="text-xs font-extrabold tracking-[0.16em] text-ink uppercase">
+              Позитано · Амальфитанское побережье
+            </p>
+          </div>
         </div>
       </div>
     </section>

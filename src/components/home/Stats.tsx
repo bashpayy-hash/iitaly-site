@@ -2,9 +2,9 @@ import { DataPanel } from "@/components/DataPanel";
 
 export function Stats() {
   return (
-    <section className="border-b-2 border-ink px-5 py-14">
+    <section className="border-b-2 border-ink px-5 py-16 sm:py-20">
       <div className="mx-auto max-w-[1200px]">
-        <p className="mb-6 font-editorial text-3xl text-ink italic sm:text-4xl">
+        <p className="mb-8 font-editorial text-heading text-ink italic sm:text-title">
           Цифры, а не обещания.
         </p>
 

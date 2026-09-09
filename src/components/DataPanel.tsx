@@ -19,7 +19,7 @@ export function DataPanel({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-md ${className}`}
+      className={`overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-soft-md ${className}`}
     >
       <div className="grid grid-cols-1 sm:grid-cols-[1.15fr_1fr]">
         <div

@@ -1,28 +1,28 @@
 import { ButtonLink } from "@/components/Button";
+import { Display, BodyLarge, Body, Caption } from "@/components/Typography";
 import { Vespa } from "@/components/Vespa";
 import { RouteRibbon } from "@/components/RouteRibbon";
 
 export function Hero() {
   return (
     <section
-      className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-14 sm:pt-14 sm:pb-20"
+      className="relative overflow-hidden border-b-2 border-ink px-5 pt-14 pb-16 sm:pt-20 sm:pb-24"
       style={{
         backgroundImage:
-          "radial-gradient(75% 65% at 102% -8%, color-mix(in oklch, var(--color-red) 38%, transparent) 0%, transparent 62%), " +
-          "radial-gradient(60% 55% at -5% 108%, color-mix(in oklch, var(--color-green) 30%, transparent) 0%, transparent 60%)",
+          "radial-gradient(65% 60% at 100% -10%, color-mix(in oklch, var(--color-red) 22%, transparent) 0%, transparent 62%)",
         backgroundColor: "var(--color-cream)",
       }}
     >
-      <RouteRibbon className="opacity-70" />
+      <RouteRibbon className="opacity-40" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
           <div className="flex items-center gap-2">
             <Vespa pose="hero" className="h-8 w-auto shrink-0" priority />
-            <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
+            <Caption as="p" className="text-sec">
               Абитуриентам Казахстана 16–18 лет и их родителям
-            </p>
+            </Caption>
           </div>
-          <h1 className="mt-3 font-display text-[10vw] leading-[0.88] font-black tracking-tight uppercase sm:text-[8vw] lg:text-[6vw]">
+          <Display as="h1" className="mt-4">
             Поступать
             <br />
             <span className="relative inline-block text-red">
@@ -44,25 +44,25 @@ export function Hero() {
                 />
               </svg>
             </span>
-          </h1>
-          <p className="mt-5 max-w-lg font-editorial text-2xl text-ink-soft italic sm:text-3xl">
+          </Display>
+          <BodyLarge as="p" className="mt-6 max-w-lg font-editorial text-ink italic">
             Подбор вузов, документы и виза — ведёт система.
-          </p>
-          <p className="mt-3 max-w-md text-lg text-ink-soft sm:text-xl">
+          </BodyLarge>
+          <Body as="p" className="mt-3 max-w-md">
             Один платёж 25&nbsp;000&nbsp;₸ — без агентских наценок и подписок.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          </Body>
+          <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
             <ButtonLink href="/plan" variant="primary">
               Составить план бесплатно
             </ButtonLink>
-            <ButtonLink href="/universities" variant="ghost">
-              Смотреть университеты →
+            <ButtonLink href="/universities" variant="tertiary">
+              Смотреть университеты
             </ButtonLink>
           </div>
         </div>
 
         <div className="hidden lg:block">
-          <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-lg">
+          <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-soft-lg">
             <div className="p-5">
               <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                 Стипендия DSU

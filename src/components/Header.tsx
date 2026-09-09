@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { ButtonLink } from "@/components/Button";
 
 const links = [
   { href: "/", label: "Главная" },
@@ -36,12 +37,11 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <Link
-          href="/plan"
-          className="hidden shrink-0 rounded-pill border-2 border-ink bg-ink px-4 py-2 text-xs font-extrabold tracking-wide text-cream uppercase shadow-md sm:inline-block"
-        >
-          Спросить ИИ
-        </Link>
+        <div className="hidden shrink-0 sm:block">
+          <ButtonLink href="/plan" variant="secondary" size="sm">
+            Спросить ИИ
+          </ButtonLink>
+        </div>
       </div>
     </header>
   );

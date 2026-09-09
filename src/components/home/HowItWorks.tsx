@@ -25,25 +25,29 @@ const STAGES = [
   },
 ];
 
+import { Title, Heading, Body, Caption } from "@/components/Typography";
+
 export function HowItWorks() {
   return (
-    <section className="border-b-2 border-ink px-5 py-16">
+    <section className="border-b-2 border-ink px-5 py-16 sm:py-24">
       <div className="mx-auto max-w-[1200px]">
-        <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-          Как проходит работа с нами
-        </p>
-        <h2 className="mt-2 font-display text-4xl font-black tracking-tight uppercase sm:text-5xl">
+        <Caption as="p">Как проходит работа с нами</Caption>
+        <Title as="h2" className="mt-3">
           От вопроса до посадки
           <br />
           в самолёт
-        </h2>
+        </Title>
 
-        <div className="mt-10 grid gap-px overflow-hidden rounded-lg border-2 border-ink bg-ink sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border-2 border-ink bg-line sm:grid-cols-2 lg:grid-cols-4">
           {STAGES.map((s) => (
-            <div key={s.n} className="relative flex flex-col bg-paper p-6">
+            <div key={s.n} className="relative flex flex-col bg-paper p-6 sm:p-7">
               <span className="font-display text-3xl font-black text-red">{s.n}</span>
-              <h3 className="mt-3 text-base font-extrabold tracking-tight uppercase">{s.title}</h3>
-              <p className="mt-2 flex-1 text-sm text-ink-soft">{s.body}</p>
+              <Heading as="h3" className="mt-3 text-heading!">
+                {s.title}
+              </Heading>
+              <Body as="p" className="mt-2 flex-1">
+                {s.body}
+              </Body>
               <p className="mt-4 text-xs font-bold text-sec uppercase">{s.time}</p>
             </div>
           ))}
