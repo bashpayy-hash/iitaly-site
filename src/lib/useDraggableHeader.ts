@@ -18,7 +18,17 @@ function project(v: number, rate = 0.998) {
   return (v / 1000) * (rate / (1 - rate));
 }
 
-export function useDraggableHeader(panelRef: React.RefObject<HTMLElement | null>, headRef: React.RefObject<HTMLElement | null>) {
+export function useDraggableHeader(
+  panelRef: React.RefObject<HTMLElement | null>,
+  headRef: React.RefObject<HTMLElement | null>,
+  // panel/head mount conditionally (e.g. only while a chat panel is open),
+  // so a plain [panelRef, headRef] dependency array never re-fires this
+  // effect: ref *objects* keep the same identity across renders even
+  // though .current only gets populated later. Callers must pass a value
+  // that actually changes when the elements mount (e.g. the `open` flag),
+  // so the effect re-runs and finds real nodes instead of the initial nulls.
+  active: unknown,
+) {
   const dragging = useRef(false);
   const start = useRef({ x: 0, y: 0 });
   const base = useRef({ x: 0, y: 0 });
@@ -67,7 +77,11 @@ export function useDraggableHeader(panelRef: React.RefObject<HTMLElement | null>
       base.current = { x: p.x, y: p.y };
       hist.current = [{ x: e.clientX, y: e.clientY, t: performance.now() }];
       put(p.x, p.y);
-      panel!.setPointerCapture(e.pointerId);
+      // Capture must go on the element the move/up listeners are actually
+      // bound to (head). head is a descendant of panel, so capturing on
+      // panel would retarget events to panel and bubble from there — never
+      // reaching head's listeners, which live further down the tree.
+      head!.setPointerCapture(e.pointerId);
       panel!.classList.add("dragging");
     }
     function move(e: PointerEvent) {
@@ -144,5 +158,5 @@ export function useDraggableHeader(panelRef: React.RefObject<HTMLElement | null>
       head.removeEventListener("dblclick", onDblClick);
       window.removeEventListener("resize", onResize);
     };
-  }, [panelRef, headRef]);
+  }, [panelRef, headRef, active]);
 }

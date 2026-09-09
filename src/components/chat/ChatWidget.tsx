@@ -28,7 +28,7 @@ export function ChatWidget() {
   const panelRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
 
-  useDraggableHeader(panelRef, headRef);
+  useDraggableHeader(panelRef, headRef, open);
 
   // Keeps the mount-only event listener below calling the current render's
   // `send` (which closes over up-to-date `input`/`busy` state) instead of
