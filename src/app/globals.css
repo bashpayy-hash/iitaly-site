@@ -178,29 +178,8 @@ body {
   }
 }
 
-/* EditorialStatsPanel: атмосферный фон — очень медленный дрифт двух
-   мягких пятен (не мерцание, не параллакс), плюс тончайшее зерно через
-   инлайн SVG-шум (не WebGL — избыточно для одного статичного слоя).
-   Амплитуда дрифта умышленно крошечная: после reveal панель должна
-   читаться как практически неподвижная. */
-@keyframes stats-drift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-1.5%, 1%) scale(1.03);
-  }
-}
-.stats-mesh {
-  animation: stats-drift 22s ease-in-out infinite;
-  will-change: transform;
-}
-@media (prefers-reduced-motion: reduce) {
-  .stats-mesh {
-    animation: none;
-  }
-}
+/* Тончайшее зерно через инлайн SVG-шум (не WebGL — избыточно для одного
+   статичного слоя) — переиспользуется EditorialBackground.tsx (grain). */
 .stats-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 120px 120px;

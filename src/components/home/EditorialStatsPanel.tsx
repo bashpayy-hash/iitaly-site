@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { animate } from "motion";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
+import { EditorialBackground } from "@/components/EditorialBackground";
 import { track } from "@/lib/track";
 
 /**
@@ -92,18 +93,11 @@ export function EditorialStatsPanel({
       onViewportEnter={() => viewEvent && track(viewEvent)}
       className={`relative overflow-hidden rounded-xl border-2 border-ink bg-paper ${className}`}
     >
-      {/* Атмосферный фон: два мягких пятна фирменных цветов + очень тонкое зерно. */}
-      <motion.div
-        aria-hidden
-        variants={bgVariants}
-        className="stats-mesh pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(55% 60% at 8% 12%, color-mix(in oklch, var(--color-warn) 14%, transparent) 0%, transparent 65%), " +
-            "radial-gradient(50% 55% at 96% 92%, color-mix(in oklch, var(--color-red) 12%, transparent) 0%, transparent 60%)",
-        }}
-      />
-      <div aria-hidden className="stats-grain pointer-events-none absolute inset-0 opacity-[0.05] mix-blend-multiply" />
+      {/* Атмосферный фон — тот же "ledger"-паттерн, что и в общем EditorialBackground,
+         обёрнутый в motion.div ради fade-in по bgVariants при входе в вьюпорт. */}
+      <motion.div aria-hidden variants={bgVariants} className="absolute inset-0">
+        <EditorialBackground variant="ledger" grain />
+      </motion.div>
 
       <span
         aria-hidden

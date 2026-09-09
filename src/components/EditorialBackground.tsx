@@ -3,9 +3,10 @@
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 
 /**
- * Общий атмосферный фон для секций — обобщение приёма, уже
- * использованного в EditorialStatsPanel (.stats-mesh/.stats-grain):
- * мягкие радиальные пятна фирменных цветов + опциональное зерно, только
+ * Общий атмосферный фон для секций — обобщение приёма, изначально
+ * написанного отдельно внутри EditorialStatsPanel (сейчас сам делегирует
+ * сюда, вариант "ledger"): мягкие радиальные пятна фирменных цветов +
+ * опциональное зерно, только
  * native CSS-градиенты (никаких шейдеров/canvas — не нужны для этого
  * эффекта). Пять вариантов — не 5 разных техник, а 5 разных сочетаний
  * тех же градиентов под ритм страницы (просторно → живо → спокойно).
@@ -24,14 +25,14 @@ const GRADIENTS: Record<EditorialBackgroundVariant, string> = {
   // Hero — тёплое пятно сверху справа, как уже сделано в Hero.tsx.
   atlas:
     "radial-gradient(65% 60% at 100% -10%, color-mix(in oklch, var(--color-red) 22%, transparent) 0%, transparent 62%)",
-  // Маршрут/шаги — два пятна по диагонали, живее и плотнее.
+  // Маршрут/шаги — одно спокойное пятно снизу слева, легче и суше ledger.
   journey:
+    "radial-gradient(58% 55% at 6% 100%, color-mix(in oklch, var(--color-warn) 12%, transparent) 0%, transparent 62%)",
+  // DSU/цифры/стипендия — два пятна по диагонали, как в EditorialStatsPanel
+  // (значения совпадают с исходным .stats-mesh — тот же фон, не другой).
+  ledger:
     "radial-gradient(55% 60% at 8% 12%, color-mix(in oklch, var(--color-warn) 14%, transparent) 0%, transparent 65%), " +
     "radial-gradient(50% 55% at 96% 92%, color-mix(in oklch, var(--color-red) 12%, transparent) 0%, transparent 60%)",
-  // DSU/цифры/стипендия — красный + зелёный по углам, как в EditorialStatsPanel.
-  ledger:
-    "radial-gradient(75% 65% at 102% -8%, color-mix(in oklch, var(--color-red) 30%, transparent) 0%, transparent 62%), " +
-    "radial-gradient(60% 55% at -5% 108%, color-mix(in oklch, var(--color-green) 24%, transparent) 0%, transparent 60%)",
   // Побережье/университеты — одно тёплое пятно сверху, спокойнее atlas.
   coast:
     "radial-gradient(60% 55% at 50% 0%, color-mix(in oklch, var(--color-warn) 10%, transparent) 0%, transparent 60%)",

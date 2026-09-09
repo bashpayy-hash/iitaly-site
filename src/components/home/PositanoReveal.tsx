@@ -3,14 +3,16 @@ import { Caption, Body } from "@/components/Typography";
 import { ScanlineImage } from "@/components/ScanlineImage";
 import { Reveal } from "@/components/motion/Reveal";
 import { AnimatedText } from "@/components/motion/AnimatedText";
+import { EditorialBackground } from "@/components/EditorialBackground";
 
 const IMAGE_SRC = "/positano.jpg";
 const IMAGE_ALT = "Позитано на Амальфитанском побережье Италии: разноцветные дома на скалах над морем";
 
 export function PositanoReveal() {
   return (
-    <section className="border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_0.85fr] lg:gap-16">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+      <EditorialBackground variant="coast" motion="none" />
+      <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_0.85fr] lg:gap-16">
         <div className="max-w-lg">
           <Reveal variant="fade">
             <Caption as="p">Прибрежная Италия</Caption>
