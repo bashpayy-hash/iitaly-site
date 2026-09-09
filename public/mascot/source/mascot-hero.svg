@@ -1,45 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 205" role="img" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 170" role="img" aria-hidden="true">
 <style>
 @media (prefers-reduced-motion: no-preference) {
-  .ribbon { animation: ribbon-flutter 2.4s ease-in-out infinite; transform-origin: 150px 22px; }
+  .ribbon { animation: ribbon-flutter 2.4s ease-in-out infinite; transform-origin: 139px 28px; }
   @keyframes ribbon-flutter { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-3deg); } }
-  .idle-bob { animation: idle-bob 3.4s ease-in-out infinite; transform-origin: 122px 158px; }
+  .idle-bob { animation: idle-bob 3.4s ease-in-out infinite; transform-origin: 118px 130px; }
   @keyframes idle-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
   .sparkle { animation: sparkle-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
   @keyframes sparkle-pulse { 0%, 100% { opacity: 0.35; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.05); } }
 }
 </style>
-<ellipse cx="122" cy="192" rx="104" ry="9" fill="#211a14" opacity="0.12"/>
+<ellipse cx="118" cy="156" rx="96" ry="8" fill="#211a14" opacity="0.12"/>
 <g class="idle-bob">
 
-  <circle cx="66" cy="158" r="28" fill="#8f1d21" stroke="#211a14" stroke-width="4"/>
-  <circle cx="66" cy="158" r="10" fill="#b4262b" stroke="#211a14" stroke-width="2.5"/>
-  <circle cx="182" cy="162" r="24" fill="#8f1d21" stroke="#211a14" stroke-width="4"/>
-  <circle cx="182" cy="162" r="8" fill="#b4262b" stroke="#211a14" stroke-width="2.5"/>
-  <path d="M28,140 C18,120 24,95 45,80 C65,66 95,60 118,66
-           C132,70 138,80 136,95 L136,120 C136,132 130,142 116,148
-           C90,158 50,158 34,148 C30,146 29,143 28,140 Z"
+  <circle cx="64" cy="132" r="23" fill="#211a14"/>
+  <circle cx="64" cy="132" r="7.5" fill="#fffdf8"/>
+  <circle cx="176" cy="134" r="19" fill="#211a14"/>
+  <circle cx="176" cy="134" r="6.5" fill="#fffdf8"/>
+  <path d="M40,120
+           C34,104 42,88 58,80
+           C70,74 86,72 100,76
+           C110,79 114,86 112,96
+           L112,112
+           C112,120 108,126 98,130
+           C82,136 58,136 46,130
+           C42,128 41,124 40,120 Z"
         fill="#b4262b" stroke="#211a14" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M46,84 C68,72 96,68 118,74" stroke="#8f1d21" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M130,138 L172,135 L175,149 C175,153 171,156 165,156 L137,157
-           C133,157 130,153 130,149 Z"
+  <path d="M108,110 L160,108 L160,120 C160,124 156,127 150,127 L114,128 C110,128 108,124 108,120 Z"
         fill="#8f1d21" stroke="#211a14" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M150,140 C142,115 142,85 155,60 C163,45 180,38 196,44
-           C212,50 220,72 216,96 C213,118 202,138 186,146
-           C174,151 158,148 150,140 Z"
+  <path d="M156,108
+           C150,90 150,70 158,54
+           C163,44 175,40 184,46
+           C193,52 196,68 194,84
+           C192,100 186,112 176,116
+           C168,119 160,116 156,108 Z"
         fill="#b4262b" stroke="#211a14" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M186,55 C180,76 180,106 190,128" stroke="#8f1d21" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <circle cx="192" cy="120" r="5" fill="#fffdf8" stroke="#211a14" stroke-width="2.5"/><path d="M160,94 Q168,89 176,93" stroke="#211a14" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <path d="M172,58 C165,45 158,32 150,22" stroke="#211a14" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <circle cx="150" cy="22" r="10" fill="#b4262b" stroke="#211a14" stroke-width="3"/>
-  <circle cx="147" cy="19" r="2.4" fill="#fffdf8"/>
-  <path d="M198,58 C203,48 206,38 208,30" stroke="#211a14" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <circle cx="208" cy="30" r="8" fill="#b4262b" stroke="#211a14" stroke-width="3"/><g class="ribbon">
-    <path d="M150,22 C133,20 115,26 99,20 C87,16 77,20 67,14" stroke="#211a14" stroke-width="5.5" fill="none" stroke-linecap="round"/>
-    <path d="M150,22 C133,20 115,26 99,20 C87,16 77,20 67,14" stroke="#fffdf8" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-    <circle cx="65" cy="13" r="3.4" fill="#b25000" stroke="#211a14" stroke-width="1.6"/></g>
-  <circle cx="185" cy="78" r="24" fill="#8f1d21" stroke="#211a14" stroke-width="3.5"/>
-  <circle cx="185" cy="78" r="18" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M171,77 Q185,89 199,77" stroke="#211a14" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+  <path d="M178,44 C176,36 172,30 165,26" stroke="#211a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <path d="M165,26 C158,23 150,23 144,27" stroke="#211a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <circle cx="144" cy="27" r="5.5" fill="#fffdf8" stroke="#211a14" stroke-width="3"/><g class="ribbon">
+    <path d="M139,28 C122,26 104,32 88,26 C76,22 66,26 56,20" stroke="#211a14" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <path d="M139,28 C122,26 104,32 88,26 C76,22 66,26 56,20" stroke="#fffdf8" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+    <circle cx="54" cy="19" r="3.4" fill="#b25000" stroke="#211a14" stroke-width="1.6"/></g><circle cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M164,64 Q174,56 184,64" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
 </g>
 
 </svg>

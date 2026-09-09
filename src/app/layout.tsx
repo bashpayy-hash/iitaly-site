@@ -1,12 +1,36 @@
 import type { Metadata } from "next";
-import { Golos_Text } from "next/font/google";
+import { Unbounded, Golos_Text, Instrument_Serif, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin", "cyrillic"],
+  weight: ["600", "700", "800", "900"],
+  display: "swap",
+});
 
 const golos = Golos_Text({
   variable: "--font-golos",
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Редакторский курсив для цитат и акцентных строк — контраст плотному Unbounded.
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["italic", "normal"],
+  display: "swap",
+});
+
+// Моноширинный для технических подписей у цифр (сроки, счётчики, статусы).
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -39,7 +63,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ru" className={`${golos.variable} h-full antialiased`}>
+    <html
+      lang="ru"
+      className={`${unbounded.variable} ${golos.variable} ${instrumentSerif.variable} ${spaceMono.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         {children}
         <ChatWidget />

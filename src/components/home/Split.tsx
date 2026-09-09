@@ -6,7 +6,11 @@ export function Split() {
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
         <Link
           href="/universities"
-          className="group rounded-lg border-2 border-ink bg-ink p-8 text-cream shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg sm:p-10"
+          className="group relative overflow-hidden rounded-lg border-2 border-ink p-8 text-cream shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg sm:p-10"
+          style={{
+            backgroundImage:
+              "linear-gradient(135deg, var(--color-ink) 0%, var(--color-ink) 55%, var(--color-red-deep) 130%)",
+          }}
         >
           <p className="text-xs font-extrabold tracking-[0.16em] text-cream/60 uppercase">
             Интерактивная карта
@@ -24,7 +28,11 @@ export function Split() {
 
         <Link
           href="/plan"
-          className="group rounded-lg border-2 border-ink bg-paper p-8 shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg sm:p-10"
+          className="group relative overflow-hidden rounded-lg border-2 border-ink p-8 shadow-md transition-transform hover:-translate-y-1 hover:shadow-lg sm:p-10"
+          style={{
+            backgroundImage:
+              "linear-gradient(135deg, var(--color-paper) 0%, var(--color-paper) 60%, var(--color-cream) 140%)",
+          }}
         >
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
             Бесплатно
