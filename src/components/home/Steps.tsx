@@ -1,5 +1,6 @@
 import { Title, Heading, Body } from "@/components/Typography";
 import { Reveal } from "@/components/motion/Reveal";
+import { EditorialBackground } from "@/components/EditorialBackground";
 
 const steps = [
   {
@@ -31,8 +32,9 @@ const steps = [
 
 export function Steps() {
   return (
-    <section className="border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <div className="mx-auto max-w-[1200px]">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+      <EditorialBackground variant="journey" />
+      <div className="relative mx-auto max-w-[1200px]">
         <Reveal variant="fade">
           <Title as="h2">
             Пять шагов

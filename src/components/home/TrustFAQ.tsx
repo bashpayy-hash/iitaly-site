@@ -2,6 +2,7 @@
 
 import { Caption, Title, Body } from "@/components/Typography";
 import { Reveal } from "@/components/motion/Reveal";
+import { EditorialBackground } from "@/components/EditorialBackground";
 import { track } from "@/lib/track";
 
 /**
@@ -33,14 +34,7 @@ const FAQ = [
 export function TrustFAQ() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "radial-gradient(70% 55% at 50% 0%, color-mix(in oklch, var(--color-ink) 5%, transparent) 0%, transparent 70%)",
-        }}
-      />
+      <EditorialBackground variant="quiet" motion="none" />
       <div className="relative mx-auto max-w-[760px]">
         <Reveal variant="fade">
           <Caption as="p">Прежде чем платить</Caption>
