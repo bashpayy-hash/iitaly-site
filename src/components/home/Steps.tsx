@@ -1,3 +1,6 @@
+import { Title, Heading, Body } from "@/components/Typography";
+import { Reveal } from "@/components/motion/Reveal";
+
 const steps = [
   {
     n: "01",
@@ -26,39 +29,40 @@ const steps = [
   },
 ];
 
-import { Title, Heading, Body } from "@/components/Typography";
-
 export function Steps() {
   return (
     <section className="border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
       <div className="mx-auto max-w-[1200px]">
-        <Title as="h2">
-          Пять шагов
-          <br />
-          до Италии
-        </Title>
+        <Reveal variant="fade">
+          <Title as="h2">
+            Пять шагов
+            <br />
+            до Италии
+          </Title>
+        </Reveal>
 
         <div className="mt-12 flex flex-col">
           {steps.map((s, i) => (
-            <div
-              key={s.n}
-              className="border-t border-line py-7 last:border-b"
-              style={{
-                marginLeft: `min(${i * 3}vw, ${i * 40}px)`,
-              }}
-            >
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
-                <span className="font-display text-2xl font-black text-red">
-                  {s.n}
-                </span>
-                <div>
-                  <Heading as="h3">{s.title}</Heading>
-                  <Body as="p" className="mt-1.5 max-w-lg">
-                    {s.body}
-                  </Body>
+            <Reveal key={s.n} delay={Math.min(i * 0.06, 0.3)} amount={0.4}>
+              <div
+                className="border-t border-line py-7 last:border-b"
+                style={{
+                  marginLeft: `min(${i * 3}vw, ${i * 40}px)`,
+                }}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
+                  <span className="font-display text-2xl font-black text-red">
+                    {s.n}
+                  </span>
+                  <div>
+                    <Heading as="h3">{s.title}</Heading>
+                    <Body as="p" className="mt-1.5 max-w-lg">
+                      {s.body}
+                    </Body>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>

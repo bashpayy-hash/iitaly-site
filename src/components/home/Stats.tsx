@@ -1,4 +1,4 @@
-import { DataPanel } from "@/components/DataPanel";
+import { EditorialStatsPanel } from "@/components/home/EditorialStatsPanel";
 
 export function Stats() {
   return (
@@ -8,14 +8,20 @@ export function Stats() {
           Цифры, а не обещания.
         </p>
 
-        <DataPanel
+        <EditorialStatsPanel
           watermark="€"
           hero={{ value: "€7 557", label: "Стипендия DSU в год — покрывает жильё и питание" }}
-          stats={[
-            { value: "€0–4К", label: "Год в госвузе по ISEE семьи" },
-            { value: "43", label: "Университета в базе с тестами и дедлайнами" },
-            { value: "30", label: "Городов на интерактивной карте" },
+          metrics={[
+            { value: "43", numeric: 43, label: "университета в базе с тестами и дедлайнами" },
+            { value: "30", numeric: 30, label: "городов на интерактивной карте" },
+            {
+              value: "25 000 ₸",
+              numeric: 25000,
+              suffix: " ₸",
+              label: "полный цикл поступления, разово",
+            },
           ]}
+          metaLine="База: правила приёма 2026/27 (MUR, CIMEA, bando регионов). Ответы ИИ могут содержать ошибки — критичное проверяет эксперт."
         />
       </div>
     </section>

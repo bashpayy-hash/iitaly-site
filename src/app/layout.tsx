@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Unbounded, Golos_Text, Instrument_Serif, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 
 const unbounded = Unbounded({
   variable: "--font-unbounded",
@@ -68,8 +69,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${unbounded.variable} ${golos.variable} ${instrumentSerif.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
-        {children}
-        <ChatWidget />
+        <MotionProvider>
+          {children}
+          <ChatWidget />
+        </MotionProvider>
       </body>
     </html>
   );

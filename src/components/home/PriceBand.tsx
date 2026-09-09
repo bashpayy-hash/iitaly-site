@@ -1,6 +1,7 @@
 import { ButtonLink } from "@/components/Button";
 import { Body, Caption } from "@/components/Typography";
 import { Vespa } from "@/components/Vespa";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function PriceBand() {
   return (
@@ -11,7 +12,7 @@ export function PriceBand() {
           "radial-gradient(120% 140% at 12% 0%, var(--color-red-deep) 0%, var(--color-ink) 42%, var(--color-ink) 100%)",
       }}
     >
-      <div className="mx-auto flex max-w-[1200px] flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
+      <Reveal className="mx-auto flex max-w-[1200px] flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
         <div className="flex items-end gap-5">
           <Vespa pose="celebrate" className="hidden h-24 w-auto shrink-0 sm:block" />
           <div>
@@ -30,7 +31,7 @@ export function PriceBand() {
         <ButtonLink href="/prices" variant="primary" className="shrink-0">
           Смотреть, что входит
         </ButtonLink>
-      </div>
+      </Reveal>
     </section>
   );
 }
