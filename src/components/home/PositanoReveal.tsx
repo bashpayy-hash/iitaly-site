@@ -19,10 +19,12 @@ const IMAGE_ALT =
   "Позитано на Амальфитанском побережье Италии: разноцветные дома на скалах над морем";
 
 const LINE_HEX = "#b25000"; // --color-warn
+const LINE_DEEP_HEX = "#7a3600"; // --color-warn-deep
+const LINE_LIGHT_HEX = "#c97a2e"; // --color-warn-light
 const BG_HEX = "#faf5ec"; // --color-cream
 
-const COLUMN_SPACING = 4; // px между линиями
-const ROW_STEP = 4; // px шаг сэмплирования по высоте
+const COLUMN_SPACING = 3; // px между линиями
+const ROW_STEP = 3; // px шаг сэмплирования по высоте
 const REVEAL_MS = 2100;
 const WAVE_AMPLITUDE = 46; // px, изгиб фронта реveal'а
 const WAVE_FREQ = 0.012; // рад/px по Y
@@ -36,7 +38,7 @@ function resolveColor(varName: string, fallbackHex: string) {
 }
 
 export function PositanoReveal() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const targetRef = useRef<HTMLCanvasElement | null>(null); // offscreen: полностью проявленный узор
@@ -45,8 +47,9 @@ export function PositanoReveal() {
   const rafRef = useRef<number | null>(null);
   const revealStartRef = useRef<number | null>(null);
   const idleActiveRef = useRef(false);
-  const readyRef = useRef(false);
-  const colorsRef = useRef({ line: LINE_HEX, bg: BG_HEX });
+  const revealStartedRef = useRef(false); // one-shot реveal уже запущен (идёт или закончен)
+  const pendingRevealRef = useRef(false); // секция уже видна, но фото/размер ещё не были готовы
+  const colorsRef = useRef({ line: LINE_HEX, lineDeep: LINE_DEEP_HEX, lineLight: LINE_LIGHT_HEX, bg: BG_HEX });
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -60,6 +63,8 @@ export function PositanoReveal() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     colorsRef.current = {
       line: resolveColor("--color-warn", LINE_HEX),
+      lineDeep: resolveColor("--color-warn-deep", LINE_DEEP_HEX),
+      lineLight: resolveColor("--color-warn-light", LINE_LIGHT_HEX),
       bg: resolveColor("--color-cream", BG_HEX),
     };
 
@@ -118,21 +123,27 @@ export function PositanoReveal() {
       const tctx = target.getContext("2d");
       if (!tctx) return null;
       tctx.scale(dpr, dpr);
-      tctx.fillStyle = colorsRef.current.line;
 
       const colStep = w / numCols;
       const rowStep = h / numRows;
+      const { lineDeep, line, lineLight } = colorsRef.current;
 
       for (let cx = 0; cx < numCols; cx++) {
         const x = cx * colStep;
         for (let ry = 0; ry < numRows; ry++) {
           const idx = (ry * numCols + cx) * 4;
           const lum = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
-          if (lum > 236) continue; // яркое небо/блики — настоящий разрыв
-          const alpha = Math.min(0.92, Math.max(0.08, 1 - lum / 232));
+          if (lum > 232) continue; // яркое небо/блики — настоящий разрыв
+
+          // t=0 у самых тёмных пятен фото, t=1 у самых светлых (но ещё не
+          // разрыв) — по нему одновременно гоним и цвет (deep→line→light),
+          // и alpha, с гамма-кривой для более контрастного, "печатного" вида.
+          const t = Math.min(1, Math.max(0, lum / 232));
+          tctx.fillStyle = t < 0.45 ? lineDeep : t < 0.8 ? line : lineLight;
+          const alpha = Math.min(0.95, Math.max(0.06, Math.pow(1 - t, 1.5)));
           const y = ry * rowStep;
           tctx.globalAlpha = alpha;
-          tctx.fillRect(x, y, Math.max(1, colStep * 0.62), rowStep * 0.92);
+          tctx.fillRect(x, y, Math.max(1, colStep * 0.48), rowStep * 0.94);
         }
       }
       tctx.globalAlpha = 1;
@@ -219,34 +230,44 @@ export function PositanoReveal() {
       revealedRef.current = true;
     }
 
-    function rebuild(replay: boolean) {
-      sizeCanvas();
-      const target = buildTarget();
-      if (!target) return;
-      targetRef.current = target;
-      readyRef.current = true;
-
+    function startReveal() {
+      revealStartedRef.current = true;
       if (reducedMotion) {
         drawStaticFinal();
         return;
       }
-      if (replay && !revealedRef.current) {
-        stopLoop();
-        revealStartRef.current = null;
-        rafRef.current = requestAnimationFrame((t) => {
-          revealStartRef.current = t;
-          drawRevealFrame(0);
-        });
+      stopLoop();
+      revealStartRef.current = null;
+      rafRef.current = requestAnimationFrame((t) => {
+        revealStartRef.current = t;
+        drawRevealFrame(0);
+      });
+    }
+
+    // Строит/обновляет offscreen-таргет под текущий размер секции. Сам по
+    // себе НЕ решает, показывать ли реveal — только держит узор свежим.
+    // Триггер реveal'а — исключительно intersection (см. io ниже), плюс
+    // догон здесь же, если видимость уже наступила раньше, чем фото/размер
+    // стали готовы.
+    function rebuild() {
+      sizeCanvas();
+      const target = buildTarget();
+      if (!target) return;
+      targetRef.current = target;
+
+      if (pendingRevealRef.current && !revealStartedRef.current) {
+        pendingRevealRef.current = false;
+        startReveal();
       } else if (revealedRef.current) {
         drawStaticFinal();
-        startIdleLoop();
+        if (isIntersecting) startIdleLoop();
       }
     }
 
     let resizeTimer: number | null = null;
     const ro = new ResizeObserver(() => {
       if (resizeTimer) window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => rebuild(false), 150);
+      resizeTimer = window.setTimeout(rebuild, 150);
     });
     ro.observe(section);
 
@@ -256,8 +277,12 @@ export function PositanoReveal() {
         const entry = entries[0];
         isIntersecting = entry.isIntersecting;
         if (isIntersecting) {
-          if (!readyRef.current) {
-            rebuild(true);
+          if (!revealStartedRef.current) {
+            if (targetRef.current) {
+              startReveal();
+            } else {
+              pendingRevealRef.current = true;
+            }
           } else if (revealedRef.current) {
             startIdleLoop();
           }
@@ -265,7 +290,7 @@ export function PositanoReveal() {
           stopLoop();
         }
       },
-      { threshold: 0.15 },
+      { threshold: 0.35, rootMargin: "0px 0px -80px 0px" },
     );
     io.observe(section);
 
@@ -273,7 +298,7 @@ export function PositanoReveal() {
     // (buildTarget тогда ничего не строит) — доcтраиваем узор, как только
     // пиксели фото стали доступны.
     function onImgReady() {
-      if (isIntersecting && !readyRef.current) rebuild(true);
+      rebuild();
     }
     if (!img.complete) img.addEventListener("load", onImgReady, { once: true });
 
@@ -287,29 +312,30 @@ export function PositanoReveal() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative aspect-[21/10] w-full overflow-hidden border-b-2 border-ink bg-cream sm:aspect-[21/9]"
-    >
-      {/* Реальное фото: источник пикселей для анализа + доступный fallback
-         (alt-текст, показывается если JS/canvas недоступны). */}
-      <img
-        ref={imgRef}
-        src={IMAGE_SRC}
-        alt={IMAGE_ALT}
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full bg-cream"
-      />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 p-5 sm:p-8">
-        <p className="text-xs font-extrabold tracking-[0.16em] text-ink-soft uppercase">
-          Позитано · Амальфитанское побережье
-        </p>
+    <section className="border-b-2 border-ink bg-cream px-5 py-12 sm:py-16">
+      <div className="mx-auto w-full max-w-[420px] overflow-hidden rounded-xl border-2 border-ink shadow-red sm:max-w-[460px]">
+        <div ref={sectionRef} className="relative aspect-[600/1075] w-full overflow-hidden bg-cream">
+          {/* Реальное фото: источник пикселей для анализа + доступный fallback
+             (alt-текст, показывается если JS/canvas недоступны). */}
+          <img
+            ref={imgRef}
+            src={IMAGE_SRC}
+            alt={IMAGE_ALT}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <canvas
+            ref={canvasRef}
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full bg-cream"
+          />
+        </div>
+        <div className="border-t-2 border-ink bg-cream px-4 py-3">
+          <p className="text-xs font-extrabold tracking-[0.16em] text-ink uppercase">
+            Позитано · Амальфитанское побережье
+          </p>
+        </div>
       </div>
     </section>
   );
