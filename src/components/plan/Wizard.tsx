@@ -18,8 +18,10 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   const progress = finished ? 1 : step / WIZ.length;
 
   function choose(id: string, value: string) {
+    if (step === 0) track("plan_started");
     setAnswers((prev) => ({ ...prev, [id]: value }));
     track("wiz_step", { s: id });
+    track("plan_step_completed", { step: step, of: WIZ.length });
     setStep((s) => s + 1);
   }
 
@@ -37,8 +39,10 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
         budget: answers.budget || "—",
       });
       track("lead_captured", { from: "wizard" });
+      track("lead_submitted", { from: "wizard" });
       setSending(false);
     }
+    track("plan_completed", { withPhone });
     onDone(answers);
   }
 

@@ -7,6 +7,7 @@ import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { RouteRibbon } from "@/components/RouteRibbon";
+import { track } from "@/lib/track";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -14,6 +15,7 @@ export function PlanExplorer() {
   function handleDone(answers: WizAnswers) {
     const situation = situationFromAnswers(answers);
     setPlan(buildPlan(situation));
+    track("plan_preview_viewed");
   }
 
   return (

@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { ButtonLink } from "@/components/Button";
+import { Button } from "@/components/Button";
 
 const links = [
   { href: "/", label: "Главная" },
@@ -38,9 +40,16 @@ export function Header() {
           ))}
         </nav>
         <div className="hidden shrink-0 sm:block">
-          <ButtonLink href="/plan" variant="secondary" size="sm">
-            Спросить ИИ
-          </ButtonLink>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
+            }
+          >
+            Задать вопрос
+          </Button>
         </div>
       </div>
     </header>

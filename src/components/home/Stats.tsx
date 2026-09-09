@@ -10,7 +10,11 @@ export function Stats() {
 
         <EditorialStatsPanel
           watermark="€"
-          hero={{ value: "€7 557", label: "Стипендия DSU в год — покрывает жильё и питание" }}
+          viewEvent="dsu_section_viewed"
+          hero={{
+            value: "до €7 557",
+            label: "Стипендия DSU в год — потолок в Риме, покрывает жильё и питание. Сумма зависит от города и дохода семьи",
+          }}
           metrics={[
             { value: "43", numeric: 43, label: "университета в базе с тестами и дедлайнами" },
             { value: "30", numeric: 30, label: "городов на интерактивной карте" },

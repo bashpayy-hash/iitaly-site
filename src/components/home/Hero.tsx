@@ -8,6 +8,7 @@ import { RouteRibbon } from "@/components/RouteRibbon";
 import { AnimatedText } from "@/components/motion/AnimatedText";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
+import { track } from "@/lib/track";
 
 /**
  * Hero — единственная секция с motion-последовательностью на маунте, а
@@ -93,12 +94,26 @@ export function Hero() {
             </Body>
           </motion.div>
           <motion.div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4" {...fadeUp(reducedMotion, 0.66)}>
-            <ButtonLink href="/plan" variant="primary">
+            <ButtonLink
+              href="/plan"
+              variant="primary"
+              onClick={() => track("hero_primary_cta_click", { label: "Составить план бесплатно" })}
+            >
               Составить план бесплатно
             </ButtonLink>
-            <ButtonLink href="/universities" variant="tertiary">
+            <ButtonLink
+              href="/universities"
+              variant="tertiary"
+              onClick={() => track("hero_secondary_cta_click", { label: "Смотреть университеты" })}
+            >
               Смотреть университеты
             </ButtonLink>
+          </motion.div>
+          <motion.div {...fadeUp(reducedMotion, 0.74)}>
+            <p className="mt-4 text-xs text-ink-soft">
+              Не понравится — до 7 дней с оплаты вернём деньги полностью, без
+              объяснений.
+            </p>
           </motion.div>
         </div>
 
@@ -108,8 +123,10 @@ export function Hero() {
               <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                 Стипендия DSU
               </p>
-              <p className="mt-1.5 font-display text-4xl font-black">€7 557</p>
-              <p className="mt-1 text-sm text-ink-soft">в год + жильё и питание</p>
+              <p className="mt-1.5 font-display text-4xl font-black">до €7 557</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                в год — потолок в Риме (DiSCo), зависит от города и дохода семьи
+              </p>
             </div>
             <div
               className="border-t-2 border-ink p-5 text-cream"
@@ -122,7 +139,9 @@ export function Hero() {
                 Вместо агентства
               </p>
               <p className="mt-1.5 font-display text-3xl font-black">25 000 ₸</p>
-              <p className="mt-1 text-sm text-cream/70">вместо 650 000 – 1 000 000 ₸</p>
+              <p className="mt-1 text-sm text-cream/70">
+                агентства в Казахстане обычно берут 650 000 – 1 000 000 ₸
+              </p>
             </div>
           </div>
         </motion.div>

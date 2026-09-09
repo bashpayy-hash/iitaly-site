@@ -8,6 +8,7 @@ import { Filters, type TypeFilter } from "./Filters";
 import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
+import { track } from "@/lib/track";
 
 function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
   if (type !== "all" && u.type !== type) return false;
@@ -40,6 +41,11 @@ export function UniversitiesExplorer() {
   );
 
   const openUni = openUniId ? UNIS.find((u) => u.id === openUniId) ?? null : null;
+
+  function openUniModal(id: string) {
+    setOpenUniId(id);
+    track("university_opened", { id });
+  }
 
   function toggleCompare(id: string) {
     setCompareIds((prev) => {
@@ -96,7 +102,7 @@ export function UniversitiesExplorer() {
                 <CityPanel
                   cityId={activeCity}
                   unis={cityUnis}
-                  onOpenUni={setOpenUniId}
+                  onOpenUni={openUniModal}
                   compareIds={compareIds}
                   onToggleCompare={toggleCompare}
                 />

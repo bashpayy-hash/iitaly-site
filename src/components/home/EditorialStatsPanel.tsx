@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { animate } from "motion";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
+import { track } from "@/lib/track";
 
 /**
  * Editorial data-poster (композиционный приём, не клон конкретного
@@ -40,12 +41,15 @@ export function EditorialStatsPanel({
   metaLine,
   watermark = "€",
   className = "",
+  viewEvent,
 }: {
   hero: Metric;
   metrics: Metric[];
   metaLine?: string;
   watermark?: string;
   className?: string;
+  /** Имя события track(), отправляется один раз при первом входе панели в вьюпорт. */
+  viewEvent?: string;
 }) {
   const reducedMotion = useReducedMotion();
   const t = (real: object) => (reducedMotion ? { duration: 0 } : real);
@@ -85,6 +89,7 @@ export function EditorialStatsPanel({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.25 }}
+      onViewportEnter={() => viewEvent && track(viewEvent)}
       className={`relative overflow-hidden rounded-xl border-2 border-ink bg-paper ${className}`}
     >
       {/* Атмосферный фон: два мягких пятна фирменных цветов + очень тонкое зерно. */}

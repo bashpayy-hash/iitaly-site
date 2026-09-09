@@ -57,6 +57,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
       return;
     }
     track("order_submitted", { product: product.name, price: product.price });
+    track("lead_submitted", { product: product.name, price: product.price, from: "buy_modal" });
     setStep("paid");
   }
 

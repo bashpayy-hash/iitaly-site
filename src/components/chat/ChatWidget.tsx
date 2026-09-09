@@ -37,11 +37,12 @@ export function ChatWidget() {
 
   useEffect(() => {
     function onOpenRequest(e: Event) {
+      const detail = (e as CustomEvent<{ prefill?: string; source?: string }>).detail;
       setOpen(true);
       track("chat_open");
-      const prefill = (e as CustomEvent<{ prefill?: string }>).detail?.prefill;
-      if (prefill) {
-        setTimeout(() => sendRef.current(prefill), 50);
+      track("ai_assistant_opened", { source: detail?.source ?? "portal" });
+      if (detail?.prefill) {
+        setTimeout(() => sendRef.current(detail.prefill), 50);
       }
     }
     window.addEventListener("iitaly:open-chat", onOpenRequest);
@@ -57,6 +58,7 @@ export function ChatWidget() {
   function openChat() {
     setOpen(true);
     track("chat_open");
+    track("ai_assistant_opened", { source: "fab" });
   }
 
   async function send(overrideText?: string) {
@@ -123,9 +125,11 @@ export function ChatWidget() {
         <button
           type="button"
           onClick={openChat}
-          className="fixed right-4 bottom-4 z-[90] rounded-pill border-2 border-ink bg-red px-5 py-3.5 text-sm font-extrabold text-cream uppercase shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          aria-label="Задать вопрос ИИ-консультанту"
+          title="Задать вопрос"
+          className="fixed right-4 bottom-4 z-[90] flex size-14 items-center justify-center rounded-full border-2 border-ink bg-red text-cream shadow-lg transition-transform duration-[var(--duration-fast)] ease-[var(--ease-standard)] hover:-translate-y-px active:scale-[0.94] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:size-12"
         >
-          ✦ Спросить ИИ
+          <Vespa pose="avatar" className="h-8 w-8 sm:h-7 sm:w-7" />
         </button>
       )}
 
