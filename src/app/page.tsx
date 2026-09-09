@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/home/Hero";
 import { Ticker } from "@/components/home/Ticker";
+import { PositanoReveal } from "@/components/home/PositanoReveal";
 import { Stats } from "@/components/home/Stats";
 import { Steps } from "@/components/home/Steps";
 import { Split } from "@/components/home/Split";
@@ -15,6 +16,7 @@ export default function Home() {
       <main>
         <Hero />
         <Ticker />
+        <PositanoReveal />
         <Stats />
         <Steps />
         <Split />
