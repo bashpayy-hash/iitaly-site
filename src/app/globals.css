@@ -58,11 +58,14 @@
      элементов, slow — крупные композиционные переходы. Стандартная кривая —
      симметричная, спокойная; expressive — для hero/reveal, где нужен
      уверенный, но не "прыгающий" акцент. */
-  --duration-fast: 180ms;
+  --duration-fast: 160ms;
   --duration-normal: 320ms;
   --duration-slow: 560ms;
+  --duration-reveal: 750ms;
+  --duration-narrative: 1300ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* Типографическая система: именованные роли вместо произвольных text-*
      размеров на местах. Fluid clamp() между ~390px и ~1440px — Dynamic-Type
@@ -172,5 +175,35 @@ body {
 @media (prefers-contrast: more) {
   :root {
     --color-line: oklch(70% 0.02 75);
+  }
+}
+
+/* Тончайшее зерно через инлайн SVG-шум (не WebGL — избыточно для одного
+   статичного слоя) — переиспользуется EditorialBackground.tsx (grain). */
+.stats-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+/* Общий фон для EditorialBackground.tsx — тот же приём дрифта, что и у
+   .stats-mesh выше, только с более широкой (30с) амплитудой, чтобы один
+   keyframe обслуживал все варианты компонента без дублирования @keyframes
+   на каждый вариант. */
+@keyframes editorial-bg-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-1.5%, 1%) scale(1.03);
+  }
+}
+.editorial-bg-drift {
+  animation: editorial-bg-drift 30s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .editorial-bg-drift {
+    animation: none;
   }
 }

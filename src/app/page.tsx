@@ -7,6 +7,8 @@ import { Stats } from "@/components/home/Stats";
 import { Steps } from "@/components/home/Steps";
 import { Split } from "@/components/home/Split";
 import { HowItWorks } from "@/components/home/HowItWorks";
+import { FirstWeeks } from "@/components/home/FirstWeeks";
+import { TrustFAQ } from "@/components/home/TrustFAQ";
 import { PriceBand } from "@/components/home/PriceBand";
 
 export default function Home() {
@@ -21,6 +23,8 @@ export default function Home() {
         <Steps />
         <Split />
         <HowItWorks />
+        <FirstWeeks />
+        <TrustFAQ />
         <PriceBand />
       </main>
       <Footer />

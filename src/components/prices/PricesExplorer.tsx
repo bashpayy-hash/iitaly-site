@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 import { RouteRibbon } from "@/components/RouteRibbon";
@@ -45,9 +45,14 @@ export function PricesExplorer() {
   const router = useRouter();
   const [buy, setBuy] = useState<BuyProduct | null>(null);
 
+  useEffect(() => {
+    track("pricing_viewed");
+  }, []);
+
   function openBuy(name: string, price: number) {
     setBuy({ name, price });
     track("buy_open", { product: name });
+    track("checkout_started", { product: name });
   }
 
   return (

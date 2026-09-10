@@ -14,7 +14,7 @@ export function Footer() {
         </p>
         <Link
           href="/privacy"
-          className="underline underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:text-cream"
+          className="inline-block py-2.5 underline underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:text-cream"
         >
           Политика конфиденциальности
         </Link>
