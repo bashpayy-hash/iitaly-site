@@ -13,20 +13,8 @@ import { Accordion } from "@/components/Accordion";
 
 export function VisaSection() {
   return (
-    <div className="rounded-lg border-2 border-ink bg-paper p-4 sm:p-5">
-      <div className="flex items-start gap-3">
-        <span aria-hidden className="text-2xl leading-none">
-          🛂
-        </span>
-        <div>
-          <b className="block font-display text-base font-black">Виза D</b>
-          <span className="mt-1 block text-sm text-ink-soft">
-            Национальная студенческая виза через BLS: гарантия, слоты, сроки.
-          </span>
-        </div>
-      </div>
-
-      <p className="mt-3 text-sm">
+    <div>
+      <p className="text-sm">
         <span className="text-ink-soft">Где подавать: </span>
         <b>BLS в Алматы, Астане, Атырау, Оскемене, Шымкенте</b>
       </p>
@@ -38,18 +26,18 @@ export function VisaSection() {
       <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
         {VISA_KEY_FACTS.map((f) => (
           <div key={f.label} className="rounded-md bg-cream px-3 py-3 text-center">
-            <b className="block font-display text-lg font-black">{f.value}</b>
+            <b className="block font-display text-lg font-bold">{f.value}</b>
             <span className="text-xs text-ink-soft">{f.label}</span>
           </div>
         ))}
       </div>
 
       <div className="mt-4 space-y-3">
-        <Accordion defaultOpen summary={<b className="text-sm font-black">Таймлайн подачи: когда что делать</b>}>
+        <Accordion defaultOpen summary={<b className="text-sm font-bold">Таймлайн подачи: когда что делать</b>}>
           <div className="space-y-3">
             {VISA_TIMELINE.map((s, i) => (
               <div key={i} className="flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-black text-cream">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-bold text-cream">
                   {i + 1}
                 </div>
                 <div>
@@ -61,15 +49,15 @@ export function VisaSection() {
           </div>
         </Accordion>
 
-        <Accordion summary={<b className="text-sm font-black">Калькулятор финансовой гарантии</b>}>
+        <Accordion summary={<b className="text-sm font-bold">Калькулятор финансовой гарантии</b>}>
           <GuaranteeCalculator />
         </Accordion>
 
-        <Accordion summary={<b className="text-sm font-black">Чек-лист документов</b>}>
+        <Accordion summary={<b className="text-sm font-bold">Чек-лист документов</b>}>
           <VisaChecklist />
         </Accordion>
 
-        <Accordion summary={<b className="text-sm font-black">Частые причины отказа</b>}>
+        <Accordion summary={<b className="text-sm font-bold">Частые причины отказа</b>}>
           <div className="space-y-2">
             {VISA_REJECT_REASONS.map((r, i) => (
               <div key={i} className="rounded-md border-2 border-warn bg-warn/10 px-3 py-2.5 text-sm">
@@ -110,11 +98,11 @@ function GuaranteeCalculator() {
       </div>
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-md bg-cream px-3 py-4 text-center">
-          <p className="font-display text-2xl font-black">€ {Math.round(eur).toLocaleString("ru-RU")}</p>
+          <p className="font-display text-2xl font-bold">€ {Math.round(eur).toLocaleString("ru-RU")}</p>
           <p className="mt-1 text-xs text-ink-soft">минимум на счёте</p>
         </div>
         <div className="rounded-md bg-cream px-3 py-4 text-center">
-          <p className="font-display text-2xl font-black">≈ {kzt} млн ₸</p>
+          <p className="font-display text-2xl font-bold">≈ {kzt} млн ₸</p>
           <p className="mt-1 text-xs text-ink-soft">по курсу ~534 ₸/€</p>
         </div>
       </div>
@@ -167,7 +155,7 @@ function VisaChecklist() {
             >
               <span
                 aria-hidden
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 text-xs font-black ${
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 text-xs font-bold ${
                   isDone ? "border-green bg-green text-cream" : "border-ink-soft bg-paper"
                 }`}
               >

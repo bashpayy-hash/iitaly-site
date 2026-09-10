@@ -20,9 +20,20 @@
   --color-warn-light: oklch(64% 0.13 52);
   --color-line: oklch(90.73% 0.0241 79.74);
 
-  --font-display: var(--font-unbounded), "Arial Black", sans-serif;
-  --font-sans: var(--font-golos), "Helvetica Neue", Arial, sans-serif;
-  --font-editorial: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  /* Атмосферная пара для EditorialBackground — пыльно-голубой и
+     приглушённый персик/терракота, низкая насыщенность. Не для текста/
+     обводок (для этого есть sec/warn/ink) — только для мягких mesh-пятен
+     фона, где фирменный красный остаётся редким акцентом, а не основой. */
+  --color-dusty-blue: oklch(72% 0.035 238);
+  --color-dusty-blue-deep: oklch(52% 0.045 238);
+  --color-dusty-blue-light: oklch(84% 0.025 238);
+  --color-peach: oklch(80% 0.05 52);
+
+  /* Одна гарнитура (Onest) на весь продукт — display и sans указывают на
+     один и тот же variable-файл. Роли различаются весом/размером в
+     Typography.tsx, не разными шрифтами (см. layout.tsx). */
+  --font-display: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-space-mono), "SF Mono", "Courier New", monospace;
 
   --radius-pill: 999px;

@@ -1,33 +1,24 @@
 import type { Metadata } from "next";
-import { Unbounded, Golos_Text, Instrument_Serif, Space_Mono } from "next/font/google";
+import { Onest, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 
-const unbounded = Unbounded({
-  variable: "--font-unbounded",
-  subsets: ["latin", "cyrillic"],
-  weight: ["600", "700", "800", "900"],
+// Единственная гарнитура продукта — variable, один файл на весь диапазон
+// начертаний (100–900), реальная поддержка казахской кириллицы
+// (cyrillic-ext). Раньше здесь было три разные гарнитуры (Unbounded для
+// заголовков, Golos Text для текста, Instrument Serif для «редакторских»
+// курсивов) — набор, который на разных экранах читался как склейка
+// нескольких чужих дизайн-систем. Иерархия теперь строится весом и
+// размером внутри одной гарнитуры (см. Typography.tsx), а не сменой шрифта.
+const onest = Onest({
+  variable: "--font-onest",
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   display: "swap",
 });
 
-const golos = Golos_Text({
-  variable: "--font-golos",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-// Редакторский курсив для цитат и акцентных строк — контраст плотному Unbounded.
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["italic", "normal"],
-  display: "swap",
-});
-
-// Моноширинный для технических подписей у цифр (сроки, счётчики, статусы).
+// Моноширинный — только для табличных технических подписей (сроки, коды,
+// метаданные), не альтернатива основной гарнитуре.
 const spaceMono = Space_Mono({
   variable: "--font-space-mono",
   subsets: ["latin"],
@@ -64,10 +55,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="ru"
-      className={`${unbounded.variable} ${golos.variable} ${instrumentSerif.variable} ${spaceMono.variable} h-full antialiased`}
-    >
+    <html lang="ru" className={`${onest.variable} ${spaceMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         <MotionProvider>
           {children}

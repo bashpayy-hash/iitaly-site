@@ -26,7 +26,7 @@ export function DocsSection({
   return (
     <div>
       <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Документы</p>
-      <h3 className="mt-1 font-display text-xl font-black">
+      <h3 className="mt-1 font-display text-xl font-bold">
         {ready} из {rows.length} готовы
       </h3>
       <p className="mt-1 text-sm text-ink-soft">

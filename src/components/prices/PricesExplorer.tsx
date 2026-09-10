@@ -6,17 +6,7 @@ import { Button } from "@/components/Button";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
-
-const FEATURES = [
-  "Персональный shortlist программ под твои баллы и бюджет",
-  "Расчёт шансов на стипендию DSU по доходу семьи",
-  "Календарь дедлайнов с напоминаниями в Telegram и на почту",
-  "Точные чек-листы документов под твой случай",
-  "AI-проверка каждого документа до подачи",
-  "Черновики мотивационных писем и анкет",
-  "Пошаговое ведение через Universitaly, DSU и визу D",
-  "Отслеживание прогресса и предупреждения об ошибках",
-];
+import { FEATURES } from "@/data/pricing";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: 16900 },
@@ -68,7 +58,7 @@ export function PricesExplorer() {
         <RouteRibbon className="opacity-60" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
-          <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-black tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
+          <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-bold tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
             25 000 ₸ — и система ведёт тебя до конца
           </h1>
           <p className="mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
@@ -83,7 +73,7 @@ export function PricesExplorer() {
         <div className="mx-auto max-w-[900px]">
           <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
             <div className="flex-1 rounded-lg border-2 border-ink bg-paper p-5">
-              <b className="block font-display text-lg font-black">Бесплатно</b>
+              <b className="block font-display text-lg font-bold">Бесплатно</b>
               <span className="text-sm text-ink-soft">
                 ИИ оценит шансы, покажет риски и назовёт следующий шаг
               </span>
@@ -92,7 +82,7 @@ export function PricesExplorer() {
               →
             </span>
             <div className="flex-1 rounded-lg border-2 border-ink bg-ink p-5 text-cream shadow-red">
-              <b className="block font-display text-lg font-black">25 000 ₸</b>
+              <b className="block font-display text-lg font-bold">25 000 ₸</b>
               <span className="text-sm text-cream/70">
                 система ведёт поступление от выбора вуза до permesso
               </span>
@@ -114,13 +104,13 @@ export function PricesExplorer() {
 
           <div className="mt-8 rounded-xl border-2 border-ink bg-paper p-6 shadow-red sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <b className="font-display text-xl font-black">Поступление под ключ</b>
+              <b className="font-display text-xl font-bold">Поступление под ключ</b>
               <span className="rounded-pill bg-red px-3 py-1 text-xs font-extrabold text-cream uppercase">
                 Один платёж
               </span>
             </div>
             <p className="mt-2 text-sm text-ink-soft">Всё, что делает система, входит в цену</p>
-            <p className="mt-3 font-display text-5xl font-black sm:text-6xl">25 000 ₸</p>
+            <p className="mt-3 font-display text-5xl font-bold sm:text-6xl">25 000 ₸</p>
             <p className="mt-1 text-sm text-ink-soft">разово · без подписки и доплат</p>
             <div className="mt-5 grid grid-cols-3 divide-x-2 divide-ink/10 overflow-hidden rounded-md border-2 border-ink/10">
               {[
@@ -129,7 +119,7 @@ export function PricesExplorer() {
                 { v: "30", l: "городов" },
               ].map((s) => (
                 <div key={s.l} className="px-3 py-2.5 text-center sm:px-4">
-                  <p className="font-display text-lg font-black sm:text-xl">{s.v}</p>
+                  <p className="font-display text-lg font-bold sm:text-xl">{s.v}</p>
                   <p className="mt-0.5 font-mono text-[9px] tracking-[0.05em] text-sec-deep uppercase">{s.l}</p>
                 </div>
               ))}
@@ -168,12 +158,20 @@ export function PricesExplorer() {
                 <details key={g.title} className="group py-3 first:pt-0 last:pb-0">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-ink marker:content-none [&::-webkit-details-marker]:hidden">
                     {g.title}
-                    <span
+                    <svg
                       aria-hidden
-                      className="shrink-0 font-display text-lg leading-none text-green transition-transform duration-200 group-open:rotate-45"
+                      viewBox="0 0 16 10"
+                      className="h-2.5 w-4 shrink-0 text-green transition-transform duration-200 group-open:-rotate-180"
                     >
-                      +
-                    </span>
+                      <path
+                        d="M1 1.5 8 8.5 15 1.5"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </summary>
                   <p className="mt-2 text-sm text-ink-soft">{g.body}</p>
                 </details>
@@ -213,7 +211,7 @@ export function PricesExplorer() {
                   <b className="block text-sm">{m.name}</b>
                   <span className="text-sm text-ink-soft">{m.desc}</span>
                 </div>
-                <span className="shrink-0 font-display text-lg font-black whitespace-nowrap">
+                <span className="shrink-0 font-display text-lg font-bold whitespace-nowrap">
                   {m.price.toLocaleString("ru-RU")} ₸
                 </span>
               </button>

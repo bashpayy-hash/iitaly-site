@@ -53,7 +53,7 @@ export function Steps() {
                 }}
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
-                  <span className="font-display text-2xl font-black text-red">
+                  <span className="font-display text-2xl font-bold text-red">
                     {s.n}
                   </span>
                   <div>

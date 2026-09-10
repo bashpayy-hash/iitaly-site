@@ -80,10 +80,10 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
         <div className="p-6">
           {step === "form" && (
             <>
-              <h3 id="buy-modal-title" className="font-display text-xl font-black">
+              <h3 id="buy-modal-title" className="font-display text-xl font-bold">
                 {product.name}
               </h3>
-              <p className="mt-1 font-display text-3xl font-black text-red">{fmt(product.price)} ₸</p>
+              <p className="mt-1 font-display text-3xl font-bold text-red">{fmt(product.price)} ₸</p>
               {isPkg && (
                 <div className="mt-3 rounded-md border-2 border-warn bg-warn/10 px-3 py-2.5 text-sm">
                   🔒 Ты в числе первых 30 — стартовая цена зафиксируется за тобой навсегда. Взамен
@@ -141,12 +141,12 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                 <div aria-hidden className="text-4xl">
                   ✅
                 </div>
-                <p className="mt-2 font-display text-xl font-black">Заказ принят</p>
+                <p className="mt-2 font-display text-xl font-bold">Заказ принят</p>
                 <p className="mt-1 text-sm text-ink-soft">Осталось оплатить — два шага, минута времени.</p>
               </div>
 
               <div className="mt-5 flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-black text-cream">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-bold text-cream">
                   1
                 </div>
                 <div className="min-w-0 flex-1">
@@ -154,7 +154,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                     Переведи {fmt(product.price)} ₸ в Kaspi
                   </b>
                   <div className="mt-2 flex items-center justify-between gap-2 rounded-md border-2 border-ink bg-cream px-3 py-2.5">
-                    <span className="font-display text-lg font-black">{PAY_PHONE}</span>
+                    <span className="font-display text-lg font-bold">{PAY_PHONE}</span>
                     <button
                       type="button"
                       onClick={copyPhone}
@@ -170,7 +170,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               </div>
 
               <div className="mt-4 flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-black text-cream">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-bold text-cream">
                   2
                 </div>
                 <div className="min-w-0 flex-1">

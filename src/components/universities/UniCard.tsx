@@ -22,7 +22,7 @@ export function UniCard({
         onClick={onOpen}
         className="text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
       >
-        <p className="font-display text-lg leading-tight font-black">{uni.name}</p>
+        <p className="font-display text-lg leading-tight font-bold">{uni.name}</p>
         <p className="mt-1 text-xs font-bold text-sec uppercase">{uni.tp}</p>
       </button>
       <dl className="mt-3 space-y-2 text-xs">

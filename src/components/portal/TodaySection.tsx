@@ -31,7 +31,7 @@ export function TodaySection({
     <div>
       <div className="rounded-lg border-2 border-ink bg-paper p-4">
         <div className="flex items-center justify-between">
-          <b className="font-display text-lg font-black">
+          <b className="font-display text-lg font-bold">
             {data.progress.done} из {data.progress.total}
           </b>
           <span className="text-sm text-ink-soft">шагов пройдено</span>

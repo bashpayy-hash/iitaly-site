@@ -113,7 +113,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
                 </p>
               </div>
             )}
-            <p className="font-display text-xl font-black">Куда прислать план?</p>
+            <p className="font-display text-xl font-bold">Куда прислать план?</p>
             <p className="mt-2 text-sm text-ink-soft">
               Пришлём маршрут и напоминания о дедлайнах в WhatsApp. Можно
               пропустить — план всё равно откроется прямо здесь.
@@ -197,7 +197,7 @@ function WizStep({
 }) {
   return (
     <>
-      <p className="font-display text-xl font-black">{question.q}</p>
+      <p className="font-display text-xl font-bold">{question.q}</p>
       {question.hint && <p className="mt-1.5 text-sm text-ink-soft">{question.hint}</p>}
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
         {question.opts.map((o) => (

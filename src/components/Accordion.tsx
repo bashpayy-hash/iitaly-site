@@ -24,12 +24,20 @@ export function Accordion({
         className="flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red sm:px-5"
       >
         <div className="min-w-0 flex-1">{summary}</div>
-        <span
+        <svg
           aria-hidden
-          className={`mt-1 shrink-0 font-display text-lg font-black text-ink-soft transition-transform duration-300 ${open ? "rotate-45" : ""}`}
+          viewBox="0 0 16 10"
+          className={`mt-1.5 h-2.5 w-4 shrink-0 text-ink-soft transition-transform duration-300 ${open ? "-rotate-180" : ""}`}
         >
-          +
-        </span>
+          <path
+            d="M1 1.5 8 8.5 15 1.5"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
       <div
         id={id}

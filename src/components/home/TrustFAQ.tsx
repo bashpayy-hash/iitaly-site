@@ -52,14 +52,22 @@ export function TrustFAQ() {
                   if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
                 }}
               >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-black marker:content-none [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-bold marker:content-none [&::-webkit-details-marker]:hidden">
                   {item.q}
-                  <span
+                  <svg
                     aria-hidden
-                    className="shrink-0 font-display text-xl leading-none text-red transition-transform duration-200 group-open:rotate-45"
+                    viewBox="0 0 16 10"
+                    className="h-2.5 w-4 shrink-0 text-red transition-transform duration-200 group-open:-rotate-180"
                   >
-                    +
-                  </span>
+                    <path
+                      d="M1 1.5 8 8.5 15 1.5"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </summary>
                 <Body as="p" className="mt-3 max-w-[65ch]">
                   {item.a}

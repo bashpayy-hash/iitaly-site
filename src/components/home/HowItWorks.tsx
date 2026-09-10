@@ -45,7 +45,7 @@ export function HowItWorks() {
           {STAGES.map((s, i) => (
             <Reveal key={s.n} delay={Math.min(i * 0.06, 0.24)} amount={0.3} className="h-full">
               <div className="relative flex h-full flex-col bg-paper p-6 sm:p-7">
-                <span className="font-display text-3xl font-black text-red">{s.n}</span>
+                <span className="font-display text-3xl font-bold text-red">{s.n}</span>
                 <Heading as="h3" className="mt-3 text-heading!">
                   {s.title}
                 </Heading>

@@ -84,7 +84,7 @@ export function Hero() {
           </Display>
 
           <motion.div {...fadeUp(reducedMotion, 0.5)}>
-            <BodyLarge as="p" className="mt-6 max-w-lg font-editorial text-ink italic">
+            <BodyLarge as="p" className="mt-6 max-w-lg font-medium text-ink">
               Подбор вузов, документы и виза — ведёт система.
             </BodyLarge>
           </motion.div>
@@ -123,7 +123,7 @@ export function Hero() {
               <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                 Стипендия DSU
               </p>
-              <p className="mt-1.5 font-display text-4xl font-black">до €7 557</p>
+              <p className="mt-1.5 font-display text-4xl font-bold">до €7 557</p>
               <p className="mt-1 text-sm text-ink-soft">
                 в год — потолок в Риме (DiSCo), зависит от города и дохода семьи
               </p>
@@ -138,7 +138,7 @@ export function Hero() {
               <p className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
                 Вместо агентства
               </p>
-              <p className="mt-1.5 font-display text-3xl font-black">25 000 ₸</p>
+              <p className="mt-1.5 font-display text-3xl font-bold">25 000 ₸</p>
               <p className="mt-1 text-sm text-cream/70">
                 агентства в Казахстане обычно берут 650 000 – 1 000 000 ₸
               </p>
