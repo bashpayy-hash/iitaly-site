@@ -7,6 +7,7 @@ import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { RouteRibbon } from "@/components/RouteRibbon";
+import { EditorialBackground } from "@/components/EditorialBackground";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -18,16 +19,9 @@ export function PlanExplorer() {
 
   return (
     <>
-      <section
-        className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14"
-        style={{
-          backgroundImage:
-            "radial-gradient(75% 65% at 102% -8%, color-mix(in oklch, var(--color-red) 30%, transparent) 0%, transparent 62%), " +
-            "radial-gradient(60% 55% at -5% 108%, color-mix(in oklch, var(--color-green) 24%, transparent) 0%, transparent 60%)",
-          backgroundColor: "var(--color-cream)",
-        }}
-      >
-        <RouteRibbon className="opacity-60" />
+      <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
+        <EditorialBackground variant="data" grain />
+        <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[760px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
             Персональный маршрут

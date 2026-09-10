@@ -7,6 +7,7 @@ import { RouteRibbon } from "@/components/RouteRibbon";
 import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 import { FEATURES } from "@/data/pricing";
+import { EditorialBackground } from "@/components/EditorialBackground";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: 16900 },
@@ -47,15 +48,9 @@ export function PricesExplorer() {
 
   return (
     <>
-      <section
-        className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14"
-        style={{
-          backgroundImage:
-            "radial-gradient(75% 65% at 102% -8%, color-mix(in oklch, var(--color-red) 32%, transparent) 0%, transparent 62%)",
-          backgroundColor: "var(--color-cream)",
-        }}
-      >
-        <RouteRibbon className="opacity-60" />
+      <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
+        <EditorialBackground variant="pricing" grain />
+        <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
           <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-bold tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
