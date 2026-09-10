@@ -10,17 +10,18 @@ import { track } from "@/lib/track";
 
 /**
  * Editorial data-poster (композиционный приём, не клон конкретного
- * сайта): огромная serif-цифра как главный показатель, hairline-сетка
- * вторичных метрик, нижняя строка metadata, атмосферный фон и watermark.
+ * сайта): огромная табличная цифра как главный показатель (одна гарнитура
+ * продукта, без курсива/serif), hairline-сетка вторичных метрик, нижняя
+ * строка metadata, атмосферный фон и watermark.
  * Все числа — настоящие данные сайта (см. вызов в Stats.tsx), ничего не
  * выдумано ради красивой анимации.
  *
  * Структурные motion-пропы (initial/whileInView/variants) всегда одни и
- * те же вне зависимости от reducedMotion — см. подробное объяснение в
- * LifestyleStoryCard.tsx: контекст reducedMotion приходит только после
- * маунта, и подмена пропов на false/undefined в этот момент может
- * заморозить уже отрендеренный hidden-элемент навсегда. Здесь
- * reducedMotion влияет только на transition.duration/delay (0 — сразу).
+ * те же вне зависимости от reducedMotion: контекст reducedMotion приходит
+ * только после маунта (см. MotionProvider.tsx), и подмена пропов на
+ * false/undefined в этот момент может заморозить уже отрендеренный
+ * hidden-элемент навсегда. Здесь reducedMotion влияет только на
+ * transition.duration/delay (0 — сразу).
  */
 
 export interface Metric {
@@ -93,15 +94,17 @@ export function EditorialStatsPanel({
       onViewportEnter={() => viewEvent && track(viewEvent)}
       className={`relative overflow-hidden rounded-xl border-2 border-ink bg-paper ${className}`}
     >
-      {/* Атмосферный фон — тот же "ledger"-паттерн, что и в общем EditorialBackground,
-         обёрнутый в motion.div ради fade-in по bgVariants при входе в вьюпорт. */}
+      {/* Атмосферный фон — пыльно-голубое/персиковое mesh-пятно + тончайшая
+         модульная сетка + зерно, обёрнутые в motion.div ради fade-in по
+         bgVariants при входе в вьюпорт. Фирменный watermark ниже рисуется
+         отдельно (свой, более поздний, reveal — см. watermarkVariants). */}
       <motion.div aria-hidden variants={bgVariants} className="absolute inset-0">
-        <EditorialBackground variant="ledger" grain />
+        <EditorialBackground variant="data" grain grid />
       </motion.div>
 
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-6 -right-4 font-display text-[10rem] leading-none font-black text-ink/[0.06] select-none sm:text-[13rem]"
+        className="pointer-events-none absolute -top-6 -right-4 font-display text-[10rem] leading-none font-bold text-ink/[0.06] select-none sm:text-[13rem]"
       >
         <motion.span variants={watermarkVariants} className="block">
           {watermark}
@@ -113,7 +116,7 @@ export function EditorialStatsPanel({
       <div className="relative grid grid-cols-1 sm:grid-cols-[1.2fr_1px_1fr]">
         <div className="relative flex flex-col justify-end p-6 sm:p-10">
           <motion.div variants={heroVariants}>
-            <p className="font-editorial text-[clamp(3.5rem,2.2rem+6vw,7.5rem)] leading-[0.9] font-normal tracking-tight text-ink italic">
+            <p className="font-display text-[clamp(3.5rem,2.2rem+6vw,7.5rem)] leading-[0.9] font-bold tracking-tight text-ink tabular-nums">
               {hero.value}
             </p>
             <p className="mt-3 max-w-[30ch] font-mono text-[11px] tracking-[0.08em] text-sec-deep uppercase">
@@ -133,7 +136,7 @@ export function EditorialStatsPanel({
               variants={metricVariants}
               className={`flex items-baseline justify-between gap-4 px-6 py-5 sm:px-8 ${i > 0 ? "border-t border-line" : ""}`}
             >
-              <p className="font-editorial text-3xl font-normal tracking-tight text-ink italic sm:text-4xl">
+              <p className="font-display text-3xl font-bold tracking-tight text-ink tabular-nums sm:text-4xl">
                 <AnimatedMetric metric={m} reducedMotion={reducedMotion} />
               </p>
               <p className="max-w-[18ch] text-right font-mono text-[10px] tracking-[0.05em] text-sec-deep uppercase">

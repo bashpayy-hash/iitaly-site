@@ -27,7 +27,7 @@ export function CompareModal({
   return (
     <Modal open={open} onClose={onClose} labelledBy="compare-modal-title" className="max-w-5xl">
       <div className="p-6">
-        <h3 id="compare-modal-title" className="font-display text-2xl font-black">
+        <h3 id="compare-modal-title" className="font-display text-2xl font-bold">
           Сравнение университетов
         </h3>
         <div className="mt-5 overflow-x-auto">
@@ -37,7 +37,7 @@ export function CompareModal({
                 <th className="w-32 border-b-2 border-ink py-2 text-left text-xs font-bold text-ink-soft uppercase" />
                 {unis.map((u) => (
                   <th key={u.id} className="border-b-2 border-ink px-3 py-2 text-left">
-                    <p className="font-display text-base font-black">{u.name}</p>
+                    <p className="font-display text-base font-bold">{u.name}</p>
                     <p className="text-xs font-bold text-sec">{CITIES[u.city].name}</p>
                   </th>
                 ))}

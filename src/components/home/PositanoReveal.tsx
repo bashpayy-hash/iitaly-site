@@ -20,7 +20,7 @@ export function PositanoReveal() {
           <AnimatedText
             as="h2"
             text="Италия шире Рима"
-            className="mt-3 font-display text-title font-black uppercase tracking-tight text-balance"
+            className="mt-3 font-display text-title font-bold uppercase tracking-tight text-balance"
             delay={0.05}
           />
           <Reveal delay={0.1}>

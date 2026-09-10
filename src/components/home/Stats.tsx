@@ -4,7 +4,7 @@ export function Stats() {
   return (
     <section className="border-b-2 border-ink px-5 py-16 sm:py-20">
       <div className="mx-auto max-w-[1200px]">
-        <p className="mb-8 font-editorial text-heading text-ink italic sm:text-title">
+        <p className="mb-8 font-display text-heading font-semibold text-ink sm:text-title">
           Цифры, а не обещания.
         </p>
 

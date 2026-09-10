@@ -80,7 +80,7 @@ export function DocCheck() {
       <p className="text-xs font-extrabold tracking-[0.14em] text-sec uppercase">
         Проверка документов · бесплатно
       </p>
-      <h3 className="mt-1 font-display text-2xl font-black">
+      <h3 className="mt-1 font-display text-2xl font-bold">
         Загрузи документ — ИИ найдёт ошибки до подачи
       </h3>
       <p className="mt-2 text-sm text-ink-soft">
@@ -142,7 +142,7 @@ export function DocCheck() {
               className="h-28 w-28 shrink-0 rounded-md border-2 border-ink object-cover"
             />
           ) : (
-            <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-paper font-display text-lg font-black text-ink-soft">
+            <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-paper font-display text-lg font-bold text-ink-soft">
               {fileIcon}
             </div>
           )}
@@ -218,7 +218,7 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
         >
           {LABEL[v] || "Результат"}
         </span>
-        <span className="font-display text-lg font-black">{result.docTitle || "Документ"}</span>
+        <span className="font-display text-lg font-bold">{result.docTitle || "Документ"}</span>
       </div>
 
       {result.summary && <p className="mt-3 text-sm text-ink-soft">{result.summary}</p>}
@@ -229,7 +229,7 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
             <div key={i} className="flex gap-2.5 text-sm">
               <span
                 aria-hidden
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-black ${
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                   c.status === "ok"
                     ? "bg-green/15 text-green"
                     : c.status === "error"

@@ -37,7 +37,7 @@ export function PlanSection({
               defaultOpen={st.id === openStage}
               summary={
                 <div className="flex items-center justify-between gap-3">
-                  <b className="text-sm font-black">{st.title}</b>
+                  <b className="text-sm font-bold">{st.title}</b>
                   <span className="shrink-0 text-xs font-bold text-ink-soft">
                     {done}/{total}
                   </span>
@@ -116,7 +116,7 @@ function TaskRow({
     >
       <span
         aria-hidden
-        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 text-xs font-black ${
+        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 text-xs font-bold ${
           done ? "border-green bg-green text-cream" : "border-ink-soft bg-paper"
         }`}
       >

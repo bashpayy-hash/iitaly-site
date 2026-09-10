@@ -202,7 +202,7 @@ export function ChatWidget() {
               type="button"
               onClick={() => send()}
               aria-label="Отправить"
-              className="shrink-0 rounded-md border-2 border-ink bg-red px-4 py-2.5 font-black text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              className="shrink-0 rounded-md border-2 border-ink bg-red px-4 py-2.5 font-bold text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               ↑
             </button>

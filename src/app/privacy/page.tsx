@@ -95,7 +95,7 @@ export default function PrivacyPage() {
       <main>
         <section className="px-5 py-10 sm:py-14">
           <div className="mx-auto max-w-[720px]">
-            <h1 className="font-display text-3xl font-black tracking-tight uppercase sm:text-4xl">
+            <h1 className="font-display text-3xl font-bold tracking-tight uppercase sm:text-4xl">
               Политика конфиденциальности
             </h1>
             <p className="mt-1.5 text-xs text-ink-soft">IItaly · обновлено при запуске сервиса</p>
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
             <div className="mt-8 space-y-6">
               {SECTIONS.map((s) => (
                 <div key={s.title}>
-                  <h2 className="font-display text-lg font-black">{s.title}</h2>
+                  <h2 className="font-display text-lg font-bold">{s.title}</h2>
                   <div className="mt-1.5 text-sm text-ink-soft [&_a]:font-bold [&_a]:text-red [&_b]:text-ink">
                     {s.body}
                   </div>

@@ -173,7 +173,7 @@ export function PortalExplorer() {
               {data.client.tier} · набор {data.client.intakeYear || ""}/
               {String((data.client.intakeYear || 0) + 1).slice(2)}
             </p>
-            <h1 className="mt-1 font-display text-2xl font-black sm:text-3xl">{data.client.name}</h1>
+            <h1 className="mt-1 font-display text-2xl font-bold sm:text-3xl">{data.client.name}</h1>
           </div>
           <button
             type="button"

@@ -62,7 +62,7 @@ export function UniversitiesExplorer() {
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
             43 университета · 30 городов
           </p>
-          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-black tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
+          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-bold tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
             Университеты
             <br />
             <span className="text-red">Италии</span>
@@ -108,7 +108,7 @@ export function UniversitiesExplorer() {
                 />
               ) : (
                 <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-line px-6 py-16 text-center">
-                  <p className="font-display text-xl font-black text-ink-soft uppercase">
+                  <p className="font-display text-xl font-bold text-ink-soft uppercase">
                     Выберите город
                   </p>
                   <p className="mt-2 max-w-xs text-sm text-ink-soft">

@@ -48,7 +48,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       <div className="mt-3 space-y-3">
         {plan.steps.map((s, i) => (
           <div key={i} className="flex gap-4 rounded-lg border-2 border-ink bg-paper p-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink font-display text-sm font-black text-cream">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink font-display text-sm font-bold text-cream">
               {i + 1}
             </div>
             <div>
