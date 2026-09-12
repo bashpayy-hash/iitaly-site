@@ -8,6 +8,8 @@ import { Filters, type TypeFilter } from "./Filters";
 import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
+import { EditorialBackground } from "@/components/EditorialBackground";
+import { RegistrationMark } from "@/components/EditorialMarks";
 import { track } from "@/lib/track";
 
 function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
@@ -57,8 +59,10 @@ export function UniversitiesExplorer() {
 
   return (
     <>
-      <section className="overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14">
-        <div className="mx-auto max-w-[1200px]">
+      <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
+        <EditorialBackground variant="coast" motion="none" grain />
+        <RegistrationMark corner="top-right" />
+        <div className="relative mx-auto max-w-[1200px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
             43 университета · 30 городов
           </p>

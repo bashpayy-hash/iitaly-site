@@ -2,8 +2,12 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-auto bg-ink px-5 py-10 text-cream/70">
-      <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 text-caption">
+    <footer className="relative mt-auto overflow-hidden bg-ink px-5 py-10 text-cream/70">
+      {/* Та же бумага, что и на светлых секциях, но в screen: на чернилах
+         умножение не читается. Без неё футер — единственная поверхность
+         сайта, оставшаяся «цифровой». */}
+      <div aria-hidden className="paper-layer paper-layer-dark pointer-events-none absolute inset-0" />
+      <div className="relative mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 text-caption">
         <div>
           <b className="text-cream uppercase">IItaly</b>
           <span className="ml-2">ИИ-сервис поступления · Казахстан</span>

@@ -105,6 +105,7 @@ export function EditorialBackground({
   variant,
   motion = "ambient",
   grain = false,
+  grainTone = "light",
   grid = false,
   intensity = 1,
   paperBase = false,
@@ -118,6 +119,8 @@ export function EditorialBackground({
   /** ambient — медленный дрифт (выключается по prefers-reduced-motion); scroll/none — статичный слой. */
   motion?: "ambient" | "scroll" | "none";
   grain?: boolean;
+  /** "light" — умножение (для кремовых секций); "dark" — screen (для панелей на bg-ink, где умножение не видно) */
+  grainTone?: "light" | "dark";
   /** тончайшая модульная сетка поверх mesh */
   grid?: boolean;
   /** множитель прозрачности пятен, 0–1 */
@@ -152,7 +155,13 @@ export function EditorialBackground({
       {grid && (
         <div className="absolute inset-0 opacity-[0.07]" style={gridStyle()} />
       )}
-      {grain && <div className="paper-layer paper-layer-section absolute inset-0" />}
+      {grain && (
+        <div
+          className={`paper-layer absolute inset-0 ${
+            grainTone === "dark" ? "paper-layer-dark" : "paper-layer-section"
+          }`}
+        />
+      )}
       {watermark && (
         <span
           className={`absolute font-display text-[clamp(4rem,14vw,9rem)] leading-none font-bold select-none ${
