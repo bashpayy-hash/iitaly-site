@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
@@ -13,6 +13,51 @@ import { VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
 import { track } from "@/lib/track";
+
+/**
+ * Венеция фоном верхней части шапки.
+ *
+ * Была вклейка в рамке справа от заголовка; теперь это фоновый слой, и
+ * поэтому работает ровно то, что в рамке не работало: mix-blend-multiply.
+ * На полной непрозрачности умножение давало заплатку темнее и желтее
+ * бумаги — у кадра свой кремовый фон. На 17% умножения этот фон
+ * практически исчезает (умножение на почти-белое — это почти ничего), и
+ * остаётся только штрих, лежащий прямо на нашей бумаге.
+ *
+ * Две маски, пересечением:
+ *   по горизонтали — кадр проявляется справа и полностью растворяется к
+ *   колонке с заголовком, поэтому текст лежит на чистой бумаге;
+ *   по вертикали — растворяется у верхнего и нижнего краёв, чтобы слой не
+ *   обрывался прямой линией по границе секции.
+ * mask-composite: intersect — стандартный синтаксис, -webkit-mask-composite
+ * source-in — старый для Safari. Там, где composite не поддержан, слои
+ * складываются: маска слабее, но это по-прежнему растворение, а не обрыв.
+ *
+ * Кадр декоративный: aria-hidden на всей обёртке, alt пустой.
+ */
+const BACKDROP_MASK =
+  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 36%, #000 78%), " +
+  "linear-gradient(to bottom, transparent 0%, #000 24%, #000 74%, transparent 100%)";
+
+const backdropStyle: CSSProperties = {
+  maskImage: BACKDROP_MASK,
+  WebkitMaskImage: BACKDROP_MASK,
+  maskComposite: "intersect",
+  WebkitMaskComposite: "source-in",
+};
+
+function VeniceBackdrop() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        className="absolute right-0 -bottom-2 w-[94%] opacity-[0.15] mix-blend-multiply sm:w-[min(900px,64%)] sm:opacity-[0.17]"
+        style={backdropStyle}
+      >
+        <Illustration asset={VENICE_BAND} priority />
+      </div>
+    </div>
+  );
+}
 
 function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
   if (type !== "all" && u.type !== type) return false;
@@ -63,41 +108,22 @@ export function UniversitiesExplorer() {
     <>
       <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="coast" motion="none" grain />
+        <VeniceBackdrop />
         <RegistrationMark corner="top-right" />
-        <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-8 lg:grid-cols-[1fr_minmax(0,400px)] lg:items-end lg:gap-12">
-          <div>
-            <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-              43 университета · 30 городов
-            </p>
-            <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-bold tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
-              Университеты
-              <br />
-              <span className="text-red">Италии</span>
-            </h1>
-            <p className="mt-5 max-w-xl text-base text-ink-soft sm:text-lg">
-              Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
-              жизни там. Можно сравнить до трёх университетов.
-            </p>
-          </div>
+        <div className="relative mx-auto max-w-[1200px]">
+          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
+            43 университета · 30 городов
+          </p>
+          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-bold tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
+            Университеты
+            <br />
+            <span className="text-red">Италии</span>
+          </h1>
+          <p className="mt-5 max-w-xl text-base text-ink-soft sm:text-lg">
+            Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
+            жизни там. Можно сравнить до трёх университетов.
+          </p>
 
-          {/* Полоса Венеции — в шапке, а не на карте: воздух справа от
-             заголовка был пустым, а Венеция — один из тех самых 30 городов,
-             о которых говорит строка выше.
-
-             В рамке, а не «бесшовно на бумаге»: у кадра свой кремовый фон,
-             и он не совпадает с нашей базой — без рамки он читался
-             заплаткой (светлее фона), а через mix-blend-multiply — той же
-             заплаткой, только темнее и желтее. Рамка делает разницу
-             осознанной: это вклейка на листе, как и остальные медиа на
-             сайте. */}
-          <figure className="hidden lg:block">
-            <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper">
-              <Illustration asset={VENICE_BAND} />
-              <figcaption className="border-t-2 border-ink px-3 py-2 font-mono text-[10px] tracking-[0.12em] text-sec-deep uppercase">
-                Венеция · один из 30 городов
-              </figcaption>
-            </div>
-          </figure>
         </div>
       </section>
 
