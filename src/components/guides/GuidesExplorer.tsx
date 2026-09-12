@@ -90,7 +90,7 @@ export function GuidesExplorer() {
         className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14"
         style={{ backgroundColor: "var(--color-cream)" }}
       >
-        <EditorialBackground variant="guides" />
+        <EditorialBackground variant="guides" grain />
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">

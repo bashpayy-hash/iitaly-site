@@ -8,6 +8,10 @@ import { Filters, type TypeFilter } from "./Filters";
 import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
+import { Illustration } from "@/components/illustration/Illustration";
+import { VENICE_BAND } from "@/data/illustrations";
+import { EditorialBackground } from "@/components/EditorialBackground";
+import { RegistrationMark } from "@/components/EditorialMarks";
 import { track } from "@/lib/track";
 
 function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
@@ -57,20 +61,43 @@ export function UniversitiesExplorer() {
 
   return (
     <>
-      <section className="overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14">
-        <div className="mx-auto max-w-[1200px]">
-          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-            43 университета · 30 городов
-          </p>
-          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-bold tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
-            Университеты
-            <br />
-            <span className="text-red">Италии</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-base text-ink-soft sm:text-lg">
-            Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
-            жизни там. Можно сравнить до трёх университетов.
-          </p>
+      <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
+        <EditorialBackground variant="coast" motion="none" grain />
+        <RegistrationMark corner="top-right" />
+        <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-8 lg:grid-cols-[1fr_minmax(0,400px)] lg:items-end lg:gap-12">
+          <div>
+            <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
+              43 университета · 30 городов
+            </p>
+            <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-bold tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
+              Университеты
+              <br />
+              <span className="text-red">Италии</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-base text-ink-soft sm:text-lg">
+              Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
+              жизни там. Можно сравнить до трёх университетов.
+            </p>
+          </div>
+
+          {/* Полоса Венеции — в шапке, а не на карте: воздух справа от
+             заголовка был пустым, а Венеция — один из тех самых 30 городов,
+             о которых говорит строка выше.
+
+             В рамке, а не «бесшовно на бумаге»: у кадра свой кремовый фон,
+             и он не совпадает с нашей базой — без рамки он читался
+             заплаткой (светлее фона), а через mix-blend-multiply — той же
+             заплаткой, только темнее и желтее. Рамка делает разницу
+             осознанной: это вклейка на листе, как и остальные медиа на
+             сайте. */}
+          <figure className="hidden lg:block">
+            <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper">
+              <Illustration asset={VENICE_BAND} />
+              <figcaption className="border-t-2 border-ink px-3 py-2 font-mono text-[10px] tracking-[0.12em] text-sec-deep uppercase">
+                Венеция · один из 30 городов
+              </figcaption>
+            </div>
+          </figure>
         </div>
       </section>
 

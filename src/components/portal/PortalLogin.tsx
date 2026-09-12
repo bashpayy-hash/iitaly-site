@@ -54,6 +54,8 @@ export function PortalLogin({
       <div className="relative flex h-56 flex-col justify-between overflow-hidden border-b-2 border-ink bg-ink px-6 py-8 sm:h-64 sm:px-10 lg:h-auto lg:border-r-2 lg:border-b-0 lg:px-12 lg:py-14">
         <EditorialBackground
           variant="portal"
+          grain
+          grainTone="dark"
           watermark="4"
           watermarkPosition="top-right"
           watermarkTone="cream"

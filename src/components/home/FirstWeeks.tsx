@@ -1,5 +1,8 @@
-import { ScanlineImage } from "@/components/ScanlineImage";
+import { Illustration } from "@/components/illustration/Illustration";
+import { ROME_PAPERCUT } from "@/data/illustrations";
+import { RegisterFrame } from "@/components/motion/RegisterFrame";
 import { EditorialBackground } from "@/components/EditorialBackground";
+import { RegistrationMark } from "@/components/EditorialMarks";
 import { Caption, Title, Body } from "@/components/Typography";
 import { ButtonLink } from "@/components/Button";
 import { Reveal } from "@/components/motion/Reveal";
@@ -9,9 +12,14 @@ import { Reveal } from "@/components/motion/Reveal";
  * фискале → kit giallo → Questura), не общий lifestyle-кадр. Раньше
  * фото несло собственный крупный заголовок (LifestyleStoryCard), а
  * секция — свой: два соседних огромных headline на одну мысль. Теперь
- * заголовок один (справа), фото — чистое editorial image-window (тот же
- * scanline-приём, что и в PositanoReveal, но в холодной dusty-blue
- * гамме — различает две фотосекции одним и тем же реальным снимком).
+ * заголовок один (справа), а в кадре — бумажная иллюстрация Рима.
+ *
+ * Раньше здесь стоял тот же самый снимок Позитано, что и в
+ * PositanoReveal, только прогнанный через scanline в холодной гамме:
+ * одно фото на две секции главной, и «Италия шире Рима» соседствовала с
+ * ним же. Теперь у секции свой кадр, а приём scanline остался там, где он
+ * работает на фотографии. Иллюстрация — вырезка из бумаги, то есть тот же
+ * материал, что и у всей поверхности сайта, и она не фотооткрытка.
  */
 const STAGES = [
   {
@@ -34,30 +42,27 @@ const STAGES = [
 export function FirstWeeks() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <EditorialBackground variant="arrival" motion="none" />
+      <EditorialBackground variant="arrival" motion="none" grain />
+      {/* Приводочные крестики — третья и последняя секция главной, где они
+         стоят. Дальше их нет сознательно: редкая метка читается как знак
+         типографской культуры, метка в каждой секции — как узор. */}
+      <RegistrationMark corner="top-right" />
+      <RegistrationMark corner="bottom-left" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-start gap-12 lg:grid-cols-[0.82fr_1fr] lg:gap-16">
         <Reveal variant="fade" className="mx-auto w-full max-w-[420px] lg:mx-0 lg:max-w-none">
-          <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-soft-lg">
-            <ScanlineImage
-              src="/positano.jpg"
-              alt="Побережье Италии — куда попадают студенты после переезда"
-              aspectRatio="4/5"
-              lineVar="--color-dusty-blue"
-              lineHex="#5b7a94"
-              lineDeepVar="--color-dusty-blue-deep"
-              lineDeepHex="#3c5468"
-              lineLightVar="--color-dusty-blue-light"
-              lineLightHex="#a9c1d2"
-            />
-            <div className="flex items-center justify-between gap-3 border-t-2 border-ink px-4 py-3">
-              <span className="text-xs font-semibold tracking-[0.1em] text-ink uppercase">
-                Первые недели
-              </span>
-              <span className="font-mono text-[10px] tracking-[0.05em] text-sec-deep uppercase">
-                D+0 — D+8
-              </span>
+          <RegisterFrame>
+            <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-soft-lg">
+              <Illustration asset={ROME_PAPERCUT} />
+              <div className="flex items-center justify-between gap-3 border-t-2 border-ink px-4 py-3">
+                <span className="text-xs font-semibold tracking-[0.1em] text-ink uppercase">
+                  Первые недели
+                </span>
+                <span className="font-mono text-[10px] tracking-[0.05em] text-sec-deep uppercase">
+                  D+0 — D+8
+                </span>
+              </div>
             </div>
-          </div>
+          </RegisterFrame>
         </Reveal>
 
         <div className="max-w-lg">

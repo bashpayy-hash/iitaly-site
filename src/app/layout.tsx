@@ -3,6 +3,7 @@ import { Onest, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { PaperOverlay } from "@/components/PaperOverlay";
 
 // Единственная гарнитура продукта — variable, один файл на весь диапазон
 // начертаний (100–900), реальная поддержка казахской кириллицы
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         <MotionProvider>
           {children}
+          <PaperOverlay />
           <ChatWidget />
         </MotionProvider>
       </body>
