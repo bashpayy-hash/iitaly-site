@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Heading, Body, Caption } from "@/components/Typography";
 import { Reveal } from "@/components/motion/Reveal";
+import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
+import { COAST_TOWN } from "@/data/illustrations";
 
 const chevron = (
   <svg aria-hidden viewBox="0 0 16 10" className="h-2.5 w-4 shrink-0 transition-transform duration-[var(--duration-fast)] ease-[var(--ease-standard)] group-hover:translate-x-[3px]">
@@ -52,16 +54,29 @@ export function Split() {
                 "linear-gradient(135deg, var(--color-paper) 0%, var(--color-paper) 60%, var(--color-cream) 140%)",
             }}
           >
-            <Caption as="p">Бесплатно</Caption>
-            <Heading as="h3" className="mt-3 text-heading!">
-              Получи <span className="text-red">маршрут</span>
-            </Heading>
-            <Body as="p" className="mt-3">
-              Шесть вопросов о твоей ситуации — и персональный план поступления.
-            </Body>
-            <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink">
-              Составить план {chevron}
-            </span>
+            {/* Фрагмент внутри карточки — то единственное применение
+               иллюстраций к CTA-карточкам, которое разрешало ТЗ. Слой
+               абсолютный, поэтому содержимое карточки обёрнуто в relative:
+               иначе абсолютный слой рисуется поверх статичного контента
+               независимо от порядка в DOM. Тёмная карточка слева такого
+               слоя не получает — на чернилах умножение не работает. */}
+            <IllustrationBackdrop
+              asset={COAST_TOWN}
+              side="right"
+              className="-right-4 -bottom-6 w-[48%] opacity-[0.2] sm:w-[42%] sm:opacity-[0.24]"
+            />
+            <div className="relative">
+              <Caption as="p">Бесплатно</Caption>
+              <Heading as="h3" className="mt-3 text-heading!">
+                Получи <span className="text-red">маршрут</span>
+              </Heading>
+              <Body as="p" className="mt-3">
+                Шесть вопросов о твоей ситуации — и персональный план поступления.
+              </Body>
+              <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-ink">
+                Составить план {chevron}
+              </span>
+            </div>
           </Link>
         </Reveal>
       </div>

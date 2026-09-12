@@ -84,3 +84,32 @@ export const TUSCANY_HILLS: IllustrationAsset = {
   mobile: { base: "/illustrations/tuscany-hills-300", width: 300, height: 300 },
   alt: "",
 };
+
+/**
+ * Колизей и руины под облаками — центр первой полосы. Края срезаны с
+ * запасом: слева «HISTORI» и «ROMEA», снизу и справа «AMALFI TCRIORT»,
+ * «STRIFY» — всё сгенерированный текст.
+ *
+ * Стоит фоном шапки /plan. Именно шапки, над формой: по ТЗ внутрь формы
+ * диагностики иллюстрации не ставятся, а страница до сих пор была
+ * единственной совсем голой.
+ */
+export const ROME_SKYLINE: IllustrationAsset = {
+  desktop: { base: "/illustrations/rome-skyline-570", width: 570, height: 215 },
+  mobile: { base: "/illustrations/rome-skyline-390", width: 390, height: 215 },
+  alt: "",
+};
+
+/**
+ * Городок на скалах над волнами — левая часть четвёртой полосы, отдельный
+ * сюжет, а не тот же кадр побережья в другом размере.
+ *
+ * Два места: пустое состояние карты вузов («Выберите город» — там до
+ * выбора буквально пустой прямоугольник) и светлая карточка «Получи
+ * маршрут». Фрагмент в этих двух карточках прямо разрешён исходным ТЗ.
+ */
+export const COAST_TOWN: IllustrationAsset = {
+  desktop: { base: "/illustrations/coast-town-400", width: 400, height: 300 },
+  mobile: { base: "/illustrations/coast-town-300", width: 300, height: 300 },
+  alt: "",
+};

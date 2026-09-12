@@ -8,6 +8,8 @@ import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { EditorialBackground } from "@/components/EditorialBackground";
+import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
+import { ROME_SKYLINE } from "@/data/illustrations";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -21,6 +23,18 @@ export function PlanExplorer() {
     <>
       <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="data" grain />
+        {/* Шапка, а не форма: внутрь диагностики иллюстрации не ставятся,
+           но сама страница до сих пор была совсем голой. */}
+        {/* Слева и side="left": в кадре Колизей стоит у левого края, а
+           маска растворяет кадр от своего дальнего конца. При правой
+           привязке вся масса Колизея уходила именно в растворённую зону, и
+           оставались одни руины у края. Колонка текста здесь центрирована
+           (max-w-760), воздуха хватает с обеих сторон. */}
+        <IllustrationBackdrop
+          asset={ROME_SKYLINE}
+          side="left"
+          className="-bottom-4 left-0 w-[92%] opacity-[0.2] sm:w-[min(640px,44%)] sm:opacity-[0.22]"
+        />
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[760px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
