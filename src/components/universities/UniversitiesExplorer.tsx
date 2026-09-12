@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState } from "react";
 import { UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
@@ -8,56 +8,11 @@ import { Filters, type TypeFilter } from "./Filters";
 import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
-import { Illustration } from "@/components/illustration/Illustration";
+import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
 import { VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
 import { track } from "@/lib/track";
-
-/**
- * Венеция фоном верхней части шапки.
- *
- * Была вклейка в рамке справа от заголовка; теперь это фоновый слой, и
- * поэтому работает ровно то, что в рамке не работало: mix-blend-multiply.
- * На полной непрозрачности умножение давало заплатку темнее и желтее
- * бумаги — у кадра свой кремовый фон. На 17% умножения этот фон
- * практически исчезает (умножение на почти-белое — это почти ничего), и
- * остаётся только штрих, лежащий прямо на нашей бумаге.
- *
- * Две маски, пересечением:
- *   по горизонтали — кадр проявляется справа и полностью растворяется к
- *   колонке с заголовком, поэтому текст лежит на чистой бумаге;
- *   по вертикали — растворяется у верхнего и нижнего краёв, чтобы слой не
- *   обрывался прямой линией по границе секции.
- * mask-composite: intersect — стандартный синтаксис, -webkit-mask-composite
- * source-in — старый для Safari. Там, где composite не поддержан, слои
- * складываются: маска слабее, но это по-прежнему растворение, а не обрыв.
- *
- * Кадр декоративный: aria-hidden на всей обёртке, alt пустой.
- */
-const BACKDROP_MASK =
-  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 36%, #000 78%), " +
-  "linear-gradient(to bottom, transparent 0%, #000 24%, #000 74%, transparent 100%)";
-
-const backdropStyle: CSSProperties = {
-  maskImage: BACKDROP_MASK,
-  WebkitMaskImage: BACKDROP_MASK,
-  maskComposite: "intersect",
-  WebkitMaskComposite: "source-in",
-};
-
-function VeniceBackdrop() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div
-        className="absolute right-0 -bottom-2 w-[94%] opacity-[0.15] mix-blend-multiply sm:w-[min(900px,64%)] sm:opacity-[0.17]"
-        style={backdropStyle}
-      >
-        <Illustration asset={VENICE_BAND} priority />
-      </div>
-    </div>
-  );
-}
 
 function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
   if (type !== "all" && u.type !== type) return false;
@@ -108,7 +63,15 @@ export function UniversitiesExplorer() {
     <>
       <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="coast" motion="none" grain />
-        <VeniceBackdrop />
+        {/* Венеция — один из тех самых 30 городов, о которых говорит
+           строка над заголовком. Фоном, а не вклейкой: см.
+           IllustrationBackdrop про умножение и маски. */}
+        <IllustrationBackdrop
+          asset={VENICE_BAND}
+          side="right"
+          className="right-0 -bottom-2 w-[94%] opacity-[0.15] sm:w-[min(900px,64%)] sm:opacity-[0.17]"
+          priority
+        />
         <RegistrationMark corner="top-right" />
         <div className="relative mx-auto max-w-[1200px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
