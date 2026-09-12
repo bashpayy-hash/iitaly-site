@@ -61,30 +61,36 @@ const MESH: Record<EditorialBackgroundVariant, string> = {
   quiet:
     "radial-gradient(70% 60% at 50% 0%, color-mix(in oklch, var(--color-ink) 5%, transparent) 0%, transparent 70%)",
 
-  // Ниже — пыльно-голубая/персиковая пара, ближе к атмосфере референса.
-  // Данные/цифры — голубое пятно сверху слева, персиковое снизу справа.
+  // Ниже — пыльно-голубая/персиковая гамма. Каждый вариант — 3–4
+  // перекрывающихся поля, а не одно-два: именно наложение нескольких
+  // мягких пятен разного размера даёт «облачность», которую одиночный
+  // градиент не даёт ни при какой прозрачности. Насыщенность по-прежнему
+  // низкая (это color-mix с transparent), но плотность — заметная.
   data:
-    "radial-gradient(60% 60% at 6% 8%, color-mix(in oklch, var(--color-dusty-blue) 22%, transparent) 0%, transparent 62%), " +
-    "radial-gradient(55% 55% at 98% 96%, color-mix(in oklch, var(--color-peach) 20%, transparent) 0%, transparent 60%)",
-  // Прибытие/маршрут — персиковое пятно снизу слева (тепло, прибытие),
-  // голубое едва заметное сверху справа (даль/дорога).
+    "radial-gradient(72% 78% at 2% 0%, color-mix(in oklch, var(--color-dusty-blue) 46%, transparent) 0%, transparent 66%), " +
+    "radial-gradient(60% 64% at 100% 100%, color-mix(in oklch, var(--color-peach) 44%, transparent) 0%, transparent 62%), " +
+    "radial-gradient(48% 52% at 62% 18%, color-mix(in oklch, var(--color-peach) 22%, transparent) 0%, transparent 58%), " +
+    "radial-gradient(40% 44% at 30% 92%, color-mix(in oklch, var(--color-dusty-blue) 26%, transparent) 0%, transparent 56%)",
   arrival:
-    "radial-gradient(58% 55% at 4% 100%, color-mix(in oklch, var(--color-peach) 18%, transparent) 0%, transparent 62%), " +
-    "radial-gradient(45% 45% at 100% 0%, color-mix(in oklch, var(--color-dusty-blue) 12%, transparent) 0%, transparent 55%)",
-  // Цена — спокойное персиковое пятно сверху, голубое снизу — ровный лист,
-  // не тёмный SaaS-градиент.
+    "radial-gradient(66% 70% at 0% 100%, color-mix(in oklch, var(--color-peach) 42%, transparent) 0%, transparent 64%), " +
+    "radial-gradient(54% 56% at 100% 2%, color-mix(in oklch, var(--color-dusty-blue) 34%, transparent) 0%, transparent 60%), " +
+    "radial-gradient(44% 48% at 46% 40%, color-mix(in oklch, var(--color-peach) 18%, transparent) 0%, transparent 58%)",
   pricing:
-    "radial-gradient(65% 55% at 90% -6%, color-mix(in oklch, var(--color-peach) 20%, transparent) 0%, transparent 60%), " +
-    "radial-gradient(55% 50% at 0% 105%, color-mix(in oklch, var(--color-dusty-blue) 14%, transparent) 0%, transparent 58%)",
-  // Гайды — узкая голубая полоса сверху страницы, остальное спокойно.
+    "radial-gradient(70% 62% at 96% -4%, color-mix(in oklch, var(--color-peach) 44%, transparent) 0%, transparent 62%), " +
+    "radial-gradient(62% 58% at 0% 104%, color-mix(in oklch, var(--color-dusty-blue) 36%, transparent) 0%, transparent 60%), " +
+    "radial-gradient(46% 50% at 34% 30%, color-mix(in oklch, var(--color-peach) 20%, transparent) 0%, transparent 56%)",
   guides:
-    "radial-gradient(50% 40% at 20% -10%, color-mix(in oklch, var(--color-dusty-blue) 16%, transparent) 0%, transparent 55%)",
-  // Кабинет — голубой + персиковый по углам, ровно и просторно (весь
-  // atmospheric panel экрана входа).
+    "radial-gradient(64% 52% at 14% -12%, color-mix(in oklch, var(--color-dusty-blue) 40%, transparent) 0%, transparent 58%), " +
+    "radial-gradient(50% 42% at 88% -6%, color-mix(in oklch, var(--color-peach) 28%, transparent) 0%, transparent 55%)",
   portal:
-    "radial-gradient(70% 65% at 100% 0%, color-mix(in oklch, var(--color-dusty-blue) 20%, transparent) 0%, transparent 62%), " +
-    "radial-gradient(60% 60% at 0% 100%, color-mix(in oklch, var(--color-peach) 18%, transparent) 0%, transparent 60%)",
+    "radial-gradient(78% 72% at 100% 0%, color-mix(in oklch, var(--color-dusty-blue) 42%, transparent) 0%, transparent 64%), " +
+    "radial-gradient(68% 66% at 0% 100%, color-mix(in oklch, var(--color-peach) 34%, transparent) 0%, transparent 62%), " +
+    "radial-gradient(46% 48% at 52% 44%, color-mix(in oklch, var(--color-dusty-blue) 20%, transparent) 0%, transparent 58%)",
 };
+
+/** Тёплая бумажная подложка под mesh — чтобы панель не читалась как белый лист. */
+const PAPER_BASE =
+  "linear-gradient(180deg, color-mix(in oklch, var(--color-warn) 5%, var(--color-cream)) 0%, var(--color-cream) 100%)";
 
 function gridStyle(color = "var(--color-ink)", size = 96) {
   return {
@@ -100,6 +106,7 @@ export function EditorialBackground({
   grain = false,
   grid = false,
   intensity = 1,
+  paperBase = false,
   watermark,
   watermarkPosition = "bottom-right",
   watermarkTone = "ink",
@@ -114,6 +121,8 @@ export function EditorialBackground({
   grid?: boolean;
   /** множитель прозрачности пятен, 0–1 */
   intensity?: number;
+  /** тёплая бумажная подложка под mesh — для панелей на bg-paper, чтобы они не были белыми */
+  paperBase?: boolean;
   /** символ/буква для крупного едва заметного watermark в углу (напр. "I", "€") */
   watermark?: string;
   watermarkPosition?: "bottom-right" | "top-right" | "bottom-left";
@@ -134,18 +143,19 @@ export function EditorialBackground({
 
   return (
     <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
+      {paperBase && <div className="absolute inset-0" style={{ backgroundImage: PAPER_BASE }} />}
       <div
         className={animate ? "editorial-bg-drift absolute -inset-[10%]" : "absolute -inset-[10%]"}
         style={{ backgroundImage: MESH[variant], opacity: intensity }}
       />
       {grid && (
-        <div className="absolute inset-0 opacity-[0.05]" style={gridStyle()} />
+        <div className="absolute inset-0 opacity-[0.07]" style={gridStyle()} />
       )}
-      {grain && <div className="stats-grain absolute inset-0 opacity-[0.05] mix-blend-multiply" />}
+      {grain && <div className="stats-grain absolute inset-0 opacity-[0.13] mix-blend-multiply" />}
       {watermark && (
         <span
           className={`absolute font-display text-[clamp(4rem,14vw,9rem)] leading-none font-bold select-none ${
-            watermarkTone === "cream" ? "text-cream/[0.07]" : "text-ink/[0.05]"
+            watermarkTone === "cream" ? "text-cream/[0.10]" : "text-ink/[0.07]"
           } ${watermarkPos[watermarkPosition]}`}
         >
           {watermark}

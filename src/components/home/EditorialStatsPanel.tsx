@@ -99,12 +99,14 @@ export function EditorialStatsPanel({
          bgVariants при входе в вьюпорт. Фирменный watermark ниже рисуется
          отдельно (свой, более поздний, reveal — см. watermarkVariants). */}
       <motion.div aria-hidden variants={bgVariants} className="absolute inset-0">
-        <EditorialBackground variant="data" grain grid />
+        <EditorialBackground variant="data" paperBase grain grid />
       </motion.div>
 
+      {/* Watermark внутри кадра, не обрезается рамкой: сидит за колонкой
+         метрик, где нет плотного текста. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-6 -right-4 font-display text-[10rem] leading-none font-bold text-ink/[0.06] select-none sm:text-[13rem]"
+        className="pointer-events-none absolute top-1/2 right-[6%] -translate-y-1/2 font-display text-[14rem] leading-none font-bold text-ink/[0.055] select-none sm:text-[19rem]"
       >
         <motion.span variants={watermarkVariants} className="block">
           {watermark}
@@ -113,13 +115,22 @@ export function EditorialStatsPanel({
 
       <motion.div aria-hidden variants={frameVariants} className="absolute inset-0 rounded-xl border-2 border-ink" />
 
-      <div className="relative grid grid-cols-1 sm:grid-cols-[1.2fr_1px_1fr]">
-        <div className="relative flex flex-col justify-end p-6 sm:p-10">
+      <div className="relative grid grid-cols-1 sm:grid-cols-[1.35fr_1px_1fr]">
+        <div className="relative flex flex-col justify-between gap-10 p-6 sm:p-10">
+          <motion.p
+            variants={metaVariants}
+            className="font-mono text-[10px] tracking-[0.14em] text-sec-deep uppercase"
+          >
+            Главный показатель
+          </motion.p>
           <motion.div variants={heroVariants}>
-            <p className="font-display text-[clamp(3.5rem,2.2rem+6vw,7.5rem)] leading-[0.9] font-bold tracking-tight text-ink tabular-nums">
+            {/* whitespace-nowrap обязателен: без него «до €7 557» ломается
+               посреди суммы и читается как два разных числа. Верхняя
+               граница clamp подобрана так, чтобы строка влезала в колонку. */}
+            <p className="font-display text-[clamp(2.75rem,1.4rem+4.6vw,5.25rem)] leading-[0.95] font-bold tracking-tight whitespace-nowrap text-ink tabular-nums">
               {hero.value}
             </p>
-            <p className="mt-3 max-w-[30ch] font-mono text-[11px] tracking-[0.08em] text-sec-deep uppercase">
+            <p className="mt-4 max-w-[34ch] font-mono text-[11px] leading-relaxed tracking-[0.06em] text-sec-deep uppercase">
               {hero.label}
             </p>
           </motion.div>
@@ -134,12 +145,12 @@ export function EditorialStatsPanel({
               key={m.label}
               custom={i}
               variants={metricVariants}
-              className={`flex items-baseline justify-between gap-4 px-6 py-5 sm:px-8 ${i > 0 ? "border-t border-line" : ""}`}
+              className={`px-6 py-5 sm:px-8 ${i > 0 ? "border-t border-line" : ""}`}
             >
-              <p className="font-display text-3xl font-bold tracking-tight text-ink tabular-nums sm:text-4xl">
+              <p className="font-display text-[1.75rem] leading-none font-bold tracking-tight text-ink tabular-nums sm:text-[2.125rem]">
                 <AnimatedMetric metric={m} reducedMotion={reducedMotion} />
               </p>
-              <p className="max-w-[18ch] text-right font-mono text-[10px] tracking-[0.05em] text-sec-deep uppercase">
+              <p className="mt-1.5 max-w-[26ch] font-mono text-[10px] leading-relaxed tracking-[0.05em] text-sec-deep uppercase">
                 {m.label}
               </p>
             </motion.div>
