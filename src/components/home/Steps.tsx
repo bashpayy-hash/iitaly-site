@@ -1,6 +1,12 @@
 import { Title, Heading, Body } from "@/components/Typography";
 import { Reveal } from "@/components/motion/Reveal";
+import { RegisterFrame } from "@/components/motion/RegisterFrame";
 import { EditorialBackground } from "@/components/EditorialBackground";
+import {
+  RegistrationMark,
+  MicroLabel,
+  MicroLabelGroup,
+} from "@/components/EditorialMarks";
 import { RouteScene } from "@/components/illustration/RouteScene";
 
 const steps = [
@@ -34,7 +40,12 @@ const steps = [
 export function Steps() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <EditorialBackground variant="journey" />
+      {/* grain — бумажная фактура секции: это одна из двух показательных
+         секций, где обкатывается бумажный слой (вторая — PositanoReveal). */}
+      <EditorialBackground variant="journey" grain />
+      {/* Приводочные крестики стоят в углах листа, вне контентной колонки. */}
+      <RegistrationMark corner="top-right" />
+      <RegistrationMark corner="bottom-left" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-12 lg:grid-cols-[1fr_0.66fr] lg:items-start">
         <div>
           <Reveal variant="fade">
@@ -73,9 +84,25 @@ export function Steps() {
           </div>
 
           {/* Мобильный кадр сцены — не сжатый десктоп, а другое окно в той
-             же геометрии: только подход к арке. */}
-          <Reveal delay={0.1} className="mt-10 h-44 overflow-hidden rounded-xl border-2 border-ink bg-cream lg:hidden">
-            <RouteScene variant="band" />
+             же геометрии: только подход к арке. Приводка (RegisterFrame) —
+             то самое единственное движение бумажного слоя. */}
+          <Reveal delay={0.1} className="mt-10 lg:hidden">
+            <RegisterFrame>
+              <div className="overflow-hidden rounded-xl border-2 border-ink bg-cream">
+                <div className="h-44">
+                  <RouteScene variant="band" />
+                </div>
+                <div className="flex items-baseline justify-between gap-3 border-t-2 border-ink px-4 py-2.5">
+                  <MicroLabel label="Маршрут" value="05 этапов" layout="inline" />
+                  <span
+                    aria-hidden
+                    className="font-mono text-[10px] tracking-[0.12em] text-sec uppercase"
+                  >
+                    Правила 2026/27
+                  </span>
+                </div>
+              </div>
+            </RegisterFrame>
           </Reveal>
         </div>
 
@@ -83,8 +110,20 @@ export function Steps() {
            холодного dusty blue (неопределённость) к тёплой арке (Италия),
            документы лежат вдоль пути. Здесь у неё есть воздух и она
            объясняет содержание секции — этапность, — а не украшает. */}
-        <div aria-hidden className="hidden h-[640px] lg:block">
-          <RouteScene variant="wide" />
+        <div className="hidden lg:block">
+          {/* Спецификация этапа: каждая строка — факт, уже сказанный в
+             секции обычным текстом (пять шагов, апостиль → CIMEA → 30–60
+             дней, Universitaly, DSU), моно-подписи только уточняют его
+             техническую рамку и ничего нового не утверждают. */}
+          <MicroLabelGroup className="gap-1 border-b border-line pb-4">
+            <MicroLabel label="Этапов" value="05" />
+            <MicroLabel label="Документы" value="Апостиль → CIMEA · 30–60 дней" />
+            <MicroLabel label="Подача" value="Universitaly · DSU" />
+            <MicroLabel label="Правила" value="2026/27" />
+          </MicroLabelGroup>
+          <div aria-hidden className="h-[560px]">
+            <RouteScene variant="wide" />
+          </div>
         </div>
       </div>
     </section>

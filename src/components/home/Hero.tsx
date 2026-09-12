@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/Button";
 import { Display, BodyLarge, Body, Caption } from "@/components/Typography";
 import { Vespa } from "@/components/Vespa";
 import { RouteRibbon } from "@/components/RouteRibbon";
+import { EditorialBackground } from "@/components/EditorialBackground";
 import { AnimatedText } from "@/components/motion/AnimatedText";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
@@ -36,14 +37,14 @@ export function Hero() {
   const reducedMotion = useReducedMotion();
 
   return (
-    <section
-      className="relative overflow-hidden border-b-2 border-ink px-5 pt-14 pb-16 sm:pt-20 sm:pb-24"
-      style={{
-        backgroundImage:
-          "radial-gradient(65% 60% at 100% -10%, color-mix(in oklch, var(--color-red) 22%, transparent) 0%, transparent 62%)",
-        backgroundColor: "var(--color-cream)",
-      }}
-    >
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-14 pb-16 sm:pt-20 sm:pb-24">
+      {/* Тот же mesh, что был здесь инлайн-градиентом: вариант "atlas" в
+         EditorialBackground — его копия (см. MESH.atlas), так что дубль
+         определения убран, а не добавлен новый слой. motion="none" —
+         чтобы пятно над первым экраном осталось статичным, как и было.
+         grain даёт первому экрану ту же бумагу, что и остальным секциям:
+         без неё именно hero выглядел бы единственным «цифровым» экраном. */}
+      <EditorialBackground variant="atlas" motion="none" grain />
       <RouteRibbon className="opacity-40" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>

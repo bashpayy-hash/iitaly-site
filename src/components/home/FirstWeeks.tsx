@@ -1,5 +1,6 @@
 import { ScanlineImage } from "@/components/ScanlineImage";
 import { EditorialBackground } from "@/components/EditorialBackground";
+import { RegistrationMark } from "@/components/EditorialMarks";
 import { Caption, Title, Body } from "@/components/Typography";
 import { ButtonLink } from "@/components/Button";
 import { Reveal } from "@/components/motion/Reveal";
@@ -34,7 +35,12 @@ const STAGES = [
 export function FirstWeeks() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <EditorialBackground variant="arrival" motion="none" />
+      <EditorialBackground variant="arrival" motion="none" grain />
+      {/* Приводочные крестики — третья и последняя секция главной, где они
+         стоят. Дальше их нет сознательно: редкая метка читается как знак
+         типографской культуры, метка в каждой секции — как узор. */}
+      <RegistrationMark corner="top-right" />
+      <RegistrationMark corner="bottom-left" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-start gap-12 lg:grid-cols-[0.82fr_1fr] lg:gap-16">
         <Reveal variant="fade" className="mx-auto w-full max-w-[420px] lg:mx-0 lg:max-w-none">
           <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-soft-lg">

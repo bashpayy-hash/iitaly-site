@@ -8,7 +8,8 @@ import { useReducedMotion } from "@/components/motion/MotionProvider";
  * "бумажная база" — отдельный слой под неё не нужен):
  *   1. mesh    — 1–2 мягких radial-пятна фирменных цветов;
  *   2. grid    — опциональная тончайшая модульная сетка (hairlines);
- *   3. grain   — опциональное статичное зерно (SVG feTurbulence, .stats-grain);
+ *   3. grain   — опциональная бумажная фактура секции (.paper-layer, два
+ *      слоя шума разного масштаба — см. globals.css);
  *   4. watermark — опциональный крупный полупрозрачный символ (буква,
  *      обозначение) в углу, 3–8% непрозрачности;
  *   5. scrim   — опциональный локальный градиент-подложка под текст, если
@@ -151,7 +152,7 @@ export function EditorialBackground({
       {grid && (
         <div className="absolute inset-0 opacity-[0.07]" style={gridStyle()} />
       )}
-      {grain && <div className="stats-grain absolute inset-0 opacity-[0.13] mix-blend-multiply" />}
+      {grain && <div className="paper-layer paper-layer-section absolute inset-0" />}
       {watermark && (
         <span
           className={`absolute font-display text-[clamp(4rem,14vw,9rem)] leading-none font-bold select-none ${

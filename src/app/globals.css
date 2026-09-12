@@ -189,11 +189,68 @@ body {
   }
 }
 
-/* Тончайшее зерно через инлайн SVG-шум (не WebGL — избыточно для одного
-   статичного слоя) — переиспользуется EditorialBackground.tsx (grain). */
-.stats-grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 120px 120px;
+/* ── Бумага ───────────────────────────────────────────────────────────
+   Поверхность сайта — не «залитый цвет», а лист: мелкое волокно плюс
+   крупная облачная неровность, как у акварельной бумаги. Раньше здесь был
+   один слой шума (120px, baseFrequency 0.9) — он давал «песок», но не
+   бумагу: у настоящего листа две разные частоты, и именно их сочетание
+   читается как материал, а не как фильтр.
+
+   Два независимых шума:
+     --paper-fibre — высокая частота, слегка анизотропная (0.62 по X против
+       1.05 по Y), то есть волокно имеет направление, как у прессованного
+       листа; плитка 149px;
+     --paper-cloud — очень низкая частота: редкие пятна-облачность; плитка
+       617px.
+
+   Оба слоя проявляют не весь диапазон шума, а его верхнюю часть: альфа
+   считается как 1.15·A − 0.36 (и 0.62·A − 0.22 для облачности), то есть
+   наклон больше единицы, а отрицательный сдвиг срезает низ. Первая версия
+   брала весь диапазон с наклоном 0.52 — и измерения показали, что средняя
+   затемняющая добавка (7 уровней из 255) равна разбросу (±7): слой ложился
+   как ровная грязь, а не как фактура. При том же среднем крутая передача
+   даёт вдвое больший разброс — то есть видимое волокно, а не потемнение.
+
+   Умножение (multiply), а не soft-light/overlay: на почти белой кремовой
+   базе обе «двусторонние» формулы вырождаются (проверено расчётом: ±3
+   уровня против ±14 у multiply), и физически это верно — на светлом листе
+   фактура видна тенями в волокне, светлее самой бумаги крупиц не бывает.
+
+   Размеры плиток взаимно простые: их совпадение повторяется раз в ~92 000px,
+   то есть ни «обоев», ни муара на реальной странице не видно. Шум окрашен
+   в тёплый чернильный (0.16/0.13/0.09), не в нейтральный серый — иначе слой
+   охлаждает кремовую базу и выглядит как инстаграм-фильтр поверх дизайна.
+
+   Всё на inline-SVG: WebGL/canvas для статичной текстуры избыточны. */
+:root {
+  --paper-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='149' height='149'%3E%3Cfilter id='pf' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62 1.05' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.16 0 0 0 0 0.13 0 0 0 0 0.09 0 0 0 1.15 -0.36'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23pf)'/%3E%3C/svg%3E");
+  --paper-cloud: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='617' height='617'%3E%3Cfilter id='pc' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.2 0 0 0 0 0.16 0 0 0 0 0.11 0 0 0 0.62 -0.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23pc)'/%3E%3C/svg%3E");
+}
+
+.paper-layer {
+  background-image: var(--paper-fibre), var(--paper-cloud);
+  background-size:
+    149px 149px,
+    617px 617px;
+}
+
+/* Три силы одного и того же слоя.
+   global  — постоянная плёнка на всё приложение, включая карточки, формы и
+             хедер (слой лежит выше них): именно она держит «печатность»
+             интерфейса и она же — тот «слабее на карточках», который нужен;
+   section — секционная поверхность под контентом, заметно плотнее;
+   card    — редкий случай, когда карточке нужна своя фактура (тёмные панели,
+             где глобальный multiply не виден). */
+.paper-layer-global {
+  opacity: 0.07;
+}
+.paper-layer-section {
+  opacity: 0.2;
+  mix-blend-mode: multiply;
+}
+.paper-layer-card {
+  opacity: 0.1;
+  mix-blend-mode: multiply;
 }
 
 /* Общий фон для EditorialBackground.tsx — тот же приём дрифта, что и у
