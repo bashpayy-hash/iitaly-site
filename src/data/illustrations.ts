@@ -113,3 +113,18 @@ export const COAST_TOWN: IllustrationAsset = {
   mobile: { base: "/illustrations/coast-town-300", width: 300, height: 300 },
   alt: "",
 };
+
+/**
+ * Солнце, город на склоне и волны — правая часть четвёртой полосы. Третий
+ * самостоятельный сюжет из неё, к левому городку и к панораме целиком.
+ *
+ * Стоит фоном шапки /prices. Кадр сидит в поле страницы, за пределами
+ * колонки контента: по ТЗ иллюстраций не должно быть в тарифной карточке
+ * и рядом с блоком возврата, поэтому слой уходит в воздух сбоку, а не под
+ * цену и не под гарантии.
+ */
+export const COAST_SUN: IllustrationAsset = {
+  desktop: { base: "/illustrations/coast-sun-376", width: 376, height: 300 },
+  mobile: { base: "/illustrations/coast-sun-300", width: 300, height: 300 },
+  alt: "",
+};

@@ -9,7 +9,7 @@ import { PlanResult } from "./PlanResult";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
-import { ROME_SKYLINE } from "@/data/illustrations";
+import { ROME_SKYLINE, TUSCANY_HILLS } from "@/data/illustrations";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -52,8 +52,16 @@ export function PlanExplorer() {
         </div>
       </section>
 
-      <section className="px-5 py-8">
-        <div className="mx-auto max-w-[760px] space-y-8">
+      <section className="relative overflow-hidden px-5 py-8">
+        {/* В поле справа от колонки (max-w-760), а не внутри формы: по ТЗ
+           внутрь диагностики иллюстрации не ставятся. На узких экранах
+           поля нет — там слой скрыт целиком, а не ужат. */}
+        <IllustrationBackdrop
+          asset={TUSCANY_HILLS}
+          side="right"
+          className="top-16 right-0 hidden w-[min(400px,24%)] opacity-[0.16] lg:block"
+        />
+        <div className="relative mx-auto max-w-[760px] space-y-8">
           <DocCheck />
 
           {plan ? (
