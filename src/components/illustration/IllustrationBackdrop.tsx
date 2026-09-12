@@ -13,6 +13,14 @@ import type { IllustrationAsset } from "@/data/illustrations";
  * нашей бумаге. Поэтому в этот слой годится только штриховая графика на
  * светлом; тёмный кадр дал бы на кремовой базе грязное пятно.
  *
+ * Рабочая плотность — 20–28%. Первая версия стояла на 12–17%: на
+ * скриншотах слой читался, на обычном экране — нет. Компенсируется не
+ * только числом, но и маской: провал у текстовой стороны стал глубже
+ * (0.1 вместо 0.2) и начинается позже (42% вместо 36%), полная
+ * непрозрачность — раньше (72% вместо 78%). То есть при большей общей
+ * плотности энергия ушла к дальнему краю, а колонка с текстом осталась
+ * такой же чистой.
+ *
  * Две маски, пересечением:
  *   по горизонтали — кадр проявляется у своего края и полностью
  *     растворяется к колонке с текстом, поэтому текст всегда лежит на
@@ -30,9 +38,10 @@ import type { IllustrationAsset } from "@/data/illustrations";
 function maskFor(side: "right" | "left"): CSSProperties {
   const horizontal =
     side === "right"
-      ? "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 36%, #000 78%)"
-      : "linear-gradient(to left, transparent 0%, rgba(0,0,0,0.2) 36%, #000 78%)";
-  const vertical = "linear-gradient(to bottom, transparent 0%, #000 24%, #000 74%, transparent 100%)";
+      ? "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 42%, #000 72%)"
+      : "linear-gradient(to left, transparent 0%, rgba(0,0,0,0.1) 42%, #000 72%)";
+  const vertical =
+    "linear-gradient(to bottom, transparent 0%, #000 20%, #000 78%, transparent 100%)";
   const mask = `${horizontal}, ${vertical}`;
   return {
     maskImage: mask,
@@ -55,8 +64,14 @@ export function IllustrationBackdrop({
   priority?: boolean;
 }) {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className={`absolute mix-blend-multiply ${className}`} style={maskFor(side)}>
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <div
+        className={`absolute mix-blend-multiply ${className}`}
+        style={maskFor(side)}
+      >
         <Illustration asset={asset} priority={priority} />
       </div>
     </div>

@@ -40,7 +40,7 @@ export function HowItWorks() {
       <IllustrationBackdrop
         asset={COAST_BAND}
         side="right"
-        className="-top-8 right-0 w-[96%] opacity-[0.13] sm:w-[min(900px,58%)] sm:opacity-[0.15]"
+        className="-top-8 right-0 w-[96%] opacity-[0.22] sm:w-[min(940px,60%)] sm:opacity-[0.25]"
       />
       <div className="relative mx-auto max-w-[1200px]">
         <Reveal variant="fade">
