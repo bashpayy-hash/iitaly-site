@@ -13,6 +13,12 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
  * само по себе всегда "концентрично" любому родителю с достаточным
  * скруглением, поэтому отдельный radius-проп не нужен на этой странице.
  *
+ * Главное действие (primary) дополнительно помечается data-fab-yield:
+ * по этому атрибуту плавающая кнопка чата определяет, что она встала над
+ * CTA, и уезжает за край (см. ChatLauncher). Атрибут ставится здесь, а не
+ * на местах вызова, чтобы правило «плавающая кнопка не перекрывает
+ * главное действие» работало само, без ручной разметки каждой страницы.
+ *
  * Состояния: default / hover / active / focus-visible / disabled / loading.
  * Микроанимация — 180мс, active чуть сжимает (0.98) и убирает hover-подъём,
  * без bounce/spring/glow.
@@ -122,6 +128,7 @@ export function ButtonLink({
     <Link
       href={href}
       aria-busy={loading || undefined}
+      data-fab-yield={variant === "primary" ? "" : undefined}
       className={classesFor(variant, size, className)}
       {...props}
     >
@@ -146,6 +153,7 @@ export function Button({
       className={classesFor(variant, size, className)}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
+      data-fab-yield={variant === "primary" ? "" : undefined}
       {...props}
     >
       {loading && <Spinner />}

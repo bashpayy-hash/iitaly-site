@@ -16,7 +16,14 @@ export function CompareBar({
   const unis = compareIds.map((id) => UNIS.find((u) => u.id === id)!).filter(Boolean);
 
   return (
-    <div className="sticky bottom-0 z-40 border-t-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6">
+    // data-fab-yield на всей полосе, а не только на кнопке «Сравнить»:
+    // липкая полоса внизу экрана — ровно тот случай, когда плавающая
+    // кнопка чата оказывается сверху. Её кнопка левее лаунчера и сама по
+    // себе пересечения не даёт, но лаунчер садится на правый край полосы.
+    <div
+      data-fab-yield
+      className="sticky bottom-0 z-40 border-t-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6"
+    >
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-3">
         <span className="text-xs font-extrabold text-ink-soft uppercase">
           Сравнение ({unis.length}/3)
