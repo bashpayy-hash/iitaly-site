@@ -69,7 +69,7 @@ export function UniversitiesExplorer() {
         <IllustrationBackdrop
           asset={VENICE_BAND}
           side="right"
-          className="right-0 -bottom-2 w-[94%] opacity-[0.15] sm:w-[min(900px,64%)] sm:opacity-[0.17]"
+          className="right-0 -bottom-2 w-[94%] opacity-[0.24] sm:w-[min(900px,64%)] sm:opacity-[0.26]"
           priority
         />
         <RegistrationMark corner="top-right" />

@@ -99,7 +99,7 @@ export function GuidesExplorer() {
         <IllustrationBackdrop
           asset={TUSCANY_HILLS}
           side="left"
-          className="-bottom-6 left-0 w-[72%] opacity-[0.12] sm:w-[min(520px,42%)] sm:opacity-[0.13]"
+          className="-bottom-6 left-0 w-[72%] opacity-[0.2] sm:w-[min(560px,44%)] sm:opacity-[0.23]"
         />
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
