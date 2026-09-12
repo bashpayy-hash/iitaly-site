@@ -1,5 +1,7 @@
 import { Title, Heading, Body, Caption } from "@/components/Typography";
 import { Reveal } from "@/components/motion/Reveal";
+import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
+import { COAST_BAND } from "@/data/illustrations";
 
 const STAGES = [
   {
@@ -30,8 +32,17 @@ const STAGES = [
 
 export function HowItWorks() {
   return (
-    <section className="border-b-2 border-ink px-5 py-16 sm:py-24">
-      <div className="mx-auto max-w-[1200px]">
+    <section className="relative overflow-hidden border-b-2 border-ink px-5 py-16 sm:py-24">
+      {/* Кадр про то, куда прилетают, — в секции, которая заканчивается
+         вылетом. Привязан к ВЕРХНЕМУ краю: блок карточек непрозрачный и
+         занимает всю ширину колонки, поэтому снизу от слоя оставался
+         торчать случайный угол. Воздух здесь только справа от заголовка. */}
+      <IllustrationBackdrop
+        asset={COAST_BAND}
+        side="right"
+        className="-top-8 right-0 w-[96%] opacity-[0.13] sm:w-[min(900px,58%)] sm:opacity-[0.15]"
+      />
+      <div className="relative mx-auto max-w-[1200px]">
         <Reveal variant="fade">
           <Caption as="p">Как проходит работа с нами</Caption>
           <Title as="h2" className="mt-3">

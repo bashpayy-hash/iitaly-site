@@ -9,6 +9,8 @@ import { Accordion } from "@/components/Accordion";
 import { Button } from "@/components/Button";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { EditorialBackground } from "@/components/EditorialBackground";
+import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
+import { TUSCANY_HILLS } from "@/data/illustrations";
 
 /**
  * Справочник как index + активная глава, а не пять одинаковых больших
@@ -91,6 +93,14 @@ export function GuidesExplorer() {
         style={{ backgroundColor: "var(--color-cream)" }}
       >
         <EditorialBackground variant="guides" grain />
+        {/* Спокойный кадр без достопримечательности: справочник про
+           апостиль, CIMEA и визу, туристический мотив здесь спорил бы с
+           содержанием. Слева — справа висит лента маршрута. */}
+        <IllustrationBackdrop
+          asset={TUSCANY_HILLS}
+          side="left"
+          className="-bottom-6 left-0 w-[72%] opacity-[0.12] sm:w-[min(520px,42%)] sm:opacity-[0.13]"
+        />
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">
