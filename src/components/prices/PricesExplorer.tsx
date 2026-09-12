@@ -8,6 +8,8 @@ import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 import { FEATURES } from "@/data/pricing";
 import { EditorialBackground } from "@/components/EditorialBackground";
+import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
+import { COAST_SUN, TUSCANY_HILLS } from "@/data/illustrations";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: 16900 },
@@ -50,6 +52,15 @@ export function PricesExplorer() {
     <>
       <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="pricing" grain />
+        {/* Кадр уходит в поле страницы, за правый край колонки (max-w-900):
+           по ТЗ иллюстраций не должно быть в тарифной карточке и рядом с
+           возвратом, поэтому слой не заходит ни под цену, ни под гарантии —
+           только в воздух сбоку. */}
+        <IllustrationBackdrop
+          asset={COAST_SUN}
+          side="right"
+          className="right-0 -bottom-6 w-[86%] opacity-[0.18] sm:w-[min(460px,34%)] sm:opacity-[0.2]"
+        />
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
@@ -64,8 +75,16 @@ export function PricesExplorer() {
         </div>
       </section>
 
-      <section className="px-5 py-10">
-        <div className="mx-auto max-w-[900px]">
+      <section className="relative overflow-hidden px-5 py-10">
+        {/* Тот же принцип: слой прижат к левому краю страницы и полностью
+           растворяется до колонки с карточками. Ни тарифная карточка, ни
+           блок гарантий, ни кнопки оплаты его не касаются. */}
+        <IllustrationBackdrop
+          asset={TUSCANY_HILLS}
+          side="left"
+          className="bottom-10 left-0 hidden w-[min(420px,26%)] opacity-[0.16] lg:block"
+        />
+        <div className="relative mx-auto max-w-[900px]">
           <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
             <div className="flex-1 rounded-lg border-2 border-ink bg-paper p-5">
               <b className="block font-display text-lg font-bold">Бесплатно</b>
