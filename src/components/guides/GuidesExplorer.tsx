@@ -78,7 +78,11 @@ function ChapterBody({ chapter }: { chapter: Chapter }) {
 export function GuidesExplorer() {
   const router = useRouter();
   const [activeId, setActiveId] = useState(CHAPTERS[0].id);
-  const active = CHAPTERS.find((c) => c.id === activeId) ?? CHAPTERS[0];
+  const activeIndex = Math.max(
+    0,
+    CHAPTERS.findIndex((c) => c.id === activeId),
+  );
+  const active = CHAPTERS[activeIndex];
 
   return (
     <>
@@ -131,12 +135,23 @@ export function GuidesExplorer() {
             </ol>
           </nav>
 
-          <div key={active.id} className="min-w-0">
-            <p className="text-xs font-semibold tracking-[0.1em] text-sec uppercase">
-              {String(CHAPTERS.findIndex((c) => c.id === activeId) + 1).padStart(2, "0")} · {active.title}
+          <div key={active.id} className="relative min-w-0">
+            {/* Крупный полупрозрачный номер активной главы — тот же приём
+               watermark'а, что в data-постере, только привязан к выбору.
+               Сидит в воздухе НАД главой (в паддинге секции): ниже он
+               пересекал бы строки текста — номер бледный, но глиф всё
+               равно читался как грязь поверх абзацев. */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -top-[4.75rem] right-0 font-display text-[6.5rem] leading-none font-bold text-ink/[0.06] select-none tabular-nums"
+            >
+              {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+            <p className="relative text-xs font-semibold tracking-[0.1em] text-sec uppercase">
+              {String(activeIndex + 1).padStart(2, "0")} · {active.title}
             </p>
-            <p className="mt-2 max-w-[60ch] text-base text-ink-soft">{active.teaser}</p>
-            <div className="mt-6">
+            <p className="relative mt-2 max-w-[60ch] text-base text-ink-soft">{active.teaser}</p>
+            <div className="relative mt-6">
               <ChapterBody chapter={active} />
             </div>
           </div>

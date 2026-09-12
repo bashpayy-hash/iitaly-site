@@ -15,7 +15,10 @@ import { FEATURES } from "@/data/pricing";
 export function PriceBand() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
-      <EditorialBackground variant="pricing" grain watermark="₸" watermarkPosition="top-right" />
+      {/* Без watermark: композиция здесь плотная (текст слева + непрозрачная
+         карточка справа), крупный знак некуда посадить, не налезая на сноску
+         или не обрезаясь границей секции. Атмосферу держат mesh + сетка. */}
+      <EditorialBackground variant="pricing" grain grid />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1fr] lg:gap-16">
         <Reveal variant="fade">
           <Caption as="p">Один платёж, без подписки</Caption>
@@ -36,16 +39,26 @@ export function PriceBand() {
           </p>
         </Reveal>
 
-        <Reveal delay={0.1} className="rounded-xl border-2 border-ink bg-paper p-6 sm:p-8">
-          <p className="text-xs font-semibold tracking-[0.1em] text-sec uppercase">Что входит</p>
-          <ul className="mt-4 space-y-3">
-            {FEATURES.slice(0, 6).map((f) => (
-              <li key={f} className="flex gap-2.5 text-sm">
-                <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
-                {f}
-              </li>
-            ))}
-          </ul>
+        <Reveal delay={0.1} className="relative overflow-hidden rounded-xl border-2 border-ink bg-paper">
+          <EditorialBackground variant="data" motion="none" paperBase intensity={0.55} />
+          <div className="relative p-6 sm:p-8">
+            <div className="flex items-baseline justify-between gap-4 border-b border-line pb-3">
+              <p className="text-xs font-semibold tracking-[0.1em] text-sec uppercase">Что входит</p>
+              <p className="font-mono text-[10px] tracking-[0.05em] text-sec-deep tabular-nums uppercase">
+                {FEATURES.length} пунктов
+              </p>
+            </div>
+            <ul className="mt-4 divide-y divide-line/70">
+              {FEATURES.map((f, i) => (
+                <li key={f} className="flex gap-3 py-2.5 text-sm first:pt-0 last:pb-0">
+                  <span className="mt-0.5 shrink-0 font-mono text-[10px] text-sec-deep tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
         </Reveal>
       </div>
     </section>
