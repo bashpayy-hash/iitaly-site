@@ -9,7 +9,7 @@ import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
 import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
-import { VENICE_BAND } from "@/data/illustrations";
+import { COAST_TOWN, VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
 import { track } from "@/lib/track";
@@ -123,18 +123,26 @@ export function UniversitiesExplorer() {
                   onToggleCompare={toggleCompare}
                 />
               ) : (
-                <div className="flex h-full min-h-[280px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-line px-6 py-16 text-center">
-                  <p className="font-display text-xl font-bold text-ink-soft uppercase">
+                <div className="relative flex h-full min-h-[280px] flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-line px-6 py-16 text-center">
+                  {/* До выбора города здесь буквально пустой прямоугольник —
+                     единственное место страницы, где фон ничего не
+                     перекрывает по определению. */}
+                  <IllustrationBackdrop
+                    asset={COAST_TOWN}
+                    side="right"
+                    className="-right-6 -bottom-8 w-[62%] opacity-[0.18] sm:w-[56%] sm:opacity-[0.2]"
+                  />
+                  <p className="relative font-display text-xl font-bold text-ink-soft uppercase">
                     Выберите город
                   </p>
-                  <p className="mt-2 max-w-xs text-sm text-ink-soft">
+                  <p className="relative mt-2 max-w-xs text-sm text-ink-soft">
                     Нажмите на любую точку на карте, чтобы увидеть университеты,
                     стипендии и факты о городе.
                   </p>
                   <button
                     type="button"
                     onClick={() => setActiveCity("roma")}
-                    className="mt-5 text-sm font-bold text-red underline underline-offset-4"
+                    className="relative mt-5 text-sm font-bold text-red underline underline-offset-4"
                   >
                     Начать с Рима →
                   </button>
