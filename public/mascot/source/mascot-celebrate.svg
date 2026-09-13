@@ -7,6 +7,8 @@
   @keyframes idle-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
   .sparkle { animation: sparkle-pulse 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
   @keyframes sparkle-pulse { 0%, 100% { opacity: 0.35; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.05); } }
+  .lamp { animation: lamp-blink 5.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes lamp-blink { 0%, 91%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.12); } 97% { transform: scaleY(1); } }
 }
 </style>
 <ellipse cx="118" cy="156" rx="96" ry="8" fill="#211a14" opacity="0.12"/>
@@ -40,7 +42,7 @@
     <path d="M139,28 C124,26 110,30 98,26 C90,23 84,26 80,22" stroke="#211a14" stroke-width="5.5" fill="none" stroke-linecap="round"/>
     <path d="M139,28 C124,26 110,30 98,26 C90,23 84,26 80,22" stroke="#fffdf8" stroke-width="3.6" fill="none" stroke-linecap="round"/>
     <circle cx="78" cy="23" r="6" fill="#fffdf8" stroke="#211a14" stroke-width="3"/>
-    <circle cx="78" cy="23" r="2.6" fill="#b25000"/></g><circle cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M164,63 Q174,57 184,63" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <circle cx="78" cy="23" r="2.6" fill="#b25000"/></g><circle class="lamp" cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M164,63 Q174,57 184,63" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
 </g>
 <circle cx="30" cy="46" r="5.5" fill="#b25000" stroke="#211a14" stroke-width="1.4" class="sparkle" style="animation-delay:0s"/>
 <circle cx="206" cy="58" r="5" fill="#3f6b4f" stroke="#211a14" stroke-width="1.4" class="sparkle" style="animation-delay:0.3s"/>

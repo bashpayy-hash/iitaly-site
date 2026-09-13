@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { PortalData } from "@/lib/portalApi";
 import { ACT_PAGE, TASK_META, dlText, fmtDate } from "@/lib/portalMeta";
-import { Vespa } from "@/components/Vespa";
+import { VespaReveal } from "@/components/VespaReveal";
 import { ProgressRibbon } from "@/components/portal/ProgressRibbon";
 
 function flatTasks(d: PortalData) {
@@ -58,7 +58,7 @@ export function TodaySection({
       <div className="mt-4">
         {!next ? (
           <div className="flex items-start gap-3 rounded-lg border-2 border-green bg-green/5 p-4">
-            <Vespa pose="celebrate" className="h-11 w-auto shrink-0" />
+            <VespaReveal pose="celebrate" className="h-11 w-auto shrink-0" />
             <div>
               <b className="text-sm">Все шаги пройдены</b>
               <p className="mt-1 text-sm text-ink-soft">

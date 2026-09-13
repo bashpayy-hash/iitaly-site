@@ -7,6 +7,7 @@ import { checkDocument, type DocCheckResult } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { Button } from "@/components/Button";
 import { Vespa } from "@/components/Vespa";
+import { VespaReveal } from "@/components/VespaReveal";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
@@ -204,7 +205,7 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
   return (
     <div className="rounded-lg border-2 border-ink p-4">
       <div className="flex flex-wrap items-center gap-2.5">
-        {v === "ok" && <Vespa pose="success" className="h-9 w-auto shrink-0" />}
+        {v === "ok" && <VespaReveal pose="success" className="h-9 w-auto shrink-0" />}
         <span
           className={`rounded-pill px-3 py-1 text-xs font-extrabold uppercase ${
             v === "ok"

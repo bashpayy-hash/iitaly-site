@@ -17,6 +17,7 @@ import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
 import { Vespa } from "@/components/Vespa";
+import { VespaReveal } from "@/components/VespaReveal";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 
@@ -257,7 +258,7 @@ export function ChatWidget() {
               ))}
               {typing && (
                 <div className="flex w-fit items-center gap-2 rounded-lg bg-cream px-3 py-2">
-                  <Vespa pose="thinking" className="h-7 w-auto shrink-0" />
+                  <VespaReveal pose="thinking" className="h-7 w-auto shrink-0" />
                   <span className="flex items-center gap-1.5">
                     <span
                       className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft"
@@ -330,7 +331,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   if (done) {
     return (
       <div className="flex items-start gap-2.5 rounded-lg border-2 border-green bg-green/10 p-4 text-sm">
-        <Vespa pose="success" className="h-10 w-auto shrink-0" />
+        <VespaReveal pose="success" className="h-10 w-auto shrink-0" />
         <div>
           <b className="block">Записали</b>
           <p className="mt-1 text-ink-soft">
