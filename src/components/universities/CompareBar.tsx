@@ -22,7 +22,7 @@ export function CompareBar({
     // себе пересечения не даёт, но лаунчер садится на правый край полосы.
     <div
       data-fab-yield
-      className="sticky bottom-0 z-40 border-t-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6"
+      className="surface-translucent-paper sticky bottom-0 z-40 border-t-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6"
     >
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-3">
         <span className="text-xs font-extrabold text-ink-soft uppercase">

@@ -81,9 +81,9 @@ export function DocCheck() {
       <p className="text-xs font-extrabold tracking-[0.14em] text-sec uppercase">
         Проверка документов · бесплатно
       </p>
-      <h3 className="mt-1 font-display text-2xl font-bold">
+      <h2 className="mt-1 font-display text-2xl font-bold">
         Загрузи документ — ИИ найдёт ошибки до подачи
-      </h3>
+      </h2>
       <p className="mt-2 text-sm text-ink-soft">
         Справка о доходах, свидетельство о рождении, состав семьи, банковская
         выписка, апостиль. Система сверит с правилами DSU и ISU: референсный

@@ -15,7 +15,7 @@ const links = [
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-ink bg-cream/90 backdrop-blur-md">
+    <header className="surface-translucent sticky top-0 z-50 border-b-2 border-ink bg-cream/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-4 px-5">
         <Link
           href="/"

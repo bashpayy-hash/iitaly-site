@@ -13,7 +13,7 @@ export default function PlanPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         <PlanExplorer />
       </main>
       <Footer />

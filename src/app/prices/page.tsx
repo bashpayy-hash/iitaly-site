@@ -13,7 +13,7 @@ export default function PricesPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         <PricesExplorer />
       </main>
       <Footer />

@@ -198,9 +198,44 @@ body {
   animation: chp-dot 1.1s ease-in-out infinite;
 }
 
+/* Прозрачность. Полупрозрачных поверхностей на сайте ровно три: шапка,
+   липкая полоса сравнения вузов и подложка модального окна. Тем, кто
+   попросил систему уменьшить прозрачность (частая настройка при астигматизме
+   и при ярком солнце на телефоне), они отдаются непрозрачными — размытие
+   снимается вместе с ней, потому что без прозрачности оно бессмысленно и
+   только греет батарею. */
+@media (prefers-reduced-transparency: reduce) {
+  /* Размытие снимается через переменную самой утилиты, а не через
+     backdrop-filter: none. Минификатор сборки (Lightning CSS) схлопывает
+     пару «backdrop-filter + -webkit-backdrop-filter» в одно объявление и
+     выбрасывает стандартное свойство — проверено в собранном CSS, blur
+     оставался на месте. Переменная в такую оптимизацию не попадает. */
+  .surface-translucent {
+    background-color: var(--color-cream) !important;
+    --tw-backdrop-blur: initial;
+  }
+  .surface-translucent-paper {
+    background-color: var(--color-paper) !important;
+    --tw-backdrop-blur: initial;
+  }
+  .scrim-ink {
+    background-color: color-mix(in oklch, var(--color-ink) 88%, transparent) !important;
+  }
+}
+
+/* Контраст. Кроме разделителей поднимаем вторичный текст и мягкие чернила:
+   это два цвета, которыми набраны подписи и пояснения, — именно они первыми
+   перестают читаться, когда человек просит больше контраста. */
 @media (prefers-contrast: more) {
   :root {
     --color-line: oklch(70% 0.02 75);
+    --color-sec: oklch(42% 0.028 75);
+    --color-sec-deep: oklch(36% 0.026 74);
+    --color-ink-soft: oklch(30% 0.019 61);
+  }
+  .surface-translucent,
+  .surface-translucent-paper {
+    --tw-backdrop-blur: initial;
   }
 }
 
