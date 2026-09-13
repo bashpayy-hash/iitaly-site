@@ -13,7 +13,7 @@ export default function UniversitiesPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         <UniversitiesExplorer />
       </main>
       <Footer />

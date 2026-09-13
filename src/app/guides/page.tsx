@@ -13,7 +13,7 @@ export default function GuidesPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         <GuidesExplorer />
       </main>
       <Footer />

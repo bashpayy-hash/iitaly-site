@@ -49,7 +49,10 @@ export function FirstWeeks() {
       <RegistrationMark corner="top-right" />
       <RegistrationMark corner="bottom-left" />
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 items-start gap-12 lg:grid-cols-[0.82fr_1fr] lg:gap-16">
-        <Reveal variant="fade" className="mx-auto w-full max-w-[420px] lg:mx-0 lg:max-w-none">
+        <Reveal
+          variant="fade"
+          className="mx-auto w-full max-w-[420px] lg:mx-0 lg:max-w-none"
+        >
           <RegisterFrame>
             <div className="overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-soft-lg">
               <Illustration asset={ROME_PAPERCUT} />
@@ -80,38 +83,45 @@ export function FirstWeeks() {
           <Reveal delay={0.14}>
             <Body as="p" className="mt-4">
               Виза — не финал. Кабинет держит порядок первых недель в новом
-              городе: что оформить, в какой последовательности и к какому
-              сроку.
+              городе: что оформить, в какой последовательности и к какому сроку.
             </Body>
           </Reveal>
 
-          {/* Расстояние между пунктами держит сам список через gap, а не
-             padding-bottom на <li> с last:pb-0. Каждый пункт обёрнут в свой
-             Reveal, поэтому в DOM он — единственный ребёнок своей обёртки, и
-             :last-child совпадал со ВСЕМИ тремя: отступ гасился у каждого, и
-             пункты слипались (замер в браузере: padding-bottom 0px у всех). */}
+          {/* Reveal здесь рендерится самим <li> (as="li"), а не оборачивает
+             его в div. Лишняя обёртка между <ol> и пунктом стоила двух
+             дефектов сразу: Lighthouse ловил её как нарушение семантики
+             списка, а каждый пункт становился единственным ребёнком своей
+             обёртки — из-за чего :last-child совпадал со ВСЕМИ тремя и гасил
+             отступ у каждого (замер: padding-bottom 0px). Расстояние теперь
+             держит сам список через gap. */}
           <ol className="mt-8 flex flex-col gap-7">
             {STAGES.map((s, i) => (
-              <Reveal key={s.t} delay={0.2 + i * 0.08} variant="fade">
-                <li className="relative flex gap-4 pl-1">
-                  {i < STAGES.length - 1 && (
-                    <span
-                      aria-hidden
-                      className="absolute top-7 left-[11px] h-full w-px bg-line"
-                    />
-                  )}
+              <Reveal
+                key={s.t}
+                as="li"
+                delay={0.2 + i * 0.08}
+                variant="fade"
+                className="relative flex gap-4 pl-1"
+              >
+                {i < STAGES.length - 1 && (
                   <span
                     aria-hidden
-                    className="relative z-[1] mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-cream font-mono text-[10px] font-bold text-ink"
-                  >
-                    {i + 1}
-                  </span>
-                  <div>
-                    <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">{s.d}</p>
-                    <b className="mt-0.5 block text-sm">{s.t}</b>
-                    <p className="mt-1 text-sm text-ink-soft">{s.p}</p>
-                  </div>
-                </li>
+                    className="absolute top-7 left-[11px] h-full w-px bg-line"
+                  />
+                )}
+                <span
+                  aria-hidden
+                  className="relative z-[1] mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-cream font-mono text-[10px] font-bold text-ink"
+                >
+                  {i + 1}
+                </span>
+                <div>
+                  <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
+                    {s.d}
+                  </p>
+                  <b className="mt-0.5 block text-sm">{s.t}</b>
+                  <p className="mt-1 text-sm text-ink-soft">{s.p}</p>
+                </div>
               </Reveal>
             ))}
           </ol>

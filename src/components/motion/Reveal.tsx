@@ -29,6 +29,7 @@ export function Reveal({
   y = 16,
   amount = 0.2,
   variant = "fade-up",
+  as = "div",
 }: {
   children: ReactNode;
   className?: string;
@@ -39,11 +40,20 @@ export function Reveal({
   /** доля элемента, видимая в вьюпорте для триггера (0–1) */
   amount?: number;
   variant?: "fade-up" | "fade";
+  /**
+   * Тег обёртки. По умолчанию div, но внутри <ol>/<ul> обёртка обязана быть
+   * самим <li>: лишний div между списком и пунктом ломает семантику
+   * (Lighthouse ловит это как list/listitem) и заодно делает каждый пункт
+   * единственным ребёнком своей обёртки — из-за чего :last-child совпадает
+   * со всеми пунктами сразу.
+   */
+  as?: "div" | "li";
 }) {
   const reducedMotion = useReducedMotion();
+  const Tag = as === "li" ? motion.li : motion.div;
 
   return (
-    <motion.div
+    <Tag
       className={className}
       initial={variant === "fade-up" ? { opacity: 0, y } : { opacity: 0 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -55,6 +65,6 @@ export function Reveal({
       }
     >
       {children}
-    </motion.div>
+    </Tag>
   );
 }

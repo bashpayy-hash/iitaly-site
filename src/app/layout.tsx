@@ -59,6 +59,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="ru" className={`${onest.variable} ${spaceMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         <MotionProvider>
+          {/* Первое, что получает фокус на любой странице. По ТЗ клавиатурная
+             навигация обязана быть видимой; без этой ссылки человек на
+             клавиатуре проходит всю шапку заново на каждой странице.
+             Появляется только при фокусе — мышью её никто не видит. */}
+          <a
+            href="#main"
+            className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-[120] focus-visible:rounded-pill focus-visible:border-2 focus-visible:border-ink focus-visible:bg-paper focus-visible:px-5 focus-visible:py-3 focus-visible:text-sm focus-visible:font-bold focus-visible:shadow-soft-lg"
+          >
+            Перейти к содержимому
+          </a>
           {children}
           <PaperOverlay />
           <ChatWidget />

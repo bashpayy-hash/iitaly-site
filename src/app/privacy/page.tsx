@@ -92,7 +92,7 @@ export default function PrivacyPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         <section className="px-5 py-10 sm:py-14">
           <div className="mx-auto max-w-[720px]">
             <h1 className="font-display text-3xl font-bold tracking-tight uppercase sm:text-4xl">

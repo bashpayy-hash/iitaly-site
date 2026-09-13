@@ -14,7 +14,7 @@ export default function PortalPage() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         <PortalExplorer />
       </main>
       <Footer />
