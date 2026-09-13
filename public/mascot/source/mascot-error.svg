@@ -1,7 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 170" role="img" aria-hidden="true">
+<style>
+@media (prefers-reduced-motion: no-preference) {
+  .shake { animation: shake 5s ease-in-out infinite; transform-origin: 118px 140px; }
+  @keyframes shake { 0%, 78%, 100% { transform: translateX(0); } 82% { transform: translateX(-3px); } 86% { transform: translateX(3px); } 90% { transform: translateX(-1.5px); } 94% { transform: translateX(0); } }
+  .ribbon { animation: ribbon-flutter 2.4s ease-in-out infinite; transform-origin: 139px 28px; }
+  @keyframes ribbon-flutter { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-3deg); } }
+  .lamp { animation: lamp-blink 5.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes lamp-blink { 0%, 91%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.12); } 97% { transform: scaleY(1); } }
+}
+</style>
+
 
 <ellipse cx="118" cy="156" rx="96" ry="8" fill="#211a14" opacity="0.12"/>
-<g class="">
+<g class="shake">
 
   <circle cx="64" cy="132" r="23" fill="#211a14"/>
   <circle cx="64" cy="132" r="7.5" fill="#fffdf8"/>
@@ -28,9 +39,10 @@
   <path d="M178,44 C177,36 174,29 168,24" stroke="#211a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
   <path d="M168,24 C161,19 152,18 145,21" stroke="#211a14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
   <circle cx="145" cy="21" r="5.5" fill="#fffdf8" stroke="#211a14" stroke-width="3"/>
+    <g class="ribbon">
     <path d="M139,28 C130,34 122,42 114,46 C106,50 100,54 92,60" stroke="#211a14" stroke-width="5.5" fill="none" stroke-linecap="round"/>
     <path d="M139,28 C130,34 122,42 114,46 C106,50 100,54 92,60" stroke="#fffdf8" stroke-width="3.6" fill="none" stroke-linecap="round"/>
-    <circle cx="90" cy="61" r="3.4" fill="#b25000" stroke="#211a14" stroke-width="1.6"/><circle cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M165,69 Q174,66 183,69" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <circle cx="90" cy="61" r="3.4" fill="#b25000" stroke="#211a14" stroke-width="1.6"/></g><circle class="lamp" cx="174" cy="68" r="13" fill="#fffdf8" stroke="#211a14" stroke-width="3.5"/><path d="M165,69 Q174,66 183,69" stroke="#211a14" stroke-width="2.8" fill="none" stroke-linecap="round"/>
 </g>
 
 </svg>
