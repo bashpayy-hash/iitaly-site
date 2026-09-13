@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IItaly — сайт
 
-## Getting Started
+Next.js 16 (App Router, Turbopack) со статическим экспортом. Бэкенд живёт
+отдельно и этим репозиторием не управляется.
 
-First, run the development server:
+Визуальный язык описан в [DESIGN.md](./DESIGN.md) — это источник правды.
+Перед любой правкой интерфейса читай его.
+
+## Разработка
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # адрес бэкенда
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Проверки перед коммитом:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npx tsc --noEmit
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Сборка и деплой
 
-## Learn More
+```bash
+npm run build     # → out/
+```
 
-To learn more about Next.js, take a look at the following resources:
+`output: "export"` в `next.config.ts` — сборка отдаёт статику, серверной
+части у фронтенда нет. Публикуется каталог `out`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Netlify собирает по `netlify.toml`: команда `npm run build`, каталог
+`out`, Node 22, заголовки `X-Content-Type-Options`, `Referrer-Policy`,
+`X-Frame-Options`. Любой другой статический хостинг (Vercel, Cloudflare
+Pages, S3 + CDN) подойдёт с теми же тремя параметрами.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Проверить сборку локально ровно так, как её увидит хостинг:
 
-## Deploy on Vercel
+```bash
+npx serve out -l 4321
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Переменные окружения
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Переменная | Значение | Зачем |
+|---|---|---|
+| `NEXT_PUBLIC_BACKEND_URL` | адрес Express-сервера на Railway | все запросы фронтенда |
+
+Она вшивается в бандл на этапе сборки (префикс `NEXT_PUBLIC_`), поэтому
+после её изменения нужен новый деплой, а не перезапуск. На Netlify она
+задана в `netlify.toml` → `[build.environment]`; локально — в
+`.env.local` (см. `.env.example`).
+
+## Бэкенд
+
+Node/Express на Railway, **в этом репозитории его нет и трогать его не
+нужно**. Фронтенд только читает адрес из `NEXT_PUBLIC_BACKEND_URL`
+(единственная точка — `src/lib/backend.ts`) и обращается к:
+
+```
+POST /api/chat · /api/check-document · /api/order · /api/lead · /api/event
+GET  /api/portal/:code?surname=
+POST /api/portal/:code/task · /doc · /notify · /delete
+```
+
+Контракты менять нельзя: на них завязан уже работающий сервер.
+
+## Что лежит в корне
+
+`index.html`, `privacy.html`, `tokens.css`, `robots.txt` — предыдущая
+версия сайта одним файлом. Оставлены намеренно как справочный материал,
+в сборку не попадают. Актуальная статика — в `public/`.
+
+`design/` — исходники и разборы иллюстраций, риг маскота.
+`docs/` — заметки по использованию маскота и моторике.
