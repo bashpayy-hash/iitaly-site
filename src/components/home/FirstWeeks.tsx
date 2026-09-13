@@ -57,8 +57,11 @@ export function FirstWeeks() {
                 <span className="text-xs font-semibold tracking-[0.1em] text-ink uppercase">
                   Первые недели
                 </span>
+                {/* Было «D+0 — D+8» — счёт дней от прилёта, понятный тому, кто
+                   уже в теме, и шифр для всех остальных. Подпись под кадром
+                   должна объяснять кадр, а не требовать расшифровки. */}
                 <span className="font-mono text-[10px] tracking-[0.05em] text-sec-deep uppercase">
-                  D+0 — D+8
+                  От прилёта до подачи
                 </span>
               </div>
             </div>
@@ -82,14 +85,19 @@ export function FirstWeeks() {
             </Body>
           </Reveal>
 
-          <ol className="mt-8 space-y-0">
+          {/* Расстояние между пунктами держит сам список через gap, а не
+             padding-bottom на <li> с last:pb-0. Каждый пункт обёрнут в свой
+             Reveal, поэтому в DOM он — единственный ребёнок своей обёртки, и
+             :last-child совпадал со ВСЕМИ тремя: отступ гасился у каждого, и
+             пункты слипались (замер в браузере: padding-bottom 0px у всех). */}
+          <ol className="mt-8 flex flex-col gap-7">
             {STAGES.map((s, i) => (
               <Reveal key={s.t} delay={0.2 + i * 0.08} variant="fade">
-                <li className="relative flex gap-4 pb-7 pl-1 last:pb-0">
+                <li className="relative flex gap-4 pl-1">
                   {i < STAGES.length - 1 && (
                     <span
                       aria-hidden
-                      className="absolute top-7 left-[11px] h-[calc(100%-1.25rem)] w-px bg-line"
+                      className="absolute top-7 left-[11px] h-full w-px bg-line"
                     />
                   )}
                   <span

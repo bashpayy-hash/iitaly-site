@@ -226,8 +226,11 @@ export function ChatWidget() {
                 <Vespa pose="avatar" className="h-6 w-6" />
               </span>
               <b className="text-sm">Веспа</b>
+              {/* Было «база 2026»: непонятно, что за база и почему 2026.
+                 На остальных страницах это называется «правила приёма
+                 2026/27» — одна формулировка на весь продукт. */}
               <span className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
-                база 2026
+                правила 2026/27
               </span>
               <button
                 type="button"
