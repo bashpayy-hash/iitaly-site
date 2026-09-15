@@ -39,7 +39,7 @@ const steps = [
 
 export function Steps() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-18 sm:py-28">
       {/* grain — бумажная фактура секции: это одна из двух показательных
          секций, где обкатывается бумажный слой (вторая — PositanoReveal). */}
       <EditorialBackground variant="journey" grain />

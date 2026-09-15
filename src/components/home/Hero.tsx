@@ -124,7 +124,7 @@ export function Hero() {
               <p className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                 Стипендия DSU
               </p>
-              <p className="mt-1.5 font-display text-4xl font-bold">до €7 557</p>
+              <p className="mt-1.5 font-display text-4xl font-semibold">до €7 557</p>
               <p className="mt-1 text-sm text-ink-soft">
                 в год — потолок в Риме (DiSCo), зависит от города и дохода семьи
               </p>

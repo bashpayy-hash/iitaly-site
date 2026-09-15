@@ -33,7 +33,7 @@ const FAQ = [
 
 export function TrustFAQ() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-18 sm:py-28">
       <EditorialBackground variant="quiet" motion="none" grain />
       <div className="relative mx-auto max-w-[760px]">
         <Reveal variant="fade">

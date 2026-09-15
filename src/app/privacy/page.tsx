@@ -96,7 +96,7 @@ export default function PrivacyPage() {
       <main id="main">
         <section className="px-5 py-10 sm:py-14">
           <div className="mx-auto max-w-[720px]">
-            <h1 className="font-display text-3xl font-bold tracking-tight uppercase sm:text-4xl">
+            <h1 className="font-display text-3xl font-semibold tracking-tight uppercase sm:text-4xl">
               Политика конфиденциальности
             </h1>
             <p className="mt-1.5 text-xs text-ink-soft">IItaly · обновлено при запуске сервиса</p>

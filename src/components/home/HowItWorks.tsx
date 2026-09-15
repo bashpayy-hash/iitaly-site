@@ -32,7 +32,7 @@ const STAGES = [
 
 export function HowItWorks() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink px-5 py-16 sm:py-24">
+    <section className="relative overflow-hidden border-b-2 border-ink px-5 py-18 sm:py-28">
       {/* Кадр про то, куда прилетают, — в секции, которая заканчивается
          вылетом. Привязан к ВЕРХНЕМУ краю: блок карточек непрозрачный и
          занимает всю ширину колонки, поэтому снизу от слоя оставался

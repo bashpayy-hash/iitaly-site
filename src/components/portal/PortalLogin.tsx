@@ -95,7 +95,7 @@ export function PortalLogin({
       {/* Форма — на непрозрачной paper-поверхности, не glassmorphism. */}
       <div className="flex items-center justify-center bg-cream px-5 py-12 sm:py-16">
         <div className="w-full max-w-[420px]">
-          <h1 className="font-display text-title font-bold text-ink uppercase text-balance">Вход</h1>
+          <h1 className="font-display text-title font-semibold text-ink uppercase text-balance">Вход</h1>
           <p className="mt-3 text-sm text-ink-soft">
             Проверка брони: фамилия и код, который пришёл в WhatsApp после
             оплаты.

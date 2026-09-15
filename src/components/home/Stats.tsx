@@ -2,7 +2,7 @@ import { EditorialStatsPanel } from "@/components/home/EditorialStatsPanel";
 
 export function Stats() {
   return (
-    <section className="border-b-2 border-ink px-5 py-16 sm:py-20">
+    <section className="border-b-2 border-ink px-5 py-18 sm:py-24">
       <div className="mx-auto max-w-[1200px]">
         <p className="mb-8 font-display text-heading font-semibold text-ink sm:text-title">
           Цифры, а не обещания.
