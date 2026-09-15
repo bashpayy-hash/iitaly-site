@@ -3,10 +3,10 @@
 import { motion } from "motion/react";
 import { ButtonLink } from "@/components/Button";
 import { Display, BodyLarge, Body, Caption } from "@/components/Typography";
-import { Vespa } from "@/components/Vespa";
+import { HeroVespa } from "./HeroVespa";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { EditorialBackground } from "@/components/EditorialBackground";
-import { AnimatedText } from "@/components/motion/AnimatedText";
+import { MaskedLines } from "@/components/motion/MaskedLines";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { track } from "@/lib/track";
@@ -37,7 +37,7 @@ export function Hero() {
   const reducedMotion = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-14 pb-16 sm:pt-20 sm:pb-24">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-14 pb-10 sm:pt-20 sm:pb-12">
       {/* Тот же mesh, что был здесь инлайн-градиентом: вариант "atlas" в
          EditorialBackground — его копия (см. MESH.atlas), так что дубль
          определения убран, а не добавлен новый слой. motion="none" —
@@ -49,39 +49,41 @@ export function Hero() {
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
         <div>
           <motion.div className="flex items-center gap-2" {...fadeUp(reducedMotion, 0, 8)}>
-            <Vespa pose="hero" className="h-8 w-auto shrink-0" priority />
             <Caption as="p" className="text-sec">
               Абитуриентам Казахстана 16–18 лет и их родителям
             </Caption>
           </motion.div>
 
+          {/* Обе строки выезжают из-под маски, а не всплывают из пустоты —
+             см. MaskedLines. Подчёркивание под «в Италию» лежит внутри
+             своей строки, поэтому едет вместе с ней, а не остаётся
+             висеть на месте, пока текст поднимается. */}
           <Display as="h1" className="mt-4">
-            <AnimatedText
-              as="span"
-              text="Поступать"
-              className="block"
-              delay={0.12}
-              stagger={0.05}
+            <MaskedLines
+              delay={0.1}
+              lines={[
+                "Поступать",
+                <span key="it" className="relative inline-block text-red">
+                  в Италию
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 10 10"
+                    preserveAspectRatio="none"
+                    className="absolute right-[-6%] -bottom-2 h-[10px] w-full text-ink sm:-bottom-3"
+                  >
+                    <line
+                      x1="0"
+                      y1="5"
+                      x2="10"
+                      y2="5"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </svg>
+                </span>,
+              ]}
             />
-            <motion.span className="relative inline-block text-red" {...fadeUp(reducedMotion, 0.42, 10)}>
-              в Италию
-              <svg
-                aria-hidden
-                viewBox="0 0 10 10"
-                preserveAspectRatio="none"
-                className="absolute right-[-6%] -bottom-2 h-[10px] w-full text-ink sm:-bottom-3"
-              >
-                <line
-                  x1="0"
-                  y1="5"
-                  x2="10"
-                  y2="5"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  vectorEffect="non-scaling-stroke"
-                />
-              </svg>
-            </motion.span>
           </Display>
 
           <motion.div {...fadeUp(reducedMotion, 0.5)}>
@@ -146,6 +148,19 @@ export function Hero() {
             </div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Нижняя полоса экрана принадлежит объекту: Веспа стоит по центру
+         под всем набором и почти касается нижней границы секции — едет по
+         ней, как по дороге.
+
+         Полоса именно в потоке, а не absolute. Пробовал и так: подтянутая
+         отрицательным отступом в правый нижний угол, Веспа наезжала на
+         стат-карточку и перекрывала строку про 650 000 – 1 000 000 ₸,
+         то есть закрывала собой цену. Объект в потоке не может перекрыть
+         текст по определению, и экран остаётся читаемым на любой ширине. */}
+      <div className="relative mx-auto mt-8 flex max-w-[1200px] justify-center sm:mt-10 lg:mt-4">
+        <HeroVespa />
       </div>
     </section>
   );
