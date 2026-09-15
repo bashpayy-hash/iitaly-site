@@ -39,6 +39,11 @@ export const metadata: Metadata = {
     template: "%s — IItaly",
   },
   description,
+  // Каноническая ссылка на каждой странице. Сайт статический, и один и
+  // тот же документ доступен минимум по двум адресам (/prices и
+  // /prices/, а на Netlify ещё и по домену превью) — без canonical
+  // поисковик считает их разными страницами и делит между ними вес.
+  alternates: { canonical: "/" },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",

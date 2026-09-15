@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { GuidesExplorer } from "@/components/guides/GuidesExplorer";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/guides" },
   title: "Гайды и виза D — апостиль, CIMEA, ISEEU",
   description:
     "Апостиль, CIMEA, присяжный перевод, ISEEU parificato, виза D через BLS: сроки, стоимость и порядок шагов. Калькулятор финансовой гарантии и чек-лист документов на визу.",

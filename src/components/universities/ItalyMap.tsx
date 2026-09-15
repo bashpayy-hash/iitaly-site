@@ -15,7 +15,8 @@ export function ItalyMap({
 }: {
   activeCity: CityId | null;
   onSelectCity: (id: CityId) => void;
-  matchedCities: Set<CityId>;
+  // ReadonlySet: карта только читает выборку и не должна её менять.
+  matchedCities: ReadonlySet<CityId>;
 }) {
   const labels = useMemo(() => placeAllLabels(activeCity), [activeCity]);
   const cityIds = useMemo(
