@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/privacy" },
   title: "Политика конфиденциальности",
   description: "Какие данные IItaly собирает, как их использует и как их можно удалить.",
 };

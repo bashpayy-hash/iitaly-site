@@ -184,7 +184,18 @@ export function PortalExplorer() {
           </button>
         </div>
 
-        <nav className="sticky top-16 z-20 mt-5 flex gap-1 overflow-x-auto border-y-2 border-ink bg-cream py-2">
+        {/* Переключатель разделов кабинета — это вкладки, а не навигация:
+           он не ведёт на другие адреса, а подменяет панель под собой.
+           Раньше это был <nav> с кнопками aria-pressed: диктор читал их
+           как четыре независимые кнопки-переключателя и никак не связывал
+           с панелью, которая от них меняется. Роли tablist/tab/tabpanel
+           эту связь называют явно: «вкладка 2 из 4, выбрана», а
+           aria-controls ведёт к самой панели. */}
+        <div
+          role="tablist"
+          aria-label="Разделы кабинета"
+          className="sticky top-16 z-20 mt-5 flex gap-1 overflow-x-auto border-y-2 border-ink bg-cream py-2"
+        >
           {(
             [
               ["today", "Сегодня"],
@@ -196,11 +207,27 @@ export function PortalExplorer() {
             <button
               key={id}
               type="button"
+              role="tab"
+              id={`portal-tab-${id}`}
+              aria-selected={section === id}
+              aria-controls="portal-panel"
+              // Из четырёх вкладок в Tab-обход попадает только выбранная —
+              // так положено в этом паттерне: внутри группы переключают
+              // стрелками, а Tab уводит сразу в содержимое панели.
+              tabIndex={section === id ? 0 : -1}
+              onKeyDown={(e) => {
+                const order: Section[] = ["today", "plan", "docs", "help"];
+                const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+                if (!step) return;
+                e.preventDefault();
+                const next = order[(order.indexOf(section) + step + order.length) % order.length];
+                setSection(next);
+                document.getElementById(`portal-tab-${next}`)?.focus();
+              }}
               onClick={() => {
                 setSection(id);
                 track("portal_sec", { s: id });
               }}
-              aria-pressed={section === id}
               className={`shrink-0 rounded-pill px-4 py-2 text-sm font-bold whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red ${
                 section === id ? "bg-ink text-cream" : "text-ink-soft hover:text-ink"
               }`}
@@ -208,9 +235,18 @@ export function PortalExplorer() {
               {label}
             </button>
           ))}
-        </nav>
+        </div>
 
-        <div className="mt-6">
+        <div
+          id="portal-panel"
+          role="tabpanel"
+          aria-labelledby={`portal-tab-${section}`}
+          // Панель фокусируема, иначе после Tab с вкладки фокус
+          // перепрыгивал бы сразу на первую кнопку внутри неё, а
+          // содержимое панели осталось бы непрочитанным.
+          tabIndex={0}
+          className="mt-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red"
+        >
           {section === "today" && (
             <TodaySection
               data={data}

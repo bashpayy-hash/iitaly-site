@@ -5,6 +5,7 @@ import { UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
 import { Filters, type TypeFilter } from "./Filters";
+import { ResultSummary } from "./ResultSummary";
 import { UniModal } from "./UniModal";
 import { CompareBar } from "./CompareBar";
 import { CompareModal } from "./CompareModal";
@@ -13,6 +14,10 @@ import { COAST_TOWN, VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
 import { track } from "@/lib/track";
+
+// Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
+// ItalyMap новую ссылку и заставляла карту сравнивать точки заново.
+const EMPTY_CITIES: ReadonlySet<CityId> = new Set<CityId>();
 
 function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
   if (type !== "all" && u.type !== type) return false;
@@ -33,11 +38,17 @@ export function UniversitiesExplorer() {
     [typeFilter, engOnly],
   );
 
-  const matchedCities = useMemo(() => {
-    const active = typeFilter !== "all" || engOnly;
-    if (!active) return new Set<CityId>();
-    return new Set(filteredUnis.map((u) => u.city));
-  }, [filteredUnis, typeFilter, engOnly]);
+  const filtersActive = typeFilter !== "all" || engOnly;
+
+  // Города, попавшие в выборку. Для подсветки на карте считаем их только
+  // при активном фильтре (иначе подсвечены были бы все точки разом и
+  // подсветка перестала бы что-либо означать), а для строки результата —
+  // всегда: «всего 43 вуза в 30 городах» — тоже полезный факт.
+  const filteredCities = useMemo(
+    () => new Set(filteredUnis.map((u) => u.city)),
+    [filteredUnis],
+  );
+  const matchedCities = filtersActive ? filteredCities : EMPTY_CITIES;
 
   const cityUnis = useMemo(
     () => (activeCity ? filteredUnis.filter((u) => u.city === activeCity) : []),
@@ -97,6 +108,11 @@ export function UniversitiesExplorer() {
             onTypeChange={setTypeFilter}
             engOnly={engOnly}
             onEngChange={setEngOnly}
+          />
+          <ResultSummary
+            unis={filteredUnis.length}
+            cities={filteredCities.size}
+            filtered={filtersActive}
           />
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
