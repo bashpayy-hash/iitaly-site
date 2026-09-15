@@ -17,7 +17,7 @@ const IMAGE_ALT = "Позитано на Амальфитанском побер
 
 export function PositanoReveal() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-18 sm:py-28">
       {/* Вторая показательная секция бумажного слоя: здесь он проверяется
          на кадрированном изображении — фактура не должна ни ложиться на
          фотографию как фильтр, ни обрываться на её границе. */}
@@ -35,7 +35,7 @@ export function PositanoReveal() {
           <AnimatedText
             as="h2"
             text="Италия шире Рима"
-            className="mt-3 font-display text-title font-bold uppercase tracking-tight text-balance"
+            className="mt-3 font-display text-title font-semibold uppercase tracking-tight text-balance"
             delay={0.05}
           />
           <Reveal delay={0.1}>

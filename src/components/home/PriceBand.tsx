@@ -14,7 +14,7 @@ import { FEATURES } from "@/data/pricing";
  */
 export function PriceBand() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-18 sm:py-28">
       {/* Без watermark: композиция здесь плотная (текст слева + непрозрачная
          карточка справа), крупный знак некуда посадить, не налезая на сноску
          или не обрезаясь границей секции. Атмосферу держат mesh + сетка. */}
@@ -22,7 +22,7 @@ export function PriceBand() {
       <div className="relative mx-auto grid max-w-[1200px] grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1fr] lg:gap-16">
         <Reveal variant="fade">
           <Caption as="p">Один платёж, без подписки</Caption>
-          <p className="mt-3 font-display text-display font-bold tracking-tight text-ink tabular-nums">
+          <p className="mt-3 font-display text-display font-medium tracking-tight text-ink tabular-nums">
             25 000 ₸
           </p>
           <Body as="p" className="mt-4 max-w-md">

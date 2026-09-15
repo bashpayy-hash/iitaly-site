@@ -106,7 +106,7 @@ export function GuidesExplorer() {
           <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">
             Справочник · бесплатно
           </p>
-          <h1 className="mt-2 font-display text-[9vw] leading-[0.95] font-bold tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
+          <h1 className="mt-2 font-display text-[9vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
             Как пройти бюрократию
           </h1>
           <p className="mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">

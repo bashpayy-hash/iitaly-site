@@ -64,7 +64,7 @@ export function PricesExplorer() {
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
-          <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-bold tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
+          <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
             25 000 ₸ — и система ведёт тебя до конца
           </h1>
           <p className="mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
@@ -124,7 +124,7 @@ export function PricesExplorer() {
               </span>
             </div>
             <p className="mt-2 text-sm text-ink-soft">Всё, что делает система, входит в цену</p>
-            <p className="mt-3 font-display text-5xl font-bold sm:text-6xl">25 000 ₸</p>
+            <p className="mt-3 font-display text-5xl font-semibold sm:text-6xl">25 000 ₸</p>
             <p className="mt-1 text-sm text-ink-soft">разово · без подписки и доплат</p>
             <div className="mt-5 grid grid-cols-3 divide-x-2 divide-ink/10 overflow-hidden rounded-md border-2 border-ink/10">
               {[

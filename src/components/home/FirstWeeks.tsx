@@ -41,7 +41,7 @@ const STAGES = [
 
 export function FirstWeeks() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-16 sm:py-24">
+    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-18 sm:py-28">
       <EditorialBackground variant="arrival" motion="none" grain />
       {/* Приводочные крестики — третья и последняя секция главной, где они
          стоят. Дальше их нет сознательно: редкая метка читается как знак

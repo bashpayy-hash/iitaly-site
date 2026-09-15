@@ -19,7 +19,7 @@ const chevron = (
 
 export function Split() {
   return (
-    <section className="border-b-2 border-ink px-5 py-16 sm:py-20">
+    <section className="border-b-2 border-ink px-5 py-18 sm:py-24">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-5 lg:grid-cols-[1.4fr_1fr]">
         <Reveal>
           <Link

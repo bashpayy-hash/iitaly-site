@@ -33,7 +33,7 @@ export function CityPanel({
         <p className="text-xs font-extrabold tracking-[0.14em] text-ink/60 uppercase">
           Город
         </p>
-        <h2 className="font-display text-3xl font-bold text-ink sm:text-4xl">{c.name}</h2>
+        <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">{c.name}</h2>
         <p className="mt-1 text-sm font-bold text-ink/70">{c.region}</p>
       </div>
 

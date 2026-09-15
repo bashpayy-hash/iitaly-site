@@ -88,7 +88,7 @@ export function UniversitiesExplorer() {
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
             43 университета · 30 городов
           </p>
-          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-bold tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
+          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.9] font-medium tracking-tight uppercase sm:text-[6.5vw] lg:text-[4.2vw]">
             Университеты
             <br />
             <span className="text-red">Италии</span>

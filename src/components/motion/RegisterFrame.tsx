@@ -45,7 +45,7 @@ export function RegisterFrame({
     viewport: { once: true, amount: 0.3 } as const,
     transition: reducedMotion
       ? { duration: 0 }
-      : { duration: DURATION.narrative, delay: delay + 0.15, ease: EASE.reveal },
+      : { duration: DURATION.narrative, delay: delay + 0.15, ease: EASE.focus },
   });
 
   // Эхо — не только контур, но и заливка: из-за непрозрачной карточки
