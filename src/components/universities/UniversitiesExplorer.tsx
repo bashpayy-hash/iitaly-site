@@ -13,6 +13,8 @@ import { IllustrationBackdrop } from "@/components/illustration/IllustrationBack
 import { COAST_TOWN, VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
+import { CitySketchbook } from "@/components/sketchbook/CitySketchbook";
+import { Body, Caption, Title } from "@/components/Typography";
 import { track } from "@/lib/track";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
@@ -165,6 +167,27 @@ export function UniversitiesExplorer() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Скетчбук стоит ПОД картой, а не вместо неё: карта с фильтрами и
+         сравнением — рабочий инструмент выбора вуза, ради него на эту
+         страницу и заходят. Скетчбук отвечает на другой вопрос, который
+         задают ровно так же часто: а как там вообще. */}
+      <section className="relative overflow-hidden border-t-2 border-ink bg-paper px-5 py-18 sm:py-28">
+        <div className="mx-auto max-w-[900px]">
+          <Caption as="p">Италия, в которую едут</Caption>
+          <Title as="h2" className="mt-3 text-heading! sm:text-title!">
+            Скетчбук городов
+          </Title>
+          <Body as="p" className="mt-4 max-w-xl">
+            Семь разворотов: потяните страницу, чтобы перелистнуть, и
+            протащите лупу по бумаге. Под каждым кадром — чем это место
+            интересно поступающему.
+          </Body>
+          <div className="mt-8">
+            <CitySketchbook />
           </div>
         </div>
       </section>

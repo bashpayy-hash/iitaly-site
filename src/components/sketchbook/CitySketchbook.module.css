@@ -1,0 +1,321 @@
+/*
+ * Геометрия перелистывания перенесена из авторского исходника
+ * (@designcodeio/threeui, MIT — meng-to-sketchbook.html, SHA-256
+ * e0330548b1ac…, сверен байт-в-байт). Содержимое наше: итальянские
+ * города и бумажные иллюстрации IITALY вместо сингапурских плашек.
+ *
+ * Суть приёма: лист, который переворачивается, — не плоская дверца на
+ * петле, а настоящая изогнутая поверхность. Это цепочка из N вложенных
+ * полос, каждая повёрнута относительно предыдущей на маленький угол --td;
+ * сумма этих углов и даёт дугу. Лицо и изнанка каждой полосы — куски
+ * одной и той же картинки, сдвинутые по X ровно на свою ширину, поэтому
+ * изображение не рвётся на стыках.
+ */
+
+.wrap {
+  position: relative;
+}
+
+/* Сцена перспективы. Книга наклоняется к курсору (--rx/--ry) и
+   масштабируется (--zoom); всё это один transform на контейнере, а не
+   на каждой полосе. */
+.stage {
+  position: relative;
+  perspective: 1800px;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.book3d {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--zoom, 1));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.book {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  transform-style: preserve-3d;
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius-lg);
+  background: var(--color-paper);
+  overflow: hidden;
+}
+
+/* Разворот в покое — одна картинка на всю книгу. */
+.full,
+.full img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.full img {
+  object-fit: cover;
+}
+
+/* Половины видны только во время переворота: под изогнутым листом
+   должна лежать та страница, с которой он уходит, и та, на которую
+   приходит. */
+.half {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  overflow: hidden;
+}
+.half.left {
+  left: 0;
+}
+.half.right {
+  right: 0;
+}
+/* max-width: none обязателен. В preflight Tailwind у всех картинок стоит
+   max-width: 100%, и он зажимал эти 200% до ширины самой половины —
+   каждая половина показывала не свою часть страницы, а всю страницу
+   целиком, сплющенную вдвое. На экране это читалось как удвоение
+   оттиска: один и тот же кадр слева, справа и на листе. */
+.halfImg {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 200%;
+  max-width: none;
+  object-fit: cover;
+}
+.halfImg.left {
+  left: 0;
+}
+.halfImg.right {
+  right: 0;
+}
+
+/* Тень у корешка: бумага у сгиба всегда темнее. */
+.gutter {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 16%;
+  pointer-events: none;
+}
+.gutter.left {
+  right: 0;
+  background: linear-gradient(90deg, transparent, oklch(22.41% 0.0158 62.49 / 0.16));
+}
+.gutter.right {
+  left: 0;
+  background: linear-gradient(270deg, transparent, oklch(22.41% 0.0158 62.49 / 0.16));
+}
+
+/* --- изогнутый лист ------------------------------------------------ */
+
+.curl {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: calc(var(--bw, 0px) * var(--span));
+  transform-style: preserve-3d;
+  z-index: 6;
+}
+.curl.next {
+  left: 50%;
+  transform-origin: left center;
+  transform: rotateY(calc(-1 * var(--tt, 0deg)));
+}
+.curl.prev {
+  right: 50%;
+  transform-origin: right center;
+  transform: rotateY(var(--tt, 0deg));
+}
+
+/* Ширина полосы на 0.75px больше шага цепочки: соседние полосы браузер
+   округляет к пикселям независимо, и между ними проступали светлые швы —
+   на ровной заливке иллюстрации их видно отчётливо. Перекрытие их
+   закрывает. Важно, что дети ставятся не на 100% ширины родителя, а на
+   номинальный шаг: иначе прибавка копилась бы на каждом звене и к
+   восемнадцатому увела бы край листа на 13px. */
+.strip {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: calc(var(--bw, 0px) * var(--span) / var(--n) + 0.75px);
+  transform-style: preserve-3d;
+}
+.curl.next .strip {
+  transform-origin: left center;
+}
+.curl.prev .strip {
+  transform-origin: right center;
+}
+.curl.next > .strip {
+  left: 0;
+}
+.curl.prev > .strip {
+  right: 0;
+  left: auto;
+}
+/* каждая следующая полоса стоит на краю предыдущей и довёрнута на --td —
+   именно это накопление маленьких углов и есть изгиб */
+.curl.next .strip .strip {
+  left: calc(var(--bw, 0px) * var(--span) / var(--n));
+  transform: rotateY(var(--td, 0deg));
+}
+.curl.prev .strip .strip {
+  right: calc(var(--bw, 0px) * var(--span) / var(--n));
+  transform: rotateY(calc(-1 * var(--td, 0deg)));
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background-repeat: no-repeat;
+  background-size: var(--bw, 0px) 100%;
+}
+.face.back {
+  transform: rotateY(180deg);
+}
+
+/* Затенение по ширине полосы: --a1 на ближнем краю, --a2 на дальнем.
+   Значения считает JS по косинусу угла — чем сильнее полоса отвёрнута
+   от света, тем темнее. */
+.sh,
+.gl {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.curl.next .face.front .sh,
+.curl.prev .face.back .sh {
+  background: linear-gradient(
+    90deg,
+    oklch(22.41% 0.0158 62.49 / var(--a1, 0)),
+    oklch(22.41% 0.0158 62.49 / var(--a2, 0))
+  );
+}
+.curl.next .face.back .sh,
+.curl.prev .face.front .sh {
+  background: linear-gradient(
+    90deg,
+    oklch(22.41% 0.0158 62.49 / var(--a2, 0)),
+    oklch(22.41% 0.0158 62.49 / var(--a1, 0))
+  );
+}
+/* блик по самой освещённой полосе */
+.gl {
+  background: linear-gradient(90deg, transparent, oklch(100% 0 0 / calc(var(--lit, 0) * 0.16)));
+}
+
+/* Внешняя кромка листа — единственная полоса, у которой видно толщину
+   бумаги; маска гасит её к верхнему и нижнему краю, чтобы угол не
+   выглядел обрубленным. */
+.strip.edge .sh,
+.strip.edge .gl {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+
+/* Зоны нажатия для листания — половины книги. Прозрачные, но это
+   настоящие кнопки: с клавиатуры до них можно дойти табом. */
+.zone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  z-index: 7;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.zone:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: -4px;
+}
+.zonePrev {
+  left: 0;
+}
+.zoneNext {
+  right: 0;
+}
+
+/* --- лупа ----------------------------------------------------------- */
+
+/* Увеличенная копия книги. Живёт вне трансформации книги, поэтому наклон
+   страницы её не дёргает; JS сам пересчитывает, какая точка бумаги
+   оказалась под стеклом. */
+.zoomWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  border-radius: var(--radius-lg);
+}
+.zoomInner {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+}
+
+.loupe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--lr, 200px);
+  height: var(--lr, 200px);
+  border-radius: 50%;
+  z-index: 9;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-standard);
+  touch-action: none;
+}
+.loupe.on {
+  opacity: 1;
+}
+.loupe.held {
+  cursor: grabbing;
+}
+.lens {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-ink);
+  box-shadow: var(--shadow-float);
+  /* стекло: блик сверху слева, лёгкое затемнение к краю */
+  /* Блик слабый и узкий: на 0.42 стекло превращалось в белый диск и
+     закрывало то, ради чего лупу и тащат. */
+  background:
+    radial-gradient(circle at 30% 26%, oklch(100% 0 0 / 0.2), transparent 30%),
+    radial-gradient(circle at 50% 50%, transparent 66%, oklch(22.41% 0.0158 62.49 / 0.12) 100%);
+}
+
+/* --- панель управления --------------------------------------------- */
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.zoomRead {
+  min-width: 3.5em;
+  text-align: center;
+}
+
+/* --- указатель разворотов ------------------------------------------ */
+
+.plate[aria-current="true"] {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}
+.plate[aria-current="true"] .plateNum {
+  color: oklch(97.16% 0.0131 82.4 / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loupe {
+    transition-duration: 0ms;
+  }
+}
