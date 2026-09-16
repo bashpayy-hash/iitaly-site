@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppleButton } from "@/components/apple/Button";
+import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
+import { AppleEyebrow } from "@/components/apple/Typography";
 import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 import { FEATURES, PRICE_EXPRESS_CHECK, PRICE_MAIN, priceLabel } from "@/data/pricing";
@@ -47,7 +48,7 @@ export function PricesExplorer() {
   return (
     <>
       <section className="bg-frost px-5 pt-14 pb-10 text-center sm:pt-20">
-        <p className="text-apple-caption text-ash">Цена</p>
+        <AppleEyebrow as="p">Цена</AppleEyebrow>
         <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] font-semibold text-carbon sm:text-apple-heading">
           {priceLabel(PRICE_MAIN)} — и система ведёт тебя до конца
         </h1>
@@ -94,7 +95,7 @@ export function PricesExplorer() {
           <div className="mt-8 rounded-apple-card border border-mist/30 p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <b className="font-apple-display text-apple-subheading font-semibold text-carbon">Поступление под ключ</b>
-              <span className="rounded-apple-pill bg-apple-blue px-3 py-1 text-apple-caption font-semibold text-white uppercase">
+              <span className="rounded-apple-pill bg-rosso px-3 py-1 text-apple-caption font-semibold text-white uppercase">
                 Один платёж
               </span>
             </div>
@@ -120,7 +121,7 @@ export function PricesExplorer() {
             <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
               {FEATURES.map((f) => (
                 <li key={f} className="flex gap-2 text-apple-body-sm text-carbon">
-                  <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-apple-blue" />
+                  <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-rosso" />
                   {f}
                 </li>
               ))}
@@ -194,7 +195,7 @@ export function PricesExplorer() {
                 key={m.name}
                 type="button"
                 onClick={() => openBuy(m.name, m.price)}
-                className="flex w-full items-center justify-between gap-4 rounded-apple-card border border-mist/30 p-4 text-left transition-colors hover:bg-frost focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue"
+                className="flex w-full items-center justify-between gap-4 rounded-apple-card border border-mist/30 p-4 text-left transition-colors hover:bg-frost focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
               >
                 <div>
                   <b className="block text-apple-body-sm font-semibold text-carbon">{m.name}</b>
@@ -206,6 +207,32 @@ export function PricesExplorer() {
               </button>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Единственная тёмная полоса страницы. Она закрывает цены тем же,
+         чем закрывает их разговор с человеком: обещанием вернуть деньги.
+         Обсидиан здесь работает как точка, а не как декорация — после неё
+         на странице ничего не остаётся. */}
+      <section className="bg-obsidian px-5 py-16 sm:py-20">
+        <div className="mx-auto max-w-[900px]">
+          <AppleEyebrow as="p" className="text-ash-dark">
+            Если передумал
+          </AppleEyebrow>
+          <h2 className="mt-4 max-w-[30rem] font-whisper text-[32px] leading-[1.05] font-normal text-white sm:text-[46px]">
+            Семь дней на то, чтобы <span className="italic">передумать</span>
+          </h2>
+          <p className="mt-5 max-w-[34rem] font-apple-text text-apple-body text-ash-dark">
+            Не начал работать с планом или чек-листом — вернём всё полностью,
+            без объяснений и без разговора с менеджером.
+          </p>
+          <AppleButtonLink
+            href="/plan"
+            variant="inverted"
+            className="mt-8 px-8"
+          >
+            Сначала проверить шансы
+          </AppleButtonLink>
         </div>
       </section>
 

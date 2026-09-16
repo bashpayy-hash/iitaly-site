@@ -49,7 +49,7 @@ export function TrustFAQ() {
                 <svg
                   aria-hidden
                   viewBox="0 0 16 10"
-                  className="h-2.5 w-4 shrink-0 text-apple-blue transition-transform duration-200 group-open:-rotate-180"
+                  className="h-2.5 w-4 shrink-0 text-rosso transition-transform duration-200 group-open:-rotate-180"
                 >
                   <path
                     d="M1 1.5 8 8.5 15 1.5"

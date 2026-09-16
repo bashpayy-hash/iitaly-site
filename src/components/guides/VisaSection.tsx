@@ -113,8 +113,8 @@ function GuaranteeCalculator() {
               type="button"
               onClick={() => setYears(y)}
               aria-pressed={years === y}
-              className={`rounded-apple-pill border px-3.5 py-1.5 text-apple-caption font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue ${
-                years === y ? "border-apple-blue bg-apple-blue text-white" : "border-mist/40 bg-frost text-carbon"
+              className={`rounded-apple-pill border px-3.5 py-1.5 text-apple-caption font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso ${
+                years === y ? "border-rosso bg-rosso text-white" : "border-mist/40 bg-frost text-carbon"
               }`}
             >
               {y} {y === 1 ? "год" : "года"}
@@ -175,7 +175,7 @@ function VisaChecklist() {
               type="button"
               onClick={() => toggle(i)}
               aria-pressed={isDone}
-              className={`flex w-full items-start gap-3 rounded-apple-card border px-3 py-2.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue ${
+              className={`flex w-full items-start gap-3 rounded-apple-card border px-3 py-2.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso ${
                 isDone ? "border-green bg-green/5" : "border-mist/30 bg-frost"
               }`}
             >

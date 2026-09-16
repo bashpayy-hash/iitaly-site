@@ -107,7 +107,7 @@ export function DocCheck() {
       {state.step === "idle" || state.step === "error" ? (
         <label
           className={`mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-apple-card border border-dashed px-6 py-8 text-center transition-colors ${
-            dragOver ? "border-apple-blue bg-apple-blue/5" : "border-mist/40 hover:bg-frost"
+            dragOver ? "border-rosso bg-rosso/5" : "border-mist/40 hover:bg-frost"
           }`}
           onDragOver={(e) => {
             e.preventDefault();
@@ -192,7 +192,7 @@ export function DocCheck() {
         Проверка помогает не подать документ с ошибкой, но результат не
         гарантирует: решение о стипендии принимает регион Италии. Подробнее о
         работе с данными — в{" "}
-        <a href="/privacy" className="font-semibold text-link-blue">
+        <a href="/privacy" className="font-semibold text-rosso">
           политике конфиденциальности
         </a>
         .

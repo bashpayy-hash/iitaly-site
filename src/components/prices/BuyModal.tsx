@@ -86,7 +86,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-carbon">
                 {product.name}
               </h3>
-              <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-apple-blue">{fmt(product.price)} ₸</p>
+              <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-rosso">{fmt(product.price)} ₸</p>
               {isPkg && (
                 <div className="mt-3 rounded-apple-card border border-warn bg-warn/10 px-3 py-2.5 text-apple-body-sm text-carbon">
                   🔒 Ты в числе первых 30 — стартовая цена зафиксируется за тобой навсегда. Взамен
@@ -99,7 +99,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Имя"
-                  className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue"
+                  className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
                 />
               </label>
               <label className="mt-2.5 block">
@@ -109,7 +109,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Телефон / WhatsApp"
                   inputMode="tel"
-                  className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue"
+                  className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
                 />
               </label>
               {error && (
@@ -132,7 +132,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
             <div className="flex flex-col items-center gap-3 py-8 text-center">
               <span
                 aria-hidden
-                className="h-6 w-6 animate-spin rounded-full border-2 border-mist/30 border-t-apple-blue motion-reduce:animate-none"
+                className="h-6 w-6 animate-spin rounded-full border-2 border-mist/30 border-t-rosso motion-reduce:animate-none"
               />
               <p className="text-apple-body-sm text-graphite">Отправляю…</p>
             </div>
@@ -161,7 +161,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                     <button
                       type="button"
                       onClick={copyPhone}
-                      className="shrink-0 rounded-apple-pill border border-mist/40 bg-white px-3 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue"
+                      className="shrink-0 rounded-apple-pill border border-mist/40 bg-white px-3 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
                     >
                       {copied ? "Скопировано" : "Копировать"}
                     </button>
@@ -185,7 +185,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                     href={whatsappLink(product.name, product.price)}
                     target="_blank"
                     rel="noopener"
-                    className="mt-2.5 block rounded-apple-pill bg-apple-blue px-4 py-3 text-center text-apple-body-sm font-semibold text-white"
+                    className="mt-2.5 block rounded-apple-pill bg-rosso px-4 py-3 text-center text-apple-body-sm font-semibold text-white"
                   >
                     Открыть WhatsApp
                   </a>
