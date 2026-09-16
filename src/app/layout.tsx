@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Onest, Space_Mono } from "next/font/google";
+import { Onest, Space_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
-import { PaperOverlay } from "@/components/PaperOverlay";
+import { PaperOverlayGate } from "@/components/PaperOverlayGate";
 
 // Единственная гарнитура продукта — variable, один файл на весь диапазон
 // начертаний (100–900), реальная поддержка казахской кириллицы
@@ -25,6 +25,17 @@ const spaceMono = Space_Mono({
   variable: "--font-space-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
+  display: "swap",
+});
+
+// Apple-хром сайта (везде, кроме /universities) набран практическим
+// аналогом SF Pro: Inter Tight, самохостится через next/font, та же
+// причина, что и у Onest выше, — без стороннего CDN и сдвига макета.
+// SF Pro всё равно стоит первым в стеке (globals.css) — на реальном Mac/
+// iPhone победит она, здесь только надёжный фолбэк для всех остальных.
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   display: "swap",
 });
 
@@ -63,7 +74,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ru" className={`${onest.variable} ${spaceMono.variable} h-full antialiased`}>
+    <html
+      lang="ru"
+      className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         <MotionProvider>
           {/* Первое, что получает фокус на любой странице. По ТЗ клавиатурная
@@ -77,7 +91,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Перейти к содержимому
           </a>
           {children}
-          <PaperOverlay />
+          <PaperOverlayGate />
           <ChatWidget />
         </MotionProvider>
       </body>

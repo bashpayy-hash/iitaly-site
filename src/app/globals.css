@@ -125,6 +125,83 @@
 
   --text-button: 0.9375rem;
   --text-button--line-height: 1;
+
+  /* ── Apple design system (Refero: "white room with a single blue switch") ──
+     Новый параллельный набор токенов для всего сайта, КРОМЕ /universities.
+     Имена намеренно не пересекаются с токенами выше (cream/ink/red/...,
+     text-display/heading/body/caption): старые токены остаются как есть и
+     продолжают управлять /universities и sketchbook — эти файлы не
+     трогаются, поэтому их значения не могут измениться. Новые apple-*
+     токены добавляются рядом и используются только в новых компонентах
+     (Header, Footer, Home, /plan, /prices, /guides, apple/*). См. DESIGN.md. */
+  --color-apple-blue: #0071e3;
+  --color-link-blue: #0066cc;
+  --color-signal-blue: #2997ff;
+  --color-carbon: #1d1d1f;
+  --color-frost: #f5f5f7;
+  --color-ice: #f4f8fb;
+  --color-smoke: #333333;
+  --color-graphite: #474747;
+  --color-ash: #707070;
+  --color-mist: #858585;
+  --color-onyx: #000000;
+  --color-pebble: #e2e2e5;
+
+  /* SF Pro первым — авторендер на реальных Apple-устройствах бесплатно.
+     Inter Tight — самохостится через next/font/google (см. layout.tsx),
+     это практический рендер для большинства посетителей сайта (Android/
+     Windows, см. HANDOFF.md): у system-ui/-apple-system там свой облик
+     (Segoe UI/Roboto), а не SF Pro, и Inter Tight ближе по духу и трекингу. */
+  --font-apple-display: "SF Pro Display", var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-apple-text: "SF Pro Text", var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Именованная шкала из DESIGN(Apple).md — фиксированные px, не clamp():
+     "закон" даёт точные размеры, а не диапазон. На узких экранах крупные
+     display/heading-lg дополнительно уменьшены на уровне компонентов
+     (Tailwind sm:/lg: перед классом text-apple-*), чтобы не переполнять
+     390px — сама именованная ступень от этого не отличается от закона. */
+  --text-apple-caption: 12px;
+  --text-apple-caption--line-height: 1.33;
+  --text-apple-caption--letter-spacing: -0.264px;
+
+  --text-apple-body-sm: 14px;
+  --text-apple-body-sm--line-height: 1.29;
+  --text-apple-body-sm--letter-spacing: -0.224px;
+
+  --text-apple-body: 17px;
+  --text-apple-body--line-height: 1.47;
+  --text-apple-body--letter-spacing: -0.272px;
+
+  --text-apple-subheading: 21px;
+  --text-apple-subheading--line-height: 1.24;
+  --text-apple-subheading--letter-spacing: -0.105px;
+
+  --text-apple-heading-sm: 28px;
+  --text-apple-heading-sm--line-height: 1.18;
+  --text-apple-heading-sm--letter-spacing: 0.196px;
+
+  --text-apple-heading: 40px;
+  --text-apple-heading--line-height: 1.14;
+  --text-apple-heading--letter-spacing: 0.44px;
+
+  --text-apple-heading-lg: 44px;
+  --text-apple-heading-lg--line-height: 1.18;
+  --text-apple-heading-lg--letter-spacing: -0.44px;
+
+  --text-apple-display: 56px;
+  --text-apple-display--line-height: 1.07;
+  --text-apple-display--letter-spacing: 0.616px;
+
+  /* Радиусы закона — 980px (пилюля) и 8px (карточки/картинки/инпуты).
+     Отдельные имена: --radius-lg/xl и т.п. в проекте уже переопределены
+     под старую систему (16/20px), брать их для Apple-компонентов было бы
+     ошибкой на пиксель. */
+  --radius-apple-pill: 980px;
+  --radius-apple-card: 8px;
+
+  /* Единственная тень системы — под продуктовым/фото-кадром на холсте,
+     не под кнопками/карточками/навигацией (см. DESIGN.md → Elevation). */
+  --shadow-apple-image: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
 }
 
 :root {
@@ -175,27 +252,6 @@ body {
 }
 .progress-ribbon-dot {
   transition: offset-distance 0.5s ease-out;
-}
-
-/* Закрепление первого экрана. Только с lg: на телефоне это лишний
-   закреплённый слой во весь экран на всю длину страницы, а аудитория там
-   на недорогих Android. Снимается по data-pinned, когда лист с разделами
-   уже закрыл экран — см. StickyHeroFrame.tsx, там же замер цены. */
-@media (min-width: 64rem) {
-  .hero-pin[data-pinned="true"] {
-    position: sticky;
-    top: 0;
-    z-index: 0;
-  }
-}
-
-@keyframes ticker {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
 }
 
 /* Три точки «печатает…» в чате. prefers-reduced-motion уже глушится

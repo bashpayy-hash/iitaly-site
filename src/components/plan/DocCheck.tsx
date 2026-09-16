@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, type DocCheckResult } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
-import { Button } from "@/components/Button";
+import { AppleButton } from "@/components/apple/Button";
 import { Vespa } from "@/components/Vespa";
 import { VespaReveal } from "@/components/VespaReveal";
 
@@ -77,14 +77,14 @@ export function DocCheck() {
         : null;
 
   return (
-    <div className="rounded-xl border-2 border-ink bg-paper p-5 shadow-lg sm:p-7">
-      <p className="text-xs font-extrabold tracking-[0.14em] text-sec uppercase">
+    <div className="rounded-apple-card border border-mist/30 bg-white p-5 sm:p-7">
+      <p className="text-apple-caption text-ash uppercase">
         Проверка документов · бесплатно
       </p>
-      <h2 className="mt-1 font-display text-2xl font-bold">
+      <h2 className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-carbon">
         Загрузи документ — ИИ найдёт ошибки до подачи
       </h2>
-      <p className="mt-2 text-sm text-ink-soft">
+      <p className="mt-2 text-apple-body-sm text-graphite">
         Справка о доходах, свидетельство о рождении, состав семьи, банковская
         выписка, апостиль. Система сверит с правилами DSU и ISU: референсный
         год, цепочка «апостиль → перевод → нотариус», реквизиты, арифметика.
@@ -97,17 +97,17 @@ export function DocCheck() {
           ["Не идёт на обучение моделей", "используется один раз — для твоего разбора"],
           ["Удалим по запросу", "напиши, и данные сотрём"],
         ].map(([b, s]) => (
-          <div key={b} className="rounded-md bg-cream px-3 py-2 text-xs">
-            <b className="block text-ink">{b}</b>
-            <span className="text-ink-soft">{s}</span>
+          <div key={b} className="rounded-apple-card bg-frost px-3 py-2 text-apple-caption">
+            <b className="block text-carbon">{b}</b>
+            <span className="text-ash">{s}</span>
           </div>
         ))}
       </div>
 
       {state.step === "idle" || state.step === "error" ? (
         <label
-          className={`mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed px-6 py-8 text-center transition-colors ${
-            dragOver ? "border-red bg-red/5" : "border-line hover:bg-cream"
+          className={`mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-apple-card border border-dashed px-6 py-8 text-center transition-colors ${
+            dragOver ? "border-apple-blue bg-apple-blue/5" : "border-mist/40 hover:bg-frost"
           }`}
           onDragOver={(e) => {
             e.preventDefault();
@@ -130,29 +130,30 @@ export function DocCheck() {
           <span aria-hidden className="text-3xl">
             📄
           </span>
-          <b>Выбрать документ</b>
-          <span className="text-sm text-ink-soft">или перетащи сюда · фото, PDF, Word до 5 МБ</span>
+          <b className="text-carbon">Выбрать документ</b>
+          <span className="text-apple-body-sm text-graphite">или перетащи сюда · фото, PDF, Word до 5 МБ</span>
         </label>
       ) : (
-        <div className="mt-5 flex flex-col gap-4 rounded-lg border-2 border-ink bg-cream p-4 sm:flex-row sm:items-center">
+        <div className="mt-5 flex flex-col gap-4 rounded-apple-card border border-mist/30 bg-frost p-4 sm:flex-row sm:items-center">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={preview}
               alt="документ"
-              className="h-28 w-28 shrink-0 rounded-md border-2 border-ink object-cover"
+              className="h-28 w-28 shrink-0 rounded-apple-card border border-mist/30 object-cover"
             />
           ) : (
-            <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-paper font-display text-lg font-bold text-ink-soft">
+            <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-apple-card border border-mist/30 bg-white font-apple-display text-apple-subheading font-semibold text-ash">
               {fileIcon}
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold">{state.file.name}</p>
+            <p className="truncate text-apple-body-sm font-semibold text-carbon">{state.file.name}</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button
+              <AppleButton
                 type="button"
-                variant="primary"
+                variant="filled"
+                size="sm"
                 onClick={run}
                 disabled={state.step === "checking"}
               >
@@ -161,10 +162,10 @@ export function DocCheck() {
                   : state.step === "done"
                     ? "Проверить ещё раз"
                     : "Проверить документ"}
-              </Button>
-              <Button type="button" variant="ghost" onClick={reset}>
+              </AppleButton>
+              <AppleButton type="button" variant="outlined" size="sm" onClick={reset}>
                 Выбрать другой
-              </Button>
+              </AppleButton>
             </div>
           </div>
         </div>
@@ -172,12 +173,12 @@ export function DocCheck() {
 
       <div aria-live="polite" className="mt-5">
         {state.step === "error" && (
-          <div className="rounded-md border-2 border-red bg-red/5 px-4 py-3 text-sm font-bold text-red">
+          <div className="rounded-apple-card border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
             {state.message}
           </div>
         )}
         {state.step === "checking" && (
-          <div className="flex items-center gap-3 rounded-md border-2 border-line px-4 py-3 text-sm text-ink-soft">
+          <div className="flex items-center gap-3 rounded-apple-card border border-mist/30 px-4 py-3 text-apple-body-sm text-graphite">
             <Vespa pose="documents" className="h-9 w-auto shrink-0" />
             Сверяю с правилами DSU и ISU — это занимает 10–20 секунд
           </div>
@@ -187,11 +188,11 @@ export function DocCheck() {
         )}
       </div>
 
-      <p className="mt-5 text-xs text-ink-soft">
+      <p className="mt-5 text-apple-caption text-ash">
         Проверка помогает не подать документ с ошибкой, но результат не
         гарантирует: решение о стипендии принимает регион Италии. Подробнее о
         работе с данными — в{" "}
-        <a href="/privacy" className="font-bold text-red">
+        <a href="/privacy" className="font-semibold text-link-blue">
           политике конфиденциальности
         </a>
         .
@@ -203,31 +204,31 @@ export function DocCheck() {
 function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => void }) {
   const v = result.verdict || "warn";
   return (
-    <div className="rounded-lg border-2 border-ink p-4">
+    <div className="rounded-apple-card border border-mist/30 p-4">
       <div className="flex flex-wrap items-center gap-2.5">
         {v === "ok" && <VespaReveal pose="success" className="h-9 w-auto shrink-0" />}
         <span
-          className={`rounded-pill px-3 py-1 text-xs font-extrabold uppercase ${
+          className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold text-white uppercase ${
             v === "ok"
-              ? "bg-green text-cream"
+              ? "bg-green"
               : v === "error"
-                ? "bg-red text-cream"
+                ? "bg-red"
                 : v === "unreadable"
-                  ? "bg-sec text-cream"
-                  : "bg-warn text-cream"
+                  ? "bg-ash"
+                  : "bg-warn"
           }`}
         >
           {LABEL[v] || "Результат"}
         </span>
-        <span className="font-display text-lg font-bold">{result.docTitle || "Документ"}</span>
+        <span className="font-apple-display text-apple-subheading font-semibold text-carbon">{result.docTitle || "Документ"}</span>
       </div>
 
-      {result.summary && <p className="mt-3 text-sm text-ink-soft">{result.summary}</p>}
+      {result.summary && <p className="mt-3 text-apple-body-sm text-graphite">{result.summary}</p>}
 
       {result.checks && result.checks.length > 0 && (
         <div className="mt-4 space-y-2">
           {result.checks.map((c, i) => (
-            <div key={i} className="flex gap-2.5 text-sm">
+            <div key={i} className="flex gap-2.5 text-apple-body-sm">
               <span
                 aria-hidden
                 className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
@@ -237,12 +238,12 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
                       ? "bg-red/15 text-red"
                       : c.status === "warn"
                         ? "bg-warn/15 text-warn"
-                        : "bg-line text-ink-soft"
+                        : "bg-pebble text-ash"
                 }`}
               >
                 {MARK[c.status || "unknown"] || "?"}
               </span>
-              <span>
+              <span className="text-carbon">
                 <b>{c.label}.</b> {c.note}
               </span>
             </div>
@@ -255,34 +256,34 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
           {result.problems.map((p, i) => (
             <div
               key={i}
-              className={`rounded-md border-2 px-3 py-2.5 text-sm ${
+              className={`rounded-apple-card border px-3 py-2.5 text-apple-body-sm text-carbon ${
                 p.severity === "critical" ? "border-red bg-red/5" : "border-warn bg-warn/5"
               }`}
             >
               <b>{p.severity === "critical" ? "Критично: " : "Замечание: "}</b>
               {p.text}
-              {p.fix && <span className="mt-1 block text-ink-soft">Что делать: {p.fix}</span>}
+              {p.fix && <span className="mt-1 block text-graphite">Что делать: {p.fix}</span>}
             </div>
           ))}
         </div>
       )}
 
       {result.nextSteps && result.nextSteps.length > 0 && (
-        <div className="mt-4 text-sm">
+        <div className="mt-4 text-apple-body-sm text-carbon">
           <b>Что дальше</b>
           {result.nextSteps.map((n, i) => (
-            <div key={i} className="mt-1 text-ink-soft">
+            <div key={i} className="mt-1 text-graphite">
               → {n}
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3 border-t-2 border-line pt-4">
-        <Button type="button" variant="dark" onClick={onCta}>
+      <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-mist/30 pt-4">
+        <AppleButton type="button" variant="filled" size="sm" onClick={onCta}>
           Собрать весь пакет с IItaly
-        </Button>
-        <span className="text-xs text-ink-soft">
+        </AppleButton>
+        <span className="text-apple-caption text-ash">
           Проверка одного документа бесплатна. Полный комплект ведёт система в тарифе.
         </span>
       </div>
