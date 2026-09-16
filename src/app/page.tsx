@@ -1,25 +1,25 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/home/Hero";
-import { Funnel } from "@/components/home/Funnel";
-import { BandDuomo } from "@/components/home/BandDuomo";
-import { DsuCard } from "@/components/home/DsuCard";
-import { BandNight } from "@/components/home/BandNight";
+import { HowItWorks } from "@/components/home/HowItWorks";
+import { FeatureBanner } from "@/components/home/FeatureBanner";
+import { Split } from "@/components/home/Split";
+import { Stats } from "@/components/home/Stats";
 import { TrustFAQ } from "@/components/home/TrustFAQ";
 import { PriceBand } from "@/components/home/PriceBand";
+import { ScrollTransitions } from "@/components/motion/ScrollTransitions";
 
 /**
- * Ритм главной: свет → тьма → свет → свет → тьма → свет → свет.
+ * Порядок секций главной. Холст даёт SkyBackground (фото неба), сами
+ * секции прозрачны — поэтому фонов здесь нет ни у одной.
  *
- * Небо первого экрана заканчивается обсидианом, и воронка подхватывает
- * ровно этот цвет — шва между ними нет. Дальше две иллюстративные полосы
- * (дневной Дуомо и ночная Мадоннина) разнесены по странице: рядом они
- * читались бы как галерея, а порознь держат её как два кадра одного
- * фильма.
+ * ScrollTransitions стоит последним и вне <main>: он не рисует ничего
+ * своего, а навешивает ScrollTrigger на data-section соседних блоков.
+ * Внутри main он попал бы под собственные же клипы.
  *
- * Тёмных секций две, и это потолок. Третья (отдельная полоса под кабинет
- * после визы) убрана — её содержание ушло в ночную полосу, иначе низ
- * страницы превращался в сплошной провал.
+ * Прежний комментарий здесь описывал раскладку с полосами Дуомо, ночной
+ * Мадонниной и карточкой DSU — её больше нет, и оставлять описание
+ * несуществующего ритма хуже, чем не иметь описания вовсе.
  */
 export default function Home() {
   return (
@@ -27,14 +27,15 @@ export default function Home() {
       <Header />
       <main id="main">
         <Hero />
-        <Funnel />
-        <BandDuomo />
-        <DsuCard />
-        <BandNight />
+        <HowItWorks />
+        <FeatureBanner />
+        <Split />
+        <Stats />
         <TrustFAQ />
         <PriceBand />
       </main>
       <Footer />
+      <ScrollTransitions />
     </>
   );
 }

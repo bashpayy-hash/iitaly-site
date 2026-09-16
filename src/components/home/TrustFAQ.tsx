@@ -5,7 +5,8 @@ import { track } from "@/lib/track";
 
 /**
  * Те же вопросы/ответы, что и раньше (реальные условия сервиса, ничего не
- * переписано) — сменилась только оболочка: без бумаги и mesh-фона.
+ * переписано) — оболочка прозрачна, часть закрывающей главы (data-section
+ * "closing" стоит на Stats выше), здесь без своей механики стыка.
  */
 const FAQ = [
   {
@@ -28,14 +29,14 @@ const FAQ = [
 
 export function TrustFAQ() {
   return (
-    <section className="bg-frost px-5 py-16 sm:py-24">
+    <section className="px-5 py-24 sm:py-32">
       <div className="mx-auto max-w-[760px]">
         <AppleCaption as="p" className="text-center">Прежде чем платить</AppleCaption>
-        <AppleHeading as="h2" className="mt-3 text-center text-[32px] sm:text-apple-heading">
+        <AppleHeading as="h2" className="mt-3 text-center">
           Можно ли нам доверять
         </AppleHeading>
 
-        <div className="mt-10 divide-y divide-mist/30">
+        <div className="mt-10 divide-y divide-white/15">
           {FAQ.map((item) => (
             <details
               key={item.q}
@@ -44,12 +45,12 @@ export function TrustFAQ() {
                 if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
               }}
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-apple-text text-apple-subheading font-normal text-carbon marker:content-none [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-apple-text text-apple-subheading font-normal text-cloud-white marker:content-none [&::-webkit-details-marker]:hidden">
                 {item.q}
                 <svg
                   aria-hidden
                   viewBox="0 0 16 10"
-                  className="h-2.5 w-4 shrink-0 text-rosso transition-transform duration-200 group-open:-rotate-180"
+                  className="h-2.5 w-4 shrink-0 text-crimson transition-transform duration-200 group-open:-rotate-180"
                 >
                   <path
                     d="M1 1.5 8 8.5 15 1.5"
@@ -61,7 +62,7 @@ export function TrustFAQ() {
                   />
                 </svg>
               </summary>
-              <AppleBody as="p" className="mt-3 max-w-[65ch] text-apple-body-sm text-graphite">
+              <AppleBody as="p" className="mt-3 max-w-[65ch] text-apple-body-sm text-cloud-body">
                 {item.a}
               </AppleBody>
             </details>

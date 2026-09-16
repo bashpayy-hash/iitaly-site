@@ -9,7 +9,7 @@ import { AppleButton } from "@/components/apple/Button";
 import { Illustration } from "@/components/illustration/Illustration";
 import { TUSCANY_HILLS } from "@/data/illustrations";
 import Link from "next/link";
-import { AppleEyebrow } from "@/components/apple/Typography";
+import { HeadingPin } from "@/components/motion/HeadingPin";
 
 /**
  * Справочник как index + активная глава, а не пять одинаковых больших
@@ -85,21 +85,21 @@ export function GuidesExplorer() {
 
   return (
     <>
-      <section className="grid grid-cols-1 bg-frost lg:grid-cols-2">
+      <section data-section="guides-header" className="grid grid-cols-1 lg:grid-cols-2">
         <div className="order-2 flex flex-col justify-center px-5 py-14 sm:py-20 lg:order-1 lg:px-16">
-          <div className="mx-auto max-w-md lg:mx-0">
-            <AppleEyebrow as="p">Справочник · бесплатно</AppleEyebrow>
-            <h1 className="mt-4 font-apple-display font-light text-[38px] leading-[0.95] text-carbon sm:text-[52px]">
+          <div data-role="heading" className="mx-auto max-w-md lg:mx-0">
+            <p className="text-apple-caption text-cloud-meta">Справочник · бесплатно</p>
+            <h1 className="mt-2 font-apple-display text-[32px] font-semibold uppercase text-cloud-white sm:text-[44px]">
               Как пройти бюрократию
             </h1>
-            <p className="mt-5 text-apple-body text-graphite">
+            <p className="mt-5 text-apple-body text-cloud-body">
               Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор
               визы D. Где делать в Казахстане, сколько стоит и в каком
               порядке. Всё бесплатно.
             </p>
-            <p className="mt-4 text-apple-body-sm text-graphite">
+            <p className="mt-4 text-apple-body-sm text-cloud-body">
               Правила 2026/27 изменились —{" "}
-              <Link href="/changes-2026-27" className="font-semibold text-rosso">
+              <Link href="/changes-2026-27" className="font-semibold text-crimson">
                 что именно и с какими датами
               </Link>
               .
@@ -111,11 +111,11 @@ export function GuidesExplorer() {
         </div>
       </section>
 
-      <section className="bg-white px-5 py-10 sm:py-14">
+      <section className="px-5 py-10 sm:py-14">
         {/* Десктоп: sticky-индекс + активная глава. */}
         <div className="mx-auto hidden max-w-[1100px] gap-12 lg:grid lg:grid-cols-[0.85fr_1.15fr]">
           <nav aria-label="Главы справочника" className="lg:sticky lg:top-16 lg:h-fit">
-            <ol className="space-y-0.5 border-t border-mist/30">
+            <ol className="space-y-0.5 border-t border-white/15">
               {CHAPTERS.map((c, i) => {
                 const isActive = c.id === activeId;
                 return (
@@ -124,11 +124,11 @@ export function GuidesExplorer() {
                       type="button"
                       onClick={() => setActiveId(c.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`flex w-full items-baseline gap-3 border-b border-mist/20 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso ${
-                        isActive ? "text-carbon" : "text-ash hover:text-carbon"
+                      className={`flex w-full items-baseline gap-3 border-b border-white/10 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ${
+                        isActive ? "text-cloud-white" : "text-cloud-meta hover:text-cloud-white"
                       }`}
                     >
-                      <span className={`text-apple-caption tabular-nums ${isActive ? "text-rosso" : "text-ash"}`}>
+                      <span className={`text-apple-caption tabular-nums ${isActive ? "text-crimson" : "text-cloud-meta"}`}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className={`text-apple-body-sm ${isActive ? "font-semibold" : "font-normal"}`}>{c.title}</span>
@@ -140,10 +140,10 @@ export function GuidesExplorer() {
           </nav>
 
           <div key={active.id} className="relative min-w-0">
-            <p className="text-apple-caption text-ash">
+            <p className="text-apple-caption text-cloud-meta">
               {String(activeIndex + 1).padStart(2, "0")} · {active.title}
             </p>
-            <p className="mt-2 max-w-[60ch] text-apple-body-sm text-graphite">{active.teaser}</p>
+            <p className="mt-2 max-w-[60ch] text-apple-body-sm text-cloud-body">{active.teaser}</p>
             <div className="mt-6">
               <ChapterBody chapter={active} />
             </div>
@@ -153,47 +153,35 @@ export function GuidesExplorer() {
         {/* Мобильный/планшет: нативный accordion. */}
         <div className="mx-auto max-w-[900px] space-y-2 lg:hidden">
           {CHAPTERS.map((c, i) => (
-            <details key={c.id} className="group rounded-apple-card border border-mist/30">
+            <details key={c.id} className="group border border-white/15">
               <summary className="flex cursor-pointer list-none items-baseline gap-3 px-4 py-4 text-left marker:content-none [&::-webkit-details-marker]:hidden">
-                <span className="text-apple-caption text-ash tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-apple-caption text-cloud-meta tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                 <div>
-                  <b className="block text-apple-body-sm font-semibold text-carbon">{c.title}</b>
-                  <span className="mt-1 block text-apple-caption text-ash">{c.teaser}</span>
+                  <b className="block text-apple-body-sm font-semibold text-cloud-white">{c.title}</b>
+                  <span className="mt-1 block text-apple-caption text-cloud-meta">{c.teaser}</span>
                 </div>
               </summary>
-              <div className="border-t border-mist/20 px-4 pt-4 pb-5">
+              <div className="border-t border-white/10 px-4 pt-4 pb-5">
                 <ChapterBody chapter={c} />
               </div>
             </details>
           ))}
         </div>
 
-      </section>
-
-      {/* Единственная тёмная полоса справочника. Раньше это была тёмная
-         карточка внутри светлой секции — на всю ширину она читается как
-         конец главы, а не как ещё один блок в списке. */}
-      <section className="bg-obsidian px-5 py-14 sm:py-20">
-        <div className="mx-auto flex max-w-[1100px] flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+        <div className="mx-auto mt-10 flex max-w-[900px] flex-col items-start justify-between gap-4 border border-white/15 p-5 text-cloud-white sm:flex-row sm:items-center lg:max-w-[1100px]">
           <div>
-            <h2 className="font-apple-display font-light text-[28px] leading-[1.1] text-white sm:text-[38px]">
-              Запутался в порядке шагов?
-            </h2>
-            <p className="mt-3 max-w-[32rem] font-apple-text text-apple-body-sm text-ash-dark">
+            <b className="block">Запутался в порядке шагов?</b>
+            <span className="text-apple-body-sm text-cloud-meta">
               Опиши свою ситуацию — ИИ соберёт всё в персональный план и
               проверит документы.
-            </p>
+            </span>
           </div>
-          <AppleButton
-            type="button"
-            variant="inverted"
-            onClick={() => router.push("/plan")}
-            className="shrink-0 px-8"
-          >
+          <AppleButton type="button" variant="filled" onClick={() => router.push("/plan")} className="shrink-0">
             Составить план
           </AppleButton>
         </div>
       </section>
+      <HeadingPin section="guides-header" />
     </>
   );
 }

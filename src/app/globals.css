@@ -134,40 +134,9 @@
      трогаются, поэтому их значения не могут измениться. Новые apple-*
      токены добавляются рядом и используются только в новых компонентах
      (Header, Footer, Home, /plan, /prices, /guides, apple/*). См. DESIGN.md. */
-  /* Единственный цвет действия — пыльный rosso. Он заменил системный
-     Apple Blue целиком: кнопка, ссылка, активный пункт навигации, номер
-     активного шага воронки, кольцо фокуса. Одна нитка через весь сайт, а
-     не красный сайт: фоны остаются холстом, rosso появляется только там,
-     где от человека ждут действия.
-
-     wash/mist — те же чернила, разбавленные до пастели. Они живут ТОЛЬКО
-     в небе первого экрана и в цветовых пятнах под персонажем; в кнопках,
-     тексте и обводках их быть не должно — иначе действие перестаёт быть
-     единственным пятном максимального контраста. */
-  --color-rosso: #b42318;
-  --color-rosso-deep: #8f1c13;
-  --color-rosso-wash: #c45c4a;
-  --color-rosso-mist: #e8b4a8;
-
-  /* Пятна для персонажа (референс Beegg: герой СИДИТ на цветовом поле,
-     поле обрезает ему ноги). Золото — только поле, никогда не кнопка:
-     кнопка остаётся rosso, иначе теряется «одно действие = один цвет». */
-  /* Токенов --color-apple-blue / --color-link-blue / --color-signal-blue
-     здесь больше нет: они были системным цветом действия, их место занял
-     rosso, и оставлять мёртвые имена в @theme значит оставить Tailwind
-     генерировать утилиты, которыми никто не пользуется. */
-  --color-yolk: #e2b441;
-  --color-cream-paper: #f7ece6;
-  --color-graphic-ink: #1a1a1a;
-
-  /* Тёмные полосы Origin. body на обсидиане набирается ash-dark, а не
-     чистым белым: #fff на #0f1011 даёт контраст 19:1 и режет глаз на
-     длинных абзацах. silver — инвертированная светлая карточка, её на
-     страницу максимум одна-две. */
-  --color-obsidian: #0f1011;
-  --color-ash-dark: #9f9fa0;
-  --color-silver: #cacaca;
-
+  --color-apple-blue: #0071e3;
+  --color-link-blue: #0066cc;
+  --color-signal-blue: #2997ff;
   --color-carbon: #1d1d1f;
   --color-frost: #f5f5f7;
   --color-ice: #f4f8fb;
@@ -229,6 +198,27 @@
      ошибкой на пиксель. */
   --radius-apple-pill: 980px;
   --radius-apple-card: 8px;
+
+  /* ── ThoughtLab × Air phase — заменяет Apple-акцент, не токены выше ──
+     Второй проход поверх Apple-хрома: холст маркетинговых страниц (везде,
+     кроме /universities) становится full-bleed фото неба (SkyBackground),
+     секции — прозрачные, единственный акцент — Crimson Signal. Старые
+     apple-blue/link-blue/signal-blue/frost/carbon больше не используются
+     новыми компонентами (но не удалены — вдруг где-то зацепится старый
+     класс, лучше молча не сработать, чем сломать сборку), а apple-body/
+     caption/radius-apple-pill/шрифты остаются в деле. */
+  --color-crimson: #fc1c46;
+  --color-cloud-white: #ffffff;
+  --color-cloud-body: #cccccc;
+  --color-cloud-meta: #4c4c4c;
+
+  /* Архитектурная шкала заголовков: H1 героя — единственное место, где
+     разрешён 198px потолок, через clamp к 12–15vw. Заголовки секций —
+     72–91px, тоже clamp, а не фиксированные px (390px иначе ловит перелив). */
+  --text-arch-h1: clamp(2.75rem, 13vw, 12.375rem);
+  --text-arch-h1--line-height: 0.92;
+  --text-arch-h2: clamp(2.5rem, 6vw, 5.6875rem);
+  --text-arch-h2--line-height: 0.96;
 
   /* Единственная тень системы — под продуктовым/фото-кадром на холсте,
      не под кнопками/карточками/навигацией (см. DESIGN.md → Elevation). */
@@ -498,4 +488,107 @@ body {
 .sky-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   opacity: 0.05;
+}
+
+/* ── Полоса ожидания на /plan: веспа едет, пока идёт проверка ──────────
+   Разметка и обоснование слоёв — в components/plan/VespaRide.tsx. */
+
+/* Дорога: одна линия под колёсами, чтобы поездка была поездкой, а не
+   дрейфом картинки в пустоте. */
+.vespa-lane::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 3px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Проезд. Проценты у translateX считаются от ширины САМОГО элемента, и
+   именно поэтому едет дорожка во всю ширину полосы, а не веспа: сдвиг на
+   100% дорожки равен ширине полосы, сдвиг на 100% веспы — сорока
+   пикселям. Начинаем чуть левее края и заканчиваем чуть правее, чтобы
+   въезд и выезд были за кадром, а не появлением из ниоткуда. */
+.vespa-lane-track {
+  animation: vespa-ride 4.6s ease-in-out infinite;
+}
+@keyframes vespa-ride {
+  from {
+    transform: translateX(-16%);
+  }
+  to {
+    transform: translateX(106%);
+  }
+}
+
+/* Покачивание кузова. 2px — предел: на трёх уже видно, что картинка
+   прыгает, а не едет по неровной дороге. */
+.vespa-bob {
+  animation: vespa-bob 0.62s ease-in-out infinite alternate;
+}
+@keyframes vespa-bob {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(calc(-50% - 2px));
+  }
+}
+
+/* Пыль: ровно три точки позади заднего колеса, расходятся и гаснут.
+   Не частицы и не спрайт — три span'а и один keyframe на всех. */
+.vespa-dust {
+  position: absolute;
+  bottom: 2px;
+  left: -2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  animation: vespa-dust 0.9s linear infinite;
+}
+.vespa-dust:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.vespa-dust:nth-child(3) {
+  animation-delay: 0.6s;
+}
+@keyframes vespa-dust {
+  from {
+    opacity: 0.5;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-14px, -5px) scale(0.4);
+  }
+}
+
+/* Кнопка «Проверяю…» дышит прозрачностью. Спиннера нет намеренно: рядом
+   уже едет веспа, и два индикатора одного и того же ожидания спорят. */
+.vespa-wait-pulse {
+  animation: vespa-wait-pulse 1.5s ease-in-out infinite;
+}
+@keyframes vespa-wait-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Без движения остаётся один текст: ни проезда, ни покачивания, ни пыли,
+   ни дороги — полоса под строкой просто исчезает, а не стоит пустой. */
+@media (prefers-reduced-motion: reduce) {
+  .vespa-lane {
+    display: none;
+  }
+  .vespa-lane-track,
+  .vespa-bob,
+  .vespa-dust,
+  .vespa-wait-pulse {
+    animation: none;
+  }
 }

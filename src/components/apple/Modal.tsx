@@ -69,7 +69,7 @@ export function AppleModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-carbon/40 p-0 sm:items-center sm:p-5"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 p-0 sm:items-center sm:p-5"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -79,7 +79,7 @@ export function AppleModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className={`max-h-[88vh] w-full overflow-y-auto rounded-t-apple-card bg-white sm:rounded-apple-card ${className || "max-w-md"}`}
+        className={`max-h-[88vh] w-full overflow-y-auto border border-white/10 bg-[#0b0b0d] sm:rounded-apple-card ${className || "max-w-md"}`}
       >
         {children}
       </div>

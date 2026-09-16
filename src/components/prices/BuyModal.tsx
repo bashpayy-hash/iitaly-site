@@ -83,12 +83,12 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
         <div className="p-6">
           {step === "form" && (
             <>
-              <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-carbon">
+              <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {product.name}
               </h3>
-              <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-rosso">{fmt(product.price)} ₸</p>
+              <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-crimson">{fmt(product.price)} ₸</p>
               {isPkg && (
-                <div className="mt-3 rounded-apple-card border border-warn bg-warn/10 px-3 py-2.5 text-apple-body-sm text-carbon">
+                <div className="mt-3 border border-warn bg-warn/10 px-3 py-2.5 text-apple-body-sm text-cloud-white">
                   🔒 Ты в числе первых 30 — стартовая цена зафиксируется за тобой навсегда. Взамен
                   попросим отзыв, когда поступишь.
                 </div>
@@ -99,7 +99,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Имя"
-                  className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
+                  className="w-full border-0 border-b border-white/25 bg-transparent px-1 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                 />
               </label>
               <label className="mt-2.5 block">
@@ -109,7 +109,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Телефон / WhatsApp"
                   inputMode="tel"
-                  className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
+                  className="w-full border-0 border-b border-white/25 bg-transparent px-1 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                 />
               </label>
               {error && (
@@ -120,7 +120,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               <AppleButton type="button" variant="filled" onClick={submit} className="mt-4 w-full">
                 {PAY_MODE === "kaspi" ? "Оплатить через Kaspi" : "Оформить заказ"}
               </AppleButton>
-              <p className="mt-2.5 text-center text-apple-caption text-ash">
+              <p className="mt-2.5 text-center text-apple-caption text-cloud-meta">
                 {PAY_MODE === "kaspi"
                   ? "Оплата откроется в приложении Kaspi. Продукт придёт в WhatsApp после оплаты."
                   : "После оформления покажем реквизиты для перевода. Продукт придёт в WhatsApp после оплаты."}
@@ -132,9 +132,9 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
             <div className="flex flex-col items-center gap-3 py-8 text-center">
               <span
                 aria-hidden
-                className="h-6 w-6 animate-spin rounded-full border-2 border-mist/30 border-t-rosso motion-reduce:animate-none"
+                className="h-6 w-6 animate-spin rounded-full border-2 border-white/15 border-t-crimson motion-reduce:animate-none"
               />
-              <p className="text-apple-body-sm text-graphite">Отправляю…</p>
+              <p className="text-apple-body-sm text-cloud-body">Отправляю…</p>
             </div>
           )}
 
@@ -144,8 +144,8 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                 <div aria-hidden className="text-4xl">
                   ✅
                 </div>
-                <p className="mt-2 font-apple-display text-apple-subheading font-semibold text-carbon">Заказ принят</p>
-                <p className="mt-1 text-apple-body-sm text-graphite">Осталось оплатить — два шага, минута времени.</p>
+                <p className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
+                <p className="mt-1 text-apple-body-sm text-cloud-body">Осталось оплатить — два шага, минута времени.</p>
               </div>
 
               <div className="mt-5 flex gap-3">
@@ -153,20 +153,20 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   1
                 </div>
                 <div className="min-w-0 flex-1">
-                  <b className="text-apple-body-sm text-carbon">
+                  <b className="text-apple-body-sm text-cloud-white">
                     Переведи {fmt(product.price)} ₸ в Kaspi
                   </b>
-                  <div className="mt-2 flex items-center justify-between gap-2 rounded-apple-card border border-mist/30 bg-frost px-3 py-2.5">
-                    <span className="font-apple-display text-apple-subheading font-semibold text-carbon">{PAY_PHONE}</span>
+                  <div className="mt-2 flex items-center justify-between gap-2 border border-white/15  px-3 py-2.5">
+                    <span className="font-apple-display text-apple-subheading font-semibold text-cloud-white">{PAY_PHONE}</span>
                     <button
                       type="button"
                       onClick={copyPhone}
-                      className="shrink-0 rounded-apple-pill border border-mist/40 bg-white px-3 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
+                      className="shrink-0 rounded-apple-pill border border-white/20 px-3 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                     >
                       {copied ? "Скопировано" : "Копировать"}
                     </button>
                   </div>
-                  <span className="mt-1.5 block text-apple-caption text-ash">
+                  <span className="mt-1.5 block text-apple-caption text-cloud-meta">
                     Получатель: {PAY_NAME} · в комментарии укажи «{product.name}»
                   </span>
                 </div>
@@ -177,22 +177,22 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   2
                 </div>
                 <div className="min-w-0 flex-1">
-                  <b className="text-apple-body-sm text-carbon">Пришли скриншот чека в WhatsApp</b>
-                  <span className="mt-1 block text-apple-caption text-ash">
+                  <b className="text-apple-body-sm text-cloud-white">Пришли скриншот чека в WhatsApp</b>
+                  <span className="mt-1 block text-apple-caption text-cloud-meta">
                     {isPkg ? "Куратор ответит" : "Продукт придёт"} в течение часа на {phone}
                   </span>
                   <a
                     href={whatsappLink(product.name, product.price)}
                     target="_blank"
                     rel="noopener"
-                    className="mt-2.5 block rounded-apple-pill bg-rosso px-4 py-3 text-center text-apple-body-sm font-semibold text-white"
+                    className="mt-2.5 block rounded-apple-pill bg-crimson px-4 py-3 text-center text-apple-body-sm font-semibold text-white"
                   >
                     Открыть WhatsApp
                   </a>
                 </div>
               </div>
 
-              <p className="mt-5 text-apple-caption text-ash">
+              <p className="mt-5 text-apple-caption text-cloud-meta">
                 Без предоплаты «в никуда»: до 7 дней с оплаты, если ещё не начал работать с планом
                 — вернём деньги полностью, без объяснений.
               </p>

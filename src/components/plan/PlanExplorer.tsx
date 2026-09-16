@@ -1,13 +1,13 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import type { WizAnswers } from "@/data/wizard";
 import { buildPlan, situationFromAnswers, type Plan } from "@/lib/planBuilder";
 import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
-import { AppleEyebrow, AppleHeading } from "@/components/apple/Typography";
-import { PlanSeed } from "./PlanSeed";
+import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
+import { HeadingPin } from "@/components/motion/HeadingPin";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -19,23 +19,21 @@ export function PlanExplorer() {
 
   return (
     <>
-      <section className="bg-frost px-5 pt-14 pb-10 text-center sm:pt-20">
-        <AppleEyebrow as="p">Персональный маршрут</AppleEyebrow>
-        <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl text-[32px] sm:text-apple-heading">
-          Опиши свою ситуацию
-        </AppleHeading>
-        <p className="mx-auto mt-5 max-w-lg text-apple-body text-graphite">
+      <section data-section="plan-header" className="px-5 pt-16 pb-10 text-center sm:pt-24">
+        <div data-role="heading">
+          <AppleCaption as="p">Персональный маршрут</AppleCaption>
+          <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
+            Опиши свою ситуацию
+          </AppleHeading>
+        </div>
+        <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">
           Своими словами: класс и школа, оценки, бюджет семьи, куда мечтаешь.
           ИИ построит план — что считать, какие документы собирать и в каком
           порядке — и проверит каждый документ на типовые ошибки.
         </p>
-        {/* Suspense обязателен: внутри useSearchParams, см. PlanSeed. */}
-        <Suspense fallback={null}>
-          <PlanSeed />
-        </Suspense>
       </section>
 
-      <section className="bg-white px-5 py-10">
+      <section className="px-5 py-10">
         <div className="mx-auto max-w-[760px] space-y-8">
           <DocCheck />
 
@@ -46,6 +44,7 @@ export function PlanExplorer() {
           )}
         </div>
       </section>
+      <HeadingPin section="plan-header" />
     </>
   );
 }

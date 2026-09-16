@@ -22,7 +22,7 @@ export function Footer() {
           <Link href="/universities" className="text-ash hover:text-frost">Университеты</Link>
         </nav>
       </div>
-      <div className="mx-auto mt-6 flex max-w-[1440px] flex-wrap items-center justify-between gap-3 text-[12px] text-ash">
+      <div className="mx-auto mt-6 flex max-w-[1440px] flex-wrap items-center justify-between gap-3 text-[12px] text-cloud-meta">
         <p className="max-w-xl">
           База: правила приёма 2026/27 (MUR, CIMEA, bando регионов). Ответы ИИ
           могут содержать ошибки — критичное проверяет эксперт.
