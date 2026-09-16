@@ -1,31 +1,33 @@
 import Link from "next/link";
 
+/**
+ * Apple footer: плоский, тёмный, типографический — без бумаги, без купола,
+ * без карточек. Рендерится на каждой странице, включая /universities (см.
+ * Header.tsx — то же решение и то же обоснование).
+ */
 export function Footer() {
   return (
-    // Парный к верхнему куполу переход (см. page.tsx): подвал — вторая и
-    // последняя настоящая смена поверхности на странице, и вход в него
-    // такой же дугой. Обводки здесь нет и не нужно: чернила на кремовом
-    // сами дают кромку, а линия цвета ink по краю ink-заливки невидима.
-    // Верхний отступ увеличен под глубину дуги — иначе она срезала бы
-    // первую строку подвала по краям.
-    <footer className="relative mt-auto overflow-hidden bg-ink px-5 pt-20 pb-10 text-cream/70 [border-radius:50%_50%_0_0/2.5rem_2.5rem_0_0] sm:pt-28 sm:[border-radius:50%_50%_0_0/5.5rem_5.5rem_0_0]">
-      {/* Та же бумага, что и на светлых секциях, но в screen: на чернилах
-         умножение не читается. Без неё футер — единственная поверхность
-         сайта, оставшаяся «цифровой». */}
-      <div aria-hidden className="paper-layer paper-layer-dark pointer-events-none absolute inset-0" />
-      <div className="relative mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 text-caption">
+    <footer className="mt-auto bg-carbon px-5 pt-10 pb-6 text-ash">
+      <div className="mx-auto flex max-w-[1440px] flex-wrap items-start justify-between gap-6 border-b border-smoke pb-8">
         <div>
-          <b className="text-cream uppercase">IItaly</b>
-          <span className="ml-2">ИИ-сервис поступления · Казахстан</span>
+          <b className="font-apple-text text-[14px] font-semibold text-frost">IItaly</b>
+          <p className="mt-1 max-w-xs text-[12px] leading-relaxed text-ash">
+            ИИ-сервис поступления в университеты Италии · Казахстан
+          </p>
         </div>
-        <p className="max-w-xl text-cream/50">
+        <nav className="grid grid-cols-2 gap-x-10 gap-y-2 text-[12px] sm:grid-cols-4">
+          <Link href="/plan" className="text-ash hover:text-frost">Мой план</Link>
+          <Link href="/prices" className="text-ash hover:text-frost">Цены</Link>
+          <Link href="/guides" className="text-ash hover:text-frost">Гайды и виза</Link>
+          <Link href="/universities" className="text-ash hover:text-frost">Университеты</Link>
+        </nav>
+      </div>
+      <div className="mx-auto mt-6 flex max-w-[1440px] flex-wrap items-center justify-between gap-3 text-[12px] text-ash">
+        <p className="max-w-xl">
           База: правила приёма 2026/27 (MUR, CIMEA, bando регионов). Ответы ИИ
           могут содержать ошибки — критичное проверяет эксперт.
         </p>
-        <Link
-          href="/privacy"
-          className="inline-block py-2.5 underline underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:text-cream"
-        >
+        <Link href="/privacy" className="underline underline-offset-4 hover:text-frost">
           Политика конфиденциальности
         </Link>
       </div>

@@ -1,7 +1,5 @@
-import { Title, Heading, Body, Caption } from "@/components/Typography";
-import { Reveal } from "@/components/motion/Reveal";
-import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
-import { COAST_BAND } from "@/data/illustrations";
+import { AppleHeading, AppleBody, AppleCaption } from "@/components/apple/Typography";
+import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 
 const STAGES = [
@@ -20,54 +18,47 @@ const STAGES = [
   {
     n: "3",
     title: "Маршрут и документы",
-    body: "Персональный чек-лист по стадиям — аттестат и CIMEA, Universitaly, стипендия DSU. Каждый документ проверяет ИИ до подачи, дедлайны — с напоминаниями в Telegram и на почту.",
+    body: "Персональный чек-лист по стадиям — аттестат и CIMEA, Universitaly, стипендия DSU. Каждый документ проверяет ИИ до подачи.",
     time: "CIMEA 30–60 дней · Universitaly май–июль · DSU до приезда",
   },
   {
     n: "4",
-    title: "Виза и вылет",
-    body: "Досье на визу D собираем заранее, подача не позднее чем за 15 дней до выезда. После прилёта — 8 рабочих дней на permesso di soggiorno, дальше кабинет ведёт первые шаги в Италии.",
+    title: "Виза, вылет и первые недели",
+    body: "Досье на визу D собираем заранее. После прилёта кабинет ведёт первые шаги в Италии: codice fiscale, kit giallo, Questura.",
     time: "рассмотрение визы до 90 дней",
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink px-5 py-18 sm:py-28">
-      {/* Кадр про то, куда прилетают, — в секции, которая заканчивается
-         вылетом. Привязан к ВЕРХНЕМУ краю: блок карточек непрозрачный и
-         занимает всю ширину колонки, поэтому снизу от слоя оставался
-         торчать случайный угол. Воздух здесь только справа от заголовка. */}
-      <IllustrationBackdrop
-        asset={COAST_BAND}
-        side="right"
-        className="-top-8 right-0 w-[96%] opacity-[0.22] sm:w-[min(940px,60%)] sm:opacity-[0.25]"
-      />
-      <div className="relative mx-auto max-w-[1200px]">
-        <Reveal variant="fade">
-          <Caption as="p">Как проходит работа с нами</Caption>
-          <Title as="h2" className="mt-3">
-            От вопроса до посадки
-            <br />
-            в самолёт
-          </Title>
-        </Reveal>
+    <section className="bg-white px-5 py-16 sm:py-24">
+      <div className="mx-auto max-w-[980px]">
+        <AppleCaption as="p" className="text-center">Как проходит работа с нами</AppleCaption>
+        <AppleHeading as="h2" className="mt-3 text-center text-[32px] sm:text-apple-heading">
+          От вопроса до посадки в самолёт
+        </AppleHeading>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border-2 border-ink bg-line sm:grid-cols-2 lg:grid-cols-4">
-          {STAGES.map((s, i) => (
-            <Reveal key={s.n} delay={Math.min(i * 0.06, 0.24)} amount={0.3} className="h-full">
-              <div className="relative flex h-full flex-col bg-paper p-6 sm:p-7">
-                <span className="font-display text-3xl font-bold text-red">{s.n}</span>
-                <Heading as="h3" className="mt-3 text-heading!">
-                  {s.title}
-                </Heading>
-                <Body as="p" className="mt-2 flex-1">
-                  {s.body}
-                </Body>
-                <p className="mt-4 text-xs font-bold text-sec uppercase">{s.time}</p>
-              </div>
-            </Reveal>
+        <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+          {STAGES.map((s) => (
+            <div key={s.n} className="border-t border-mist/30 pt-5">
+              <span className="font-apple-display text-apple-heading-sm font-semibold text-apple-blue">
+                {s.n}
+              </span>
+              <p className="mt-2 font-apple-text text-apple-subheading font-semibold text-carbon">
+                {s.title}
+              </p>
+              <AppleBody as="p" className="mt-1.5 text-apple-body-sm text-graphite">
+                {s.body}
+              </AppleBody>
+              <p className="mt-2 text-apple-caption text-ash uppercase">{s.time}</p>
+            </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <AppleButtonLink href="/guides" variant="ghost">
+            Смотреть гайды по визе
+          </AppleButtonLink>
         </div>
       </div>
     </section>

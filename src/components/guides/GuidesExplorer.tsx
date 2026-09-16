@@ -5,11 +5,8 @@ import { useRouter } from "next/navigation";
 import { GUIDES } from "@/data/guides";
 import { GuideDetail } from "./GuideDetail";
 import { VisaSection } from "./VisaSection";
-import { Accordion } from "@/components/Accordion";
-import { Button } from "@/components/Button";
-import { RouteRibbon } from "@/components/RouteRibbon";
-import { EditorialBackground } from "@/components/EditorialBackground";
-import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
+import { AppleButton } from "@/components/apple/Button";
+import { Illustration } from "@/components/illustration/Illustration";
 import { TUSCANY_HILLS } from "@/data/illustrations";
 import Link from "next/link";
 
@@ -17,14 +14,12 @@ import Link from "next/link";
  * Справочник как index + активная глава, а не пять одинаковых больших
  * карточек: на десктопе слева компактный sticky-индекс 01–08, справа
  * содержимое выбранной главы; на мобильном — обычный доступный accordion
- * (см. Accordion.tsx). Обе раскладки рендерят одно и то же тело главы
- * (renderBody), чтобы не дублировать контент в двух местах.
+ * (нативный <details>, не общий Accordion.tsx — тот же используется в
+ * личном кабинете и не входит в этот проход, см. отчёт по редизайну).
  *
  * Порядок глав — реальная хронология процесса (не порядок объявления в
  * data/guides.ts): легализация документов → признание аттестата → перевод
- * → расчёт ISEEU → виза → уже в Италии. Виза — отдельная, самая крупная
- * глава с собственными вложенными accordion (калькулятор/чек-лист) —
- * это функциональное вложение, а не декоративное дублирование паттерна.
+ * → расчёт ISEEU → виза → уже в Италии.
  */
 type Chapter =
   | { kind: "guide"; id: string; title: string; teaser: string; index: number }
@@ -89,54 +84,37 @@ export function GuidesExplorer() {
 
   return (
     <>
-      <section
-        className="relative overflow-hidden border-b-2 border-ink px-5 pt-10 pb-8 sm:pt-14"
-        style={{ backgroundColor: "var(--color-cream)" }}
-      >
-        <EditorialBackground variant="guides" grain />
-        {/* Спокойный кадр без достопримечательности: справочник про
-           апостиль, CIMEA и визу, туристический мотив здесь спорил бы с
-           содержанием. Слева — справа висит лента маршрута. */}
-        <IllustrationBackdrop
-          asset={TUSCANY_HILLS}
-          side="left"
-          className="-bottom-6 left-0 w-[72%] opacity-[0.2] sm:w-[min(560px,44%)] sm:opacity-[0.23]"
-        />
-        <RouteRibbon className="opacity-40" />
-        <div className="relative mx-auto max-w-[900px]">
-          <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">
-            Справочник · бесплатно
-          </p>
-          <h1 className="mt-2 font-display text-[9vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
-            Как пройти бюрократию
-          </h1>
-          <p className="mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
-            Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор
-            визы D. Где делать в Казахстане, сколько стоит и в каком порядке.
-            Всё бесплатно.
-          </p>
-          {/* Правила приёма меняются каждый цикл, и справочник — первое
-             место, где человек ищет актуальную сумму гарантии. Ссылка
-             стоит здесь, а не в подвале, чтобы он не читал прошлогоднее,
-             приняв его за нынешнее. */}
-          <p className="mt-4 text-sm text-ink-soft">
-            Правила 2026/27 изменились —{" "}
-            <Link
-              href="/changes-2026-27"
-              className="font-semibold text-ink underline underline-offset-4"
-            >
-              что именно и с какими датами
-            </Link>
-            .
-          </p>
+      <section className="grid grid-cols-1 bg-frost lg:grid-cols-2">
+        <div className="order-2 flex flex-col justify-center px-5 py-14 sm:py-20 lg:order-1 lg:px-16">
+          <div className="mx-auto max-w-md lg:mx-0">
+            <p className="text-apple-caption text-ash">Справочник · бесплатно</p>
+            <h1 className="mt-2 font-apple-display text-[32px] font-semibold text-carbon sm:text-apple-heading">
+              Как пройти бюрократию
+            </h1>
+            <p className="mt-5 text-apple-body text-graphite">
+              Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор
+              визы D. Где делать в Казахстане, сколько стоит и в каком
+              порядке. Всё бесплатно.
+            </p>
+            <p className="mt-4 text-apple-body-sm text-graphite">
+              Правила 2026/27 изменились —{" "}
+              <Link href="/changes-2026-27" className="font-semibold text-link-blue">
+                что именно и с какими датами
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+        <div className="order-1 lg:order-2">
+          <Illustration asset={TUSCANY_HILLS} className="h-full object-cover" />
         </div>
       </section>
 
-      <section className="px-5 py-10 sm:py-14">
+      <section className="bg-white px-5 py-10 sm:py-14">
         {/* Десктоп: sticky-индекс + активная глава. */}
         <div className="mx-auto hidden max-w-[1100px] gap-12 lg:grid lg:grid-cols-[0.85fr_1.15fr]">
-          <nav aria-label="Главы справочника" className="lg:sticky lg:top-24 lg:h-fit">
-            <ol className="space-y-0.5 border-t-2 border-ink">
+          <nav aria-label="Главы справочника" className="lg:sticky lg:top-16 lg:h-fit">
+            <ol className="space-y-0.5 border-t border-mist/30">
               {CHAPTERS.map((c, i) => {
                 const isActive = c.id === activeId;
                 return (
@@ -145,14 +123,14 @@ export function GuidesExplorer() {
                       type="button"
                       onClick={() => setActiveId(c.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`flex w-full items-baseline gap-3 border-b border-line py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red ${
-                        isActive ? "text-ink" : "text-ink-soft hover:text-ink"
+                      className={`flex w-full items-baseline gap-3 border-b border-mist/20 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue ${
+                        isActive ? "text-carbon" : "text-ash hover:text-carbon"
                       }`}
                     >
-                      <span className={`font-mono text-xs tabular-nums ${isActive ? "text-red" : "text-sec-deep"}`}>
+                      <span className={`text-apple-caption tabular-nums ${isActive ? "text-apple-blue" : "text-ash"}`}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className={`text-sm ${isActive ? "font-semibold" : "font-medium"}`}>{c.title}</span>
+                      <span className={`text-apple-body-sm ${isActive ? "font-semibold" : "font-normal"}`}>{c.title}</span>
                     </button>
                   </li>
                 );
@@ -161,58 +139,45 @@ export function GuidesExplorer() {
           </nav>
 
           <div key={active.id} className="relative min-w-0">
-            {/* Крупный полупрозрачный номер активной главы — тот же приём
-               watermark'а, что в data-постере, только привязан к выбору.
-               Сидит в воздухе НАД главой (в паддинге секции): ниже он
-               пересекал бы строки текста — номер бледный, но глиф всё
-               равно читался как грязь поверх абзацев. */}
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -top-[4.75rem] right-0 font-display text-[6.5rem] leading-none font-bold text-ink/[0.06] select-none tabular-nums"
-            >
-              {String(activeIndex + 1).padStart(2, "0")}
-            </span>
-            <p className="relative text-xs font-semibold tracking-[0.1em] text-sec uppercase">
+            <p className="text-apple-caption text-ash">
               {String(activeIndex + 1).padStart(2, "0")} · {active.title}
             </p>
-            <p className="relative mt-2 max-w-[60ch] text-base text-ink-soft">{active.teaser}</p>
-            <div className="relative mt-6">
+            <p className="mt-2 max-w-[60ch] text-apple-body-sm text-graphite">{active.teaser}</p>
+            <div className="mt-6">
               <ChapterBody chapter={active} />
             </div>
           </div>
         </div>
 
-        {/* Мобильный/планшет: обычный доступный accordion. */}
-        <div className="mx-auto max-w-[900px] space-y-3 lg:hidden">
+        {/* Мобильный/планшет: нативный accordion. */}
+        <div className="mx-auto max-w-[900px] space-y-2 lg:hidden">
           {CHAPTERS.map((c, i) => (
-            <Accordion
-              key={c.id}
-              summary={
-                <div className="flex items-baseline gap-3">
-                  <span className="font-mono text-xs text-sec-deep tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <b className="block text-base font-semibold">{c.title}</b>
-                    <span className="mt-1 block text-sm text-ink-soft">{c.teaser}</span>
-                  </div>
+            <details key={c.id} className="group rounded-apple-card border border-mist/30">
+              <summary className="flex cursor-pointer list-none items-baseline gap-3 px-4 py-4 text-left marker:content-none [&::-webkit-details-marker]:hidden">
+                <span className="text-apple-caption text-ash tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <b className="block text-apple-body-sm font-semibold text-carbon">{c.title}</b>
+                  <span className="mt-1 block text-apple-caption text-ash">{c.teaser}</span>
                 </div>
-              }
-            >
-              <ChapterBody chapter={c} />
-            </Accordion>
+              </summary>
+              <div className="border-t border-mist/20 px-4 pt-4 pb-5">
+                <ChapterBody chapter={c} />
+              </div>
+            </details>
           ))}
         </div>
 
-        <div className="mx-auto mt-10 flex max-w-[900px] flex-col items-start justify-between gap-4 rounded-lg border-2 border-ink bg-ink p-5 text-cream sm:flex-row sm:items-center lg:max-w-[1100px]">
+        <div className="mx-auto mt-10 flex max-w-[900px] flex-col items-start justify-between gap-4 rounded-apple-card bg-carbon p-5 text-white sm:flex-row sm:items-center lg:max-w-[1100px]">
           <div>
             <b className="block">Запутался в порядке шагов?</b>
-            <span className="text-sm text-cream/70">
+            <span className="text-apple-body-sm text-ash">
               Опиши свою ситуацию — ИИ соберёт всё в персональный план и
               проверит документы.
             </span>
           </div>
-          <Button type="button" variant="primary" onClick={() => router.push("/plan")} className="shrink-0">
+          <AppleButton type="button" variant="filled" onClick={() => router.push("/plan")} className="shrink-0">
             Составить план
-          </Button>
+          </AppleButton>
         </div>
       </section>
     </>
