@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
-import { checkDocument, type DocCheckResult } from "@/lib/checkDocument";
+import { checkDocument, DocCheckError, type DocCheckResult } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
 import { Vespa } from "@/components/Vespa";
@@ -56,13 +56,23 @@ export function DocCheck() {
       setState({ step: "done", file, payload, result });
       track("doc_check_done", { verdict: result.verdict });
     } catch (e) {
-      const message =
-        e instanceof Error && e.message === "no-backend"
-          ? "Проверка заработает после подключения сервера."
-          : e instanceof Error && e.message === "fail"
-            ? "Не удалось проверить документ. Попробуй ещё раз через минуту."
-            : "Нет связи с сервером. Проверь интернет и попробуй снова.";
-      setState({ step: "error", message });
+      /* Текст ошибки готовит checkDocument — там же, где известно, что
+         именно случилось. Раньше он собирался здесь по e.message, и
+         любой содержательный ответ сервера («PDF слишком большой»,
+         «лимит 12 файлов за 5 минут», «проверка временно недоступна»)
+         подменялся советом проверить интернет. Человек чинил связь,
+         которая работала, а настоящая причина до него не доходила. */
+      const err = e instanceof DocCheckError ? e : null;
+      /* В аналитику уходит только вид сбоя и код ответа — по ним видно,
+         что именно ломается в проде, и для этого не нужны ни имя файла,
+         ни его содержимое. */
+      track("doc_check_error", { kind: err?.kind ?? "unknown", status: err?.status ?? 0 });
+      setState({
+        step: "error",
+        message: err
+          ? err.message
+          : "Не удалось проверить документ. Попробуй ещё раз через минуту.",
+      });
     }
   }
 
