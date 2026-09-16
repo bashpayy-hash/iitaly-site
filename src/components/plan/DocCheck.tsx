@@ -6,7 +6,7 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, DocCheckError, type DocCheckResult } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
-import { Vespa } from "@/components/Vespa";
+import { VespaRide } from "./VespaRide";
 import { VespaReveal } from "@/components/VespaReveal";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
@@ -17,8 +17,14 @@ const LABEL: Record<string, string> = {
   unreadable: "Плохо видно",
 };
 
+/* reading — отдельный шаг, а не мгновение внутри accept(). Чтение файла
+   не бесплатное: FileReader плюс перерисовка фото в canvas до 1600px по
+   длинной стороне занимают на телефоне заметные секунды, и всё это время
+   раньше не происходило ровно ничего — человек нажал «выбрать документ» и
+   смотрел в неподвижный экран. Веспа едет и здесь тоже. */
 type State =
   | { step: "idle" }
+  | { step: "reading" }
   | { step: "ready"; file: File; payload: DocPayload }
   | { step: "checking"; file: File; payload: DocPayload }
   | { step: "done"; file: File; payload: DocPayload; result: DocCheckResult }
@@ -32,6 +38,7 @@ export function DocCheck() {
 
   async function accept(file: File | null | undefined) {
     if (!file) return;
+    setState({ step: "reading" });
     const res = await preparePayload(file);
     if ("error" in res) {
       setState({ step: "error", message: res.error });
@@ -114,7 +121,7 @@ export function DocCheck() {
         ))}
       </div>
 
-      {state.step === "idle" || state.step === "error" ? (
+      {state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
           className={`mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 border border-dashed px-6 py-8 text-center transition-colors ${
             dragOver ? "border-crimson bg-crimson/5" : "border-white/20 hover:bg-white/5"
@@ -166,6 +173,7 @@ export function DocCheck() {
                 size="sm"
                 onClick={run}
                 disabled={state.step === "checking"}
+                className={state.step === "checking" ? "vespa-wait-pulse" : undefined}
               >
                 {state.step === "checking"
                   ? "Проверяю…"
@@ -187,11 +195,14 @@ export function DocCheck() {
             {state.message}
           </div>
         )}
-        {state.step === "checking" && (
-          <div className="flex items-center gap-3 border border-white/15 px-4 py-3 text-apple-body-sm text-cloud-body">
-            <Vespa pose="documents" className="h-9 w-auto shrink-0" />
-            Сверяю с правилами DSU и ISU — это занимает 10–20 секунд
-          </div>
+        {(state.step === "checking" || state.step === "reading") && (
+          <VespaRide
+            text={
+              state.step === "reading"
+                ? "Читаю файл — сжимаю фото, чтобы оно доехало"
+                : "Сверяю с правилами DSU и ISU — это занимает 10–20 секунд"
+            }
+          />
         )}
         {state.step === "done" && (
           <DocResult result={state.result} onCta={() => router.push("/prices")} />

@@ -14,6 +14,7 @@ import { COAST_TOWN, VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
 import { CitySketchbook } from "@/components/sketchbook/CitySketchbook";
+import { CityMatch } from "./CityMatch";
 import { Body, Caption, Title } from "@/components/Typography";
 import { track } from "@/lib/track";
 
@@ -35,6 +36,16 @@ export function UniversitiesExplorer() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
 
+  /* Подбор города. Три куска состояния, и каждый нужен отдельно:
+     matchOpen  — открыта ли панель;
+     matchCities — что подсвечивать на карте. Это НЕ фильтр: карточки вузов
+                  и строка результата его не видят, из выборки не исчезает
+                  ни один город. Гаснут только точки — и гаснут обратимо;
+     jumpTo     — запрос скетчбуку открыться на нужном развороте. */
+  const [matchOpen, setMatchOpen] = useState(false);
+  const [matchedByQuiz, setMatchedByQuiz] = useState<ReadonlySet<CityId>>(EMPTY_CITIES);
+  const [jumpTo, setJumpTo] = useState<{ plate: number; token: number } | null>(null);
+
   const filteredUnis = useMemo(
     () => UNIS.filter((u) => matchesFilters(u, typeFilter, engOnly)),
     [typeFilter, engOnly],
@@ -50,7 +61,16 @@ export function UniversitiesExplorer() {
     () => new Set(filteredUnis.map((u) => u.city)),
     [filteredUnis],
   );
-  const matchedCities = filtersActive ? filteredCities : EMPTY_CITIES;
+  /* Подсветка от подбора важнее подсветки от фильтров: человек только что
+     ответил на четыре вопроса, и результат этих ответов должен быть виден,
+     даже если до опросника стоял фильтр «только технические». Фильтры при
+     этом продолжают работать как работали — они режут список вузов, а не
+     точки. */
+  const matchedCities = matchedByQuiz.size > 0
+    ? matchedByQuiz
+    : filtersActive
+      ? filteredCities
+      : EMPTY_CITIES;
 
   const cityUnis = useMemo(
     () => (activeCity ? filteredUnis.filter((u) => u.city === activeCity) : []),
@@ -129,6 +149,31 @@ export function UniversitiesExplorer() {
               <p className="mt-3 text-center text-xs text-ink-soft">
                 Крупные точки — города с несколькими университетами
               </p>
+              {/* Тихая кнопка под подписью карты, не поверх неё: подбор —
+                 предложение, а не главное действие страницы. Рядом с ней
+                 живёт сброс подсветки, и появляется он только тогда, когда
+                 подсвечивать есть что. */}
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMatchOpen(true);
+                    track("city_match_open");
+                  }}
+                  className="rounded-pill border-2 border-ink px-4 py-2 text-xs font-semibold transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                >
+                  Подобрать город под ритм
+                </button>
+                {matchedByQuiz.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setMatchedByQuiz(EMPTY_CITIES)}
+                    className="rounded-pill px-3 py-2 text-xs text-ink-soft underline underline-offset-4 hover:text-ink"
+                  >
+                    Показать все города
+                  </button>
+                )}
+              </div>
             </div>
 
             <div>
@@ -187,10 +232,24 @@ export function UniversitiesExplorer() {
             интересно поступающему.
           </Body>
           <div className="mt-8">
-            <CitySketchbook />
+            <CitySketchbook jumpTo={jumpTo} />
           </div>
         </div>
       </section>
+
+      <CityMatch
+        open={matchOpen}
+        onClose={() => setMatchOpen(false)}
+        onPick={(city, plate) => {
+          /* Порядок важен. Сначала подсветка и выбор города — тогда панель
+             города уже отрисована к моменту, когда закрывается лист. */
+          setMatchedByQuiz(new Set([city]));
+          setActiveCity(city);
+          if (plate !== null) setJumpTo({ plate, token: Date.now() });
+          setMatchOpen(false);
+          track("city_match_pick", { city });
+        }}
+      />
 
       <CompareBar
         compareIds={compareIds}

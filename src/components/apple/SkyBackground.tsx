@@ -50,7 +50,17 @@ export function SkyBackground({ scrim = 0.4 }: { scrim?: number }) {
   }, []);
 
   return (
-    <div aria-hidden className="fixed inset-0 z-0 overflow-hidden bg-black">
+    /* pointer-events-none обязателен, а не украшение. Слой fixed inset-0
+       z-0 стоит в том же контексте наложения, что и содержимое страницы,
+       и в DOM идёт после него — значит при попадании курсора выигрывает
+       он, даже если визуально лежит позади. Без этой строки на /plan,
+       /prices и /guides не нажимается ни одна кнопка внутри страницы:
+       проверка документов не запускается вообще. Шапка работала только
+       потому, что у неё z-50.
+
+       Проверено не на глаз: document.elementFromPoint в центре кнопки
+       «Проверить документ» возвращал скрим неба, а не кнопку. */
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-black">
       <div ref={imgRef} className="absolute inset-0">
         <picture className="block h-full w-full">
           <source srcSet="/sky/night-clouds-900.webp" media="(max-width: 768px)" type="image/webp" />

@@ -489,3 +489,106 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   opacity: 0.05;
 }
+
+/* ── Полоса ожидания на /plan: веспа едет, пока идёт проверка ──────────
+   Разметка и обоснование слоёв — в components/plan/VespaRide.tsx. */
+
+/* Дорога: одна линия под колёсами, чтобы поездка была поездкой, а не
+   дрейфом картинки в пустоте. */
+.vespa-lane::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 3px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Проезд. Проценты у translateX считаются от ширины САМОГО элемента, и
+   именно поэтому едет дорожка во всю ширину полосы, а не веспа: сдвиг на
+   100% дорожки равен ширине полосы, сдвиг на 100% веспы — сорока
+   пикселям. Начинаем чуть левее края и заканчиваем чуть правее, чтобы
+   въезд и выезд были за кадром, а не появлением из ниоткуда. */
+.vespa-lane-track {
+  animation: vespa-ride 4.6s ease-in-out infinite;
+}
+@keyframes vespa-ride {
+  from {
+    transform: translateX(-16%);
+  }
+  to {
+    transform: translateX(106%);
+  }
+}
+
+/* Покачивание кузова. 2px — предел: на трёх уже видно, что картинка
+   прыгает, а не едет по неровной дороге. */
+.vespa-bob {
+  animation: vespa-bob 0.62s ease-in-out infinite alternate;
+}
+@keyframes vespa-bob {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(calc(-50% - 2px));
+  }
+}
+
+/* Пыль: ровно три точки позади заднего колеса, расходятся и гаснут.
+   Не частицы и не спрайт — три span'а и один keyframe на всех. */
+.vespa-dust {
+  position: absolute;
+  bottom: 2px;
+  left: -2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  animation: vespa-dust 0.9s linear infinite;
+}
+.vespa-dust:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.vespa-dust:nth-child(3) {
+  animation-delay: 0.6s;
+}
+@keyframes vespa-dust {
+  from {
+    opacity: 0.5;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-14px, -5px) scale(0.4);
+  }
+}
+
+/* Кнопка «Проверяю…» дышит прозрачностью. Спиннера нет намеренно: рядом
+   уже едет веспа, и два индикатора одного и того же ожидания спорят. */
+.vespa-wait-pulse {
+  animation: vespa-wait-pulse 1.5s ease-in-out infinite;
+}
+@keyframes vespa-wait-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Без движения остаётся один текст: ни проезда, ни покачивания, ни пыли,
+   ни дороги — полоса под строкой просто исчезает, а не стоит пустой. */
+@media (prefers-reduced-motion: reduce) {
+  .vespa-lane {
+    display: none;
+  }
+  .vespa-lane-track,
+  .vespa-bob,
+  .vespa-dust,
+  .vespa-wait-pulse {
+    animation: none;
+  }
+}

@@ -45,7 +45,21 @@ const M = PLATES.length;
 type Dir = "next" | "prev";
 type Turn = { dir: Dir; from: number; to: number };
 
-export function CitySketchbook() {
+/**
+ * jumpTo — единственная внешняя ручка книги. Ею пользуется подбор города:
+ * выбрал Бари — книга открывается на побережье.
+ *
+ * Прыжок делается СМЕНОЙ idx, без анимации перелистывания. Перелистывать
+ * по одному развороту через пол-книги долго и укачивает, а curl-анимация
+ * рассчитана на соседние страницы: она рисует переход from→to одним
+ * листом, и «через четыре» в ней означает не четыре листа, а один
+ * неправильный.
+ *
+ * Поле token, а не просто номер: выбрать один и тот же город дважды —
+ * законно, и во второй раз книга обязана открыться снова. По голому
+ * числу эффект бы не сработал, значение-то не изменилось.
+ */
+export function CitySketchbook({ jumpTo }: { jumpTo?: { plate: number; token: number } | null } = {}) {
   const reducedMotion = useReducedMotion();
   const [idx, setIdx] = useState(0);
   const [turn, setTurn] = useState<Turn | null>(null);
@@ -83,6 +97,16 @@ export function CitySketchbook() {
   useEffect(() => {
     idxRef.current = idx;
   }, [idx]);
+
+  /* Внешний прыжок. Текущий перелистывающий лист снимается: если запрос
+     пришёл в середине анимации, оставленный turn дорисовал бы переход к
+     странице, с которой мы уже ушли. */
+  useEffect(() => {
+    if (!jumpTo) return;
+    const to = Math.max(0, Math.min(M - 1, Math.trunc(jumpTo.plate)));
+    setTurn(null);
+    setIdx(to);
+  }, [jumpTo]);
   useEffect(() => {
     turnRef.current = turn;
   }, [turn]);
