@@ -10,6 +10,7 @@ import { MaskedLines } from "@/components/motion/MaskedLines";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { track } from "@/lib/track";
+import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 
 /**
  * Hero — единственная секция с motion-последовательностью на маунте, а
@@ -93,7 +94,8 @@ export function Hero() {
           </motion.div>
           <motion.div {...fadeUp(reducedMotion, 0.58)}>
             <Body as="p" className="mt-3 max-w-md">
-              Один платёж 25&nbsp;000&nbsp;₸ — без агентских наценок и подписок.
+              Один платёж {priceLabel(PRICE_MAIN)} — без агентских наценок и
+              подписок.
             </Body>
           </motion.div>
           <motion.div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4" {...fadeUp(reducedMotion, 0.66)}>
@@ -141,7 +143,7 @@ export function Hero() {
               <p className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
                 Вместо агентства
               </p>
-              <p className="mt-1.5 font-display text-3xl font-bold">25 000 ₸</p>
+              <p className="mt-1.5 font-display text-3xl font-bold">{priceLabel(PRICE_MAIN)}</p>
               <p className="mt-1 text-sm text-cream/70">
                 агентства в Казахстане обычно берут 650 000 – 1 000 000 ₸
               </p>

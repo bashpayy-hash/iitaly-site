@@ -2,6 +2,7 @@ import { Title, Heading, Body, Caption } from "@/components/Typography";
 import { Reveal } from "@/components/motion/Reveal";
 import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
 import { COAST_BAND } from "@/data/illustrations";
+import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 
 const STAGES = [
   {
@@ -12,7 +13,7 @@ const STAGES = [
   },
   {
     n: "2",
-    title: "Оплата 25 000 ₸",
+    title: `Оплата ${priceLabel(PRICE_MAIN)}`,
     body: "Один платёж, без подписки. Личный кабинет открывается сразу — код доступа приходит в WhatsApp в течение часа.",
     time: "сразу после оплаты",
   },
