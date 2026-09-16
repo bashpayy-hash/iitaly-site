@@ -82,8 +82,8 @@ export function BandNight() {
           <AppleEyebrow as="p" className="text-ash-dark">
             Виза и первые недели
           </AppleEyebrow>
-          <h2 className="mt-4 font-whisper text-[34px] leading-[1] font-normal text-white sm:text-[52px]">
-            Виза — <span className="italic">не финал</span>
+          <h2 className="mt-4 font-apple-display font-light text-[34px] leading-[1] text-white sm:text-[52px]">
+            Виза — не финал
           </h2>
           <p className="mt-5 max-w-[26rem] font-apple-text text-apple-body text-ash-dark">
             Досье на визу D собираем заранее, а после прилёта кабинет ведёт

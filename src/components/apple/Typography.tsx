@@ -1,9 +1,17 @@
 import type { ElementType, ComponentPropsWithoutRef, ReactNode } from "react";
 
 /**
- * Типографика нового (Apple) хрома — параллельно старой Typography.tsx,
- * которую по-прежнему использует /universities. Размеры — фиксированные
- * apple-токены из globals.css (закон DESIGN.md), не clamp().
+ * Типографика Apple-хрома — параллельно старой Typography.tsx, которую
+ * по-прежнему использует /universities. Размеры — фиксированные
+ * apple-токены из globals.css (закон DESIGN.md), не clamp(); исключение
+ * одно и оговорено у роли whisper.
+ *
+ * Гарнитура на весь хром одна: эпловский стек (SF Pro, практический
+ * фолбэк Inter Tight). Подключённые было антиква Playfair Display,
+ * моноширинная Roboto Mono и рукописная Caveat сняты целиком —
+ * иерархия строится кеглем, весом и трекингом внутри одного шрифта.
+ * Onest и Space Mono в проекте остаются, но они принадлежат старой
+ * системе и живут только на /universities, /portal и в чате.
  */
 
 type Role =
@@ -19,18 +27,26 @@ type Role =
   | "caption";
 
 const roleClass: Record<Role, string> = {
-  // Антиква 300 на 44→96px. Единственная роль с clamp() в этом наборе:
-  // остальные ступени — фиксированные px по закону, но заголовок первого
-  // экрана обязан дышать от 390px до 1990px, а ступенями это даёт три
-  // брейкпоинта вместо одной строки. leading-[0.9] — из задания: тонкая
-  // антиква на такой высоте строки складывается в плотный блок, а не в
-  // лесенку. Курсив одного слова ставится на месте, не здесь.
+  // Крупный заголовок экрана и полос. Здесь стояла антиква Playfair —
+  // убрана вместе с моно и рукописной: в хроме один голос, эпловский
+  // sans, и иерархия строится кеглем и весом, а не сменой гарнитуры.
+  //
+  // Единственная роль с clamp() в наборе: остальные ступени —
+  // фиксированные px по закону, но заголовок первого экрана обязан
+  // дышать от 390px до 1990px, а ступенями это три брейкпоинта вместо
+  // одной строки. Вес 300 и отрицательный трекинг делают то, ради чего
+  // бралась тонкая антиква: на 44→96px лёгкий grotesk читается как выдох,
+  // а не как плакат. leading-[0.95], а не 0.9 — у sans-заголовка выносные
+  // короче, и при 0.9 строки начинали цеплять друг друга.
   whisper:
-    "font-whisper font-normal text-carbon [font-size:clamp(2.75rem,1.6rem+4.6vw,6rem)] leading-[0.9] tracking-[-0.01em]",
+    "font-apple-display font-light text-carbon [font-size:clamp(2.5rem,1.5rem+4.2vw,5.5rem)] leading-[0.95] tracking-[-0.025em]",
   // Служебная подпись над заголовком. Капслок с широким трекингом —
   // единственное место на сайте, где капслок разрешён: это метка, а не
-  // текст, и читать её построчно никто не будет.
-  eyebrow: "font-mono-eyebrow text-[11px] leading-[1.4] tracking-[0.14em] text-ash uppercase sm:text-[12px]",
+  // текст, и читать её построчно никто не будет. Раньше набиралась
+  // моноширинной Roboto Mono; теперь тот же sans, а «технический» вид
+  // даёт трекинг и кегль.
+  eyebrow:
+    "font-apple-text text-[11px] leading-[1.4] font-medium tracking-[0.14em] text-ash uppercase sm:text-[12px]",
   display: "font-apple-display text-apple-display font-semibold text-carbon",
   headingLg: "font-apple-display text-apple-heading-lg font-semibold text-carbon",
   heading: "font-apple-display text-apple-heading font-semibold text-carbon",
@@ -74,11 +90,11 @@ function make<R extends Role>(role: R) {
   };
 }
 
-/** Антиква 300, 44→96px — заголовок первого экрана и двух полос. Больше нигде. */
+/** Лёгкий sans 40→88px — заголовок первого экрана, полос и тёмных секций. */
 export const AppleWhisper = make("whisper");
-/** Моно 11–12px капслоком — надзаголовок-метка. */
+/** 11–12px капслоком с широким трекингом — надзаголовок-метка. */
 export const AppleEyebrow = make("eyebrow");
-/** 56px sans — заголовок там, где антиква была бы слишком мягкой (внутренние страницы). */
+/** 56px, полужирный — заголовок там, где нужен вес, а не лёгкость. */
 export const AppleDisplay = make("display");
 /** 44px — заголовок секции первого уровня. */
 export const AppleHeadingLg = make("headingLg");

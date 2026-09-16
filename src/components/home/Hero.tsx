@@ -52,7 +52,7 @@ export function Hero() {
         {/* Курсив на одном слове — приём Origin: не выделение смысла, а
            смена дыхания внутри строки. */}
         <AppleWhisper as="h1" className="mt-5">
-          Поступать <span className="italic">в Италию</span>
+          Поступать в Италию
         </AppleWhisper>
 
         <p className="mx-auto mt-6 max-w-[34rem] font-apple-text text-apple-body text-[#3a3a3a] sm:text-apple-subheading">
@@ -112,18 +112,10 @@ export function Hero() {
         </p>
 
         {/* Цена и возврат — один раз, мелко, как сноска. Не плакат. */}
-        <p className="mt-10 font-mono-eyebrow text-[11px] tracking-[0.12em] text-[#4a3f3b] uppercase">
+        <p className="mt-10 font-apple-text text-[11px] tracking-[0.12em] text-[#4a3f3b] uppercase">
           {priceLabel(PRICE_MAIN)} · возврат 7 дней
         </p>
 
-        {/* Единственный рукописный акцент на сайте — и он действительно
-           один: сначала здесь стояла целая строка «твоё досье начинается
-           здесь», но рукопись длиной в предложение перестаёт быть
-           акцентом и превращается во второй подзаголовок. Осталось то,
-           что несёт мысль само по себе. */}
-        <p className="mt-7 font-hand text-[32px] leading-none text-[#5a4038] sm:text-[38px]">
-          не агентство
-        </p>
       </div>
 
       {/* Персонаж выглядывает из золотого пятна у левого края неба.

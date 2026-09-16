@@ -89,8 +89,8 @@ export function GuidesExplorer() {
         <div className="order-2 flex flex-col justify-center px-5 py-14 sm:py-20 lg:order-1 lg:px-16">
           <div className="mx-auto max-w-md lg:mx-0">
             <AppleEyebrow as="p">Справочник · бесплатно</AppleEyebrow>
-            <h1 className="mt-4 font-whisper text-[38px] leading-[0.95] font-normal text-carbon sm:text-[52px]">
-              Как пройти <span className="italic">бюрократию</span>
+            <h1 className="mt-4 font-apple-display font-light text-[38px] leading-[0.95] text-carbon sm:text-[52px]">
+              Как пройти бюрократию
             </h1>
             <p className="mt-5 text-apple-body text-graphite">
               Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор
@@ -176,7 +176,7 @@ export function GuidesExplorer() {
       <section className="bg-obsidian px-5 py-14 sm:py-20">
         <div className="mx-auto flex max-w-[1100px] flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div>
-            <h2 className="font-whisper text-[28px] leading-[1.1] font-normal text-white sm:text-[38px]">
+            <h2 className="font-apple-display font-light text-[28px] leading-[1.1] text-white sm:text-[38px]">
               Запутался в порядке шагов?
             </h2>
             <p className="mt-3 max-w-[32rem] font-apple-text text-apple-body-sm text-ash-dark">

@@ -40,7 +40,7 @@ export function Funnel() {
           <AppleEyebrow as="p" className="text-ash-dark">
             Как это устроено
           </AppleEyebrow>
-          <h2 className="mt-4 font-whisper text-[34px] leading-[1.05] font-normal text-white sm:text-[52px]">
+          <h2 className="mt-4 font-apple-display font-light text-[34px] leading-[1.05] text-white sm:text-[52px]">
             От вопроса до посадки в самолёт
           </h2>
         </div>
@@ -65,7 +65,7 @@ export function Funnel() {
                 }`}
               />
               <span
-                className={`font-mono-eyebrow text-[12px] tracking-[0.14em] ${
+                className={`font-apple-text text-[12px] tracking-[0.14em] ${
                   i === 0 ? "text-rosso" : "text-ash-dark"
                 }`}
               >

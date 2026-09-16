@@ -186,26 +186,6 @@
   --font-apple-display: "SF Pro Display", var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-apple-text: "SF Pro Text", var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  /* Три голоса Origin. Sans выше — рабочий, он несёт весь интерфейс.
-
-     whisper — Playfair Display 300. Только h1 первого экрана и заголовки
-     двух иллюстративных полос: тонкая антиква на 72–96px работает как
-     выдох, но на 17px-абзаце становится нечитаемой на дешёвом Android.
-     Поэтому она нигде, кроме крупного кегля, и не применяется.
-
-     mono — Roboto Mono 11–12px капслоком в надзаголовках и номерах шагов.
-     В проекте уже есть Space Mono (старая система, /universities), но у
-     него характерные «слэбовые» окончания: на 11px капслоком он читается
-     как акцент, а надзаголовок должен быть служебной подписью.
-
-     hand — Caveat. Ровно одно слово на главной («досье» в первом экране).
-     Целая гарнитура ради одного слова — сознательная плата: рукописный
-     акцент это единственное место, где у страницы есть голос от руки, а
-     подделывать его курсивом антиквы значит не сделать его вовсе. */
-  --font-whisper: var(--font-playfair), Georgia, "Times New Roman", serif;
-  --font-mono-eyebrow: var(--font-roboto-mono), ui-monospace, "SF Mono", monospace;
-  --font-hand: var(--font-caveat), "Segoe Script", cursive;
-
   /* Именованная шкала из DESIGN(Apple).md — фиксированные px, не clamp():
      "закон" даёт точные размеры, а не диапазон. На узких экранах крупные
      display/heading-lg дополнительно уменьшены на уровне компонентов
