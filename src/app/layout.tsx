@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Onest, Space_Mono, Inter_Tight } from "next/font/google";
+import { Onest, Space_Mono, Inter_Tight, Playfair_Display, Roboto_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
@@ -36,6 +36,45 @@ const spaceMono = Space_Mono({
 const interTight = Inter_Tight({
   variable: "--font-inter-tight",
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  display: "swap",
+});
+
+// Три голоса Origin. Каждый взят под конкретную роль и нигде больше — см.
+// комментарии у --font-whisper/--font-mono-eyebrow/--font-hand в globals.css.
+//
+// Про вес файлов. Аудитория сайта — дешёвые Android на медленном
+// региональном интернете, и три новые гарнитуры это не мелочь. Поэтому
+// здесь запрошен минимум начертаний, какой позволяет задача: у антиквы
+// ровно 300 (прямое + курсив для одного слова в h1), у моно 400, у
+// рукописной 400. Никаких 400/500/600 «про запас» — недостающий вес
+// браузер не подставит сам, а значит лишний файл никогда не пригодится.
+// Вес 400, а не 300 из задания: у Playfair Display начертания 300 не
+// существует — её диапазон начинается с 400 (проверено, сборка на "300"
+// падает с ошибкой типов от next/font). 400 — её самое лёгкое начертание,
+// и на 72–96px высококонтрастная антиква с тонкими соединительными
+// штрихами даёт ровно тот «шёпот», ради которого 300 и просили. Ставить
+// вместо неё Cormorant Garamond, у которой 300 есть, я не стал: в задании
+// названа конкретная гарнитура, и менять её ради номера веса — потерять
+// больше, чем приобрести.
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -76,7 +115,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ru"
-      className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} h-full antialiased`}
+      className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} ${playfair.variable} ${robotoMono.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         <MotionProvider>

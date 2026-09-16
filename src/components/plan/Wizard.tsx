@@ -6,6 +6,7 @@ import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan, situationFromAnswers } from "@/lib/planBuilder";
 import { AppleButton } from "@/components/apple/Button";
+import { Applicant } from "@/components/character/Applicant";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -79,7 +80,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
       <div className="flex items-center gap-3">
         <div className="h-1 flex-1 overflow-hidden rounded-apple-pill bg-pebble">
           <div
-            className="h-full origin-left rounded-apple-pill bg-apple-blue transition-transform duration-300 ease-out motion-reduce:transition-none"
+            className="h-full origin-left rounded-apple-pill bg-rosso transition-transform duration-300 ease-out motion-reduce:transition-none"
             style={{ transform: `scaleX(${progress})` }}
           />
         </div>
@@ -93,7 +94,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
           <>
             {preview && (
               <div className="mb-6 rounded-apple-card border border-mist/30 bg-frost p-4">
-                <p className="text-apple-caption font-semibold text-apple-blue uppercase">
+                <p className="text-apple-caption font-semibold text-rosso uppercase">
                   Уже готово по твоим ответам
                 </p>
                 <p className="mt-2 text-apple-body-sm font-semibold text-carbon">{preview.steps[0]?.t}</p>
@@ -129,11 +130,11 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
                   setPhone(e.target.value);
                   setPhoneError(false);
                 }}
-                className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue"
+                className="w-full rounded-apple-card border border-mist/40 bg-frost px-4 py-3 text-apple-body-sm text-carbon outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
               />
             </label>
             {phoneError && (
-              <p role="alert" className="mt-1.5 text-apple-caption text-apple-blue">
+              <p role="alert" className="mt-1.5 text-apple-caption text-rosso">
                 Проверь номер телефона.
               </p>
             )}
@@ -157,7 +158,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
               Оставляя номер, ты соглашаешься, что мы напишем по поводу
               поступления. Рассылок и передачи третьим лицам не будет,
               отписаться можно в любой момент.{" "}
-              <a href="/privacy" className="font-semibold text-link-blue">
+              <a href="/privacy" className="font-semibold text-rosso">
                 Как мы работаем с данными
               </a>
               . Если тебе меньше 18, заполняй вместе с родителем.
@@ -169,6 +170,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
             question={WIZ[step]}
             value={answers[WIZ[step].id]}
             onChoose={(v) => choose(WIZ[step].id, v)}
+            first={step === 0}
           />
         )}
       </div>
@@ -190,13 +192,30 @@ function WizStep({
   question,
   value,
   onChoose,
+  first,
 }: {
   question: (typeof WIZ)[number];
   value: string | undefined;
   onChoose: (v: string) => void;
+  first: boolean;
 }) {
   return (
     <>
+      {/* Третье и последнее появление персонажа: пустой квиз — ещё ничего
+         не отвечено, он сидит с раскрытой папкой и ждёт. Дальше первого
+         вопроса его нет: как только человек начал отвечать, место на
+         экране нужнее ответам.
+
+         Золотое поле лежит ПОВЕРХ фигуры и срезает её снизу — тот же
+         приём, что в полосе шагов. */}
+      {first && (
+        <div aria-hidden className="mb-6 hidden sm:block">
+          <div className="relative mx-auto w-[150px]">
+            <Applicant pose="sit" className="relative z-0 w-full" />
+            <div className="absolute inset-x-[-18px] bottom-0 z-10 h-7 rounded-b-apple-card bg-yolk" />
+          </div>
+        </div>
+      )}
       <p className="font-apple-text text-apple-subheading font-semibold text-carbon">{question.q}</p>
       {question.hint && <p className="mt-1.5 text-apple-body-sm text-graphite">{question.hint}</p>}
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
@@ -206,8 +225,8 @@ function WizStep({
             type="button"
             onClick={() => onChoose(o.v)}
             aria-pressed={value === o.v}
-            className={`rounded-apple-card border px-4 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue ${
-              value === o.v ? "border-apple-blue bg-apple-blue text-white" : "border-mist/30 bg-frost hover:bg-pebble/40"
+            className={`rounded-apple-card border px-4 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso ${
+              value === o.v ? "border-rosso bg-rosso text-white" : "border-mist/30 bg-frost hover:bg-pebble/40"
             }`}
           >
             <b className="block text-apple-body-sm font-semibold">{o.t}</b>

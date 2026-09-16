@@ -9,6 +9,7 @@ import { AppleButton } from "@/components/apple/Button";
 import { Illustration } from "@/components/illustration/Illustration";
 import { TUSCANY_HILLS } from "@/data/illustrations";
 import Link from "next/link";
+import { AppleEyebrow } from "@/components/apple/Typography";
 
 /**
  * Справочник как index + активная глава, а не пять одинаковых больших
@@ -87,9 +88,9 @@ export function GuidesExplorer() {
       <section className="grid grid-cols-1 bg-frost lg:grid-cols-2">
         <div className="order-2 flex flex-col justify-center px-5 py-14 sm:py-20 lg:order-1 lg:px-16">
           <div className="mx-auto max-w-md lg:mx-0">
-            <p className="text-apple-caption text-ash">Справочник · бесплатно</p>
-            <h1 className="mt-2 font-apple-display text-[32px] font-semibold text-carbon sm:text-apple-heading">
-              Как пройти бюрократию
+            <AppleEyebrow as="p">Справочник · бесплатно</AppleEyebrow>
+            <h1 className="mt-4 font-whisper text-[38px] leading-[0.95] font-normal text-carbon sm:text-[52px]">
+              Как пройти <span className="italic">бюрократию</span>
             </h1>
             <p className="mt-5 text-apple-body text-graphite">
               Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор
@@ -98,7 +99,7 @@ export function GuidesExplorer() {
             </p>
             <p className="mt-4 text-apple-body-sm text-graphite">
               Правила 2026/27 изменились —{" "}
-              <Link href="/changes-2026-27" className="font-semibold text-link-blue">
+              <Link href="/changes-2026-27" className="font-semibold text-rosso">
                 что именно и с какими датами
               </Link>
               .
@@ -123,11 +124,11 @@ export function GuidesExplorer() {
                       type="button"
                       onClick={() => setActiveId(c.id)}
                       aria-current={isActive ? "true" : undefined}
-                      className={`flex w-full items-baseline gap-3 border-b border-mist/20 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue ${
+                      className={`flex w-full items-baseline gap-3 border-b border-mist/20 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso ${
                         isActive ? "text-carbon" : "text-ash hover:text-carbon"
                       }`}
                     >
-                      <span className={`text-apple-caption tabular-nums ${isActive ? "text-apple-blue" : "text-ash"}`}>
+                      <span className={`text-apple-caption tabular-nums ${isActive ? "text-rosso" : "text-ash"}`}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className={`text-apple-body-sm ${isActive ? "font-semibold" : "font-normal"}`}>{c.title}</span>
@@ -167,15 +168,28 @@ export function GuidesExplorer() {
           ))}
         </div>
 
-        <div className="mx-auto mt-10 flex max-w-[900px] flex-col items-start justify-between gap-4 rounded-apple-card bg-carbon p-5 text-white sm:flex-row sm:items-center lg:max-w-[1100px]">
+      </section>
+
+      {/* Единственная тёмная полоса справочника. Раньше это была тёмная
+         карточка внутри светлой секции — на всю ширину она читается как
+         конец главы, а не как ещё один блок в списке. */}
+      <section className="bg-obsidian px-5 py-14 sm:py-20">
+        <div className="mx-auto flex max-w-[1100px] flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div>
-            <b className="block">Запутался в порядке шагов?</b>
-            <span className="text-apple-body-sm text-ash">
+            <h2 className="font-whisper text-[28px] leading-[1.1] font-normal text-white sm:text-[38px]">
+              Запутался в порядке шагов?
+            </h2>
+            <p className="mt-3 max-w-[32rem] font-apple-text text-apple-body-sm text-ash-dark">
               Опиши свою ситуацию — ИИ соберёт всё в персональный план и
               проверит документы.
-            </span>
+            </p>
           </div>
-          <AppleButton type="button" variant="filled" onClick={() => router.push("/plan")} className="shrink-0">
+          <AppleButton
+            type="button"
+            variant="inverted"
+            onClick={() => router.push("/plan")}
+            className="shrink-0 px-8"
+          >
             Составить план
           </AppleButton>
         </div>

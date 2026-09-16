@@ -34,7 +34,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       <div className="flex items-start gap-3 rounded-apple-card border border-mist/30 bg-white p-4">
         <VespaReveal pose="celebrate" className="h-12 w-auto shrink-0" />
         <div>
-          <p className="text-apple-caption font-semibold text-apple-blue uppercase">
+          <p className="text-apple-caption font-semibold text-rosso uppercase">
             Персональный план готов
           </p>
           <p className="mt-1 text-apple-body-sm text-graphite">
@@ -80,7 +80,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
                   type="button"
                   disabled={st === "checking"}
                   onClick={() => checkDoc(i, d.err)}
-                  className="shrink-0 rounded-apple-pill border border-mist/40 bg-frost px-3.5 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-apple-blue"
+                  className="shrink-0 rounded-apple-pill border border-mist/40 bg-frost px-3.5 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-carbon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
                 >
                   {st === "checking" ? "Проверка…" : st === "err" ? "Ошибка" : st === "ok" ? "✓ Ок" : "Проверить"}
                 </button>
