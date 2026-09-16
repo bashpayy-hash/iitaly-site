@@ -6,10 +6,8 @@ import { buildPlan, situationFromAnswers, type Plan } from "@/lib/planBuilder";
 import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
-import { RouteRibbon } from "@/components/RouteRibbon";
-import { EditorialBackground } from "@/components/EditorialBackground";
-import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
-import { ROME_SKYLINE, TUSCANY_HILLS } from "@/data/illustrations";
+import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
+import { HeadingPin } from "@/components/motion/HeadingPin";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -21,47 +19,22 @@ export function PlanExplorer() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
-        <EditorialBackground variant="data" grain />
-        {/* Шапка, а не форма: внутрь диагностики иллюстрации не ставятся,
-           но сама страница до сих пор была совсем голой. */}
-        {/* Слева и side="left": в кадре Колизей стоит у левого края, а
-           маска растворяет кадр от своего дальнего конца. При правой
-           привязке вся масса Колизея уходила именно в растворённую зону, и
-           оставались одни руины у края. Колонка текста здесь центрирована
-           (max-w-760), воздуха хватает с обеих сторон. */}
-        <IllustrationBackdrop
-          asset={ROME_SKYLINE}
-          side="left"
-          className="-bottom-4 left-0 w-[92%] opacity-[0.2] sm:w-[min(640px,44%)] sm:opacity-[0.22]"
-        />
-        <RouteRibbon className="opacity-40" />
-        <div className="relative mx-auto max-w-[760px]">
-          <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">
-            Персональный маршрут
-          </p>
-          <h1 className="mt-2 font-display text-[9vw] leading-[0.92] font-medium tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
+      <section data-section="plan-header" className="px-5 pt-16 pb-10 text-center sm:pt-24">
+        <div data-role="heading">
+          <AppleCaption as="p">Персональный маршрут</AppleCaption>
+          <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
             Опиши свою ситуацию
-          </h1>
-          <p className="mt-5 text-base text-ink-soft sm:text-lg">
-            Своими словами: класс и школа, оценки, бюджет семьи, куда
-            мечтаешь. ИИ построит план — что считать, какие документы
-            собирать и в каком порядке — и проверит каждый документ на
-            типовые ошибки.
-          </p>
+          </AppleHeading>
         </div>
+        <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">
+          Своими словами: класс и школа, оценки, бюджет семьи, куда мечтаешь.
+          ИИ построит план — что считать, какие документы собирать и в каком
+          порядке — и проверит каждый документ на типовые ошибки.
+        </p>
       </section>
 
-      <section className="relative overflow-hidden px-5 py-8">
-        {/* В поле справа от колонки (max-w-760), а не внутри формы: по ТЗ
-           внутрь диагностики иллюстрации не ставятся. На узких экранах
-           поля нет — там слой скрыт целиком, а не ужат. */}
-        <IllustrationBackdrop
-          asset={TUSCANY_HILLS}
-          side="right"
-          className="top-16 right-0 hidden w-[min(400px,24%)] opacity-[0.16] lg:block"
-        />
-        <div className="relative mx-auto max-w-[760px] space-y-8">
+      <section className="px-5 py-10">
+        <div className="mx-auto max-w-[760px] space-y-8">
           <DocCheck />
 
           {plan ? (
@@ -71,6 +44,7 @@ export function PlanExplorer() {
           )}
         </div>
       </section>
+      <HeadingPin section="plan-header" />
     </>
   );
 }

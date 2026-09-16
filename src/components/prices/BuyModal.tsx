@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Modal } from "@/components/Modal";
-import { Button } from "@/components/Button";
+import { AppleModal } from "@/components/apple/Modal";
+import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
 import {
   PAY_MODE,
@@ -78,17 +78,17 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
   const isPkg = product ? product.price >= 45900 : false;
 
   return (
-    <Modal open={!!product} onClose={close} labelledBy="buy-modal-title" className="max-w-md">
+    <AppleModal open={!!product} onClose={close} labelledBy="buy-modal-title" className="max-w-md">
       {product && (
         <div className="p-6">
           {step === "form" && (
             <>
-              <h3 id="buy-modal-title" className="font-display text-xl font-bold">
+              <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {product.name}
               </h3>
-              <p className="mt-1 font-display text-3xl font-bold text-red">{fmt(product.price)} ₸</p>
+              <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-crimson">{fmt(product.price)} ₸</p>
               {isPkg && (
-                <div className="mt-3 rounded-md border-2 border-warn bg-warn/10 px-3 py-2.5 text-sm">
+                <div className="mt-3 border border-warn bg-warn/10 px-3 py-2.5 text-apple-body-sm text-cloud-white">
                   🔒 Ты в числе первых 30 — стартовая цена зафиксируется за тобой навсегда. Взамен
                   попросим отзыв, когда поступишь.
                 </div>
@@ -99,7 +99,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Имя"
-                  className="w-full rounded-md border-2 border-ink bg-cream px-4 py-3 text-sm font-bold outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                  className="w-full border-0 border-b border-white/25 bg-transparent px-1 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                 />
               </label>
               <label className="mt-2.5 block">
@@ -109,18 +109,18 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Телефон / WhatsApp"
                   inputMode="tel"
-                  className="w-full rounded-md border-2 border-ink bg-cream px-4 py-3 text-sm font-bold outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                  className="w-full border-0 border-b border-white/25 bg-transparent px-1 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                 />
               </label>
               {error && (
-                <p role="alert" className="mt-2 text-xs font-bold text-red">
+                <p role="alert" className="mt-2 text-apple-caption font-semibold text-red">
                   {error}
                 </p>
               )}
-              <Button type="button" variant="primary" onClick={submit} className="mt-4 w-full">
+              <AppleButton type="button" variant="filled" onClick={submit} className="mt-4 w-full">
                 {PAY_MODE === "kaspi" ? "Оплатить через Kaspi" : "Оформить заказ"}
-              </Button>
-              <p className="mt-2.5 text-center text-xs text-ink-soft">
+              </AppleButton>
+              <p className="mt-2.5 text-center text-apple-caption text-cloud-meta">
                 {PAY_MODE === "kaspi"
                   ? "Оплата откроется в приложении Kaspi. Продукт придёт в WhatsApp после оплаты."
                   : "После оформления покажем реквизиты для перевода. Продукт придёт в WhatsApp после оплаты."}
@@ -132,9 +132,9 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
             <div className="flex flex-col items-center gap-3 py-8 text-center">
               <span
                 aria-hidden
-                className="h-6 w-6 animate-spin rounded-full border-2 border-line border-t-red motion-reduce:animate-none"
+                className="h-6 w-6 animate-spin rounded-full border-2 border-white/15 border-t-crimson motion-reduce:animate-none"
               />
-              <p className="text-sm text-ink-soft">Отправляю…</p>
+              <p className="text-apple-body-sm text-cloud-body">Отправляю…</p>
             </div>
           )}
 
@@ -144,65 +144,65 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                 <div aria-hidden className="text-4xl">
                   ✅
                 </div>
-                <p className="mt-2 font-display text-xl font-bold">Заказ принят</p>
-                <p className="mt-1 text-sm text-ink-soft">Осталось оплатить — два шага, минута времени.</p>
+                <p className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
+                <p className="mt-1 text-apple-body-sm text-cloud-body">Осталось оплатить — два шага, минута времени.</p>
               </div>
 
               <div className="mt-5 flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-bold text-cream">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon font-apple-text text-apple-caption font-semibold text-white">
                   1
                 </div>
                 <div className="min-w-0 flex-1">
-                  <b className="text-sm">
+                  <b className="text-apple-body-sm text-cloud-white">
                     Переведи {fmt(product.price)} ₸ в Kaspi
                   </b>
-                  <div className="mt-2 flex items-center justify-between gap-2 rounded-md border-2 border-ink bg-cream px-3 py-2.5">
-                    <span className="font-display text-lg font-bold">{PAY_PHONE}</span>
+                  <div className="mt-2 flex items-center justify-between gap-2 border border-white/15  px-3 py-2.5">
+                    <span className="font-apple-display text-apple-subheading font-semibold text-cloud-white">{PAY_PHONE}</span>
                     <button
                       type="button"
                       onClick={copyPhone}
-                      className="shrink-0 rounded-pill border-2 border-ink bg-paper px-3 py-1.5 text-xs font-extrabold whitespace-nowrap uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                      className="shrink-0 rounded-apple-pill border border-white/20 px-3 py-1.5 text-apple-caption font-semibold whitespace-nowrap text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                     >
                       {copied ? "Скопировано" : "Копировать"}
                     </button>
                   </div>
-                  <span className="mt-1.5 block text-xs text-ink-soft">
+                  <span className="mt-1.5 block text-apple-caption text-cloud-meta">
                     Получатель: {PAY_NAME} · в комментарии укажи «{product.name}»
                   </span>
                 </div>
               </div>
 
               <div className="mt-4 flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink font-display text-xs font-bold text-cream">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon font-apple-text text-apple-caption font-semibold text-white">
                   2
                 </div>
                 <div className="min-w-0 flex-1">
-                  <b className="text-sm">Пришли скриншот чека в WhatsApp</b>
-                  <span className="mt-1 block text-xs text-ink-soft">
+                  <b className="text-apple-body-sm text-cloud-white">Пришли скриншот чека в WhatsApp</b>
+                  <span className="mt-1 block text-apple-caption text-cloud-meta">
                     {isPkg ? "Куратор ответит" : "Продукт придёт"} в течение часа на {phone}
                   </span>
                   <a
                     href={whatsappLink(product.name, product.price)}
                     target="_blank"
                     rel="noopener"
-                    className="mt-2.5 block rounded-pill border-2 border-ink bg-red px-4 py-3 text-center text-sm font-extrabold text-cream uppercase shadow-md"
+                    className="mt-2.5 block rounded-apple-pill bg-crimson px-4 py-3 text-center text-apple-body-sm font-semibold text-white"
                   >
                     Открыть WhatsApp
                   </a>
                 </div>
               </div>
 
-              <p className="mt-5 text-xs text-ink-soft">
+              <p className="mt-5 text-apple-caption text-cloud-meta">
                 Без предоплаты «в никуда»: до 7 дней с оплаты, если ещё не начал работать с планом
                 — вернём деньги полностью, без объяснений.
               </p>
-              <Button type="button" variant="ghost" onClick={close} className="mt-3 w-full">
+              <AppleButton type="button" variant="outlined" onClick={close} className="mt-3 w-full">
                 Закрыть
-              </Button>
+              </AppleButton>
             </div>
           )}
         </div>
       )}
-    </Modal>
+    </AppleModal>
   );
 }

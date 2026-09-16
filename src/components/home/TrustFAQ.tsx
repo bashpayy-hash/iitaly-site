@@ -1,16 +1,12 @@
 "use client";
 
-import { Caption, Title, Body } from "@/components/Typography";
-import { Reveal } from "@/components/motion/Reveal";
-import { EditorialBackground } from "@/components/EditorialBackground";
+import { AppleCaption, AppleHeading, AppleBody } from "@/components/apple/Typography";
 import { track } from "@/lib/track";
 
 /**
- * Честные ответы на вопросы доверия перед ценой — те же формулировки,
- * что и в GUARANTEES на /prices (PricesExplorer.tsx), просто в формате
- * вопрос/ответ для главной. Ничего не выдумано специально для этой
- * секции: возврат, отсутствие гарантий поступления/визы/стипендии и
- * что происходит при отказе вуза — реальные условия сервиса.
+ * Те же вопросы/ответы, что и раньше (реальные условия сервиса, ничего не
+ * переписано) — оболочка прозрачна, часть закрывающей главы (data-section
+ * "closing" стоит на Stats выше), здесь без своей механики стыка.
  */
 const FAQ = [
   {
@@ -33,47 +29,43 @@ const FAQ = [
 
 export function TrustFAQ() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 py-18 sm:py-28">
-      <EditorialBackground variant="quiet" motion="none" grain />
-      <div className="relative mx-auto max-w-[760px]">
-        <Reveal variant="fade">
-          <Caption as="p">Прежде чем платить</Caption>
-          <Title as="h2" className="mt-3">
-            Можно ли нам доверять
-          </Title>
-        </Reveal>
+    <section className="px-5 py-24 sm:py-32">
+      <div className="mx-auto max-w-[760px]">
+        <AppleCaption as="p" className="text-center">Прежде чем платить</AppleCaption>
+        <AppleHeading as="h2" className="mt-3 text-center">
+          Можно ли нам доверять
+        </AppleHeading>
 
-        <div className="mt-10 divide-y-2 divide-line">
-          {FAQ.map((item, i) => (
-            <Reveal key={item.q} delay={Math.min(i * 0.05, 0.2)} variant="fade" className="py-5">
-              <details
-                className="group"
-                onToggle={(e) => {
-                  if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
-                }}
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-bold marker:content-none [&::-webkit-details-marker]:hidden">
-                  {item.q}
-                  <svg
-                    aria-hidden
-                    viewBox="0 0 16 10"
-                    className="h-2.5 w-4 shrink-0 text-red transition-transform duration-200 group-open:-rotate-180"
-                  >
-                    <path
-                      d="M1 1.5 8 8.5 15 1.5"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </summary>
-                <Body as="p" className="mt-3 max-w-[65ch]">
-                  {item.a}
-                </Body>
-              </details>
-            </Reveal>
+        <div className="mt-10 divide-y divide-white/15">
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group py-5"
+              onToggle={(e) => {
+                if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
+              }}
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-apple-text text-apple-subheading font-normal text-cloud-white marker:content-none [&::-webkit-details-marker]:hidden">
+                {item.q}
+                <svg
+                  aria-hidden
+                  viewBox="0 0 16 10"
+                  className="h-2.5 w-4 shrink-0 text-crimson transition-transform duration-200 group-open:-rotate-180"
+                >
+                  <path
+                    d="M1 1.5 8 8.5 15 1.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </summary>
+              <AppleBody as="p" className="mt-3 max-w-[65ch] text-apple-body-sm text-cloud-body">
+                {item.a}
+              </AppleBody>
+            </details>
           ))}
         </div>
       </div>

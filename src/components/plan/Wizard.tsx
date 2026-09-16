@@ -5,7 +5,7 @@ import { WIZ, type WizAnswers } from "@/data/wizard";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan, situationFromAnswers } from "@/lib/planBuilder";
-import { Button } from "@/components/Button";
+import { AppleButton } from "@/components/apple/Button";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -75,15 +75,15 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   }
 
   return (
-    <div className="rounded-xl border-2 border-ink bg-paper p-5 shadow-lg sm:p-7">
+    <div className="rounded-apple-card border border-white/15 bg-white p-5 sm:p-7">
       <div className="flex items-center gap-3">
-        <div className="h-1.5 flex-1 overflow-hidden rounded-pill bg-line">
+        <div className="h-1 flex-1 overflow-hidden rounded-apple-pill bg-pebble">
           <div
-            className="h-full origin-left rounded-pill bg-red transition-transform duration-300 ease-out motion-reduce:transition-none"
+            className="h-full origin-left rounded-apple-pill bg-crimson transition-transform duration-300 ease-out motion-reduce:transition-none"
             style={{ transform: `scaleX(${progress})` }}
           />
         </div>
-        <span className="shrink-0 text-xs font-bold text-ink-soft">
+        <span className="shrink-0 text-apple-caption text-cloud-meta">
           {finished ? "Готово" : `${Math.min(step + 1, WIZ.length)} из ${WIZ.length}`}
         </span>
       </div>
@@ -92,13 +92,13 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
         {finished ? (
           <>
             {preview && (
-              <div className="mb-6 rounded-lg border-2 border-green bg-green/5 p-4">
-                <p className="text-xs font-extrabold tracking-[0.1em] text-green uppercase">
+              <div className="mb-6 rounded-apple-card border border-white/15 bg-frost p-4">
+                <p className="text-apple-caption font-semibold text-crimson uppercase">
                   Уже готово по твоим ответам
                 </p>
-                <p className="mt-2 text-sm font-bold">{preview.steps[0]?.t}</p>
-                <p className="mt-1 text-sm text-ink-soft">{preview.steps[0]?.p}</p>
-                <p className="mt-2 text-xs text-ink-soft">
+                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0]?.t}</p>
+                <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.p}</p>
+                <p className="mt-2 text-apple-caption text-cloud-meta">
                   {(() => {
                     const stepsLeft = Math.max(preview.steps.length - 1, 0);
                     const docsCount = preview.docs.length;
@@ -113,8 +113,8 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
                 </p>
               </div>
             )}
-            <p className="font-display text-xl font-bold">Куда прислать план?</p>
-            <p className="mt-2 text-sm text-ink-soft">
+            <p className="font-apple-text text-apple-subheading font-semibold text-cloud-white">Куда прислать план?</p>
+            <p className="mt-2 text-apple-body-sm text-cloud-body">
               Пришлём маршрут и напоминания о дедлайнах в WhatsApp. Можно
               пропустить — план всё равно откроется прямо здесь.
             </p>
@@ -129,35 +129,35 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
                   setPhone(e.target.value);
                   setPhoneError(false);
                 }}
-                className="w-full rounded-md border-2 border-ink bg-cream px-4 py-3 text-sm font-bold outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                className="w-full rounded-apple-card border border-white/20 bg-frost px-4 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
               />
             </label>
             {phoneError && (
-              <p role="alert" className="mt-1.5 text-xs font-bold text-red">
+              <p role="alert" className="mt-1.5 text-apple-caption text-crimson">
                 Проверь номер телефона.
               </p>
             )}
-            <Button
+            <AppleButton
               type="button"
-              variant="primary"
+              variant="filled"
               onClick={() => finish(true)}
               disabled={sending}
               className="mt-3 w-full"
             >
               {sending ? "Отправляю…" : "Составить план"}
-            </Button>
+            </AppleButton>
             <button
               type="button"
               onClick={() => finish(false)}
-              className="mt-3 block w-full text-center text-sm font-bold text-ink-soft underline underline-offset-4 hover:text-ink"
+              className="mt-3 block w-full text-center text-apple-body-sm text-cloud-body underline underline-offset-4 hover:text-cloud-white"
             >
               Пропустить и посмотреть план
             </button>
-            <p className="mt-4 text-xs text-ink-soft">
+            <p className="mt-4 text-apple-caption text-cloud-meta">
               Оставляя номер, ты соглашаешься, что мы напишем по поводу
               поступления. Рассылок и передачи третьим лицам не будет,
               отписаться можно в любой момент.{" "}
-              <a href="/privacy" className="font-bold text-red">
+              <a href="/privacy" className="font-semibold text-crimson">
                 Как мы работаем с данными
               </a>
               . Если тебе меньше 18, заполняй вместе с родителем.
@@ -173,11 +173,11 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
         )}
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t-2 border-line pt-4">
+      <div className="mt-6 flex items-center justify-between border-t border-white/15 pt-4">
         <button
           type="button"
           onClick={() => setStep((s) => Math.max(0, s - 1))}
-          className={`text-sm font-bold text-ink-soft hover:text-ink ${step > 0 ? "visible" : "invisible"}`}
+          className={`text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
         >
           ← Назад
         </button>
@@ -197,8 +197,8 @@ function WizStep({
 }) {
   return (
     <>
-      <p className="font-display text-xl font-bold">{question.q}</p>
-      {question.hint && <p className="mt-1.5 text-sm text-ink-soft">{question.hint}</p>}
+      <p className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</p>
+      {question.hint && <p className="mt-1.5 text-apple-body-sm text-cloud-body">{question.hint}</p>}
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
         {question.opts.map((o) => (
           <button
@@ -206,13 +206,13 @@ function WizStep({
             type="button"
             onClick={() => onChoose(o.v)}
             aria-pressed={value === o.v}
-            className={`rounded-lg border-2 border-ink px-4 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red ${
-              value === o.v ? "bg-ink text-cream" : "bg-cream hover:bg-paper"
+            className={`rounded-apple-card border px-4 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ${
+              value === o.v ? "border-crimson bg-crimson text-white" : "border-white/15 bg-frost hover:bg-pebble/40"
             }`}
           >
-            <b className="block text-sm">{o.t}</b>
+            <b className="block text-apple-body-sm font-semibold">{o.t}</b>
             {o.s && (
-              <span className={`text-xs ${value === o.v ? "text-cream/70" : "text-ink-soft"}`}>{o.s}</span>
+              <span className={`text-apple-caption ${value === o.v ? "text-white/75" : "text-cloud-meta"}`}>{o.s}</span>
             )}
           </button>
         ))}
