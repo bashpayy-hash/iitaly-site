@@ -1,4 +1,5 @@
 import { EditorialStatsPanel } from "@/components/home/EditorialStatsPanel";
+import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 
 export function Stats() {
   return (
@@ -19,8 +20,8 @@ export function Stats() {
             { value: "43", numeric: 43, label: "университета в базе с тестами и дедлайнами" },
             { value: "30", numeric: 30, label: "городов на интерактивной карте" },
             {
-              value: "25 000 ₸",
-              numeric: 25000,
+              value: priceLabel(PRICE_MAIN),
+              numeric: PRICE_MAIN,
               suffix: " ₸",
               label: "полный цикл поступления, разово",
             },

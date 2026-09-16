@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"        # та же версия, что в netlify.toml
+          cache: npm
+
+      - run: npm ci
+
+      # Порядок как в README: типы → линтер → сборка.
+      # next build сам прогоняет TypeScript, но отдельный шаг даёт
+      # понятное место падения в логе, а не «build error» в конце.
+      - run: npx next typegen
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_BACKEND_URL: https://example.invalid
+
+      # Страховка против того, что уже один раз случилось: инструменты
+      # владельца лежали в public/ и уезжали на прод вместе со сборкой.
+      - name: Админка не должна попадать в сборку
+        run: |
+          if [ -e out/admin.html ]; then
+            echo "out/admin.html оказался в сборке — верни файл в tools/"
+            exit 1
+          fi

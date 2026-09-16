@@ -6,13 +6,13 @@ import { Button } from "@/components/Button";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
-import { FEATURES } from "@/data/pricing";
+import { FEATURES, PRICE_EXPRESS_CHECK, PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
 import { COAST_SUN, TUSCANY_HILLS } from "@/data/illustrations";
 
 const MICRO = [
-  { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: 16900 },
+  { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
 ];
 
 const GUARANTEES = [
@@ -65,7 +65,7 @@ export function PricesExplorer() {
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Цена</p>
           <h1 className="mt-2 font-display text-[8vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5vw] lg:text-[3.2vw]">
-            25 000 ₸ — и система ведёт тебя до конца
+            {priceLabel(PRICE_MAIN)} — и система ведёт тебя до конца
           </h1>
           <p className="mt-5 max-w-2xl text-base text-ink-soft sm:text-lg">
             Один платёж за всё поступление. Не подписка, не тарифы, без доплат
@@ -96,7 +96,7 @@ export function PricesExplorer() {
               →
             </span>
             <div className="flex-1 rounded-lg border-2 border-ink bg-ink p-5 text-cream shadow-red">
-              <b className="block font-display text-lg font-bold">25 000 ₸</b>
+              <b className="block font-display text-lg font-bold">{priceLabel(PRICE_MAIN)}</b>
               <span className="text-sm text-cream/70">
                 система ведёт поступление от выбора вуза до permesso
               </span>
@@ -124,7 +124,7 @@ export function PricesExplorer() {
               </span>
             </div>
             <p className="mt-2 text-sm text-ink-soft">Всё, что делает система, входит в цену</p>
-            <p className="mt-3 font-display text-5xl font-semibold sm:text-6xl">25 000 ₸</p>
+            <p className="mt-3 font-display text-5xl font-semibold sm:text-6xl">{priceLabel(PRICE_MAIN)}</p>
             <p className="mt-1 text-sm text-ink-soft">разово · без подписки и доплат</p>
             <div className="mt-5 grid grid-cols-3 divide-x-2 divide-ink/10 overflow-hidden rounded-md border-2 border-ink/10">
               {[
@@ -156,7 +156,7 @@ export function PricesExplorer() {
             <Button
               type="button"
               variant="primary"
-              onClick={() => openBuy("Поступление под ключ", 25000)}
+              onClick={() => openBuy("Поступление под ключ", PRICE_MAIN)}
               className="mt-4 w-full sm:w-auto"
             >
               Оплатить и начать

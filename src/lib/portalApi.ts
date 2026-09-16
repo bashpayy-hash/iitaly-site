@@ -47,11 +47,34 @@ export interface PortalData {
 
 export type PortalResult = { ok: true; data: PortalData } | { ok: false; error: string };
 
+/* Вход в кабинет идёт через POST /api/portal/lookup: код и фамилия лежат
+   в теле запроса, а не в адресе. В прежнем GET /api/portal/:code?surname=
+   учётные данные кабинета попадали в путь и query-строку, а значит — в
+   журналы Railway, CDN и всех прокси по дороге.
+
+   Откат на старый GET нужен потому, что фронтенд и бэкенд выкатываются
+   порознь: если сайт обновится раньше сервера, новый адрес вернёт 404, и
+   без этого отката кабинет перестал бы открываться до выката бэкенда. */
 export async function fetchPortal(code: string, surname: string): Promise<PortalResult> {
   if (!BACKEND_URL) return { ok: false, error: "Кабинет заработает после подключения сервера." };
   try {
-    const r = await fetch(`${BACKEND_URL}/api/portal/${encodeURIComponent(code)}?surname=${encodeURIComponent(surname)}`);
-    const d = await r.json();
+    let r = await fetch(`${BACKEND_URL}/api/portal/lookup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, surname }),
+    });
+    if (r.status === 404 || r.status === 405) {
+      // 404 здесь двусмысленный: это либо «нет такого маршрута» на старом
+      // сервере, либо «не нашли бронь» на новом. Различаем по телу: новый
+      // отвечает JSON с полем error, старый — HTML-страницей Express.
+      const legacy = await r.clone().json().catch(() => null);
+      if (!legacy || typeof legacy.ok !== "boolean") {
+        r = await fetch(
+          `${BACKEND_URL}/api/portal/${encodeURIComponent(code)}?surname=${encodeURIComponent(surname)}`,
+        );
+      }
+    }
+    const d = await r.json().catch(() => null);
     if (!d || !d.ok) return { ok: false, error: (d && d.error) || "Не нашли бронь." };
     return { ok: true, data: d as PortalData };
   } catch {
@@ -108,10 +131,19 @@ export async function uploadPortalDoc(
   result: unknown,
   fileName: string,
 ) {
-  const r = await fetch(`${BACKEND_URL}/api/portal/${encodeURIComponent(code)}/doc`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ surname, task: taskId, result, fileName }),
-  });
-  return await r.json();
+  // Единственная функция здесь, которая раньше не проверяла адрес бэкенда
+  // и не ловила ошибку сети: при обрыве связи падало исключение прямо в
+  // обработчик загрузки документа, и вместо сообщения человек видел
+  // зависший экран.
+  if (!BACKEND_URL) return { ok: false, error: "Нет связи с сервером" };
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/portal/${encodeURIComponent(code)}/doc`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ surname, task: taskId, result, fileName }),
+    });
+    return await r.json();
+  } catch {
+    return { ok: false, error: "Нет связи с сервером — результат проверки не сохранён" };
+  }
 }

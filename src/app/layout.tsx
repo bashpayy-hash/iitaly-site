@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Onest, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlay } from "@/components/PaperOverlay";
@@ -30,7 +31,8 @@ const spaceMono = Space_Mono({
 const siteUrl = "https://iitaly.kz";
 const title = "IItaly — поступление в Италию ведёт ИИ";
 const description =
-  "Поступление в Италию из Казахстана по понятному плану: подбор программ, расчёт шансов на стипендию DSU, документы и виза. Один платёж 25 000 ₸ — агентства обычно берут 650 000 – 1 000 000 ₸.";
+  "Поступление в Италию из Казахстана по понятному плану: подбор программ, расчёт шансов на стипендию DSU, "
+  + `документы и виза. Один платёж ${priceLabel(PRICE_MAIN)} — агентства обычно берут 650 000 – 1 000 000 ₸.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -52,7 +52,10 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
     setStep("sending");
     const res = await submitOrder({ product: product.name, price: product.price, name, phone });
     if (!res.ok) {
-      setError("Не получилось отправить заказ. Проверь интернет и попробуй ещё раз.");
+      // Текст берём из ответа: «слишком много заявок», «нет связи» и
+      // «приём заявок не настроен» требуют от человека разных действий,
+      // и одна общая фраза про интернет их только путала.
+      setError(res.error);
       setStep("form");
       return;
     }

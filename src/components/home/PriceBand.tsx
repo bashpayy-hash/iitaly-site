@@ -2,7 +2,7 @@ import { ButtonLink } from "@/components/Button";
 import { Body, Caption } from "@/components/Typography";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { Reveal } from "@/components/motion/Reveal";
-import { FEATURES } from "@/data/pricing";
+import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
 
 /**
  * Light editorial value ledger — раньше здесь был красно-чёрный SaaS-
@@ -23,7 +23,7 @@ export function PriceBand() {
         <Reveal variant="fade">
           <Caption as="p">Один платёж, без подписки</Caption>
           <p className="mt-3 font-display text-display font-medium tracking-tight text-ink tabular-nums">
-            25 000 ₸
+            {priceLabel(PRICE_MAIN)}
           </p>
           <Body as="p" className="mt-4 max-w-md">
             Агентства в Казахстане обычно берут 650 000 – 1 000 000 ₸ за ту же

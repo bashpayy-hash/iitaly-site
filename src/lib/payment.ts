@@ -16,19 +16,40 @@ export function isValidPhone(phone: string): boolean {
   return /^[+0-9() -]{10,18}$/.test(phone);
 }
 
-export async function submitOrder(fields: { product: string; price: number; name: string; phone: string }) {
-  if (!BACKEND_URL) return { ok: true };
+export type OrderResult = { ok: true } | { ok: false; error: string };
+
+/* Заказ — единственное место, где у нас на кону деньги человека, поэтому
+   здесь нельзя врать об успехе.
+
+   Раньше при пустом BACKEND_URL функция возвращала { ok: true }: если
+   переменная не доехала до сборки (а она вшивается на этапе сборки, а не
+   читается в рантайме), студент видел «заявка принята», а на сервер не
+   уходило ничего. Заявка исчезала бесследно, и узнать об этом можно было
+   только от самого человека. Теперь любой сбой — честная ошибка, и у
+   пользователя остаётся рабочий запасной путь: написать в WhatsApp. */
+export async function submitOrder(fields: {
+  product: string;
+  price: number;
+  name: string;
+  phone: string;
+}): Promise<OrderResult> {
+  if (!BACKEND_URL) {
+    return { ok: false, error: "Приём заявок временно не работает. Напиши в WhatsApp — оформим вручную." };
+  }
   try {
     const r = await fetch(`${BACKEND_URL}/api/order`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fields),
     });
-    const data = await r.json();
-    if (!data || !data.ok) throw new Error("bad");
+    const data = await r.json().catch(() => null);
+    if (!r.ok || !data || !data.ok) {
+      // 429 от сервера приходит с понятным текстом — показываем его, а не общий
+      return { ok: false, error: (data && data.error) || "Не удалось отправить заявку. Попробуй ещё раз или напиши в WhatsApp." };
+    }
     return { ok: true };
   } catch {
-    return { ok: false };
+    return { ok: false, error: "Нет связи с сервером. Проверь интернет или напиши в WhatsApp." };
   }
 }
 

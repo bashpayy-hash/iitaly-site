@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# Инструменты владельца. В сборку они больше не попадают (лежат в tools/,
+# а не в public/), но строка остаётся как страховка от случайного возврата.
+Disallow: /admin.html
+
 Sitemap: https://iitaly.kz/sitemap.xml
