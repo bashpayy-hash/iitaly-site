@@ -3,10 +3,10 @@
 import { motion } from "motion/react";
 import { ButtonLink } from "@/components/Button";
 import { Display, BodyLarge, Body, Caption } from "@/components/Typography";
-import { HeroVespa } from "./HeroVespa";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { MaskedLines } from "@/components/motion/MaskedLines";
+import { HeroVespa } from "@/components/home/HeroVespa";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { track } from "@/lib/track";
@@ -38,7 +38,14 @@ export function Hero() {
   const reducedMotion = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-14 pb-10 sm:pt-20 sm:pb-12">
+    /* Нижний отступ держит место под Веспу: от верха рисунка до линии
+       колёс — 129/168/219px по брейкпоинтам, и отступ это плюс воздух,
+       иначе объект наехал бы на CTA и строку о возврате.
+
+       Собственной чернильной линейки снизу у экрана больше нет: кромку
+       рисует купол листа, а две параллельные линии в полусотне пикселей
+       друг от друга и читались как обрубок. */
+    <section className="relative overflow-hidden bg-cream px-5 pt-14 pb-44 sm:pt-20 sm:pb-52 lg:pb-64">
       {/* Тот же mesh, что был здесь инлайн-градиентом: вариант "atlas" в
          EditorialBackground — его копия (см. MESH.atlas), так что дубль
          определения убран, а не добавлен новый слой. motion="none" —
@@ -152,18 +159,27 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Нижняя полоса экрана принадлежит объекту: Веспа стоит по центру
-         под всем набором и почти касается нижней границы секции — едет по
-         ней, как по дороге.
+      {/* Веспа стоит на кромке купола — на самом стыке первого экрана и
+         листа разделов (см. page.tsx).
 
-         Полоса именно в потоке, а не absolute. Пробовал и так: подтянутая
-         отрицательным отступом в правый нижний угол, Веспа наезжала на
-         стат-карточку и перекрывала строку про 650 000 – 1 000 000 ₸,
-         то есть закрывала собой цену. Объект в потоке не может перекрыть
-         текст по определению, и экран остаётся читаемым на любой ширине. */}
-      <div className="relative mx-auto mt-8 flex max-w-[1200px] justify-center sm:mt-10 lg:mt-4">
-        <HeroVespa />
-      </div>
+         translate-y-[8.8%] — это доля высоты рисунка ниже линии колёс (в
+         viewBox 240×170 колёса касаются y≈155, дальше только тень).
+         Смещаем на неё вниз от нижнего края секции, и колёса встают ровно
+         на кромку, а не парят над ней на десяток пикселей. Тень уходит под
+         обрезку секции и заканчивается точно на чернильной линии — на 12%
+         непрозрачности этот срез не читается.
+
+         Половина ширины объекта от центра — около 14% полуширины окна, а
+         на таком удалении эллиптическая дуга купола опускается всего на
+         4px: у гребня она практически плоская, колёсам есть на что встать.
+
+         Объект лежит в первом экране, а не в листе. Это и есть сам приём:
+         экран закреплён, лист наезжает сверху — значит бумага поднимается
+         и забирает Веспу снизу вверх, пока та едет вперёд. Если положить
+         её в лист, она поедет вверх вместе со швом и на широких окнах
+         проедет прямо по «Смотреть университеты» — живой ссылке. Здесь ей
+         нечего задеть: она ниже всего содержимого. */}
+      <HeroVespa className="absolute bottom-0 left-1/2 w-[min(200px,52vw)] -translate-x-1/2 translate-y-[8.8%] sm:w-[260px] lg:w-[340px]" />
     </section>
   );
 }
