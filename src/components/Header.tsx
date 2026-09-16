@@ -5,10 +5,16 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/Logo";
 
 /**
- * Apple ghost-nav: тонкая, почти незаметная, hairline снизу вместо тени.
+ * Ghost-nav, тонкая, почти незаметная, hairline снизу вместо тени.
  * Рендерится на КАЖДОЙ странице, включая /universities — это тот самый
  * "новый хром", из которого разрешена ссылка на карту (см. DESIGN.md).
  * Содержимое /universities (канвас карты и всё внутри) не трогается.
+ *
+ * Тема заголовка зависит от маршрута: /universities осталась ровно такой,
+ * какой была после Apple-прохода (светлая, над кремовой страницей) — этот
+ * компонент проверен на пиксель-в-пиксель там и трогать его вид на этом
+ * маршруте нельзя. На остальных маршрутах теперь под шапкой не frost, а
+ * фото неба (SkyBackground) — там шапка стеклянно-тёмная.
  */
 const links = [
   { href: "/", label: "Главная" },
@@ -21,15 +27,20 @@ const links = [
 
 export function Header() {
   const pathname = usePathname();
-  /* Текущий раздел красится rosso — той же ниткой, что кнопка и ссылка.
-     Сравнение точное, а не по префиксу: "/" иначе совпало бы с любым
-     адресом и главная считалась бы активной на всех страницах. */
-  const isActive = (href: string) => pathname === href;
+  const onUniversities = pathname === "/universities";
+
+  const bar = onUniversities
+    ? "border-mist/40 bg-frost/80 backdrop-blur-md"
+    : "border-white/10 bg-black/25 backdrop-blur-md";
+  const brand = onUniversities ? "text-carbon" : "text-cloud-white";
+  const link = onUniversities
+    ? "text-graphite hover:text-carbon"
+    : "text-cloud-body hover:text-cloud-white";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-mist/40 bg-frost/80 backdrop-blur-md">
+    <header className={`sticky top-0 z-50 border-b ${bar}`}>
       <div className="mx-auto flex h-12 max-w-[1440px] items-center gap-6 px-5">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold text-carbon">
+        <Link href="/" className={`flex shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold ${brand}`}>
           <Logo className="h-5 w-5 shrink-0" />
           <span>IItaly</span>
         </Link>
@@ -38,12 +49,7 @@ export function Header() {
             <Link
               key={l.href}
               href={l.href}
-              aria-current={isActive(l.href) ? "page" : undefined}
-              className={`shrink-0 text-[12px] whitespace-nowrap transition-colors duration-200 ${
-                isActive(l.href)
-                  ? "font-medium text-rosso"
-                  : "font-normal text-graphite hover:text-carbon"
-              }`}
+              className={`shrink-0 text-[12px] font-normal whitespace-nowrap transition-colors ${link}`}
             >
               {l.label}
             </Link>
@@ -51,7 +57,7 @@ export function Header() {
         </nav>
         <button
           type="button"
-          className="hidden shrink-0 text-[12px] font-normal text-graphite transition-colors hover:text-carbon sm:block"
+          className={`hidden shrink-0 text-[12px] font-normal transition-colors sm:block ${link}`}
           onClick={() =>
             window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
           }

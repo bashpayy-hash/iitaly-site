@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
-import { AppleEyebrow } from "@/components/apple/Typography";
+import { AppleButton } from "@/components/apple/Button";
 import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 import { FEATURES, PRICE_EXPRESS_CHECK, PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { HeadingPin } from "@/components/motion/HeadingPin";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -47,42 +47,44 @@ export function PricesExplorer() {
 
   return (
     <>
-      <section className="bg-frost px-5 pt-14 pb-10 text-center sm:pt-20">
-        <AppleEyebrow as="p">Цена</AppleEyebrow>
-        <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] font-semibold text-carbon sm:text-apple-heading">
-          {priceLabel(PRICE_MAIN)} — и система ведёт тебя до конца
-        </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-apple-body text-graphite">
+      <section data-section="prices-header" className="px-5 pt-16 pb-10 text-center sm:pt-24">
+        <div data-role="heading">
+          <p className="text-apple-caption text-cloud-meta">Цена</p>
+          <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">
+            {priceLabel(PRICE_MAIN)} — и система ведёт тебя до конца
+          </h1>
+        </div>
+        <p className="mx-auto mt-5 max-w-2xl text-apple-body text-cloud-body">
           Один платёж за всё поступление. Не подписка, не тарифы, без доплат
           за этапы. Работу выполняет система — поэтому это стоит столько, а
           не как в агентстве.
         </p>
       </section>
 
-      <section className="bg-white px-5 py-10">
+      <section className="px-5 py-10">
         <div className="mx-auto max-w-[900px]">
           <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
-            <div className="flex-1 rounded-apple-card border border-mist/30 p-5">
-              <b className="block font-apple-text text-apple-subheading font-semibold text-carbon">Бесплатно</b>
-              <span className="text-apple-body-sm text-graphite">
+            <div className="flex-1 border border-white/15 p-5">
+              <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
+              <span className="text-apple-body-sm text-cloud-body">
                 ИИ оценит шансы, покажет риски и назовёт следующий шаг
               </span>
             </div>
-            <span aria-hidden className="hidden text-2xl text-ash sm:block">
+            <span aria-hidden className="hidden text-2xl text-cloud-meta sm:block">
               →
             </span>
-            <div className="flex-1 rounded-apple-card bg-carbon p-5 text-white">
+            <div className="flex-1 bg-carbon p-5 text-white">
               <b className="block font-apple-text text-apple-subheading font-semibold">{priceLabel(PRICE_MAIN)}</b>
-              <span className="text-apple-body-sm text-ash">
+              <span className="text-apple-body-sm text-cloud-meta">
                 система ведёт поступление от выбора вуза до permesso
               </span>
             </div>
           </div>
 
-          <div className="mt-6 flex flex-col items-start justify-between gap-4 rounded-apple-card border border-mist/30 p-5 sm:flex-row sm:items-center">
+          <div className="mt-6 flex flex-col items-start justify-between gap-4 border border-white/15 p-5 sm:flex-row sm:items-center">
             <div>
-              <b className="block text-apple-body-sm font-semibold text-carbon">Сначала проверь шансы — это бесплатно</b>
-              <span className="text-apple-body-sm text-graphite">
+              <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы — это бесплатно</b>
+              <span className="text-apple-body-sm text-cloud-body">
                 Расскажи о себе, и ИИ скажет, реально ли поступить и на что
                 рассчитывать. Платить, чтобы это узнать, не нужно.
               </span>
@@ -92,41 +94,41 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div className="mt-8 rounded-apple-card border border-mist/30 p-6 sm:p-8">
+          <div className="mt-8 border border-white/15 p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <b className="font-apple-display text-apple-subheading font-semibold text-carbon">Поступление под ключ</b>
-              <span className="rounded-apple-pill bg-rosso px-3 py-1 text-apple-caption font-semibold text-white uppercase">
+              <b className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Поступление под ключ</b>
+              <span className="rounded-apple-pill bg-crimson px-3 py-1 text-apple-caption font-semibold text-white uppercase">
                 Один платёж
               </span>
             </div>
-            <p className="mt-2 text-apple-body-sm text-graphite">Всё, что делает система, входит в цену</p>
-            <p className="mt-3 font-apple-display text-apple-display font-semibold text-carbon">{priceLabel(PRICE_MAIN)}</p>
-            <p className="mt-1 text-apple-caption text-ash">разово · без подписки и доплат</p>
-            <div className="mt-5 grid grid-cols-3 divide-x divide-mist/20 overflow-hidden rounded-apple-card border border-mist/20">
+            <p className="mt-2 text-apple-body-sm text-cloud-body">Всё, что делает система, входит в цену</p>
+            <p className="mt-3 font-apple-display text-apple-display font-semibold text-cloud-white">{priceLabel(PRICE_MAIN)}</p>
+            <p className="mt-1 text-apple-caption text-cloud-meta">разово · без подписки и доплат</p>
+            <div className="mt-5 grid grid-cols-3 divide-x divide-white/10 overflow-hidden border border-white/10">
               {[
                 { v: "28", l: "шагов в маршруте" },
                 { v: "43", l: "университета" },
                 { v: "30", l: "городов" },
               ].map((s) => (
                 <div key={s.l} className="px-3 py-2.5 text-center sm:px-4">
-                  <p className="font-apple-display text-lg font-semibold text-carbon">{s.v}</p>
-                  <p className="mt-0.5 text-apple-caption text-ash">{s.l}</p>
+                  <p className="font-apple-display text-lg font-semibold text-cloud-white">{s.v}</p>
+                  <p className="mt-0.5 text-apple-caption text-cloud-meta">{s.l}</p>
                 </div>
               ))}
             </div>
-            <p className="mt-4 rounded-apple-card bg-frost px-4 py-3 text-apple-body-sm text-carbon">
+            <p className="mt-4  px-4 py-3 text-apple-body-sm text-cloud-white">
               Личный кабинет с маршрутом открывается сразу после оплаты и ведёт
               весь путь — от выбора программ до первых дней в Италии.
             </p>
             <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
               {FEATURES.map((f) => (
-                <li key={f} className="flex gap-2 text-apple-body-sm text-carbon">
-                  <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-rosso" />
+                <li key={f} className="flex gap-2 text-apple-body-sm text-cloud-white">
+                  <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson" />
                   {f}
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-apple-caption text-ash uppercase">
+            <p className="mt-5 text-apple-caption text-cloud-meta uppercase">
               Доступ на весь цикл поступления, без ограничения по времени
             </p>
             <AppleButton
@@ -139,14 +141,14 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div className="mt-8 rounded-apple-card border border-green/40 bg-green/5 p-5 sm:p-6">
+          <div className="mt-8 border border-green/40 bg-green/5 p-5 sm:p-6">
             <b className="block text-apple-caption font-semibold text-green uppercase">
               Гарантии и как мы снимаем риск
             </b>
             <div className="mt-3 divide-y divide-green/15">
               {GUARANTEES.map((g) => (
                 <details key={g.title} className="group py-3 first:pt-0 last:pb-0">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-apple-body-sm font-semibold text-carbon marker:content-none [&::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-apple-body-sm font-semibold text-cloud-white marker:content-none [&::-webkit-details-marker]:hidden">
                     {g.title}
                     <svg
                       aria-hidden
@@ -163,15 +165,15 @@ export function PricesExplorer() {
                       />
                     </svg>
                   </summary>
-                  <p className="mt-2 text-apple-body-sm text-graphite">{g.body}</p>
+                  <p className="mt-2 text-apple-body-sm text-cloud-body">{g.body}</p>
                 </details>
               ))}
             </div>
           </div>
 
-          <div className="mt-6 rounded-apple-card border border-mist/30 p-5">
-            <b className="block text-apple-body-sm font-semibold text-carbon">Что система делает сама, а где решаешь ты</b>
-            <p className="mt-2 text-apple-body-sm text-graphite">
+          <div className="mt-6 border border-white/15 p-5">
+            <b className="block text-apple-body-sm font-semibold text-cloud-white">Что система делает сама, а где решаешь ты</b>
+            <p className="mt-2 text-apple-body-sm text-cloud-body">
               Подбор программ, сроки, чек-листы, черновики и проверку
               документов система делает целиком. Но есть места, где случай
               бывает нестандартным: спорная ситуация с двенадцатью годами
@@ -182,10 +184,10 @@ export function PricesExplorer() {
             </p>
           </div>
 
-          <p className="mt-10 text-apple-caption text-ash uppercase">
+          <p className="mt-10 text-apple-caption text-cloud-meta uppercase">
             Если нужен живой человек
           </p>
-          <p className="mt-2 text-apple-body-sm text-graphite">
+          <p className="mt-2 text-apple-body-sm text-cloud-body">
             Не входит в цену и не обязательно. Берут те, у кого нестандартный
             случай или просто хочется, чтобы проверил человек.
           </p>
@@ -195,13 +197,13 @@ export function PricesExplorer() {
                 key={m.name}
                 type="button"
                 onClick={() => openBuy(m.name, m.price)}
-                className="flex w-full items-center justify-between gap-4 rounded-apple-card border border-mist/30 p-4 text-left transition-colors hover:bg-frost focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rosso"
+                className="flex w-full items-center justify-between gap-4 border border-white/15 p-4 text-left transition-colors hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
               >
                 <div>
-                  <b className="block text-apple-body-sm font-semibold text-carbon">{m.name}</b>
-                  <span className="text-apple-body-sm text-graphite">{m.desc}</span>
+                  <b className="block text-apple-body-sm font-semibold text-cloud-white">{m.name}</b>
+                  <span className="text-apple-body-sm text-cloud-body">{m.desc}</span>
                 </div>
-                <span className="shrink-0 font-apple-display text-apple-subheading font-semibold whitespace-nowrap text-carbon">
+                <span className="shrink-0 font-apple-display text-apple-subheading font-semibold whitespace-nowrap text-cloud-white">
                   {m.price.toLocaleString("ru-RU")} ₸
                 </span>
               </button>
@@ -210,33 +212,8 @@ export function PricesExplorer() {
         </div>
       </section>
 
-      {/* Единственная тёмная полоса страницы. Она закрывает цены тем же,
-         чем закрывает их разговор с человеком: обещанием вернуть деньги.
-         Обсидиан здесь работает как точка, а не как декорация — после неё
-         на странице ничего не остаётся. */}
-      <section className="bg-obsidian px-5 py-16 sm:py-20">
-        <div className="mx-auto max-w-[900px]">
-          <AppleEyebrow as="p" className="text-ash-dark">
-            Если передумал
-          </AppleEyebrow>
-          <h2 className="mt-4 max-w-[30rem] font-apple-display font-light text-[32px] leading-[1.05] text-white sm:text-[46px]">
-            Семь дней на то, чтобы передумать
-          </h2>
-          <p className="mt-5 max-w-[34rem] font-apple-text text-apple-body text-ash-dark">
-            Не начал работать с планом или чек-листом — вернём всё полностью,
-            без объяснений и без разговора с менеджером.
-          </p>
-          <AppleButtonLink
-            href="/plan"
-            variant="inverted"
-            className="mt-8 px-8"
-          >
-            Сначала проверить шансы
-          </AppleButtonLink>
-        </div>
-      </section>
-
       <BuyModal product={buy} onClose={() => setBuy(null)} />
+      <HeadingPin section="prices-header" />
     </>
   );
 }

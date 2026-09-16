@@ -10,20 +10,20 @@ export function GuideDetail({ guide }: { guide: GuideCardData }) {
   return (
     <div>
       {guide.lead && (
-        <AppleBody as="p" className="text-apple-body-sm text-carbon">
+        <AppleBody as="p" className="text-apple-body-sm text-cloud-white">
           {guide.lead}
         </AppleBody>
       )}
       <dl className={`space-y-2.5 ${guide.lead ? "mt-4" : ""}`}>
         {guide.rows.map((r) => (
-          <div key={r.label} className="flex flex-col gap-0.5 border-t border-mist/20 pt-2.5 text-apple-body-sm first:border-t-0 first:pt-0 sm:flex-row sm:justify-between sm:gap-4">
-            <dt className="text-graphite">{r.label}</dt>
-            <dd className="font-semibold text-carbon sm:text-right">{r.value}</dd>
+          <div key={r.label} className="flex flex-col gap-0.5 border-t border-white/10 pt-2.5 text-apple-body-sm first:border-t-0 first:pt-0 sm:flex-row sm:justify-between sm:gap-4">
+            <dt className="text-cloud-body">{r.label}</dt>
+            <dd className="font-semibold text-cloud-white sm:text-right">{r.value}</dd>
           </div>
         ))}
       </dl>
       {guide.warn && (
-        <div className="mt-4 rounded-apple-card border border-warn bg-warn/10 px-4 py-3 text-apple-body-sm text-carbon">{guide.warn}</div>
+        <div className="mt-4 border border-warn bg-warn/10 px-4 py-3 text-apple-body-sm text-cloud-white">{guide.warn}</div>
       )}
     </div>
   );

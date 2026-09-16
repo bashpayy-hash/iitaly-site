@@ -5,6 +5,8 @@ import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlayGate } from "@/components/PaperOverlayGate";
+import { SkyBackgroundGate } from "@/components/apple/SkyBackgroundGate";
+import { LenisProvider } from "@/components/motion/LenisProvider";
 
 // Единственная гарнитура продукта — variable, один файл на весь диапазон
 // начертаний (100–900), реальная поддержка казахской кириллицы
@@ -90,6 +92,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           >
             Перейти к содержимому
           </a>
+          <SkyBackgroundGate />
+          <LenisProvider />
           {children}
           <PaperOverlayGate />
           <ChatWidget />
