@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
 import {
   VG_PER_YEAR,
   VG_RATE,
@@ -107,7 +108,7 @@ function GuaranteeCalculator() {
         </div>
       </div>
       <p className="mt-3 text-xs text-ink-soft">
-        €6 947,33 за каждый год. Выписки за 3 месяца с QR-кодом; одного Kaspi
+        {VISA_GUARANTEE_LABEL} за каждый год. Выписки за 3 месяца с QR-кодом; одного Kaspi
         недостаточно — консульство хочет видеть банковские выписки
         установленного вида. Подойдёт счёт родителей со спонсорским письмом.
       </p>

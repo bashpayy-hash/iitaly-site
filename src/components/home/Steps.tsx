@@ -8,6 +8,7 @@ import {
   MicroLabelGroup,
 } from "@/components/EditorialMarks";
 import { RouteScene } from "@/components/illustration/RouteScene";
+import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
 
 const steps = [
   {
@@ -33,7 +34,7 @@ const steps = [
   {
     n: "05",
     title: "Виза D и переезд",
-    body: "BLS, гарантия €6 947, kit giallo за 8 дней после прилёта.",
+    body: `BLS, гарантия ${VISA_GUARANTEE_LABEL}, kit giallo за 8 дней после прилёта.`,
   },
 ];
 
