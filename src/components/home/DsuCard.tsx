@@ -26,7 +26,7 @@ export function DsuCard() {
           <AppleEyebrow as="p" className="text-graphite">
             Стипендия DSU
           </AppleEyebrow>
-          <p className="mt-5 font-whisper text-[56px] leading-none font-normal text-carbon tabular-nums sm:text-[84px]">
+          <p className="mt-5 font-apple-display font-light text-[56px] leading-none text-carbon tabular-nums sm:text-[84px]">
             до €7 557
           </p>
           <p className="mx-auto mt-6 max-w-[34rem] font-apple-text text-apple-body text-graphite">

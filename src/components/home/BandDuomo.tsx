@@ -130,8 +130,8 @@ export function BandDuomo() {
           <AppleEyebrow as="p" className="text-[#7a5246]">
             43 университета · 30 городов
           </AppleEyebrow>
-          <h2 className="mt-4 font-whisper text-[38px] leading-[0.95] font-normal text-[#2e1d18] sm:text-[60px]">
-            Италия <span className="italic">шире</span> Рима
+          <h2 className="mt-4 font-apple-display font-light text-[38px] leading-[0.95] text-[#2e1d18] sm:text-[60px]">
+            Италия шире Рима
           </h2>
           <p className="mt-5 max-w-[24rem] font-apple-text text-apple-body text-[#4a332c]">
             Милан, Болонья, Турин, Падуя — цены по ISEE, языки программ,

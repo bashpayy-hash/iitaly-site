@@ -219,8 +219,8 @@ export function PricesExplorer() {
           <AppleEyebrow as="p" className="text-ash-dark">
             Если передумал
           </AppleEyebrow>
-          <h2 className="mt-4 max-w-[30rem] font-whisper text-[32px] leading-[1.05] font-normal text-white sm:text-[46px]">
-            Семь дней на то, чтобы <span className="italic">передумать</span>
+          <h2 className="mt-4 max-w-[30rem] font-apple-display font-light text-[32px] leading-[1.05] text-white sm:text-[46px]">
+            Семь дней на то, чтобы передумать
           </h2>
           <p className="mt-5 max-w-[34rem] font-apple-text text-apple-body text-ash-dark">
             Не начал работать с планом или чек-листом — вернём всё полностью,
