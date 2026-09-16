@@ -11,6 +11,7 @@ import { RouteRibbon } from "@/components/RouteRibbon";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
 import { TUSCANY_HILLS } from "@/data/illustrations";
+import Link from "next/link";
 
 /**
  * Справочник как index + активная глава, а не пять одинаковых больших
@@ -113,6 +114,20 @@ export function GuidesExplorer() {
             Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор
             визы D. Где делать в Казахстане, сколько стоит и в каком порядке.
             Всё бесплатно.
+          </p>
+          {/* Правила приёма меняются каждый цикл, и справочник — первое
+             место, где человек ищет актуальную сумму гарантии. Ссылка
+             стоит здесь, а не в подвале, чтобы он не читал прошлогоднее,
+             приняв его за нынешнее. */}
+          <p className="mt-4 text-sm text-ink-soft">
+            Правила 2026/27 изменились —{" "}
+            <Link
+              href="/changes-2026-27"
+              className="font-semibold text-ink underline underline-offset-4"
+            >
+              что именно и с какими датами
+            </Link>
+            .
           </p>
         </div>
       </section>
