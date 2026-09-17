@@ -8,6 +8,8 @@ import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
 import { HeadingPin } from "@/components/motion/HeadingPin";
+import { StudyAtmosphere } from "@/components/marketing/EditorialArtwork";
+import art from "@/components/marketing/editorial-art.module.css";
 
 export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
@@ -19,7 +21,8 @@ export function PlanExplorer() {
 
   return (
     <>
-      <section data-section="plan-header" className="px-5 pt-16 pb-10 text-center sm:pt-24">
+      <section data-section="plan-header" className={`${art.headerHost} px-5 pt-16 pb-10 text-center sm:pt-24`}>
+        <StudyAtmosphere />
         <div data-role="heading">
           <AppleCaption as="p">Персональный маршрут</AppleCaption>
           <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">

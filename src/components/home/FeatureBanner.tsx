@@ -1,10 +1,10 @@
 import styles from "@/components/marketing/marketing.module.css";
-import { Illustration } from "@/components/illustration/Illustration";
-import { ROME_PAPERCUT } from "@/data/illustrations";
+import art from "@/components/marketing/editorial-art.module.css";
+import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
 import { AppleHeading, AppleBody, AppleCaption } from "@/components/apple/Typography";
 import { AppleButtonLink } from "@/components/apple/Button";
 
-/** Existing Rome artwork; no new imagery or protected data changes. */
+/** The approved balcony occupies the existing image slot; copy and controls stay intact. */
 export function FeatureBanner() {
   return (
     <section data-section="feature" className={`${styles.feature} grid grid-cols-1 lg:grid-cols-2`}>
@@ -24,8 +24,8 @@ export function FeatureBanner() {
           </AppleButtonLink>
         </div>
       </div>
-      <div data-role="image" className="order-1 lg:order-2">
-        <Illustration asset={ROME_PAPERCUT} className="h-full object-cover" />
+      <div data-role="image" className={`${art.arrivalPanel} order-1 lg:order-2`}>
+        <EditorialArtwork scene="balcony-scene" />
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 import styles from "@/components/marketing/marketing.module.css";
+import { ItalianAccent } from "@/components/marketing/ItalianAccent";
 import { AppleHeading, AppleCaption } from "@/components/apple/Typography";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
@@ -40,6 +41,7 @@ export function HowItWorks() {
           <AppleHeading>От вопроса до посадки в самолёт.</AppleHeading>
           <p>Не нужно разбираться во всём сразу. У каждого этапа — свой понятный следующий шаг.</p>
           <AppleButtonLink href="/guides" variant="ghost" className="mt-5">Смотреть гайды по визе <span aria-hidden>↗</span></AppleButtonLink>
+          <ItalianAccent kind="moka" />
         </div>
         <ol className={styles.steps}>
           {STAGES.map((s) => (

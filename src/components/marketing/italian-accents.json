@@ -1,0 +1,20 @@
+{
+  "lemon": {
+    "src": "/illustrations/editorial/lemon-accent.webp",
+    "width": 1024,
+    "height": 688,
+    "jobId": "45b7f2d4-cfa0-427f-a681-19383043a329"
+  },
+  "moka": {
+    "src": "/illustrations/editorial/moka-accent.webp",
+    "width": 1024,
+    "height": 688,
+    "jobId": "12ac7c85-e87d-4611-a35f-247efd706ce3"
+  },
+  "balcony": {
+    "src": "/illustrations/editorial/balcony-accent.webp",
+    "width": 1024,
+    "height": 1024,
+    "jobId": "4c3a691f-1ca0-49c4-9c8c-093fab220926"
+  }
+}

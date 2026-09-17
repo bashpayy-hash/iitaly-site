@@ -1,4 +1,6 @@
 import styles from "@/components/marketing/marketing.module.css";
+import accents from "@/components/marketing/italian-accents.module.css";
+import { ItalianAccent } from "@/components/marketing/ItalianAccent";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { AppleCaption, AppleBody } from "@/components/apple/Typography";
 import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
@@ -6,7 +8,8 @@ import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
 /** Existing pricing and refund terms, with one clear conversion action. */
 export function PriceBand() {
   return (
-    <section className={`${styles.pricing} px-5 py-20 sm:py-28`}>
+    <section className={`${accents.host} ${styles.pricing} px-5 py-20 sm:py-28`}>
+      <ItalianAccent kind="lemon" />
       <div className="mx-auto grid max-w-[980px] grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1fr]">
         <div>
           <AppleCaption as="p">Один платёж, без подписки</AppleCaption>

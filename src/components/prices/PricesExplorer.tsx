@@ -7,6 +7,8 @@ import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 import { FEATURES, PRICE_EXPRESS_CHECK, PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { HeadingPin } from "@/components/motion/HeadingPin";
+import { TomatoAccent } from "@/components/marketing/EditorialArtwork";
+import art from "@/components/marketing/editorial-art.module.css";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -47,7 +49,8 @@ export function PricesExplorer() {
 
   return (
     <>
-      <section data-section="prices-header" className="px-5 pt-16 pb-10 text-center sm:pt-24">
+      <section data-section="prices-header" className={`${art.headerHost} px-5 pt-16 pb-10 text-center sm:pt-24`}>
+        <TomatoAccent />
         <div data-role="heading">
           <p className="text-apple-caption text-cloud-meta">Цена</p>
           <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">
