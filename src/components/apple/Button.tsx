@@ -26,7 +26,7 @@ export function AppleButtonLink({
   ...props
 }: CommonProps & { href: string } & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "className">) {
   return (
-    <Link href={href} className={classesFor(variant, size, className)} {...props}>
+    <Link href={href} className={classesFor(variant, size, className)} data-fab-yield={variant === "filled" ? "" : undefined} {...props}>
       {children}
     </Link>
   );
@@ -40,7 +40,7 @@ export function AppleButton({
   ...props
 }: CommonProps & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button className={classesFor(variant, size, className)} {...props}>
+    <button className={classesFor(variant, size, className)} data-fab-yield={variant === "filled" ? "" : undefined} {...props}>
       {children}
     </button>
   );

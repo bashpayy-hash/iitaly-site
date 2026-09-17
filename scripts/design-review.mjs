@@ -40,12 +40,22 @@ async function makePage(width, reducedMotion = 'reduce') {
     const url = new URL(route.request().url());
     return ['127.0.0.1', 'localhost'].includes(url.hostname) || url.protocol === 'data:' ? route.continue() : route.abort();
   });
+  if (reducedMotion === 'reduce') {
+    // Playwright's screenshot animation switch does not pause CSS inside an
+    // SVG loaded through <img>. Freeze that legacy mascot animation equally
+    // in base/head responses; no element is masked and no source is changed.
+    await context.route('**/mascot/source/*.svg', async route => {
+      const response = await route.fetch();
+      const svg = (await response.text()).replace('</svg>', '<style>* { animation: none !important; }</style></svg>');
+      await route.fulfill({ response, body: svg });
+    });
+  }
   const page = await context.newPage();
   page.on('pageerror', error => pageErrors.push(error.message));
   return page;
 }
 async function settle(page) {
-  await page.evaluate(async () => { await document.fonts.ready; await Promise.all([...document.images].map(image => image.decode().catch(() => {}))); });
+  await page.evaluate(async () => { await document.fonts.ready; for (const image of document.images) image.loading = 'eager'; await Promise.all([...document.images].map(image => image.decode().catch(() => {}))); });
   await page.waitForTimeout(350);
 }
 async function visit(page, route, port = 4173) {
@@ -131,6 +141,18 @@ try {
   await motionPage.emulateMedia({ reducedMotion: 'reduce' });
   await motionPage.waitForTimeout(200);
   assert.equal(await motionPage.locator('[data-journey-preview]').evaluate(el => el.style.transform), '');
+  await motionPage.emulateMedia({ reducedMotion: 'no-preference' });
+  await visit(motionPage, '/');
+  await motionPage.getByRole('link', { name: 'Смотреть университеты', exact: true }).click();
+  await motionPage.waitForURL('**/universities');
+  await settle(motionPage);
+  assert.equal(await motionPage.evaluate(() => document.documentElement.classList.contains('lenis')), false);
+  assert.equal(await motionPage.locator('.pin-spacer').count(), 0);
+  await motionPage.mouse.move(1200, 300);
+  await motionPage.mouse.wheel(0, 600);
+  await motionPage.waitForTimeout(600);
+  assert.equal(await motionPage.evaluate(() => scrollY > 0), true, 'Native scrolling works after leaving Lenis');
+  results.push({ test: 'Native university scroll restored after animated homepage navigation', passed: true });
   await motionPage.context().close();
   results.push({ test: 'Desktop motion cleans up on reduced-motion change', passed: true });
   assert.deepEqual(pageErrors, [], 'Browser runtime errors');
