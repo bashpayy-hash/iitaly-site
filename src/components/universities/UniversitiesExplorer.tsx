@@ -13,9 +13,8 @@ import { IllustrationBackdrop } from "@/components/illustration/IllustrationBack
 import { COAST_TOWN, VENICE_BAND } from "@/data/illustrations";
 import { EditorialBackground } from "@/components/EditorialBackground";
 import { RegistrationMark } from "@/components/EditorialMarks";
-import { CitySketchbook } from "@/components/sketchbook/CitySketchbook";
+import { ComparisonSection } from "./ComparisonSection";
 import { CityMatch } from "./CityMatch";
-import { Body, Caption, Title } from "@/components/Typography";
 import { track } from "@/lib/track";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
@@ -36,15 +35,9 @@ export function UniversitiesExplorer() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
 
-  /* Подбор города. Три куска состояния, и каждый нужен отдельно:
-     matchOpen  — открыта ли панель;
-     matchCities — что подсвечивать на карте. Это НЕ фильтр: карточки вузов
-                  и строка результата его не видят, из выборки не исчезает
-                  ни один город. Гаснут только точки — и гаснут обратимо;
-     jumpTo     — запрос скетчбуку открыться на нужном развороте. */
+  // City matching only highlights the map; filters remain independent.
   const [matchOpen, setMatchOpen] = useState(false);
   const [matchedByQuiz, setMatchedByQuiz] = useState<ReadonlySet<CityId>>(EMPTY_CITIES);
-  const [jumpTo, setJumpTo] = useState<{ plate: number; token: number } | null>(null);
 
   const filteredUnis = useMemo(
     () => UNIS.filter((u) => matchesFilters(u, typeFilter, engOnly)),
@@ -216,36 +209,20 @@ export function UniversitiesExplorer() {
         </div>
       </section>
 
-      {/* Скетчбук стоит ПОД картой, а не вместо неё: карта с фильтрами и
-         сравнением — рабочий инструмент выбора вуза, ради него на эту
-         страницу и заходят. Скетчбук отвечает на другой вопрос, который
-         задают ровно так же часто: а как там вообще. */}
-      <section className="relative overflow-hidden border-t-2 border-ink bg-paper px-5 py-18 sm:py-28">
-        <div className="mx-auto max-w-[900px]">
-          <Caption as="p">Италия, в которую едут</Caption>
-          <Title as="h2" className="mt-3 text-heading! sm:text-title!">
-            Скетчбук городов
-          </Title>
-          <Body as="p" className="mt-4 max-w-xl">
-            Семь разворотов: потяните страницу, чтобы перелистнуть, и
-            протащите лупу по бумаге. Под каждым кадром — чем это место
-            интересно поступающему.
-          </Body>
-          <div className="mt-8">
-            <CitySketchbook jumpTo={jumpTo} />
-          </div>
-        </div>
-      </section>
+      <ComparisonSection
+        compareIds={compareIds}
+        onChange={setCompareIds}
+        onOpen={() => setCompareOpen(true)}
+      />
 
       <CityMatch
         open={matchOpen}
         onClose={() => setMatchOpen(false)}
-        onPick={(city, plate) => {
+        onPick={(city) => {
           /* Порядок важен. Сначала подсветка и выбор города — тогда панель
              города уже отрисована к моменту, когда закрывается лист. */
           setMatchedByQuiz(new Set([city]));
           setActiveCity(city);
-          if (plate !== null) setJumpTo({ plate, token: Date.now() });
           setMatchOpen(false);
           track("city_match_pick", { city });
         }}

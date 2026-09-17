@@ -66,6 +66,13 @@ async function visit(page, route, port = 4173) {
 async function shot(page, name, fullPage = false) {
   return page.screenshot({ path: resolve(output, `${name}.png`), fullPage, animations: 'disabled', caret: 'hide' });
 }
+// The sketchbook section is intentionally removed. Compare the untouched map,
+// filters and city panel region, not the intentionally changed full-page height.
+async function mapShot(page, name) {
+  return page.locator('#main > section').nth(1).screenshot({
+    path: resolve(output, `${name}.png`), animations: 'disabled', caret: 'hide',
+  });
+}
 function compareImages(base, actual, name) {
   const a = PNG.sync.read(base), b = PNG.sync.read(actual);
   assert.equal(a.width, b.width, name + ': width');
@@ -75,7 +82,7 @@ function compareImages(base, actual, name) {
     if (a.data[i] !== b.data[i] || a.data[i + 1] !== b.data[i + 1] || a.data[i + 2] !== b.data[i + 2] || a.data[i + 3] !== b.data[i + 3]) changed++;
   }
   results.push({ test: name, changedPixels: changed, pixels: a.width * a.height });
-  assert.equal(changed, 0, name + ': the protected route must remain pixel-identical');
+  assert.equal(changed, 0, name + ': the protected map/filter region must remain pixel-identical');
 }
 try {
   for (const width of [1440, 390]) {
@@ -90,17 +97,17 @@ try {
     }
     // Compare direct entry, then entry via the redesigned client-side navigation.
     await visit(page, '/universities', 4174);
-    const baseline = await shot(page, `universities-baseline-${width}`, true);
+    const baseline = await mapShot(page, `universities-map-baseline-${width}`);
     await visit(page, '/universities');
     assert.equal(await page.locator('[data-marketing-surface]').count(), 0);
     assert.equal(await page.evaluate(() => document.documentElement.classList.contains('lenis')), false);
-    compareImages(baseline, await shot(page, `universities-head-${width}`, true), `universities ${width}px direct`);
+    compareImages(baseline, await mapShot(page, `universities-map-head-${width}`), `university map and filters ${width}px direct`);
     await visit(page, '/');
     await page.getByRole('link', { name: 'Смотреть университеты', exact: true }).click();
     await page.waitForURL('**/universities');
     await settle(page);
     assert.equal(await page.locator('[data-marketing-surface]').count(), 0);
-    compareImages(baseline, await shot(page, `universities-navigation-${width}`, true), `universities ${width}px client navigation`);
+    compareImages(baseline, await mapShot(page, `universities-map-navigation-${width}`), `university map and filters ${width}px client navigation`);
     await page.context().close();
   }
   const page = await makePage(1440);
