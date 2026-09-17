@@ -90,7 +90,9 @@ try {
     }
     results.push({ test: `${width}px: all three selections committed`, passed: true });
     assert.equal(await workbench.locator('[data-comparison-row]').count(), 12);
-    assert.equal(await workbench.getByLabel('Университет 2', {exact:true}).locator('option[value="bocconi"]').isDisabled(), true);
+    // isDisabled() retargets an option inside a wrapping label to the enabled select.
+    // Inspect the native option property instead; the duplicate must remain disabled.
+    assert.equal(await workbench.getByLabel('Университет 2', {exact:true}).locator('option[value="bocconi"]').evaluate(option => option.disabled), true);
     assert.match(await workbench.locator('[data-comparison-row="period"]').innerText(), /14\s400/);
     assert.match(await workbench.locator('[data-comparison-row="period"]').innerText(), /от €8\s400/);
     await workbench.getByLabel('Бюджет жизни за').selectOption('10');
