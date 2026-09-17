@@ -26,7 +26,7 @@ export function EditorialArtwork({
       <source
         type="image/webp"
         srcSet={`${ROOT}/${scene}-480.webp 480w, ${ROOT}/${scene}.webp ${width}w`}
-        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 65vw, 50vw"
+        sizes="(max-width: 1023px) 100vw, 50vw"
       />
       <img
         src={`${ROOT}/${scene}.webp`}

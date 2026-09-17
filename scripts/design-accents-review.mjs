@@ -94,8 +94,14 @@ function compareHero(a,b,layout,width) {
     if (!delta) continue;
     pixels++; maxDelta = Math.max(maxDelta,delta);
     const x = (i/4)%a.width+.5, y = Math.floor(i/4/a.width)+.5;
-    const edge = buttons.some(([bx,by,bw,bh]) => x>=bx-1.5 && x<=bx+bw+1.5 && y>=by-1.5 && y<=by+bh+1.5 && Math.min(Math.abs(x-bx),Math.abs(x-bx-bw),Math.abs(y-by),Math.abs(y-by-bh))<=1.5);
-    assert(edge, `${width}: a changed hero pixel is outside a pill perimeter`);
+    const edge = buttons.some(([bx,by,bw,bh]) => {
+      // Distance to a capsule boundary, including its rounded ends. A plain
+      // bounding-rectangle edge incorrectly rejects pixels on the corner arc.
+      const radius = bh / 2;
+      const cx = Math.max(bx + radius, Math.min(x, bx + bw - radius));
+      return Math.abs(Math.hypot(x - cx, y - by - radius) - radius) <= 1.5;
+    });
+    assert(edge, `${width}: changed pixel (${x},${y}) is outside a pill perimeter`);
   }
   results.push({test:`Hero ${width}px exact layout/styles and bounded edge rasterization`,passed:pixels<=64&&maxDelta<=32,changedPixels:pixels,maxChannelDelta:maxDelta});
   assert(pixels<=64&&maxDelta<=32, `${width}: hero difference exceeds verified antialiasing tolerance`);
@@ -123,6 +129,7 @@ try {
     const a = pngjs.PNG.sync.read(heroBefore), b = pngjs.PNG.sync.read(heroAfter);
     assert.equal(a.width, b.width); assert.equal(a.height, b.height);
     const afterLayout = await heroLayout(page);
+    await writeFile(resolve(output, `hero-layout-${width}.json`), JSON.stringify({beforeLayout,afterLayout},null,2));
     assert.deepEqual(afterLayout, beforeLayout, `Hero geometry and CSS unchanged at ${width}`);
     compareHero(a, b, beforeLayout, width);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}: horizontal overflow`);
@@ -220,7 +227,7 @@ try {
       if (route === '/guides') {
         if (width >= 1024) {
           await page.getByRole('navigation', {name:'Главы справочника'}).getByRole('button', {name:'CIMEA'}).click();
-          assert(await page.getByText('03 · CIMEA', {exact:true}).isVisible());
+          await page.getByText('03 · CIMEA', {exact:true}).waitFor({state:'visible'});
         } else {
           const detail = page.locator('main details').filter({has:page.locator('summary').filter({hasText:'CIMEA'})}).first();
           await detail.locator('summary').click();
