@@ -46,7 +46,7 @@ export function EditorialArtwork({
 export function StudyAtmosphere() {
   return (
     <div aria-hidden="true" data-editorial-atmosphere className={styles.atmosphere}>
-      <img src={`${ROOT}/study-desk-480.webp`} alt="" width={480} height={360} loading="lazy" decoding="async" draggable={false} />
+      <img src={`${ROOT}/travel-paperwork-640.webp`} alt="" width={640} height={480} loading="lazy" decoding="async" draggable={false} />
     </div>
   );
 }
@@ -54,7 +54,16 @@ export function StudyAtmosphere() {
 export function TomatoAccent() {
   return (
     <span aria-hidden="true" data-editorial-spot="tomatoes" className={styles.tomato}>
-      <img src={`${ROOT}/tomatoes.webp`} alt="" width={440} height={293} loading="lazy" decoding="async" draggable={false} />
+      <img src={`${ROOT}/tomato-bowl-320.webp`} alt="" width={320} height={320} loading="lazy" decoding="async" draggable={false} />
+    </span>
+  );
+}
+
+/** Small approved cutout in the comparison heading, never over table content. */
+export function LemonPostcard() {
+  return (
+    <span aria-hidden="true" data-selected-accent="lemon-postcard" className={styles.lemonPostcard}>
+      <img src={`${ROOT}/lemon-postcard-320.webp`} alt="" width={320} height={400} loading="lazy" decoding="async" draggable={false} />
     </span>
   );
 }

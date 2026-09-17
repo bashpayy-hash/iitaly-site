@@ -6,12 +6,14 @@ on:
     paths:
       - "src/components/marketing/**"
       - "src/components/home/**"
+      - "src/components/universities/**"
       - "src/components/apple/**"
       - "src/components/guides/**"
       - "src/components/plan/**"
       - "src/components/prices/**"
       - "public/illustrations/editorial/**"
       - "docs/editorial-art-assets.json"
+      - "docs/selected-accents-assets.json"
       - "src/components/motion/HeadingPin.tsx"
       - "src/app/page.tsx"
       - "src/app/plan/**"
@@ -64,6 +66,8 @@ jobs:
         run: node scripts/design-review.mjs
       - name: Review local illustrations, unchanged copy and hero
         run: node scripts/design-accents-review.mjs
+      - name: Review expanded comparisons and selected artwork
+        run: node scripts/design-comparison-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

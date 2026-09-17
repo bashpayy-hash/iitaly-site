@@ -1,0 +1,61 @@
+/* Scoped to the new comparison workspace; map, filters and global chrome are untouched. */
+.section { padding: 72px 24px 64px; background: #f5f5f7; border-top: 1px solid #dcdce1; color: #1d1d1f; font-family: var(--font-apple-text); }
+.inner { max-width: 1100px; margin: 0 auto; }
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) 156px; gap: 64px; align-items: center; margin-bottom: 36px; }
+.eyebrow { font-size: 12px; font-weight: 500; color: #666670; letter-spacing: .03em; }
+.intro h2 { max-width: 730px; margin-top: 12px; font-family: var(--font-apple-display); font-size: clamp(32px, 4vw, 48px); font-weight: 600; letter-spacing: -.045em; line-height: 1.08; text-wrap: balance; }
+.description { max-width: 620px; margin-top: 20px; font-size: 17px; line-height: 1.5; color: #51515a; }
+.selectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.selector { min-width: 0; }
+.selector > span { display: block; margin-bottom: 9px; color: #666670; font-size: 12px; }
+.selector select { display: block; width: 100%; min-width: 0; padding: 13px 32px 13px 12px; border: 1px solid #c9c9d0; border-radius: 8px; background: #fff; color: #1d1d1f; font-size: 16px; text-overflow: ellipsis; }
+.section :where(button,select,input):focus-visible, .comparison :where(select,input):focus-visible, .tableScroll:focus-visible { outline: 2px solid #b91134; outline-offset: 4px; }
+.selectionActions { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 16px 0 24px; font-size: 13px; color: #666670; }
+.selectionActions button { min-height: 40px; color: #b91134; text-underline-offset: 4px; }
+.selectionActions button:hover { text-decoration: underline; }
+.empty { padding: 40px 24px; border-top: 1px solid #dcdce1; text-align: center; }
+.empty > span { display: block; color: #b91134; font-size: 12px; letter-spacing: .16em; }
+.empty p { font-size: 22px; margin-top: 12px; letter-spacing: -.025em; }
+.empty small { display: block; margin-top: 10px; color: #666670; font-size: 13px; }
+.comparison { min-width: 0; color: #1d1d1f; font-family: var(--font-apple-text); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; margin: 24px 0 12px; font-size: 14px; }
+.toggle { display: inline-flex; gap: 10px; align-items: center; min-height: 44px; cursor: pointer; }
+.toggle input { width: 18px; height: 18px; accent-color: #d7133f; }
+.period { display: inline-flex; align-items: center; gap: 10px; }
+.period select { padding: 10px; border: 1px solid #c9c9d0; border-radius: 8px; background: #fff; font-size: 16px; }
+.count { color: #666670; font-size: 12px; }
+.scrollHint { margin: 8px 0 12px; font-size: 12px; color: #666670; }
+.tableScroll { max-width: 100%; overflow-x: auto; border: 1px solid #dcdce1; border-radius: 8px; overscroll-behavior-x: contain; }
+.table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; text-align: left; font-size: 14px; line-height: 1.5; }
+.table tr > :first-child { width: 180px; }
+.table tr > * { padding: 16px 18px; border-bottom: 1px solid #e4e4e9; vertical-align: top; background: #fff; overflow-wrap: anywhere; }
+.table thead th { min-width: 220px; background: #fafafc; font-weight: 500; }
+.table thead th:first-child { color: #666670; font-size: 12px; }
+.table tbody tr > th { color: #51515a; font-weight: 500; font-size: 13px; }
+.table tr > :not(:first-child) { border-left: 1px solid #ededf1; }
+.table tbody tr[data-different="true"] > th { box-shadow: inset 3px 0 #d7133f; }
+.table .groupRow th { width: auto; padding: 11px 18px; color: #1d1d1f; background: #ececf0; font-size: 12px; letter-spacing: .03em; font-weight: 600; }
+.table small { display: block; font-size: 11px; color: #666670; margin-top: 4px; }
+.uniName { display: block; font-size: 18px; line-height: 1.25; letter-spacing: -.025em; }
+.city { display: block; margin-top: 6px; color: #666670; font-size: 12px; }
+.notes { display: grid; gap: 12px; margin-top: 20px; color: #666670; font-size: 12px; line-height: 1.6; }
+.notes strong { color: #51515a; font-weight: 600; }
+.note { margin: 18px 0; font-size: 14px; color: #666670; }
+.modal { padding: 28px; background: #fff; }
+.modalHeader { display: flex; justify-content: space-between; align-items: start; gap: 24px; }
+.modalHeader h3 { font-size: clamp(24px, 3vw, 32px); line-height: 1.15; font-weight: 600; letter-spacing: -.03em; }
+.close { min-width: 44px; min-height: 44px; border: 1px solid #dcdce1; border-radius: 50%; font-size: 24px; }
+.close:focus-visible { outline: 2px solid #b91134; outline-offset: 3px; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 767px) {
+  .section { padding: 48px 20px; }
+  .intro { display: block; margin-bottom: 28px; }
+  .selectors { grid-template-columns: 1fr; gap: 14px; }
+  .table { min-width: 650px; }
+  .table tr > :first-child { width: 130px; }
+  .table tr > * { padding: 14px 12px; }
+  .table tr:not(.groupRow) > th:first-child { position: sticky; left: 0; z-index: 1; background: #fafafc; border-right: 1px solid #dcdce1; }
+  .toolbar { gap: 10px 20px; }
+  .modal { padding: 24px 16px; }
+}
+@media (forced-colors: active) { .table tbody tr[data-different="true"] > th { border-inline-start: 3px solid Highlight; } }
