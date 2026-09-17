@@ -1,0 +1,114 @@
+{
+  "terrace": {
+    "origin": "approved conversation image_gen output; transferred with Higgsfield",
+    "sourceSha256": "8506a7c08372b1a7723fd0fc6a8ce0c1026dae012a92af9e7c602422fb4b7631",
+    "variants": [
+      {
+        "file": "terrace-480.webp",
+        "width": 480,
+        "height": 360,
+        "bytes": 51550,
+        "sha256": "adfe536710d67dec27df86659f20268120743304d0a9fe29da15be4426af02dc"
+      },
+      {
+        "file": "terrace.webp",
+        "width": 1200,
+        "height": 900,
+        "bytes": 237874,
+        "sha256": "7211420969ff6c10452e960c199a075fd4133ffa3c9e68a26244865e4cd21105"
+      }
+    ]
+  },
+  "balcony-scene": {
+    "origin": "approved conversation image_gen output; transferred with Higgsfield",
+    "sourceSha256": "9d380a85fa02015fa4203b6fcb94dd0f5bf3ff3dceb9903cdefc3492d8dfa35b",
+    "variants": [
+      {
+        "file": "balcony-scene-480.webp",
+        "width": 480,
+        "height": 480,
+        "bytes": 41304,
+        "sha256": "d6feccd2e09fb14ac90945cd2ad4ae15e6363a517068d99561ba70c0c3789484"
+      },
+      {
+        "file": "balcony-scene.webp",
+        "width": 1000,
+        "height": 1000,
+        "bytes": 161314,
+        "sha256": "19faf466e9742a5ec84b8b9ed40bd508f18c70e1ea92fd391b5c8ff9089b2be7"
+      }
+    ]
+  },
+  "study-desk": {
+    "origin": "approved conversation image_gen output; transferred with Higgsfield",
+    "sourceSha256": "cf0e0634a1b6436015b961b42ca3739dabe9491d066433a1fa34c9bd6c462637",
+    "variants": [
+      {
+        "file": "study-desk-480.webp",
+        "width": 480,
+        "height": 360,
+        "bytes": 34462,
+        "sha256": "9ac0b85fc8a4a6de2c6fb1dfa15928db45581478f521a56ce80417f33f37c853"
+      },
+      {
+        "file": "study-desk.webp",
+        "width": 900,
+        "height": 675,
+        "bytes": 106970,
+        "sha256": "1364cc293e22d069487e9e1e08fc15a25e7c9cb1329f162e0286d1f3b6565f6e"
+      }
+    ]
+  },
+  "tomatoes": {
+    "origin": "approved conversation image_gen output; transferred with Higgsfield",
+    "sourceSha256": "0bfb5bba05a79402976f6186f3ce31e21792eabd5050a969abeaac3d74cff52a",
+    "variants": [
+      {
+        "file": "tomatoes.webp",
+        "width": 440,
+        "height": 293,
+        "bytes": 41982,
+        "sha256": "418b2b7e18197ba06e05f037dbee07d404e5d83a6ee6ce5588f53955979f3956"
+      }
+    ]
+  },
+  "lemon-accent": {
+    "origin": "Higgsfield generation",
+    "jobId": "45b7f2d4-cfa0-427f-a681-19383043a329",
+    "variants": [
+      {
+        "file": "lemon-accent.webp",
+        "width": 1024,
+        "height": 688,
+        "bytes": 62352,
+        "sha256": "bfb1e865e4d4b155b89133ff3718dae5b697fb772a15e901b6272fb96db34051"
+      }
+    ]
+  },
+  "moka-accent": {
+    "origin": "Higgsfield generation",
+    "jobId": "12ac7c85-e87d-4611-a35f-247efd706ce3",
+    "variants": [
+      {
+        "file": "moka-accent.webp",
+        "width": 1024,
+        "height": 688,
+        "bytes": 43050,
+        "sha256": "31df55b0e3732d50b116f8f811b53083f8175cca523885fa5d731aaaf1aaca53"
+      }
+    ]
+  },
+  "balcony-accent": {
+    "origin": "Higgsfield generation",
+    "jobId": "4c3a691f-1ca0-49c4-9c8c-093fab220926",
+    "variants": [
+      {
+        "file": "balcony-accent.webp",
+        "width": 1024,
+        "height": 1024,
+        "bytes": 66726,
+        "sha256": "31650bf798803d94fcb0ed557bf6d22759c370f467fa3f954fc1c474bf1a75aa"
+      }
+    ]
+  }
+}
