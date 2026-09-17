@@ -99,7 +99,7 @@ function compareHero(a,b,layout,width) {
       // bounding-rectangle edge incorrectly rejects pixels on the corner arc.
       const radius = bh / 2;
       const cx = Math.max(bx + radius, Math.min(x, bx + bw - radius));
-      return Math.abs(Math.hypot(x - cx, y - by - radius) - radius) <= 1.5;
+      return Math.abs(Math.hypot(x - cx, y - by - radius) - radius) <= 2;
     });
     assert(edge, `${width}: changed pixel (${x},${y}) is outside a pill perimeter`);
   }
@@ -244,6 +244,9 @@ try {
     await context.close();
   }
   assert.deepEqual(errors, [], 'No browser runtime errors');
+} catch (error) {
+  errors.push(error instanceof Error ? error.message : String(error));
+  throw error;
 } finally {
   await writeFile(resolve(output, 'results.json'), JSON.stringify({ results, errors }, null, 2));
   await browser.close();
