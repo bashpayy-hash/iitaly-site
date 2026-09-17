@@ -1,9 +1,15 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { CITIES, UNIS, type University } from "@/data/italy";
 import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
 import { ComparisonTable } from "./ComparisonTable";
 import styles from "./comparison.module.css";
+
+// Server-exported native selects stay disabled until their React handlers exist.
+const subscribe = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
 
 const options = [...UNIS].sort((a, b) => CITIES[a.city].name.localeCompare(CITIES[b.city].name, "ru") || a.name.localeCompare(b.name));
 
@@ -12,6 +18,7 @@ export function ComparisonSection({ compareIds, onChange, onOpen }: {
   onChange: (ids: string[]) => void;
   onOpen: () => void;
 }) {
+  const ready = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
   const universities = compareIds.map(id => UNIS.find(u => u.id === id)).filter((u): u is University => Boolean(u));
   function select(index: number, value: string) {
     const next = [...compareIds];
@@ -20,7 +27,7 @@ export function ComparisonSection({ compareIds, onChange, onOpen }: {
     onChange([...new Set(next.filter(Boolean))].slice(0, 3));
   }
   return (
-    <section className={styles.section} id="compare-universities" aria-labelledby="comparison-heading">
+    <section className={styles.section} id="compare-universities" data-comparison-ready={ready} aria-labelledby="comparison-heading">
       <div className={styles.inner}>
         <div className={styles.intro}>
           <div>
@@ -33,7 +40,7 @@ export function ComparisonSection({ compareIds, onChange, onOpen }: {
         <div className={styles.selectors}>
           {[0, 1, 2].map(index => <label key={index} className={styles.selector}>
             <span>Университет {index + 1}{index === 2 ? " · необязательно" : ""}</span>
-            <select aria-label={`Университет ${index + 1}`} value={compareIds[index] || ""} onChange={event => select(index, event.target.value)}>
+            <select disabled={!ready} aria-label={`Университет ${index + 1}`} value={compareIds[index] || ""} onChange={event => select(index, event.target.value)}>
               <option value="">Выбрать университет</option>
               {options.map(u => <option key={u.id} value={u.id} disabled={compareIds.includes(u.id) && compareIds[index] !== u.id}>{CITIES[u.city].name} — {u.name}</option>)}
             </select>

@@ -66,6 +66,7 @@ try {
     assert.equal(await page.evaluate(() => document.documentElement.classList.contains('lenis')), false);
     await noOverflow(page, `universities empty ${width}`);
     const workbench = page.locator('#compare-universities');
+    await page.waitForFunction(() => document.querySelector('#compare-universities')?.getAttribute('data-comparison-ready') === 'true');
     const lemon = page.locator('[data-selected-accent="lemon-postcard"]');
     assert.equal(await lemon.isVisible(), width >= 768);
     if (width >= 768) {
@@ -79,9 +80,15 @@ try {
       });
       assert.equal(overlap, false, 'Postcard does not overlap comparison controls/copy');
     }
-    await workbench.getByLabel('Университет 1', {exact:true}).selectOption('bocconi');
-    await workbench.getByLabel('Университет 2', {exact:true}).selectOption('polimi');
-    await workbench.getByLabel('Университет 3', {exact:true}).selectOption('polito');
+    for (const [index, id] of ['bocconi', 'polimi', 'polito'].entries()) {
+      await workbench.getByLabel(`Университет ${index + 1}`, {exact:true}).selectOption(id);
+      await page.waitForFunction(({ index, id }) => {
+        const select = document.querySelector(`#compare-universities select[aria-label="Университет ${index + 1}"]`);
+        const status = document.querySelector('#compare-universities [role="status"]');
+        return select?.value === id && status?.textContent === `Выбрано ${index + 1} из 3`;
+      }, { index, id });
+    }
+    results.push({ test: `${width}px: all three selections committed`, passed: true });
     assert.equal(await workbench.locator('[data-comparison-row]').count(), 12);
     assert.equal(await workbench.getByLabel('Университет 2', {exact:true}).locator('option[value="bocconi"]').isDisabled(), true);
     assert.match(await workbench.locator('[data-comparison-row="period"]').innerText(), /14\s400/);
@@ -155,7 +162,7 @@ try {
   }
   assert.deepEqual(errors,[]);
 } catch(error) {
-  errors.push(error.message); throw error;
+  errors.push(error.stack || error.message); throw error;
 } finally {
   await writeFile(resolve(output,'results.json'),JSON.stringify({results,errors},null,2));
   await browser.close();
