@@ -1,0 +1,65 @@
+{
+  "lemon-postcard": {
+    "source": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/2eae30fe-d652-40ac-b309-8665dfa23fb2.png",
+    "sourceSha256": "eeef23586e55e8b10b0bdb5f2ddc94d76d11a3abf5de06853156d5247f42545a",
+    "origin": "User-approved image_gen attachment, transferred via Higgsfield; not regenerated",
+    "variants": [
+      {
+        "src": "/illustrations/editorial/lemon-postcard-640.webp",
+        "width": 640,
+        "height": 800,
+        "bytes": 164990,
+        "sha256": "69b403a880fc7d6e31635af6df44618de2233eef0dfa6933d98a0b5c888272d5"
+      },
+      {
+        "src": "/illustrations/editorial/lemon-postcard-320.webp",
+        "width": 320,
+        "height": 400,
+        "bytes": 51308,
+        "sha256": "71a537b4e888dc70a5601311d2205cf81ce7019557bafb460fa09517ac83d75f"
+      }
+    ]
+  },
+  "travel-paperwork": {
+    "source": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/46f1394e-b64f-4829-bbd6-e066fd472fd1.png",
+    "sourceSha256": "b0efeffcc8ab215232c02cbecd8579d295cb25f643897c36e9c07e9da5b78f50",
+    "origin": "User-approved image_gen attachment, transferred via Higgsfield; not regenerated",
+    "variants": [
+      {
+        "src": "/illustrations/editorial/travel-paperwork-640.webp",
+        "width": 640,
+        "height": 480,
+        "bytes": 114856,
+        "sha256": "d6867d0f3fd9be06fb42554f2f67667dd3ead0058795a9658155944c9dc9b848"
+      },
+      {
+        "src": "/illustrations/editorial/travel-paperwork-320.webp",
+        "width": 320,
+        "height": 240,
+        "bytes": 35766,
+        "sha256": "4d1f59c676253c21d1132de010b4db519c18a83583fc198e243376531274ef1c"
+      }
+    ]
+  },
+  "tomato-bowl": {
+    "source": "https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/a16b4eee-58bb-469e-bfdf-e66fb8c78176.png",
+    "sourceSha256": "5e1a1d9188642b2607d5418da081d800009e15ded47a462ff55c6dd417c52292",
+    "origin": "User-approved image_gen attachment, transferred via Higgsfield; not regenerated",
+    "variants": [
+      {
+        "src": "/illustrations/editorial/tomato-bowl-640.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 128494,
+        "sha256": "771152329ffde28bab0f5f73ac1f20e5cf6764e3fb87b37132aad366d1e65d90"
+      },
+      {
+        "src": "/illustrations/editorial/tomato-bowl-320.webp",
+        "width": 320,
+        "height": 320,
+        "bytes": 39710,
+        "sha256": "49b64ead87707a1e7b425f06a42e1a98a087400ccbf134f0ebb45e59a784a324"
+      }
+    ]
+  }
+}
