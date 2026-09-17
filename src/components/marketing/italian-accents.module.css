@@ -1,0 +1,53 @@
+/* All selectors stay inside this module. Never style the map or global chrome. */
+.host { position: relative; }
+.accent {
+  position: relative;
+  display: block;
+  isolation: isolate;
+  pointer-events: none;
+  user-select: none;
+}
+.image { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
+/* Two quiet, local pools of colour; no gradient behind text or full sections. */
+.moka::before, .balcony::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 4%;
+  border-radius: 50%;
+}
+.moka {
+  width: 224px;
+  max-width: 100%;
+  aspect-ratio: 1024 / 688;
+  margin-top: 20px;
+}
+.moka::before {
+  background: radial-gradient(ellipse at 36% 52%, #deebf2a3, transparent 65%), radial-gradient(ellipse at 66% 54%, #f1e1d782, transparent 65%);
+}
+.lemon {
+  position: absolute;
+  top: 0;
+  right: max(20px, calc((100% - 1080px) / 2));
+  width: 160px;
+  aspect-ratio: 1024 / 688;
+}
+.balcony {
+  display: none;
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 112px;
+  aspect-ratio: 1;
+}
+.balcony::before {
+  inset: -2%;
+  background: radial-gradient(ellipse at 35% 55%, #e0eee6b3, transparent 64%), radial-gradient(ellipse at 65% 44%, #eee5d780, transparent 66%);
+}
+@media (min-width: 1280px) { .balcony { display: block; } }
+@media (max-width: 767px) {
+  .moka { display: none; }
+  .lemon { top: 6px; right: 16px; width: 104px; }
+}
+/* Decoration is expendable; legibility and print space are not. */
+@media (forced-colors: active), print { .accent { display: none; } }

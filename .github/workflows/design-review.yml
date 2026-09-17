@@ -57,6 +57,8 @@ jobs:
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review desktop, mobile, quiz, checkout and protected route
         run: node scripts/design-review.mjs
+      - name: Review subtle Higgsfield accents and unchanged hero
+        run: node scripts/design-accents-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
