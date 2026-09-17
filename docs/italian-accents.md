@@ -1,23 +1,25 @@
-# Small Italian accents, not another redesign
-
-The existing Apple-inspired IITALY page stays in place. This change adds three small decorative images generated through the Higgsfield plugin, using the user's supplied painted moka reference for material and brushwork. No generated website mockup is used.
+# Italian artwork: an addition to the existing design
 
 ## Placement
 
-- Moka and espresso: below the existing how-it-works introduction, in the unused column space. 224px image box, with substantial transparent breathing room; a soft local blue/peach gradient only under the image.
-- Balcony: a 112px detail in the arrival section's outer margin, with a local sage/ivory gradient. Shown only at 1280px and above where it cannot touch the copy.
-- Lemon twig: 160px in the pricing section's existing upper padding, 104px on mobile. No background wash here.
+The Apple-inspired typography, homepage hero, navigation, copy, section order and interaction logic are retained. The user explicitly approved integrating the latest paintings and merging the result.
 
-No new headings, claims, buttons, typefaces, full-width illustrations, section backgrounds, motion or persistent animation. The hero, original illustrations, shared marketing stylesheet, navigation and layout are retained. Artwork uses empty alt text, aria-hidden and pointer-events:none. On small screens only the lemon remains; all decorative art is removed in forced colours and print.
+- `/guides`: the approved coastal terrace replaces the Tuscany image in the existing right-hand hero slot. The left column and chapter navigation are unchanged.
+- Home, arrival section: the approved green-shutter balcony replaces the old Rome image in the existing slot, feathered into white at the edge. The redundant tiny balcony decoration is removed.
+- `/plan`: the approved stationery/espresso painting is an expendable right-edge background wash, with a 3px blur, low opacity and local paper grain. The form and text are never blurred. This layer is disabled below 1280px and with reduced transparency or increased contrast.
+- `/prices`: the approved tomato illustration is a 128–160px accent in the spare right margin, visible only from 1280px.
+- Home: retain the small Higgsfield moka under the how-it-works introduction and the lemon twig in the price section. Only the lemon remains on phones.
 
-## Sources and delivery
+All decoration is non-interactive and hidden from assistive technology. Foreground illustrations have separate image slots; no painting covers controls. Print and forced-colour modes remove expendable illustrations.
 
-`src/components/marketing/italian-accents.json` records the three exact Higgsfield generation job IDs and WebP delivery URLs. All three were generated with transparent background enabled. The supplied reference is not copied onto the site. Model: GPT Image 2.5, invoked through Higgsfield, high quality, 1k.
+## Provenance and local delivery
 
-The provider's WebP derivatives retain alpha. Current file sizes are 62,352, 43,050 and 66,726 bytes (172,128 total). Images are lazily loaded, unoptimized for static export, and send no referrer. They currently load from Higgsfield's CDN, not the Netlify repository; the images therefore depend on that CDN remaining available. There are no Higgsfield credentials or API calls in the site, and no third-party generation SDK is installed. A CDN failure affects decoration only, not page content or controls.
+The original lemon, moka and small balcony were generated through Higgsfield (job IDs remain in `italian-accents.json`). The four newer paintings were generated in the conversation with image_gen, approved by the user, and transferred using Higgsfield; they are not described as Higgsfield generations. No reference artwork or generated website screenshot is used as a page background.
 
-## Isolation and verification
+Every image is stored in `public/illustrations/editorial/` and shipped by Netlify with the static export. There are no runtime CDN dependencies, generation APIs, credentials or added packages. `docs/editorial-art-assets.json` records source and derivative SHA256 hashes, dimensions and byte sizes. Three scenes have smaller 480px versions for responsive delivery; all outputs are WebP. Only the guides hero is eager/high priority. Other illustrations load lazily. The temporary import workflow is removed before merge.
 
-Only three home components receive decorative additions. `/universities`, sketchbook, all `src/data`, backend contracts, root layout, global CSS, existing marketing CSS, pricing/refund terms, portal, package dependencies and Netlify configuration are untouched.
+## Guardrails and validation
 
-The existing design-review suite still compares the protected map to the exact base and checks the quiz, checkout, responsive layout and native scrolling. An additional read-only browser test downloads only the three approved image URLs, verifies transparent alpha, checks real image loading and absence of text/control overlap at 320, 390, 768, 1024, 1280 and 1440px, and compares the hero pixels and homepage text with the base. It exports actual browser screenshots and source WebPs as review artifacts. External backend requests remain blocked during these tests.
+`/universities`, sketchbook, all `src/data`, shared Header/Footer, root layout, globals.css, backend contracts, portal, dependency lockfile and Netlify configuration remain untouched. Product claims and original refund terms are unchanged.
+
+The existing CI checks TypeScript, lint and static build. The existing design review compares the map to the exact base and exercises quiz, checkout and native scrolling. The illustration review checks local asset hashes and budgets, actual image decoding, transparent alpha of the original accents, homepage-hero pixel equality, original copy on all four marketing routes, non-overlap and horizontal overflow at six widths, mobile image selection, guides navigation, background-only blur, forced colours and print. Screenshots are exported for visual inspection. Real payments and contact submissions are not performed.

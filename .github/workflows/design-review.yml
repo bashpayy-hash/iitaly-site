@@ -7,6 +7,11 @@ on:
       - "src/components/marketing/**"
       - "src/components/home/**"
       - "src/components/apple/**"
+      - "src/components/guides/**"
+      - "src/components/plan/**"
+      - "src/components/prices/**"
+      - "public/illustrations/editorial/**"
+      - "docs/editorial-art-assets.json"
       - "src/components/motion/HeadingPin.tsx"
       - "src/app/page.tsx"
       - "src/app/plan/**"
@@ -57,7 +62,7 @@ jobs:
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review desktop, mobile, quiz, checkout and protected route
         run: node scripts/design-review.mjs
-      - name: Review subtle Higgsfield accents and unchanged hero
+      - name: Review local illustrations, unchanged copy and hero
         run: node scripts/design-accents-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()

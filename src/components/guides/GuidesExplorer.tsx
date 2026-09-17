@@ -6,8 +6,8 @@ import { GUIDES } from "@/data/guides";
 import { GuideDetail } from "./GuideDetail";
 import { VisaSection } from "./VisaSection";
 import { AppleButton } from "@/components/apple/Button";
-import { Illustration } from "@/components/illustration/Illustration";
-import { TUSCANY_HILLS } from "@/data/illustrations";
+import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
+import art from "@/components/marketing/editorial-art.module.css";
 import Link from "next/link";
 import { HeadingPin } from "@/components/motion/HeadingPin";
 
@@ -106,8 +106,8 @@ export function GuidesExplorer() {
             </p>
           </div>
         </div>
-        <div className="order-1 lg:order-2">
-          <Illustration asset={TUSCANY_HILLS} className="h-full object-cover" />
+        <div className={`${art.guidePanel} order-1 lg:order-2`}>
+          <EditorialArtwork scene="terrace" priority />
         </div>
       </section>
 

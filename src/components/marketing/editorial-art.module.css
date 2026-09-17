@@ -1,0 +1,72 @@
+/* Local artwork treatments only. Never import into the map, root or global CSS. */
+.picture {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+.picture img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.guidePanel { position: relative; aspect-ratio: 4 / 3; background: #f8f5ed; }
+.arrivalPanel { position: relative; aspect-ratio: 1; background: #f2f2e8; }
+/* Feather the picture into the existing white copy column, not over its text. */
+.arrivalPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #fff 0%, #ffffff80 8%, transparent 32%);
+}
+.headerHost { position: relative; isolation: isolate; }
+.headerHost > :not(.atmosphere):not(.tomato) { position: relative; z-index: 1; }
+.atmosphere {
+  display: none;
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(26vw, 390px);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  mask-image: linear-gradient(90deg, transparent, #000 58%);
+  background: radial-gradient(ellipse at 95% 70%, #e8edf480, transparent 75%);
+}
+.atmosphere img {
+  position: absolute;
+  width: 420px;
+  max-width: none;
+  height: 315px;
+  right: -68px;
+  bottom: -48px;
+  opacity: .24;
+  filter: blur(3px) saturate(.72);
+}
+/* The local paper grain stays below copy and is not a page-wide overlay. */
+.atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='137' height='137'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%2366686b' filter='url(%23n)' opacity='.5' d='M0 0h137v137H0z'/%3E%3C/svg%3E");
+}
+.tomato { display: none; position: absolute; right: 28px; bottom: 24px; width: 128px; pointer-events: none; user-select: none; }
+.tomato img { display: block; width: 100%; height: auto; }
+@media (min-width: 1280px) { .atmosphere, .tomato { display: block; } }
+@media (min-width: 1600px) { .tomato { right: max(40px, calc((100% - 1440px) / 2)); width: 160px; } }
+@media (min-width: 1024px) {
+  .guidePanel { min-height: 460px; max-height: 620px; }
+  .arrivalPanel { min-height: 480px; max-height: 660px; }
+}
+@media (max-width: 1023px) {
+  .guidePanel { max-height: 420px; }
+  .arrivalPanel { max-height: 440px; }
+  .arrivalPanel::after { background: linear-gradient(0deg, #fff, transparent 25%); }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .atmosphere { display: none; }
+  .arrivalPanel::after { display: none; }
+}
+@media (forced-colors: active), print {
+  .picture, .atmosphere, .tomato, .guidePanel, .arrivalPanel { display: none; }
+}
