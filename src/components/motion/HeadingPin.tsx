@@ -11,6 +11,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
  */
 export function HeadingPin({ section }: { section: string }) {
   useEffect(() => {
+    // Opt-in editorial pages keep form headings in normal document flow.
+    if (document.querySelector(`[data-section="${section}"]`)?.closest("[data-marketing-surface]")) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.innerWidth < 768;
     if (reduced || mobile) return;

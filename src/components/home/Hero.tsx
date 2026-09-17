@@ -1,37 +1,45 @@
 import { AppleButtonLink } from "@/components/apple/Button";
-import { AppleDisplay, AppleSubheading, AppleCaption } from "@/components/apple/Typography";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import styles from "@/components/marketing/marketing.module.css";
 
-/**
- * Герой — холст даёт SkyBackground (небо, не заливка), эта секция сама
- * прозрачна. `data-section="hero"` — точка входа CLIP WIPE в
- * ScrollTransitions (Hero → «Как это работает»).
- */
+/** An honest service diagram, not a fabricated screenshot or applicant result. */
 export function Hero() {
   return (
-    <section data-section="hero" className="px-5 pt-28 pb-24 text-center sm:pt-36 sm:pb-32">
-      <AppleCaption as="p" className="mx-auto">
-        Абитуриентам Казахстана 16–18 лет и их родителям
-      </AppleCaption>
-      <AppleDisplay as="h1" className="mx-auto mt-4 max-w-5xl">
-        Поступать
-        <br />в Италию
-      </AppleDisplay>
-      <AppleSubheading as="p" className="mx-auto mt-6 max-w-xl">
-        Подбор вузов, документы и виза — ведёт система. Один платёж{" "}
-        {priceLabel(PRICE_MAIN)}, без агентских наценок.
-      </AppleSubheading>
-      <div className="mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-        <AppleButtonLink href="/plan" variant="filled">
-          Составить план бесплатно
-        </AppleButtonLink>
-        <AppleButtonLink href="/universities" variant="outlined">
-          Смотреть университеты
-        </AppleButtonLink>
+    <section data-section="hero" className={styles.hero}>
+      <div className={styles.heroCopy}>
+        <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
+        <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
+        <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
+        <div className={styles.actions}>
+          <AppleButtonLink href="/plan">Составить план бесплатно <span aria-hidden>↗</span></AppleButtonLink>
+          <AppleButtonLink href="/universities" variant="outlined">Смотреть университеты</AppleButtonLink>
+        </div>
+        <p className={styles.heroNote}>6 вопросов · Для школьников 16–18 лет и их родителей</p>
       </div>
-      <p className="mx-auto mt-5 max-w-sm text-apple-caption text-cloud-meta">
-        Не понравится — до 7 дней с оплаты вернём деньги полностью, без объяснений.
-      </p>
+      <div className={styles.stage}>
+        <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗</span> Италия</span></div>
+        <div className={styles.journey} data-journey-preview>
+          <div className={styles.journeyHeader}>
+            <div><span className={styles.journeyLogo}>Твой маршрут с IITALY</span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
+            <span className={styles.journeyBadge}>От идеи до Италии</span>
+          </div>
+          <div className={styles.journeyBody}>
+            <div>
+              <span className={styles.eyebrow}>Начнём с главного</span>
+              <h2>Найти место,<br />где хочется учиться.</h2>
+              <p>43 университета в 30 городах. Программы, требования и дедлайны — в одной базе.</p>
+            </div>
+            <div>
+              <span className={styles.eyebrow}>Стипендия DSU</span>
+              <strong className={styles.scholarship}><small>до </small>€7 557<small>/год</small></strong>
+              <p>Размер зависит от города и дохода семьи. Получение стипендии не гарантируется.</p>
+            </div>
+          </div>
+          <ol className={styles.route} aria-label="Этапы поступления">
+            {['Подбор вузов', 'Документы и DSU', 'Виза D', 'Первые недели'].map((label, index) => <li key={label}><span aria-hidden>0{index + 1}</span>{label}</li>)}
+          </ol>
+        </div>
+      </div>
     </section>
   );
 }

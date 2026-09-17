@@ -1,19 +1,16 @@
+import styles from "@/components/marketing/marketing.module.css";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { AppleCaption, AppleBody } from "@/components/apple/Typography";
 import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
 
-/**
- * Закрывающий типографический CTA: крупная цена, реальный список состава
- * услуги (те же FEATURES, что и на /prices), одна crimson-кнопка.
- * Прозрачная секция, часть закрывающей главы (см. Stats.tsx выше).
- */
+/** Existing pricing and refund terms, with one clear conversion action. */
 export function PriceBand() {
   return (
-    <section className="px-5 py-24 sm:py-32">
+    <section className={`${styles.pricing} px-5 py-20 sm:py-28`}>
       <div className="mx-auto grid max-w-[980px] grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1fr]">
         <div>
           <AppleCaption as="p">Один платёж, без подписки</AppleCaption>
-          <p className="mt-3 font-apple-display text-apple-display font-semibold text-cloud-white tabular-nums">
+          <p className={`${styles.pricingAmount} mt-4 text-cloud-white tabular-nums`}>
             {priceLabel(PRICE_MAIN)}
           </p>
           <AppleBody as="p" className="mt-4 max-w-md text-apple-body-sm text-cloud-body">

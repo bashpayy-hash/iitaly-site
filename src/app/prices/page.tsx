@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { PricesExplorer } from "@/components/prices/PricesExplorer";
 
 export const metadata: Metadata = {
@@ -14,12 +13,8 @@ export const metadata: Metadata = {
 
 export default function PricesPage() {
   return (
-    <>
-      <Header />
-      <main id="main">
-        <PricesExplorer />
-      </main>
-      <Footer />
-    </>
+    <MarketingLayout>
+      <PricesExplorer />
+    </MarketingLayout>
   );
 }

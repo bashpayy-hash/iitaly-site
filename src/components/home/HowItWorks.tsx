@@ -1,4 +1,5 @@
-import { AppleHeading, AppleBody, AppleCaption } from "@/components/apple/Typography";
+import styles from "@/components/marketing/marketing.module.css";
+import { AppleHeading, AppleCaption } from "@/components/apple/Typography";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 
@@ -29,45 +30,25 @@ const STAGES = [
   },
 ];
 
-/**
- * data-section="how" — вторая глава главной. Заголовок закреплён на часть
- * высоты секции (PINNED DISPLAY), карточки этапов едут чуть быстрее скролла
- * — см. ScrollTransitions.tsx. На мобилке/reduced-motion pin не включается,
- * секция просто стоит статично — вёрстка ничего не теряет без него.
- */
+/** Four stages, with a native sticky title on desktop only. */
 export function HowItWorks() {
   return (
-    <section data-section="how" className="px-5 py-24 sm:py-32">
-      <div className="mx-auto max-w-[980px]">
-        <div data-role="heading" className="pb-6 text-center">
-          <AppleCaption as="p" className="text-center">Как проходит работа с нами</AppleCaption>
-          <AppleHeading as="h2" className="mt-3 text-center">
-            От вопроса до посадки в самолёт
-          </AppleHeading>
+    <section data-section="how" className={styles.how}>
+      <div className={styles.howInner}>
+        <div className={styles.howHeading}>
+          <AppleCaption>Как проходит работа с нами</AppleCaption>
+          <AppleHeading>От вопроса до посадки в самолёт.</AppleHeading>
+          <p>Не нужно разбираться во всём сразу. У каждого этапа — свой понятный следующий шаг.</p>
+          <AppleButtonLink href="/guides" variant="ghost" className="mt-5">Смотреть гайды по визе <span aria-hidden>↗</span></AppleButtonLink>
         </div>
-
-        <div data-role="content" className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+        <ol className={styles.steps}>
           {STAGES.map((s) => (
-            <div key={s.n} className="border-t border-white/15 pt-5">
-              <span className="font-apple-display text-apple-heading-sm font-semibold text-crimson">
-                {s.n}
-              </span>
-              <p className="mt-2 font-apple-text text-apple-subheading font-semibold text-cloud-white">
-                {s.title}
-              </p>
-              <AppleBody as="p" className="mt-1.5 text-apple-body-sm text-cloud-body">
-                {s.body}
-              </AppleBody>
-              <p className="mt-2 text-apple-caption text-cloud-meta">{s.time}</p>
-            </div>
+            <li key={s.n} className={styles.step}>
+              <span className={styles.stepNumber}>0{s.n}</span>
+              <div><h3>{s.title}</h3><p>{s.body}</p><small>{s.time}</small></div>
+            </li>
           ))}
-        </div>
-
-        <div className="mt-14 text-center">
-          <AppleButtonLink href="/guides" variant="ghost">
-            Смотреть гайды по визе
-          </AppleButtonLink>
-        </div>
+        </ol>
       </div>
     </section>
   );
