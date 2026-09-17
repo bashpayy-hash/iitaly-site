@@ -1,0 +1,65 @@
+name: Design review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/components/marketing/**"
+      - "src/components/home/**"
+      - "src/components/apple/**"
+      - "src/components/motion/HeadingPin.tsx"
+      - "src/app/page.tsx"
+      - "src/app/plan/**"
+      - "src/app/prices/**"
+      - "src/app/guides/**"
+      - "scripts/design-*.mjs"
+      - ".github/workflows/design-review.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: design-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  visual-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_BACKEND_URL: https://example.invalid
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      REVIEW_TOOLS: /tmp/iitaly-browser/node_modules
+      BASELINE_OUT: /tmp/iitaly-base/out
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Protect the map and product contracts
+        run: node scripts/design-guard.mjs "$BASE_SHA"
+      - run: npm ci
+      - run: npm run build
+      - name: Build the exact base for visual comparison
+        run: |
+          mkdir -p /tmp/iitaly-base
+          git archive "$BASE_SHA" | tar -x -C /tmp/iitaly-base
+          cp -al node_modules /tmp/iitaly-base/node_modules
+          cd /tmp/iitaly-base
+          npm run build
+      - name: Install isolated browser tools (no lockfile changes)
+        run: |
+          npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0
+          /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Review desktop, mobile, quiz, checkout and protected route
+        run: node scripts/design-review.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: iitaly-design-review
+          path: design-review/
+          retention-days: 7

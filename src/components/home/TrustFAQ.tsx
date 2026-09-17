@@ -1,13 +1,11 @@
 "use client";
 
+import styles from "@/components/marketing/marketing.module.css";
+
 import { AppleCaption, AppleHeading, AppleBody } from "@/components/apple/Typography";
 import { track } from "@/lib/track";
 
-/**
- * Те же вопросы/ответы, что и раньше (реальные условия сервиса, ничего не
- * переписано) — оболочка прозрачна, часть закрывающей главы (data-section
- * "closing" стоит на Stats выше), здесь без своей механики стыка.
- */
+/** Existing FAQ copy and analytics, presented on a quiet white surface. */
 const FAQ = [
   {
     q: "Гарантируете поступление, визу или стипендию?",
@@ -29,7 +27,7 @@ const FAQ = [
 
 export function TrustFAQ() {
   return (
-    <section className="px-5 py-24 sm:py-32">
+    <section className={`${styles.faq} px-5 py-20 sm:py-28`}>
       <div className="mx-auto max-w-[760px]">
         <AppleCaption as="p" className="text-center">Прежде чем платить</AppleCaption>
         <AppleHeading as="h2" className="mt-3 text-center">

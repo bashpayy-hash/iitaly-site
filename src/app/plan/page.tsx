@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { PlanExplorer } from "@/components/plan/PlanExplorer";
 
 export const metadata: Metadata = {
@@ -12,12 +11,8 @@ export const metadata: Metadata = {
 
 export default function PlanPage() {
   return (
-    <>
-      <Header />
-      <main id="main">
-        <PlanExplorer />
-      </main>
-      <Footer />
-    </>
+    <MarketingLayout>
+      <PlanExplorer />
+    </MarketingLayout>
   );
 }

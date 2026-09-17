@@ -1,17 +1,13 @@
+import styles from "@/components/marketing/marketing.module.css";
 import { Illustration } from "@/components/illustration/Illustration";
 import { ROME_PAPERCUT } from "@/data/illustrations";
 import { AppleHeading, AppleBody, AppleCaption } from "@/components/apple/Typography";
 import { AppleButtonLink } from "@/components/apple/Button";
 
-/**
- * Feature Banner: фотография заполняет всю высоту своей половины, без
- * рамки, без скругления — «картинка IS the surface». Один из двух
- * разрешённых кадров сайта. `data-role="image"` — точка OVERLAP: кадр
- * заезжает на 15–25vh в следующую секцию (Split), см. ScrollTransitions.
- */
+/** Existing Rome artwork; no new imagery or protected data changes. */
 export function FeatureBanner() {
   return (
-    <section data-section="feature" className="grid grid-cols-1 lg:grid-cols-2">
+    <section data-section="feature" className={`${styles.feature} grid grid-cols-1 lg:grid-cols-2`}>
       <div className="order-2 flex flex-col justify-center px-5 py-20 sm:py-28 lg:order-1 lg:px-16">
         <div className="mx-auto max-w-md lg:mx-0">
           <AppleCaption as="p">После прилёта</AppleCaption>
