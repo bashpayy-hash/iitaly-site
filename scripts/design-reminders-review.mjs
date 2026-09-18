@@ -85,7 +85,8 @@ try {
     await page.getByRole('heading', { name: 'Вход', exact: true }).waitFor();
     assert.equal(await page.locator('#notifications').count(), 0, 'No anonymous subscription');
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
-    await page.getByLabel('Код брони', { exact: true }).fill('TEST-01');
+    // The label also contains the WhatsApp delivery help text.
+    await page.getByRole('textbox', { name: /^Код брони/ }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти', exact: true }).click();
     await page.locator('[data-telegram-status="disconnected"]').waitFor();
     assert.equal(await page.getByRole('tab', { name: 'Помощь', exact: true }).getAttribute('aria-selected'), 'true');
