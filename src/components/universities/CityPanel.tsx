@@ -2,6 +2,7 @@
 
 import { CITIES, CITY_ICONS, REGION_FACTS, type CityId, type University } from "@/data/italy";
 import { UniCard } from "./UniCard";
+import ui from "./university-ui.module.css";
 
 export function CityPanel({
   cityId,
@@ -20,39 +21,38 @@ export function CityPanel({
   const facts = REGION_FACTS[cityId];
 
   return (
-    <div className="rounded-xl border-2 border-ink bg-ink shadow-lg">
+    <div className={ui.cityPanel} data-city-panel>
       <div
-        className="relative overflow-hidden rounded-t-[10px] border-b-2 border-ink px-6 py-7"
-        style={{ backgroundColor: c.sky }}
+        className={ui.cityHeader}
       >
         <div
           aria-hidden
-          className="absolute right-4 bottom-2 h-16 w-16 text-ink/70 sm:h-20 sm:w-20"
+          className={ui.cityIcon}
           dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 22 22" fill="currentColor">${CITY_ICONS[cityId]}</svg>` }}
         />
-        <p className="text-xs font-extrabold tracking-[0.14em] text-ink/60 uppercase">
+        <p className={ui.eyebrow}>
           Город
         </p>
-        <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">{c.name}</h2>
-        <p className="mt-1 text-sm font-bold text-ink/70">{c.region}</p>
+        <h2 className={ui.cityName}>{c.name}</h2>
+        <p className={ui.cityRegion}>{c.region}</p>
       </div>
 
-      <ul className="grid gap-2 px-6 py-5 text-sm text-cream/85 sm:grid-cols-3">
+      <ul className={ui.cityFacts}>
         {facts.map((f, i) => (
-          <li key={i} className="flex gap-2">
-            <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red" aria-hidden />
+          <li key={i} className={ui.cityFact}>
+            <span className={ui.factNumber} aria-hidden>{String(i + 1).padStart(2, "0")}</span>
             {f}
           </li>
         ))}
       </ul>
 
-      <div className="rounded-b-[10px] bg-cream px-4 py-5 sm:px-6">
+      <div className={ui.cityUniversities}>
         {unis.length === 0 ? (
-          <p className="py-4 text-center text-sm text-ink-soft">
+          <p className={ui.noResults}>
             Нет вузов, подходящих под текущие фильтры.
           </p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className={ui.uniGrid}>
             {unis.map((u) => (
               <UniCard
                 key={u.id}

@@ -1,6 +1,6 @@
 /* Scoped to the new comparison workspace; map, filters and global chrome are untouched. */
 .section { padding: 72px 24px 64px; background: #f5f5f7; border-top: 1px solid #dcdce1; color: #1d1d1f; font-family: var(--font-apple-text); }
-.inner { max-width: 1100px; margin: 0 auto; }
+.inner { max-width: 1200px; margin: 0 auto; }
 .intro { display: grid; grid-template-columns: minmax(0, 1fr) 156px; gap: 64px; align-items: center; margin-bottom: 36px; }
 .eyebrow { font-size: 12px; font-weight: 500; color: #666670; letter-spacing: .03em; }
 .intro h2 { max-width: 730px; margin-top: 12px; font-family: var(--font-apple-display); font-size: clamp(32px, 4vw, 48px); font-weight: 600; letter-spacing: -.045em; line-height: 1.08; text-wrap: balance; }
@@ -8,10 +8,10 @@
 .selectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .selector { min-width: 0; }
 .selector > span { display: block; margin-bottom: 9px; color: #666670; font-size: 12px; }
-.selector select { display: block; width: 100%; min-width: 0; padding: 13px 32px 13px 12px; border: 1px solid #c9c9d0; border-radius: 8px; background: #fff; color: #1d1d1f; font-size: 16px; text-overflow: ellipsis; }
+.selector select { display: block; width: 100%; min-width: 0; padding: 13px 32px 13px 12px; border: 1px solid #c9c9d0; border-radius: 12px; background: #fff; color: #1d1d1f; font-size: 16px; text-overflow: ellipsis; }
 .section :where(button,select,input):focus-visible, .comparison :where(select,input):focus-visible, .tableScroll:focus-visible { outline: 2px solid #b91134; outline-offset: 4px; }
 .selectionActions { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 16px 0 24px; font-size: 13px; color: #666670; }
-.selectionActions button { min-height: 40px; color: #b91134; text-underline-offset: 4px; }
+.selectionActions button { min-height: 40px; padding: 8px 16px; border: 1px solid #dcdce1; border-radius: 999px; background: #fff; color: #b91134; text-underline-offset: 4px; }
 .selectionActions button:hover { text-decoration: underline; }
 .empty { padding: 40px 24px; border-top: 1px solid #dcdce1; text-align: center; }
 .empty > span { display: block; color: #b91134; font-size: 12px; letter-spacing: .16em; }
@@ -25,7 +25,7 @@
 .period select { padding: 10px; border: 1px solid #c9c9d0; border-radius: 8px; background: #fff; font-size: 16px; }
 .count { color: #666670; font-size: 12px; }
 .scrollHint { margin: 8px 0 12px; font-size: 12px; color: #666670; }
-.tableScroll { max-width: 100%; overflow-x: auto; border: 1px solid #dcdce1; border-radius: 8px; overscroll-behavior-x: contain; }
+.tableScroll { max-width: 100%; overflow-x: auto; border: 1px solid #dcdce1; border-radius: 24px; overscroll-behavior-x: contain; }
 .table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; text-align: left; font-size: 14px; line-height: 1.5; }
 .table tr > :first-child { width: 180px; }
 .table tr > * { padding: 16px 18px; border-bottom: 1px solid #e4e4e9; vertical-align: top; background: #fff; overflow-wrap: anywhere; }

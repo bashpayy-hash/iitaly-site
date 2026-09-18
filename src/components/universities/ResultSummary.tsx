@@ -1,3 +1,5 @@
+import ui from "./university-ui.module.css";
+
 /**
  * Строка результата под фильтрами.
  *
@@ -33,7 +35,7 @@ export function ResultSummary({
   return (
     <p
       aria-live="polite"
-      className="mt-3 font-mono text-[11px] tracking-[0.06em] text-sec-deep uppercase"
+      className={ui.resultSummary}
     >
       {unis === 0 ? (
         "Под эти фильтры не подходит ни один вуз"

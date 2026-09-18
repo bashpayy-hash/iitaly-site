@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ui from "./university-ui.module.css";
 import type { CityId } from "@/data/italy";
 import {
   QUESTIONS,
@@ -69,7 +70,7 @@ export function CityMatch({
     <div
       role="dialog"
       aria-label="Подбор города под ритм"
-      className="fixed inset-x-0 bottom-0 z-[80] max-h-[78vh] overflow-y-auto border-t-2 border-ink bg-paper shadow-[0_-16px_48px_rgba(13,17,24,.28)] sm:inset-y-0 sm:right-0 sm:left-auto sm:max-h-none sm:w-[380px] sm:border-t-0 sm:border-l-2 sm:shadow-[-16px_0_48px_rgba(13,17,24,.22)]"
+      className={ui.matchPanel}
     >
       <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
         <p className="font-mono text-[11px] tracking-[0.12em] text-sec-deep uppercase">
@@ -96,7 +97,7 @@ export function CityMatch({
           <ul className="mt-4 space-y-3">
             {result.map((m) => (
               <li key={m.city}>
-                <div className="rounded-lg border-2 border-ink bg-cream p-4">
+                <div className={ui.matchCard}>
                   <div className="flex items-baseline justify-between gap-3">
                     <b className="font-display text-lg font-semibold">{m.name}</b>
                     {m.wildcard && (
@@ -129,7 +130,7 @@ export function CityMatch({
                   <button
                     type="button"
                     onClick={() => onPick(m.city, plateForAnswers(answers, m.city))}
-                    className="mt-3 w-full rounded-pill border-2 border-ink bg-ink py-2 text-sm font-semibold text-cream transition-colors hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                    className={`${ui.primaryButton} mt-3 w-full`}
                   >
                     Открыть на карте
                   </button>
@@ -154,7 +155,7 @@ export function CityMatch({
                 <button
                   type="button"
                   onClick={() => choose(o.id)}
-                  className="w-full rounded-lg border-2 border-line bg-cream px-4 py-3 text-left transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                  className={ui.matchOption}
                 >
                   <b className="block text-sm font-semibold">{o.label}</b>
                   {o.hint && <span className="mt-0.5 block text-xs text-ink-soft">{o.hint}</span>}

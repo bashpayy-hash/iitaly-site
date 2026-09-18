@@ -7,6 +7,8 @@ on:
       - "src/components/marketing/**"
       - "src/components/home/**"
       - "src/components/universities/**"
+      - "src/app/universities/**"
+      - "src/components/PaperOverlayGate.tsx"
       - "src/components/apple/**"
       - "src/components/guides/**"
       - "src/components/plan/**"
@@ -68,6 +70,8 @@ jobs:
         run: node scripts/design-accents-review.mjs
       - name: Review expanded comparisons and selected artwork
         run: node scripts/design-comparison-review.mjs
+      - name: Review university artwork, controls and unchanged map behavior
+        run: node scripts/design-university-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
