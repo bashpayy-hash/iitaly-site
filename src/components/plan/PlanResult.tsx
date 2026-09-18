@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
-import { AppleButton } from "@/components/apple/Button";
+import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
 import { VespaReveal } from "@/components/VespaReveal";
 
 type DocState = "idle" | "checking" | "ok" | "err";
@@ -38,8 +38,8 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
             Персональный план готов
           </p>
           <p className="mt-1 text-apple-body-sm text-cloud-body">
-            В продукте план строит Claude AI по полному своду правил ISEEU, DSU
-            и вузов.
+            План собран по твоим ответам. Ниже — основные шаги и список
+            документов для поступления.
           </p>
         </div>
       </div>
@@ -103,9 +103,27 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         })}
       </div>
       <p className="mt-3 text-apple-caption text-cloud-meta">
-        В приложении ты фотографируешь документ — Claude AI сверяет его с
-        правилами и находит ошибки до подачи.
+        Для проверки своего документа загрузи его в блок «Проверка документов» выше.
       </p>
+
+      <section aria-labelledby="plan-reminders-heading" className="mt-6 rounded-apple-card border border-white/15 p-5">
+        <h2 id="plan-reminders-heading" className="text-apple-body font-semibold text-cloud-white">
+          Напоминания на телефоне
+        </h2>
+        <p className="mt-2 text-apple-body-sm text-cloud-body">
+          Подключи Telegram в личном кабинете для напоминаний по сохранённому
+          маршруту. Сам по себе этот бесплатный квиз не включает рассылку.
+        </p>
+        <div className="mt-4">
+          <AppleButtonLink href="/portal#notifications" variant="outlined" size="sm">
+            Настроить напоминания
+          </AppleButtonLink>
+        </div>
+        <p className="mt-3 text-apple-caption text-cloud-meta">
+          Понадобятся фамилия и код доступа к кабинету. Затем открой бота
+          и нажми «Запустить» в Telegram.
+        </p>
+      </section>
 
       <div className="mt-6 flex flex-wrap gap-3">
         <AppleButton type="button" variant="filled" size="sm" onClick={() => router.push("/prices")}>
