@@ -69,7 +69,7 @@ export function PortalExplorer() {
     try {
       const savedCode = localStorage.getItem(KEY);
       const savedSn = localStorage.getItem(KEY_SN);
-      if (savedCode && savedSn) login(savedCode, savedSn, true);
+      if (savedCode && savedSn) login(savedSn, savedCode, true);
     } catch {
       // localStorage unavailable — user just logs in manually
     }
