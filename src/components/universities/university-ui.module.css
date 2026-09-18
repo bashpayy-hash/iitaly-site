@@ -111,7 +111,8 @@
   .heroCopy .eyebrow { grid-column: 1 / -1; }
   .heroTitle { grid-column: 1; margin-top: 0; font-size: clamp(30px, 5.7vw, 40px); }
   .heroDescription { grid-column: 1 / -1; margin-top: 4px; font-size: 16px; }
-  .heroArt { grid-column: 2; grid-row: 2; width: 86px; margin: -8px 0 -30px; }
+  /* Reserve the cutout's full grid-row height so it cannot spill into the copy. */
+  .heroArt { grid-column: 2; grid-row: 2; width: 86px; margin: 0; }
   .explorer { padding: 24px 20px 40px; }
   .filterButton { min-height: 40px; padding: 9px 13px; font-size: 13px; }
   .filterDivider { display: none; }
