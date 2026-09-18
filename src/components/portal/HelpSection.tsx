@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PortalClient } from "@/lib/portalApi";
 
@@ -10,6 +10,7 @@ export function HelpSection({
   onOpenChat,
   onSaveEmail,
   onDisableTelegram,
+  onRefreshNotifications,
   onDelete,
 }: {
   client: PortalClient;
@@ -17,12 +18,26 @@ export function HelpSection({
   onOpenChat: () => void;
   onSaveEmail: (email: string) => Promise<{ ok: boolean; error?: string }>;
   onDisableTelegram: () => Promise<{ ok: boolean; error?: string }>;
+  onRefreshNotifications: () => Promise<{ ok: boolean; linked?: boolean; error?: string }>;
   onDelete: () => void;
 }) {
   const router = useRouter();
   const [email, setEmail] = useState(client.email || "");
   const [msg, setMsg] = useState<{ text: string; bad: boolean } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [telegramBusy, setTelegramBusy] = useState(false);
+  const reminderRef = useRef<HTMLDivElement>(null);
+  const tgEnabled = Boolean(client.tgLinked) && client.notify?.telegram !== false;
+  const botName = (client.botName || "").replace(/^@/, "").trim();
+  const telegramUrl = /^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(botName) && /^[A-Z0-9-]{4,12}$/i.test(code)
+    ? `https://t.me/${botName}?start=${encodeURIComponent(code)}`
+    : null;
+
+  useEffect(() => {
+    if (window.location.hash === "#notifications") {
+      reminderRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    }
+  }, []);
 
   async function saveEmail() {
     setSaving(true);
@@ -32,8 +47,35 @@ export function HelpSection({
   }
 
   async function disableTg() {
-    const res = await onDisableTelegram();
-    setMsg(res.ok ? { text: "Telegram отключён", bad: false } : { text: res.error || "Не удалось сохранить", bad: true });
+    if (telegramBusy) return;
+    setTelegramBusy(true);
+    setMsg(null);
+    try {
+      const res = await onDisableTelegram();
+      setMsg(res.ok ? { text: "Telegram отключён", bad: false } : { text: res.error || "Не удалось сохранить", bad: true });
+    } catch {
+      setMsg({ text: "Не удалось отключить Telegram. Попробуй ещё раз или отправь боту /stop.", bad: true });
+    } finally {
+      setTelegramBusy(false);
+    }
+  }
+
+  async function refreshTelegram() {
+    if (telegramBusy) return;
+    setTelegramBusy(true);
+    setMsg(null);
+    try {
+      const res = await onRefreshNotifications();
+      setMsg(!res.ok
+        ? { text: res.error || "Не удалось проверить подключение. Попробуй ещё раз.", bad: true }
+        : res.linked
+          ? { text: "Подключение Telegram подтверждено. Проверь, что бот ответил в чате, и разреши уведомления на телефоне.", bad: false }
+          : { text: "Подключение пока не подтверждено. Открой бота по кнопке ниже, нажми «Запустить» и проверь снова.", bad: false });
+    } catch {
+      setMsg({ text: "Нет связи с сервером. Подключение не подтверждено.", bad: true });
+    } finally {
+      setTelegramBusy(false);
+    }
   }
 
   return (
@@ -62,47 +104,68 @@ export function HelpSection({
         </div>
       </div>
 
-      <div className="rounded-lg border-2 border-ink bg-paper p-4">
-        <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Напоминания о дедлайнах</p>
-        <p className="mt-1 text-sm text-ink-soft">
-          Еженедельная сводка плюс срочные предупреждения, когда до срока
-          меньше недели.
+      <div ref={reminderRef} id="notifications" className="scroll-mt-36 rounded-lg border border-line bg-paper p-5 sm:p-6">
+        <h2 className="text-lg font-semibold text-ink">Напоминания на телефоне</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Telegram-бот использует дедлайны сохранённого маршрута: сводка по
+          понедельникам и напоминания за 7, 3 и 1 день до срока.
+        </p>
+        <p className="mt-2 text-xs text-ink-soft">
+          Это сообщения в Telegram, не SMS. Номер телефона вводить не нужно.
+          Для уведомлений на экране разреши их в настройках Telegram и телефона.
         </p>
 
-        <div className="mt-3 flex items-center gap-3 border-t-2 border-line pt-3">
-          <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${client.tgLinked ? "bg-green" : "bg-line"}`} />
-          <div className="flex-1">
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-4">
+          <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${tgEnabled ? "bg-green" : "bg-line"}`} />
+          <div className="min-w-0 flex-1" role="status" aria-live="polite" data-telegram-status={tgEnabled ? "connected" : "disconnected"}>
             <b className="block text-sm">Telegram</b>
-            <span className="text-xs text-ink-soft">{client.tgLinked ? "подключён" : "не подключён"}</span>
+            <span className="text-xs text-ink-soft">{tgEnabled ? "подключён к кабинету" : "не подключён"}</span>
           </div>
-          {client.tgLinked ? (
-            <button
-              type="button"
-              onClick={disableTg}
-              className="shrink-0 rounded-pill border-2 border-ink bg-paper px-3 py-1.5 text-xs font-extrabold whitespace-nowrap uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
-            >
-              Отключить
+          {tgEnabled && (
+            <button type="button" onClick={disableTg} disabled={telegramBusy}
+              className="min-h-11 rounded-pill border border-line bg-paper px-4 py-2 text-sm font-medium text-ink disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red">
+              Отключить Telegram
             </button>
-          ) : client.botName ? (
-            <a
-              href={`https://t.me/${client.botName}?start=${code}`}
-              target="_blank"
-              rel="noopener"
-              className="shrink-0 rounded-pill border-2 border-ink bg-red px-3 py-1.5 text-xs font-extrabold whitespace-nowrap text-cream uppercase"
-            >
-              Подключить
-            </a>
-          ) : (
-            <span className="shrink-0 text-xs text-ink-soft">бот не настроен</span>
           )}
         </div>
 
-        <div className="mt-3 flex items-start gap-3 border-t-2 border-line pt-3">
+        {!tgEnabled && telegramUrl && (
+          <div className="mt-4 space-y-3 text-sm text-ink-soft">
+            <p>1. Открой бота по кнопке — ссылка уже связана с твоим кабинетом.</p>
+            <p>2. В Telegram нажми «Запустить» и дождись ответа бота. Так ты включишь напоминания.</p>
+            <p>3. Вернись сюда и нажми «Проверить подключение».</p>
+          </div>
+        )}
+        <div className="mt-4 flex flex-wrap gap-3">
+          {!tgEnabled && telegramUrl && (
+            <a href={telegramUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"
+              className="inline-flex min-h-11 items-center justify-center rounded-pill bg-red px-4 py-2 text-sm font-medium text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+              Подключить Telegram
+            </a>
+          )}
+          {(telegramUrl || tgEnabled) && (
+            <button type="button" onClick={refreshTelegram} disabled={telegramBusy}
+              className="min-h-11 rounded-pill border border-line bg-paper px-4 py-2 text-sm font-medium text-ink disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red">
+              {telegramBusy ? "Проверяю…" : "Проверить подключение"}
+            </button>
+          )}
+        </div>
+        {!telegramUrl && !tgEnabled && (
+          <p className="mt-3 text-sm text-ink-soft" role="status">
+            Подключение Telegram пока недоступно: бот не настроен на сервере.
+          </p>
+        )}
+        <p className="mt-4 text-xs text-ink-soft">
+          Отключить напоминания можно здесь или командой /stop в чате с ботом.
+          Не пересылай персональную ссылку подключения другим людям.
+        </p>
+
+        <div className="mt-5 flex items-start gap-3 border-t border-line pt-4">
           <span aria-hidden className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${client.email ? "bg-green" : "bg-line"}`} />
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <b className="block text-sm">Почта</b>
-            <span className="text-xs text-ink-soft">{client.email || "не указана"}</span>
-            <div className="mt-2 flex gap-2">
+            <span className="break-all text-xs text-ink-soft">{client.email || "не указана"}</span>
+            <div className="mt-2 flex flex-wrap gap-2">
               <input
                 type="email"
                 value={email}
@@ -124,7 +187,7 @@ export function HelpSection({
         </div>
 
         {msg && (
-          <p role="alert" className={`mt-3 text-xs font-bold ${msg.bad ? "text-red" : "text-green"}`}>
+          <p role="alert" className={`mt-3 text-sm ${msg.bad ? "text-red" : "text-ink-soft"}`}>
             {msg.text}
           </p>
         )}
