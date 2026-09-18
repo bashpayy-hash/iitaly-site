@@ -53,7 +53,7 @@ async function layout(page) {
   }));
 }
 try {
-  for (const width of [320,390,768,1024,1279,1280,1440,1600,1920]) {
+  for (const width of [320,390,768,1024,1279,1280,1366,1440,1551,1552,1600,1920]) {
     const context = await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce',deviceScaleFactor:1,locale:'ru-RU'});
     await context.route('**/*', route => ['127.0.0.1','localhost'].includes(new URL(route.request().url()).hostname) || route.request().url().startsWith('data:') ? route.continue() : route.abort());
     const head = await context.newPage(), base = await context.newPage(); activePage = head;
@@ -67,17 +67,35 @@ try {
     assert.equal(await art.isVisible(), width >= 1280);
     assert.equal(await art.getAttribute('aria-hidden'), 'true');
     assert.equal(await art.locator('img').getAttribute('alt'), '');
+    let artWidth = 0;
     if (width >= 1280) {
       const details = await art.evaluate(el => {
         const r = el.getBoundingClientRect(), host = el.closest('section'), h = host.getBoundingClientRect(), img = el.querySelector('img');
-        const overlaps = [...host.querySelectorAll('h1,p,button,a,[data-editorial-spot]')].filter(node => {
-          const b = node.getBoundingClientRect(); return b.width && b.height && r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top;
-        }).map(node => node.textContent);
+        // h1 is a 900px centered block: its blank outer margins are not text.
+        // Protect real text line rectangles with an additional 24px clear zone.
+        // Controls and the right artwork keep their full hit/layout rectangles.
+        const boxes = [];
+        for (const node of host.querySelectorAll('h1,p')) {
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            if (!walker.currentNode.textContent.trim()) continue;
+            const range = document.createRange(); range.selectNodeContents(walker.currentNode);
+            for (const b of range.getClientRects()) boxes.push({left:b.left-24,right:b.right+24,top:b.top-24,bottom:b.bottom+24,label:node.textContent});
+          }
+        }
+        for (const node of host.querySelectorAll('button,a,[data-editorial-spot]')) {
+          const b = node.getBoundingClientRect();
+          if (b.width && b.height) boxes.push({left:b.left,right:b.right,top:b.top,bottom:b.bottom,label:node.textContent});
+        }
+        const overlaps = boxes.filter(b => r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top).map(b => b.label);
         return { overlaps, contained: r.left >= h.left && r.top >= h.top && r.right <= h.right && r.bottom <= h.bottom, x: r.x, width: r.width, src: new URL(img.currentSrc).pathname, loaded: img.complete && img.naturalWidth > 0, pointerEvents: getComputedStyle(el).pointerEvents, filter: getComputedStyle(img).filter };
       });
       assert.deepEqual(details.overlaps, []);
       assert(details.contained && details.loaded);
       assert(details.x + details.width < width / 2);
+      const expected = Math.min(330, Math.max(208, width * .45 - 368));
+      assert(Math.abs(details.width - expected) < 1, 'Larger responsive width is rendered');
+      artWidth = details.width;
       assert.equal(details.pointerEvents, 'none'); assert.equal(details.filter, 'none');
       assert.match(details.src, /^\/illustrations\/editorial\/coastal-terrace-/);
       const alpha = await art.locator('img').evaluate(img => {
@@ -89,7 +107,7 @@ try {
       });
       assert(alpha.clear > 100 && alpha.painted > 100);
     }
-    if ([390,1280,1440,1920].includes(width)) {
+    if ([390,1280,1366,1440,1600,1920].includes(width)) {
       await head.screenshot({path:resolve(output, `prices-${width}.png`),animations:'disabled'});
       await head.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-${width}.png`),animations:'disabled'});
       await base.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-before-${width}.png`),animations:'disabled'});
@@ -99,7 +117,7 @@ try {
     await head.keyboard.press('Escape'); assert.equal(await head.getByRole('dialog').count(),0);
     await head.emulateMedia({forcedColors:'active'}); assert.equal(await art.isVisible(),false);
     await head.emulateMedia({forcedColors:'none',media:'print'}); assert.equal(await art.isVisible(),false);
-    results.push({test:`${width}px: exact pricing copy/layout, local alpha, separate left art, no overlap/overflow, checkout/Escape, print/forced-colors`,passed:true});
+    results.push({test:`${width}px: exact pricing layout, larger local art, 24px text clearance, no overflow, checkout/Escape, print/forced-colors`,artWidth,passed:true});
     await context.close();
   }
   assert.deepEqual(errors, []);
