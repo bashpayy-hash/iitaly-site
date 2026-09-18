@@ -12,6 +12,8 @@ on:
       - "src/components/apple/**"
       - "src/components/guides/**"
       - "src/components/plan/**"
+      - "src/components/portal/PortalExplorer.tsx"
+      - "src/components/portal/HelpSection.tsx"
       - "src/components/prices/**"
       - "public/illustrations/editorial/**"
       - "docs/editorial-art-assets.json"
@@ -74,6 +76,8 @@ jobs:
         run: node scripts/design-university-review.mjs
       - name: Review approved landscape in pricing margin
         run: node scripts/design-prices-landscape-review.mjs
+      - name: Review plan copy and Telegram opt-in with isolated API fixtures
+        run: node scripts/design-reminders-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
