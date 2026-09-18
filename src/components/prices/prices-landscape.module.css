@@ -1,0 +1,30 @@
+/* Only the pricing hero's empty left margin. The heading host is relative. */
+.landscape {
+  display: none;
+  position: absolute;
+  left: 8px;
+  bottom: -62px;
+  width: 144px;
+  aspect-ratio: 4 / 3;
+  isolation: isolate;
+  pointer-events: none;
+  user-select: none;
+}
+.landscape img { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
+.landscape::before {
+  content: "";
+  position: absolute;
+  inset: 15% -6%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #eaf3f880, #f7eddb60 50%, transparent 75%);
+  filter: blur(12px);
+}
+@media (min-width: 1280px) { .landscape { display: block; } }
+@media (min-width: 1440px) { .landscape { width: 200px; } }
+@media (min-width: 1600px) {
+  .landscape { left: max(20px, calc((100% - 1400px) / 2)); width: 220px; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .landscape::before { display: none; }
+}
+@media (forced-colors: active), print { .landscape { display: none; } }

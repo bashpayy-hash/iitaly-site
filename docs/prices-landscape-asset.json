@@ -1,0 +1,21 @@
+{
+  "source": "User-approved coastal terrace attachment from this conversation; not a new generation",
+  "sourceSha256": "023c232b561e78c3087d9b13d53d899cc954dbec7f39ce6128eca51022aa6b6c",
+  "treatment": "Only resized and encoded to WebP; original alpha and full composition retained",
+  "assets": [
+    {
+      "path": "public/illustrations/editorial/coastal-terrace-360.webp",
+      "width": 360,
+      "height": 270,
+      "bytes": 43744,
+      "sha256": "81d004eede35eadfebc031ab47c55ad8c8b97f37ceb4b7b97edcfa8bcaea45f8"
+    },
+    {
+      "path": "public/illustrations/editorial/coastal-terrace-720.webp",
+      "width": 720,
+      "height": 540,
+      "bytes": 143390,
+      "sha256": "0bbf0756bd8dfacdcf536238c4dd701f82db5bef604c31d7fc679d1a0a63b743"
+    }
+  ]
+}
