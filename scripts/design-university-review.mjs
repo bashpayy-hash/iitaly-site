@@ -27,6 +27,7 @@ const browser = await chromium.launch();
 async function context(width) {
   const ctx = await browser.newContext({viewport:{width,height:960},deviceScaleFactor:1,reducedMotion:'reduce',locale:'ru-RU'});
   await ctx.route('**/*',route=>['localhost','127.0.0.1'].includes(new URL(route.request().url()).hostname)||route.request().url().startsWith('data:')?route.continue():route.abort());
+  ctx.on('page',page=>page.on('pageerror',error=>errors.push(error.message)));
   return ctx;
 }
 async function visit(page,port=4183) {
@@ -44,6 +45,14 @@ async function panelData(page,label) {
   const name=label.replace(' — показать университеты','');
   const panel=page.getByRole('heading',{name,exact:true}).locator('..').locator('..');
   return panel.locator('button').evaluateAll(nodes=>nodes.map(el=>el.textContent.trim().replace(/\s+/g,' ')));
+}
+async function resultText(page) {
+  // innerText includes CSS text-transform (the old design used uppercase).
+  // Compare the exact DOM wording and numbers, normalizing whitespace only.
+  // The separate control assertions below still verify the new presentation.
+  const text=await page.locator('#main [aria-live="polite"]').first().textContent();
+  assert.notEqual(text,null,'Filter result summary exists');
+  return text.trim().replace(/\s+/g,' ');
 }
 async function noOverflow(page,where) {
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where);
@@ -67,8 +76,12 @@ try {
       await p.getByRole('button',{name:type,exact:true}).click();
       const toggle=p.getByRole('button',{name:'На английском',exact:true});
       if((await toggle.getAttribute('aria-pressed')==='true')!==eng)await toggle.click();
+      await p.waitForFunction(({type,eng})=>{
+        const buttons=[...document.querySelectorAll('button')];
+        return buttons.some(el=>el.textContent.trim()===type&&el.getAttribute('aria-pressed')==='true')&&buttons.some(el=>el.textContent.trim()==='На английском'&&(el.getAttribute('aria-pressed')==='true')===eng);
+      },{type,eng});
     }
-    assert.equal(await head.locator('#main [aria-live="polite"]').first().innerText(),await base.locator('#main [aria-live="polite"]').first().innerText());
+    assert.equal(await resultText(head),await resultText(base),`${type}, English ${eng}: identical result content`);
     assert.deepEqual(await panelData(head,milan),await panelData(base,milan));
   }
   results.push({test:'All eight type/English filter combinations match base counts and Milan cards',passed:true});
@@ -76,7 +89,6 @@ try {
   for(const width of [1440,1280,1024,768,390,320]) {
     const ctx=await context(width),page=await ctx.newPage();activePage=page;
     const imageRequests=[];
-    page.on('pageerror',e=>errors.push(e.message));
     page.on('request',r=>{if(r.resourceType()==='image')imageRequests.push(r.url());});
     await visit(page);await noOverflow(page,`initial ${width}`);
     assert.equal(await page.locator('.paper-layer-global').count(),0);
