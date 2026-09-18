@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/Header";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import ui from "@/components/universities/university-ui.module.css";
 import { Footer } from "@/components/Footer";
 import { UniversitiesExplorer } from "@/components/universities/UniversitiesExplorer";
 
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
 
 export default function UniversitiesPage() {
   return (
-    <>
-      <Header />
-      <main id="main">
+    <div className={ui.page} data-university-page>
+      <MarketingHeader />
+      <main id="main" className={ui.main}>
         <UniversitiesExplorer />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

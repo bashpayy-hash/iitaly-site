@@ -7,8 +7,6 @@ import { pathToFileURL } from 'node:url';
 const tools = process.env.REVIEW_TOOLS;
 assert(tools, 'REVIEW_TOOLS must point to the isolated browser-tool installation.');
 const { chromium } = await import(pathToFileURL(resolve(tools, 'playwright/index.mjs')).href);
-const { default: pngjs } = await import(pathToFileURL(resolve(tools, 'pngjs/lib/png.js')).href);
-const { PNG } = pngjs;
 const output = resolve('design-review');
 await mkdir(output, { recursive: true });
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ico': 'image/x-icon' };
@@ -66,23 +64,24 @@ async function visit(page, route, port = 4173) {
 async function shot(page, name, fullPage = false) {
   return page.screenshot({ path: resolve(output, `${name}.png`), fullPage, animations: 'disabled', caret: 'hide' });
 }
-// The sketchbook section is intentionally removed. Compare the untouched map,
-// filters and city panel region, not the intentionally changed full-page height.
+// Surrounding controls and the fixed paper overlay intentionally changed.
+// Retain visual evidence, but compare the actual SVG structure and computed
+// presentation rather than asserting the old page chrome remains unchanged.
 async function mapShot(page, name) {
-  return page.locator('#main > section').nth(1).screenshot({
-    path: resolve(output, `${name}.png`), animations: 'disabled', caret: 'hide',
-  });
+  const map = page.getByRole('img', { name: 'Карта Италии с университетами по городам' });
+  await map.screenshot({ path: resolve(output, `${name}.png`), animations: 'disabled' });
+  return map.evaluate(svg => ({
+    viewBox: svg.getAttribute('viewBox'),
+    markup: svg.innerHTML,
+    presentation: [...svg.querySelectorAll('*')].map(el => {
+      const s = getComputedStyle(el);
+      return [el.tagName, s.fontFamily, s.fontSize, s.fontWeight, s.fill, s.stroke, s.strokeWidth, s.opacity];
+    }),
+  }));
 }
 function compareImages(base, actual, name) {
-  const a = PNG.sync.read(base), b = PNG.sync.read(actual);
-  assert.equal(a.width, b.width, name + ': width');
-  assert.equal(a.height, b.height, name + ': height');
-  let changed = 0;
-  for (let i = 0; i < a.data.length; i += 4) {
-    if (a.data[i] !== b.data[i] || a.data[i + 1] !== b.data[i + 1] || a.data[i + 2] !== b.data[i + 2] || a.data[i + 3] !== b.data[i + 3]) changed++;
-  }
-  results.push({ test: name, changedPixels: changed, pixels: a.width * a.height });
-  assert.equal(changed, 0, name + ': the protected map/filter region must remain pixel-identical');
+  assert.deepEqual(actual, base, name + ': SVG data, structure and computed presentation unchanged');
+  results.push({ test: name, passed: true, comparison: 'SVG DOM and computed presentation; surrounding chrome intentionally updated' });
 }
 try {
   for (const width of [1440, 390]) {
@@ -101,13 +100,13 @@ try {
     await visit(page, '/universities');
     assert.equal(await page.locator('[data-marketing-surface]').count(), 0);
     assert.equal(await page.evaluate(() => document.documentElement.classList.contains('lenis')), false);
-    compareImages(baseline, await mapShot(page, `universities-map-head-${width}`), `university map and filters ${width}px direct`);
+    compareImages(baseline, await mapShot(page, `universities-map-head-${width}`), `university SVG ${width}px direct`);
     await visit(page, '/');
     await page.getByRole('link', { name: 'Смотреть университеты', exact: true }).click();
     await page.waitForURL('**/universities');
     await settle(page);
     assert.equal(await page.locator('[data-marketing-surface]').count(), 0);
-    compareImages(baseline, await mapShot(page, `universities-map-navigation-${width}`), `university map and filters ${width}px client navigation`);
+    compareImages(baseline, await mapShot(page, `universities-map-navigation-${width}`), `university SVG ${width}px client navigation`);
     await page.context().close();
   }
   const page = await makePage(1440);

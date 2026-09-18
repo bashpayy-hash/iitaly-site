@@ -2,7 +2,8 @@
 
 import { CITIES, type University } from "@/data/italy";
 import { Modal } from "@/components/Modal";
-import { Button } from "@/components/Button";
+import { AppleButton } from "@/components/apple/Button";
+import ui from "./university-ui.module.css";
 
 const ROWS: { key: keyof University; label: string }[] = [
   { key: "tp", label: "Тип и направление" },
@@ -28,35 +29,35 @@ export function UniModal({
   compareDisabled: boolean;
 }) {
   return (
-    <Modal open={!!uni} onClose={onClose} labelledBy="uni-modal-title">
+    <Modal open={!!uni} onClose={onClose} labelledBy="uni-modal-title" className={ui.dialogPanel}>
       {uni && (
-        <div className="p-6">
-          <p className="text-xs font-extrabold tracking-[0.14em] text-sec uppercase">
+        <div className={ui.uniModal}>
+          <p className={ui.eyebrow}>
             {CITIES[uni.city].name}
           </p>
-          <h3 id="uni-modal-title" className="mt-1 font-display text-2xl font-bold">
+          <h3 id="uni-modal-title" className={ui.modalTitle}>
             {uni.name}
           </h3>
-          <dl className="mt-5 divide-y-2 divide-line border-y-2 border-line">
+          <dl className={ui.modalDetails}>
             {ROWS.map(({ key, label }) => (
-              <div key={key} className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 py-3">
-                <dt className="text-xs font-bold text-ink-soft uppercase">{label}</dt>
-                <dd className="text-right text-sm font-bold">{String(uni[key])}</dd>
+              <div key={key} className={ui.modalRow}>
+                <dt className={ui.detailLabel}>{label}</dt>
+                <dd className={ui.detailValue}>{String(uni[key])}</dd>
               </div>
             ))}
           </dl>
           <div className="mt-5 flex flex-wrap gap-3">
-            <Button
+            <AppleButton
               type="button"
-              variant={inCompare ? "dark" : "ghost"}
+              variant="outlined"
               onClick={onToggleCompare}
               disabled={!inCompare && compareDisabled}
             >
               {inCompare ? "Убрать из сравнения" : "Добавить к сравнению"}
-            </Button>
-            <Button type="button" variant="primary" onClick={onClose}>
+            </AppleButton>
+            <AppleButton type="button" variant="filled" onClick={onClose}>
               Понятно
-            </Button>
+            </AppleButton>
           </div>
         </div>
       )}

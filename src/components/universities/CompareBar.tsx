@@ -1,7 +1,8 @@
 "use client";
 
 import { UNIS } from "@/data/italy";
-import { Button } from "@/components/Button";
+import { AppleButton } from "@/components/apple/Button";
+import ui from "./university-ui.module.css";
 
 export function CompareBar({
   compareIds,
@@ -22,39 +23,39 @@ export function CompareBar({
     // себе пересечения не даёт, но лаунчер садится на правый край полосы.
     <div
       data-fab-yield
-      className="surface-translucent-paper sticky bottom-0 z-40 border-t-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur-md sm:px-6"
+      className={ui.compareBar}
     >
-      <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-3">
-        <span className="text-xs font-extrabold text-ink-soft uppercase">
+      <div className={ui.compareBarInner}>
+        <span className={ui.compareBarLabel}>
           Сравнение ({unis.length}/3)
         </span>
-        <div className="flex flex-1 flex-wrap gap-2">
+        <div className={ui.compareChips}>
           {unis.map((u) => (
             <span
               key={u.id}
-              className="flex items-center gap-1.5 rounded-pill border-2 border-ink bg-cream px-3 py-1 text-xs font-bold"
+              className={ui.compareChip}
             >
               {u.name}
               <button
                 type="button"
                 aria-label={`Убрать ${u.name} из сравнения`}
                 onClick={() => onRemove(u.id)}
-                className="text-ink-soft hover:text-red focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                className={ui.removeChip}
               >
                 ×
               </button>
             </span>
           ))}
         </div>
-        <Button
+        <AppleButton
           type="button"
-          variant="primary"
+          variant="filled" size="sm"
           onClick={onOpenCompare}
           disabled={unis.length < 2}
           className="shrink-0"
         >
           Сравнить
-        </Button>
+        </AppleButton>
       </div>
     </div>
   );
