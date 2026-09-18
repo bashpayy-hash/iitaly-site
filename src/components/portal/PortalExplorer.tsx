@@ -46,6 +46,8 @@ export function PortalExplorer() {
     setCode(c);
     setSurname(sn);
     setData(res.data);
+    // The public plan links to settings, never sends credentials in the URL.
+    if (window.location.hash === "#notifications") setSection("help");
     const first = res.data.roadmap.find((st) => st.tasks.some((t) => !res.data.done[t.id]));
     setOpenStage((first || res.data.roadmap[0])?.id || "");
     try {
@@ -67,11 +69,19 @@ export function PortalExplorer() {
     try {
       const savedCode = localStorage.getItem(KEY);
       const savedSn = localStorage.getItem(KEY_SN);
-      if (savedCode && savedSn) login(savedCode, savedSn, true);
+      if (savedCode && savedSn) login(savedSn, savedCode, true);
     } catch {
       // localStorage unavailable — user just logs in manually
     }
     /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
+
+  useEffect(() => {
+    function openReminderSettings() {
+      if (window.location.hash === "#notifications") setSection("help");
+    }
+    window.addEventListener("hashchange", openReminderSettings);
+    return () => window.removeEventListener("hashchange", openReminderSettings);
   }, []);
 
   function exit() {
@@ -135,11 +145,25 @@ export function PortalExplorer() {
     return { ok: false, error: res?.error };
   }
 
+  async function handleRefreshNotifications() {
+    if (!code || !surname) return { ok: false, error: "Сначала войди в кабинет." };
+    const res = await fetchPortal(code, surname);
+    if (!res.ok) return { ok: false, error: res.error };
+    setData((prev) => (prev ? { ...prev, client: res.data.client } : prev));
+    return {
+      ok: true,
+      linked: Boolean(res.data.client.tgLinked) && res.data.client.notify?.telegram !== false,
+    };
+  }
+
   async function handleDisableTelegram() {
     if (!code || !surname) return { ok: false, error: "Нет связи" };
     const res = await saveNotify(code, surname, { notifyTelegram: false });
     if (res && res.ok) {
-      await login(code, surname, true);
+      setData((prev) => (prev ? {
+        ...prev,
+        client: { ...prev.client, tgLinked: false, notify: { ...prev.client.notify, telegram: false } },
+      } : prev));
       return { ok: true };
     }
     return { ok: false, error: res?.error };
@@ -274,6 +298,7 @@ export function PortalExplorer() {
               onOpenChat={openChat}
               onSaveEmail={handleSaveEmail}
               onDisableTelegram={handleDisableTelegram}
+              onRefreshNotifications={handleRefreshNotifications}
               onDelete={handleDelete}
             />
           )}

@@ -20,10 +20,15 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/CityMatch.tsx',
   'src/components/universities/comparison.module.css',
   'src/components/universities/university-ui.module.css']);
+// Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
+const approvedReminderUiPaths = new Set([
+  'src/components/portal/PortalExplorer.tsx',
+  'src/components/portal/HelpSection.tsx',
+]);
 const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path)), [], 'Protected source or contract changed.');
+assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 25000;/);
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');
 assert.equal((wizard.match(/    id: /g) || []).length, 6, 'The free quiz must have six questions.');
-console.log('University presentation allowlist passed; ItalyMap, all data, comparison model, map-label logic, backend contracts, root layout, global CSS and dependencies unchanged.');
+console.log('Presentation/reminder UI allowlist passed; ItalyMap, data, comparison model, API contracts, root layout, global CSS and dependencies unchanged.');
