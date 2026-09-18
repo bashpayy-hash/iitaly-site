@@ -72,6 +72,8 @@ jobs:
         run: node scripts/design-comparison-review.mjs
       - name: Review university artwork, controls and unchanged map behavior
         run: node scripts/design-university-review.mjs
+      - name: Review approved landscape in pricing margin
+        run: node scripts/design-prices-landscape-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
