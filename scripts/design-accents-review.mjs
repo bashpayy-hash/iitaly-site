@@ -126,7 +126,7 @@ try {
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
     const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     assert.equal(headHeroText, baseHeroText, `Hero copy unchanged at ${width}`);
-    assert.match(headText, /После подтверждения оплаты активируется личный кабинет/);
+    assert.match(headText, /После подтверждения оплаты мы активируем личный кабинет/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
     const heroAfter = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-unchanged-${width}.png`), animations: 'disabled' });
@@ -212,12 +212,7 @@ try {
       const beforeText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
       await settle(page, 4175, route);
       const afterText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
-      if (route === '/prices') {
-        assert.match(afterText, /После подтверждения оплаты личный кабинет активируется/);
-        assert.match(afterText, /После подтверждения оплаты мы/);
-      } else {
-        assert.equal(afterText, beforeText, `${route}: original copy at ${width}px`);
-      }
+      assert.equal(afterText, beforeText, `${route}: original copy at ${width}px`);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${route} overflow at ${width}`);
       await inspectArtwork();
       assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).filter), 'none', 'Blur never affects the heading');
