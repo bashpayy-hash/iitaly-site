@@ -122,8 +122,12 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               </AppleButton>
               <p className="mt-2.5 text-center text-apple-caption text-cloud-meta">
                 {PAY_MODE === "kaspi"
-                  ? "Оплата откроется в приложении Kaspi. Продукт придёт в WhatsApp после оплаты."
-                  : "После оформления покажем реквизиты для перевода. Продукт придёт в WhatsApp после оплаты."}
+                  ? "Оплата откроется в приложении Kaspi. После подтверждения платежа пришлём доступ или результат в WhatsApp."
+                  : "После оформления покажем реквизиты для перевода. После подтверждения платежа пришлём доступ или результат в WhatsApp."}
+              </p>
+              <p className="mt-2 text-center text-apple-caption text-cloud-meta">
+                Оформляя заказ, ты принимаешь <a href="/terms" className="underline underline-offset-2">условия сервиса</a> и{" "}
+                <a href="/privacy" className="underline underline-offset-2">политику конфиденциальности</a>.
               </p>
             </>
           )}
@@ -145,7 +149,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   ✅
                 </div>
                 <p className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
-                <p className="mt-1 text-apple-body-sm text-cloud-body">Осталось оплатить — два шага, минута времени.</p>
+                <p className="mt-1 text-apple-body-sm text-cloud-body">Осталось оплатить и прислать чек. После подтверждения платежа мы активируем доступ.</p>
               </div>
 
               <div className="mt-5 flex gap-3">
@@ -193,8 +197,8 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               </div>
 
               <p className="mt-5 text-apple-caption text-cloud-meta">
-                Без предоплаты «в никуда»: до 7 дней с оплаты, если ещё не начал работать с планом
-                — вернём деньги полностью, без объяснений.
+                До 7 календарных дней с оплаты вернём деньги полностью, если кабинет ещё не активирован
+                и персональный маршрут не выдан.
               </p>
               <AppleButton type="button" variant="outlined" onClick={close} className="mt-3 w-full">
                 Закрыть

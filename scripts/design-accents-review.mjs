@@ -120,11 +120,16 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await settle(page, 4176);
     const baseText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
+    const baseHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     const beforeLayout = await heroLayout(page);
     const heroBefore = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
     await settle(page, 4175);
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
-    assert.equal(headText, baseText, `Unchanged homepage content at ${width}`);
+    const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
+    assert.equal(headHeroText, baseHeroText, `Hero copy unchanged at ${width}`);
+    assert.match(headText, /После подтверждения оплаты мы активируем личный кабинет/);
+    assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
+    assert.doesNotMatch(headText, /Telegram и на почту/);
     const heroAfter = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-unchanged-${width}.png`), animations: 'disabled' });
     const a = pngjs.PNG.sync.read(heroBefore), b = pngjs.PNG.sync.read(heroAfter);
     assert.equal(a.width, b.width); assert.equal(a.height, b.height);

@@ -7,6 +7,7 @@ import { PlanSection } from "./PlanSection";
 import { DocsSection } from "./DocsSection";
 import { HelpSection } from "./HelpSection";
 import {
+  createTelegramLink,
   deletePortalData,
   fetchPortal,
   saveNotify,
@@ -134,15 +135,11 @@ export function PortalExplorer() {
     setBusyTask(null);
   }
 
-  async function handleSaveEmail(email: string) {
-    if (!code || !surname) return { ok: false, error: "Нет связи" };
-    const res = await saveNotify(code, surname, { email, notifyEmail: !!email });
-    if (res && res.ok) {
-      setData((prev) => (prev ? { ...prev, client: { ...prev.client, email } } : prev));
-      track("notify_email");
-      return { ok: true };
-    }
-    return { ok: false, error: res?.error };
+  async function handleCreateTelegramLink() {
+    if (!code || !surname) return { ok: false, error: "Сначала войди в кабинет." };
+    const res = await createTelegramLink(code, surname);
+    if (!res.ok) return { ok: false, error: res.error };
+    return { ok: true, url: res.url };
   }
 
   async function handleRefreshNotifications() {
@@ -294,9 +291,8 @@ export function PortalExplorer() {
           {section === "help" && (
             <HelpSection
               client={data.client}
-              code={code}
               onOpenChat={openChat}
-              onSaveEmail={handleSaveEmail}
+              onCreateTelegramLink={handleCreateTelegramLink}
               onDisableTelegram={handleDisableTelegram}
               onRefreshNotifications={handleRefreshNotifications}
               onDelete={handleDelete}

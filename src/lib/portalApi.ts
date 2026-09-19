@@ -96,6 +96,29 @@ export async function toggleTask(code: string, surname: string, taskId: string, 
   }
 }
 
+
+export type TelegramLinkResult =
+  | { ok: true; url: string; expiresAt: string }
+  | { ok: false; error: string };
+
+export async function createTelegramLink(code: string, surname: string): Promise<TelegramLinkResult> {
+  if (!BACKEND_URL) return { ok: false, error: "Нет связи с сервером" };
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/portal/${encodeURIComponent(code)}/telegram-link`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ surname }),
+    });
+    const d = await r.json().catch(() => null);
+    if (!r.ok || !d?.ok || typeof d.url !== "string") {
+      return { ok: false, error: d?.error || "Не удалось создать ссылку Telegram" };
+    }
+    return { ok: true, url: d.url, expiresAt: String(d.expiresAt || "") };
+  } catch {
+    return { ok: false, error: "Нет связи с сервером" };
+  }
+}
+
 export async function saveNotify(code: string, surname: string, payload: Record<string, unknown>) {
   if (!BACKEND_URL) return { ok: false, error: "Нет связи с сервером" };
   try {
