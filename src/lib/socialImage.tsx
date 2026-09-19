@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { PRICE_MAIN, fmtPrice } from "@/data/pricing";
 
 export const SOCIAL_IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
@@ -37,7 +37,7 @@ export function socialImage() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 24 }}>
-          <div style={{ display: "flex", fontWeight: 700 }}>{priceLabel(PRICE_MAIN)} · разово</div>
+          <div style={{ display: "flex", fontWeight: 700 }}>{fmtPrice(PRICE_MAIN)} KZT · разово</div>
           <div style={{ display: "flex", color: "#686868" }}>iitaly.kz</div>
         </div>
       </div>
