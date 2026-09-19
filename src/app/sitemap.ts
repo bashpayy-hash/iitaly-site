@@ -9,7 +9,7 @@ const BASE = "https://iitaly.kz";
    противоречивый сигнал, из-за которого страница попадает в отчёты
    Search Console как ошибка. Закрывать /portal ещё и в robots.txt тоже
    нельзя: запрет обхода помешает роботу увидеть тот самый noindex. */
-const ROUTES = ["", "/universities", "/plan", "/prices", "/guides", "/changes-2026-27", "/privacy"];
+const ROUTES = ["", "/universities", "/plan", "/prices", "/guides", "/changes-2026-27", "/privacy", "/terms"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.map((path) => ({
