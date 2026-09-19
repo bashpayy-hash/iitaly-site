@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { MarketingHeader } from "./MarketingHeader";
 import styles from "./marketing.module.css";
+import { OFFICIAL_SOURCES } from "@/data/sources";
 
 /** Opt-in shell. Never wrap /universities or the legacy portal in this component. */
 export function MarketingLayout({ children, home = false }: { children: ReactNode; home?: boolean }) {
@@ -25,8 +26,19 @@ export function MarketingLayout({ children, home = false }: { children: ReactNod
           </nav>
         </div>
         <div className={styles.finePrint}>
-          <p>База: правила приёма 2026/27 (MUR, CIMEA, bando регионов). Ответы ИИ могут содержать ошибки — критичное проверяет эксперт.</p>
-          <Link href="/privacy">Политика конфиденциальности</Link>
+          <p>
+            Официальные источники:{" "}
+            <a href={OFFICIAL_SOURCES.universitalyInternational.href} target="_blank" rel="noopener noreferrer">Universitaly</a>
+            {" · "}
+            <a href={OFFICIAL_SOURCES.cimea.href} target="_blank" rel="noopener noreferrer">CIMEA</a>
+            {" · "}
+            <a href={OFFICIAL_SOURCES.lazioDsu.href} target="_blank" rel="noopener noreferrer">DiSCo Lazio 2026/27</a>.
+            {" "}Ответы ИИ могут содержать ошибки.
+          </p>
+          <span className="flex flex-wrap gap-4">
+            <Link href="/terms">Условия сервиса</Link>
+            <Link href="/privacy">Политика конфиденциальности</Link>
+          </span>
         </div>
       </footer>
     </div>
