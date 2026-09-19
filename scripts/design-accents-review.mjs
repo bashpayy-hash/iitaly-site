@@ -126,7 +126,7 @@ try {
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
     const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     assert.equal(headHeroText, baseHeroText, `Hero copy unchanged at ${width}`);
-    assert.match(headText, /После подтверждённой оплаты кабинет создаётся автоматически/);
+    assert.match(headText, /После подтверждения оплаты активируется личный кабинет/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
     const heroAfter = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-unchanged-${width}.png`), animations: 'disabled' });
@@ -213,8 +213,8 @@ try {
       await settle(page, 4175, route);
       const afterText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
       if (route === '/prices') {
-        assert.match(afterText, /После подтверждённой оплаты Stripe личный кабинет создаётся автоматически/);
-        assert.match(afterText, /Stripe Checkout/);
+        assert.match(afterText, /После подтверждения оплаты личный кабинет активируется/);
+        assert.match(afterText, /После подтверждения оплаты мы/);
       } else {
         assert.equal(afterText, beforeText, `${route}: original copy at ${width}px`);
       }
