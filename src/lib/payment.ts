@@ -31,6 +31,7 @@ export async function submitOrder(fields: {
   product: string;
   price: number;
   name: string;
+  surname?: string;
   phone: string;
 }): Promise<OrderResult> {
   if (!BACKEND_URL) {
