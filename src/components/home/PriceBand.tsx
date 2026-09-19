@@ -26,7 +26,7 @@ export function PriceBand() {
           </AppleButtonLink>
           <p className="mt-4 max-w-md text-apple-caption text-cloud-meta">
             До 7 календарных дней с оплаты вернём деньги полностью, если
-            кабинет ещё не активирован и персональный маршрут не выдан.
+            платные функции кабинета ещё не использовались.
           </p>
         </div>
 
