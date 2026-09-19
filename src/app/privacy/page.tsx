@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PAY_PHONE, PAY_WA } from "@/lib/payment";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
@@ -36,7 +37,7 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
       </p>
     ),
   },
-  {
+  ...(STRIPE_ENABLED ? [{
     title: "Оплата через Stripe",
     body: (
       <p>
@@ -46,7 +47,7 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
         исполнения заказа и разрешения спорных ситуаций.
       </p>
     ),
-  },
+  }] : []),
   {
     title: "Документы и ИИ",
     body: (
