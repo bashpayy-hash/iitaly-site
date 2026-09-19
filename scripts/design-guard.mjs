@@ -32,6 +32,7 @@ const approvedReminderUiPaths = new Set([
   'src/components/Header.tsx',
   'src/data/sources.ts',
   'src/lib/payment.ts',
+  'src/lib/paymentMode.ts',
   'src/lib/socialImage.tsx',
 ]);
 const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
