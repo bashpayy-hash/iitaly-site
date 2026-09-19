@@ -119,7 +119,7 @@ try {
   await shot(page, 'plan-complete', true);
   results.push({ test: 'Six-question quiz completes without contact submission', passed: true });
   await visit(page, '/prices');
-  await page.getByRole('button', { name: 'Оплатить и начать', exact: true }).click();
+  await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
   assert.equal(await page.getByRole('dialog').isVisible(), true);
   await shot(page, 'checkout-open');
   await page.keyboard.press('Escape');
