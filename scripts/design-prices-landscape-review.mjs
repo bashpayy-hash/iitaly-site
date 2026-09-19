@@ -112,7 +112,7 @@ try {
       await head.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-${width}.png`),animations:'disabled'});
       await base.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-before-${width}.png`),animations:'disabled'});
     }
-    await head.getByRole('button',{name:'Оплатить и начать',exact:true}).click();
+    await head.getByRole('button',{name:'Оформить и оплатить',exact:true}).click();
     assert(await head.getByRole('dialog').isVisible());
     await head.keyboard.press('Escape'); assert.equal(await head.getByRole('dialog').count(),0);
     await head.emulateMedia({forcedColors:'active'}); assert.equal(await art.isVisible(),false);
