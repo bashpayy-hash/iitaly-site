@@ -3,6 +3,7 @@ import { ItalianAccent } from "@/components/marketing/ItalianAccent";
 import { AppleHeading, AppleCaption } from "@/components/apple/Typography";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 const STAGES = [
   {
@@ -14,8 +15,10 @@ const STAGES = [
   {
     n: "2",
     title: `Оплата ${priceLabel(PRICE_MAIN)}`,
-    body: "Один платёж, без подписки. После подтверждения оплаты мы активируем личный кабинет и присылаем код доступа в WhatsApp.",
-    time: "после подтверждения оплаты",
+    body: STRIPE_ENABLED
+      ? "Один платёж через Stripe. После подтверждённой оплаты кабинет создаётся автоматически — код появляется сразу на сайте."
+      : "Один платёж, без подписки. После подтверждения оплаты мы активируем личный кабинет и присылаем код доступа в WhatsApp.",
+    time: STRIPE_ENABLED ? "сразу после подтверждения Stripe" : "после подтверждения оплаты",
   },
   {
     n: "3",

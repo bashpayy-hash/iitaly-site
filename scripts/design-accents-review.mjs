@@ -211,7 +211,8 @@ try {
       await settle(page, 4176, route);
       const beforeText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
       await settle(page, 4175, route);
-      assert.equal((await page.locator('main').innerText()).replace(/\s+/g, ' ').trim(), beforeText, `${route}: original copy at ${width}px`);
+      const afterText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
+      assert.equal(afterText, beforeText, `${route}: original copy at ${width}px`);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${route} overflow at ${width}`);
       await inspectArtwork();
       assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).filter), 'none', 'Blur never affects the heading');
@@ -238,7 +239,7 @@ try {
           assert(await detail.evaluate(el => el.open));
         }
       }
-      results.push({test:`${route} ${width}px: unchanged copy, loaded art, no overlap/overflow`,passed:true});
+      results.push({test:`${route} ${width}px: reviewed copy, loaded art, no overlap/overflow`,passed:true});
     }
     await page.emulateMedia({forcedColors:'active'});
     assert.equal(await page.locator('[data-editorial-spot]').isVisible(), false);

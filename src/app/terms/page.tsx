@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { PAY_PHONE, PAY_WA } from "@/lib/payment";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/terms" },
@@ -37,19 +38,20 @@ export default function TermsPage() {
               <section>
                 <h2 className="font-display text-lg font-bold text-ink">Цена и оплата</h2>
                 <p className="mt-1.5">
-                  Основной пакет стоит <b>{priceLabel(PRICE_MAIN)}</b> разово. После оформления
-                  заявки сайт показывает реквизиты. Платёж подтверждается по чеку, который
-                  пользователь отправляет в WhatsApp IITALY. Сам факт перевода не создаёт кабинет
-                  автоматически.
+                  Основной пакет стоит <b>{priceLabel(PRICE_MAIN)}</b> разово.{" "}
+                  {STRIPE_ENABLED
+                    ? "Оплата проходит через Stripe Checkout. Реквизиты карты вводятся на стороне Stripe и не проходят через сервер IITALY. После подтверждённого платежа выполнение заказа запускается автоматически."
+                    : "После оформления заявки сайт показывает реквизиты. Платёж подтверждается по чеку, который пользователь отправляет в WhatsApp IITALY. Сам факт перевода не создаёт кабинет автоматически."}
                 </p>
               </section>
 
               <section>
                 <h2 className="font-display text-lg font-bold text-ink">Когда открывается кабинет</h2>
                 <p className="mt-1.5">
-                  Личный кабинет и персональный маршрут активируются после подтверждения оплаты.
-                  После активации пользователь получает код доступа и может подключить Telegram
-                  для напоминаний о дедлайнах.
+                  {STRIPE_ENABLED
+                    ? "Для основного пакета личный кабинет и персональный маршрут создаются автоматически после подтверждённого webhook Stripe. Код доступа показывается на странице подтверждения оплаты."
+                    : "Личный кабинет и персональный маршрут активируются после подтверждения оплаты. После активации пользователь получает код доступа."}
+                  {" "}После входа можно подключить Telegram для напоминаний о дедлайнах.
                 </p>
               </section>
 
@@ -66,10 +68,11 @@ export default function TermsPage() {
               <section>
                 <h2 className="font-display text-lg font-bold text-ink">Возврат</h2>
                 <p className="mt-1.5">
-                  В течение <b>7 календарных дней с оплаты</b> можно запросить полный возврат,
-                  если личный кабинет ещё не активирован и персональный маршрут не выдан. После
-                  активации начинается оказание персонализированной услуги. Чтобы запросить
-                  возврат, напиши в WhatsApp IITALY по номеру{" "}
+                  В течение <b>7 календарных дней с оплаты</b> можно запросить полный возврат,{" "}
+                  {STRIPE_ENABLED
+                    ? "если платные функции кабинета ещё не использовались: не загружались документы на проверку и не отмечались шаги маршрута выполненными."
+                    : "если личный кабинет ещё не активирован и персональный маршрут не выдан."}
+                  {" "}Чтобы запросить возврат, напиши в WhatsApp IITALY по номеру{" "}
                   <a className="font-bold text-red underline underline-offset-4" href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer">
                     {PAY_PHONE}
                   </a>.

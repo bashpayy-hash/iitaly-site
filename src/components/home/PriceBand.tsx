@@ -4,6 +4,7 @@ import { ItalianAccent } from "@/components/marketing/ItalianAccent";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { AppleCaption, AppleBody } from "@/components/apple/Typography";
 import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 /** Existing pricing and refund terms, with one clear conversion action. */
 export function PriceBand() {
@@ -25,8 +26,9 @@ export function PriceBand() {
             Смотреть, что входит
           </AppleButtonLink>
           <p className="mt-4 max-w-md text-apple-caption text-cloud-meta">
-            До 7 календарных дней с оплаты вернём деньги полностью, если
-            кабинет ещё не активирован и персональный маршрут не выдан.
+            {STRIPE_ENABLED
+              ? "До 7 календарных дней с оплаты вернём деньги полностью, если платные функции кабинета ещё не использовались."
+              : "До 7 календарных дней с оплаты вернём деньги полностью, если кабинет ещё не активирован и персональный маршрут не выдан."}
           </p>
         </div>
 

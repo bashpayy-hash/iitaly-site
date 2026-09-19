@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PAY_PHONE, PAY_WA } from "@/lib/payment";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
@@ -20,6 +21,7 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
         <li><b>Сообщения ИИ-чату</b> — чтобы сформировать ответ.</li>
         <li><b>Документы</b>, которые ты сам загружаешь на проверку.</li>
         <li><b>Данные личного кабинета</b> — прогресс, результаты проверок и настройки уведомлений.</li>
+        <li><b>Данные заказа</b> — выбранная услуга, сумма, имя, фамилия, телефон, статус оплаты и технический идентификатор Stripe-сессии. Полные реквизиты банковской карты IITALY не получает и не хранит.</li>
         <li><b>Telegram chat ID и статусы доставки</b> — только после того, как ты сам подключил Telegram-бота.</li>
         <li><b>Псевдонимная аналитика</b> — случайный идентификатор устройства и события вроде открытия страницы цен. Это не имя, но такой идентификатор всё равно относится к данным об использовании сервиса.</li>
       </ul>
@@ -35,6 +37,17 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
       </p>
     ),
   },
+  ...(STRIPE_ENABLED ? [{
+    title: "Оплата через Stripe",
+    body: (
+      <p>
+        Оплата проходит на защищённой странице Stripe. Stripe обрабатывает платёжные реквизиты
+        и присылает IITALY подписанный webhook со статусом платежа. IITALY хранит только данные
+        заказа, технические идентификаторы Stripe и факт успешной оплаты, необходимые для
+        исполнения заказа и разрешения спорных ситуаций.
+      </p>
+    ),
+  }] : []),
   {
     title: "Документы и ИИ",
     body: (

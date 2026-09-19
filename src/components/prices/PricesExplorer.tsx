@@ -10,6 +10,7 @@ import { HeadingPin } from "@/components/motion/HeadingPin";
 import { TomatoAccent } from "@/components/marketing/EditorialArtwork";
 import art from "@/components/marketing/editorial-art.module.css";
 import { PricesLandscape } from "./PricesLandscape";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -18,7 +19,7 @@ const MICRO = [
 const GUARANTEES = [
   {
     title: "Возврат",
-    body: "До 7 календарных дней с оплаты вернём деньги полностью, если личный кабинет ещё не активирован и персональный маршрут не выдан. После активации начинается оказание услуги.",
+    body: "В течение 7 календарных дней с оплаты вернём деньги полностью, если ты ещё не использовал платные функции кабинета: не загружал документы на проверку и не отмечал шаги маршрута выполненными.",
   },
   {
     title: "Мы не обещаем поступление, визу или стипендию",
@@ -122,8 +123,9 @@ export function PricesExplorer() {
               ))}
             </div>
             <p className="mt-4  px-4 py-3 text-apple-body-sm text-cloud-white">
-              После подтверждения оплаты мы активируем личный кабинет с маршрутом.
-              Он ведёт весь путь — от выбора программ до первых дней в Италии.
+              {STRIPE_ENABLED
+                ? "После подтверждённой оплаты Stripe личный кабинет создаётся автоматически. Код доступа появится сразу на странице подтверждения."
+                : "После подтверждения оплаты мы активируем личный кабинет с маршрутом. Он ведёт весь путь — от выбора программ до первых дней в Италии."}
             </p>
             <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
               {FEATURES.map((f) => (
@@ -193,8 +195,9 @@ export function PricesExplorer() {
             Если нужен живой человек
           </p>
           <p className="mt-2 text-apple-body-sm text-cloud-body">
-            Не входит в цену и не обязательно. Берут те, у кого нестандартный
-            случай или просто хочется, чтобы проверил человек.
+            {STRIPE_ENABLED
+              ? "Не входит в цену и не обязательно. Оплачивается через тот же защищённый Stripe Checkout; после оплаты мы связываемся по оставленному номеру."
+              : "Не входит в цену и не обязательно. Берут те, у кого нестандартный случай или просто хочется, чтобы проверил человек."}
           </p>
           <div className="mt-4 space-y-3">
             {MICRO.map((m) => (
