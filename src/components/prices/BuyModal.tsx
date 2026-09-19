@@ -145,7 +145,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   ✅
                 </div>
                 <p className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
-                <p className="mt-1 text-apple-body-sm text-cloud-body">Осталось оплатить — два шага, минута времени.</p>
+                <p className="mt-1 text-apple-body-sm text-cloud-body">Осталось оплатить и прислать чек. После подтверждения платежа мы активируем доступ.</p>
               </div>
 
               <div className="mt-5 flex gap-3">
