@@ -17,9 +17,9 @@ export function PriceBand() {
             {priceLabel(PRICE_MAIN)}
           </p>
           <AppleBody as="p" className="mt-4 max-w-md text-apple-body-sm text-cloud-body">
-            Агентства в Казахстане обычно берут 650 000 – 1 000 000 ₸ за ту же
-            работу — там её делают руками. У нас её выполняет система: один
-            платёж закрывает весь цикл поступления, без доплат за этапы.
+            Один платёж закрывает весь цифровой маршрут поступления: подбор,
+            документы, дедлайны, DSU, Universitaly и визу D. Без подписки и
+            обязательных доплат за отдельные этапы.
           </AppleBody>
           <AppleButtonLink href="/prices" variant="filled" className="mt-7">
             Смотреть, что входит
