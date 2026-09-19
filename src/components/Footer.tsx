@@ -27,9 +27,14 @@ export function Footer() {
           База: правила приёма 2026/27 (MUR, CIMEA, bando регионов). Ответы ИИ
           могут содержать ошибки — критичное проверяет эксперт.
         </p>
-        <Link href="/privacy" className="underline underline-offset-4 hover:text-frost">
-          Политика конфиденциальности
-        </Link>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/terms" className="underline underline-offset-4 hover:text-frost">
+            Условия сервиса
+          </Link>
+          <Link href="/privacy" className="underline underline-offset-4 hover:text-frost">
+            Политика конфиденциальности
+          </Link>
+        </div>
       </div>
     </footer>
   );
