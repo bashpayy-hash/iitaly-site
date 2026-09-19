@@ -124,7 +124,11 @@ try {
     const heroBefore = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
     await settle(page, 4175);
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
-    assert.equal(headText, baseText, `Unchanged homepage content at ${width}`);
+    assert.equal((await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim(), (await page.goto(`http://127.0.0.1:4176/`, { waitUntil: 'networkidle' }).then(async () => { await page.evaluate(async () => { await document.fonts.ready; }); return page.locator('[data-section="hero"]').innerText(); })).replace(/\s+/g, ' ').trim(), `Hero copy unchanged at ${width}`);
+    await settle(page, 4175);
+    assert.match(headText, /После подтверждения оплаты мы активируем личный кабинет/);
+    assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
+    assert.doesNotMatch(headText, /Telegram и на почту/);
     const heroAfter = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-unchanged-${width}.png`), animations: 'disabled' });
     const a = pngjs.PNG.sync.read(heroBefore), b = pngjs.PNG.sync.read(heroAfter);
     assert.equal(a.width, b.width); assert.equal(a.height, b.height);
