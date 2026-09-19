@@ -125,6 +125,11 @@ try {
   await page.keyboard.press('Escape');
   assert.equal(await page.getByRole('dialog').count(), 0);
   results.push({ test: 'Checkout opens and Escape closes; no order submitted', passed: true });
+  await visit(page, '/payment/success');
+  await page.waitForTimeout(50);
+  assert.match(await page.locator('main').innerText(), /нет данных платёжной сессии|нет данных платежной сессии/i);
+  await shot(page, 'payment-success-missing');
+  results.push({ test: 'Stripe return page handles a missing local checkout token safely', passed: true });
   await visit(page, '/');
   const summary = page.locator('summary').filter({ hasText: 'Можно вернуть деньги?' });
   await summary.click();
