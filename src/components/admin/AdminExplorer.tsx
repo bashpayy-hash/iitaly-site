@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BACKEND_URL } from "@/lib/backend";
 
 type Order = {
@@ -42,16 +42,15 @@ function waLink(phone: string, text: string) {
 }
 
 export function AdminExplorer() {
-  const [key, setKey] = useState("");
+  const [key, setKey] = useState(() => {
+    try { return typeof window === "undefined" ? "" : sessionStorage.getItem("iitaly_admin_key") || ""; }
+    catch { return ""; }
+  });
   const [data, setData] = useState<Overview | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
   const [surnameDrafts, setSurnameDrafts] = useState<Record<string, string>>({});
   const [activated, setActivated] = useState<Record<string, { code: string; name: string; surname: string; phone: string }>>({});
-
-  useEffect(() => {
-    try { setKey(sessionStorage.getItem("iitaly_admin_key") || ""); } catch {}
-  }, []);
 
   const pending = useMemo(() => data?.orders.filter(o => o.status !== "activated") || [], [data]);
 
