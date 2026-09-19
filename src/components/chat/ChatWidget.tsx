@@ -74,7 +74,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<Msg[]>([
     {
       who: "ai",
-      text: "Ciao! Я Веспа, ИИ-консультант IItaly. Спроси про аттестат, документы, визу D или стипендию DSU.",
+      text: "Ciao! Я Веспа, ИИ-консультант IITALY. Спроси про аттестат, документы, визу D или стипендию DSU.",
     },
   ]);
   const [input, setInput] = useState("");
