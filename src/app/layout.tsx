@@ -42,16 +42,16 @@ const interTight = Inter_Tight({
 });
 
 const siteUrl = "https://iitaly.kz";
-const title = "IItaly — поступление в Италию ведёт ИИ";
+const title = "IITALY — поступление в Италию ведёт ИИ";
 const description =
   "Поступление в Италию из Казахстана по понятному плану: подбор программ, расчёт шансов на стипендию DSU, "
-  + `документы и виза. Один платёж ${priceLabel(PRICE_MAIN)} — агентства обычно берут 650 000 – 1 000 000 ₸.`;
+  + `документы, Universitaly и виза. Один платёж ${priceLabel(PRICE_MAIN)} за цифровой маршрут.`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: title,
-    template: "%s — IItaly",
+    template: "%s — IITALY",
   },
   description,
   // Каноническая ссылка на каждой странице. Сайт статический, и один и
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    siteName: "IItaly",
+    siteName: "IITALY",
     title,
     description,
     locale: "ru_RU",

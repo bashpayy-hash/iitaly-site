@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/prices" },
   title: `Цены — ${priceLabel(PRICE_MAIN)} за поступление под ключ`,
   description:
-    `Один платёж ${priceLabel(PRICE_MAIN)} — агентства в Казахстане обычно берут 650 000 – 1 000 000 ₸: `
-    + "подбор вузов, документы, стипендия DSU и виза D ведёт система. Платные опции с живым экспертом.",
+    `Один платёж ${priceLabel(PRICE_MAIN)} за цифровой маршрут поступления: `
+    + "подбор вузов, документы, стипендия DSU, Universitaly и виза D. Платные опции с живым экспертом — отдельно.",
 };
 
 export default function PricesPage() {

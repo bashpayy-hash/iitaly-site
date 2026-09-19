@@ -25,6 +25,7 @@ type Step = "form" | "sending" | "paid";
 export function BuyModal({ product, onClose }: { product: BuyProduct | null; onClose: () => void }) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -32,6 +33,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
   function reset() {
     setStep("form");
     setName("");
+    setSurname("");
     setPhone("");
     setError(null);
     setCopied(false);
@@ -44,13 +46,13 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
 
   async function submit() {
     if (!product) return;
-    if (!isValidName(name) || !isValidPhone(phone)) {
-      setError("Проверь имя и телефон.");
+    if (!isValidName(name) || !isValidName(surname) || !isValidPhone(phone)) {
+      setError("Проверь имя, фамилию и телефон.");
       return;
     }
     setError(null);
     setStep("sending");
-    const res = await submitOrder({ product: product.name, price: product.price, name, phone });
+    const res = await submitOrder({ product: product.name, price: product.price, name, surname, phone });
     if (!res.ok) {
       // Текст берём из ответа: «слишком много заявок», «нет связи» и
       // «приём заявок не настроен» требуют от человека разных действий,
@@ -99,6 +101,16 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Имя"
+                  className="w-full border-0 border-b border-white/25 bg-transparent px-1 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
+                />
+              </label>
+              <label className="mt-2.5 block">
+                <span className="sr-only">Фамилия</span>
+                <input
+                  value={surname}
+                  onChange={(e) => setSurname(e.target.value)}
+                  placeholder="Фамилия"
+                  autoComplete="family-name"
                   className="w-full border-0 border-b border-white/25 bg-transparent px-1 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
                 />
               </label>

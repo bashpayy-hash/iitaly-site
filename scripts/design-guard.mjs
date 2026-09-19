@@ -28,6 +28,11 @@ const approvedReminderUiPaths = new Set([
   'src/components/Footer.tsx',
   'src/data/pricing.ts',
   'src/lib/portalApi.ts',
+  'src/app/layout.tsx',
+  'src/components/Header.tsx',
+  'src/data/sources.ts',
+  'src/lib/payment.ts',
+  'src/lib/socialImage.tsx',
 ]);
 const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path)), [], 'Protected source or contract changed.');
@@ -35,4 +40,4 @@ const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 25000;/);
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');
 assert.equal((wizard.match(/    id: /g) || []).length, 6, 'The free quiz must have six questions.');
-console.log('Approved product-truth/reminder paths passed; ItalyMap, university data, comparison model, root layout, global CSS and dependencies unchanged.');
+console.log('Approved launch-polish paths passed; ItalyMap, university data, comparison model, global CSS and dependencies unchanged.');

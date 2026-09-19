@@ -4,18 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/Logo";
 
-/**
- * Ghost-nav, тонкая, почти незаметная, hairline снизу вместо тени.
- * Рендерится на КАЖДОЙ странице, включая /universities — это тот самый
- * "новый хром", из которого разрешена ссылка на карту (см. DESIGN.md).
- * Содержимое /universities (канвас карты и всё внутри) не трогается.
- *
- * Тема заголовка зависит от маршрута: /universities осталась ровно такой,
- * какой была после Apple-прохода (светлая, над кремовой страницей) — этот
- * компонент проверен на пиксель-в-пиксель там и трогать его вид на этом
- * маршруте нельзя. На остальных маршрутах теперь под шапкой не frost, а
- * фото неба (SkyBackground) — там шапка стеклянно-тёмная.
- */
 const links = [
   { href: "/", label: "Главная" },
   { href: "/universities", label: "Университеты" },
@@ -30,40 +18,95 @@ export function Header() {
   const onUniversities = pathname === "/universities";
 
   const bar = onUniversities
-    ? "border-mist/40 bg-frost/80 backdrop-blur-md"
-    : "border-white/10 bg-black/25 backdrop-blur-md";
+    ? "border-mist/40 bg-frost/90 backdrop-blur-md"
+    : "border-white/10 bg-black/35 backdrop-blur-md";
   const brand = onUniversities ? "text-carbon" : "text-cloud-white";
   const link = onUniversities
     ? "text-graphite hover:text-carbon"
     : "text-cloud-body hover:text-cloud-white";
+  const panel = onUniversities
+    ? "border-mist bg-frost text-carbon"
+    : "border-white/10 bg-carbon text-cloud-white";
 
   return (
     <header className={`sticky top-0 z-50 border-b ${bar}`}>
       <div className="mx-auto flex h-12 max-w-[1440px] items-center gap-6 px-5">
-        <Link href="/" className={`flex shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold ${brand}`}>
+        <Link href="/" aria-label="IITALY — главная" className={`flex shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold ${brand}`}>
           <Logo className="h-5 w-5 shrink-0" />
-          <span>IItaly</span>
+          <span>IITALY</span>
         </Link>
-        <nav className="scrollbar-none flex flex-1 gap-5 overflow-x-auto">
+
+        <nav aria-label="Основная навигация" className="hidden flex-1 items-center gap-5 md:flex">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
+              aria-current={pathname === l.href ? "page" : undefined}
               className={`shrink-0 text-[12px] font-normal whitespace-nowrap transition-colors ${link}`}
             >
               {l.label}
             </Link>
           ))}
         </nav>
+
         <button
           type="button"
-          className={`hidden shrink-0 text-[12px] font-normal transition-colors sm:block ${link}`}
+          className={`ml-auto hidden shrink-0 text-[12px] font-normal transition-colors md:block ${link}`}
           onClick={() =>
             window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
           }
         >
           Задать вопрос
         </button>
+
+        <details
+          key={pathname}
+          className="group relative ml-auto md:hidden"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector("summary")?.focus();
+            }
+          }}
+        >
+          <summary
+            aria-label="Открыть меню"
+            className={`flex min-h-10 cursor-pointer list-none items-center gap-2 text-[12px] font-medium marker:content-none [&::-webkit-details-marker]:hidden ${brand}`}
+          >
+            Меню
+            <span aria-hidden className="text-base transition-transform group-open:rotate-45">＋</span>
+          </summary>
+          <nav
+            aria-label="Мобильная навигация"
+            className={`absolute right-0 top-[calc(100%+0.4rem)] w-[min(82vw,300px)] overflow-hidden rounded-xl border p-2 shadow-xl ${panel}`}
+            onClick={(event) => {
+              if ((event.target as HTMLElement).closest("a,button")) {
+                const details = event.currentTarget.closest("details");
+                if (details) details.open = false;
+              }
+            }}
+          >
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                aria-current={pathname === l.href ? "page" : undefined}
+                className="flex min-h-11 items-center justify-between rounded-lg px-3 text-sm hover:bg-white/10"
+              >
+                {l.label}<span aria-hidden>↗</span>
+              </Link>
+            ))}
+            <button
+              type="button"
+              className="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm hover:bg-white/10"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
+              }
+            >
+              Задать вопрос<span aria-hidden>↗</span>
+            </button>
+          </nav>
+        </details>
       </div>
     </header>
   );

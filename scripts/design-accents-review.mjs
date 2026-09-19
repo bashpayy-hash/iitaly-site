@@ -119,7 +119,6 @@ try {
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
     await settle(page, 4176);
-    const baseText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
     const baseHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     const beforeLayout = await heroLayout(page);
     const heroBefore = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
