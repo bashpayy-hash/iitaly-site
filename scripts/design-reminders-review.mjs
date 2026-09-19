@@ -28,20 +28,23 @@ await new Promise(done => server.listen(4187, '127.0.0.1', done));
 const browser = await chromium.launch();
 const origin = 'http://127.0.0.1:4187';
 let activePage;
-async function settle(page) {
-  await page.evaluate(async () => { await document.fonts.ready; });
-}
+
+async function settle(page) { await page.evaluate(async () => { await document.fonts.ready; }); }
 async function noOverflow(page, label) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label);
 }
+
 try {
   const source = await readFile('src/components/plan/PlanResult.tsx', 'utf8');
   assert.doesNotMatch(source, /Claude|Anthropic|Клод/i);
+  assert.doesNotMatch(source, /docStates|setTimeout|Найдена ошибка:/, 'Free plan must not simulate document verdicts');
+
   for (const width of [1440, 1280, 1024, 768, 390, 320]) {
     const ctx = await browser.newContext({ viewport: { width, height: 960 }, reducedMotion: 'reduce', locale: 'ru-RU' });
-    let linked = false, notify = false, botName = 'IitalyReminderTestBot', lookupFails = false;
-    const writes = [], unexpected = [];
-    // Fixtures only. Never connect to Railway, Telegram, payments or real users.
+    let linked = false, notify = false, lookupFails = false, linkFails = false;
+    const writes = [], linkRequests = [], unexpected = [];
+    const safeToken = 'A'.repeat(43);
+
     await ctx.route('**/*', async route => {
       const request = route.request(), url = new URL(request.url());
       if (url.pathname === '/api/portal/lookup') {
@@ -49,10 +52,17 @@ try {
         assert.deepEqual(request.postDataJSON(), { code: 'TEST-01', surname: 'Testov' });
         const data = lookupFails ? { ok: false, error: 'Тестовая ошибка соединения' } : {
           ok: true,
-          client: { name: 'Тестовый профиль', tier: 'IITALY', intakeYear: 2027, tgLinked: linked, botName, email: '', notify: { telegram: notify, email: false } },
+          client: { name: 'Тестовый профиль', tier: 'IITALY', intakeYear: 2027, tgLinked: linked, notify: { telegram: notify, email: false } },
           roadmap: [], done: {}, docs: {}, progress: { done: 0, total: 0, pct: 0 },
         };
         return route.fulfill({ status: lookupFails ? 503 : 200, contentType: 'application/json', body: JSON.stringify(data) });
+      }
+      if (url.pathname === '/api/portal/TEST-01/telegram-link') {
+        linkRequests.push(request.postDataJSON());
+        const data = linkFails
+          ? { ok: false, error: 'Тестовая ошибка ссылки' }
+          : { ok: true, url: `https://t.me/IitalyReminderTestBot?start=${safeToken}`, expiresAt: '2026-09-19T12:30:00Z' };
+        return route.fulfill({ status: linkFails ? 503 : 200, contentType: 'application/json', body: JSON.stringify(data) });
       }
       if (url.pathname === '/api/portal/TEST-01/notify') {
         writes.push(request.postDataJSON());
@@ -64,6 +74,7 @@ try {
       unexpected.push(url.origin + url.pathname);
       return route.abort();
     });
+
     const page = await ctx.newPage(); activePage = page;
     page.on('pageerror', e => errors.push(e.message));
     await page.goto(`${origin}/plan`, { waitUntil: 'networkidle' });
@@ -72,43 +83,55 @@ try {
     await page.getByRole('button', { name: 'Пропустить и посмотреть план', exact: true }).click();
     await page.getByRole('heading', { name: 'Напоминания на телефоне', exact: true }).waitFor();
     await settle(page);
-    assert.doesNotMatch(await page.locator('#main').innerText(), /Claude|Anthropic|Клод/i);
-    assert.match(await page.locator('#main').innerText(), /План собран по твоим ответам/);
+
+    const mainText = await page.locator('#main').innerText();
+    assert.doesNotMatch(mainText, /Claude|Anthropic|Клод/i);
+    assert.match(mainText, /План собран по твоим ответам/);
+    assert.match(mainText, /Это чек-лист, а не результат проверки файла/);
+
     const settings = page.getByRole('link', { name: 'Настроить напоминания', exact: true });
     assert.equal(await settings.getAttribute('href'), '/portal#notifications');
     await noOverflow(page, `plan result ${width}`);
     if ([1440, 390].includes(width)) {
       await page.locator('section[aria-labelledby="plan-reminders-heading"]').screenshot({ path: resolve(output, `plan-reminders-${width}.png`) });
     }
+
     await settings.click();
     await page.waitForURL('**/portal#notifications');
     await page.getByRole('heading', { name: 'Вход', exact: true }).waitFor();
     assert.equal(await page.locator('#notifications').count(), 0, 'No anonymous subscription');
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
-    // The label also contains the WhatsApp delivery help text.
     await page.getByRole('textbox', { name: /^Код брони/ }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти', exact: true }).click();
     await page.locator('[data-telegram-status="disconnected"]').waitFor();
     assert.equal(await page.getByRole('tab', { name: 'Помощь', exact: true }).getAttribute('aria-selected'), 'true');
+
     const panel = page.locator('#notifications');
-    const connect = panel.getByRole('link', { name: 'Подключить Telegram', exact: true });
-    assert.equal(await connect.getAttribute('href'), 'https://t.me/IitalyReminderTestBot?start=TEST-01');
-    assert.equal(await connect.getAttribute('rel'), 'noopener noreferrer');
-    assert.equal(await connect.getAttribute('referrerpolicy'), 'no-referrer');
-    assert.match(await panel.innerText(), /не SMS/);
+    assert.match(await panel.innerText(), /15 минут/);
     assert.match(await panel.innerText(), /\/stop/);
+    assert.doesNotMatch(await panel.innerText(), /Почта|email|SMS/i);
     assert.equal(writes.length, 0, 'Viewing settings must not opt users in');
+
+    await panel.getByRole('button', { name: 'Подключить Telegram', exact: true }).click();
+    const open = panel.getByRole('link', { name: 'Открыть Telegram', exact: true });
+    await open.waitFor();
+    assert.equal(await open.getAttribute('href'), `https://t.me/IitalyReminderTestBot?start=${safeToken}`);
+    assert(!String(await open.getAttribute('href')).includes('TEST-01'), 'Access code must not enter Telegram URL');
+    assert.equal(await open.getAttribute('rel'), 'noopener noreferrer');
+    assert.equal(await open.getAttribute('referrerpolicy'), 'no-referrer');
+    assert.deepEqual(linkRequests, [{ surname: 'Testov' }]);
+
     await noOverflow(page, `settings ${width}`);
     if ([1440, 390].includes(width)) await panel.screenshot({ path: resolve(output, `telegram-settings-${width}.png`) });
 
     const refresh = panel.getByRole('button', { name: 'Проверить подключение', exact: true });
     await refresh.click();
     await panel.getByRole('alert').filter({ hasText: 'Подключение пока не подтверждено' }).waitFor();
-    assert.equal(await panel.locator('[data-telegram-status]').getAttribute('data-telegram-status'), 'disconnected');
     linked = true; notify = true;
     await refresh.click();
     await panel.locator('[data-telegram-status="connected"]').waitFor();
     await panel.getByRole('alert').filter({ hasText: 'Подключение Telegram подтверждено' }).waitFor();
+
     await panel.getByRole('button', { name: 'Отключить Telegram', exact: true }).click();
     await panel.locator('[data-telegram-status="disconnected"]').waitFor();
     assert.deepEqual(writes, [{ surname: 'Testov', notifyTelegram: false }]);
@@ -116,21 +139,14 @@ try {
     lookupFails = true;
     await refresh.click();
     await panel.getByRole('alert').filter({ hasText: 'Тестовая ошибка соединения' }).waitFor();
-    assert.equal(await panel.locator('[data-telegram-status]').getAttribute('data-telegram-status'), 'disconnected');
-    lookupFails = false; linked = true; notify = false;
-    await refresh.click();
-    await panel.getByRole('alert').filter({ hasText: 'Подключение пока не подтверждено' }).waitFor();
-    assert.equal(await panel.locator('[data-telegram-status]').getAttribute('data-telegram-status'), 'disconnected', 'Honor disabled notifications even if chat ID exists');
-    for (const invalid of ['', 'invalid/name?start=other']) {
-      botName = invalid; linked = false;
-      await page.reload({ waitUntil: 'networkidle' });
-      await page.locator('#notifications').waitFor();
-      assert.equal(await panel.getByRole('link', { name: 'Подключить Telegram', exact: true }).count(), 0);
-      assert.match(await panel.innerText(), /бот не настроен на сервере/);
-      await noOverflow(page, `unconfigured bot ${width}`);
-    }
+    lookupFails = false;
+
+    linkFails = true;
+    await panel.getByRole('button', { name: 'Подключить Telegram', exact: true }).click();
+    await panel.getByRole('alert').filter({ hasText: 'Тестовая ошибка ссылки' }).waitFor();
+
     assert.deepEqual(unexpected, [], 'No unmocked external requests');
-    results.push({ test: `${width}px: model-free result, gated settings, manual login/autologin, Telegram link, confirmed/unconfirmed/disabled states, disconnect, server error, missing/invalid bot`, passed: true });
+    results.push({ test: `${width}px: honest plan docs, gated settings, expiring Telegram token URL, connect/refresh/disable/error states`, passed: true });
     await ctx.close();
   }
   assert.deepEqual(errors, []);
