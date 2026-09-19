@@ -4,6 +4,7 @@ import styles from "@/components/marketing/marketing.module.css";
 
 import { AppleCaption, AppleHeading, AppleBody } from "@/components/apple/Typography";
 import { track } from "@/lib/track";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
 /** Existing FAQ copy and analytics, presented on a quiet white surface. */
 const FAQ = [
@@ -17,7 +18,9 @@ const FAQ = [
   },
   {
     q: "Можно вернуть деньги?",
-    a: "Да. В течение 7 календарных дней с оплаты вернём деньги полностью, если ты ещё не использовал платные функции кабинета: не загружал документы на проверку и не отмечал шаги маршрута выполненными.",
+    a: STRIPE_ENABLED
+      ? "Да. В течение 7 календарных дней с оплаты вернём деньги полностью, если ты ещё не использовал платные функции кабинета: не загружал документы на проверку и не отмечал шаги маршрута выполненными."
+      : "Да. В течение 7 календарных дней с оплаты вернём деньги полностью, если личный кабинет ещё не активирован и персональный маршрут не выдан.",
   },
   {
     q: "ИИ может ошибиться?",
