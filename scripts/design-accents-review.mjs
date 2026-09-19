@@ -126,7 +126,7 @@ try {
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
     const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     assert.equal(headHeroText, baseHeroText, `Hero copy unchanged at ${width}`);
-    assert.match(headText, /После подтверждённой оплаты Stripe личный кабинет создаётся автоматически/);
+    assert.match(headText, /После подтверждённой оплаты кабинет создаётся автоматически/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
     const heroAfter = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-unchanged-${width}.png`), animations: 'disabled' });
