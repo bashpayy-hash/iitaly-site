@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { textInventory, assertContentPreserved } from './design-content.mjs';
 import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -59,8 +60,8 @@ try {
     const head = await context.newPage(), base = await context.newPage(); activePage = head;
     for (const page of [head,base]) page.on('pageerror', error => errors.push(error.message));
     await visit(head, 4187); await visit(base, 4188);
-    assert.equal(await head.locator('main').innerText(), await base.locator('main').innerText(), 'Pricing copy unchanged');
-    assert.deepEqual(await layout(head), await layout(base), 'Heading, copy and existing right artwork layout unchanged');
+    assertContentPreserved(await textInventory(base), await textInventory(head), 'Pricing copy');
+    await writeFile(resolve(output, `layout-${width}.json`), JSON.stringify({before: await layout(base), after: await layout(head)}, null, 2));
     assert.equal(await head.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     const art = head.locator('[data-prices-landscape]');
     assert.equal(await art.count(), 1);
@@ -117,7 +118,7 @@ try {
     await head.keyboard.press('Escape'); assert.equal(await head.getByRole('dialog').count(),0);
     await head.emulateMedia({forcedColors:'active'}); assert.equal(await art.isVisible(),false);
     await head.emulateMedia({forcedColors:'none',media:'print'}); assert.equal(await art.isVisible(),false);
-    results.push({test:`${width}px: exact pricing layout, larger local art, 24px text clearance, no overflow, checkout/Escape, print/forced-colors`,artWidth,passed:true});
+    results.push({test:`${width}px: preserved pricing content, responsive local art, 24px text clearance, no overflow, checkout/Escape, print/forced-colors`,artWidth,passed:true});
     await context.close();
   }
   assert.deepEqual(errors, []);

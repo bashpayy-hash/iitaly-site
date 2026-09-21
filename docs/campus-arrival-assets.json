@@ -1,0 +1,32 @@
+{
+  "created": "2026-09-21",
+  "provider": "Higgsfield",
+  "model": "gpt_image_2_5",
+  "job": "a7d31ea4-a663-4d37-96ad-fb2abe530c94",
+  "scene": "Imagined Italian university courtyard with a study notebook; no identified university, signage or student outcome.",
+  "reference": "https://iitaly.netlify.app/illustrations/editorial/study-desk.webp",
+  "treatment": "Pale watercolor in the existing editorial style. Local responsive WebP derivatives, quality 82–84. Decorative alt text is empty.",
+  "variants": [
+    {
+      "file": "campus-arrival-1168.webp",
+      "width": 1168,
+      "height": 880,
+      "bytes": 92092,
+      "sha256": "02a797a231e4de5c101cda76e89624c2688ac3629eb81e9bdd9887b946cb8e37"
+    },
+    {
+      "file": "campus-arrival-480.webp",
+      "width": 480,
+      "height": 362,
+      "bytes": 22812,
+      "sha256": "a64d82414d02de081c9aca9b2e5bff18c950fa5c9d76c14f4a995342e0a6d660"
+    },
+    {
+      "file": "campus-arrival-960.webp",
+      "width": 960,
+      "height": 723,
+      "bytes": 74188,
+      "sha256": "e51ebb778585458dd8eebf9f8cca8b411542ac199be6f9a54e3e0c9795546c18"
+    }
+  ]
+}

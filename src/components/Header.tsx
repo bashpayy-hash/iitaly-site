@@ -15,34 +15,26 @@ const links = [
 
 export function Header() {
   const pathname = usePathname();
-  const onUniversities = pathname === "/universities";
-
-  const bar = onUniversities
-    ? "border-mist/40 bg-frost/90 backdrop-blur-md"
-    : "border-white/10 bg-black/35 backdrop-blur-md";
-  const brand = onUniversities ? "text-carbon" : "text-cloud-white";
-  const link = onUniversities
-    ? "text-graphite hover:text-carbon"
-    : "text-cloud-body hover:text-cloud-white";
-  const panel = onUniversities
-    ? "border-mist bg-frost text-carbon"
-    : "border-white/10 bg-carbon text-cloud-white";
+  const bar = "border-mist/40 bg-frost/95 backdrop-blur-md";
+  const brand = "text-carbon";
+  const link = "text-graphite hover:text-carbon";
+  const panel = "border-mist/40 bg-frost text-carbon";
 
   return (
     <header className={`sticky top-0 z-50 border-b ${bar}`}>
-      <div className="mx-auto flex h-12 max-w-[1440px] items-center gap-6 px-5">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-6 px-5">
         <Link href="/" aria-label="IITALY — главная" className={`flex shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold ${brand}`}>
           <Logo className="h-5 w-5 shrink-0" />
           <span>IITALY</span>
         </Link>
 
-        <nav aria-label="Основная навигация" className="hidden flex-1 items-center gap-5 md:flex">
+        <nav aria-label="Основная навигация" className="hidden flex-1 items-center gap-5 lg:flex">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               aria-current={pathname === l.href ? "page" : undefined}
-              className={`shrink-0 text-[12px] font-normal whitespace-nowrap transition-colors ${link}`}
+              className={`inline-flex items-center min-h-11 shrink-0 text-[14px] font-normal whitespace-nowrap transition-colors ${link}`}
             >
               {l.label}
             </Link>
@@ -51,7 +43,7 @@ export function Header() {
 
         <button
           type="button"
-          className={`ml-auto hidden shrink-0 text-[12px] font-normal transition-colors md:block ${link}`}
+          className={`ml-auto hidden min-h-11 shrink-0 text-[14px] font-normal transition-colors lg:block ${link}`}
           onClick={() =>
             window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
           }
@@ -61,7 +53,7 @@ export function Header() {
 
         <details
           key={pathname}
-          className="group relative ml-auto md:hidden"
+          className="group relative ml-auto lg:hidden"
           onKeyDown={(event) => {
             if (event.key === "Escape") {
               event.currentTarget.open = false;
@@ -71,7 +63,7 @@ export function Header() {
         >
           <summary
             aria-label="Открыть меню"
-            className={`flex min-h-10 cursor-pointer list-none items-center gap-2 text-[12px] font-medium marker:content-none [&::-webkit-details-marker]:hidden ${brand}`}
+            className={`flex min-h-11 cursor-pointer list-none items-center gap-2 text-[12px] font-medium marker:content-none [&::-webkit-details-marker]:hidden ${brand}`}
           >
             Меню
             <span aria-hidden className="text-base transition-transform group-open:rotate-45">＋</span>
@@ -91,14 +83,14 @@ export function Header() {
                 key={l.href}
                 href={l.href}
                 aria-current={pathname === l.href ? "page" : undefined}
-                className="flex min-h-11 items-center justify-between rounded-lg px-3 text-sm hover:bg-white/10"
+                className="flex min-h-11 items-center justify-between rounded-lg px-3 text-sm hover:bg-pebble/50"
               >
                 {l.label}<span aria-hidden>↗</span>
               </Link>
             ))}
             <button
               type="button"
-              className="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm hover:bg-white/10"
+              className="flex min-h-11 w-full items-center justify-between rounded-lg px-3 text-left text-sm hover:bg-pebble/50"
               onClick={() =>
                 window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
               }

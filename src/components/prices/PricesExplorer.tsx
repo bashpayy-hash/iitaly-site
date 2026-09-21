@@ -11,6 +11,7 @@ import { TomatoAccent } from "@/components/marketing/EditorialArtwork";
 import art from "@/components/marketing/editorial-art.module.css";
 import { PricesLandscape } from "./PricesLandscape";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
+import styles from "@/components/marketing/marketing.module.css";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -65,6 +66,11 @@ export function PricesExplorer() {
           за этапы. Работу выполняет система — поэтому это стоит столько, а
           не как в агентстве.
         </p>
+        <nav className={styles.taskLinks} aria-label="На странице цен">
+          <a href="#main-package">Состав пакета</a>
+          <a href="#terms-and-refund">Условия и возврат</a>
+          <a href="#expert-review">Проверка экспертом</a>
+        </nav>
       </section>
 
       <section className="px-5 py-10">
@@ -100,9 +106,9 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div className="mt-8 border border-white/15 p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <b className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Поступление под ключ</b>
+          <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
+            <div className={styles.offerHeading}>
+              <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Поступление под ключ</h2>
               <span className="rounded-apple-pill bg-crimson px-3 py-1 text-apple-caption font-semibold text-white uppercase">
                 Один платёж
               </span>
@@ -127,7 +133,7 @@ export function PricesExplorer() {
                 ? "После подтверждённой оплаты Stripe личный кабинет создаётся автоматически. Код доступа появится сразу на странице подтверждения."
                 : "После подтверждения оплаты мы активируем личный кабинет с маршрутом. Он ведёт весь путь — от выбора программ до первых дней в Италии."}
             </p>
-            <ul className="mt-5 grid gap-2.5 sm:grid-cols-2">
+            <ul className={`${styles.offerFeatures} mt-5 grid gap-4 sm:grid-cols-2`}>
               {FEATURES.map((f) => (
                 <li key={f} className="flex gap-2 text-apple-body-sm text-cloud-white">
                   <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson" />
@@ -148,13 +154,13 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div className="mt-8 border border-green/40 bg-green/5 p-5 sm:p-6">
+          <div id="terms-and-refund" className={`${styles.termsBox} ${styles.anchorTarget} mt-8 p-5 sm:p-6`}>
             <b className="block text-apple-caption font-semibold text-green uppercase">
               Гарантии и как мы снимаем риск
             </b>
             <div className="mt-3 divide-y divide-green/15">
               {GUARANTEES.map((g) => (
-                <details key={g.title} className="group py-3 first:pt-0 last:pb-0">
+                <details key={g.title} open={g.title === "Возврат" || undefined} className="group py-3 first:pt-0 last:pb-0">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-apple-body-sm font-semibold text-cloud-white marker:content-none [&::-webkit-details-marker]:hidden">
                     {g.title}
                     <svg
@@ -191,7 +197,7 @@ export function PricesExplorer() {
             </p>
           </div>
 
-          <p className="mt-10 text-apple-caption text-cloud-meta uppercase">
+          <p id="expert-review" className={`${styles.anchorTarget} mt-10 text-apple-caption text-cloud-meta uppercase`}>
             Если нужен живой человек
           </p>
           <p className="mt-2 text-apple-body-sm text-cloud-body">
@@ -205,7 +211,7 @@ export function PricesExplorer() {
                 key={m.name}
                 type="button"
                 onClick={() => openBuy(m.name, m.price)}
-                className="flex w-full items-center justify-between gap-4 border border-white/15 p-4 text-left transition-colors hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
+                className={`${styles.optionalService} flex w-full items-center justify-between gap-4 border border-white/15 p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson`}
               >
                 <div>
                   <b className="block text-apple-body-sm font-semibold text-cloud-white">{m.name}</b>

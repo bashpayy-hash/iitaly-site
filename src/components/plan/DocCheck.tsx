@@ -94,7 +94,7 @@ export function DocCheck() {
         : null;
 
   return (
-    <div className="border border-white/15 p-5 sm:p-7">
+    <div className="rounded-apple-card border border-white/15 bg-white p-5 sm:p-7">
       <p className="text-apple-caption text-cloud-meta uppercase">
         Проверка документов · бесплатно
       </p>
@@ -123,7 +123,7 @@ export function DocCheck() {
 
       {state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
-          className={`mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 border border-dashed px-6 py-8 text-center transition-colors ${
+          className={`relative mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-apple-card border border-dashed px-6 py-8 text-center transition-colors focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-crimson ${
             dragOver ? "border-crimson bg-crimson/5" : "border-white/20 hover:bg-white/5"
           }`}
           onDragOver={(e) => {
@@ -141,7 +141,9 @@ export function DocCheck() {
             ref={inputRef}
             type="file"
             accept="image/*,application/pdf,.pdf,.doc,.docx,.txt,.rtf"
-            hidden
+            className="sr-only"
+            aria-label="Выбрать документ для проверки"
+            disabled={state.step === "reading"}
             onChange={(e) => accept(e.target.files?.[0])}
           />
           <span aria-hidden className="text-3xl">
