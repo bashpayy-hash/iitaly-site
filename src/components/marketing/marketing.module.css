@@ -212,7 +212,7 @@
   .universityNumbers > div + div { padding-left: 40px; }
   .footerTop, .finePrint { flex-direction: column; gap: 24px; }
   .footer nav { gap: 4px 32px; }
-  .guideHeroArt { max-height: 220px; }
+  .surface .guideHeroArt { max-height: 220px; overflow: hidden; }
   .guideTopics summary { padding: 18px 16px; }
   .surface [data-section="plan-header"], .surface [data-section="prices-header"] { padding-top: 40px; padding-bottom: 24px; }
   .finePrint > a { flex-shrink: 1; }

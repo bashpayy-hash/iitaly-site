@@ -9,17 +9,17 @@ export function Hero() {
   return (
     <section data-section="hero" className={styles.hero}>
       <div className={styles.heroIntro}>
-      <div className={styles.heroCopy}>
-        <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
-        <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
-        <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
-        <div className={styles.actions}>
-          <AppleButtonLink href="/plan">Составить план бесплатно <span aria-hidden>↗</span></AppleButtonLink>
-          <AppleButtonLink href="/universities" variant="outlined">Смотреть университеты</AppleButtonLink>
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
+          <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
+          <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
+          <div className={styles.actions}>
+            <AppleButtonLink href="/plan">Составить план бесплатно <span aria-hidden>↗</span></AppleButtonLink>
+            <AppleButtonLink href="/universities" variant="outlined">Смотреть университеты</AppleButtonLink>
+          </div>
+          <p className={styles.heroNote}>6 вопросов · Для школьников 16–18 лет и их родителей</p>
         </div>
-        <p className={styles.heroNote}>6 вопросов · Для школьников 16–18 лет и их родителей</p>
-      </div>
-      <CampusArtwork />
+        <CampusArtwork />
       </div>
       <div className={styles.stage}>
         <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗</span> Италия</span></div>

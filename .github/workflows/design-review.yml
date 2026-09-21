@@ -63,20 +63,26 @@ jobs:
           cd /tmp/iitaly-base
           npm run build
       - name: Install isolated browser tools (no lockfile changes)
+        id: browser-tools
         run: |
           npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review desktop, mobile, quiz, checkout and protected route
         run: node scripts/design-review.mjs
       - name: Review local illustrations, unchanged copy and hero
+        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
         run: node scripts/design-accents-review.mjs
       - name: Review expanded comparisons and selected artwork
+        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
         run: node scripts/design-comparison-review.mjs
       - name: Review university artwork, controls and unchanged map behavior
+        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
         run: node scripts/design-university-review.mjs
       - name: Review approved landscape in pricing margin
+        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
         run: node scripts/design-prices-landscape-review.mjs
       - name: Review plan copy and Telegram opt-in with isolated API fixtures
+        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
         run: node scripts/design-reminders-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()

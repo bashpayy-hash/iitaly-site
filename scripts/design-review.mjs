@@ -132,7 +132,7 @@ try {
   assert.equal(await page.getByRole('textbox', { name: 'Фамилия', exact: true }).inputValue(), 'Тестов');
   assert.equal(await page.getByRole('textbox', { name: 'Фамилия', exact: true }).evaluate(el => document.activeElement === el), true, 'Typing does not move focus to another field');
   await page.getByRole('button', { name: 'Оформить заказ', exact: true }).click();
-  assert.equal(await page.getByRole('alert').innerText(), 'Проверь имя, фамилию и телефон.');
+  assert.equal(await page.getByRole('dialog').getByRole('alert').innerText(), 'Проверь имя, фамилию и телефон.');
   assert.equal(await page.getByRole('textbox', { name: 'Телефон', exact: true }).getAttribute('aria-invalid'), 'true');
   await shot(page, 'checkout-open');
   await page.keyboard.press('Escape');
@@ -161,7 +161,7 @@ try {
   await mobile.keyboard.press('Escape');
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false);
   await mobile.getByLabel('Открыть меню').click();
-  await mobile.getByRole('heading', { level: 1 }).click();
+  await mobile.locator('[data-journey-preview]').click({ position: { x: 8, y: 8 } });
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false, 'Outside tap closes mobile navigation');
   await visit(mobile, '/guides#visa');
   assert.equal(await mobile.locator('details#visa').evaluate(el => el.open), true, 'Mobile visa deep link opens its disclosure');

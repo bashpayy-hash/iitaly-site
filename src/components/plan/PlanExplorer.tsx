@@ -44,15 +44,15 @@ export function PlanExplorer() {
       <section className="px-5 py-10">
         <div className={`${styles.planWorkspace} mx-auto max-w-[760px] space-y-10`}>
           <div id="questionnaire" className={styles.anchorTarget}>
-          <div className={styles.toolHeading}>
-            <p>Твой план поступления</p>
-            <span>6 вопросов · бесплатно</span>
-          </div>
-          {plan ? (
-            <PlanResult plan={plan} onReset={() => setPlan(null)} />
-          ) : (
-            <Wizard onDone={handleDone} />
-          )}
+            <div className={styles.toolHeading}>
+              <p>Твой план поступления</p>
+              <span>6 вопросов · бесплатно</span>
+            </div>
+            {plan ? (
+              <PlanResult plan={plan} onReset={() => setPlan(null)} />
+            ) : (
+              <Wizard onDone={handleDone} />
+            )}
           </div>
           <div id="document-check" className={styles.anchorTarget}>
             <DocCheck />
