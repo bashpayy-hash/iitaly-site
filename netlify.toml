@@ -5,6 +5,7 @@
 [build.environment]
   NODE_VERSION = "22"
   NEXT_PUBLIC_BACKEND_URL = "https://web-production-9faf3.up.railway.app"
+  NEXT_PUBLIC_STRIPE_ENABLED = "true"
 
 [[headers]]
   for = "/*"
