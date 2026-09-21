@@ -66,12 +66,12 @@ export function PaymentSuccess() {
     if (attempt >= 24) {
       setView({
         kind: "waiting",
-        text: "Stripe уже вернул тебя на сайт, но webhook ещё обрабатывается. Обычно это занимает несколько секунд.",
+        text: "Пока нет подтверждения оплаты. Подожди немного и проверь статус ещё раз. Если деньги списались, не оплачивай повторно.",
       });
       return;
     }
 
-    setView({ kind: "checking", text: "Оплата прошла — ждём подтверждение от Stripe…" });
+    setView({ kind: "checking", text: "Ждём подтверждение оплаты от Stripe…" });
     setTimeout(() => check(attempt + 1), 1250);
   }
 

@@ -27,6 +27,7 @@ jobs:
       - run: npm run build
         env:
           NEXT_PUBLIC_BACKEND_URL: https://example.invalid
+          NEXT_PUBLIC_STRIPE_ENABLED: "true"
 
       # Страховка против того, что уже один раз случилось: инструменты
       # владельца лежали в public/ и уезжали на прод вместе со сборкой.
@@ -36,3 +37,20 @@ jobs:
             echo "out/admin.html оказался в сборке — верни файл в tools/"
             exit 1
           fi
+
+      - name: Install isolated checkout browser tools
+        run: |
+          npm install --prefix /tmp/iitaly-checkout --no-package-lock --ignore-scripts playwright@1.56.1
+          /tmp/iitaly-checkout/node_modules/.bin/playwright install --with-deps chromium
+
+      - name: Review Stripe checkout with isolated fixtures
+        run: node scripts/stripe-checkout-review.mjs
+        env:
+          REVIEW_TOOLS: /tmp/iitaly-checkout/node_modules
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stripe-checkout-review
+          path: checkout-review/
+          retention-days: 7
