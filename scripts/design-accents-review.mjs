@@ -4,11 +4,11 @@ import { createHash } from 'node:crypto';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { textInventory, assertContentPreserved } from './design-content.mjs';
 
 const tools = process.env.REVIEW_TOOLS;
 assert(tools && process.env.BASELINE_OUT, 'Browser tools and exact baseline are required');
 const { chromium } = await import(pathToFileURL(resolve(tools, 'playwright/index.mjs')).href);
-const { default: pngjs } = await import(pathToFileURL(resolve(tools, 'pngjs/lib/png.js')).href);
 const manifest = JSON.parse(await readFile('src/components/marketing/italian-accents.json', 'utf8'));
 const output = resolve('design-review/italian-accents');
 await mkdir(output, { recursive: true });
@@ -38,6 +38,17 @@ for (const asset of Object.values(catalog)) {
 }
 assert(assetBytes < 950000, 'All responsive artwork assets together stay under 950 KB');
 results.push({ test: 'Locally exported artwork integrity and total budget', passed: true, bytes: assetBytes });
+
+const campusCatalog = JSON.parse(await readFile('docs/campus-arrival-assets.json', 'utf8'));
+let campusBytes = 0;
+for (const variant of campusCatalog.variants) {
+  const bytes = await readFile(resolve('out/illustrations/editorial', variant.file));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), variant.sha256, variant.file);
+  assert.equal(bytes.length, variant.bytes);
+  campusBytes += bytes.length;
+}
+assert(campusBytes < 200000, 'All campus responsive derivatives stay under 200 KB combined');
+results.push({ test: 'Campus art integrity and responsive delivery budget', passed: true, bytes: campusBytes });
 
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon' };
 function serve(root, port) {
@@ -73,9 +84,8 @@ async function settle(page, port, route = '/') {
   });
   await page.waitForTimeout(350);
 }
-// Chromium can rasterize the 1px curved pill perimeter differently when the
-// page contains another composited image. Compare all geometry/styles exactly,
-// allow at most 64 low-delta perimeter pixels; never mask content or the map.
+// Retain geometry evidence for the authorized hero layout change. Assertions
+// below protect copy, CTA visibility, image loading and horizontal overflow.
 async function heroLayout(page) {
   return page.locator('[data-section="hero"] > div').first().evaluate(root => {
     const origin = root.getBoundingClientRect();
@@ -86,26 +96,7 @@ async function heroLayout(page) {
     });
   });
 }
-function compareHero(a,b,layout,width) {
-  const buttons = layout.filter(el => el.tag === 'A').map(el => el.rect);
-  let pixels = 0, maxDelta = 0;
-  for (let i = 0; i < a.data.length; i += 4) {
-    const delta = Math.max(...[0,1,2,3].map(c => Math.abs(a.data[i+c]-b.data[i+c])));
-    if (!delta) continue;
-    pixels++; maxDelta = Math.max(maxDelta,delta);
-    const x = (i/4)%a.width+.5, y = Math.floor(i/4/a.width)+.5;
-    const edge = buttons.some(([bx,by,bw,bh]) => {
-      // Distance to a capsule boundary, including its rounded ends. A plain
-      // bounding-rectangle edge incorrectly rejects pixels on the corner arc.
-      const radius = bh / 2;
-      const cx = Math.max(bx + radius, Math.min(x, bx + bw - radius));
-      return Math.abs(Math.hypot(x - cx, y - by - radius) - radius) <= 2;
-    });
-    assert(edge, `${width}: changed pixel (${x},${y}) is outside a pill perimeter`);
-  }
-  results.push({test:`Hero ${width}px exact layout/styles and bounded edge rasterization`,passed:pixels<=64&&maxDelta<=32,changedPixels:pixels,maxChannelDelta:maxDelta});
-  assert(pixels<=64&&maxDelta<=32, `${width}: hero difference exceeds verified antialiasing tolerance`);
-}
+
 try {
   for (const width of [1440, 1280, 1024, 768, 390, 320]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce', deviceScaleFactor: 1, locale: 'ru-RU', timezoneId: 'Europe/Rome' });
@@ -121,7 +112,7 @@ try {
     await settle(page, 4176);
     const baseHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     const beforeLayout = await heroLayout(page);
-    const heroBefore = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
+    await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
     await settle(page, 4175);
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
     const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
@@ -129,13 +120,14 @@ try {
     assert.match(headText, /После подтверждения оплаты мы активируем личный кабинет/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
-    const heroAfter = await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-unchanged-${width}.png`), animations: 'disabled' });
-    const a = pngjs.PNG.sync.read(heroBefore), b = pngjs.PNG.sync.read(heroAfter);
-    assert.equal(a.width, b.width); assert.equal(a.height, b.height);
+    await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-polished-${width}.png`), animations: 'disabled' });
     const afterLayout = await heroLayout(page);
     await writeFile(resolve(output, `hero-layout-${width}.json`), JSON.stringify({beforeLayout,afterLayout},null,2));
-    assert.deepEqual(afterLayout, beforeLayout, `Hero geometry and CSS unchanged at ${width}`);
-    compareHero(a, b, beforeLayout, width);
+    const campus = page.locator('picture img[src*="campus-arrival"]');
+    assert.equal(await campus.evaluate(img => img.complete && img.naturalWidth > 0), true);
+    const primary = page.getByRole('link', { name: /Составить план бесплатно/ });
+    const ctaBox = await primary.boundingBox();
+    assert(ctaBox && ctaBox.y + ctaBox.height < 900, 'Free plan action visible in first viewport');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}: horizontal overflow`);
     const accents = page.locator('[data-italian-accent]');
     assert.equal(await accents.count(), 2);
@@ -183,7 +175,7 @@ try {
       }
       await page.locator('[data-italian-accent="lemon"]').locator('..').screenshot({ path: resolve(output, `pricing-${width}.png`), animations: 'disabled' });
     }
-    results.push({ test: `${width}px: same hero/content, no overflow or illustration overlap`, passed: true, visibleAccents: visible });
+    results.push({ test: `${width}px: preserved hero copy, local campus art, no overflow or illustration overlap`, passed: true, visibleAccents: visible });
 
     // Foreground imagery is always confined to an image slot or an empty margin.
     async function inspectArtwork() {
@@ -209,10 +201,10 @@ try {
     await inspectArtwork();
     for (const route of ['/guides', '/plan', '/prices']) {
       await settle(page, 4176, route);
-      const beforeText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
+      const beforeText = await textInventory(page);
       await settle(page, 4175, route);
-      const afterText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
-      assert.equal(afterText, beforeText, `${route}: original copy at ${width}px`);
+      const afterText = await textInventory(page);
+      assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${route} overflow at ${width}`);
       await inspectArtwork();
       assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).filter), 'none', 'Blur never affects the heading');

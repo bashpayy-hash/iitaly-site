@@ -25,9 +25,17 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   const [sending, setSending] = useState(false);
   const liveRef = useRef<HTMLDivElement>(null);
   const previewTracked = useRef(false);
+  const stepChanged = useRef(false);
 
   const finished = step >= WIZ.length;
   const progress = finished ? 1 : step / WIZ.length;
+
+  useEffect(() => {
+    if (!stepChanged.current) return;
+    liveRef.current?.focus({ preventScroll: true });
+    liveRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
+    stepChanged.current = false;
+  }, [step]);
 
   // Реальный превью того же движка, что строит финальный план (buildPlan) —
   // не отдельная выдуманная "заглушка ради демо-эффекта". Показываем его
@@ -46,6 +54,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   }, [finished]);
 
   function choose(id: string, value: string) {
+    stepChanged.current = true;
     if (step === 0) track("plan_started");
     setAnswers((prev) => ({ ...prev, [id]: value }));
     track("wiz_step", { s: id });
@@ -75,9 +84,9 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   }
 
   return (
-    <div className="rounded-apple-card border border-white/15 bg-white p-5 sm:p-7">
+    <div className="rounded-apple-card border border-white/15 bg-white p-5 sm:p-7" data-plan-wizard>
       <div className="flex items-center gap-3">
-        <div className="h-1 flex-1 overflow-hidden rounded-apple-pill bg-pebble">
+        <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="h-1 flex-1 overflow-hidden rounded-apple-pill bg-pebble">
           <div
             className="h-full origin-left rounded-apple-pill bg-crimson transition-transform duration-300 ease-out motion-reduce:transition-none"
             style={{ transform: `scaleX(${progress})` }}
@@ -88,7 +97,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
         </span>
       </div>
 
-      <div ref={liveRef} aria-live="polite" className="mt-6">
+      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="mt-6 rounded-apple-card">
         {finished ? (
           <>
             {preview && (
@@ -119,10 +128,13 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
               пропустить — план всё равно откроется прямо здесь.
             </p>
             <label className="mt-4 block">
-              <span className="sr-only">Номер телефона для WhatsApp</span>
+              <span className="mb-2 block text-apple-body-sm font-medium text-cloud-white">Номер телефона для WhatsApp</span>
               <input
                 type="tel"
                 inputMode="tel"
+                autoComplete="tel"
+                aria-invalid={phoneError || undefined}
+                aria-describedby={phoneError ? "plan-phone-error" : undefined}
                 placeholder="+7 ___ ___ __ __"
                 value={phone}
                 onChange={(e) => {
@@ -133,7 +145,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
               />
             </label>
             {phoneError && (
-              <p role="alert" className="mt-1.5 text-apple-caption text-crimson">
+              <p id="plan-phone-error" role="alert" className="mt-1.5 text-apple-caption text-crimson">
                 Проверь номер телефона.
               </p>
             )}
@@ -149,7 +161,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
             <button
               type="button"
               onClick={() => finish(false)}
-              className="mt-3 block w-full text-center text-apple-body-sm text-cloud-body underline underline-offset-4 hover:text-cloud-white"
+              className="mt-3 block min-h-11 w-full text-center text-apple-body-sm text-cloud-body underline underline-offset-4 hover:text-cloud-white"
             >
               Пропустить и посмотреть план
             </button>
@@ -176,8 +188,8 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
       <div className="mt-6 flex items-center justify-between border-t border-white/15 pt-4">
         <button
           type="button"
-          onClick={() => setStep((s) => Math.max(0, s - 1))}
-          className={`text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
+          onClick={() => { stepChanged.current = true; setStep((s) => Math.max(0, s - 1)); }}
+          className={`min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
         >
           ← Назад
         </button>
@@ -197,7 +209,7 @@ function WizStep({
 }) {
   return (
     <>
-      <p className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</p>
+      <h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>
       {question.hint && <p className="mt-1.5 text-apple-body-sm text-cloud-body">{question.hint}</p>}
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
         {question.opts.map((o) => (

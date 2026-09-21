@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import styles from "./marketing.module.css";
 
 const links = [
@@ -11,9 +12,19 @@ const links = [
   { href: "/guides", label: "Гайды и виза" },
 ];
 
-/** A separate header keeps the original shared Header byte-for-byte intact. */
+/** Navigation for the public marketing pages. */
 export function MarketingHeader() {
   const pathname = usePathname();
+  const menuRef = useRef<HTMLDetailsElement>(null);
+
+  useEffect(() => {
+    function closeOutside(event: PointerEvent) {
+      const menu = menuRef.current;
+      if (menu?.open && event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+    }
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, []);
   return (
     <header className={styles.header}>
       <div className={styles.navInner}>
@@ -23,8 +34,8 @@ export function MarketingHeader() {
             <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
-        <Link href="/portal" className={styles.portalLink}>Личный кабинет <span aria-hidden>↗</span></Link>
-        <details key={pathname} className={styles.mobileMenu} onKeyDown={(event) => {
+        <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>
+        <details ref={menuRef} key={pathname} className={styles.mobileMenu} onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.currentTarget.open = false;
             event.currentTarget.querySelector("summary")?.focus();
@@ -32,7 +43,7 @@ export function MarketingHeader() {
         }}>
           <summary aria-label="Открыть меню">Меню <span aria-hidden>＋</span></summary>
           <nav aria-label="Мобильная навигация" onClick={(event) => {
-            if ((event.target as HTMLElement).closest("a")) {
+            if ((event.target as HTMLElement).closest("a,button")) {
               const details = event.currentTarget.closest("details");
               if (details) details.open = false;
             }
