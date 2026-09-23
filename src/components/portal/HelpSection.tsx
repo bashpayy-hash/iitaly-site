@@ -113,7 +113,7 @@ export function HelpSection({
           </div>
 
           <p className={styles.actionBody}>
-            Бот использует дедлайны твоего маршрута: недельная сводка и напоминания за 7, 3 и 1 день.
+            Бот использует дедлайны твоего маршрута: недельная сводка и напоминания за 7, 3 и 1 день. Ссылка подключения действует 15 минут. Отключить напоминания можно здесь или командой /stop.
           </p>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
@@ -139,13 +139,13 @@ export function HelpSection({
             </button>
             {tgEnabled && (
               <button type="button" onClick={disableTg} disabled={telegramBusy} className={styles.textLink}>
-                Отключить
+                Отключить Telegram
               </button>
             )}
           </div>
 
           {msg && (
-            <p role="status" className={msg.bad ? styles.taskWarn : styles.taskNote} style={{ marginTop: 12 }}>
+            <p role="alert" className={msg.bad ? styles.taskWarn : styles.taskNote} style={{ marginTop: 12 }}>
               {msg.text}
             </p>
           )}
