@@ -68,11 +68,15 @@ export function PortalExplorer() {
   useEffect(() => {
     if (triedAutoLogin.current) return;
     triedAutoLogin.current = true;
+    // Restoring a saved portal session is intentionally a fetch-on-mount flow.
+    // The async login resolves later and updates React state from the result.
+    /* eslint-disable react-hooks/set-state-in-effect */
     try {
       const savedCode = localStorage.getItem(KEY);
       const savedSn = localStorage.getItem(KEY_SN);
       if (savedCode && savedSn) login(savedSn, savedCode, true);
     } catch {}
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   useEffect(() => {
