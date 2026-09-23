@@ -103,7 +103,11 @@ export function HelpSection({
               <h3>Telegram</h3>
               <p>{tgEnabled ? "Подключён к кабинету." : "Пока не подключён."}</p>
             </div>
-            <span className={styles.statusChip} data-state={tgEnabled ? "ok" : "missing"}>
+            <span
+              className={styles.statusChip}
+              data-state={tgEnabled ? "ok" : "missing"}
+              data-telegram-status={tgEnabled ? "connected" : "disconnected"}
+            >
               {tgEnabled ? "Активен" : "Выключен"}
             </span>
           </div>
