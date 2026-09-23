@@ -3,15 +3,7 @@
 import { Accordion } from "@/components/Accordion";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, V_LABEL, dlState, dlText } from "@/lib/portalMeta";
-
-const DL_STYLE: Record<string, string> = {
-  done: "bg-green/15 text-green",
-  over: "bg-red/15 text-red",
-  hot: "bg-red/15 text-red",
-  soon: "bg-warn/15 text-warn",
-  calm: "bg-line text-ink-soft",
-  none: "bg-line text-ink-soft",
-};
+import styles from "./portal.module.css";
 
 export function PlanSection({
   data,
@@ -27,40 +19,52 @@ export function PlanSection({
   busyTask: string | null;
 }) {
   return (
-    <div className="space-y-3">
-      {data.roadmap.map((st) => {
-        const total = st.tasks.length;
-        const done = st.tasks.filter((t) => data.done[t.id]).length;
-        return (
-          <div key={st.id} id={`portal-stage-${st.id}`}>
-            <Accordion
-              defaultOpen={st.id === openStage}
-              summary={
-                <div className="flex items-center justify-between gap-3">
-                  <b className="text-sm font-bold">{st.title}</b>
-                  <span className="shrink-0 text-xs font-bold text-ink-soft">
-                    {done}/{total}
-                  </span>
+    <div>
+      <div className={styles.sectionHeading}>
+        <div>
+          <h2>План поступления</h2>
+          <p>Открывай только текущий этап. Остальные остаются на виду, но не отвлекают.</p>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gap: 10 }}>
+        {data.roadmap.map((stage) => {
+          const total = stage.tasks.length;
+          const done = stage.tasks.filter((task) => data.done[task.id]).length;
+          const pct = total ? Math.round((done / total) * 100) : 0;
+          return (
+            <div key={stage.id} id={"portal-stage-" + stage.id}>
+              <Accordion
+                variant="quiet"
+                defaultOpen={stage.id === openStage}
+                summary={
+                  <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 90px auto", gap: 12, alignItems: "center" }}>
+                    <span className={styles.stageName}>{stage.title}</span>
+                    <span className={styles.miniTrack} aria-hidden>
+                      <span className={styles.miniFill} style={{ width: pct + "%" }} />
+                    </span>
+                    <span className={styles.stageMeta}>{done}/{total}</span>
+                  </div>
+                }
+              >
+                <div>
+                  {stage.tasks.map((task) => (
+                    <TaskRow
+                      key={task.id}
+                      task={task}
+                      done={!!data.done[task.id]}
+                      doc={data.docs?.[task.id]}
+                      busy={busyTask === task.id}
+                      onToggle={onToggleTask}
+                      onUploadDoc={onUploadDoc}
+                    />
+                  ))}
                 </div>
-              }
-            >
-              <div className="space-y-2">
-                {st.tasks.map((t) => (
-                  <TaskRow
-                    key={t.id}
-                    task={t}
-                    done={!!data.done[t.id]}
-                    doc={data.docs?.[t.id]}
-                    busy={busyTask === t.id}
-                    onToggle={onToggleTask}
-                    onUploadDoc={onUploadDoc}
-                  />
-                ))}
-              </div>
-            </Accordion>
-          </div>
-        );
-      })}
+              </Accordion>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -82,80 +86,62 @@ function TaskRow({
 }) {
   const auto = task.ai || task.expert;
   const needDoc = DOC_TASKS[task.id];
-  const stt = dlState(task, done);
+  const state = dlState(task, done);
+
+  function activate() {
+    if (busy) return;
+    if (auto) {
+      window.dispatchEvent(
+        new CustomEvent("iitaly:open-chat", { detail: { prefill: "Помоги с шагом: " + task.t } }),
+      );
+      return;
+    }
+    onToggle(task.id, !done);
+  }
 
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={() => {
-        if (busy) return;
-        if (auto) {
-          window.dispatchEvent(
-            new CustomEvent("iitaly:open-chat", { detail: { prefill: `Помоги с шагом: ${task.t}` } }),
-          );
-          return;
-        }
-        onToggle(task.id, !done);
-      }}
-      onKeyDown={(e) => {
-        if ((e.key === "Enter" || e.key === " ") && !busy) {
-          e.preventDefault();
-          if (auto) {
-            window.dispatchEvent(
-              new CustomEvent("iitaly:open-chat", { detail: { prefill: `Помоги с шагом: ${task.t}` } }),
-            );
-            return;
-          }
-          onToggle(task.id, !done);
+      onClick={activate}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activate();
         }
       }}
-      className={`flex gap-3 rounded-md border-2 p-3 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red ${
-        done ? "border-green bg-green/5" : "border-line bg-cream"
-      } cursor-pointer ${busy ? "opacity-60" : ""}`}
+      className={styles.taskRow}
+      style={{ opacity: busy ? .55 : 1, cursor: "pointer" }}
     >
-      <span
-        aria-hidden
-        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 text-xs font-bold ${
-          done ? "border-green bg-green text-cream" : "border-ink-soft bg-paper"
-        }`}
-      >
+      <span className={styles.taskCheck} data-done={done ? "true" : "false"} aria-hidden>
         {done ? "✓" : ""}
       </span>
-      <div className="min-w-0 flex-1">
-        <span className="block text-sm font-bold">{task.t}</span>
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {task.deadline && (
-            <span className={`rounded-pill px-2 py-0.5 text-[11px] font-bold ${DL_STYLE[stt]}`}>
-              {dlText(task, done)}
-            </span>
-          )}
-          {task.ai && <span className="rounded-pill bg-sec/15 px-2 py-0.5 text-[11px] font-bold text-sec">делает ИИ</span>}
-          {task.expert && (
-            <span className="rounded-pill bg-sec/15 px-2 py-0.5 text-[11px] font-bold text-sec">проверяет эксперт</span>
-          )}
-          {doc && (
-            <span className={`rounded-pill px-2 py-0.5 text-[11px] font-bold ${DL_STYLE[doc.verdict] || DL_STYLE.calm}`}>
-              документ: {V_LABEL[doc.verdict] || ""}
-            </span>
-          )}
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <div className={styles.taskTitle}>{task.t}</div>
+        <div className={styles.taskChips}>
+          {task.deadline && <span className={styles.taskChip}>{dlText(task, done)}</span>}
+          {task.ai && <span className={styles.taskChip}>поможет ИИ</span>}
+          {task.expert && <span className={styles.taskChip}>нужен эксперт</span>}
+          {doc && <span className={styles.taskChip}>документ: {V_LABEL[doc.verdict] || "проверен"}</span>}
         </div>
-        {task.note && <p className="mt-1 text-xs text-ink-soft">{task.note}</p>}
-        {task.warn && <p className="mt-1 text-xs font-bold text-red">{task.warn}</p>}
-        {doc?.summary && <p className="mt-1 text-xs text-ink-soft">{doc.summary}</p>}
+        {task.note && <p className={styles.taskNote}>{task.note}</p>}
+        {task.warn && <p className={styles.taskWarn}>{task.warn}</p>}
+        {doc?.summary && <p className={styles.taskNote}>{doc.summary}</p>}
         {needDoc && (
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={(event) => {
+              event.stopPropagation();
               onUploadDoc(task.id);
             }}
             disabled={busy}
-            className="mt-2 rounded-pill border-2 border-ink bg-paper px-3 py-1.5 text-[11px] font-extrabold uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+            className={doc ? styles.secondaryButton : styles.primaryButton}
+            style={{ marginTop: 9 }}
           >
-            {busy ? "Проверяю…" : doc ? "Проверить другой файл" : "Загрузить и проверить"}
+            {busy ? "Проверяю…" : doc ? "Проверить другой файл" : "Загрузить документ"}
           </button>
         )}
+        {!done && state === "over" && <p className={styles.taskWarn}>Этот дедлайн уже прошёл — лучше разобрать шаг первым.</p>}
       </div>
     </div>
   );
