@@ -193,11 +193,15 @@ export function PortalExplorer() {
       <div className={styles.shell}>
         <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
           <p className={styles.sidebarLabel}>Личный кабинет</p>
-          <div className={styles.nav}>
+          <div className={styles.nav} role="tablist" aria-label="Разделы личного кабинета">
             {NAV.map((item) => (
               <button
                 key={item.id}
                 type="button"
+                role="tab"
+                aria-label={item.id === "help" ? "Помощь" : item.label}
+                aria-selected={section === item.id}
+                aria-controls="portal-panel"
                 aria-current={section === item.id ? "page" : undefined}
                 onClick={() => changeSection(item.id)}
                 className={`${styles.navItem} ${section === item.id ? styles.navItemActive : ""}`}
@@ -230,7 +234,9 @@ export function PortalExplorer() {
                 key={item.id}
                 type="button"
                 role="tab"
+                aria-label={item.id === "help" ? "Помощь" : item.label}
                 aria-selected={section === item.id}
+                aria-controls="portal-panel"
                 onClick={() => changeSection(item.id)}
                 className={`${styles.navItem} ${section === item.id ? styles.navItemActive : ""}`}
               >
