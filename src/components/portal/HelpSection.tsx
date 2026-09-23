@@ -77,7 +77,7 @@ export function HelpSection({
       setMsg(!res.ok
         ? { text: res.error || "Не удалось проверить подключение.", bad: true }
         : res.linked
-          ? { text: "Telegram подключён. Напоминания включены.", bad: false }
+          ? { text: "Подключение Telegram подтверждено. Напоминания включены.", bad: false }
           : { text: "Подключение пока не подтверждено. Создай новую ссылку и запусти бота.", bad: false });
       if (res.linked) setTelegramUrl(null);
     } catch {
