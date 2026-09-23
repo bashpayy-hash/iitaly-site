@@ -6,28 +6,38 @@ export function Accordion({
   summary,
   defaultOpen = false,
   children,
+  variant = "default",
 }: {
   summary: React.ReactNode;
   defaultOpen?: boolean;
   children: React.ReactNode;
+  variant?: "default" | "quiet";
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const id = useId();
+  const quiet = variant === "quiet";
 
   return (
-    <div className="overflow-hidden rounded-lg border-2 border-ink bg-paper">
+    <div className={quiet
+      ? "overflow-hidden rounded-2xl border border-[#d1d1cd] bg-[#fdfbfa]"
+      : "overflow-hidden rounded-lg border-2 border-ink bg-paper"}
+    >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-controls={id}
-        className="flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red sm:px-5"
+        className={quiet
+          ? "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#016a71] sm:px-5"
+          : "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red sm:px-5"}
       >
         <div className="min-w-0 flex-1">{summary}</div>
         <svg
           aria-hidden
           viewBox="0 0 16 10"
-          className={`mt-1.5 h-2.5 w-4 shrink-0 text-ink-soft transition-transform duration-300 ${open ? "-rotate-180" : ""}`}
+          className={"mt-1.5 h-2.5 w-4 shrink-0 transition-transform duration-300 " +
+            (quiet ? "text-[#72706b] " : "text-ink-soft ") +
+            (open ? "-rotate-180" : "")}
         >
           <path
             d="M1 1.5 8 8.5 15 1.5"
@@ -45,7 +55,12 @@ export function Accordion({
         style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
       >
         <div className="overflow-hidden">
-          <div className="border-t-2 border-line px-4 pt-4 pb-5 sm:px-5">{children}</div>
+          <div className={quiet
+            ? "border-t border-[#e6e5e1] px-4 pt-2 pb-4 sm:px-5"
+            : "border-t-2 border-line px-4 pt-4 pb-5 sm:px-5"}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>
