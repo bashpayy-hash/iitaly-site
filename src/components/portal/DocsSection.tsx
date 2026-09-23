@@ -2,6 +2,7 @@
 
 import type { PortalData } from "@/lib/portalApi";
 import { DOC_TASKS, V_LABEL } from "@/lib/portalMeta";
+import styles from "./portal.module.css";
 
 export function DocsSection({
   data,
@@ -19,58 +20,104 @@ export function DocsSection({
       rows.push({ id: t.id, title: DOC_TASKS[t.id], stage: st.title, doc: data.docs?.[t.id] });
     }
   }
+
   const ready = rows.filter((r) => r.doc?.verdict === "ok").length;
   const issues = rows.filter((r) => r.doc && r.doc.verdict !== "ok").length;
   const missing = rows.filter((r) => !r.doc).length;
+  const firstIssue = rows.find((r) => r.doc && r.doc.verdict !== "ok");
+  const firstMissing = rows.find((r) => !r.doc);
+  const focus = firstIssue || firstMissing;
 
   return (
     <div>
-      <p className="text-xs font-extrabold tracking-[0.16em] text-sec uppercase">Документы</p>
-      <h3 className="mt-1 font-display text-xl font-bold">
-        {ready} из {rows.length} готовы
-      </h3>
-      <p className="mt-1 text-sm text-ink-soft">
-        Загрузи файл — ИИ сверит его с правилами и подскажет, что не так.
-        Проверенный документ закрывает шаг маршрута.
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <span className="rounded-pill bg-green/15 px-3 py-1 text-xs font-bold text-green">{ready} проверено</span>
-        {issues > 0 && <span className="rounded-pill bg-red/15 px-3 py-1 text-xs font-bold text-red">{issues} с замечаниями</span>}
-        <span className="rounded-pill bg-line px-3 py-1 text-xs font-bold text-ink-soft">{missing} не загружено</span>
-      </div>
-
-      <div className="mt-5 space-y-2.5">
-        {rows.map((r) => (
-          <div
-            key={r.id}
-            className={`rounded-lg border-2 p-4 ${
-              r.doc?.verdict === "ok" ? "border-green bg-green/5" : r.doc ? "border-warn bg-warn/5" : "border-line bg-paper"
-            }`}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <b className="text-sm">{r.title}</b>
-              {r.doc ? (
-                <span className="shrink-0 rounded-pill bg-cream px-2.5 py-1 text-[11px] font-bold whitespace-nowrap">
-                  {V_LABEL[r.doc.verdict] || ""}
-                </span>
-              ) : (
-                <span className="shrink-0 text-[11px] text-ink-soft whitespace-nowrap">нет файла</span>
-              )}
-            </div>
-            <span className="mt-1 block text-xs text-ink-soft">{r.stage}</span>
-            {r.doc?.summary && <p className="mt-1.5 text-xs text-ink-soft">{r.doc.summary}</p>}
-            {r.doc?.critical ? <p className="mt-1 text-xs font-bold text-red">Критических ошибок: {r.doc.critical}</p> : null}
-            <button
-              type="button"
-              onClick={() => onUploadDoc(r.id)}
-              disabled={busyTask === r.id}
-              className="mt-2.5 rounded-pill border-2 border-ink bg-paper px-3.5 py-1.5 text-xs font-extrabold uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
-            >
-              {busyTask === r.id ? "Проверяю…" : r.doc ? "Проверить другой файл" : "Загрузить и проверить"}
-            </button>
+      <section className={styles.docsHero}>
+        <div className={styles.docsHeroContent}>
+          <p className={styles.kicker}>Документы</p>
+          <h2 className={styles.heroTitle}>Сначала закрой обязательные документы</h2>
+          <p className={styles.actionBody}>
+            Не нужно помнить весь пакет. Система показывает, что уже готово, что требует исправления и что загрузить следующим.
+          </p>
+          <div className={styles.heroMeta}>
+            <span className={styles.heroCount}>{ready} из {rows.length} готовы</span>
+            <span className={styles.heroPct}>{missing} ещё не загружено</span>
           </div>
-        ))}
-      </div>
+          <div className={styles.progressTrack}>
+            <div className={styles.progressFill} style={{ width: (rows.length ? Math.round((ready / rows.length) * 100) : 0) + "%" }} />
+          </div>
+          {focus && (
+            <div className={styles.focusLine}>
+              <span className={styles.focusDot} aria-hidden />
+              <span>Сейчас важнее всего — {focus.doc ? "исправить «" + focus.title + "»" : "загрузить «" + focus.title + "»"}.</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.overviewGrid}>
+          <div className={styles.card}>
+            <div className={styles.sectionHeading}>
+              <div>
+                <h3>Список документов</h3>
+                <p>Статус и следующее действие по каждому файлу.</p>
+              </div>
+            </div>
+            <div className={styles.docList}>
+              {rows.map((row) => {
+                const verdict = row.doc?.verdict;
+                const state = verdict === "ok" ? "ok" : verdict ? verdict : "missing";
+                return (
+                  <div key={row.id} className={styles.docRow}>
+                    <div>
+                      <div className={styles.docTitle}>{row.title}</div>
+                      <div className={styles.docMeta}>{row.stage}</div>
+                      {row.doc?.summary && <p className={styles.taskNote}>{row.doc.summary}</p>}
+                      {row.doc?.critical ? <p className={styles.taskWarn}>Критических ошибок: {row.doc.critical}</p> : null}
+                    </div>
+                    <span className={styles.statusChip} data-state={state}>
+                      {row.doc ? (V_LABEL[row.doc.verdict] || "Проверен") : "Нет файла"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onUploadDoc(row.id)}
+                      disabled={busyTask === row.id}
+                      className={verdict === "ok" ? styles.secondaryButton : styles.primaryButton}
+                    >
+                      {busyTask === row.id ? "Проверяю…" : row.doc ? "Проверить снова" : "Загрузить"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className={styles.summaryStack}>
+            <div className={styles.card}>
+              <div className={styles.sectionHeading}>
+                <div>
+                  <h3>Сводка</h3>
+                  <p>Только три числа, которые реально помогают понять состояние пакета.</p>
+                </div>
+              </div>
+              <div className={styles.summaryMetric}><span>Проверены</span><strong>{ready}</strong></div>
+              <div className={styles.summaryMetric}><span>Есть замечания</span><strong>{issues}</strong></div>
+              <div className={styles.summaryMetric}><span>Не загружены</span><strong>{missing}</strong></div>
+            </div>
+
+            <div className={styles.card}>
+              <div className={styles.sectionHeading}>
+                <div>
+                  <h3>Как работает проверка</h3>
+                  <p>Загрузил → получил вердикт → исправил → проверил снова.</p>
+                </div>
+              </div>
+              <p className={styles.actionBody}>
+                ИИ сверяет файл с требованиями шага. Если есть критичная ошибка, она остаётся видимой до следующей проверки.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
