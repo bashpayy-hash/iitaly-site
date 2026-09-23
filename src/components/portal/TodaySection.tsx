@@ -2,160 +2,271 @@
 
 import { useRouter } from "next/navigation";
 import type { PortalData } from "@/lib/portalApi";
-import { ACT_PAGE, TASK_META, dlText, fmtDate } from "@/lib/portalMeta";
-import { VespaReveal } from "@/components/VespaReveal";
-import { ProgressRibbon } from "@/components/portal/ProgressRibbon";
+import { ACT_PAGE, DOC_TASKS, TASK_META, dlState, dlText, fmtDate } from "@/lib/portalMeta";
+import styles from "./portal.module.css";
 
-function flatTasks(d: PortalData) {
-  const out: { st: string; stId: string; t: PortalData["roadmap"][number]["tasks"][number]; done: boolean }[] = [];
-  for (const st of d.roadmap) for (const t of st.tasks) out.push({ st: st.title, stId: st.id, t, done: !!d.done[t.id] });
+type FlatItem = {
+  st: string;
+  stId: string;
+  order: number;
+  t: PortalData["roadmap"][number]["tasks"][number];
+  done: boolean;
+};
+
+function flatTasks(data: PortalData): FlatItem[] {
+  const out: FlatItem[] = [];
+  let order = 0;
+  for (const st of data.roadmap) {
+    for (const t of st.tasks) {
+      out.push({ st: st.title, stId: st.id, order: order++, t, done: !!data.done[t.id] });
+    }
+  }
   return out;
+}
+
+function priority(item: FlatItem) {
+  if (item.done) return 9999;
+  const days = item.t.daysLeft;
+  if (days != null && days < 0) return -1000 + days;
+  if (days != null && days <= 14) return -500 + days;
+  if (days != null && days <= 45) return -200 + days;
+  return item.order;
+}
+
+function nextActions(data: PortalData) {
+  return flatTasks(data)
+    .filter((item) => !item.done)
+    .sort((a, b) => priority(a) - priority(b) || a.order - b.order)
+    .slice(0, 3);
+}
+
+function deadlineItems(data: PortalData) {
+  return flatTasks(data)
+    .filter((item) => !item.done && item.t.deadline)
+    .sort((a, b) => String(a.t.deadline).localeCompare(String(b.t.deadline)))
+    .slice(0, 4);
 }
 
 export function TodaySection({
   data,
   onGoto,
   onMarkDone,
+  onOpenDocs,
+  onOpenHelp,
 }: {
   data: PortalData;
   onGoto: (stageId: string) => void;
   onMarkDone: (taskId: string) => void;
+  onOpenDocs: () => void;
+  onOpenHelp: () => void;
 }) {
   const router = useRouter();
+  const actions = nextActions(data);
+  const deadlines = deadlineItems(data);
   const flat = flatTasks(data);
-  const over = flat.filter((v) => !v.done && v.t.daysLeft != null && v.t.daysLeft < 0);
-  const hot = flat.filter((v) => !v.done && v.t.daysLeft != null && v.t.daysLeft >= 0 && v.t.daysLeft <= 45);
-  const next = flat.find((v) => !v.done);
+  const overdue = flat.filter((item) => !item.done && item.t.daysLeft != null && item.t.daysLeft < 0);
+  const urgent = flat.filter((item) => !item.done && item.t.daysLeft != null && item.t.daysLeft >= 0 && item.t.daysLeft <= 14);
+  const docRows = flat.filter((item) => Boolean(DOC_TASKS[item.t.id]));
+  const docsReady = docRows.filter((item) => data.docs?.[item.t.id]?.verdict === "ok").length;
+  const docsIssues = docRows.filter((item) => data.docs?.[item.t.id] && data.docs[item.t.id].verdict !== "ok").length;
+  const tgOn = Boolean(data.client.tgLinked) && data.client.notify?.telegram !== false;
+  const needsAttention = overdue.length > 0 || urgent.length > 0 || docsIssues > 0;
+
+  function act(item: FlatItem) {
+    const page = ACT_PAGE[item.t.id];
+    if (page) {
+      router.push(page);
+      return;
+    }
+    if (item.t.ai || item.t.expert) {
+      window.dispatchEvent(
+        new CustomEvent("iitaly:open-chat", { detail: { prefill: `Помоги с шагом: ${item.t.t}` } }),
+      );
+      return;
+    }
+    onGoto(item.stId);
+  }
 
   return (
     <div>
-      <div className="rounded-lg border-2 border-ink bg-paper p-4">
-        <div className="flex items-center justify-between">
-          <b className="font-display text-lg font-bold">
-            {data.progress.done} из {data.progress.total}
-          </b>
-          <span className="text-sm text-ink-soft">шагов пройдено</span>
-        </div>
-        <div className="mt-2.5">
-          <ProgressRibbon pct={data.progress.pct} />
-        </div>
-      </div>
+      <section className={styles.hero}>
+        <div className={styles.heroContent}>
+          <p className={styles.kicker}>Твой маршрут</p>
+          <h2 className={styles.heroTitle}>Твой путь к поступлению</h2>
 
-      {(over.length > 0 || hot.length > 0) && (
-        <div className={`mt-4 rounded-lg border-2 p-4 ${over.length ? "border-red bg-red/5" : "border-warn bg-warn/5"}`}>
-          <b className="text-sm">{over.length ? `Просрочено: ${over.length}` : `Скоро дедлайн: ${hot.length}`}</b>
-          <div className="mt-2 space-y-1">
-            {(over.length ? over : hot).slice(0, 3).map((v) => (
-              <div key={v.t.id} className="flex justify-between gap-3 text-sm">
-                <span>{v.t.t}</span>
-                <span className="text-ink-soft italic">{dlText(v.t, false)}</span>
-              </div>
-            ))}
+          <div className={styles.heroMeta}>
+            <span className={styles.heroCount}>{data.progress.done} из {data.progress.total} шагов</span>
+            <span className={styles.heroPct}>{data.progress.pct}%</span>
           </div>
-        </div>
-      )}
+          <div className={styles.progressTrack} aria-label={`Пройдено ${data.progress.pct}%`}>
+            <div className={styles.progressFill} style={{ width: `${data.progress.pct}%` }} />
+          </div>
 
-      <div className="mt-4">
-        {!next ? (
-          <div className="flex items-start gap-3 rounded-lg border-2 border-green bg-green/5 p-4">
-            <VespaReveal pose="celebrate" className="h-11 w-auto shrink-0" />
-            <div>
-              <b className="text-sm">Все шаги пройдены</b>
-              <p className="mt-1 text-sm text-ink-soft">
-                Маршрут закрыт. Если появятся новые задачи, они появятся здесь.
-              </p>
+          <div className={styles.statusBadge} data-state={needsAttention ? "attention" : "ok"}>
+            <span aria-hidden>{needsAttention ? "!" : "✓"}</span>
+            {needsAttention ? "Есть несколько вещей, которые лучше не откладывать" : "Всё под контролем"}
+          </div>
+
+          {actions[0] && (
+            <div className={styles.focusLine}>
+              <span className={styles.focusDot} aria-hidden />
+              <span>Сейчас важнее всего — {actions[0].t.t.toLowerCase()}.</span>
             </div>
+          )}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <h2>Что делать сейчас</h2>
+            <p>Система сама поднимает наверх срочные и логически следующие шаги.</p>
+          </div>
+          <button type="button" className={styles.textLink} onClick={() => onGoto(actions[0]?.stId || data.roadmap[0]?.id || "")}>
+            Смотреть весь план →
+          </button>
+        </div>
+
+        {actions.length === 0 ? (
+          <div className={styles.card}>
+            <div className={styles.actionTitle}>Маршрут закрыт</div>
+            <p className={styles.actionBody}>Все текущие шаги отмечены как выполненные. Если появятся новые задачи, они автоматически поднимутся сюда.</p>
           </div>
         ) : (
-          <NextStepCard
-            item={next}
-            onGo={() => {
-              const page = ACT_PAGE[next.t.id];
-              if (page) {
-                router.push(page);
-                return;
-              }
-              window.dispatchEvent(
-                new CustomEvent("iitaly:open-chat", { detail: { prefill: `Расскажи подробно про шаг: ${next.t.t}` } }),
+          <div className={styles.actionGrid}>
+            {actions.map((item, index) => {
+              const meta = TASK_META[item.t.id] || {};
+              const state = dlState(item.t, item.done);
+              const auto = item.t.ai || item.t.expert;
+              return (
+                <article
+                  key={item.t.id}
+                  className={`${styles.actionCard} ${index === 0 ? styles.actionCardPrimary : ""}`}
+                >
+                  <span className={styles.actionNum}>{index + 1}</span>
+                  <div className={styles.actionTitle}>{item.t.t}</div>
+                  <p className={styles.actionBody}>{meta.why || item.t.note || `Следующий шаг этапа «${item.st}».`}</p>
+
+                  <div className={styles.actionFoot}>
+                    <span className={styles.actionDeadline} data-state={state}>
+                      {item.t.deadline ? dlText(item.t, false) : item.st}
+                    </span>
+                    <button
+                      type="button"
+                      className={index === 0 ? styles.primaryButton : styles.secondaryButton}
+                      onClick={() => act(item)}
+                    >
+                      {meta.act || (auto ? "Разобрать" : "Открыть")}
+                    </button>
+                  </div>
+
+                  {!auto && index === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => onMarkDone(item.t.id)}
+                      className={styles.textLink}
+                      style={{ alignSelf: "flex-start", marginTop: 10 }}
+                    >
+                      Уже сделал
+                    </button>
+                  )}
+                </article>
               );
-            }}
-            onDone={() => onMarkDone(next.t.id)}
-          />
+            })}
+          </div>
         )}
-      </div>
+      </section>
 
-      <div className="mt-6 space-y-2">
-        {data.roadmap.map((st) => {
-          const total = st.tasks.length;
-          const done = st.tasks.filter((t) => data.done[t.id]).length;
-          const stOver = st.tasks.some((t) => !data.done[t.id] && t.daysLeft != null && t.daysLeft < 0);
-          const stHot = st.tasks.some((t) => !data.done[t.id] && t.daysLeft != null && t.daysLeft >= 0 && t.daysLeft <= 45);
-          const dates = st.tasks.filter((t) => t.deadline).map((t) => t.deadline as string).sort();
-          const cls = done === total ? "border-green bg-green/5" : stOver ? "border-red bg-red/5" : stHot ? "border-warn bg-warn/5" : "border-line bg-paper";
-          return (
-            <button
-              key={st.id}
-              type="button"
-              onClick={() => onGoto(st.id)}
-              className={`flex w-full items-center justify-between gap-3 rounded-md border-2 px-4 py-3 text-left transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red ${cls}`}
-            >
-              <span className="text-sm font-bold">{st.title}</span>
-              <span className="shrink-0 text-xs text-ink-soft whitespace-nowrap">
-                {done}/{total}
-                {dates.length ? ` · до ${fmtDate(dates[dates.length - 1])}` : ""}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+      <section className={styles.section}>
+        <div className={styles.overviewGrid}>
+          <div className={styles.card}>
+            <div className={styles.sectionHeading}>
+              <div>
+                <h3>Ближайшие дедлайны</h3>
+                <p>Только ближайшие даты — без календарного шума.</p>
+              </div>
+              <button type="button" className={styles.textLink} onClick={() => onGoto(actions[0]?.stId || data.roadmap[0]?.id || "")}>
+                План →
+              </button>
+            </div>
+            <div className={styles.deadlineList}>
+              {deadlines.length ? deadlines.map((item) => {
+                const state = dlState(item.t, false);
+                return (
+                  <div key={item.t.id} className={styles.deadlineRow}>
+                    <span className={styles.deadlineDate}>{fmtDate(item.t.deadline as string)}</span>
+                    <span className={styles.deadlineName}>{item.t.t}</span>
+                    <span className={styles.deadlineState} data-state={state}>{dlText(item.t, false)}</span>
+                  </div>
+                );
+              }) : (
+                <p className={styles.actionBody}>Ближайших дедлайнов нет.</p>
+              )}
+            </div>
+          </div>
 
-function NextStepCard({
-  item,
-  onGo,
-  onDone,
-}: {
-  item: ReturnType<typeof flatTasks>[number];
-  onGo: () => void;
-  onDone: () => void;
-}) {
-  const m = TASK_META[item.t.id] || {};
-  const dl = item.t.deadline ? dlText(item.t, false) : "";
-  const risky = item.t.daysLeft != null && item.t.daysLeft <= 14;
-  const auto = item.t.ai || item.t.expert;
+          <div className={styles.summaryStack}>
+            <div className={styles.card}>
+              <div className={styles.sectionHeading}>
+                <div>
+                  <h3>Документы</h3>
+                  <p>Что уже готово и где есть замечания.</p>
+                </div>
+                <button type="button" className={styles.textLink} onClick={onOpenDocs}>Открыть →</button>
+              </div>
+              <div className={styles.summaryMetric}>
+                <span>Проверены</span>
+                <strong>{docsReady}</strong>
+              </div>
+              <div className={styles.summaryMetric}>
+                <span>Есть замечания</span>
+                <strong>{docsIssues}</strong>
+              </div>
+              <div className={styles.summaryMetric}>
+                <span>Всего требуют проверки</span>
+                <strong>{docRows.length}</strong>
+              </div>
+            </div>
 
-  return (
-    <div className={`rounded-lg border-2 p-4 ${risky ? "border-red bg-red/5" : "border-ink bg-paper"}`}>
-      <p className="text-xs font-extrabold tracking-[0.14em] text-sec uppercase">Следующий шаг</p>
-      <b className="mt-1 block text-base">{item.t.t}</b>
-      {m.why && <p className="mt-1 text-sm text-ink-soft">{m.why}</p>}
-      <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-        {m.min && <span className="rounded-pill bg-cream px-2.5 py-1 font-bold">{m.min}</span>}
-        {dl && (
-          <span className={`rounded-pill px-2.5 py-1 font-bold ${risky ? "bg-red text-cream" : "bg-cream"}`}>{dl}</span>
-        )}
-        <span className="text-ink-soft">{item.st}</span>
-      </div>
-      <div className="mt-3 flex flex-wrap gap-2.5">
-        <button
-          type="button"
-          onClick={onGo}
-          className="rounded-pill border-2 border-ink bg-red px-4 py-2 text-xs font-extrabold text-cream uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
-        >
-          {m.act || "Открыть шаг"}
-        </button>
-        {!auto && (
-          <button
-            type="button"
-            onClick={onDone}
-            className="rounded-pill border-2 border-ink bg-paper px-4 py-2 text-xs font-extrabold uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
-          >
-            Уже сделал
-          </button>
-        )}
-      </div>
+            <div className={styles.card}>
+              <div className={styles.sectionHeading}>
+                <div>
+                  <h3>Напоминания</h3>
+                  <p>{tgOn ? "Telegram подключён — дедлайны придут автоматически." : "Подключи Telegram, чтобы не держать даты в голове."}</p>
+                </div>
+              </div>
+              <button type="button" className={tgOn ? styles.secondaryButton : styles.primaryButton} onClick={onOpenHelp}>
+                {tgOn ? "Настроить" : "Подключить Telegram"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeading}>
+          <div>
+            <h2>Путь целиком</h2>
+            <p>Этапы видны, но не требуют внимания, пока до них не дошла очередь.</p>
+          </div>
+        </div>
+        <div className={`${styles.card} ${styles.stageList}`}>
+          {data.roadmap.map((stage) => {
+            const total = stage.tasks.length;
+            const done = stage.tasks.filter((task) => data.done[task.id]).length;
+            const pct = total ? Math.round((done / total) * 100) : 0;
+            return (
+              <button key={stage.id} type="button" className={styles.stageRow} onClick={() => onGoto(stage.id)}>
+                <span className={styles.stageName}>{stage.title}</span>
+                <span className={styles.miniTrack} aria-hidden>
+                  <span className={styles.miniFill} style={{ width: `${pct}%` }} />
+                </span>
+                <span className={styles.stageMeta}>{done}/{total}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
