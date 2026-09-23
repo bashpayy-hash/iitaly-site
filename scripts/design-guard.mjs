@@ -24,6 +24,12 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
 const approvedReminderUiPaths = new Set([
   'src/components/portal/PortalExplorer.tsx',
   'src/components/portal/HelpSection.tsx',
+  // The user explicitly authorized a visual/UX refresh of the personal portal.
+  // Portal data, API contracts and roadmap logic remain protected elsewhere.
+  'src/components/portal/TodaySection.tsx',
+  'src/components/portal/PlanSection.tsx',
+  'src/components/portal/DocsSection.tsx',
+  'src/components/portal/portal.module.css',
   'src/components/chat/ChatWidget.tsx',
   'src/components/Footer.tsx',
   'src/data/pricing.ts',
