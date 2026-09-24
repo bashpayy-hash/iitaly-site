@@ -100,7 +100,7 @@
   inset: 20px -18px 0 -28px;
   background-image:
     linear-gradient(180deg, var(--portal-canvas) 0%, transparent 24%, transparent 76%, var(--portal-canvas) 100%),
-    url("https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20260923_130152_afa35348-0299-4eba-a6ea-2d08a6e74b1b_min.webp");
+    url("/illustrations/editorial/campus-arrival-480.webp");
   background-size: cover;
   background-position: center 52%;
   opacity: .16;
@@ -195,7 +195,7 @@
   inset: 0 0 0 52%;
   background-image:
     linear-gradient(90deg, var(--portal-surface) 0%, rgba(255,253,249,.78) 20%, transparent 56%),
-    url("https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20260923_130153_789eafa6-7c9d-4d43-b967-507f79c7c3c5_min.webp");
+    url("/illustrations/editorial/travel-paperwork-640.webp");
   background-size: cover;
   background-position: 68% center;
   opacity: .16;
@@ -753,7 +753,7 @@
   inset: 26% -9% -13% 34%;
   background-image:
     linear-gradient(180deg, transparent 0%, var(--portal-surface) 92%),
-    url("https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20260923_130152_afa35348-0299-4eba-a6ea-2d08a6e74b1b_min.webp");
+    url("/illustrations/editorial/campus-arrival-480.webp");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
