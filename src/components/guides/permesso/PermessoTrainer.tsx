@@ -149,6 +149,8 @@ export function PermessoTrainer() {
 
   function displayValueFor(field: TrainerField): string {
     if (useMyData && myData[field.number]) return myData[field.number];
+    if (useMyData && (field.number === "22" || field.number === "24" || field.number === "25")) return suggestedValueFor(field);
+    if (useMyData && field.kind === "x" && modeFor(field) === "write") return field.example?.[scenario] || "";
     if (showExample) return suggestedValueFor(field);
     return "";
   }
