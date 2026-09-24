@@ -78,7 +78,7 @@ export function ProfileSection({
             Мы не создаём отдельный родительский логин без твоего согласия. Вместо этого можно скопировать только список задач, где нужна помощь семьи.
           </p>
           <button type="button" className={styles.secondaryButton} onClick={copyParents} disabled={!parentTasks.length}>
-            {copied ? "Скопировано" : parentTasks.length ? "Скопировать список для родителей" : "Пока задач нет"}
+            {copied ? "Скопировано" : parentTasks.length ? "Поделиться списком с родителями" : "Пока задач нет"}
           </button>
         </section>
       </div>

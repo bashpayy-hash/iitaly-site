@@ -43,7 +43,7 @@ export function TodaySection({
   const blocked = rows.filter(({ task }) => task.available === false).slice(0, 2);
   const parents = available.filter(({ task }) => task.owner?.includes("Родители")).slice(0, 2);
   const parallel = available.find(({ task }) => task.id === "test");
-  const after = available
+  const next = available
     .filter(({ task }) => !task.owner?.includes("Родители") && task.id !== "test")
     .slice(1, 3);
   const deadlines = dateRows(data);
@@ -51,43 +51,55 @@ export function TodaySection({
   const docRows = rows.filter(({ task }) => Boolean(DOC_TASKS[task.id]));
   const docsReady = docRows.filter(({ task }) => data.docs?.[task.id]?.verdict === "ok").length;
   const docsIssues = docRows.filter(({ task }) => data.docs?.[task.id] && data.docs[task.id].verdict !== "ok").length;
+  const docsMissing = docRows.length - docsReady - docsIssues;
   const tgOn = Boolean(data.client.tgLinked) && data.client.notify?.telegram !== false;
 
   return (
     <div>
       <section className={styles.sectionCompact}>
-        <div className={styles.guidanceGrid}>
-          <GuidanceCard
-            title="После этого"
-            note="Следующие шаги, когда закроешь главное действие."
-            items={after}
-            onGoto={onGoto}
-          />
+        <div className={styles.weekBoard}>
+          <div className={styles.weekBoardHeader}>
+            <div>
+              <p className={styles.kicker}>После главного шага</p>
+              <h2>Что держать в поле зрения</h2>
+            </div>
+            <p>Не список на весь год — только ближайший контекст.</p>
+          </div>
 
-          <GuidanceCard
-            title="Параллельно"
-            note="Долгая подготовка, которую не стоит откладывать."
-            items={parallel ? [parallel] : []}
-            empty="Пока ничего отдельного."
-            onGoto={onGoto}
-          />
+          <div className={styles.weekColumns}>
+            <GuidanceColumn
+              title="Следом"
+              items={next}
+              onGoto={onGoto}
+              empty="Сначала закрой главное действие."
+            />
+            <GuidanceColumn
+              title="Родителям"
+              items={parents}
+              onGoto={onGoto}
+              empty="Сейчас ничего не требуется."
+            />
+            <GuidanceColumn
+              title="Позже"
+              items={blocked}
+              onGoto={onGoto}
+              empty="Нет отложенных задач."
+              blocked
+            />
+          </div>
 
-          <GuidanceCard
-            title="Ждём от родителей"
-            note="То, что лучше заранее обсудить дома."
-            items={parents}
-            empty="Сейчас ничего."
-            onGoto={onGoto}
-          />
-
-          <GuidanceCard
-            title="Потом, не сейчас"
-            note="Эти шаги появятся, когда станут возможны."
-            items={blocked}
-            empty="Нет отложенных задач."
-            onGoto={onGoto}
-            blocked
-          />
+          {parallel && (
+            <button type="button" className={styles.parallelStrip} onClick={() => onGoto(parallel.stageId)}>
+              <span>
+                <small>Параллельно</small>
+                <strong>{parallel.task.t}</strong>
+              </span>
+              <span>
+                {parallel.task.time || "начни заранее"} · {parallel.task.owner || "Ты"}
+              </span>
+              <span aria-hidden>→</span>
+            </button>
+          )}
         </div>
       </section>
 
@@ -118,7 +130,7 @@ export function TodaySection({
             <button type="button" className={styles.statusRailItem} onClick={onOpenDocs}>
               <span>
                 <small>Документы</small>
-                <strong>{docsReady} готово · {docsIssues} с замечаниями</strong>
+                <strong>Проверены: {docsReady} · С замечаниями: {docsIssues} · Не загружены: {docsMissing}</strong>
               </span>
               <span aria-hidden>→</span>
             </button>
@@ -142,48 +154,47 @@ export function TodaySection({
   );
 }
 
-function GuidanceCard({
+function GuidanceColumn({
   title,
-  note,
   items,
-  empty = "Пока ничего.",
+  empty,
   onGoto,
   blocked = false,
 }: {
   title: string;
-  note: string;
   items: FlatItem[];
-  empty?: string;
+  empty: string;
   onGoto: (stageId: string) => void;
   blocked?: boolean;
 }) {
   return (
-    <section className={styles.guidanceCard}>
-      <div>
-        <h3>{title}</h3>
-        <p>{note}</p>
-      </div>
-      <div className={styles.guidanceList}>
-        {items.length ? items.map(({ task, stageId }) => (
-          <button
-            key={task.id}
-            type="button"
-            className={styles.guidanceRow}
-            onClick={() => !blocked && onGoto(stageId)}
-            disabled={blocked}
-          >
-            <span>
-              <strong>{task.t}</strong>
-              <small>
-                {task.owner || "Ты"}
-                {task.time ? " · " + task.time : ""}
-                {task.timingLabel ? " · " + task.timingLabel : ""}
-              </small>
-            </span>
-            {!blocked && <span aria-hidden>→</span>}
-          </button>
-        )) : <span className={styles.guidanceEmpty}>{empty}</span>}
-      </div>
-    </section>
+    <div className={styles.weekColumn}>
+      <h3>{title}</h3>
+      {items.length ? (
+        <div className={styles.weekColumnRows}>
+          {items.map(({ task, stageId }) => (
+            <button
+              key={task.id}
+              type="button"
+              onClick={() => !blocked && onGoto(stageId)}
+              disabled={blocked}
+              className={styles.weekRow}
+            >
+              <span>
+                <strong>{task.t}</strong>
+                <small>
+                  {task.owner || "Ты"}
+                  {task.time ? " · " + task.time : ""}
+                  {task.timingLabel ? " · " + task.timingLabel : ""}
+                </small>
+              </span>
+              {!blocked && <span aria-hidden>→</span>}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className={styles.weekEmpty}>{empty}</p>
+      )}
+    </div>
   );
 }
