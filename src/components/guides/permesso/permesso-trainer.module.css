@@ -32,13 +32,33 @@
 .disclaimer p { margin: 7px 0 0; color: #51515a; font-size: 13px; line-height: 1.55; }
 .disclaimer a { display: inline-block; margin-top: 10px; color: #b91134; font-size: 13px; font-weight: 500; }
 
+.prepStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 18px 24px 8px;
+}
+.prepStrip > div { display: grid; gap: 3px; }
+.prepStrip span { color: #77727a; font-size: 11px; font-weight: 500; }
+.prepStrip b { color: #34343a; font-size: 13px; font-weight: 500; line-height: 1.45; }
+.prepStrip a { color: #b91134; font-size: 12px; font-weight: 500; white-space: nowrap; }
+
 .controls {
+  position: sticky;
+  top: 64px;
+  z-index: 24;
   display: flex;
   justify-content: space-between;
   gap: 18px;
   max-width: 1160px;
   margin: 0 auto;
-  padding: 26px 24px 12px;
+  padding: 10px 24px;
+  border-block: 1px solid rgba(220,220,225,.9);
+  background: rgba(245,245,247,.96);
+  backdrop-filter: blur(14px);
 }
 .scenarioSwitch {
   display: grid;
@@ -62,22 +82,24 @@
 .scenarioSwitch button[data-active="true"] { background: #fff0f3; box-shadow: inset 0 -2px var(--action); }
 .scenarioSwitch span { display: block; font-size: 15px; font-weight: 600; }
 .scenarioSwitch small { display: block; margin-top: 4px; color: #666670; font-size: 12px; }
-.exampleToggle {
+.controlActions { display: flex; align-items: stretch; gap: 8px; }
+.exampleToggle,
+.myDataButton {
   align-self: stretch;
-  min-width: 150px;
+  min-width: 132px;
   border: 1px solid var(--line);
   border-radius: 980px;
   background: #fff;
   color: #b91134;
-  padding: 12px 18px;
-  font-size: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
   font-weight: 500;
 }
+.myDataButton { color: #1e3a8a; }
 
 .legendBar {
-  position: sticky;
-  top: 64px;
-  z-index: 20;
+  position: static;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 8px 20px;
@@ -93,12 +115,12 @@
 .legendBar span[data-mode="write"] i { border: 2px solid var(--write); }
 .legendBar span[data-mode="empty"] i { border: 1px solid var(--empty); background: repeating-linear-gradient(135deg,#eee 0 4px,#ddd 4px 6px); }
 .legendBar span[data-mode="post"] i { border: 2px solid var(--post); background: #fff4c8; }
-.legendBar span[data-mode="optional"] i { border: 2px dashed var(--optional); }
+.legendBar span[data-mode="ifExists"] i { border: 2px dashed var(--optional); }
 
 .trainer { max-width: 1160px; margin: 0 auto; padding: 0 24px 56px; }
 .pageTabs {
   display: grid;
-  grid-template-columns: repeat(3,minmax(0,1fr));
+  grid-template-columns: repeat(5,minmax(0,1fr));
   width: calc(100% - 330px);
   max-width: none;
   margin: 0 0 12px;
@@ -112,6 +134,8 @@
 .pageTabs button[data-active="true"] { background: #fff0f3; box-shadow: inset 0 -2px var(--action); }
 .pageTabs span { display: block; font-size: 12px; font-weight: 600; }
 .pageTabs small { display: block; margin-top: 2px; color: #666670; font-size: 10px; }
+.utilityTab { background: #fafafa !important; }
+.utilityTab span { color: #51515a; }
 
 .formLayout { display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 20px; align-items: start; }
 .paper {
@@ -146,6 +170,12 @@
 .paper > * {
   position: relative;
   z-index: 1;
+}
+.paper[data-personal="true"] .cells i,
+.paper[data-personal="true"] .xBox,
+.paper[data-personal="true"] .yesNo i {
+  color: #173c78;
+  font-weight: 800;
 }
 .paperHeader {
   position: relative;
@@ -407,11 +437,19 @@
 .groupedChoice:hover { background: rgba(215,19,63,.025); }
 .formField[data-selected="true"],
 .choiceField[data-selected="true"],
-.groupedChoice[data-selected="true"] { box-shadow: inset 0 0 0 2px rgba(215,19,63,.4); }
-.formField[data-mode="write"] { outline: 1px solid rgba(51,122,82,.28); outline-offset: -2px; }
-.formField[data-mode="empty"] { background-image: repeating-linear-gradient(135deg,transparent 0 7px,rgba(110,110,115,.08) 7px 10px); }
-.formField[data-mode="post"] { outline: 1px solid rgba(181,124,8,.36); outline-offset: -2px; background: rgba(255,244,200,.28); }
-.formField[data-mode="optional"] { outline: 1px dashed rgba(75,111,174,.5); outline-offset: -2px; }
+.refugeeField[data-selected="true"] {
+  position: relative;
+  z-index: 2;
+  box-shadow: inset 0 0 0 2px #1e3a8a, 0 2px 8px rgba(30,58,138,.12);
+}
+.formField[data-mode="write"] { outline: 0; }
+.formField[data-mode="empty"] {
+  opacity: .46;
+  background-image: repeating-linear-gradient(135deg,transparent 0 7px,rgba(110,110,115,.11) 7px 10px);
+}
+.formField[data-mode="post"] { outline: 1px solid rgba(181,124,8,.46); outline-offset: -2px; background: rgba(255,244,200,.3); }
+.formField[data-mode="ifExists"] { outline: 1px dashed rgba(75,111,174,.48); outline-offset: -2px; }
+.formField[data-mode="recommended"] { outline: 1px solid rgba(75,111,174,.38); outline-offset: -2px; }
 .formField > em,
 .groupedChoice > em {
   position: absolute;
@@ -424,12 +462,13 @@
 }
 .formField[data-mode="write"] > em { color: var(--write); }
 .formField[data-mode="post"] > em { color: var(--post); }
-.formField[data-mode="optional"] > em { color: var(--optional); }
+.formField[data-mode="ifExists"] > em,
+.formField[data-mode="recommended"] > em { color: var(--optional); }
 
 .formLabel { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; padding-right: 60px; }
-.formLabel b { font-size: 9px; font-weight: 700; letter-spacing: .01em; }
-.formLabel small { color: #736e68; font-size: 8px; }
-.compactField .formLabel b { font-size: 8px; }
+.formLabel b { font-size: 11px; font-weight: 700; letter-spacing: .005em; }
+.formLabel small { color: #615d58; font-size: 10px; }
+.compactField .formLabel b { font-size: 10px; }
 
 .cells { display: flex; gap: 2px; min-width: 0; overflow-x: auto; padding: 1px 0; scrollbar-width: none; }
 .cells::-webkit-scrollbar { display: none; }
@@ -482,8 +521,8 @@
   border-radius: 0;
 }
 .choiceField > span:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
-.choiceField b { font-size: 8px; }
-.choiceField small { color: #736e68; font-size: 7px; }
+.choiceField b { font-size: 10px; }
+.choiceField small { color: #615d58; font-size: 9px; }
 .xBox { display: grid; place-items: center; width: 19px; height: 19px; border: 1px solid var(--form-red); color: #494643; font-family: "Courier New",monospace; font-size: 14px; font-weight: 700; }
 .choiceField > em {
   position: absolute;
@@ -494,10 +533,11 @@
   font-style: normal;
   font-weight: 800;
 }
-.choiceField[data-mode="write"] { outline: 1px solid rgba(51,122,82,.42); outline-offset: -2px; }
-.choiceField[data-mode="empty"] { background: repeating-linear-gradient(135deg,transparent 0 6px,rgba(110,110,115,.08) 6px 9px); }
+.choiceField[data-mode="write"] { outline: 0; }
+.choiceField[data-mode="empty"] { opacity: .46; background: repeating-linear-gradient(135deg,transparent 0 6px,rgba(110,110,115,.11) 6px 9px); }
 .choiceField[data-mode="post"] { outline: 1px solid rgba(181,124,8,.45); outline-offset: -2px; background: rgba(255,244,200,.22); }
-.choiceField[data-mode="optional"] { outline: 1px dashed rgba(75,111,174,.58); outline-offset: -2px; }
+.choiceField[data-mode="ifExists"] { outline: 1px dashed rgba(75,111,174,.5); outline-offset: -2px; }
+.choiceField[data-mode="recommended"] { outline: 1px solid rgba(75,111,174,.38); outline-offset: -2px; }
 
 .groupedChoice {
   display: grid;
@@ -665,6 +705,219 @@
 .cheatSheet p { margin: 12px 0 0; color: #51515a; font-size: 12px; line-height: 1.5; }
 .cheatSheet small { display: block; margin-top: 7px; color: #666670; font-size: 11px; }
 
+
+.myDataPanel {
+  max-width: 1160px;
+  margin: 0 auto 14px;
+  padding: 16px 24px 18px;
+  border-block: 1px solid var(--line);
+  background: #eef3fb;
+}
+.myDataHeader,
+.myDataFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.myDataHeader > div { display: grid; gap: 3px; }
+.myDataHeader span { color: #1e3a8a; font-size: 12px; font-weight: 700; }
+.myDataHeader b { color: #4b5563; font-size: 11px; font-weight: 500; }
+.myDataHeader button {
+  border: 0;
+  background: transparent;
+  color: #9b1c31;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.myDataGrid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.myDataField {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+.myDataField > span { display: grid; gap: 1px; }
+.myDataField b { color: #273247; font-size: 11px; font-weight: 600; }
+.myDataField small { color: #667085; font-size: 9px; }
+.myDataField input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #bcc8da;
+  border-radius: 7px;
+  background: #fff;
+  padding: 8px 10px;
+  color: #173c78;
+  font: inherit;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.myDataField em {
+  color: #9b1c31;
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.35;
+}
+.myDataFooter { margin-top: 14px; }
+.useMyDataButton {
+  min-height: 40px;
+  border: 1px solid #1e3a8a;
+  border-radius: 980px;
+  background: #1e3a8a;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.myDataFooter span { color: #475467; font-size: 10px; }
+
+.questoreHandLine {
+  min-height: 22px;
+  border-bottom: 1px solid #6d6861;
+  color: #777;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+
+.skipBadge {
+  margin-left: auto;
+  border: 1px solid rgba(100,100,105,.35);
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: rgba(255,255,255,.65);
+  color: #6d6d73;
+  font-size: 8px !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dateCells,
+.splitCells {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+.dateCells > span,
+.splitCells > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.dateCells > b,
+.splitCells > b {
+  align-self: center;
+  margin-top: -10px;
+  color: #4f4a45;
+  font-size: 17px;
+  font-weight: 400;
+}
+.dateCells small,
+.splitCells small {
+  color: #77716a;
+  font-size: 7px;
+  text-align: center;
+}
+.doubleCells {
+  display: grid;
+  gap: 3px;
+}
+.refugeeField {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 54px;
+  padding: 7px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+.yesNo {
+  display: flex;
+  gap: 12px;
+}
+.yesNo > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #47433e;
+  font-size: 9px;
+}
+.yesNo i {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border: 1px solid #d46f7e;
+  background: rgba(255,255,255,.8);
+  font-family: "Courier New",monospace;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.passportOther,
+.travelGrid {
+  display: grid;
+  gap: 0;
+}
+.passportOther > * + *,
+.travelGrid > * + * {
+  border-top: 1px solid rgba(116,107,96,.3);
+}
+.periodLabel {
+  padding: 6px;
+  color: #504c47;
+  font-size: 8px;
+  font-weight: 700;
+}
+.twoMiniFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.twoMiniFields > * + * { border-left: 1px solid rgba(116,107,96,.45); }
+.fourColumnFields {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 0;
+}
+.fourColumnFields > * + * { border-left: 1px solid rgba(116,107,96,.45); }
+
+.codeHint {
+  margin-top: 11px;
+  border-left: 3px solid #1e3a8a;
+  background: #f3f6fb;
+  padding: 8px 10px;
+  color: #173c78;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.mobileFieldCard { display: none; }
+
+.formField:focus-visible,
+.choiceField:focus-visible,
+.refugeeField:focus-visible,
+.pageTabs button:focus-visible,
+.scenarioSwitch button:focus-visible,
+.exampleToggle:focus-visible,
+.myDataButton:focus-visible {
+  outline: 3px solid rgba(30,58,138,.42);
+  outline-offset: 2px;
+}
+
+.detailPanel[data-mode="ifExists"] .detailTop span:last-child,
+.detailPanel[data-mode="recommended"] .detailTop span:last-child { color: var(--optional); }
+
 @media (max-width: 1000px) {
   .pageTabs { width: 100%; }
   .formLayout { grid-template-columns: 1fr; }
@@ -672,6 +925,93 @@
 }
 
 @media (max-width: 767px) {
+  .prepStrip {
+    align-items: flex-start;
+    padding: 14px 14px 6px;
+  }
+  .prepStrip b { font-size: 11px; }
+  .prepStrip a { font-size: 10px; }
+
+  .controls {
+    top: 60px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .controlActions { width: 100%; }
+  .exampleToggle,
+  .myDataButton { flex: 1; min-width: 0; min-height: 40px; padding: 8px 10px; font-size: 11px; }
+
+  .myDataPanel { padding: 14px; }
+  .myDataHeader,
+  .myDataFooter { align-items: flex-start; flex-direction: column; }
+  .myDataGrid { grid-template-columns: 1fr; }
+  .useMyDataButton { width: 100%; }
+
+  .legendBar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-bottom: 10px;
+    padding-inline: 12px;
+    scrollbar-width: none;
+  }
+  .legendBar::-webkit-scrollbar { display: none; }
+  .legendBar span { flex: 0 0 auto; }
+
+  .pageTabs {
+    display: flex;
+    overflow-x: auto;
+    border-radius: 10px;
+    scrollbar-width: none;
+  }
+  .pageTabs::-webkit-scrollbar { display: none; }
+  .pageTabs button { min-width: 118px; flex: 0 0 118px; }
+
+  .mobileFieldCard {
+    display: block;
+    border: 1px solid #d6d2cb;
+    border-radius: 12px;
+    background: #fff;
+    padding: 16px;
+    box-shadow: 0 10px 28px -24px rgba(0,0,0,.3);
+  }
+  .mobileFieldHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #6b6b73;
+    font-size: 10px;
+  }
+  .mobileFieldHead b { color: #1e3a8a; font-size: 10px; }
+  .mobileFieldCard h2 { margin: 11px 0 0; font-size: 18px; line-height: 1.2; }
+  .mobileFieldCard > p { margin: 3px 0 12px; color: #666670; font-size: 12px; }
+  .mobileFieldCard dl { margin: 14px 0 0; }
+  .mobileFieldCard dl > div { padding: 9px 0; border-top: 1px solid var(--line); }
+  .mobileFieldCard dt { color: #77727a; font-size: 9px; }
+  .mobileFieldCard dd { margin: 3px 0 0; font-size: 11px; line-height: 1.45; }
+  .mobileFieldNav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .mobileFieldNav button {
+    min-height: 42px;
+    border: 1px solid var(--line);
+    border-radius: 980px;
+    background: #fff;
+    color: #b91134;
+    font-size: 11px;
+  }
+  .mobileFieldNav button:last-child { justify-self: stretch; }
+  .mobileFieldNav button:disabled { opacity: .35; }
+  .mobileFieldNav span { color: #77727a; font-size: 10px; }
+
+  .paper,
+  .detailPanel { display: none; }
+  .formLayout { display: block; }
+
   .hero { grid-template-columns: 1fr; gap: 22px; padding: 34px 18px 24px; }
   .hero h1 { font-size: 36px; }
   .heroCopy > p:last-child { font-size: 16px; }

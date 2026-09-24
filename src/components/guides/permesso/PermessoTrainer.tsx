@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   COUNTRY_CODES,
   PERMIT_CODES,
@@ -15,10 +15,13 @@ import styles from "./permesso-trainer.module.css";
 
 const MODE_LABEL: Record<FieldMode, string> = {
   write: "ПИШИ",
-  empty: "ОСТАВЬ ПУСТЫМ",
+  empty: "ПРОПУСТИ",
   post: "ТОЛЬКО НА ПОЧТЕ",
-  optional: "ЕСЛИ ЕСТЬ / ЖЕЛАТЕЛЬНО",
+  ifExists: "ЕСЛИ ЕСТЬ",
+  recommended: "ЖЕЛАТЕЛЬНО",
 };
+
+const LOCAL_DATA_KEY = "iitaly:permesso-modulo1-local-data";
 
 const COPY_KEYS = [
   ["passport", "Паспорт: нужные страницы + виза + штампы"],
@@ -36,20 +39,79 @@ const FORM_PAGES = [
   { number: 3, title: "Адрес в Италии", sections: ["travel", "address", "correspondence"] },
 ] as const;
 
+const RUNTIME_NOW = Date.now();
+
+function readUrlScenario(): PermessoScenario {
+  if (typeof window === "undefined") return "rilascio";
+  return new URLSearchParams(window.location.search).get("scenario") === "rinnovo" ? "rinnovo" : "rilascio";
+}
+
+function readUrlPageIndex() {
+  if (typeof window === "undefined") return 0;
+  const page = new URLSearchParams(window.location.search).get("page");
+  const index = FORM_PAGES.findIndex((item) => String(item.number) === page);
+  return index >= 0 ? index : 0;
+}
+
+function fieldsForPageIndex(pageIndex: number) {
+  const sectionIds = new Set<string>(FORM_PAGES[pageIndex].sections);
+  return TRAINER_SECTIONS.filter((section) => sectionIds.has(section.id)).flatMap((section) => section.fields);
+}
+
+function readUrlField() {
+  const scenario = readUrlScenario();
+  const pageIndex = readUrlPageIndex();
+  const fields = fieldsForPageIndex(pageIndex);
+  const requested = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("field");
+  return fields.find((item) => item.number === requested) || fields.find((item) => item.mode[scenario] === "write") || fields[0] || TRAINER_SECTIONS[0].fields[0];
+}
+
+function readLocalData() {
+  if (typeof window === "undefined") return {} as Record<string, string>;
+  try {
+    const saved = window.localStorage.getItem(LOCAL_DATA_KEY);
+    return saved ? JSON.parse(saved) as Record<string, string> : {};
+  } catch {
+    return {};
+  }
+}
+
 function padTwo(n: number) {
   return String(Math.max(0, Math.min(99, n))).padStart(2, "0");
 }
 
+function compactDateToTime(value: string) {
+  const clean = value.replace(/\D/g, "");
+  if (clean.length !== 8) return Number.NaN;
+  const day = Number(clean.slice(0, 2));
+  const month = Number(clean.slice(2, 4));
+  const year = Number(clean.slice(4, 8));
+  return new Date(year, month - 1, day).getTime();
+}
+
+function isValidCompactDate(value: string) {
+  const clean = value.replace(/\D/g, "");
+  if (clean.length !== 8) return false;
+  const day = Number(clean.slice(0, 2));
+  const month = Number(clean.slice(2, 4));
+  const year = Number(clean.slice(4, 8));
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
 export function PermessoTrainer() {
-  const [scenario, setScenario] = useState<PermessoScenario>("rilascio");
+  const [scenario, setScenario] = useState<PermessoScenario>(() => readUrlScenario());
   const [showExample, setShowExample] = useState(false);
-  const [activePage, setActivePage] = useState(0);
-  const [selected, setSelected] = useState<TrainerField>(TRAINER_SECTIONS[0].fields[0]);
+  const [activePage, setActivePage] = useState(() => readUrlPageIndex());
+  const [selected, setSelected] = useState<TrainerField>(() => readUrlField());
   const [requestCode, setRequestCode] = useState("");
   const [currentCardCode, setCurrentCardCode] = useState("");
   const [worker, setWorker] = useState(false);
   const [provinceQuery, setProvinceQuery] = useState("");
   const [countryQuery, setCountryQuery] = useState("");
+  const [myDataOpen, setMyDataOpen] = useState(false);
+  const [useMyData, setUseMyData] = useState(false);
+  const [myData, setMyData] = useState<Record<string, string>>(() => readLocalData());
   const [copies, setCopies] = useState<Record<string, string>>({
     passport: "", permit: "", fiscal: "", insurance: "", enrollment: "", funds: "", housing: "", module2: "",
   });
@@ -58,6 +120,14 @@ export function PermessoTrainer() {
     () => new Map(TRAINER_SECTIONS.map((section) => [section.id, section])),
     [],
   );
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(myData));
+    } catch {
+      // Storage can be unavailable in private/restricted browser modes.
+    }
+  }, [myData]);
 
   const extraSheets = useMemo(() => {
     let total = 0;
@@ -83,18 +153,30 @@ export function PermessoTrainer() {
     return COUNTRY_CODES.filter(([code, country]) => code.toLowerCase().includes(q) || country.toLowerCase().includes(q)).slice(0, 10);
   }, [countryQuery]);
 
-  function modeFor(field: TrainerField): FieldMode {
+  function modeForScenario(field: TrainerField, targetScenario: PermessoScenario): FieldMode {
     if (field.number === "24") return worker ? "write" : "empty";
-    return field.mode[scenario];
+    return field.mode[targetScenario];
   }
 
-  function exampleFor(field: TrainerField): string {
+  function modeFor(field: TrainerField): FieldMode {
+    return modeForScenario(field, scenario);
+  }
+
+  function suggestedValueFor(field: TrainerField): string {
     if (field.number === "16") return requestCode;
-    if (field.number === "19") return currentCardCode || requestCode;
+    if (field.number === "19") return currentCardCode;
     if (field.number === "22") return worker ? "02" : "01";
     if (field.number === "24") return worker ? "X" : "";
     if (field.number === "25") return padTwo(sheetTotal);
     return field.example?.[scenario] || "";
+  }
+
+  function displayValueFor(field: TrainerField): string {
+    if (useMyData && myData[field.number]) return myData[field.number];
+    if (useMyData && (field.number === "22" || field.number === "24" || field.number === "25")) return suggestedValueFor(field);
+    if (useMyData && field.kind === "x" && modeFor(field) === "write") return field.example?.[scenario] || "";
+    if (showExample) return suggestedValueFor(field);
+    return "";
   }
 
   function field(sectionId: string, number: string) {
@@ -107,11 +189,43 @@ export function PermessoTrainer() {
     return section.fields.every((item) => modeFor(item) === "empty");
   }
 
+  function firstWritableOnPage(pageIndex: number, targetScenario: PermessoScenario = scenario) {
+    const page = FORM_PAGES[pageIndex];
+    const fields = page.sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
+    return fields.find((item) => modeForScenario(item, targetScenario) === "write") || fields[0];
+  }
+
+  function updateUrl(nextScenario: PermessoScenario, pageIndex: number, fieldNumber: string, replace = false) {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("scenario", nextScenario);
+    url.searchParams.set("page", String(FORM_PAGES[pageIndex].number));
+    url.searchParams.set("field", fieldNumber);
+    window.history[replace ? "replaceState" : "pushState"]({}, "", url);
+  }
+
+  function selectField(nextField: TrainerField, replace = false) {
+    setSelected(nextField);
+    updateUrl(scenario, activePage, nextField.number, replace);
+  }
+
+  function switchScenario(nextScenario: PermessoScenario) {
+    setScenario(nextScenario);
+    const first = firstWritableOnPage(activePage, nextScenario);
+    if (first) {
+      setSelected(first);
+      updateUrl(nextScenario, activePage, first.number);
+    }
+  }
+
   function showPage(index: number) {
     const next = Math.max(0, Math.min(FORM_PAGES.length - 1, index));
     setActivePage(next);
-    const firstSection = sectionMap.get(FORM_PAGES[next].sections[0]);
-    if (firstSection?.fields[0]) setSelected(firstSection.fields[0]);
+    const first = firstWritableOnPage(next);
+    if (first) {
+      setSelected(first);
+      updateUrl(scenario, next, first.number);
+    }
     requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ block: "start", behavior: "smooth" }));
   }
 
@@ -121,14 +235,101 @@ export function PermessoTrainer() {
 
   const activeFormPage = FORM_PAGES[activePage];
   const activePageFields = activeFormPage.sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
-  const selectedPageIndex = activePageFields.findIndex((item) => item.number === selected.number);
+  const writablePageFields = activePageFields.filter((item) => modeFor(item) === "write");
+  const selectedWritableIndex = writablePageFields.findIndex((item) => item.number === selected.number);
 
   function selectRelativeField(delta: number) {
-    if (!activePageFields.length) return;
-    const current = selectedPageIndex >= 0 ? selectedPageIndex : 0;
-    const next = Math.max(0, Math.min(activePageFields.length - 1, current + delta));
-    setSelected(activePageFields[next]);
+    if (!writablePageFields.length) return;
+    const current = selectedWritableIndex >= 0 ? selectedWritableIndex : 0;
+    const next = Math.max(0, Math.min(writablePageFields.length - 1, current + delta));
+    selectField(writablePageFields[next]);
   }
+
+  function clearMyData() {
+    setMyData({});
+    setUseMyData(false);
+    try {
+      window.localStorage.removeItem(LOCAL_DATA_KEY);
+    } catch {
+      // Ignore storage restrictions.
+    }
+  }
+
+  function validationFor(field: TrainerField, value: string) {
+    if (!value) return "";
+    const clean = value.replace(/\s/g, "");
+    const capacity = (field.cells || 0) * (field.rows || 1);
+    if (capacity && value.length > capacity) return "Не помещается в клетки: сократи только если это допустимо по документу.";
+    if (field.number === "31" && !/^[A-Z0-9]{16}$/i.test(clean)) return "Codice fiscale должен содержать ровно 16 букв и цифр.";
+    if ((field.number === "72" || field.number === "84") && !/^\d{5}$/.test(clean)) return "CAP должен состоять из 5 цифр.";
+    if (field.kind === "date" && !isValidCompactDate(clean)) return "Проверь дату: формат ДДММГГГГ и дата должна существовать.";
+    if (field.number === "45" && isValidCompactDate(clean) && compactDateToTime(clean) < RUNTIME_NOW) return "Паспорт уже истёк — проверь документ до подачи.";
+    if (field.number === "20" && isValidCompactDate(clean) && compactDateToTime(clean) < RUNTIME_NOW) return "Срок ВНЖ уже прошёл. Это не блокирует тренажёр, но лучше отдельно проверить порядок действий.";
+    return "";
+  }
+
+  const editableMyDataFields = TRAINER_SECTIONS.flatMap((section) => section.fields)
+    .filter((item) => {
+      const mode = modeFor(item);
+      return mode !== "empty" && mode !== "post" && item.kind !== "x" && !["22", "25", "26", "62"].includes(item.number);
+    });
+
+  function helpSourceFor(field: TrainerField) {
+    if (field.number === "31" && scenario === "rinnovo") {
+      return "Возьми существующий codice fiscale из карточки / сертификата. При продлении не придумывай новый код.";
+    }
+    return field.source;
+  }
+
+  function codeHintFor(field: TrainerField) {
+    if (field.number === "16") {
+      const value = myData["16"] || requestCode;
+      return value ? value + " — выбран вручную" : "УТОЧНЯЕТСЯ · не подставляем 24/31 автоматически";
+    }
+    if (field.number === "19") {
+      const value = myData["19"] || currentCardCode;
+      return value ? value + " — перепроверь по текущему документу" : "ПЕРЕПИШИ С ТЕКУЩЕГО ВНЖ / ПРОШЛОГО KIT";
+    }
+    if (field.number === "32") return "A — не в браке · B — в браке";
+    if (field.number === "35" || field.number === "36") return "СВЕРЬ С TABELLA 3 ТВОЕГО KIT";
+    if (field.number === "46") return "Часто 01, если паспорт выдан госорганом страны — сверить foglio note";
+    return "";
+  }
+
+  useEffect(() => {
+    function handleKey(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, button")) return;
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        selectRelativeField(1);
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        selectRelativeField(-1);
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  });
+
+  useEffect(() => {
+    function applyUrlState() {
+      const params = new URLSearchParams(window.location.search);
+      const nextScenario: PermessoScenario = params.get("scenario") === "rinnovo" ? "rinnovo" : "rilascio";
+      const requestedPage = params.get("page");
+      const foundPage = FORM_PAGES.findIndex((item) => String(item.number) === requestedPage);
+      const pageIndex = foundPage >= 0 ? foundPage : 0;
+      const fields = fieldsForPageIndex(pageIndex);
+      const requestedField = params.get("field");
+      const nextField = fields.find((item) => item.number === requestedField) || fields.find((item) => item.mode[nextScenario] === "write") || fields[0];
+      setScenario(nextScenario);
+      setActivePage(pageIndex);
+      if (nextField) setSelected(nextField);
+    }
+    window.addEventListener("popstate", applyUrlState);
+    return () => window.removeEventListener("popstate", applyUrlState);
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -149,27 +350,95 @@ export function PermessoTrainer() {
         </div>
       </section>
 
+      <section className={styles.prepStrip} aria-label="Что подготовить">
+        <div>
+          <span>Подготовь на стол</span>
+          <b>Kit · чёрная ручка · паспорт · codice fiscale{scenario === "rinnovo" ? " · карточка ВНЖ" : ""} · marca da bollo €16</b>
+        </div>
+        <a href="#helpers">Коды и листы ↓</a>
+      </section>
+
       <section className={styles.controls}>
         <div className={styles.scenarioSwitch} aria-label="Сценарий подачи">
-          <button type="button" data-active={scenario === "rilascio"} onClick={() => setScenario("rilascio")}>
+          <button type="button" data-active={scenario === "rilascio"} onClick={() => switchScenario("rilascio")}>
             <span>Первое ВНЖ</span>
             <small>RILASCIO · только приехал</small>
           </button>
-          <button type="button" data-active={scenario === "rinnovo"} onClick={() => setScenario("rinnovo")}>
+          <button type="button" data-active={scenario === "rinnovo"} onClick={() => switchScenario("rinnovo")}>
             <span>Продление</span>
             <small>RINNOVO · карточка уже есть</small>
           </button>
         </div>
-        <button type="button" className={styles.exampleToggle} aria-pressed={showExample} onClick={() => setShowExample((value) => !value)}>
-          {showExample ? "Скрыть пример" : "Показать пример"}
-        </button>
+        <div className={styles.controlActions}>
+          <button
+            type="button"
+            className={styles.exampleToggle}
+            aria-pressed={showExample}
+            onClick={() => {
+              setShowExample((value) => !value);
+              setUseMyData(false);
+            }}
+          >
+            {showExample ? "Скрыть пример" : "Показать пример"}
+          </button>
+          <button type="button" className={styles.myDataButton} onClick={() => setMyDataOpen((value) => !value)}>
+            Мои данные
+          </button>
+        </div>
       </section>
 
+      {myDataOpen && (
+        <section className={styles.myDataPanel}>
+          <div className={styles.myDataHeader}>
+            <div>
+              <span>Режим «Мои данные»</span>
+              <b>Данные остаются только в этом браузере и не отправляются на сервер.</b>
+            </div>
+            <button type="button" onClick={clearMyData}>Стереть</button>
+          </div>
+          <div className={styles.myDataGrid}>
+            {editableMyDataFields.map((item) => {
+              const value = myData[item.number] || "";
+              const error = validationFor(item, value);
+              return (
+                <label key={item.section + ":" + item.number} className={styles.myDataField}>
+                  <span><b>{item.number}. {item.ru}</b><small>{item.it}</small></span>
+                  <input
+                    value={value}
+                    inputMode={item.kind === "number" || item.kind === "date" ? "numeric" : "text"}
+                    placeholder={item.kind === "date" ? "ДДММГГГГ" : ""}
+                    onChange={(event) => setMyData((prev) => ({ ...prev, [item.number]: event.target.value.toUpperCase() }))}
+                  />
+                  {error && <em>{error}</em>}
+                </label>
+              );
+            })}
+          </div>
+          <div className={styles.myDataFooter}>
+            <button
+              type="button"
+              className={styles.useMyDataButton}
+              onClick={() => {
+                setUseMyData(true);
+                setShowExample(false);
+                setMyDataOpen(false);
+                const first = firstWritableOnPage(activePage);
+                if (first) selectField(first, true);
+                requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+              }}
+            >
+              Переносим на бумагу
+            </button>
+            {useMyData && <span>Мои данные сейчас показаны тёмно-синими «чернилами».</span>}
+          </div>
+        </section>
+      )}
+
       <div className={styles.legendBar}>
-        <span data-mode="write"><i /> Пиши</span>
-        <span data-mode="empty"><i /> Оставь пустым</span>
+        <span data-mode="write"><i /> Обычное поле — заполняй</span>
+        <span data-mode="empty"><i /> Пропусти</span>
         <span data-mode="post"><i /> Только на почте</span>
-        <span data-mode="optional"><i /> Если есть / желательно</span>
+        <span data-mode="ifExists"><i /> Если есть</span>
       </div>
 
       <section id="modulo-sheet" className={styles.trainer}>
@@ -180,10 +449,36 @@ export function PermessoTrainer() {
               <small>{item.title}</small>
             </button>
           ))}
+          <button type="button" className={styles.utilityTab} onClick={() => document.getElementById("pages4-8")?.scrollIntoView({ behavior: "smooth" })}>
+            <span>Стр. 4–8</span><small>Не трогать</small>
+          </button>
+          <button type="button" className={styles.utilityTab} onClick={() => document.getElementById("before-poste")?.scrollIntoView({ behavior: "smooth" })}>
+            <span>Перед почтой</span><small>Проверка</small>
+          </button>
         </nav>
 
+        <div className={styles.mobileFieldCard} data-mode={modeFor(selected)}>
+          <div className={styles.mobileFieldHead}>
+            <span>Стр. {activeFormPage.number} · поле {selected.number}</span>
+            <b>{MODE_LABEL[modeFor(selected)]}</b>
+          </div>
+          <h2>{selected.it}</h2>
+          <p>{selected.ru}</p>
+          {selected.kind !== "x" && selected.cells !== 0 && <FieldCells field={selected} value={displayValueFor(selected)} compact={false} />}
+          {codeHintFor(selected) && <div className={styles.codeHint}>{codeHintFor(selected)}</div>}
+          <dl>
+            <div><dt>{modeFor(selected) === "empty" ? "Почему пусто" : "Откуда взять"}</dt><dd>{helpSourceFor(selected)}</dd></div>
+            <div><dt>Формат</dt><dd>{selected.format}</dd></div>
+          </dl>
+          <div className={styles.mobileFieldNav}>
+            <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedWritableIndex <= 0}>← Назад</button>
+            <span>{Math.max(1, selectedWritableIndex + 1)} из {writablePageFields.length}</span>
+            <button type="button" onClick={() => selectRelativeField(1)} disabled={!writablePageFields.length || selectedWritableIndex >= writablePageFields.length - 1}>Дальше →</button>
+          </div>
+        </div>
+
         <div className={styles.formLayout}>
-          <div className={styles.paper}>
+          <div className={styles.paper} data-personal={useMyData || undefined}>
             <FormHeader
               page={activeFormPage.number}
               showExample={showExample}
@@ -194,49 +489,51 @@ export function PermessoTrainer() {
               <>
                 <FormSection section={sectionMap.get("request")!} empty={false}>
                   <div className={styles.fullRows}>
-                    <FormField field={field("request", "3")} mode={modeFor(field("request", "3"))} example={showExample ? exampleFor(field("request", "3")) : ""} selected={selected.number === "3"} onSelect={setSelected} />
-                    <FormField field={field("request", "4")} mode={modeFor(field("request", "4"))} example={showExample ? exampleFor(field("request", "4")) : ""} selected={selected.number === "4"} onSelect={setSelected} />
+                    <FormField field={field("request", "3")} mode={modeFor(field("request", "3"))} example={displayValueFor(field("request", "3"))} selected={selected.number === "3"} onSelect={selectField} />
+                    <FormField field={field("request", "4")} mode={modeFor(field("request", "4"))} example={displayValueFor(field("request", "4"))} selected={selected.number === "4"} onSelect={selectField} />
                     <div className={styles.twoColumnFields}>
-                      <FormField field={field("request", "5")} compact mode={modeFor(field("request", "5"))} example={showExample ? exampleFor(field("request", "5")) : ""} selected={selected.number === "5"} onSelect={setSelected} />
-                      <FormField field={field("request", "6")} mode={modeFor(field("request", "6"))} example={showExample ? exampleFor(field("request", "6")) : ""} selected={selected.number === "6"} onSelect={setSelected} />
+                      <FormField field={field("request", "5")} compact mode={modeFor(field("request", "5"))} example={displayValueFor(field("request", "5"))} selected={selected.number === "5"} onSelect={selectField} />
+                      <FormField field={field("request", "6")} mode={modeFor(field("request", "6"))} example={displayValueFor(field("request", "6"))} selected={selected.number === "6"} onSelect={selectField} />
                     </div>
                   </div>
 
                   <div className={styles.requestChoices}>
                     <div className={styles.choicePanel}>
                       <p>7. RICHIEDE IL:</p>
-                      <ChoiceField field={field("request", "8")} mode={modeFor(field("request", "8"))} example={showExample ? exampleFor(field("request", "8")) : ""} selected={selected.number === "8"} onSelect={setSelected} />
-                      <ChoiceField field={field("request", "9")} mode={modeFor(field("request", "9"))} example={showExample ? exampleFor(field("request", "9")) : ""} selected={selected.number === "9"} onSelect={setSelected} />
-                      <GroupedChoiceField field={field("request", "10–12")} labels={["AGGIORNAMENTO", "DUPLICATO", "CONVERSIONE"]} mode={modeFor(field("request", "10–12"))} selected={selected.number === "10–12"} onSelect={setSelected} />
+                      <ChoiceField field={field("request", "8")} mode={modeFor(field("request", "8"))} example={displayValueFor(field("request", "8"))} selected={selected.number === "8"} onSelect={selectField} />
+                      <ChoiceField field={field("request", "9")} mode={modeFor(field("request", "9"))} example={displayValueFor(field("request", "9"))} selected={selected.number === "9"} onSelect={selectField} />
+                      <ChoiceField field={field("request", "10")} mode={modeFor(field("request", "10"))} example="" selected={selected.number === "10"} onSelect={selectField} />
+                      <ChoiceField field={field("request", "11")} mode={modeFor(field("request", "11"))} example="" selected={selected.number === "11"} onSelect={selectField} />
+                      <ChoiceField field={field("request", "12")} mode={modeFor(field("request", "12"))} example="" selected={selected.number === "12"} onSelect={selectField} />
                     </div>
                     <div className={styles.choicePanel}>
                       <p>13. DEL/DELLA:</p>
-                      <ChoiceField field={field("request", "14")} mode={modeFor(field("request", "14"))} example={showExample ? exampleFor(field("request", "14")) : ""} selected={selected.number === "14"} onSelect={setSelected} />
-                      <ChoiceField field={field("request", "15")} mode={modeFor(field("request", "15"))} example="" selected={selected.number === "15"} onSelect={setSelected} />
-                      <FormField field={field("request", "16")} compact mode={modeFor(field("request", "16"))} example={showExample ? exampleFor(field("request", "16")) : ""} selected={selected.number === "16"} onSelect={setSelected} />
-                      <ChoiceField field={field("request", "17")} mode={modeFor(field("request", "17"))} example="" selected={selected.number === "17"} onSelect={setSelected} />
+                      <ChoiceField field={field("request", "14")} mode={modeFor(field("request", "14"))} example={displayValueFor(field("request", "14"))} selected={selected.number === "14"} onSelect={selectField} />
+                      <ChoiceField field={field("request", "15")} mode={modeFor(field("request", "15"))} example="" selected={selected.number === "15"} onSelect={selectField} />
+                      <FormField field={field("request", "16")} compact mode={modeFor(field("request", "16"))} example={displayValueFor(field("request", "16"))} selected={selected.number === "16"} onSelect={selectField} />
+                      <ChoiceField field={field("request", "17")} mode={modeFor(field("request", "17"))} example="" selected={selected.number === "17"} onSelect={selectField} />
                     </div>
                   </div>
 
                   <div className={styles.permitStrip}>
-                    <FormField field={field("request", "18")} mode={modeFor(field("request", "18"))} example={showExample ? exampleFor(field("request", "18")) : ""} selected={selected.number === "18"} onSelect={setSelected} />
-                    <FormField field={field("request", "19")} compact mode={modeFor(field("request", "19"))} example={showExample ? exampleFor(field("request", "19")) : ""} selected={selected.number === "19"} onSelect={setSelected} />
-                    <FormField field={field("request", "20")} compact mode={modeFor(field("request", "20"))} example={showExample ? exampleFor(field("request", "20")) : ""} selected={selected.number === "20"} onSelect={setSelected} />
+                    <FormField field={field("request", "18")} mode={modeFor(field("request", "18"))} example={displayValueFor(field("request", "18"))} selected={selected.number === "18"} onSelect={selectField} />
+                    <FormField field={field("request", "19")} compact mode={modeFor(field("request", "19"))} example={displayValueFor(field("request", "19"))} selected={selected.number === "19"} onSelect={selectField} />
+                    <FormField field={field("request", "20")} compact mode={modeFor(field("request", "20"))} example={displayValueFor(field("request", "20"))} selected={selected.number === "20"} onSelect={selectField} />
                   </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("application")!} empty={false}>
                   <div className={styles.applicationGrid}>
-                    <FormField field={field("application", "22")} compact mode={modeFor(field("application", "22"))} example={showExample ? exampleFor(field("application", "22")) : ""} selected={selected.number === "22"} onSelect={setSelected} />
-                    <ChoiceField field={field("application", "23")} mode={modeFor(field("application", "23"))} example={showExample ? exampleFor(field("application", "23")) : ""} selected={selected.number === "23"} onSelect={setSelected} />
-                    <ChoiceField field={field("application", "24")} mode={modeFor(field("application", "24"))} example={showExample ? exampleFor(field("application", "24")) : ""} selected={selected.number === "24"} onSelect={setSelected} />
-                    <FormField field={field("application", "25")} compact mode={modeFor(field("application", "25"))} example={showExample ? exampleFor(field("application", "25")) : ""} selected={selected.number === "25"} onSelect={setSelected} />
-                    <FormField field={field("application", "26")} compact mode={modeFor(field("application", "26"))} example="" selected={selected.number === "26"} onSelect={setSelected} />
+                    <FormField field={field("application", "22")} compact mode={modeFor(field("application", "22"))} example={displayValueFor(field("application", "22"))} selected={selected.number === "22"} onSelect={selectField} />
+                    <ChoiceField field={field("application", "23")} mode={modeFor(field("application", "23"))} example={displayValueFor(field("application", "23"))} selected={selected.number === "23"} onSelect={selectField} />
+                    <ChoiceField field={field("application", "24")} mode={modeFor(field("application", "24"))} example={displayValueFor(field("application", "24"))} selected={selected.number === "24"} onSelect={selectField} />
+                    <FormField field={field("application", "25")} compact mode={modeFor(field("application", "25"))} example={displayValueFor(field("application", "25"))} selected={selected.number === "25"} onSelect={selectField} />
+                    <FormField field={field("application", "26")} compact mode={modeFor(field("application", "26"))} example="" selected={selected.number === "26"} onSelect={selectField} />
                   </div>
                   <p className={styles.legalLine}>27. RESPONSABILITÀ PER DICHIARAZIONI MENDACI · этот текст только читают, здесь ничего не пишут.</p>
                   <div className={styles.dateSignature}>
-                    <FormField field={field("application", "28")} mode={modeFor(field("application", "28"))} example={showExample ? exampleFor(field("application", "28")) : ""} selected={selected.number === "28"} onSelect={setSelected} />
-                    <FormField field={field("application", "29")} signature mode={modeFor(field("application", "29"))} example="" selected={selected.number === "29"} onSelect={setSelected} />
+                    <FormField field={field("application", "28")} mode={modeFor(field("application", "28"))} example={displayValueFor(field("application", "28"))} selected={selected.number === "28"} onSelect={selectField} />
+                    <FormField field={field("application", "29")} signature mode={modeFor(field("application", "29"))} example="" selected={selected.number === "29"} onSelect={selectField} />
                   </div>
                 </FormSection>
               </>
@@ -246,45 +543,49 @@ export function PermessoTrainer() {
               <>
                 <FormSection section={sectionMap.get("identity")!} empty={false}>
                   <div className={styles.identityGrid}>
-                    <FormField className={styles.spanAll} field={field("identity", "31")} mode={modeFor(field("identity", "31"))} example={showExample ? exampleFor(field("identity", "31")) : ""} selected={selected.number === "31"} onSelect={setSelected} />
-                    <FormField field={field("identity", "32")} compact mode={modeFor(field("identity", "32"))} example={showExample ? exampleFor(field("identity", "32")) : ""} selected={selected.number === "32"} onSelect={setSelected} />
-                    <FormField field={field("identity", "33")} compact mode={modeFor(field("identity", "33"))} example={showExample ? exampleFor(field("identity", "33")) : ""} selected={selected.number === "33"} onSelect={setSelected} />
-                    <FormField field={field("identity", "34")} compact mode={modeFor(field("identity", "34"))} example={showExample ? exampleFor(field("identity", "34")) : ""} selected={selected.number === "34"} onSelect={setSelected} />
-                    <FormField field={field("identity", "35")} compact mode={modeFor(field("identity", "35"))} example={showExample ? exampleFor(field("identity", "35")) : ""} selected={selected.number === "35"} onSelect={setSelected} />
-                    <FormField field={field("identity", "36")} compact mode={modeFor(field("identity", "36"))} example={showExample ? exampleFor(field("identity", "36")) : ""} selected={selected.number === "36"} onSelect={setSelected} />
-                    <FormField field={field("identity", "37")} compact mode={modeFor(field("identity", "37"))} example={showExample ? exampleFor(field("identity", "37")) : ""} selected={selected.number === "37"} onSelect={setSelected} />
-                    <FormField className={styles.spanAll} field={field("identity", "38")} mode={modeFor(field("identity", "38"))} example={showExample ? exampleFor(field("identity", "38")) : ""} selected={selected.number === "38"} onSelect={setSelected} />
+                    <FormField className={styles.spanAll} field={field("identity", "31")} mode={modeFor(field("identity", "31"))} example={displayValueFor(field("identity", "31"))} selected={selected.number === "31"} onSelect={selectField} />
+                    <FormField field={field("identity", "32")} compact mode={modeFor(field("identity", "32"))} example={displayValueFor(field("identity", "32"))} selected={selected.number === "32"} onSelect={selectField} />
+                    <FormField field={field("identity", "33")} compact mode={modeFor(field("identity", "33"))} example={displayValueFor(field("identity", "33"))} selected={selected.number === "33"} onSelect={selectField} />
+                    <FormField field={field("identity", "34")} compact mode={modeFor(field("identity", "34"))} example={displayValueFor(field("identity", "34"))} selected={selected.number === "34"} onSelect={selectField} />
+                    <FormField field={field("identity", "35")} compact mode={modeFor(field("identity", "35"))} example={displayValueFor(field("identity", "35"))} selected={selected.number === "35"} onSelect={selectField} />
+                    <FormField field={field("identity", "36")} compact mode={modeFor(field("identity", "36"))} example={displayValueFor(field("identity", "36"))} selected={selected.number === "36"} onSelect={selectField} />
+                    <RefugeeField field={field("identity", "37")} mode={modeFor(field("identity", "37"))} value={displayValueFor(field("identity", "37"))} selected={selected.number === "37"} onSelect={selectField} />
+                    <FormField className={styles.spanAll} field={field("identity", "38")} mode={modeFor(field("identity", "38"))} example={displayValueFor(field("identity", "38"))} selected={selected.number === "38"} onSelect={selectField} />
                   </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("passport")!} empty={false}>
                   <div className={styles.passportTop}>
-                    <ChoiceField field={field("passport", "40")} mode={modeFor(field("passport", "40"))} example={showExample ? exampleFor(field("passport", "40")) : ""} selected={selected.number === "40"} onSelect={setSelected} />
-                    <GroupedChoiceField field={field("passport", "41–43")} labels={["ALTRO TIPO", "SPECIFICARE ALTRO", "ALTRO"]} mode={modeFor(field("passport", "41–43"))} selected={selected.number === "41–43"} onSelect={setSelected} />
+                    <ChoiceField field={field("passport", "40")} mode={modeFor(field("passport", "40"))} example={displayValueFor(field("passport", "40"))} selected={selected.number === "40"} onSelect={selectField} />
+                    <div className={styles.passportOther}>
+                      <ChoiceField field={field("passport", "41")} mode={modeFor(field("passport", "41"))} example="" selected={selected.number === "41"} onSelect={selectField} />
+                      <FormField field={field("passport", "42")} compact mode={modeFor(field("passport", "42"))} example="" selected={selected.number === "42"} onSelect={selectField} />
+                      <FormField field={field("passport", "43")} mode={modeFor(field("passport", "43"))} example="" selected={selected.number === "43"} onSelect={selectField} />
+                    </div>
                   </div>
-                  <FormField field={field("passport", "44")} mode={modeFor(field("passport", "44"))} example={showExample ? exampleFor(field("passport", "44")) : ""} selected={selected.number === "44"} onSelect={setSelected} />
+                  <FormField field={field("passport", "44")} mode={modeFor(field("passport", "44"))} example={displayValueFor(field("passport", "44"))} selected={selected.number === "44"} onSelect={selectField} />
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("passport", "45")} mode={modeFor(field("passport", "45"))} example={showExample ? exampleFor(field("passport", "45")) : ""} selected={selected.number === "45"} onSelect={setSelected} />
-                    <FormField field={field("passport", "46")} compact mode={modeFor(field("passport", "46"))} example={showExample ? exampleFor(field("passport", "46")) : ""} selected={selected.number === "46"} onSelect={setSelected} />
+                    <FormField field={field("passport", "45")} mode={modeFor(field("passport", "45"))} example={displayValueFor(field("passport", "45"))} selected={selected.number === "45"} onSelect={selectField} />
+                    <FormField field={field("passport", "46")} compact mode={modeFor(field("passport", "46"))} example={displayValueFor(field("passport", "46"))} selected={selected.number === "46"} onSelect={selectField} />
                   </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("visa")!} empty={allEmpty(sectionMap.get("visa")!)}>
-                  <FormField field={field("visa", "48")} mode={modeFor(field("visa", "48"))} example={showExample ? exampleFor(field("visa", "48")) : ""} selected={selected.number === "48"} onSelect={setSelected} />
-                  <FormField field={field("visa", "49")} mode={modeFor(field("visa", "49"))} example={showExample ? exampleFor(field("visa", "49")) : ""} selected={selected.number === "49"} onSelect={setSelected} />
+                  <FormField field={field("visa", "48")} mode={modeFor(field("visa", "48"))} example={displayValueFor(field("visa", "48"))} selected={selected.number === "48"} onSelect={selectField} />
+                  <FormField field={field("visa", "49")} mode={modeFor(field("visa", "49"))} example={displayValueFor(field("visa", "49"))} selected={selected.number === "49"} onSelect={selectField} />
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("visa", "50")} mode={modeFor(field("visa", "50"))} example={showExample ? exampleFor(field("visa", "50")) : ""} selected={selected.number === "50"} onSelect={setSelected} />
-                    <FormField field={field("visa", "51")} compact mode={modeFor(field("visa", "51"))} example={showExample ? exampleFor(field("visa", "51")) : ""} selected={selected.number === "51"} onSelect={setSelected} />
+                    <FormField field={field("visa", "50")} mode={modeFor(field("visa", "50"))} example={displayValueFor(field("visa", "50"))} selected={selected.number === "50"} onSelect={selectField} />
+                    <FormField field={field("visa", "51")} compact mode={modeFor(field("visa", "51"))} example={displayValueFor(field("visa", "51"))} selected={selected.number === "51"} onSelect={selectField} />
                   </div>
                   <div className={styles.twoColumnFields}>
-                    <ChoiceField field={field("visa", "52")} mode={modeFor(field("visa", "52"))} example={showExample ? exampleFor(field("visa", "52")) : ""} selected={selected.number === "52"} onSelect={setSelected} />
-                    <ChoiceField field={field("visa", "53")} mode={modeFor(field("visa", "53"))} example={showExample ? exampleFor(field("visa", "53")) : ""} selected={selected.number === "53"} onSelect={setSelected} />
+                    <ChoiceField field={field("visa", "52")} mode={modeFor(field("visa", "52"))} example={displayValueFor(field("visa", "52"))} selected={selected.number === "52"} onSelect={selectField} />
+                    <ChoiceField field={field("visa", "53")} mode={modeFor(field("visa", "53"))} example={displayValueFor(field("visa", "53"))} selected={selected.number === "53"} onSelect={selectField} />
                   </div>
-                  <FormField field={field("visa", "54")} mode={modeFor(field("visa", "54"))} example={showExample ? exampleFor(field("visa", "54")) : ""} selected={selected.number === "54"} onSelect={setSelected} />
+                  <FormField field={field("visa", "54")} mode={modeFor(field("visa", "54"))} example={displayValueFor(field("visa", "54"))} selected={selected.number === "54"} onSelect={selectField} />
                   <div className={styles.threeColumnFields}>
-                    <FormField field={field("visa", "55")} compact mode={modeFor(field("visa", "55"))} example={showExample ? exampleFor(field("visa", "55")) : ""} selected={selected.number === "55"} onSelect={setSelected} />
-                    <FormField field={field("visa", "56")} mode={modeFor(field("visa", "56"))} example={showExample ? exampleFor(field("visa", "56")) : ""} selected={selected.number === "56"} onSelect={setSelected} />
-                    <FormField field={field("visa", "57")} mode={modeFor(field("visa", "57"))} example={showExample ? exampleFor(field("visa", "57")) : ""} selected={selected.number === "57"} onSelect={setSelected} />
+                    <FormField field={field("visa", "55")} compact mode={modeFor(field("visa", "55"))} example={displayValueFor(field("visa", "55"))} selected={selected.number === "55"} onSelect={selectField} />
+                    <FormField field={field("visa", "56")} mode={modeFor(field("visa", "56"))} example={displayValueFor(field("visa", "56"))} selected={selected.number === "56"} onSelect={selectField} />
+                    <FormField field={field("visa", "57")} mode={modeFor(field("visa", "57"))} example={displayValueFor(field("visa", "57"))} selected={selected.number === "57"} onSelect={selectField} />
                   </div>
                 </FormSection>
               </>
@@ -293,32 +594,53 @@ export function PermessoTrainer() {
             {activeFormPage.number === 3 && (
               <>
                 <FormSection section={sectionMap.get("travel")!} empty={true}>
-                  <GroupedChoiceField field={field("travel", "59–64")} labels={["TITOLO VIAGGIO STRANIERO", "TITOLO APOLIDE", "DOCUMENTO RIFUGIATO", "1 ANNO", "2 ANNI"]} mode={modeFor(field("travel", "59–64"))} selected={selected.number === "59–64"} onSelect={setSelected} />
+                  <div className={styles.travelGrid}>
+                    <ChoiceField field={field("travel", "59")} mode={modeFor(field("travel", "59"))} example="" selected={selected.number === "59"} onSelect={selectField} />
+                    <ChoiceField field={field("travel", "60")} mode={modeFor(field("travel", "60"))} example="" selected={selected.number === "60"} onSelect={selectField} />
+                    <ChoiceField field={field("travel", "61")} mode={modeFor(field("travel", "61"))} example="" selected={selected.number === "61"} onSelect={selectField} />
+                    <div className={styles.periodLabel}>62. PERIODO PER IL QUALE SI CHIEDE IL RINNOVO</div>
+                    <ChoiceField field={field("travel", "63")} mode={modeFor(field("travel", "63"))} example="" selected={selected.number === "63"} onSelect={selectField} />
+                    <ChoiceField field={field("travel", "64")} mode={modeFor(field("travel", "64"))} example="" selected={selected.number === "64"} onSelect={selectField} />
+                  </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("address")!} empty={false}>
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("address", "66")} compact mode={modeFor(field("address", "66"))} example={showExample ? exampleFor(field("address", "66")) : ""} selected={selected.number === "66"} onSelect={setSelected} />
-                    <FormField field={field("address", "67")} mode={modeFor(field("address", "67"))} example={showExample ? exampleFor(field("address", "67")) : ""} selected={selected.number === "67"} onSelect={setSelected} />
+                    <FormField field={field("address", "66")} compact mode={modeFor(field("address", "66"))} example={displayValueFor(field("address", "66"))} selected={selected.number === "66"} onSelect={selectField} />
+                    <FormField field={field("address", "67")} mode={modeFor(field("address", "67"))} example={displayValueFor(field("address", "67"))} selected={selected.number === "67"} onSelect={selectField} />
                   </div>
-                  <FormField field={field("address", "68")} mode={modeFor(field("address", "68"))} example={showExample ? exampleFor(field("address", "68")) : ""} selected={selected.number === "68"} onSelect={setSelected} />
+                  <FormField field={field("address", "68")} mode={modeFor(field("address", "68"))} example={displayValueFor(field("address", "68"))} selected={selected.number === "68"} onSelect={selectField} />
                   <div className={styles.threeColumnFields}>
-                    <FormField field={field("address", "69")} compact mode={modeFor(field("address", "69"))} example={showExample ? exampleFor(field("address", "69")) : ""} selected={selected.number === "69"} onSelect={setSelected} />
-                    <FormField field={field("address", "70–71")} compact mode={modeFor(field("address", "70–71"))} example="" selected={selected.number === "70–71"} onSelect={setSelected} />
-                    <FormField field={field("address", "72")} compact mode={modeFor(field("address", "72"))} example={showExample ? exampleFor(field("address", "72")) : ""} selected={selected.number === "72"} onSelect={setSelected} />
+                    <FormField field={field("address", "69")} compact mode={modeFor(field("address", "69"))} example={displayValueFor(field("address", "69"))} selected={selected.number === "69"} onSelect={selectField} />
+                    <div className={styles.twoMiniFields}>
+                      <FormField field={field("address", "70")} compact mode={modeFor(field("address", "70"))} example={displayValueFor(field("address", "70"))} selected={selected.number === "70"} onSelect={selectField} />
+                      <FormField field={field("address", "71")} compact mode={modeFor(field("address", "71"))} example={displayValueFor(field("address", "71"))} selected={selected.number === "71"} onSelect={selectField} />
+                    </div>
+                    <FormField field={field("address", "72")} compact mode={modeFor(field("address", "72"))} example={displayValueFor(field("address", "72"))} selected={selected.number === "72"} onSelect={selectField} />
                   </div>
-                  <FormField field={field("address", "73")} mode={modeFor(field("address", "73"))} example={showExample ? exampleFor(field("address", "73")) : ""} selected={selected.number === "73"} onSelect={setSelected} />
+                  <FormField field={field("address", "73")} mode={modeFor(field("address", "73"))} example={displayValueFor(field("address", "73"))} selected={selected.number === "73"} onSelect={selectField} />
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("address", "74")} mode={modeFor(field("address", "74"))} example="" selected={selected.number === "74"} onSelect={setSelected} />
-                    <FormField field={field("address", "75")} mode={modeFor(field("address", "75"))} example={showExample ? exampleFor(field("address", "75")) : ""} selected={selected.number === "75"} onSelect={setSelected} />
+                    <FormField field={field("address", "74")} mode={modeFor(field("address", "74"))} example={displayValueFor(field("address", "74"))} selected={selected.number === "74"} onSelect={selectField} />
+                    <FormField field={field("address", "75")} mode={modeFor(field("address", "75"))} example={displayValueFor(field("address", "75"))} selected={selected.number === "75"} onSelect={selectField} />
                   </div>
                 </FormSection>
 
-                <FormSection section={sectionMap.get("correspondence")!} empty={true}>
-                  <FormField field={field("correspondence", "77–84")} mode={modeFor(field("correspondence", "77–84"))} example="" selected={selected.number === "77–84"} onSelect={setSelected} />
+                <FormSection section={sectionMap.get("correspondence")!} empty={false}>
+                  <FormField field={field("correspondence", "77")} mode={modeFor(field("correspondence", "77"))} example={displayValueFor(field("correspondence", "77"))} selected={selected.number === "77"} onSelect={selectField} />
+                  <div className={styles.twoColumnFields}>
+                    <FormField field={field("correspondence", "78")} compact mode={modeFor(field("correspondence", "78"))} example={displayValueFor(field("correspondence", "78"))} selected={selected.number === "78"} onSelect={selectField} />
+                    <FormField field={field("correspondence", "79")} mode={modeFor(field("correspondence", "79"))} example={displayValueFor(field("correspondence", "79"))} selected={selected.number === "79"} onSelect={selectField} />
+                  </div>
+                  <FormField field={field("correspondence", "80")} mode={modeFor(field("correspondence", "80"))} example={displayValueFor(field("correspondence", "80"))} selected={selected.number === "80"} onSelect={selectField} />
+                  <div className={styles.fourColumnFields}>
+                    <FormField field={field("correspondence", "81")} compact mode={modeFor(field("correspondence", "81"))} example={displayValueFor(field("correspondence", "81"))} selected={selected.number === "81"} onSelect={selectField} />
+                    <FormField field={field("correspondence", "82")} compact mode={modeFor(field("correspondence", "82"))} example={displayValueFor(field("correspondence", "82"))} selected={selected.number === "82"} onSelect={selectField} />
+                    <FormField field={field("correspondence", "83")} compact mode={modeFor(field("correspondence", "83"))} example={displayValueFor(field("correspondence", "83"))} selected={selected.number === "83"} onSelect={selectField} />
+                    <FormField field={field("correspondence", "84")} compact mode={modeFor(field("correspondence", "84"))} example={displayValueFor(field("correspondence", "84"))} selected={selected.number === "84"} onSelect={selectField} />
+                  </div>
                 </FormSection>
 
-                <div className={styles.pagesEmpty}>
+                <div id="pages4-8" className={styles.pagesEmpty}>
                   <span>Страницы 4–8 бумажного Modulo 1</span>
                   <strong>НЕ ВЫРЫВАТЬ · ОСТАВИТЬ ПУСТЫМИ</strong>
                   <p>Для сценария студента без семьи они остаются частью комплекта и учитываются в числе листов.</p>
@@ -336,20 +658,26 @@ export function PermessoTrainer() {
             </div>
             <h3>{selected.it}</h3>
             <p className={styles.detailRu}>{selected.ru}</p>
+            {codeHintFor(selected) && <div className={styles.codeHint}>{codeHintFor(selected)}</div>}
             <dl>
-              <div><dt>Откуда взять</dt><dd>{selected.source}</dd></div>
+              <div>
+                <dt>{modeFor(selected) === "empty" ? "Почему пусто" : "Откуда взять"}</dt>
+                <dd>{helpSourceFor(selected)}</dd>
+              </div>
               <div><dt>Формат</dt><dd>{selected.format}</dd></div>
-              {exampleFor(selected) && <div><dt>Пример</dt><dd>{exampleFor(selected)}</dd></div>}
+              {suggestedValueFor(selected) && <div><dt>Пример</dt><dd>{suggestedValueFor(selected)}</dd></div>}
               <div><dt>Частая ошибка</dt><dd>{selected.mistake}</dd></div>
             </dl>
-            <p className={styles.exampleNote}>Серые буквы — выдуманный пример. На бумаге пиши свои данные чёрной ручкой.</p>
+            <p className={styles.exampleNote}>
+              {useMyData ? "Тёмно-синие буквы — твои локальные данные из этого браузера." : "Серые буквы — выдуманный пример. На бумаге пиши свои данные чёрной ручкой."}
+            </p>
             <div className={styles.detailNav}>
-              <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedPageIndex <= 0}>
-                ← Предыдущее
+              <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedWritableIndex <= 0}>
+                ← Предыдущее поле
               </button>
-              <span>{Math.max(1, selectedPageIndex + 1)} / {activePageFields.length}</span>
-              <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedPageIndex < 0 || selectedPageIndex >= activePageFields.length - 1}>
-                Следующее →
+              <span>{Math.max(1, selectedWritableIndex + 1)} / {writablePageFields.length}</span>
+              <button type="button" onClick={() => selectRelativeField(1)} disabled={!writablePageFields.length || selectedWritableIndex >= writablePageFields.length - 1}>
+                Следующее поле →
               </button>
             </div>
           </aside>
@@ -361,7 +689,7 @@ export function PermessoTrainer() {
         </div>
       </section>
 
-      <section className={styles.toolsSection}>
+      <section id="helpers" className={styles.toolsSection}>
         <div className={styles.toolHeader}>
           <p className={styles.eyebrow}>Перед тем как писать в клетки</p>
           <h2>Четыре помощника</h2>
@@ -435,7 +763,7 @@ export function PermessoTrainer() {
         </div>
       </section>
 
-      <section className={styles.checklistSection}>
+      <section id="before-poste" className={styles.checklistSection}>
         <div className={styles.toolHeader}>
           <p className={styles.eyebrow}>Финальная проверка</p>
           <h2>Что взять и как заполнять</h2>
@@ -500,7 +828,7 @@ function FormHeader({ page, showExample, scenario }: { page: number; showExample
             <div className={styles.questoreBlock}>
               <div className={styles.questoreRow}>
                 <span>Al Signor Questore di:</span>
-                <CellRun count={12} value={showExample ? "FIRENZE" : ""} />
+                <span className={styles.questoreHandLine}>{showExample ? "FIRENZE" : ""}</span>
               </div>
               <div className={styles.questoreRow}>
                 <span>(Sigla Provincia)</span>
@@ -514,7 +842,7 @@ function FormHeader({ page, showExample, scenario }: { page: number; showExample
 
         <div className={styles.barcode} aria-label="Область штрихкода бумажного бланка">
           <span className={styles.barcodeBars}><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></span>
-          <small>1742281399{page}</small>
+          <small>IL TUO KIT HA UN NUMERO UNICO · NON SCRIVERE QUI</small>
         </div>
       </div>
 
@@ -543,9 +871,9 @@ function FormSection({ section, empty, children }: { section: TrainerSection; em
       <header>
         <b>{section.label.toUpperCase()} · {section.title.toUpperCase()}</b>
         {section.note && <span>{section.note}</span>}
+        {empty && <strong className={styles.skipBadge}>ПРОПУСТИ ЦЕЛИКОМ</strong>}
       </header>
       <div className={styles.sectionBody}>{children}</div>
-      {empty && <div className={styles.emptyStamp}>ОСТАВЬ ПУСТЫМ</div>}
     </section>
   );
 }
@@ -556,25 +884,41 @@ function ChoiceField({
   field: TrainerField; mode: FieldMode; example: string; selected: boolean; onSelect: (field: TrainerField) => void;
 }) {
   return (
-    <button type="button" className={styles.choiceField} data-mode={mode} data-selected={selected || undefined} onClick={() => onSelect(field)}>
+    <button
+      type="button"
+      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
+      className={styles.choiceField}
+      data-mode={mode}
+      data-selected={selected || undefined}
+      onClick={() => onSelect(field)}
+    >
       <span><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
       <span className={styles.xBox}>{example === "X" ? "X" : ""}</span>
-      <em>{MODE_LABEL[mode]}</em>
+      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
     </button>
   );
 }
 
-function GroupedChoiceField({
-  field, labels, mode, selected, onSelect,
+function RefugeeField({
+  field, mode, value, selected, onSelect,
 }: {
-  field: TrainerField; labels: string[]; mode: FieldMode; selected: boolean; onSelect: (field: TrainerField) => void;
+  field: TrainerField; mode: FieldMode; value: string; selected: boolean; onSelect: (field: TrainerField) => void;
 }) {
+  const upper = value.toUpperCase();
   return (
-    <button type="button" className={styles.groupedChoice} data-mode={mode} data-selected={selected || undefined} onClick={() => onSelect(field)}>
-      {labels.map((label, index) => (
-        <span key={label}><b>{field.number}{index ? "" : "."} {label}</b><i /></span>
-      ))}
-      <em>{MODE_LABEL[mode]}</em>
+    <button
+      type="button"
+      aria-label={"Поле 37, Rifugiato, " + MODE_LABEL[mode]}
+      className={styles.refugeeField}
+      data-mode={mode}
+      data-selected={selected || undefined}
+      onClick={() => onSelect(field)}
+    >
+      <span className={styles.formLabel}><b>37. RIFUGIATO</b><small>Статус беженца</small></span>
+      <span className={styles.yesNo}>
+        <span><b>SI</b><i>{upper === "SI" ? "X" : ""}</i></span>
+        <span><b>NO</b><i>{upper === "NO" ? "X" : ""}</i></span>
+      </span>
     </button>
   );
 }
@@ -598,31 +942,84 @@ function FormField({
   signature?: boolean;
   className?: string;
 }) {
-  const count = Math.max(1, compact ? Math.min(field.cells || 8, 10) : field.cells || 12);
   return (
     <button
       type="button"
+      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
       className={styles.formField + " " + (compact ? styles.compactField : "") + " " + (signature ? styles.signatureField : "") + " " + className}
       data-mode={mode}
       data-selected={selected || undefined}
       onClick={() => onSelect(field)}
     >
       <span className={styles.formLabel}><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
-      {signature ? <span className={styles.signatureLine} /> : <CellRun count={count} value={example} date={field.kind === "date"} />}
-      <em>{MODE_LABEL[mode]}</em>
+      {signature ? <span className={styles.signatureLine} /> : <FieldCells field={field} value={example} compact={compact} />}
+      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
     </button>
   );
 }
 
-function CellRun({ count, value = "", date = false }: { count: number; value?: string; date?: boolean }) {
+function FieldCells({ field, value, compact }: { field: TrainerField; value: string; compact: boolean }) {
+  if (field.kind === "date") return <DateCells value={value} />;
+  if (field.number === "69" || field.number === "81") return <HouseCells value={value} />;
+  if (field.number === "74" || field.number === "75") return <PhoneCells value={value} />;
+  if (field.rows === 2) return <DoubleRowCells count={field.cells || 20} value={value} />;
+  const count = Math.max(1, compact ? Math.min(field.cells || 8, 10) : field.cells || 12);
+  return <CellRun count={count} value={value} />;
+}
+
+function DateCells({ value = "" }: { value?: string }) {
+  const clean = value.replace(/\D/g, "");
+  return (
+    <span className={styles.dateCells} aria-hidden>
+      <span><CellRun count={2} value={clean.slice(0, 2)} /><small>gg</small></span>
+      <b>/</b>
+      <span><CellRun count={2} value={clean.slice(2, 4)} /><small>mm</small></span>
+      <b>/</b>
+      <span><CellRun count={4} value={clean.slice(4, 8)} /><small>aaaa</small></span>
+    </span>
+  );
+}
+
+function HouseCells({ value = "" }: { value?: string }) {
+  const [numberPart, letterPart = ""] = value.toUpperCase().split("/");
+  return (
+    <span className={styles.splitCells} aria-hidden>
+      <span><CellRun count={5} value={numberPart} /><small>numero</small></span>
+      <b>/</b>
+      <span><CellRun count={2} value={letterPart} /><small>lettera</small></span>
+    </span>
+  );
+}
+
+function PhoneCells({ value = "" }: { value?: string }) {
+  const parts = value.replace(/\s/g, "").split("/");
+  const prefix = parts.length > 1 ? parts[0] : value.replace(/\D/g, "").slice(0, 3);
+  const number = parts.length > 1 ? parts[1] : value.replace(/\D/g, "").slice(3);
+  return (
+    <span className={styles.splitCells} aria-hidden>
+      <span><CellRun count={4} value={prefix} /><small>prefisso</small></span>
+      <b>/</b>
+      <span><CellRun count={8} value={number} /><small>numero</small></span>
+    </span>
+  );
+}
+
+function DoubleRowCells({ count, value = "" }: { count: number; value?: string }) {
+  const normalized = value.toUpperCase();
+  return (
+    <span className={styles.doubleCells} aria-hidden>
+      <CellRun count={count} value={normalized.slice(0, count)} />
+      <CellRun count={count} value={normalized.slice(count, count * 2)} />
+    </span>
+  );
+}
+
+function CellRun({ count, value = "" }: { count: number; value?: string }) {
   const chars = value.toUpperCase().split("");
   return (
     <span className={styles.cells} aria-hidden>
       {Array.from({ length: count }).map((_, index) => (
-        <i key={index}>
-          {chars[index] || ""}
-          {date && (index === 1 || index === 3) && index < count - 1 ? <span>/</span> : null}
-        </i>
+        <i key={index}>{chars[index] === " " ? "" : chars[index] || ""}</i>
       ))}
     </span>
   );
