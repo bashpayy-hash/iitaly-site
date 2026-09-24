@@ -690,7 +690,7 @@ function FormHeader({ page, showExample, scenario }: { page: number; showExample
             <div className={styles.questoreBlock}>
               <div className={styles.questoreRow}>
                 <span>Al Signor Questore di:</span>
-                <CellRun count={12} value={showExample ? "FIRENZE" : ""} />
+                <span className={styles.questoreHandLine}>{showExample ? "FIRENZE" : ""}</span>
               </div>
               <div className={styles.questoreRow}>
                 <span>(Sigla Provincia)</span>
@@ -704,7 +704,7 @@ function FormHeader({ page, showExample, scenario }: { page: number; showExample
 
         <div className={styles.barcode} aria-label="Область штрихкода бумажного бланка">
           <span className={styles.barcodeBars}><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></span>
-          <small>1742281399{page}</small>
+          <small>IL TUO KIT HA UN NUMERO UNICO · NON SCRIVERE QUI</small>
         </div>
       </div>
 
