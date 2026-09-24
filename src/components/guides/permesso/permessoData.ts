@@ -1,5 +1,5 @@
 export type PermessoScenario = "rilascio" | "rinnovo";
-export type FieldMode = "write" | "empty" | "post" | "optional";
+export type FieldMode = "write" | "empty" | "post" | "ifExists" | "recommended";
 
 export interface TrainerField {
   number: string;
@@ -7,6 +7,7 @@ export interface TrainerField {
   ru: string;
   section: string;
   cells?: number;
+  rows?: 1 | 2;
   kind?: "text" | "date" | "x" | "code" | "number";
   mode: Record<PermessoScenario, FieldMode>;
   source: string;
@@ -26,7 +27,8 @@ export interface TrainerSection {
 const BOTH_WRITE = { rilascio: "write", rinnovo: "write" } as const;
 const BOTH_EMPTY = { rilascio: "empty", rinnovo: "empty" } as const;
 const BOTH_POST = { rilascio: "post", rinnovo: "post" } as const;
-const BOTH_OPTIONAL = { rilascio: "optional", rinnovo: "optional" } as const;
+const BOTH_IF_EXISTS = { rilascio: "ifExists", rinnovo: "ifExists" } as const;
+const BOTH_RECOMMENDED = { rilascio: "recommended", rinnovo: "recommended" } as const;
 
 export const TRAINER_SECTIONS: TrainerSection[] = [
   {
@@ -35,13 +37,15 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     title: "Dati della richiesta",
     note: "Кто подаёт, где живёт и что именно просит.",
     fields: [
-      { number: "3", it: "COGNOME", ru: "Фамилия", section: "request", cells: 22, kind: "text", mode: BOTH_WRITE, source: "Паспорт: латиница, ровно как напечатано.", format: "ЗАГЛАВНЫЕ, один символ в клетке.", example: { rilascio: "KUZNETSOVA", rinnovo: "KUZNETSOVA" }, mistake: "Не транслитерируй фамилию заново по-русски." },
-      { number: "4", it: "NOME", ru: "Имя", section: "request", cells: 22, kind: "text", mode: BOTH_WRITE, source: "Паспорт.", format: "ЗАГЛАВНЫЕ, включая второе имя, если оно есть в паспорте.", example: { rilascio: "MARIA", rinnovo: "MARIA" }, mistake: "Не сокращай имя и не меняй порядок." },
+      { number: "3", it: "COGNOME", ru: "Фамилия", section: "request", cells: 22, rows: 2, kind: "text", mode: BOTH_WRITE, source: "Паспорт: латиница, ровно как напечатано.", format: "ЗАГЛАВНЫЕ, один символ в клетке.", example: { rilascio: "KUZNETSOVA", rinnovo: "KUZNETSOVA" }, mistake: "Не транслитерируй фамилию заново по-русски." },
+      { number: "4", it: "NOME", ru: "Имя", section: "request", cells: 22, rows: 2, kind: "text", mode: BOTH_WRITE, source: "Паспорт.", format: "ЗАГЛАВНЫЕ, включая второе имя, если оно есть в паспорте.", example: { rilascio: "MARIA", rinnovo: "MARIA" }, mistake: "Не сокращай имя и не меняй порядок." },
       { number: "5", it: "PROVINCIA DI DOMICILIO", ru: "Сигла провинции", section: "request", cells: 2, kind: "code", mode: BOTH_WRITE, source: "Провинция фактического жилья в Италии.", format: "2 буквы, например MI / RM / FI.", example: { rilascio: "FI", rinnovo: "FI" }, mistake: "Не ставь провинцию университета, если живёшь в другой." },
       { number: "6", it: "COMUNE DI DOMICILIO", ru: "Comune проживания", section: "request", cells: 18, kind: "text", mode: BOTH_WRITE, source: "Адрес жилья в Италии.", format: "Итальянское название comune, ЗАГЛАВНЫМИ.", example: { rilascio: "FIRENZE", rinnovo: "FIRENZE" }, mistake: "Не пиши MILAN или «Милан»: на бланке нужен итальянский comune." },
       { number: "8", it: "RILASCIO", ru: "Первое ВНЖ", section: "request", cells: 1, kind: "x", mode: { rilascio: "write", rinnovo: "empty" }, source: "Сценарий подачи.", format: "X в квадрате.", example: { rilascio: "X" }, mistake: "Не ставь галочку ✓ и не закрашивай квадрат." },
       { number: "9", it: "RINNOVO", ru: "Продление", section: "request", cells: 1, kind: "x", mode: { rilascio: "empty", rinnovo: "write" }, source: "Сценарий подачи.", format: "X в квадрате.", example: { rinnovo: "X" }, mistake: "При первом permesso поле 9 пустое." },
-      { number: "10–12", it: "AGGIORNAMENTO / DUPLICATO / CONVERSIONE", ru: "Другие типы запроса", section: "request", cells: 3, kind: "x", mode: BOTH_EMPTY, source: "Не относятся к двум сценариям этого тренажёра.", format: "Ничего не ставить.", mistake: "Не выбирай «на всякий случай» ещё один тип запроса." },
+      { number: "10", it: "AGGIORNAMENTO", ru: "Обновление", section: "request", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к двум сценариям этого тренажёра.", format: "Оставить пустым.", mistake: "Не выбирай другой тип запроса «на всякий случай»." },
+      { number: "11", it: "DUPLICATO", ru: "Дубликат", section: "request", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к двум сценариям этого тренажёра.", format: "Оставить пустым.", mistake: "Не выбирай другой тип запроса «на всякий случай»." },
+      { number: "12", it: "CONVERSIONE", ru: "Конвертация", section: "request", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к двум сценариям этого тренажёра.", format: "Оставить пустым.", mistake: "Не выбирай другой тип запроса «на всякий случай»." },
       { number: "14", it: "PERMESSO DI SOGGIORNO", ru: "Permesso", section: "request", cells: 1, kind: "x", mode: BOTH_WRITE, source: "Тип документа, который просишь.", format: "X.", example: { rilascio: "X", rinnovo: "X" }, mistake: "Не ставь X в поле 15 Carta di soggiorno." },
       { number: "15", it: "CARTA DI SOGGIORNO", ru: "Carta", section: "request", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не наш студенческий сценарий.", format: "Оставить пустым.", mistake: "Для обычного студенческого permesso X стоит только в 14." },
       { number: "16", it: "CODICE TIPOLOGIA", ru: "Код того, что просишь", section: "request", cells: 2, kind: "code", mode: BOTH_WRITE, source: "Таблица motivi Portale Immigrazione + указания твоего kit / international office.", format: "2 цифры. Выбери код в виджете ниже.", mistake: "Не ставь 24 или 31 автоматически всем студентам." },
@@ -57,10 +61,10 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     title: "Dati sull'istanza",
     note: "Сколько модулей и листов идёт в конверт; дата и подпись — только на почте.",
     fields: [
-      { number: "22", it: "NUMERO MODULI", ru: "Количество модулей", section: "application", cells: 2, kind: "number", mode: BOTH_WRITE, source: "Обычно только Modulo 1 для студента без дохода от работы.", format: "01; если реально нужен Modulo 2 — 02.", example: { rilascio: "01", rinnovo: "01" }, mistake: "Не считай сюда страницы и ксерокопии." },
+      { number: "22", it: "INDICARE QUALI MODULI SONO STATI COMPILATI", ru: "Какие модули заполнены", section: "application", cells: 2, kind: "number", mode: BOTH_WRITE, source: "Обычно только Modulo 1 для студента без дохода от работы.", format: "01; если реально нужен Modulo 2 — 02.", example: { rilascio: "01", rinnovo: "01" }, mistake: "Не считай сюда страницы и ксерокопии." },
       { number: "23", it: "MODULO 1", ru: "Modulo 1 приложен", section: "application", cells: 1, kind: "x", mode: BOTH_WRITE, source: "Бумажный kit.", format: "X.", example: { rilascio: "X", rinnovo: "X" }, mistake: "Не путай с количеством листов." },
       { number: "24", it: "MODULO 2", ru: "Modulo 2", section: "application", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Для студента без работы не нужен.", format: "Пусто, если Modulo 2 не кладёшь.", mistake: "Не ставь X просто потому, что бланк лежит в kit." },
-      { number: "25", it: "NUMERO FOGLI", ru: "Общее число листов", section: "application", cells: 2, kind: "number", mode: BOTH_WRITE, source: "8 страниц Modulo 1 + физические листы A4 приложений.", format: "Две цифры. Используй калькулятор ниже.", mistake: "Не считай marca da bollo и foglio note." },
+      { number: "25", it: "INDICARE IL NUMERO TOTALE DI FOGLI", ru: "Общее число листов", section: "application", cells: 2, kind: "number", mode: BOTH_WRITE, source: "8 страниц Modulo 1 + физические листы A4 приложений.", format: "Две цифры. Используй калькулятор ниже.", mistake: "Не считай marca da bollo и foglio note." },
       { number: "26", it: "FIGLI A CARICO", ru: "Дети на иждивении", section: "application", cells: 2, kind: "number", mode: BOTH_EMPTY, source: "Сценарий: студент без детей.", format: "Пусто.", mistake: "Не пиши 0 или 00." },
       { number: "28", it: "DATA", ru: "Дата подачи", section: "application", cells: 8, kind: "date", mode: BOTH_POST, source: "День, когда сдаёшь kit.", format: "Заполнять у Sportello Amico.", mistake: "Не ставь дату дома заранее." },
       { number: "29", it: "FIRMA", ru: "Подпись", section: "application", cells: 10, kind: "text", mode: BOTH_POST, source: "Подписывается при сотруднике Sportello Amico.", format: "Подпись, не печатное имя.", mistake: "Не подписывай бланк заранее." },
@@ -71,14 +75,14 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     label: "Sezione 3",
     title: "Dati anagrafici",
     fields: [
-      { number: "31", it: "CODICE FISCALE", ru: "Codice fiscale", section: "identity", cells: 16, kind: "text", mode: BOTH_OPTIONAL, source: "Карточка / сертификат codice fiscale, если уже есть.", format: "Ровно 16 символов.", example: { rilascio: "ZZZAAA00A00Z000X", rinnovo: "ZZZAAA00A00Z000X" }, mistake: "Если при первом permesso кода ещё нет — это не повод выдумывать его." },
+      { number: "31", it: "CODICE FISCALE (OVE IN POSSESSO)", ru: "Налоговый код", section: "identity", cells: 16, kind: "text", mode: { rilascio: "ifExists", rinnovo: "write" }, source: "Карточка / сертификат codice fiscale.", format: "Ровно 16 букв и цифр.", example: { rilascio: "ZZZAAA00A00Z000X", rinnovo: "ZZZAAA00A00Z000X" }, mistake: "При первом permesso не выдумывай код, если его ещё нет; при продлении перепиши существующий codice fiscale." },
       { number: "32", it: "STATO CIVILE", ru: "Семейное положение", section: "identity", cells: 1, kind: "code", mode: BOTH_WRITE, source: "Официальная сноска kit.", format: "A = не в браке; B = в браке.", example: { rilascio: "A", rinnovo: "A" }, mistake: "Не придумывай другие буквы без patronato / foglio note." },
       { number: "33", it: "SESSO", ru: "Пол", section: "identity", cells: 1, kind: "code", mode: BOTH_WRITE, source: "Паспорт / данные заявителя.", format: "F или M.", example: { rilascio: "F", rinnovo: "F" }, mistake: "Одна буква." },
       { number: "34", it: "NATO/A IL", ru: "Дата рождения", section: "identity", cells: 8, kind: "date", mode: BOTH_WRITE, source: "Паспорт.", format: "gg / mm / aaaa.", example: { rilascio: "14032004", rinnovo: "14032004" }, mistake: "Слэши уже есть на бумаге — их не вписывают." },
       { number: "35", it: "CODICE STATO NASCITA", ru: "Код страны рождения", section: "identity", cells: 3, kind: "code", mode: BOTH_WRITE, source: "Tabella 3 из бумажного kit.", format: "3 буквы.", example: { rilascio: "KAZ", rinnovo: "KAZ" }, mistake: "Страна рождения и гражданство могут отличаться." },
       { number: "36", it: "CODICE STATO CITTADINANZA", ru: "Код гражданства", section: "identity", cells: 3, kind: "code", mode: BOTH_WRITE, source: "Tabella 3 из бумажного kit.", format: "3 буквы.", example: { rilascio: "KAZ", rinnovo: "KAZ" }, mistake: "Не копируй поле 35 автоматически, если гражданство другое." },
       { number: "37", it: "RIFUGIATO", ru: "Статус беженца", section: "identity", cells: 2, kind: "x", mode: BOTH_WRITE, source: "Твой фактический статус.", format: "Для обычного студента X в NO.", example: { rilascio: "NO", rinnovo: "NO" }, mistake: "Не ставь SI, если это не твой официальный статус." },
-      { number: "38", it: "CITTÀ DI NASCITA", ru: "Город рождения", section: "identity", cells: 20, kind: "text", mode: BOTH_WRITE, source: "Паспорт.", format: "Латиницей, ЗАГЛАВНЫМИ.", example: { rilascio: "ALMATY", rinnovo: "ALMATY" }, mistake: "Не пиши кириллицей." },
+      { number: "38", it: "CITTÀ DI NASCITA", ru: "Город рождения", section: "identity", cells: 20, rows: 2, kind: "text", mode: BOTH_WRITE, source: "Паспорт.", format: "Латиницей, ЗАГЛАВНЫМИ.", example: { rilascio: "ALMATY", rinnovo: "ALMATY" }, mistake: "Не пиши кириллицей." },
     ],
   },
   {
@@ -87,7 +91,9 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     title: "Documento di identità",
     fields: [
       { number: "40", it: "PASSAPORTO", ru: "Паспорт", section: "passport", cells: 1, kind: "x", mode: BOTH_WRITE, source: "Документ, по которому подаёшь.", format: "X.", example: { rilascio: "X", rinnovo: "X" }, mistake: "Для обычного загранпаспорта X только здесь." },
-      { number: "41–43", it: "ALTRO DOCUMENTO", ru: "Другие документы", section: "passport", cells: 3, kind: "x", mode: BOTH_EMPTY, source: "Не относятся к обычному паспорту.", format: "Пусто.", mistake: "Не ставь дополнительные X." },
+      { number: "41", it: "ALTRO TIPO DI DOCUMENTO", ru: "Другой тип документа", section: "passport", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному загранпаспорту.", format: "Оставить пустым.", mistake: "Для обычного паспорта X стоит в поле 40." },
+      { number: "42", it: "SPECIFICARE ALTRO TIPO DI DOCUMENTO", ru: "Указать другой тип документа", section: "passport", cells: 2, kind: "text", mode: BOTH_EMPTY, source: "Не относится к обычному загранпаспорту.", format: "Оставить пустым.", mistake: "Не заполняй без другого типа документа." },
+      { number: "43", it: "ALTRO", ru: "Другое", section: "passport", cells: 14, rows: 2, kind: "text", mode: BOTH_EMPTY, source: "Не относится к обычному загранпаспорту.", format: "Оставить пустым.", mistake: "Не заполняй без другого типа документа." },
       { number: "44", it: "NUMERO", ru: "Номер паспорта", section: "passport", cells: 14, kind: "text", mode: BOTH_WRITE, source: "Страница паспорта с данными.", format: "Копируй полностью, включая буквы.", example: { rilascio: "N12345678", rinnovo: "N12345678" }, mistake: "Не путай с номером permesso." },
       { number: "45", it: "VALIDO SINO AL", ru: "Паспорт действителен до", section: "passport", cells: 8, kind: "date", mode: BOTH_WRITE, source: "Страница паспорта с данными.", format: "Дата окончания, gg / mm / aaaa.", example: { rilascio: "01052031", rinnovo: "01052031" }, mistake: "Это не дата выдачи паспорта." },
       { number: "46", it: "RILASCIATO DA", ru: "Кем выдан", section: "passport", cells: 2, kind: "code", mode: BOTH_WRITE, source: "Foglio note / инструкция Mod. 209.", format: "Для обычного паспорта, выданного дома, обычно 01.", example: { rilascio: "01", rinnovo: "01" }, mistake: "02/03 относятся к выдаче консульством — не выбирай их без причины." },
@@ -117,7 +123,12 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     title: "Titolo / documento di viaggio",
     note: "Для студента с обычным паспортом этот блок не заполняется.",
     fields: [
-      { number: "59–64", it: "RINNOVO TITOLO / DOCUMENTO DI VIAGGIO", ru: "Проездной документ", section: "travel", cells: 6, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному национальному паспорту.", format: "Вся секция пустая.", mistake: "Не путай с продлением самого permesso." },
+      { number: "59", it: "TITOLO DI VIAGGIO PER STRANIERO", ru: "Проездной документ иностранца", section: "travel", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному национальному паспорту.", format: "Оставить пустым.", mistake: "Не путай с продлением самого permesso." },
+      { number: "60", it: "TITOLO DI VIAGGIO PER APOLIDE", ru: "Проездной документ лица без гражданства", section: "travel", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному национальному паспорту.", format: "Оставить пустым.", mistake: "Не отмечай без соответствующего документа." },
+      { number: "61", it: "DOCUMENTO DI VIAGGIO PER RIFUGIATO", ru: "Проездной документ беженца", section: "travel", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному национальному паспорту.", format: "Оставить пустым.", mistake: "Не отмечай без соответствующего документа." },
+      { number: "62", it: "PERIODO PER IL QUALE SI CHIEDE IL RINNOVO", ru: "Период продления документа", section: "travel", cells: 0, kind: "text", mode: BOTH_EMPTY, source: "Подпись на бумажном бланке, не поле для обычного студента.", format: "Ничего не писать.", mistake: "Это заголовок к полям 63–64." },
+      { number: "63", it: "1 ANNO", ru: "1 год", section: "travel", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному национальному паспорту.", format: "Оставить пустым.", mistake: "Не отмечай без соответствующего документа." },
+      { number: "64", it: "2 ANNI", ru: "2 года", section: "travel", cells: 1, kind: "x", mode: BOTH_EMPTY, source: "Не относится к обычному национальному паспорту.", format: "Оставить пустым.", mistake: "Не отмечай без соответствующего документа." },
     ],
   },
   {
@@ -127,13 +138,14 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     fields: [
       { number: "66", it: "PROVINCIA", ru: "Провинция", section: "address", cells: 2, kind: "code", mode: BOTH_WRITE, source: "Фактический адрес проживания.", format: "2 буквы.", example: { rilascio: "FI", rinnovo: "FI" }, mistake: "Должна соответствовать comune из поля 67." },
       { number: "67", it: "COMUNE", ru: "Comune", section: "address", cells: 18, kind: "text", mode: BOTH_WRITE, source: "Фактический адрес проживания.", format: "Итальянское название, ЗАГЛАВНЫМИ.", example: { rilascio: "FIRENZE", rinnovo: "FIRENZE" }, mistake: "Не используй английское название города." },
-      { number: "68", it: "INDIRIZZO", ru: "Улица", section: "address", cells: 24, kind: "text", mode: BOTH_WRITE, source: "Договор / адрес проживания.", format: "VIA / VIALE / PIAZZA + название.", example: { rilascio: "VIA SAN GALLO", rinnovo: "VIA SAN GALLO" }, mistake: "Номер дома идёт отдельно в поле 69." },
+      { number: "68", it: "INDIRIZZO", ru: "Улица", section: "address", cells: 24, rows: 2, kind: "text", mode: BOTH_WRITE, source: "Договор / адрес проживания.", format: "VIA / VIALE / PIAZZA + название.", example: { rilascio: "VIA SAN GALLO", rinnovo: "VIA SAN GALLO" }, mistake: "Номер дома идёт отдельно в поле 69." },
       { number: "69", it: "NUMERO CIVICO", ru: "Номер дома", section: "address", cells: 6, kind: "text", mode: BOTH_WRITE, source: "Адрес проживания.", format: "Номер / буква.", example: { rilascio: "22", rinnovo: "22" }, mistake: "Не вписывай его повторно в конец поля 68." },
-      { number: "70–71", it: "SCALA / INTERNO", ru: "Лестница / квартира", section: "address", cells: 8, kind: "text", mode: BOTH_OPTIONAL, source: "Адрес, если применимо.", format: "Оставь пустым, если в адресе этого нет.", mistake: "Не выдумывай значения." },
+      { number: "70", it: "SCALA", ru: "Лестница / подъезд", section: "address", cells: 5, kind: "text", mode: BOTH_IF_EXISTS, source: "Адрес проживания, если scala указана.", format: "Оставь пустым, если в адресе этого нет.", mistake: "Не переноси сюда номер квартиры." },
+      { number: "71", it: "INTERNO", ru: "Квартира / interno", section: "address", cells: 5, kind: "text", mode: BOTH_IF_EXISTS, source: "Адрес проживания, если interno указан.", format: "Оставь пустым, если в адресе этого нет.", mistake: "Не записывай сюда scala." },
       { number: "72", it: "CAP", ru: "Почтовый индекс", section: "address", cells: 5, kind: "number", mode: BOTH_WRITE, source: "Адрес проживания.", format: "5 цифр.", example: { rilascio: "50129", rinnovo: "50129" }, mistake: "Проверь CAP именно своего адреса." },
-      { number: "73", it: "INDIRIZZO E-MAIL", ru: "Email", section: "address", cells: 24, kind: "text", mode: BOTH_OPTIONAL, source: "Твоя рабочая почта.", format: "Каждый символ в клетке; @ тоже занимает клетку.", example: { rilascio: "MARIA.K@MAIL.COM", rinnovo: "MARIA.K@MAIL.COM" }, mistake: "Не выкидывай @ и не ставь пробелы." },
-      { number: "74", it: "TELEFONO FISSO", ru: "Стационарный телефон", section: "address", cells: 12, kind: "number", mode: BOTH_OPTIONAL, source: "Только если есть.", format: "Итальянский номер.", mistake: "Не обязательно заполнять." },
-      { number: "75", it: "TELEFONO CELLULARE", ru: "Мобильный в Италии", section: "address", cells: 10, kind: "number", mode: BOTH_OPTIONAL, source: "Итальянский мобильный.", format: "Без +39 и пробелов.", example: { rilascio: "3331234567", rinnovo: "3331234567" }, mistake: "Не добавляй +39 в клетки." },
+      { number: "73", it: "INDIRIZZO E-MAIL (FACOLTATIVO)", ru: "Email", section: "address", cells: 24, rows: 2, kind: "text", mode: BOTH_IF_EXISTS, source: "Твоя рабочая почта.", format: "Каждый символ в клетке; @ тоже занимает клетку.", example: { rilascio: "MARIA.K@MAIL.COM", rinnovo: "MARIA.K@MAIL.COM" }, mistake: "Не выкидывай @ и не ставь пробелы." },
+      { number: "74", it: "TELEFONO FISSO IN ITALIA (FACOLTATIVO)", ru: "Стационарный телефон", section: "address", cells: 12, kind: "number", mode: BOTH_IF_EXISTS, source: "Только если есть.", format: "Итальянский номер.", mistake: "Не обязательно заполнять." },
+      { number: "75", it: "TELEFONO CELLULARE IN ITALIA (FACOLTATIVO)", ru: "Мобильный в Италии", section: "address", cells: 10, kind: "number", mode: BOTH_IF_EXISTS, source: "Итальянский мобильный.", format: "Без +39 и пробелов.", example: { rilascio: "3331234567", rinnovo: "3331234567" }, mistake: "Не добавляй +39 в клетки." },
     ],
   },
   {
@@ -142,7 +154,14 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     title: "Recapito per comunicazioni",
     note: "Заполняй только если письма должны приходить на другой адрес.",
     fields: [
-      { number: "77–84", it: "RECAPITO DIVERSO", ru: "Другой адрес для писем", section: "correspondence", cells: 8, kind: "text", mode: BOTH_EMPTY, source: "Только если адрес для корреспонденции отличается от Sezione 7.", format: "По умолчанию вся секция пустая.", mistake: "Не дублируй сюда тот же адрес." },
+      { number: "77", it: "PRESSO", ru: "У кого / presso", section: "correspondence", cells: 24, rows: 2, kind: "text", mode: BOTH_IF_EXISTS, source: "Заполняй только если почта должна приходить по другому адресу.", format: "Оставь всю секцию пустой, если адрес совпадает с Sezione 7.", mistake: "Не дублируй тот же адрес без необходимости." },
+      { number: "78", it: "PROVINCIA", ru: "Провинция другого адреса", section: "correspondence", cells: 2, kind: "code", mode: BOTH_IF_EXISTS, source: "Другой адрес для корреспонденции.", format: "2 буквы.", mistake: "Не заполняй, если используешь основной адрес." },
+      { number: "79", it: "COMUNE", ru: "Comune другого адреса", section: "correspondence", cells: 18, kind: "text", mode: BOTH_IF_EXISTS, source: "Другой адрес для корреспонденции.", format: "Итальянское название comune.", mistake: "Не заполняй, если используешь основной адрес." },
+      { number: "80", it: "INDIRIZZO", ru: "Улица другого адреса", section: "correspondence", cells: 24, rows: 2, kind: "text", mode: BOTH_IF_EXISTS, source: "Другой адрес для корреспонденции.", format: "Улица без номера дома.", mistake: "Номер дома идёт отдельно в поле 81." },
+      { number: "81", it: "NUMERO CIVICO", ru: "Номер дома / литера", section: "correspondence", cells: 6, kind: "text", mode: BOTH_IF_EXISTS, source: "Другой адрес для корреспонденции.", format: "numero / lettera.", mistake: "Не смешивай номер и interno." },
+      { number: "82", it: "SCALA", ru: "Лестница / подъезд", section: "correspondence", cells: 5, kind: "text", mode: BOTH_IF_EXISTS, source: "Другой адрес, если применимо.", format: "Оставь пустым, если scala нет.", mistake: "Не выдумывай значение." },
+      { number: "83", it: "INTERNO", ru: "Квартира / interno", section: "correspondence", cells: 5, kind: "text", mode: BOTH_IF_EXISTS, source: "Другой адрес, если применимо.", format: "Оставь пустым, если interno нет.", mistake: "Не выдумывай значение." },
+      { number: "84", it: "CAP", ru: "Почтовый индекс другого адреса", section: "correspondence", cells: 5, kind: "number", mode: BOTH_IF_EXISTS, source: "Другой адрес для корреспонденции.", format: "5 цифр.", mistake: "Не заполняй, если используешь основной адрес." },
     ],
   },
 ];
