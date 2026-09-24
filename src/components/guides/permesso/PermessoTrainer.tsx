@@ -378,10 +378,36 @@ export function PermessoTrainer() {
               <small>{item.title}</small>
             </button>
           ))}
+          <button type="button" className={styles.utilityTab} onClick={() => document.getElementById("pages4-8")?.scrollIntoView({ behavior: "smooth" })}>
+            <span>Стр. 4–8</span><small>Не трогать</small>
+          </button>
+          <button type="button" className={styles.utilityTab} onClick={() => document.getElementById("before-poste")?.scrollIntoView({ behavior: "smooth" })}>
+            <span>Перед почтой</span><small>Проверка</small>
+          </button>
         </nav>
 
+        <div className={styles.mobileFieldCard} data-mode={modeFor(selected)}>
+          <div className={styles.mobileFieldHead}>
+            <span>Стр. {activeFormPage.number} · поле {selected.number}</span>
+            <b>{MODE_LABEL[modeFor(selected)]}</b>
+          </div>
+          <h2>{selected.it}</h2>
+          <p>{selected.ru}</p>
+          {selected.kind !== "x" && selected.cells !== 0 && <FieldCells field={selected} value={displayValueFor(selected)} compact={false} />}
+          {codeHintFor(selected) && <div className={styles.codeHint}>{codeHintFor(selected)}</div>}
+          <dl>
+            <div><dt>{modeFor(selected) === "empty" ? "Почему пусто" : "Откуда взять"}</dt><dd>{helpSourceFor(selected)}</dd></div>
+            <div><dt>Формат</dt><dd>{selected.format}</dd></div>
+          </dl>
+          <div className={styles.mobileFieldNav}>
+            <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedWritableIndex <= 0}>← Назад</button>
+            <span>{Math.max(1, selectedWritableIndex + 1)} из {writablePageFields.length}</span>
+            <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedWritableIndex < 0 || selectedWritableIndex >= writablePageFields.length - 1}>Дальше →</button>
+          </div>
+        </div>
+
         <div className={styles.formLayout}>
-          <div className={styles.paper}>
+          <div className={styles.paper} data-personal={useMyData || undefined}>
             <FormHeader
               page={activeFormPage.number}
               showExample={showExample}
@@ -543,7 +569,7 @@ export function PermessoTrainer() {
                   </div>
                 </FormSection>
 
-                <div className={styles.pagesEmpty}>
+                <div id="pages4-8" className={styles.pagesEmpty}>
                   <span>Страницы 4–8 бумажного Modulo 1</span>
                   <strong>НЕ ВЫРЫВАТЬ · ОСТАВИТЬ ПУСТЫМИ</strong>
                   <p>Для сценария студента без семьи они остаются частью комплекта и учитываются в числе листов.</p>
@@ -592,7 +618,7 @@ export function PermessoTrainer() {
         </div>
       </section>
 
-      <section className={styles.toolsSection}>
+      <section id="helpers" className={styles.toolsSection}>
         <div className={styles.toolHeader}>
           <p className={styles.eyebrow}>Перед тем как писать в клетки</p>
           <h2>Четыре помощника</h2>
@@ -666,7 +692,7 @@ export function PermessoTrainer() {
         </div>
       </section>
 
-      <section className={styles.checklistSection}>
+      <section id="before-poste" className={styles.checklistSection}>
         <div className={styles.toolHeader}>
           <p className={styles.eyebrow}>Финальная проверка</p>
           <h2>Что взять и как заполнять</h2>
