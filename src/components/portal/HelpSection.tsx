@@ -31,7 +31,6 @@ export function HelpSection({
       return;
     }
     setTelegramUrl(res.url);
-    window.open(res.url, "_blank", "noopener,noreferrer");
     setMsg({ text: "Открой Telegram и нажми «Запустить». После этого вернись сюда.", bad: false });
   }
 
