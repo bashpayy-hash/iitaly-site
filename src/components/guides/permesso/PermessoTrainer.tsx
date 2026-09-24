@@ -258,8 +258,14 @@ export function PermessoTrainer() {
   }
 
   function codeHintFor(field: TrainerField) {
-    if (field.number === "16") return requestCode ? requestCode + " — выбран в помощнике ниже" : "УТОЧНЯЕТСЯ · не подставляем 24/31 автоматически";
-    if (field.number === "19") return currentCardCode ? currentCardCode + " — выбран по текущему документу" : "ПЕРЕПИШИ С ТЕКУЩЕГО ВНЖ / ПРОШЛОГО KIT";
+    if (field.number === "16") {
+      const value = myData["16"] || requestCode;
+      return value ? value + " — выбран вручную" : "УТОЧНЯЕТСЯ · не подставляем 24/31 автоматически";
+    }
+    if (field.number === "19") {
+      const value = myData["19"] || currentCardCode;
+      return value ? value + " — перепроверь по текущему документу" : "ПЕРЕПИШИ С ТЕКУЩЕГО ВНЖ / ПРОШЛОГО KIT";
+    }
     if (field.number === "32") return "A — не в браке · B — в браке";
     if (field.number === "35" || field.number === "36") return "СВЕРЬ С TABELLA 3 ТВОЕГО KIT";
     if (field.number === "46") return "Часто 01, если паспорт выдан госорганом страны — сверить foglio note";
