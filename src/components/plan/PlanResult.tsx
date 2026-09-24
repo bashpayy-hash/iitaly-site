@@ -64,7 +64,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
           маршруту. Сам по себе этот бесплатный квиз не включает рассылку.
         </p>
         <div className="mt-4">
-          <AppleButtonLink href="/portal#notifications" variant="outlined" size="sm">
+          <AppleButtonLink href="/portal?view=help" variant="outlined" size="sm">
             Настроить напоминания
           </AppleButtonLink>
         </div>
