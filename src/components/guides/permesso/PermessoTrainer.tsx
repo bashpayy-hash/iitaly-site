@@ -450,7 +450,7 @@ export function PermessoTrainer() {
           <div className={styles.mobileFieldNav}>
             <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedWritableIndex <= 0}>← Назад</button>
             <span>{Math.max(1, selectedWritableIndex + 1)} из {writablePageFields.length}</span>
-            <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedWritableIndex < 0 || selectedWritableIndex >= writablePageFields.length - 1}>Дальше →</button>
+            <button type="button" onClick={() => selectRelativeField(1)} disabled={!writablePageFields.length || selectedWritableIndex >= writablePageFields.length - 1}>Дальше →</button>
           </div>
         </div>
 
@@ -653,7 +653,7 @@ export function PermessoTrainer() {
                 ← Предыдущее поле
               </button>
               <span>{Math.max(1, selectedWritableIndex + 1)} / {writablePageFields.length}</span>
-              <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedWritableIndex < 0 || selectedWritableIndex >= writablePageFields.length - 1}>
+              <button type="button" onClick={() => selectRelativeField(1)} disabled={!writablePageFields.length || selectedWritableIndex >= writablePageFields.length - 1}>
                 Следующее поле →
               </button>
             </div>
