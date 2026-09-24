@@ -1303,3 +1303,10 @@
   .guidanceCard { min-height: 0; }
   .profileList > div { grid-template-columns: 1fr; gap: 3px; }
 }
+
+.onboardingPrimarySmall {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
