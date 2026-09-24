@@ -28,7 +28,6 @@ const BOTH_WRITE = { rilascio: "write", rinnovo: "write" } as const;
 const BOTH_EMPTY = { rilascio: "empty", rinnovo: "empty" } as const;
 const BOTH_POST = { rilascio: "post", rinnovo: "post" } as const;
 const BOTH_IF_EXISTS = { rilascio: "ifExists", rinnovo: "ifExists" } as const;
-const BOTH_RECOMMENDED = { rilascio: "recommended", rinnovo: "recommended" } as const;
 
 export const TRAINER_SECTIONS: TrainerSection[] = [
   {
