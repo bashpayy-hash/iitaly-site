@@ -99,7 +99,8 @@
 .pageTabs {
   display: grid;
   grid-template-columns: repeat(3,minmax(0,1fr));
-  max-width: 760px;
+  width: calc(100% - 330px);
+  max-width: none;
   margin: 0 0 12px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -117,101 +118,201 @@
   position: relative;
   overflow: hidden;
   border: 1px solid #aaa59d;
-  border-radius: 5px;
+  border-radius: 2px;
   background:
-    linear-gradient(rgba(255,255,255,.36),rgba(255,255,255,.36)),
-    radial-gradient(circle at 20% 10%,rgba(210,196,169,.15),transparent 28%),
+    linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
+    repeating-linear-gradient(0deg,rgba(104,88,64,.012) 0 1px,transparent 1px 4px),
+    radial-gradient(circle at 18% 12%,rgba(199,178,139,.12),transparent 34%),
+    radial-gradient(circle at 84% 72%,rgba(199,178,139,.08),transparent 30%),
     var(--paper);
-  box-shadow: 0 22px 60px -36px rgba(0,0,0,.38);
+  box-shadow: 0 18px 42px -30px rgba(0,0,0,.34);
   color: #2a2724;
 }
 .paperHeader {
   position: relative;
-  min-height: 138px;
-  padding: 20px 24px 18px;
-  border-bottom: 1px solid #7d7872;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #6f6a64;
+  background:
+    linear-gradient(rgba(255,255,255,.2), rgba(255,255,255,.2)),
+    radial-gradient(circle at 12% 16%, rgba(188,167,126,.08), transparent 32%),
+    transparent;
 }
-.ministryMark {
-  position: absolute;
-  left: 26px;
-  top: 20px;
+
+.headerTop {
   display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #55514c;
-  border-radius: 50%;
-  color: #55514c;
-  font-family: Georgia,serif;
-  font-size: 12px;
+  grid-template-columns: 72px minmax(0,1fr) 116px;
+  gap: 18px;
+  align-items: start;
 }
+
+.stateEmblem {
+  position: relative;
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  margin: 1px auto 0;
+  border: 1px solid #5a5651;
+  border-radius: 50%;
+  color: #4c4945;
+  font-family: Georgia, serif;
+}
+.stateEmblem::before,
+.stateEmblem::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px dotted rgba(76,73,69,.55);
+  border-radius: 50%;
+}
+.stateEmblem::after {
+  inset: 10px;
+  border-style: solid;
+  opacity: .45;
+}
+.stateEmblem span {
+  position: relative;
+  z-index: 1;
+  margin-top: -5px;
+  font-size: 20px;
+}
+.stateEmblem small {
+  position: absolute;
+  z-index: 1;
+  bottom: 9px;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
 .ministry {
-  width: min(62%,520px);
-  margin: 0 auto;
+  min-width: 0;
   text-align: center;
 }
-.ministry > b { display: block; font-family: Arial,sans-serif; font-size: 20px; letter-spacing: .01em; }
-.ministry > small { display: inline-block; margin-top: 10px; border: 1px solid #8e8a84; padding: 3px 8px; font-size: 8px; font-weight: 700; }
-.questoreLine { display: grid; grid-template-columns: auto minmax(120px,1fr); gap: 5px 8px; align-items: center; margin-top: 10px; text-align: left; }
-.questoreLine > span { color: #57534e; font-size: 9px; }
-.questoreLine > span:nth-of-type(2) { grid-column: 1; }
-.questoreLine > .cells:last-child { grid-column: 2; }
+.ministry > b {
+  display: block;
+  font-family: Arial, sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: .005em;
+}
+.topInstruction {
+  display: inline-block;
+  margin-top: 16px;
+  border: 1px solid #8c8780;
+  padding: 4px 9px;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.questoreBlock {
+  display: grid;
+  max-width: 490px;
+  gap: 4px;
+  margin: 12px auto 0;
+}
+.questoreRow {
+  display: grid;
+  grid-template-columns: 120px minmax(0,1fr);
+  gap: 8px;
+  align-items: center;
+  text-align: left;
+}
+.questoreRow > span {
+  color: #54504b;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.questoreRow .cells i {
+  width: 19px;
+  height: 22px;
+  flex-basis: 19px;
+  font-size: 10px;
+}
+
 .barcode {
-  position: absolute;
-  right: 26px;
-  top: 24px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding-top: 2px;
+}
+.barcodeBars {
   display: flex;
   align-items: stretch;
   gap: 2px;
-  width: 90px;
+  width: 104px;
   height: 44px;
-  padding: 4px 8px;
-  border: 1px solid #8f8a84;
+  padding: 3px 4px;
+  border: 1px solid #8c8780;
+  background: rgba(255,255,255,.5);
 }
-.barcode i { flex: 1; background: #47433f; }
-.barcode i:nth-child(2n) { flex: .45; }
+.barcodeBars i {
+  flex: 1;
+  background: #3f3b37;
+}
+.barcodeBars i:nth-child(3n) { flex: .45; }
+.barcodeBars i:nth-child(4n) { flex: 1.4; }
+.barcode small {
+  color: #4f4b46;
+  font-family: "Courier New", monospace;
+  font-size: 7px;
+  letter-spacing: .02em;
+}
+
+.headerBottom {
+  display: grid;
+  grid-template-columns: 112px minmax(210px,1fr) 190px;
+  gap: 18px;
+  align-items: end;
+  margin-top: 14px;
+}
 .modLabel {
-  position: absolute;
-  left: 24px;
-  bottom: 18px;
-  border: 1px solid #8d8881;
+  border: 1px solid #8b867f;
   padding: 7px 10px;
   font-size: 9px;
   font-weight: 700;
   line-height: 1.35;
+  text-align: center;
 }
 .instruction {
-  position: absolute;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  border: 1px solid #8d8881;
-  padding: 4px 8px;
+  justify-self: center;
+  border: 1px solid #8b867f;
+  padding: 4px 9px;
   font-size: 8px;
   font-weight: 700;
   white-space: nowrap;
 }
 .stampBox {
-  position: absolute;
-  right: 150px;
-  bottom: 10px;
-  width: 180px;
-  min-height: 60px;
-  padding: 8px;
-  border: 1px solid #8d8881;
+  min-height: 58px;
+  padding: 7px 8px;
+  border: 1px solid #8b867f;
+  background: rgba(255,255,255,.22);
   text-align: center;
 }
 .stampBox small { display: block; font-size: 8px; }
-.stampBox strong { display: block; margin-top: 2px; font-size: 13px; }
-.stampBox span { display: block; margin-top: 7px; color: #a12237; font-size: 8px; font-weight: 700; }
-.headerScenario {
-  position: absolute;
-  right: 18px;
-  bottom: 7px;
+.stampBox strong { display: block; margin-top: 2px; font-size: 14px; }
+.stampBox span {
+  display: block;
+  margin-top: 5px;
   color: #a12237;
+  font-size: 7px;
+  font-weight: 700;
+}
+.pageMark {
+  justify-self: end;
+  color: #6a655f;
   font-size: 8px;
   font-weight: 700;
-  letter-spacing: .06em;
+}
+.headerScenario {
+  position: absolute;
+  right: 12px;
+  bottom: 2px;
+  color: #a12237;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .08em;
 }
 
 .formSection {
@@ -225,11 +326,11 @@
   gap: 10px;
   padding: 9px 14px;
   border-bottom: 1px solid #8b867f;
-  background: #f3f0e9;
+  background: #ece9e2;
 }
 .formSection > header b { font-size: 10px; letter-spacing: .01em; }
 .formSection > header span { color: #716c66; font-size: 8px; }
-.sectionBody { position: relative; padding: 10px 12px 12px; }
+.sectionBody { position: relative; padding: 8px 10px 10px; }
 .formSection[data-empty="true"] .sectionBody {
   background: repeating-linear-gradient(135deg,rgba(125,125,130,.03) 0 8px,rgba(125,125,130,.09) 8px 10px);
 }
@@ -240,7 +341,7 @@
   z-index: 3;
   transform: translate(-50%,-50%) rotate(-6deg);
   border: 2px solid rgba(105,105,110,.45);
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 6px 12px;
   background: rgba(255,255,255,.75);
   color: #68686e;
@@ -279,10 +380,10 @@
 .formField[data-selected="true"],
 .choiceField[data-selected="true"],
 .groupedChoice[data-selected="true"] { box-shadow: inset 0 0 0 2px rgba(215,19,63,.4); }
-.formField[data-mode="write"] { outline: 1px solid rgba(51,122,82,.45); outline-offset: -2px; }
+.formField[data-mode="write"] { outline: 1px solid rgba(51,122,82,.28); outline-offset: -2px; }
 .formField[data-mode="empty"] { background-image: repeating-linear-gradient(135deg,transparent 0 7px,rgba(110,110,115,.08) 7px 10px); }
-.formField[data-mode="post"] { outline: 1px solid rgba(181,124,8,.52); outline-offset: -2px; background: rgba(255,244,200,.28); }
-.formField[data-mode="optional"] { outline: 1px dashed rgba(75,111,174,.66); outline-offset: -2px; }
+.formField[data-mode="post"] { outline: 1px solid rgba(181,124,8,.36); outline-offset: -2px; background: rgba(255,244,200,.28); }
+.formField[data-mode="optional"] { outline: 1px dashed rgba(75,111,174,.5); outline-offset: -2px; }
 .formField > em,
 .groupedChoice > em {
   position: absolute;
@@ -311,7 +412,7 @@
   width: 21px;
   height: 24px;
   flex: 0 0 21px;
-  border: 1px solid var(--form-red);
+  border: 1px solid #d46f7e;
   background: rgba(255,255,255,.78);
   color: #7d7b7b;
   font-family: "Courier New",monospace;
@@ -465,6 +566,7 @@
 .cheatSheet small { display: block; margin-top: 7px; color: #666670; font-size: 11px; }
 
 @media (max-width: 1000px) {
+  .pageTabs { width: 100%; }
   .formLayout { grid-template-columns: 1fr; }
   .detailPanel { position: static; }
 }
@@ -490,18 +592,58 @@
   .pageTabs span { font-size: 11px; }
   .pageTabs small { font-size: 9px; }
 
-  .paperHeader { min-height: 128px; padding: 14px 12px; }
-  .ministryMark { left: 12px; top: 16px; width: 35px; height: 35px; }
-  .ministry { width: 68%; }
-  .ministry > b { font-size: 15px; }
-  .questoreLine { grid-template-columns: 1fr; gap: 3px; margin-top: 7px; }
-  .questoreLine > .cells,
-  .questoreLine > .cells:last-child { grid-column: 1; }
-  .barcode { right: 10px; top: 16px; width: 66px; height: 34px; padding: 3px 5px; }
-  .modLabel { left: 12px; bottom: 10px; padding: 5px 7px; font-size: 7px; }
-  .instruction { bottom: 10px; font-size: 6px; }
-  .stampBox { right: 10px; bottom: 8px; width: 128px; min-height: 50px; padding: 5px; }
-  .stampBox span { font-size: 6px; }
+  .paperHeader { padding: 12px 10px 10px; }
+  .headerTop {
+    grid-template-columns: 44px minmax(0,1fr) 70px;
+    gap: 8px;
+  }
+  .stateEmblem {
+    width: 38px;
+    height: 38px;
+  }
+  .stateEmblem span { font-size: 13px; }
+  .stateEmblem small { bottom: 5px; font-size: 5px; }
+  .ministry > b { font-size: 14px; }
+  .questoreBlock { margin-top: 7px; gap: 3px; }
+  .questoreRow {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .questoreRow > span { font-size: 6px; }
+  .questoreRow .cells i {
+    width: 18px;
+    height: 21px;
+    flex-basis: 18px;
+  }
+  .barcode { gap: 2px; }
+  .barcodeBars {
+    width: 66px;
+    height: 32px;
+    gap: 1px;
+    padding: 2px 3px;
+  }
+  .barcode small { font-size: 5px; }
+  .topInstruction { margin-top: 9px; font-size: 6px; }
+  .headerBottom {
+    grid-template-columns: 78px minmax(0,1fr) 112px;
+    gap: 7px;
+    margin-top: 9px;
+  }
+  .modLabel { padding: 5px 6px; font-size: 6px; }
+  .instruction {
+    padding: 3px 5px;
+    font-size: 6px;
+    white-space: normal;
+    text-align: center;
+  }
+  .stampBox {
+    min-height: 44px;
+    padding: 5px;
+  }
+  .stampBox small { font-size: 6px; }
+  .stampBox strong { font-size: 11px; }
+  .stampBox span { font-size: 5px; }
+  .pageMark { font-size: 6px; }
   .headerScenario { display: none; }
 
   .formSection > header { align-items: flex-start; flex-direction: column; gap: 2px; padding: 8px 10px; }
