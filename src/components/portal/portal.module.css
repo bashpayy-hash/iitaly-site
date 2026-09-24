@@ -708,6 +708,15 @@
 
 
 .loginPage {
+  --portal-canvas: #f8f5ef;
+  --portal-surface: #fffdf9;
+  --portal-border: #ded8cf;
+  --portal-muted: #5f5a54;
+  --portal-ash: #77716a;
+  --portal-ink: #24211d;
+  --portal-accent: var(--color-red);
+  --portal-accent-deep: var(--color-red-deep);
+  --portal-danger: var(--color-red-deep);
   min-height: 72vh;
   padding: 54px 20px 72px;
   background: var(--portal-canvas);
@@ -1173,6 +1182,16 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
+  --portal-canvas: #f8f5ef;
+  --portal-surface: #fffdf9;
+  --portal-border: #ded8cf;
+  --portal-muted: #5f5a54;
+  --portal-ash: #77716a;
+  --portal-ink: #24211d;
+  --portal-accent: var(--color-red);
+  --portal-accent-deep: var(--color-red-deep);
+  --portal-green: var(--color-green);
+  --portal-danger: var(--color-red-deep);
   min-height: 100vh;
   padding: 24px 18px 64px;
   background: var(--portal-canvas);
