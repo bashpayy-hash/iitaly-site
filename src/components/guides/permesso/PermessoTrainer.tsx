@@ -120,6 +120,15 @@ export function PermessoTrainer() {
     .map((item) => item.number);
 
   const activeFormPage = FORM_PAGES[activePage];
+  const activePageFields = activeFormPage.sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
+  const selectedPageIndex = activePageFields.findIndex((item) => item.number === selected.number);
+
+  function selectRelativeField(delta: number) {
+    if (!activePageFields.length) return;
+    const current = selectedPageIndex >= 0 ? selectedPageIndex : 0;
+    const next = Math.max(0, Math.min(activePageFields.length - 1, current + delta));
+    setSelected(activePageFields[next]);
+  }
 
   return (
     <div className={styles.page}>
@@ -334,6 +343,15 @@ export function PermessoTrainer() {
               <div><dt>Частая ошибка</dt><dd>{selected.mistake}</dd></div>
             </dl>
             <p className={styles.exampleNote}>Серые буквы — выдуманный пример. На бумаге пиши свои данные чёрной ручкой.</p>
+            <div className={styles.detailNav}>
+              <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedPageIndex <= 0}>
+                ← Предыдущее
+              </button>
+              <span>{Math.max(1, selectedPageIndex + 1)} / {activePageFields.length}</span>
+              <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedPageIndex < 0 || selectedPageIndex >= activePageFields.length - 1}>
+                Следующее →
+              </button>
+            </div>
           </aside>
         </div>
 
