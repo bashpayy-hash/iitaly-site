@@ -110,18 +110,28 @@ export function PermessoTrainer() {
     return COUNTRY_CODES.filter(([code, country]) => code.toLowerCase().includes(q) || country.toLowerCase().includes(q)).slice(0, 10);
   }, [countryQuery]);
 
-  function modeFor(field: TrainerField): FieldMode {
+  function modeForScenario(field: TrainerField, targetScenario: PermessoScenario): FieldMode {
     if (field.number === "24") return worker ? "write" : "empty";
-    return field.mode[scenario];
+    return field.mode[targetScenario];
   }
 
-  function exampleFor(field: TrainerField): string {
+  function modeFor(field: TrainerField): FieldMode {
+    return modeForScenario(field, scenario);
+  }
+
+  function suggestedValueFor(field: TrainerField): string {
     if (field.number === "16") return requestCode;
-    if (field.number === "19") return currentCardCode || requestCode;
+    if (field.number === "19") return currentCardCode;
     if (field.number === "22") return worker ? "02" : "01";
     if (field.number === "24") return worker ? "X" : "";
     if (field.number === "25") return padTwo(sheetTotal);
     return field.example?.[scenario] || "";
+  }
+
+  function displayValueFor(field: TrainerField): string {
+    if (useMyData && myData[field.number]) return myData[field.number];
+    if (showExample) return suggestedValueFor(field);
+    return "";
   }
 
   function field(sectionId: string, number: string) {
@@ -134,11 +144,23 @@ export function PermessoTrainer() {
     return section.fields.every((item) => modeFor(item) === "empty");
   }
 
+  function firstWritableOnPage(pageIndex: number, targetScenario: PermessoScenario = scenario) {
+    const page = FORM_PAGES[pageIndex];
+    const fields = page.sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
+    return fields.find((item) => modeForScenario(item, targetScenario) === "write") || fields[0];
+  }
+
+  function switchScenario(nextScenario: PermessoScenario) {
+    setScenario(nextScenario);
+    const first = firstWritableOnPage(activePage, nextScenario);
+    if (first) setSelected(first);
+  }
+
   function showPage(index: number) {
     const next = Math.max(0, Math.min(FORM_PAGES.length - 1, index));
     setActivePage(next);
-    const firstSection = sectionMap.get(FORM_PAGES[next].sections[0]);
-    if (firstSection?.fields[0]) setSelected(firstSection.fields[0]);
+    const first = firstWritableOnPage(next);
+    if (first) setSelected(first);
     requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ block: "start", behavior: "smooth" }));
   }
 
@@ -148,13 +170,37 @@ export function PermessoTrainer() {
 
   const activeFormPage = FORM_PAGES[activePage];
   const activePageFields = activeFormPage.sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
-  const selectedPageIndex = activePageFields.findIndex((item) => item.number === selected.number);
+  const writablePageFields = activePageFields.filter((item) => modeFor(item) === "write");
+  const selectedWritableIndex = writablePageFields.findIndex((item) => item.number === selected.number);
 
   function selectRelativeField(delta: number) {
-    if (!activePageFields.length) return;
-    const current = selectedPageIndex >= 0 ? selectedPageIndex : 0;
-    const next = Math.max(0, Math.min(activePageFields.length - 1, current + delta));
-    setSelected(activePageFields[next]);
+    if (!writablePageFields.length) return;
+    const current = selectedWritableIndex >= 0 ? selectedWritableIndex : 0;
+    const next = Math.max(0, Math.min(writablePageFields.length - 1, current + delta));
+    setSelected(writablePageFields[next]);
+  }
+
+  function clearMyData() {
+    setMyData({});
+    setUseMyData(false);
+    try {
+      window.localStorage.removeItem(LOCAL_DATA_KEY);
+    } catch {
+      // Ignore storage restrictions.
+    }
+  }
+
+  function validationFor(field: TrainerField, value: string) {
+    if (!value) return "";
+    const clean = value.replace(/\s/g, "");
+    const capacity = (field.cells || 0) * (field.rows || 1);
+    if (capacity && value.length > capacity) return "Не помещается в клетки: сократи только если это допустимо по документу.";
+    if (field.number === "31" && !/^[A-Z0-9]{16}$/i.test(clean)) return "Codice fiscale должен содержать ровно 16 букв и цифр.";
+    if ((field.number === "72" || field.number === "84") && !/^\d{5}$/.test(clean)) return "CAP должен состоять из 5 цифр.";
+    if (field.kind === "date" && !isValidCompactDate(clean)) return "Проверь дату: формат ДДММГГГГ и дата должна существовать.";
+    if (field.number === "45" && isValidCompactDate(clean) && compactDateToTime(clean) < Date.now()) return "Паспорт уже истёк — проверь документ до подачи.";
+    if (field.number === "20" && isValidCompactDate(clean) && compactDateToTime(clean) < Date.now()) return "Срок ВНЖ уже прошёл. Это не блокирует тренажёр, но лучше отдельно проверить порядок действий.";
+    return "";
   }
 
   return (
