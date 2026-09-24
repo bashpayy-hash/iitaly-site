@@ -357,48 +357,48 @@ export function PermessoTrainer() {
               <>
                 <FormSection section={sectionMap.get("request")!} empty={false}>
                   <div className={styles.fullRows}>
-                    <FormField field={field("request", "3")} mode={modeFor(field("request", "3"))} example={showExample ? exampleFor(field("request", "3")) : ""} selected={selected.number === "3"} onSelect={setSelected} />
-                    <FormField field={field("request", "4")} mode={modeFor(field("request", "4"))} example={showExample ? exampleFor(field("request", "4")) : ""} selected={selected.number === "4"} onSelect={setSelected} />
+                    <FormField field={field("request", "3")} mode={modeFor(field("request", "3"))} example={displayValueFor(field("request", "3"))} selected={selected.number === "3"} onSelect={setSelected} />
+                    <FormField field={field("request", "4")} mode={modeFor(field("request", "4"))} example={displayValueFor(field("request", "4"))} selected={selected.number === "4"} onSelect={setSelected} />
                     <div className={styles.twoColumnFields}>
-                      <FormField field={field("request", "5")} compact mode={modeFor(field("request", "5"))} example={showExample ? exampleFor(field("request", "5")) : ""} selected={selected.number === "5"} onSelect={setSelected} />
-                      <FormField field={field("request", "6")} mode={modeFor(field("request", "6"))} example={showExample ? exampleFor(field("request", "6")) : ""} selected={selected.number === "6"} onSelect={setSelected} />
+                      <FormField field={field("request", "5")} compact mode={modeFor(field("request", "5"))} example={displayValueFor(field("request", "5"))} selected={selected.number === "5"} onSelect={setSelected} />
+                      <FormField field={field("request", "6")} mode={modeFor(field("request", "6"))} example={displayValueFor(field("request", "6"))} selected={selected.number === "6"} onSelect={setSelected} />
                     </div>
                   </div>
 
                   <div className={styles.requestChoices}>
                     <div className={styles.choicePanel}>
                       <p>7. RICHIEDE IL:</p>
-                      <ChoiceField field={field("request", "8")} mode={modeFor(field("request", "8"))} example={showExample ? exampleFor(field("request", "8")) : ""} selected={selected.number === "8"} onSelect={setSelected} />
-                      <ChoiceField field={field("request", "9")} mode={modeFor(field("request", "9"))} example={showExample ? exampleFor(field("request", "9")) : ""} selected={selected.number === "9"} onSelect={setSelected} />
+                      <ChoiceField field={field("request", "8")} mode={modeFor(field("request", "8"))} example={displayValueFor(field("request", "8"))} selected={selected.number === "8"} onSelect={setSelected} />
+                      <ChoiceField field={field("request", "9")} mode={modeFor(field("request", "9"))} example={displayValueFor(field("request", "9"))} selected={selected.number === "9"} onSelect={setSelected} />
                       <GroupedChoiceField field={field("request", "10–12")} labels={["AGGIORNAMENTO", "DUPLICATO", "CONVERSIONE"]} mode={modeFor(field("request", "10–12"))} selected={selected.number === "10–12"} onSelect={setSelected} />
                     </div>
                     <div className={styles.choicePanel}>
                       <p>13. DEL/DELLA:</p>
-                      <ChoiceField field={field("request", "14")} mode={modeFor(field("request", "14"))} example={showExample ? exampleFor(field("request", "14")) : ""} selected={selected.number === "14"} onSelect={setSelected} />
+                      <ChoiceField field={field("request", "14")} mode={modeFor(field("request", "14"))} example={displayValueFor(field("request", "14"))} selected={selected.number === "14"} onSelect={setSelected} />
                       <ChoiceField field={field("request", "15")} mode={modeFor(field("request", "15"))} example="" selected={selected.number === "15"} onSelect={setSelected} />
-                      <FormField field={field("request", "16")} compact mode={modeFor(field("request", "16"))} example={showExample ? exampleFor(field("request", "16")) : ""} selected={selected.number === "16"} onSelect={setSelected} />
+                      <FormField field={field("request", "16")} compact mode={modeFor(field("request", "16"))} example={displayValueFor(field("request", "16"))} selected={selected.number === "16"} onSelect={setSelected} />
                       <ChoiceField field={field("request", "17")} mode={modeFor(field("request", "17"))} example="" selected={selected.number === "17"} onSelect={setSelected} />
                     </div>
                   </div>
 
                   <div className={styles.permitStrip}>
-                    <FormField field={field("request", "18")} mode={modeFor(field("request", "18"))} example={showExample ? exampleFor(field("request", "18")) : ""} selected={selected.number === "18"} onSelect={setSelected} />
-                    <FormField field={field("request", "19")} compact mode={modeFor(field("request", "19"))} example={showExample ? exampleFor(field("request", "19")) : ""} selected={selected.number === "19"} onSelect={setSelected} />
-                    <FormField field={field("request", "20")} compact mode={modeFor(field("request", "20"))} example={showExample ? exampleFor(field("request", "20")) : ""} selected={selected.number === "20"} onSelect={setSelected} />
+                    <FormField field={field("request", "18")} mode={modeFor(field("request", "18"))} example={displayValueFor(field("request", "18"))} selected={selected.number === "18"} onSelect={setSelected} />
+                    <FormField field={field("request", "19")} compact mode={modeFor(field("request", "19"))} example={displayValueFor(field("request", "19"))} selected={selected.number === "19"} onSelect={setSelected} />
+                    <FormField field={field("request", "20")} compact mode={modeFor(field("request", "20"))} example={displayValueFor(field("request", "20"))} selected={selected.number === "20"} onSelect={setSelected} />
                   </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("application")!} empty={false}>
                   <div className={styles.applicationGrid}>
-                    <FormField field={field("application", "22")} compact mode={modeFor(field("application", "22"))} example={showExample ? exampleFor(field("application", "22")) : ""} selected={selected.number === "22"} onSelect={setSelected} />
-                    <ChoiceField field={field("application", "23")} mode={modeFor(field("application", "23"))} example={showExample ? exampleFor(field("application", "23")) : ""} selected={selected.number === "23"} onSelect={setSelected} />
-                    <ChoiceField field={field("application", "24")} mode={modeFor(field("application", "24"))} example={showExample ? exampleFor(field("application", "24")) : ""} selected={selected.number === "24"} onSelect={setSelected} />
-                    <FormField field={field("application", "25")} compact mode={modeFor(field("application", "25"))} example={showExample ? exampleFor(field("application", "25")) : ""} selected={selected.number === "25"} onSelect={setSelected} />
+                    <FormField field={field("application", "22")} compact mode={modeFor(field("application", "22"))} example={displayValueFor(field("application", "22"))} selected={selected.number === "22"} onSelect={setSelected} />
+                    <ChoiceField field={field("application", "23")} mode={modeFor(field("application", "23"))} example={displayValueFor(field("application", "23"))} selected={selected.number === "23"} onSelect={setSelected} />
+                    <ChoiceField field={field("application", "24")} mode={modeFor(field("application", "24"))} example={displayValueFor(field("application", "24"))} selected={selected.number === "24"} onSelect={setSelected} />
+                    <FormField field={field("application", "25")} compact mode={modeFor(field("application", "25"))} example={displayValueFor(field("application", "25"))} selected={selected.number === "25"} onSelect={setSelected} />
                     <FormField field={field("application", "26")} compact mode={modeFor(field("application", "26"))} example="" selected={selected.number === "26"} onSelect={setSelected} />
                   </div>
                   <p className={styles.legalLine}>27. RESPONSABILITÀ PER DICHIARAZIONI MENDACI · этот текст только читают, здесь ничего не пишут.</p>
                   <div className={styles.dateSignature}>
-                    <FormField field={field("application", "28")} mode={modeFor(field("application", "28"))} example={showExample ? exampleFor(field("application", "28")) : ""} selected={selected.number === "28"} onSelect={setSelected} />
+                    <FormField field={field("application", "28")} mode={modeFor(field("application", "28"))} example={displayValueFor(field("application", "28"))} selected={selected.number === "28"} onSelect={setSelected} />
                     <FormField field={field("application", "29")} signature mode={modeFor(field("application", "29"))} example="" selected={selected.number === "29"} onSelect={setSelected} />
                   </div>
                 </FormSection>
@@ -409,45 +409,45 @@ export function PermessoTrainer() {
               <>
                 <FormSection section={sectionMap.get("identity")!} empty={false}>
                   <div className={styles.identityGrid}>
-                    <FormField className={styles.spanAll} field={field("identity", "31")} mode={modeFor(field("identity", "31"))} example={showExample ? exampleFor(field("identity", "31")) : ""} selected={selected.number === "31"} onSelect={setSelected} />
-                    <FormField field={field("identity", "32")} compact mode={modeFor(field("identity", "32"))} example={showExample ? exampleFor(field("identity", "32")) : ""} selected={selected.number === "32"} onSelect={setSelected} />
-                    <FormField field={field("identity", "33")} compact mode={modeFor(field("identity", "33"))} example={showExample ? exampleFor(field("identity", "33")) : ""} selected={selected.number === "33"} onSelect={setSelected} />
-                    <FormField field={field("identity", "34")} compact mode={modeFor(field("identity", "34"))} example={showExample ? exampleFor(field("identity", "34")) : ""} selected={selected.number === "34"} onSelect={setSelected} />
-                    <FormField field={field("identity", "35")} compact mode={modeFor(field("identity", "35"))} example={showExample ? exampleFor(field("identity", "35")) : ""} selected={selected.number === "35"} onSelect={setSelected} />
-                    <FormField field={field("identity", "36")} compact mode={modeFor(field("identity", "36"))} example={showExample ? exampleFor(field("identity", "36")) : ""} selected={selected.number === "36"} onSelect={setSelected} />
-                    <FormField field={field("identity", "37")} compact mode={modeFor(field("identity", "37"))} example={showExample ? exampleFor(field("identity", "37")) : ""} selected={selected.number === "37"} onSelect={setSelected} />
-                    <FormField className={styles.spanAll} field={field("identity", "38")} mode={modeFor(field("identity", "38"))} example={showExample ? exampleFor(field("identity", "38")) : ""} selected={selected.number === "38"} onSelect={setSelected} />
+                    <FormField className={styles.spanAll} field={field("identity", "31")} mode={modeFor(field("identity", "31"))} example={displayValueFor(field("identity", "31"))} selected={selected.number === "31"} onSelect={setSelected} />
+                    <FormField field={field("identity", "32")} compact mode={modeFor(field("identity", "32"))} example={displayValueFor(field("identity", "32"))} selected={selected.number === "32"} onSelect={setSelected} />
+                    <FormField field={field("identity", "33")} compact mode={modeFor(field("identity", "33"))} example={displayValueFor(field("identity", "33"))} selected={selected.number === "33"} onSelect={setSelected} />
+                    <FormField field={field("identity", "34")} compact mode={modeFor(field("identity", "34"))} example={displayValueFor(field("identity", "34"))} selected={selected.number === "34"} onSelect={setSelected} />
+                    <FormField field={field("identity", "35")} compact mode={modeFor(field("identity", "35"))} example={displayValueFor(field("identity", "35"))} selected={selected.number === "35"} onSelect={setSelected} />
+                    <FormField field={field("identity", "36")} compact mode={modeFor(field("identity", "36"))} example={displayValueFor(field("identity", "36"))} selected={selected.number === "36"} onSelect={setSelected} />
+                    <FormField field={field("identity", "37")} compact mode={modeFor(field("identity", "37"))} example={displayValueFor(field("identity", "37"))} selected={selected.number === "37"} onSelect={setSelected} />
+                    <FormField className={styles.spanAll} field={field("identity", "38")} mode={modeFor(field("identity", "38"))} example={displayValueFor(field("identity", "38"))} selected={selected.number === "38"} onSelect={setSelected} />
                   </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("passport")!} empty={false}>
                   <div className={styles.passportTop}>
-                    <ChoiceField field={field("passport", "40")} mode={modeFor(field("passport", "40"))} example={showExample ? exampleFor(field("passport", "40")) : ""} selected={selected.number === "40"} onSelect={setSelected} />
+                    <ChoiceField field={field("passport", "40")} mode={modeFor(field("passport", "40"))} example={displayValueFor(field("passport", "40"))} selected={selected.number === "40"} onSelect={setSelected} />
                     <GroupedChoiceField field={field("passport", "41–43")} labels={["ALTRO TIPO", "SPECIFICARE ALTRO", "ALTRO"]} mode={modeFor(field("passport", "41–43"))} selected={selected.number === "41–43"} onSelect={setSelected} />
                   </div>
-                  <FormField field={field("passport", "44")} mode={modeFor(field("passport", "44"))} example={showExample ? exampleFor(field("passport", "44")) : ""} selected={selected.number === "44"} onSelect={setSelected} />
+                  <FormField field={field("passport", "44")} mode={modeFor(field("passport", "44"))} example={displayValueFor(field("passport", "44"))} selected={selected.number === "44"} onSelect={setSelected} />
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("passport", "45")} mode={modeFor(field("passport", "45"))} example={showExample ? exampleFor(field("passport", "45")) : ""} selected={selected.number === "45"} onSelect={setSelected} />
-                    <FormField field={field("passport", "46")} compact mode={modeFor(field("passport", "46"))} example={showExample ? exampleFor(field("passport", "46")) : ""} selected={selected.number === "46"} onSelect={setSelected} />
+                    <FormField field={field("passport", "45")} mode={modeFor(field("passport", "45"))} example={displayValueFor(field("passport", "45"))} selected={selected.number === "45"} onSelect={setSelected} />
+                    <FormField field={field("passport", "46")} compact mode={modeFor(field("passport", "46"))} example={displayValueFor(field("passport", "46"))} selected={selected.number === "46"} onSelect={setSelected} />
                   </div>
                 </FormSection>
 
                 <FormSection section={sectionMap.get("visa")!} empty={allEmpty(sectionMap.get("visa")!)}>
-                  <FormField field={field("visa", "48")} mode={modeFor(field("visa", "48"))} example={showExample ? exampleFor(field("visa", "48")) : ""} selected={selected.number === "48"} onSelect={setSelected} />
-                  <FormField field={field("visa", "49")} mode={modeFor(field("visa", "49"))} example={showExample ? exampleFor(field("visa", "49")) : ""} selected={selected.number === "49"} onSelect={setSelected} />
+                  <FormField field={field("visa", "48")} mode={modeFor(field("visa", "48"))} example={displayValueFor(field("visa", "48"))} selected={selected.number === "48"} onSelect={setSelected} />
+                  <FormField field={field("visa", "49")} mode={modeFor(field("visa", "49"))} example={displayValueFor(field("visa", "49"))} selected={selected.number === "49"} onSelect={setSelected} />
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("visa", "50")} mode={modeFor(field("visa", "50"))} example={showExample ? exampleFor(field("visa", "50")) : ""} selected={selected.number === "50"} onSelect={setSelected} />
-                    <FormField field={field("visa", "51")} compact mode={modeFor(field("visa", "51"))} example={showExample ? exampleFor(field("visa", "51")) : ""} selected={selected.number === "51"} onSelect={setSelected} />
+                    <FormField field={field("visa", "50")} mode={modeFor(field("visa", "50"))} example={displayValueFor(field("visa", "50"))} selected={selected.number === "50"} onSelect={setSelected} />
+                    <FormField field={field("visa", "51")} compact mode={modeFor(field("visa", "51"))} example={displayValueFor(field("visa", "51"))} selected={selected.number === "51"} onSelect={setSelected} />
                   </div>
                   <div className={styles.twoColumnFields}>
-                    <ChoiceField field={field("visa", "52")} mode={modeFor(field("visa", "52"))} example={showExample ? exampleFor(field("visa", "52")) : ""} selected={selected.number === "52"} onSelect={setSelected} />
-                    <ChoiceField field={field("visa", "53")} mode={modeFor(field("visa", "53"))} example={showExample ? exampleFor(field("visa", "53")) : ""} selected={selected.number === "53"} onSelect={setSelected} />
+                    <ChoiceField field={field("visa", "52")} mode={modeFor(field("visa", "52"))} example={displayValueFor(field("visa", "52"))} selected={selected.number === "52"} onSelect={setSelected} />
+                    <ChoiceField field={field("visa", "53")} mode={modeFor(field("visa", "53"))} example={displayValueFor(field("visa", "53"))} selected={selected.number === "53"} onSelect={setSelected} />
                   </div>
-                  <FormField field={field("visa", "54")} mode={modeFor(field("visa", "54"))} example={showExample ? exampleFor(field("visa", "54")) : ""} selected={selected.number === "54"} onSelect={setSelected} />
+                  <FormField field={field("visa", "54")} mode={modeFor(field("visa", "54"))} example={displayValueFor(field("visa", "54"))} selected={selected.number === "54"} onSelect={setSelected} />
                   <div className={styles.threeColumnFields}>
-                    <FormField field={field("visa", "55")} compact mode={modeFor(field("visa", "55"))} example={showExample ? exampleFor(field("visa", "55")) : ""} selected={selected.number === "55"} onSelect={setSelected} />
-                    <FormField field={field("visa", "56")} mode={modeFor(field("visa", "56"))} example={showExample ? exampleFor(field("visa", "56")) : ""} selected={selected.number === "56"} onSelect={setSelected} />
-                    <FormField field={field("visa", "57")} mode={modeFor(field("visa", "57"))} example={showExample ? exampleFor(field("visa", "57")) : ""} selected={selected.number === "57"} onSelect={setSelected} />
+                    <FormField field={field("visa", "55")} compact mode={modeFor(field("visa", "55"))} example={displayValueFor(field("visa", "55"))} selected={selected.number === "55"} onSelect={setSelected} />
+                    <FormField field={field("visa", "56")} mode={modeFor(field("visa", "56"))} example={displayValueFor(field("visa", "56"))} selected={selected.number === "56"} onSelect={setSelected} />
+                    <FormField field={field("visa", "57")} mode={modeFor(field("visa", "57"))} example={displayValueFor(field("visa", "57"))} selected={selected.number === "57"} onSelect={setSelected} />
                   </div>
                 </FormSection>
               </>
@@ -461,19 +461,19 @@ export function PermessoTrainer() {
 
                 <FormSection section={sectionMap.get("address")!} empty={false}>
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("address", "66")} compact mode={modeFor(field("address", "66"))} example={showExample ? exampleFor(field("address", "66")) : ""} selected={selected.number === "66"} onSelect={setSelected} />
-                    <FormField field={field("address", "67")} mode={modeFor(field("address", "67"))} example={showExample ? exampleFor(field("address", "67")) : ""} selected={selected.number === "67"} onSelect={setSelected} />
+                    <FormField field={field("address", "66")} compact mode={modeFor(field("address", "66"))} example={displayValueFor(field("address", "66"))} selected={selected.number === "66"} onSelect={setSelected} />
+                    <FormField field={field("address", "67")} mode={modeFor(field("address", "67"))} example={displayValueFor(field("address", "67"))} selected={selected.number === "67"} onSelect={setSelected} />
                   </div>
-                  <FormField field={field("address", "68")} mode={modeFor(field("address", "68"))} example={showExample ? exampleFor(field("address", "68")) : ""} selected={selected.number === "68"} onSelect={setSelected} />
+                  <FormField field={field("address", "68")} mode={modeFor(field("address", "68"))} example={displayValueFor(field("address", "68"))} selected={selected.number === "68"} onSelect={setSelected} />
                   <div className={styles.threeColumnFields}>
-                    <FormField field={field("address", "69")} compact mode={modeFor(field("address", "69"))} example={showExample ? exampleFor(field("address", "69")) : ""} selected={selected.number === "69"} onSelect={setSelected} />
+                    <FormField field={field("address", "69")} compact mode={modeFor(field("address", "69"))} example={displayValueFor(field("address", "69"))} selected={selected.number === "69"} onSelect={setSelected} />
                     <FormField field={field("address", "70–71")} compact mode={modeFor(field("address", "70–71"))} example="" selected={selected.number === "70–71"} onSelect={setSelected} />
-                    <FormField field={field("address", "72")} compact mode={modeFor(field("address", "72"))} example={showExample ? exampleFor(field("address", "72")) : ""} selected={selected.number === "72"} onSelect={setSelected} />
+                    <FormField field={field("address", "72")} compact mode={modeFor(field("address", "72"))} example={displayValueFor(field("address", "72"))} selected={selected.number === "72"} onSelect={setSelected} />
                   </div>
-                  <FormField field={field("address", "73")} mode={modeFor(field("address", "73"))} example={showExample ? exampleFor(field("address", "73")) : ""} selected={selected.number === "73"} onSelect={setSelected} />
+                  <FormField field={field("address", "73")} mode={modeFor(field("address", "73"))} example={displayValueFor(field("address", "73"))} selected={selected.number === "73"} onSelect={setSelected} />
                   <div className={styles.twoColumnFields}>
                     <FormField field={field("address", "74")} mode={modeFor(field("address", "74"))} example="" selected={selected.number === "74"} onSelect={setSelected} />
-                    <FormField field={field("address", "75")} mode={modeFor(field("address", "75"))} example={showExample ? exampleFor(field("address", "75")) : ""} selected={selected.number === "75"} onSelect={setSelected} />
+                    <FormField field={field("address", "75")} mode={modeFor(field("address", "75"))} example={displayValueFor(field("address", "75"))} selected={selected.number === "75"} onSelect={setSelected} />
                   </div>
                 </FormSection>
 
