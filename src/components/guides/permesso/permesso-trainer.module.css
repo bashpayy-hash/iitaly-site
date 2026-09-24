@@ -925,6 +925,93 @@
 }
 
 @media (max-width: 767px) {
+  .prepStrip {
+    align-items: flex-start;
+    padding: 14px 14px 6px;
+  }
+  .prepStrip b { font-size: 11px; }
+  .prepStrip a { font-size: 10px; }
+
+  .controls {
+    top: 60px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .controlActions { width: 100%; }
+  .exampleToggle,
+  .myDataButton { flex: 1; min-width: 0; min-height: 40px; padding: 8px 10px; font-size: 11px; }
+
+  .myDataPanel { padding: 14px; }
+  .myDataHeader,
+  .myDataFooter { align-items: flex-start; flex-direction: column; }
+  .myDataGrid { grid-template-columns: 1fr; }
+  .useMyDataButton { width: 100%; }
+
+  .legendBar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-bottom: 10px;
+    padding-inline: 12px;
+    scrollbar-width: none;
+  }
+  .legendBar::-webkit-scrollbar { display: none; }
+  .legendBar span { flex: 0 0 auto; }
+
+  .pageTabs {
+    display: flex;
+    overflow-x: auto;
+    border-radius: 10px;
+    scrollbar-width: none;
+  }
+  .pageTabs::-webkit-scrollbar { display: none; }
+  .pageTabs button { min-width: 118px; flex: 0 0 118px; }
+
+  .mobileFieldCard {
+    display: block;
+    border: 1px solid #d6d2cb;
+    border-radius: 12px;
+    background: #fff;
+    padding: 16px;
+    box-shadow: 0 10px 28px -24px rgba(0,0,0,.3);
+  }
+  .mobileFieldHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #6b6b73;
+    font-size: 10px;
+  }
+  .mobileFieldHead b { color: #1e3a8a; font-size: 10px; }
+  .mobileFieldCard h2 { margin: 11px 0 0; font-size: 18px; line-height: 1.2; }
+  .mobileFieldCard > p { margin: 3px 0 12px; color: #666670; font-size: 12px; }
+  .mobileFieldCard dl { margin: 14px 0 0; }
+  .mobileFieldCard dl > div { padding: 9px 0; border-top: 1px solid var(--line); }
+  .mobileFieldCard dt { color: #77727a; font-size: 9px; }
+  .mobileFieldCard dd { margin: 3px 0 0; font-size: 11px; line-height: 1.45; }
+  .mobileFieldNav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .mobileFieldNav button {
+    min-height: 42px;
+    border: 1px solid var(--line);
+    border-radius: 980px;
+    background: #fff;
+    color: #b91134;
+    font-size: 11px;
+  }
+  .mobileFieldNav button:last-child { justify-self: stretch; }
+  .mobileFieldNav button:disabled { opacity: .35; }
+  .mobileFieldNav span { color: #77727a; font-size: 10px; }
+
+  .paper,
+  .detailPanel { display: none; }
+  .formLayout { display: block; }
+
   .hero { grid-template-columns: 1fr; gap: 22px; padding: 34px 18px 24px; }
   .hero h1 { font-size: 36px; }
   .heroCopy > p:last-child { font-size: 16px; }
