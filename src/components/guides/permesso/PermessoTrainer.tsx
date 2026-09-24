@@ -246,6 +246,23 @@ export function PermessoTrainer() {
     return "";
   }
 
+  useEffect(() => {
+    function handleKey(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, button")) return;
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        selectRelativeField(1);
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        selectRelativeField(-1);
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  });
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
