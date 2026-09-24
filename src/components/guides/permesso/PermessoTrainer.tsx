@@ -43,6 +43,25 @@ function padTwo(n: number) {
   return String(Math.max(0, Math.min(99, n))).padStart(2, "0");
 }
 
+function compactDateToTime(value: string) {
+  const clean = value.replace(/\D/g, "");
+  if (clean.length !== 8) return Number.NaN;
+  const day = Number(clean.slice(0, 2));
+  const month = Number(clean.slice(2, 4));
+  const year = Number(clean.slice(4, 8));
+  return new Date(year, month - 1, day).getTime();
+}
+
+function isValidCompactDate(value: string) {
+  const clean = value.replace(/\D/g, "");
+  if (clean.length !== 8) return false;
+  const day = Number(clean.slice(0, 2));
+  const month = Number(clean.slice(2, 4));
+  const year = Number(clean.slice(4, 8));
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
 export function PermessoTrainer() {
   const [scenario, setScenario] = useState<PermessoScenario>("rilascio");
   const [showExample, setShowExample] = useState(false);
