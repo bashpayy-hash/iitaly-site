@@ -107,7 +107,6 @@ export function PortalOnboarding({
       return;
     }
     setTelegramUrl(res.url);
-    window.open(res.url, "_blank", "noopener,noreferrer");
   }
 
   async function checkTelegram() {
@@ -255,13 +254,25 @@ export function PortalOnboarding({
               </div>
               {!telegramLinked && (
                 <div className={styles.telegramOnboardingActions}>
-                  <button type="button" className={styles.onboardingPrimarySmall} onClick={connectTelegram} disabled={busy}>
-                    {telegramUrl ? "Открыть новую ссылку" : "Подключить"}
-                  </button>
-                  {telegramUrl && (
-                    <button type="button" className={styles.onboardingSecondarySmall} onClick={checkTelegram} disabled={busy}>
-                      Я запустил бота
+                  {!telegramUrl ? (
+                    <button type="button" className={styles.onboardingPrimarySmall} onClick={connectTelegram} disabled={busy}>
+                      Подключить
                     </button>
+                  ) : (
+                    <>
+                      <a
+                        href={telegramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        referrerPolicy="no-referrer"
+                        className={styles.onboardingPrimarySmall}
+                      >
+                        Открыть Telegram
+                      </a>
+                      <button type="button" className={styles.onboardingSecondarySmall} onClick={checkTelegram} disabled={busy}>
+                        Я запустил бота
+                      </button>
+                    </>
                   )}
                 </div>
               )}
