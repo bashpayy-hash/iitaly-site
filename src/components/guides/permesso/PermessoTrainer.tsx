@@ -733,9 +733,9 @@ function FormSection({ section, empty, children }: { section: TrainerSection; em
       <header>
         <b>{section.label.toUpperCase()} · {section.title.toUpperCase()}</b>
         {section.note && <span>{section.note}</span>}
+        {empty && <strong className={styles.skipBadge}>ПРОПУСТИ ЦЕЛИКОМ</strong>}
       </header>
       <div className={styles.sectionBody}>{children}</div>
-      {empty && <div className={styles.emptyStamp}>ОСТАВЬ ПУСТЫМ</div>}
     </section>
   );
 }
@@ -746,25 +746,41 @@ function ChoiceField({
   field: TrainerField; mode: FieldMode; example: string; selected: boolean; onSelect: (field: TrainerField) => void;
 }) {
   return (
-    <button type="button" className={styles.choiceField} data-mode={mode} data-selected={selected || undefined} onClick={() => onSelect(field)}>
+    <button
+      type="button"
+      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
+      className={styles.choiceField}
+      data-mode={mode}
+      data-selected={selected || undefined}
+      onClick={() => onSelect(field)}
+    >
       <span><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
       <span className={styles.xBox}>{example === "X" ? "X" : ""}</span>
-      <em>{MODE_LABEL[mode]}</em>
+      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
     </button>
   );
 }
 
-function GroupedChoiceField({
-  field, labels, mode, selected, onSelect,
+function RefugeeField({
+  field, mode, value, selected, onSelect,
 }: {
-  field: TrainerField; labels: string[]; mode: FieldMode; selected: boolean; onSelect: (field: TrainerField) => void;
+  field: TrainerField; mode: FieldMode; value: string; selected: boolean; onSelect: (field: TrainerField) => void;
 }) {
+  const upper = value.toUpperCase();
   return (
-    <button type="button" className={styles.groupedChoice} data-mode={mode} data-selected={selected || undefined} onClick={() => onSelect(field)}>
-      {labels.map((label, index) => (
-        <span key={label}><b>{field.number}{index ? "" : "."} {label}</b><i /></span>
-      ))}
-      <em>{MODE_LABEL[mode]}</em>
+    <button
+      type="button"
+      aria-label={"Поле 37, Rifugiato, " + MODE_LABEL[mode]}
+      className={styles.refugeeField}
+      data-mode={mode}
+      data-selected={selected || undefined}
+      onClick={() => onSelect(field)}
+    >
+      <span className={styles.formLabel}><b>37. RIFUGIATO</b><small>Статус беженца</small></span>
+      <span className={styles.yesNo}>
+        <span><b>SI</b><i>{upper === "SI" ? "X" : ""}</i></span>
+        <span><b>NO</b><i>{upper === "NO" ? "X" : ""}</i></span>
+      </span>
     </button>
   );
 }
@@ -788,31 +804,84 @@ function FormField({
   signature?: boolean;
   className?: string;
 }) {
-  const count = Math.max(1, compact ? Math.min(field.cells || 8, 10) : field.cells || 12);
   return (
     <button
       type="button"
+      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
       className={styles.formField + " " + (compact ? styles.compactField : "") + " " + (signature ? styles.signatureField : "") + " " + className}
       data-mode={mode}
       data-selected={selected || undefined}
       onClick={() => onSelect(field)}
     >
       <span className={styles.formLabel}><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
-      {signature ? <span className={styles.signatureLine} /> : <CellRun count={count} value={example} date={field.kind === "date"} />}
-      <em>{MODE_LABEL[mode]}</em>
+      {signature ? <span className={styles.signatureLine} /> : <FieldCells field={field} value={example} compact={compact} />}
+      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
     </button>
   );
 }
 
-function CellRun({ count, value = "", date = false }: { count: number; value?: string; date?: boolean }) {
+function FieldCells({ field, value, compact }: { field: TrainerField; value: string; compact: boolean }) {
+  if (field.kind === "date") return <DateCells value={value} />;
+  if (field.number === "69" || field.number === "81") return <HouseCells value={value} />;
+  if (field.number === "74" || field.number === "75") return <PhoneCells value={value} />;
+  if (field.rows === 2) return <DoubleRowCells count={field.cells || 20} value={value} />;
+  const count = Math.max(1, compact ? Math.min(field.cells || 8, 10) : field.cells || 12);
+  return <CellRun count={count} value={value} />;
+}
+
+function DateCells({ value = "" }: { value?: string }) {
+  const clean = value.replace(/\D/g, "");
+  return (
+    <span className={styles.dateCells} aria-hidden>
+      <span><CellRun count={2} value={clean.slice(0, 2)} /><small>gg</small></span>
+      <b>/</b>
+      <span><CellRun count={2} value={clean.slice(2, 4)} /><small>mm</small></span>
+      <b>/</b>
+      <span><CellRun count={4} value={clean.slice(4, 8)} /><small>aaaa</small></span>
+    </span>
+  );
+}
+
+function HouseCells({ value = "" }: { value?: string }) {
+  const [numberPart, letterPart = ""] = value.toUpperCase().split("/");
+  return (
+    <span className={styles.splitCells} aria-hidden>
+      <span><CellRun count={5} value={numberPart} /><small>numero</small></span>
+      <b>/</b>
+      <span><CellRun count={2} value={letterPart} /><small>lettera</small></span>
+    </span>
+  );
+}
+
+function PhoneCells({ value = "" }: { value?: string }) {
+  const parts = value.replace(/\s/g, "").split("/");
+  const prefix = parts.length > 1 ? parts[0] : value.replace(/\D/g, "").slice(0, 3);
+  const number = parts.length > 1 ? parts[1] : value.replace(/\D/g, "").slice(3);
+  return (
+    <span className={styles.splitCells} aria-hidden>
+      <span><CellRun count={4} value={prefix} /><small>prefisso</small></span>
+      <b>/</b>
+      <span><CellRun count={8} value={number} /><small>numero</small></span>
+    </span>
+  );
+}
+
+function DoubleRowCells({ count, value = "" }: { count: number; value?: string }) {
+  const normalized = value.toUpperCase();
+  return (
+    <span className={styles.doubleCells} aria-hidden>
+      <CellRun count={count} value={normalized.slice(0, count)} />
+      <CellRun count={count} value={normalized.slice(count, count * 2)} />
+    </span>
+  );
+}
+
+function CellRun({ count, value = "" }: { count: number; value?: string }) {
   const chars = value.toUpperCase().split("");
   return (
     <span className={styles.cells} aria-hidden>
       {Array.from({ length: count }).map((_, index) => (
-        <i key={index}>
-          {chars[index] || ""}
-          {date && (index === 1 || index === 3) && index < count - 1 ? <span>/</span> : null}
-        </i>
+        <i key={index}>{chars[index] === " " ? "" : chars[index] || ""}</i>
       ))}
     </span>
   );
