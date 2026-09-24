@@ -32,13 +32,33 @@
 .disclaimer p { margin: 7px 0 0; color: #51515a; font-size: 13px; line-height: 1.55; }
 .disclaimer a { display: inline-block; margin-top: 10px; color: #b91134; font-size: 13px; font-weight: 500; }
 
+.prepStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 18px 24px 8px;
+}
+.prepStrip > div { display: grid; gap: 3px; }
+.prepStrip span { color: #77727a; font-size: 11px; font-weight: 500; }
+.prepStrip b { color: #34343a; font-size: 13px; font-weight: 500; line-height: 1.45; }
+.prepStrip a { color: #b91134; font-size: 12px; font-weight: 500; white-space: nowrap; }
+
 .controls {
+  position: sticky;
+  top: 64px;
+  z-index: 24;
   display: flex;
   justify-content: space-between;
   gap: 18px;
   max-width: 1160px;
   margin: 0 auto;
-  padding: 26px 24px 12px;
+  padding: 10px 24px;
+  border-block: 1px solid rgba(220,220,225,.9);
+  background: rgba(245,245,247,.96);
+  backdrop-filter: blur(14px);
 }
 .scenarioSwitch {
   display: grid;
@@ -62,22 +82,24 @@
 .scenarioSwitch button[data-active="true"] { background: #fff0f3; box-shadow: inset 0 -2px var(--action); }
 .scenarioSwitch span { display: block; font-size: 15px; font-weight: 600; }
 .scenarioSwitch small { display: block; margin-top: 4px; color: #666670; font-size: 12px; }
-.exampleToggle {
+.controlActions { display: flex; align-items: stretch; gap: 8px; }
+.exampleToggle,
+.myDataButton {
   align-self: stretch;
-  min-width: 150px;
+  min-width: 132px;
   border: 1px solid var(--line);
   border-radius: 980px;
   background: #fff;
   color: #b91134;
-  padding: 12px 18px;
-  font-size: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
   font-weight: 500;
 }
+.myDataButton { color: #1e3a8a; }
 
 .legendBar {
-  position: sticky;
-  top: 64px;
-  z-index: 20;
+  position: static;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 8px 20px;
@@ -93,12 +115,12 @@
 .legendBar span[data-mode="write"] i { border: 2px solid var(--write); }
 .legendBar span[data-mode="empty"] i { border: 1px solid var(--empty); background: repeating-linear-gradient(135deg,#eee 0 4px,#ddd 4px 6px); }
 .legendBar span[data-mode="post"] i { border: 2px solid var(--post); background: #fff4c8; }
-.legendBar span[data-mode="optional"] i { border: 2px dashed var(--optional); }
+.legendBar span[data-mode="ifExists"] i { border: 2px dashed var(--optional); }
 
 .trainer { max-width: 1160px; margin: 0 auto; padding: 0 24px 56px; }
 .pageTabs {
   display: grid;
-  grid-template-columns: repeat(3,minmax(0,1fr));
+  grid-template-columns: repeat(5,minmax(0,1fr));
   width: calc(100% - 330px);
   max-width: none;
   margin: 0 0 12px;
@@ -112,6 +134,8 @@
 .pageTabs button[data-active="true"] { background: #fff0f3; box-shadow: inset 0 -2px var(--action); }
 .pageTabs span { display: block; font-size: 12px; font-weight: 600; }
 .pageTabs small { display: block; margin-top: 2px; color: #666670; font-size: 10px; }
+.utilityTab { background: #fafafa !important; }
+.utilityTab span { color: #51515a; }
 
 .formLayout { display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 20px; align-items: start; }
 .paper {
