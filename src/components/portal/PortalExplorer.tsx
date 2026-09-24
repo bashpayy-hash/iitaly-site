@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
@@ -284,7 +285,7 @@ export function PortalExplorer() {
     <section className={styles.portal}>
       <div className={styles.shell}>
         <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
-          <a href="/" className={styles.portalBrand}>IITALY</a>
+          <Link href="/" className={styles.portalBrand}>IITALY</Link>
           <p className={styles.sidebarLabel}>Личный кабинет</p>
           <nav className={styles.nav} aria-label="Разделы личного кабинета">
             {NAV.map((item) => (
