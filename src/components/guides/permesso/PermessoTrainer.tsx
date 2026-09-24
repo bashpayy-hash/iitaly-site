@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import {
   COUNTRY_CODES,
   PERMIT_CODES,
@@ -502,7 +502,7 @@ function FormHeader({ page, showExample, scenario }: { page: number; showExample
   );
 }
 
-function FormSection({ section, empty, children }: { section: TrainerSection; empty: boolean; children: React.ReactNode }) {
+function FormSection({ section, empty, children }: { section: TrainerSection; empty: boolean; children: ReactNode }) {
   return (
     <section className={styles.formSection} data-empty={empty || undefined}>
       <header>
