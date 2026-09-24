@@ -316,21 +316,20 @@ export function PermessoTrainer() {
   useEffect(() => {
     function applyUrlState() {
       const params = new URLSearchParams(window.location.search);
-      const scenarioParam = params.get("scenario");
-      const nextScenario: PermessoScenario = scenarioParam === "rinnovo" ? "rinnovo" : "rilascio";
-      const pageParam = params.get("page");
-      const pageIndex = Math.max(0, FORM_PAGES.findIndex((item) => String(item.number) === pageParam));
-      const fields = FORM_PAGES[pageIndex].sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
+      const nextScenario: PermessoScenario = params.get("scenario") === "rinnovo" ? "rinnovo" : "rilascio";
+      const requestedPage = params.get("page");
+      const foundPage = FORM_PAGES.findIndex((item) => String(item.number) === requestedPage);
+      const pageIndex = foundPage >= 0 ? foundPage : 0;
+      const fields = fieldsForPageIndex(pageIndex);
       const requestedField = params.get("field");
-      const nextField = fields.find((item) => item.number === requestedField) || fields.find((item) => modeForScenario(item, nextScenario) === "write") || fields[0];
+      const nextField = fields.find((item) => item.number === requestedField) || fields.find((item) => item.mode[nextScenario] === "write") || fields[0];
       setScenario(nextScenario);
       setActivePage(pageIndex);
       if (nextField) setSelected(nextField);
     }
-    applyUrlState();
     window.addEventListener("popstate", applyUrlState);
     return () => window.removeEventListener("popstate", applyUrlState);
-  }, [sectionMap]);
+  }, []);
 
   return (
     <div className={styles.page}>
