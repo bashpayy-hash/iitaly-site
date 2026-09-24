@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { PortalData, PortalProfile, PortalResult } from "@/lib/portalApi";
 import styles from "./portal.module.css";
@@ -138,7 +139,7 @@ export function PortalOnboarding({
     <section className={styles.onboardingPage}>
       <div className={styles.onboardingShell}>
         <div className={styles.onboardingTop}>
-          <a href="/" className={styles.portalBrand}>IITALY</a>
+          <Link href="/" className={styles.portalBrand}>IITALY</Link>
           <span>Настройка маршрута · шаг {visualStep} из {totalSteps}</span>
         </div>
         <div className={styles.onboardingProgress} aria-hidden>
