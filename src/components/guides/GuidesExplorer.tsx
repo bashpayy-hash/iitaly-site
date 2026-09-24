@@ -72,7 +72,31 @@ const CHAPTERS: Chapter[] = [
 
 function ChapterBody({ chapter }: { chapter: Chapter }) {
   if (chapter.kind === "visa") return <VisaSection />;
-  return <GuideDetail guide={GUIDES[chapter.index]} />;
+  const guide = GUIDES[chapter.index];
+
+  return (
+    <>
+      <GuideDetail guide={guide} />
+      {guide.title === "Permesso di soggiorno" && (
+        <>
+          <div className="mt-4 border border-white/15 bg-white px-4 py-3 text-apple-body-sm text-cloud-white">
+            <b className="block">Актуальная ремарка к тренажёру</b>
+            <span className="mt-1 block text-cloud-body">
+              Poste отдельно указывает €16 за marca da bollo, €30 за приём kit и €30,46 за электронную карточку; дополнительный contributo зависит от длительности и типа permesso. Для rinnovo требования также зависят от кода 24 / 31 — сверяй свой тип на Portale Immigrazione и у Questura.
+            </span>
+          </div>
+          <div className="mt-5">
+            <Link href="/guides/permesso-modulo-1" className={styles.button + " " + styles.filled}>
+              Открыть тренажёр Modulo 1
+            </Link>
+            <p className="mt-2 text-apple-caption text-cloud-meta">
+              Rilascio и rinnovo · поля по секциям · без ввода личных данных.
+            </p>
+          </div>
+        </>
+      )}
+    </>
+  );
 }
 
 export function GuidesExplorer() {
