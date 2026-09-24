@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   COUNTRY_CODES,
   PERMIT_CODES,
@@ -15,10 +15,13 @@ import styles from "./permesso-trainer.module.css";
 
 const MODE_LABEL: Record<FieldMode, string> = {
   write: "ПИШИ",
-  empty: "ОСТАВЬ ПУСТЫМ",
+  empty: "ПРОПУСТИ",
   post: "ТОЛЬКО НА ПОЧТЕ",
-  optional: "ЕСЛИ ЕСТЬ / ЖЕЛАТЕЛЬНО",
+  ifExists: "ЕСЛИ ЕСТЬ",
+  recommended: "ЖЕЛАТЕЛЬНО",
 };
+
+const LOCAL_DATA_KEY = "iitaly:permesso-modulo1-local-data";
 
 const COPY_KEYS = [
   ["passport", "Паспорт: нужные страницы + виза + штампы"],
@@ -50,6 +53,10 @@ export function PermessoTrainer() {
   const [worker, setWorker] = useState(false);
   const [provinceQuery, setProvinceQuery] = useState("");
   const [countryQuery, setCountryQuery] = useState("");
+  const [myDataOpen, setMyDataOpen] = useState(false);
+  const [useMyData, setUseMyData] = useState(false);
+  const [myData, setMyData] = useState<Record<string, string>>({});
+  const [dataReady, setDataReady] = useState(false);
   const [copies, setCopies] = useState<Record<string, string>>({
     passport: "", permit: "", fiscal: "", insurance: "", enrollment: "", funds: "", housing: "", module2: "",
   });
@@ -58,6 +65,26 @@ export function PermessoTrainer() {
     () => new Map(TRAINER_SECTIONS.map((section) => [section.id, section])),
     [],
   );
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(LOCAL_DATA_KEY);
+      if (saved) setMyData(JSON.parse(saved) as Record<string, string>);
+    } catch {
+      // Local-only helper must never block the trainer.
+    } finally {
+      setDataReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!dataReady) return;
+    try {
+      window.localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(myData));
+    } catch {
+      // Storage can be unavailable in private/restricted browser modes.
+    }
+  }, [dataReady, myData]);
 
   const extraSheets = useMemo(() => {
     let total = 0;
