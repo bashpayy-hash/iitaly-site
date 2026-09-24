@@ -228,6 +228,22 @@ export function PermessoTrainer() {
       return mode !== "empty" && mode !== "post" && item.kind !== "x" && !["22", "25", "26", "62"].includes(item.number);
     });
 
+  function helpSourceFor(field: TrainerField) {
+    if (field.number === "31" && scenario === "rinnovo") {
+      return "Возьми существующий codice fiscale из карточки / сертификата. При продлении не придумывай новый код.";
+    }
+    return field.source;
+  }
+
+  function codeHintFor(field: TrainerField) {
+    if (field.number === "16") return requestCode ? requestCode + " — выбран в помощнике ниже" : "УТОЧНЯЕТСЯ · не подставляем 24/31 автоматически";
+    if (field.number === "19") return currentCardCode ? currentCardCode + " — выбран по текущему документу" : "ПЕРЕПИШИ С ТЕКУЩЕГО ВНЖ / ПРОШЛОГО KIT";
+    if (field.number === "32") return "A — не в браке · B — в браке";
+    if (field.number === "35" || field.number === "36") return "СВЕРЬ С TABELLA 3 ТВОЕГО KIT";
+    if (field.number === "46") return "Часто 01, если паспорт выдан госорганом страны — сверить foglio note";
+    return "";
+  }
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
