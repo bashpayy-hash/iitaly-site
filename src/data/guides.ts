@@ -64,9 +64,9 @@ export const GUIDES: GuideCard[] = [
     teaser:
       "Вид на жительство. Подаёшь заявку в первые 8 рабочих дней после въезда — через «жёлтый набор» (kit giallo) на почте Poste Italiane.",
     rows: [
-      { label: "Стоимость", value: "€16 marca + €30 Poste + €30,46 карта + contributo по длительности" },
+      { label: "Стоимость", value: "≈ €116 всего (marca da bollo, пересылка, карта)" },
       { label: "Потом", value: "приём в Questura по записи, снятие отпечатков" },
-      { label: "Продление", value: "требования зависят от кода permesso; сверяй art. 39 / 39-bis и свою Questura" },
+      { label: "Продление", value: "нужен минимум 1 сданный экзамен за первый год" },
     ],
   },
   {
