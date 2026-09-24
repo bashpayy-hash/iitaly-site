@@ -71,7 +71,7 @@ export function HelpSection({
         </div>
       </div>
 
-      <section className={styles.reminderCard}>
+      <section id="notifications" className={styles.reminderCard} data-telegram-status={tgEnabled ? "connected" : "disconnected"}>
         <div className={styles.reminderState}>
           <span className={styles.reminderDot} data-on={tgEnabled ? "true" : "false"} aria-hidden />
           <div>
