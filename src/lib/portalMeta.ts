@@ -4,17 +4,17 @@
 import type { PortalTask } from "./portalApi";
 
 export const TASK_META: Record<string, { min: string; why: string; act: string }> = {
-  profile: { min: "7 мин", why: "нужно для подборки программ и расчёта маршрута", act: "Заполнить" },
-  shortlist: { min: "5 мин", why: "ИИ отберёт программы под твои баллы и бюджет", act: "Получить подборку" },
-  chances: { min: "3 мин", why: "поймём, реально ли рассчитывать на стипендию", act: "Проверить шансы" },
-  checkDocs: { min: "2 мин", why: "ошибку дешевле найти сейчас, чем после отказа", act: "Проверить документы" },
-  path12: { min: "5 мин", why: "решает, теряешь ли ты год", act: "Разобрать варианты" },
-  apostille: { min: "до 6 недель", why: "без него перевод недействителен", act: "Как получить" },
-  cimea: { min: "30–60 дней", why: "запускать заранее, иначе не успеть", act: "Как подать" },
-  universitaly: { min: "40 мин", why: "без этого визу не дадут", act: "Как заполнить" },
-  iseeu: { min: "2 недели", why: "от него зависит размер стипендии", act: "Что нужно" },
-  money: { min: "заранее", why: "деньги должны «пожить» на счёте", act: "Сколько нужно" },
-  blsSlot: { min: "15 мин", why: "слоты в сезон разбирают за часы", act: "Как записаться" },
+  profile: { min: "7 мин", why: "нужно, чтобы убрать лишние шаги и настроить маршрут", act: "Заполнить профиль" },
+  shortlist: { min: "15 мин", why: "соберём короткий список программ под твою ситуацию", act: "Выбрать программы" },
+  chances: { min: "5 мин", why: "поймём, стоит ли строить стратегию вокруг региональной стипендии", act: "Проверить шансы" },
+  checkDocs: { min: "2 мин", why: "ошибку проще исправить до подачи", act: "Проверить документы" },
+  path12: { min: "10 мин", why: "после 11 классов нужен дополнительный академический год", act: "Выбрать путь" },
+  apostille: { min: "1–3 недели", why: "апостиль ставится на оригинал до перевода", act: "Открыть шаг" },
+  cimea: { min: "30–60 дней", why: "признание образования может занять несколько недель", act: "Открыть шаг" },
+  universitaly: { min: "40 мин", why: "pre-enrolment нужен перед студенческой визой", act: "Открыть шаг" },
+  iseeu: { min: "1–2 недели", why: "этот показатель используется для заявки на DSU", act: "Открыть шаг" },
+  money: { min: "заранее", why: "финансовую гарантию лучше готовить не в последний момент", act: "Открыть шаг" },
+  blsSlot: { min: "15 мин", why: "в высокий сезон свободные слоты быстро заканчиваются", act: "Открыть шаг" },
 };
 
 export const ACT_PAGE: Record<string, string> = {
@@ -26,15 +26,15 @@ export const ACT_PAGE: Record<string, string> = {
 
 export const DOC_TASKS: Record<string, string> = {
   apostille: "Аттестат или диплом с апостилем",
-  translate: "Присяжный перевод",
-  notary: "Нотариальное заверение перевода",
-  cimea: "CIMEA Statement of Comparability",
-  familyDocs: "Справка о доходах или составе семьи",
-  iseeu: "ISEEU parificato",
-  statements: "Банковская выписка",
+  translate: "Официальный перевод на итальянский",
+  notary: "Заверенный перевод",
+  cimea: "Признание образования (CIMEA)",
+  familyDocs: "Семейные справки для DSU",
+  iseeu: "Показатель дохода для DSU (ISEEU)",
+  statements: "Банковские выписки",
   insurance: "Медицинская страховка",
   housing: "Подтверждение жилья",
-  universitaly: "Сводка Universitaly",
+  universitaly: "Подтверждение Universitaly",
 };
 
 export const V_LABEL: Record<string, string> = {
@@ -69,6 +69,5 @@ export function dlText(t: PortalTask, isDone: boolean): string {
   const days = t.daysLeft ?? 0;
   if (days < 0) return `просрочено на ${-days} дн`;
   if (days === 0) return "сегодня";
-  if (days <= 45) return `через ${days} дн · ${fmtDate(t.deadline)}`;
-  return fmtDate(t.deadline);
+  return `через ${days} дн`;
 }
