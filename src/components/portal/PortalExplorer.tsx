@@ -107,11 +107,13 @@ export function PortalExplorer() {
   useEffect(() => {
     if (triedAutoLogin.current) return;
     triedAutoLogin.current = true;
+    /* eslint-disable react-hooks/set-state-in-effect */
     try {
       const savedCode = localStorage.getItem(KEY);
       const savedSn = localStorage.getItem(KEY_SN);
       if (savedCode && savedSn) login(savedSn, savedCode, true);
     } catch {}
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   useEffect(() => {
