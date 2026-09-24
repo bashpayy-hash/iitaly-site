@@ -7,12 +7,18 @@ import { BACKEND_URL } from "./backend";
 export interface PortalTask {
   id: string;
   t: string;
+  explain?: string | null;
+  owner?: string;
+  time?: string | null;
+  available?: boolean;
+  timingLabel?: string | null;
   deadline?: string | null;
+  deadlineKind?: string | null;
   daysLeft?: number | null;
   ai?: boolean;
   expert?: boolean;
-  note?: string;
-  warn?: string;
+  note?: string | null;
+  warn?: string | null;
 }
 
 export interface PortalStage {
@@ -27,14 +33,25 @@ export interface PortalDoc {
   critical?: number;
 }
 
+export interface PortalProfile {
+  education?: string;
+  goal?: string;
+  budget?: string;
+  educationPath?: "university_kz" | "foundation";
+  onboardingDone?: boolean;
+}
+
 export interface PortalClient {
   name: string;
-  tier: string;
+  surname?: string;
+  tier?: string;
   intakeYear?: number;
   tgLinked?: boolean;
   botName?: string;
   email?: string;
   notify?: { email?: boolean; telegram?: boolean };
+  profile?: PortalProfile;
+  onboardingComplete?: boolean;
 }
 
 export interface PortalData {
@@ -79,6 +96,32 @@ export async function fetchPortal(code: string, surname: string): Promise<Portal
     return { ok: true, data: d as PortalData };
   } catch {
     return { ok: false, error: "Нет связи с сервером. Проверь интернет." };
+  }
+}
+
+export async function savePortalProfile(
+  code: string,
+  surname: string,
+  payload: {
+    education?: string;
+    goal?: string;
+    budget?: string;
+    educationPath?: "university_kz" | "foundation" | null;
+    onboardingDone?: boolean;
+  },
+): Promise<PortalResult> {
+  if (!BACKEND_URL) return { ok: false, error: "Нет связи с сервером" };
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/portal/${encodeURIComponent(code)}/profile`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ surname, ...payload }),
+    });
+    const d = await r.json().catch(() => null);
+    if (!r.ok || !d?.ok) return { ok: false, error: d?.error || "Не удалось сохранить профиль." };
+    return { ok: true, data: d as PortalData };
+  } catch {
+    return { ok: false, error: "Нет связи с сервером" };
   }
 }
 

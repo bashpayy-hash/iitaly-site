@@ -29,7 +29,11 @@ const approvedReminderUiPaths = new Set([
   'src/components/portal/TodaySection.tsx',
   'src/components/portal/PlanSection.tsx',
   'src/components/portal/DocsSection.tsx',
+  // Explicitly authorized critique pass: first-run onboarding and profile settings.
+  'src/components/portal/PortalOnboarding.tsx',
+  'src/components/portal/ProfileSection.tsx',
   'src/components/portal/portal.module.css',
+  'src/lib/portalMeta.ts',
   'src/components/chat/ChatWidget.tsx',
   'src/components/Footer.tsx',
   'src/data/pricing.ts',
