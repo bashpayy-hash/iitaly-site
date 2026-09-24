@@ -26,7 +26,6 @@ export interface TrainerSection {
 
 const BOTH_WRITE = { rilascio: "write", rinnovo: "write" } as const;
 const BOTH_EMPTY = { rilascio: "empty", rinnovo: "empty" } as const;
-const BOTH_POST = { rilascio: "post", rinnovo: "post" } as const;
 const BOTH_VERIFY = { rilascio: "verify", rinnovo: "verify" } as const;
 const BOTH_IF_EXISTS = { rilascio: "ifExists", rinnovo: "ifExists" } as const;
 
@@ -59,7 +58,7 @@ export const TRAINER_SECTIONS: TrainerSection[] = [
     id: "application",
     label: "Sezione 2",
     title: "Dati sull'istanza",
-    note: "Сколько модулей и листов идёт в конверт; дата и подпись — только на почте.",
+    note: "Сколько модулей и листов идёт в конверт; момент заполнения даты и подписи уточни перед подачей.",
     fields: [
       { number: "22", it: "INDICARE QUALI MODULI SONO STATI COMPILATI", ru: "Какие модули заполнены", section: "application", cells: 2, kind: "number", mode: BOTH_WRITE, source: "Обычно только Modulo 1 для студента без дохода от работы.", format: "01; если реально нужен Modulo 2 — 02.", example: { rilascio: "01", rinnovo: "01" }, mistake: "Не считай сюда страницы и ксерокопии." },
       { number: "23", it: "MODULO 1", ru: "Modulo 1 приложен", section: "application", cells: 1, kind: "x", mode: BOTH_WRITE, source: "Бумажный kit.", format: "X.", example: { rilascio: "X", rinnovo: "X" }, mistake: "Не путай с количеством листов." },
