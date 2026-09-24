@@ -24,8 +24,8 @@ const BUDGET = [
   { value: "Без ограничений", title: "Бюджет не главное" },
 ] as const;
 
-function needsTwelveYears(profile: PortalProfile) {
-  return !(profile.education === "НИШ / 12 лет" || profile.education === "Бакалавр" || profile.goal === "Магистратура");
+function needsPathChoice(profile: PortalProfile) {
+  return profile.education === "11 классов" && profile.goal !== "Магистратура";
 }
 
 export function PortalOnboarding({
@@ -57,7 +57,7 @@ export function PortalOnboarding({
   const [telegramUrl, setTelegramUrl] = useState<string | null>(null);
   const [telegramLinked, setTelegramLinked] = useState(Boolean(data.client.tgLinked));
 
-  const needs12 = useMemo(() => needsTwelveYears(profile), [profile]);
+  const needs12 = useMemo(() => needsPathChoice(profile), [profile]);
   const totalSteps = needs12 ? 3 : 2;
   const visualStep = step === 0 ? 1 : needs12 && step === 1 ? 2 : totalSteps;
 
@@ -81,7 +81,7 @@ export function PortalOnboarding({
       return;
     }
     setProfile(res.data.client.profile || profile);
-    setStep(needsTwelveYears(res.data.client.profile || profile) ? 1 : 2);
+    setStep(needsPathChoice(res.data.client.profile || profile) ? 1 : 2);
   }
 
   async function savePath(path: "university_kz" | "foundation") {
