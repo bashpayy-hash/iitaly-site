@@ -542,20 +542,26 @@ export function PermessoTrainer() {
             </div>
             <h3>{selected.it}</h3>
             <p className={styles.detailRu}>{selected.ru}</p>
+            {codeHintFor(selected) && <div className={styles.codeHint}>{codeHintFor(selected)}</div>}
             <dl>
-              <div><dt>Откуда взять</dt><dd>{selected.source}</dd></div>
+              <div>
+                <dt>{modeFor(selected) === "empty" ? "Почему пусто" : "Откуда взять"}</dt>
+                <dd>{helpSourceFor(selected)}</dd>
+              </div>
               <div><dt>Формат</dt><dd>{selected.format}</dd></div>
-              {exampleFor(selected) && <div><dt>Пример</dt><dd>{exampleFor(selected)}</dd></div>}
+              {suggestedValueFor(selected) && <div><dt>Пример</dt><dd>{suggestedValueFor(selected)}</dd></div>}
               <div><dt>Частая ошибка</dt><dd>{selected.mistake}</dd></div>
             </dl>
-            <p className={styles.exampleNote}>Серые буквы — выдуманный пример. На бумаге пиши свои данные чёрной ручкой.</p>
+            <p className={styles.exampleNote}>
+              {useMyData ? "Тёмно-синие буквы — твои локальные данные из этого браузера." : "Серые буквы — выдуманный пример. На бумаге пиши свои данные чёрной ручкой."}
+            </p>
             <div className={styles.detailNav}>
-              <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedPageIndex <= 0}>
-                ← Предыдущее
+              <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedWritableIndex <= 0}>
+                ← Предыдущее поле
               </button>
-              <span>{Math.max(1, selectedPageIndex + 1)} / {activePageFields.length}</span>
-              <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedPageIndex < 0 || selectedPageIndex >= activePageFields.length - 1}>
-                Следующее →
+              <span>{Math.max(1, selectedWritableIndex + 1)} / {writablePageFields.length}</span>
+              <button type="button" onClick={() => selectRelativeField(1)} disabled={selectedWritableIndex < 0 || selectedWritableIndex >= writablePageFields.length - 1}>
+                Следующее поле →
               </button>
             </div>
           </aside>
