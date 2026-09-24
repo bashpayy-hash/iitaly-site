@@ -2,7 +2,7 @@
 
 import { Accordion } from "@/components/Accordion";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
-import { DOC_TASKS, V_LABEL, dlState, dlText } from "@/lib/portalMeta";
+import { DOC_TASKS, V_LABEL, dlText } from "@/lib/portalMeta";
 import styles from "./portal.module.css";
 
 export function PlanSection({
@@ -11,23 +11,26 @@ export function PlanSection({
   onToggleTask,
   onUploadDoc,
   busyTask,
+  onAsk,
 }: {
   data: PortalData;
   openStage: string;
   onToggleTask: (taskId: string, value: boolean) => void;
   onUploadDoc: (taskId: string) => void;
   busyTask: string | null;
+  onAsk: (task: PortalTask) => void;
 }) {
   return (
     <div>
       <div className={styles.sectionHeading}>
         <div>
+          <p className={styles.kicker}>Весь маршрут</p>
           <h2>План поступления</h2>
-          <p>Открывай только текущий этап. Остальные остаются на виду, но не отвлекают.</p>
+          <p>Открывай текущий этап. Остальные остаются на виду, но не требуют внимания заранее.</p>
         </div>
       </div>
 
-      <div style={{ display: "grid", gap: 10 }}>
+      <div className={styles.planStages}>
         {data.roadmap.map((stage) => {
           const total = stage.tasks.length;
           const done = stage.tasks.filter((task) => data.done[task.id]).length;
@@ -38,7 +41,7 @@ export function PlanSection({
                 variant="quiet"
                 defaultOpen={stage.id === openStage}
                 summary={
-                  <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 90px auto", gap: 12, alignItems: "center" }}>
+                  <div className={styles.stageSummary}>
                     <span className={styles.stageName}>{stage.title}</span>
                     <span className={styles.miniTrack} aria-hidden>
                       <span className={styles.miniFill} style={{ width: pct + "%" }} />
@@ -57,6 +60,7 @@ export function PlanSection({
                       busy={busyTask === task.id}
                       onToggle={onToggleTask}
                       onUploadDoc={onUploadDoc}
+                      onAsk={onAsk}
                     />
                   ))}
                 </div>
@@ -76,6 +80,7 @@ function TaskRow({
   busy,
   onToggle,
   onUploadDoc,
+  onAsk,
 }: {
   task: PortalTask;
   done: boolean;
@@ -83,65 +88,77 @@ function TaskRow({
   busy: boolean;
   onToggle: (taskId: string, value: boolean) => void;
   onUploadDoc: (taskId: string) => void;
+  onAsk: (task: PortalTask) => void;
 }) {
-  const auto = task.ai || task.expert;
   const needDoc = DOC_TASKS[task.id];
-  const state = dlState(task, done);
+  const systemTracked = task.id === "profile" || task.id === "path12" || Boolean(needDoc) || Boolean(task.ai) || Boolean(task.expert);
+  const blocked = task.available === false;
 
   function activate() {
-    if (busy) return;
-    if (auto) {
-      window.dispatchEvent(
-        new CustomEvent("iitaly:open-chat", { detail: { prefill: "Помоги с шагом: " + task.t } }),
-      );
-      return;
-    }
+    if (busy || blocked || systemTracked) return;
     onToggle(task.id, !done);
   }
 
   return (
     <div
-      role="button"
-      tabIndex={0}
+      role={!systemTracked && !blocked ? "button" : undefined}
+      tabIndex={!systemTracked && !blocked ? 0 : undefined}
       onClick={activate}
       onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
+        if (!systemTracked && !blocked && (event.key === "Enter" || event.key === " ")) {
           event.preventDefault();
           activate();
         }
       }}
       className={styles.taskRow}
-      style={{ opacity: busy ? .55 : 1, cursor: "pointer" }}
+      data-blocked={blocked || undefined}
+      style={{ opacity: busy ? .55 : 1, cursor: !systemTracked && !blocked ? "pointer" : "default" }}
     >
-      <span className={styles.taskCheck} data-done={done ? "true" : "false"} aria-hidden>
-        {done ? "✓" : ""}
+      <span className={styles.taskCheck} data-done={done ? "true" : "false"} data-system={systemTracked ? "true" : "false"} aria-hidden>
+        {done ? "✓" : systemTracked ? "·" : ""}
       </span>
-      <div style={{ minWidth: 0, flex: 1 }}>
+
+      <div className={styles.taskContent}>
         <div className={styles.taskTitle}>{task.t}</div>
+        {task.explain && <p className={styles.taskExplain}>{task.explain}</p>}
+
         <div className={styles.taskChips}>
-          {task.deadline && <span className={styles.taskChip}>{dlText(task, done)}</span>}
-          {task.ai && <span className={styles.taskChip}>поможет ИИ</span>}
-          {task.expert && <span className={styles.taskChip}>нужен эксперт</span>}
-          {doc && <span className={styles.taskChip}>документ: {V_LABEL[doc.verdict] || "проверен"}</span>}
+          {task.owner && <span className={styles.taskChip}>{task.owner}</span>}
+          {task.time && <span className={styles.taskChip}>{task.time}</span>}
+          {task.deadline && <span className={styles.taskChip}>{task.deadlineKind || "Ориентир"} · {dlText(task, done)}</span>}
+          {task.timingLabel && <span className={styles.taskChip}>{task.timingLabel}</span>}
+          {doc && <span className={styles.taskChip}>Документ: {V_LABEL[doc.verdict] || "проверен"}</span>}
         </div>
+
         {task.note && <p className={styles.taskNote}>{task.note}</p>}
         {task.warn && <p className={styles.taskWarn}>{task.warn}</p>}
         {doc?.summary && <p className={styles.taskNote}>{doc.summary}</p>}
-        {needDoc && (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onUploadDoc(task.id);
-            }}
-            disabled={busy}
-            className={doc ? styles.secondaryButton : styles.primaryButton}
-            style={{ marginTop: 9 }}
-          >
-            {busy ? "Проверяю…" : doc ? "Проверить другой файл" : "Загрузить документ"}
-          </button>
+
+        {!blocked && (
+          <div className={styles.taskActions}>
+            {needDoc && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onUploadDoc(task.id);
+                }}
+                disabled={busy}
+                className={doc ? styles.secondaryButton : styles.primaryButton}
+              >
+                {busy ? "Проверяю…" : doc ? "Проверить другой файл" : "Загрузить документ"}
+              </button>
+            )}
+            {(task.ai || task.expert) && (
+              <button type="button" onClick={() => onAsk(task)} className={styles.secondaryButton}>
+                Спросить про этот шаг
+              </button>
+            )}
+            {!systemTracked && (
+              <span className={styles.taskTapHint}>{done ? "Нажми строку, чтобы вернуть задачу" : "Нажми строку, когда сделаешь"}</span>
+            )}
+          </div>
         )}
-        {!done && state === "over" && <p className={styles.taskWarn}>Этот дедлайн уже прошёл — лучше разобрать шаг первым.</p>}
       </div>
     </div>
   );
