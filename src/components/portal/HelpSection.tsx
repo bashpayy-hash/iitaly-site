@@ -1,182 +1,122 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { PortalClient } from "@/lib/portalApi";
 import styles from "./portal.module.css";
 
 export function HelpSection({
   client,
-  onOpenChat,
   onCreateTelegramLink,
   onDisableTelegram,
   onRefreshNotifications,
-  onDelete,
 }: {
   client: PortalClient;
-  onOpenChat: () => void;
   onCreateTelegramLink: () => Promise<{ ok: boolean; url?: string; error?: string }>;
   onDisableTelegram: () => Promise<{ ok: boolean; error?: string }>;
   onRefreshNotifications: () => Promise<{ ok: boolean; linked?: boolean; error?: string }>;
-  onDelete: () => void;
 }) {
-  const router = useRouter();
   const [msg, setMsg] = useState<{ text: string; bad: boolean } | null>(null);
   const [telegramBusy, setTelegramBusy] = useState(false);
   const [telegramUrl, setTelegramUrl] = useState<string | null>(null);
-  const reminderRef = useRef<HTMLDivElement>(null);
   const tgEnabled = Boolean(client.tgLinked) && client.notify?.telegram !== false;
-
-  useEffect(() => {
-    if (window.location.hash === "#notifications") {
-      reminderRef.current?.scrollIntoView({ block: "start", behavior: "instant" });
-    }
-  }, []);
 
   async function createTgLink() {
     if (telegramBusy) return;
     setTelegramBusy(true);
     setMsg(null);
-    setTelegramUrl(null);
-    try {
-      const res = await onCreateTelegramLink();
-      if (!res.ok || !res.url) {
-        setMsg({ text: res.error || "Не удалось создать ссылку Telegram.", bad: true });
-      } else {
-        setTelegramUrl(res.url);
-        setMsg({ text: "Ссылка готова на 15 минут. Открой её и нажми «Запустить» в Telegram.", bad: false });
-      }
-    } catch {
-      setMsg({ text: "Нет связи с сервером. Попробуй ещё раз.", bad: true });
-    } finally {
-      setTelegramBusy(false);
+    const res = await onCreateTelegramLink();
+    setTelegramBusy(false);
+    if (!res.ok || !res.url) {
+      setMsg({ text: res.error || "Не удалось создать ссылку Telegram.", bad: true });
+      return;
     }
+    setTelegramUrl(res.url);
+    window.open(res.url, "_blank", "noopener,noreferrer");
+    setMsg({ text: "Открой Telegram и нажми «Запустить». После этого вернись сюда.", bad: false });
   }
 
   async function disableTg() {
     if (telegramBusy) return;
     setTelegramBusy(true);
     setMsg(null);
+    const res = await onDisableTelegram();
+    setTelegramBusy(false);
     setTelegramUrl(null);
-    try {
-      const res = await onDisableTelegram();
-      setMsg(res.ok ? { text: "Telegram отключён.", bad: false } : { text: res.error || "Не удалось сохранить.", bad: true });
-    } catch {
-      setMsg({ text: "Не удалось отключить Telegram. Попробуй ещё раз или отправь боту /stop.", bad: true });
-    } finally {
-      setTelegramBusy(false);
-    }
+    setMsg(res.ok
+      ? { text: "Telegram отключён.", bad: false }
+      : { text: res.error || "Не удалось сохранить.", bad: true });
   }
 
   async function refreshTelegram() {
     if (telegramBusy) return;
     setTelegramBusy(true);
     setMsg(null);
-    try {
-      const res = await onRefreshNotifications();
-      setMsg(!res.ok
-        ? { text: res.error || "Не удалось проверить подключение.", bad: true }
-        : res.linked
-          ? { text: "Подключение Telegram подтверждено. Напоминания включены.", bad: false }
-          : { text: "Подключение пока не подтверждено. Создай новую ссылку и запусти бота.", bad: false });
-      if (res.linked) setTelegramUrl(null);
-    } catch {
-      setMsg({ text: "Нет связи с сервером.", bad: true });
-    } finally {
-      setTelegramBusy(false);
-    }
+    const res = await onRefreshNotifications();
+    setTelegramBusy(false);
+    setMsg(!res.ok
+      ? { text: res.error || "Не удалось проверить подключение.", bad: true }
+      : res.linked
+        ? { text: "Telegram подключён. Напоминания включены.", bad: false }
+        : { text: "Подключение пока не подтверждено. В Telegram нажми «Запустить».", bad: false });
+    if (res.linked) setTelegramUrl(null);
   }
 
   return (
     <div>
       <div className={styles.sectionHeading}>
         <div>
-          <h2>Напоминания и помощь</h2>
-          <p>Настройки, которые уменьшают ручную работу и помогают не терять дедлайны.</p>
+          <p className={styles.kicker}>Напоминания</p>
+          <h2>Не держи дедлайны в голове</h2>
+          <p>Telegram получает только напоминания по твоему маршруту.</p>
         </div>
       </div>
 
-      <div className={styles.helpGrid}>
-        <section ref={reminderRef} id="notifications" className={styles.card}>
-          <div className={styles.sectionHeading}>
-            <div>
-              <h3>Telegram</h3>
-              <p>{tgEnabled ? "Подключён к кабинету." : "Пока не подключён."}</p>
-            </div>
-            <span
-              className={styles.statusChip}
-              data-state={tgEnabled ? "ok" : "missing"}
-              data-telegram-status={tgEnabled ? "connected" : "disconnected"}
-            >
-              {tgEnabled ? "Активен" : "Выключен"}
-            </span>
+      <section className={styles.reminderCard}>
+        <div className={styles.reminderState}>
+          <span className={styles.reminderDot} data-on={tgEnabled ? "true" : "false"} aria-hidden />
+          <div>
+            <h3>{tgEnabled ? "Telegram подключён" : "Telegram не подключён"}</h3>
+            <p>{tgEnabled ? "Напомним за 7, 3 и 1 день до важных дат." : "Подключение занимает около минуты."}</p>
           </div>
+        </div>
 
-          <p className={styles.actionBody}>
-            Бот использует дедлайны твоего маршрута: недельная сводка и напоминания за 7, 3 и 1 день. Ссылка подключения действует 15 минут. Отключить напоминания можно здесь или командой /stop.
-          </p>
-
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
-            {!tgEnabled && !telegramUrl && (
-              <button type="button" onClick={createTgLink} disabled={telegramBusy} className={styles.primaryButton}>
-                {telegramBusy ? "Создаю…" : "Подключить Telegram"}
-              </button>
-            )}
-            {!tgEnabled && telegramUrl && (
+        <div className={styles.reminderActions}>
+          {!tgEnabled && !telegramUrl && (
+            <button type="button" onClick={createTgLink} disabled={telegramBusy} className={styles.primaryButton}>
+              {telegramBusy ? "Создаю…" : "Подключить Telegram"}
+            </button>
+          )}
+          {!tgEnabled && telegramUrl && (
+            <>
               <a
                 href={telegramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerPolicy="no-referrer"
                 className={styles.primaryButton}
-                style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}
               >
                 Открыть Telegram
               </a>
-            )}
-            <button type="button" onClick={refreshTelegram} disabled={telegramBusy} className={styles.secondaryButton}>
-              {telegramBusy ? "Проверяю…" : "Проверить подключение"}
-            </button>
-            {tgEnabled && (
-              <button type="button" onClick={disableTg} disabled={telegramBusy} className={styles.textLink}>
-                Отключить Telegram
+              <button type="button" onClick={refreshTelegram} disabled={telegramBusy} className={styles.secondaryButton}>
+                {telegramBusy ? "Проверяю…" : "Я запустил бота"}
               </button>
-            )}
-          </div>
-
-          {msg && (
-            <p role="alert" className={msg.bad ? styles.taskWarn : styles.taskNote} style={{ marginTop: 12 }}>
-              {msg.text}
-            </p>
+            </>
           )}
-        </section>
-
-        <section className={styles.card}>
-          <div className={styles.sectionHeading}>
-            <div>
-              <h3>Если застрял</h3>
-              <p>Не ищи нужную кнопку по всему сайту — спроси прямо из кабинета.</p>
-            </div>
-          </div>
-          <p className={styles.actionBody}>
-            ИИ может объяснить текущий шаг и требования. Если нужен человек, можно перейти к отдельной экспертной услуге.
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
-            <button type="button" onClick={onOpenChat} className={styles.primaryButton}>Спросить ИИ</button>
-            <button type="button" onClick={() => router.push("/prices")} className={styles.secondaryButton}>Помощь эксперта</button>
-          </div>
-        </section>
-      </div>
-
-      <div className={styles.dangerCard}>
-        <div className={styles.sectionHeading}>
-          <div>
-            <h3>Данные кабинета</h3>
-            <p>Удаление стирает профиль, прогресс, результаты проверок и Telegram-привязку без восстановления.</p>
-          </div>
+          {tgEnabled && (
+            <button type="button" onClick={disableTg} disabled={telegramBusy} className={styles.secondaryButton}>
+              {telegramBusy ? "Сохраняю…" : "Отключить"}
+            </button>
+          )}
         </div>
-        <button type="button" onClick={onDelete} className={styles.dangerButton}>Удалить мои данные</button>
-      </div>
+
+        {msg && <p role="alert" className={msg.bad ? styles.taskWarn : styles.taskNote}>{msg.text}</p>}
+      </section>
+
+      <section className={styles.reminderExplainer}>
+        <div><strong>7 дней</strong><span>пора начать, если задача ещё не готова</span></div>
+        <div><strong>3 дня</strong><span>проверить документы и бронь</span></div>
+        <div><strong>1 день</strong><span>последнее напоминание</span></div>
+      </section>
     </div>
   );
 }
