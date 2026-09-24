@@ -470,33 +470,50 @@ export function PermessoTrainer() {
 function FormHeader({ page, showExample, scenario }: { page: number; showExample: boolean; scenario: PermessoScenario }) {
   return (
     <header className={styles.paperHeader}>
-      <div className={styles.ministryMark} aria-hidden>RI</div>
-      <div className={styles.ministry}>
-        <b>MINISTERO DELL&apos;INTERNO</b>
-        {page === 1 ? (
-          <div className={styles.questoreLine}>
-            <span>Al Signor Questore di:</span>
-            <CellRun count={12} value={showExample ? "FIRENZE" : ""} />
-            <span>(Sigla Provincia)</span>
-            <CellRun count={2} value={showExample ? "FI" : ""} />
-          </div>
-        ) : (
-          <small>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</small>
-        )}
+      <div className={styles.headerTop}>
+        <div className={styles.stateEmblem} aria-hidden>
+          <span>★</span>
+          <small>RI</small>
+        </div>
+
+        <div className={styles.ministry}>
+          <b>MINISTERO DELL&apos;INTERNO</b>
+          {page === 1 ? (
+            <div className={styles.questoreBlock}>
+              <div className={styles.questoreRow}>
+                <span>Al Signor Questore di:</span>
+                <CellRun count={12} value={showExample ? "FIRENZE" : ""} />
+              </div>
+              <div className={styles.questoreRow}>
+                <span>(Sigla Provincia)</span>
+                <CellRun count={2} value={showExample ? "FI" : ""} />
+              </div>
+            </div>
+          ) : (
+            <div className={styles.topInstruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
+          )}
+        </div>
+
+        <div className={styles.barcode} aria-label="Область штрихкода бумажного бланка">
+          <span className={styles.barcodeBars}><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></span>
+          <small>1742281399{page}</small>
+        </div>
       </div>
-      <div className={styles.barcode} aria-label="Область штрихкода бумажного бланка"><i /><i /><i /><i /><i /><i /><i /><i /></div>
-      {page === 1 && (
-        <>
-          <div className={styles.modLabel}>MOD. 209<br />MODULO 1</div>
-          <div className={styles.instruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
+
+      <div className={styles.headerBottom}>
+        <div className={styles.modLabel}>MOD. 209<br />MODULO 1</div>
+        <div className={styles.instruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
+        {page === 1 ? (
           <div className={styles.stampBox}>
             <small>MARCA DA BOLLO</small>
             <strong>€ 16,00</strong>
-            <span>НЕ ПИСАТЬ · СЮДА МАРКА</span>
+            <span>NON SCRIVERE · QUI VA LA MARCA</span>
           </div>
-        </>
-      )}
-      {page !== 1 && <div className={styles.modLabel}>MOD. 209<br />MODULO 1</div>}
+        ) : (
+          <div className={styles.pageMark}>PAGINA {page} DI 8</div>
+        )}
+      </div>
+
       <span className={styles.headerScenario}>{scenario === "rilascio" ? "RILASCIO" : "RINNOVO"}</span>
     </header>
   );
