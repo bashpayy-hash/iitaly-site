@@ -417,7 +417,7 @@ export function PermessoTrainer() {
                     <FormField field={field("identity", "34")} compact mode={modeFor(field("identity", "34"))} example={displayValueFor(field("identity", "34"))} selected={selected.number === "34"} onSelect={setSelected} />
                     <FormField field={field("identity", "35")} compact mode={modeFor(field("identity", "35"))} example={displayValueFor(field("identity", "35"))} selected={selected.number === "35"} onSelect={setSelected} />
                     <FormField field={field("identity", "36")} compact mode={modeFor(field("identity", "36"))} example={displayValueFor(field("identity", "36"))} selected={selected.number === "36"} onSelect={setSelected} />
-                    <FormField field={field("identity", "37")} compact mode={modeFor(field("identity", "37"))} example={displayValueFor(field("identity", "37"))} selected={selected.number === "37"} onSelect={setSelected} />
+                    <RefugeeField field={field("identity", "37")} mode={modeFor(field("identity", "37"))} value={displayValueFor(field("identity", "37"))} selected={selected.number === "37"} onSelect={setSelected} />
                     <FormField className={styles.spanAll} field={field("identity", "38")} mode={modeFor(field("identity", "38"))} example={displayValueFor(field("identity", "38"))} selected={selected.number === "38"} onSelect={setSelected} />
                   </div>
                 </FormSection>
