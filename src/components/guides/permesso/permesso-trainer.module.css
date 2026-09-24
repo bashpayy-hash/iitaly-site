@@ -116,17 +116,36 @@
 .formLayout { display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 20px; align-items: start; }
 .paper {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  border: 1px solid #aaa59d;
-  border-radius: 2px;
+  border: 1px solid #9f988d;
+  border-radius: 1px;
   background:
-    linear-gradient(rgba(255,255,255,.18),rgba(255,255,255,.18)),
-    repeating-linear-gradient(0deg,rgba(104,88,64,.012) 0 1px,transparent 1px 4px),
-    radial-gradient(circle at 18% 12%,rgba(199,178,139,.12),transparent 34%),
-    radial-gradient(circle at 84% 72%,rgba(199,178,139,.08),transparent 30%),
-    var(--paper);
-  box-shadow: 0 18px 42px -30px rgba(0,0,0,.34);
+    linear-gradient(180deg, rgba(255,255,255,.16), rgba(237,228,209,.06)),
+    repeating-linear-gradient(0deg, rgba(93,73,48,.016) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 2px, transparent 2px 9px),
+    radial-gradient(circle at 17% 14%, rgba(185,156,111,.12), transparent 32%),
+    radial-gradient(circle at 82% 73%, rgba(158,130,91,.07), transparent 30%),
+    #f4efe3;
+  box-shadow:
+    0 18px 44px -30px rgba(55,44,31,.34),
+    inset 0 0 0 1px rgba(98,78,51,.08);
   color: #2a2724;
+}
+.paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .24;
+  mix-blend-mode: multiply;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.075'/%3E%3C/svg%3E");
+}
+.paper > * {
+  position: relative;
+  z-index: 1;
 }
 .paperHeader {
   position: relative;
@@ -351,9 +370,18 @@
   pointer-events: none;
 }
 
-.fullRows { display: grid; gap: 6px; }
-.twoColumnFields { display: grid; grid-template-columns: minmax(0,.78fr) minmax(0,1.22fr); gap: 8px; }
-.threeColumnFields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+.fullRows {
+  display: grid;
+  gap: 0;
+  border: 1px solid rgba(116,107,96,.58);
+  border-bottom: 0;
+}
+.fullRows > * { border-bottom: 1px solid rgba(116,107,96,.48); }
+.fullRows .twoColumnFields { border-bottom: 1px solid rgba(116,107,96,.48); }
+.twoColumnFields { display: grid; grid-template-columns: minmax(0,.78fr) minmax(0,1.22fr); gap: 0; }
+.twoColumnFields > * + * { border-left: 1px solid rgba(116,107,96,.48); }
+.threeColumnFields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; }
+.threeColumnFields > * + * { border-left: 1px solid rgba(116,107,96,.48); }
 .identityGrid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
 .spanAll { grid-column: 1 / -1; }
 
@@ -372,7 +400,7 @@
   gap: 4px;
   min-height: 54px;
   padding: 7px 8px;
-  border-radius: 4px;
+  border-radius: 0;
 }
 .formField:hover,
 .choiceField:hover,
@@ -423,18 +451,35 @@
 .cells i > span { position: absolute; right: -6px; color: #3f3b37; font-family: Arial,sans-serif; font-size: 9px; font-weight: 400; }
 .compactField .cells i { width: 19px; height: 22px; flex-basis: 19px; font-size: 10px; }
 
-.requestChoices { display: grid; grid-template-columns: 1fr 1.14fr; gap: 10px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #8c8780; }
-.choicePanel { min-width: 0; }
-.choicePanel > p { margin: 0 0 4px; font-size: 9px; font-weight: 700; }
+.requestChoices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin-top: 0;
+  border: 1px solid rgba(116,107,96,.58);
+  border-top: 0;
+}
+.choicePanel {
+  min-width: 0;
+  padding: 7px 8px 8px;
+}
+.choicePanel + .choicePanel { border-left: 1px solid rgba(116,107,96,.58); }
+.choicePanel > p {
+  margin: 0 0 5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(116,107,96,.3);
+  font-size: 9px;
+  font-weight: 700;
+}
 .choiceField {
   display: grid;
   grid-template-columns: minmax(0,1fr) 22px;
   gap: 6px;
   align-items: center;
   width: 100%;
-  min-height: 31px;
-  padding: 4px 6px;
-  border-radius: 4px;
+  min-height: 30px;
+  padding: 3px 5px;
+  border-radius: 0;
 }
 .choiceField > span:first-child { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
 .choiceField b { font-size: 8px; }
@@ -456,12 +501,13 @@
 
 .groupedChoice {
   display: grid;
-  gap: 2px;
+  gap: 0;
   width: 100%;
-  margin-top: 2px;
-  padding: 5px 6px;
-  border-radius: 4px;
+  margin-top: 1px;
+  padding: 2px 5px;
+  border-radius: 0;
 }
+.groupedChoice > span + span { border-top: 1px solid rgba(116,107,96,.22); }
 .groupedChoice > span { display: grid; grid-template-columns: minmax(0,1fr) 18px; gap: 6px; align-items: center; min-height: 24px; }
 .groupedChoice b { font-size: 7px; font-weight: 700; }
 .groupedChoice i { width: 18px; height: 18px; border: 1px solid var(--form-red); background: #fff; }
@@ -470,10 +516,40 @@
 .groupedChoice[data-mode="post"] { outline: 1px solid rgba(181,124,8,.45); outline-offset: -2px; }
 .groupedChoice[data-mode="optional"] { outline: 1px dashed rgba(75,111,174,.58); outline-offset: -2px; }
 
-.permitStrip { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(150px,.55fr) minmax(190px,.7fr); gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #8c8780; }
-.applicationGrid { display: grid; grid-template-columns: .8fr .7fr .7fr .9fr .9fr; gap: 6px; }
-.legalLine { margin: 9px 0 7px; padding: 7px 5px; border-block: 1px solid #8c8780; color: #5c5752; font-size: 7px; line-height: 1.45; }
-.dateSignature { display: grid; grid-template-columns: minmax(230px,.8fr) minmax(0,1.2fr); gap: 10px; }
+.permitStrip {
+  display: grid;
+  grid-template-columns: 54% 20% 26%;
+  gap: 0;
+  margin-top: 0;
+  border: 1px solid rgba(116,107,96,.58);
+  border-top: 0;
+}
+.permitStrip > * + * { border-left: 1px solid rgba(116,107,96,.58); }
+.applicationGrid {
+  display: grid;
+  grid-template-columns: 18% 18% 18% 24% 22%;
+  gap: 0;
+  border: 1px solid rgba(116,107,96,.58);
+}
+.applicationGrid > * { min-height: 86px; }
+.applicationGrid > * + * { border-left: 1px solid rgba(116,107,96,.58); }
+.legalLine {
+  margin: 0;
+  padding: 7px 6px;
+  border: 1px solid rgba(116,107,96,.58);
+  border-top: 0;
+  color: #5c5752;
+  font-size: 7px;
+  line-height: 1.45;
+}
+.dateSignature {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 0;
+  border: 1px solid rgba(116,107,96,.58);
+  border-top: 0;
+}
+.dateSignature > * + * { border-left: 1px solid rgba(116,107,96,.58); }
 .signatureLine { display: block; min-height: 38px; border: 1px solid #8c8780; background: rgba(255,255,255,.52); }
 .passportTop { display: grid; grid-template-columns: .62fr 1.38fr; gap: 8px; margin-bottom: 5px; }
 
@@ -489,9 +565,10 @@
   position: sticky;
   top: 126px;
   padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
+  border: 1px solid #d6d2cb;
+  border-radius: 10px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 10px 30px -26px rgba(0,0,0,.28);
 }
 .detailTop { display: flex; justify-content: space-between; gap: 10px; color: #666670; font-size: 11px; }
 .detailTop span:last-child { font-weight: 700; }
@@ -506,6 +583,29 @@
 .detailPanel dt { color: #666670; font-size: 10px; }
 .detailPanel dd { margin: 3px 0 0; font-size: 12px; line-height: 1.45; }
 .exampleNote { margin-top: 14px; color: #666670; font-size: 11px; line-height: 1.45; }
+.detailNav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.detailNav button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 980px;
+  background: #fff;
+  padding: 7px 10px;
+  color: #b91134;
+  font-size: 10px;
+  font-weight: 500;
+}
+.detailNav button:last-child { justify-self: end; }
+.detailNav button:disabled { opacity: .35; cursor: default; }
+.detailNav span { color: #77727a; font-size: 10px; }
+
 
 .pagesEmpty { margin: 12px; padding: 20px; border: 1px solid #aaa; background: repeating-linear-gradient(135deg,#f6f4f1 0 10px,#ebe8e2 10px 14px); text-align: center; }
 .pagesEmpty span { display: block; color: #666; font-size: 10px; }
@@ -658,7 +758,19 @@
   .permitStrip,
   .applicationGrid,
   .dateSignature,
-  .passportTop { grid-template-columns: 1fr; gap: 6px; }
+  .passportTop { grid-template-columns: 1fr; gap: 0; }
+
+  .twoColumnFields > * + *,
+  .threeColumnFields > * + *,
+  .choicePanel + .choicePanel,
+  .permitStrip > * + *,
+  .applicationGrid > * + *,
+  .dateSignature > * + * {
+    border-left: 0;
+    border-top: 1px solid rgba(116,107,96,.42);
+  }
+
+  .applicationGrid > * { min-height: 72px; }
 
   .formField { min-height: 52px; padding: 7px; }
   .formLabel { padding-right: 48px; }
