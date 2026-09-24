@@ -222,6 +222,12 @@ export function PermessoTrainer() {
     return "";
   }
 
+  const editableMyDataFields = TRAINER_SECTIONS.flatMap((section) => section.fields)
+    .filter((item) => {
+      const mode = modeFor(item);
+      return mode !== "empty" && mode !== "post" && item.kind !== "x" && !["22", "25", "26", "62"].includes(item.number);
+    });
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
