@@ -597,7 +597,7 @@ export function PermessoTrainer() {
                   </div>
                   <FormField field={field("address", "73")} mode={modeFor(field("address", "73"))} example={displayValueFor(field("address", "73"))} selected={selected.number === "73"} onSelect={selectField} />
                   <div className={styles.twoColumnFields}>
-                    <FormField field={field("address", "74")} mode={modeFor(field("address", "74"))} example="" selected={selected.number === "74"} onSelect={selectField} />
+                    <FormField field={field("address", "74")} mode={modeFor(field("address", "74"))} example={displayValueFor(field("address", "74"))} selected={selected.number === "74"} onSelect={selectField} />
                     <FormField field={field("address", "75")} mode={modeFor(field("address", "75"))} example={displayValueFor(field("address", "75"))} selected={selected.number === "75"} onSelect={selectField} />
                   </div>
                 </FormSection>
