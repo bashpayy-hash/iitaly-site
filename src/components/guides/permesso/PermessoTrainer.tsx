@@ -19,6 +19,7 @@ const MODE_LABEL: Record<FieldMode, string> = {
   post: "ТОЛЬКО НА ПОЧТЕ",
   ifExists: "ЕСЛИ ЕСТЬ",
   recommended: "ЖЕЛАТЕЛЬНО",
+  verify: "УТОЧНИ",
 };
 
 const LOCAL_DATA_KEY = "iitaly:permesso-modulo1-local-data";
@@ -167,13 +168,13 @@ export function PermessoTrainer() {
     if (field.number === "19") return currentCardCode;
     if (field.number === "22") return worker ? "02" : "01";
     if (field.number === "24") return worker ? "X" : "";
-    if (field.number === "25") return padTwo(sheetTotal);
+    if (field.number === "25") return "";
     return field.example?.[scenario] || "";
   }
 
   function displayValueFor(field: TrainerField): string {
     if (useMyData && myData[field.number]) return myData[field.number];
-    if (useMyData && (field.number === "22" || field.number === "24" || field.number === "25")) return suggestedValueFor(field);
+    if (useMyData && (field.number === "22" || field.number === "24")) return suggestedValueFor(field);
     if (useMyData && field.kind === "x" && modeFor(field) === "write") return field.example?.[scenario] || "";
     if (showExample) return suggestedValueFor(field);
     return "";
@@ -271,7 +272,7 @@ export function PermessoTrainer() {
   const editableMyDataFields = TRAINER_SECTIONS.flatMap((section) => section.fields)
     .filter((item) => {
       const mode = modeFor(item);
-      return mode !== "empty" && mode !== "post" && item.kind !== "x" && !["22", "25", "26", "62"].includes(item.number);
+      return mode !== "empty" && mode !== "post" && mode !== "verify" && item.kind !== "x" && !["22", "25", "26", "62"].includes(item.number);
     });
 
   function helpSourceFor(field: TrainerField) {
@@ -439,6 +440,7 @@ export function PermessoTrainer() {
         <span data-mode="empty"><i /> Пропусти</span>
         <span data-mode="post"><i /> Только на почте</span>
         <span data-mode="ifExists"><i /> Если есть</span>
+        <span data-mode="verify"><i /> Уточни</span>
       </div>
 
       <section id="modulo-sheet" className={styles.trainer}>
@@ -740,7 +742,7 @@ export function PermessoTrainer() {
                 <input inputMode="numeric" min="0" max="20" type="number" value={copies.module2} placeholder="0" onChange={(e) => setCopies((prev) => ({ ...prev, module2: e.target.value }))} />
               </label>
             )}
-            <div className={styles.totalBox}><span>Поле 25</span><strong>{padTwo(sheetTotal)}</strong></div>
+            <div className={styles.totalBox}><span>Ориентир для поля 25 · проверь перед переносом</span><strong>{padTwo(sheetTotal)}</strong></div>
           </section>
 
           <section className={styles.toolCard}>
