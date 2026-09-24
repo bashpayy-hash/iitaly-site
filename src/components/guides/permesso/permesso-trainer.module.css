@@ -705,6 +705,219 @@
 .cheatSheet p { margin: 12px 0 0; color: #51515a; font-size: 12px; line-height: 1.5; }
 .cheatSheet small { display: block; margin-top: 7px; color: #666670; font-size: 11px; }
 
+
+.myDataPanel {
+  max-width: 1160px;
+  margin: 0 auto 14px;
+  padding: 16px 24px 18px;
+  border-block: 1px solid var(--line);
+  background: #eef3fb;
+}
+.myDataHeader,
+.myDataFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.myDataHeader > div { display: grid; gap: 3px; }
+.myDataHeader span { color: #1e3a8a; font-size: 12px; font-weight: 700; }
+.myDataHeader b { color: #4b5563; font-size: 11px; font-weight: 500; }
+.myDataHeader button {
+  border: 0;
+  background: transparent;
+  color: #9b1c31;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.myDataGrid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.myDataField {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+.myDataField > span { display: grid; gap: 1px; }
+.myDataField b { color: #273247; font-size: 11px; font-weight: 600; }
+.myDataField small { color: #667085; font-size: 9px; }
+.myDataField input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #bcc8da;
+  border-radius: 7px;
+  background: #fff;
+  padding: 8px 10px;
+  color: #173c78;
+  font: inherit;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.myDataField em {
+  color: #9b1c31;
+  font-size: 9px;
+  font-style: normal;
+  line-height: 1.35;
+}
+.myDataFooter { margin-top: 14px; }
+.useMyDataButton {
+  min-height: 40px;
+  border: 1px solid #1e3a8a;
+  border-radius: 980px;
+  background: #1e3a8a;
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.myDataFooter span { color: #475467; font-size: 10px; }
+
+.questoreHandLine {
+  min-height: 22px;
+  border-bottom: 1px solid #6d6861;
+  color: #777;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+}
+
+.skipBadge {
+  margin-left: auto;
+  border: 1px solid rgba(100,100,105,.35);
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: rgba(255,255,255,.65);
+  color: #6d6d73;
+  font-size: 8px !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dateCells,
+.splitCells {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+}
+.dateCells > span,
+.splitCells > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.dateCells > b,
+.splitCells > b {
+  align-self: center;
+  margin-top: -10px;
+  color: #4f4a45;
+  font-size: 17px;
+  font-weight: 400;
+}
+.dateCells small,
+.splitCells small {
+  color: #77716a;
+  font-size: 7px;
+  text-align: center;
+}
+.doubleCells {
+  display: grid;
+  gap: 3px;
+}
+.refugeeField {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 54px;
+  padding: 7px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+.yesNo {
+  display: flex;
+  gap: 12px;
+}
+.yesNo > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #47433e;
+  font-size: 9px;
+}
+.yesNo i {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border: 1px solid #d46f7e;
+  background: rgba(255,255,255,.8);
+  font-family: "Courier New",monospace;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.passportOther,
+.travelGrid {
+  display: grid;
+  gap: 0;
+}
+.passportOther > * + *,
+.travelGrid > * + * {
+  border-top: 1px solid rgba(116,107,96,.3);
+}
+.periodLabel {
+  padding: 6px;
+  color: #504c47;
+  font-size: 8px;
+  font-weight: 700;
+}
+.twoMiniFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.twoMiniFields > * + * { border-left: 1px solid rgba(116,107,96,.45); }
+.fourColumnFields {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 0;
+}
+.fourColumnFields > * + * { border-left: 1px solid rgba(116,107,96,.45); }
+
+.codeHint {
+  margin-top: 11px;
+  border-left: 3px solid #1e3a8a;
+  background: #f3f6fb;
+  padding: 8px 10px;
+  color: #173c78;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.mobileFieldCard { display: none; }
+
+.formField:focus-visible,
+.choiceField:focus-visible,
+.refugeeField:focus-visible,
+.pageTabs button:focus-visible,
+.scenarioSwitch button:focus-visible,
+.exampleToggle:focus-visible,
+.myDataButton:focus-visible {
+  outline: 3px solid rgba(30,58,138,.42);
+  outline-offset: 2px;
+}
+
+.detailPanel[data-mode="ifExists"] .detailTop span:last-child,
+.detailPanel[data-mode="recommended"] .detailTop span:last-child { color: var(--optional); }
+
 @media (max-width: 1000px) {
   .pageTabs { width: 100%; }
   .formLayout { grid-template-columns: 1fr; }
