@@ -247,27 +247,92 @@ export function PermessoTrainer() {
         </div>
       </section>
 
+      <section className={styles.prepStrip} aria-label="Что подготовить">
+        <div>
+          <span>Подготовь на стол</span>
+          <b>Kit · чёрная ручка · паспорт · codice fiscale{scenario === "rinnovo" ? " · карточка ВНЖ" : ""} · marca da bollo €16</b>
+        </div>
+        <a href="#helpers">Коды и листы ↓</a>
+      </section>
+
       <section className={styles.controls}>
         <div className={styles.scenarioSwitch} aria-label="Сценарий подачи">
-          <button type="button" data-active={scenario === "rilascio"} onClick={() => setScenario("rilascio")}>
+          <button type="button" data-active={scenario === "rilascio"} onClick={() => switchScenario("rilascio")}>
             <span>Первое ВНЖ</span>
             <small>RILASCIO · только приехал</small>
           </button>
-          <button type="button" data-active={scenario === "rinnovo"} onClick={() => setScenario("rinnovo")}>
+          <button type="button" data-active={scenario === "rinnovo"} onClick={() => switchScenario("rinnovo")}>
             <span>Продление</span>
             <small>RINNOVO · карточка уже есть</small>
           </button>
         </div>
-        <button type="button" className={styles.exampleToggle} aria-pressed={showExample} onClick={() => setShowExample((value) => !value)}>
-          {showExample ? "Скрыть пример" : "Показать пример"}
-        </button>
+        <div className={styles.controlActions}>
+          <button
+            type="button"
+            className={styles.exampleToggle}
+            aria-pressed={showExample}
+            onClick={() => {
+              setShowExample((value) => !value);
+              setUseMyData(false);
+            }}
+          >
+            {showExample ? "Скрыть пример" : "Показать пример"}
+          </button>
+          <button type="button" className={styles.myDataButton} onClick={() => setMyDataOpen((value) => !value)}>
+            Мои данные
+          </button>
+        </div>
       </section>
 
+      {myDataOpen && (
+        <section className={styles.myDataPanel}>
+          <div className={styles.myDataHeader}>
+            <div>
+              <span>Режим «Мои данные»</span>
+              <b>Данные остаются только в этом браузере и не отправляются на сервер.</b>
+            </div>
+            <button type="button" onClick={clearMyData}>Стереть</button>
+          </div>
+          <div className={styles.myDataGrid}>
+            {editableMyDataFields.map((item) => {
+              const value = myData[item.number] || "";
+              const error = validationFor(item, value);
+              return (
+                <label key={item.section + ":" + item.number} className={styles.myDataField}>
+                  <span><b>{item.number}. {item.ru}</b><small>{item.it}</small></span>
+                  <input
+                    value={value}
+                    inputMode={item.kind === "number" || item.kind === "date" ? "numeric" : "text"}
+                    placeholder={item.kind === "date" ? "ДДММГГГГ" : ""}
+                    onChange={(event) => setMyData((prev) => ({ ...prev, [item.number]: event.target.value.toUpperCase() }))}
+                  />
+                  {error && <em>{error}</em>}
+                </label>
+              );
+            })}
+          </div>
+          <div className={styles.myDataFooter}>
+            <button
+              type="button"
+              className={styles.useMyDataButton}
+              onClick={() => {
+                setUseMyData(true);
+                setShowExample(false);
+                setMyDataOpen(false);
+              }}
+            >
+              Показать мои данные в клетках
+            </button>
+            {useMyData && <span>Мои данные сейчас показаны тёмно-синими «чернилами».</span>}
+          </div>
+        </section>
+      )}
+
       <div className={styles.legendBar}>
-        <span data-mode="write"><i /> Пиши</span>
-        <span data-mode="empty"><i /> Оставь пустым</span>
+        <span data-mode="write"><i /> Обычное поле — заполняй</span>
+        <span data-mode="empty"><i /> Пропусти</span>
         <span data-mode="post"><i /> Только на почте</span>
-        <span data-mode="optional"><i /> Если есть / желательно</span>
+        <span data-mode="ifExists"><i /> Если есть</span>
       </div>
 
       <section id="modulo-sheet" className={styles.trainer}>
