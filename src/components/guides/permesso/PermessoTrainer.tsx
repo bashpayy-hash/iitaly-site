@@ -9,7 +9,7 @@ import {
   type FieldMode,
   type PermessoScenario,
   type TrainerField,
-} from "@/data/permessoTrainer";
+} from "./permessoData";
 import styles from "./permesso-trainer.module.css";
 
 const MODE_LABEL: Record<FieldMode, string> = {
