@@ -393,9 +393,12 @@ export function PermessoTrainer() {
                 setUseMyData(true);
                 setShowExample(false);
                 setMyDataOpen(false);
+                const first = firstWritableOnPage(activePage);
+                if (first) selectField(first, true);
+                requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ behavior: "smooth", block: "start" }));
               }}
             >
-              Показать мои данные в клетках
+              Переносим на бумагу
             </button>
             {useMyData && <span>Мои данные сейчас показаны тёмно-синими «чернилами».</span>}
           </div>
