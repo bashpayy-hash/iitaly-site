@@ -39,6 +39,43 @@ const FORM_PAGES = [
   { number: 3, title: "Адрес в Италии", sections: ["travel", "address", "correspondence"] },
 ] as const;
 
+const RUNTIME_NOW = Date.now();
+
+function readUrlScenario(): PermessoScenario {
+  if (typeof window === "undefined") return "rilascio";
+  return new URLSearchParams(window.location.search).get("scenario") === "rinnovo" ? "rinnovo" : "rilascio";
+}
+
+function readUrlPageIndex() {
+  if (typeof window === "undefined") return 0;
+  const page = new URLSearchParams(window.location.search).get("page");
+  const index = FORM_PAGES.findIndex((item) => String(item.number) === page);
+  return index >= 0 ? index : 0;
+}
+
+function fieldsForPageIndex(pageIndex: number) {
+  const sectionIds = new Set<string>(FORM_PAGES[pageIndex].sections);
+  return TRAINER_SECTIONS.filter((section) => sectionIds.has(section.id)).flatMap((section) => section.fields);
+}
+
+function readUrlField() {
+  const scenario = readUrlScenario();
+  const pageIndex = readUrlPageIndex();
+  const fields = fieldsForPageIndex(pageIndex);
+  const requested = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("field");
+  return fields.find((item) => item.number === requested) || fields.find((item) => item.mode[scenario] === "write") || fields[0] || TRAINER_SECTIONS[0].fields[0];
+}
+
+function readLocalData() {
+  if (typeof window === "undefined") return {} as Record<string, string>;
+  try {
+    const saved = window.localStorage.getItem(LOCAL_DATA_KEY);
+    return saved ? JSON.parse(saved) as Record<string, string> : {};
+  } catch {
+    return {};
+  }
+}
+
 function padTwo(n: number) {
   return String(Math.max(0, Math.min(99, n))).padStart(2, "0");
 }
@@ -63,10 +100,10 @@ function isValidCompactDate(value: string) {
 }
 
 export function PermessoTrainer() {
-  const [scenario, setScenario] = useState<PermessoScenario>("rilascio");
+  const [scenario, setScenario] = useState<PermessoScenario>(() => readUrlScenario());
   const [showExample, setShowExample] = useState(false);
-  const [activePage, setActivePage] = useState(0);
-  const [selected, setSelected] = useState<TrainerField>(TRAINER_SECTIONS[0].fields[0]);
+  const [activePage, setActivePage] = useState(() => readUrlPageIndex());
+  const [selected, setSelected] = useState<TrainerField>(() => readUrlField());
   const [requestCode, setRequestCode] = useState("");
   const [currentCardCode, setCurrentCardCode] = useState("");
   const [worker, setWorker] = useState(false);
@@ -74,8 +111,7 @@ export function PermessoTrainer() {
   const [countryQuery, setCountryQuery] = useState("");
   const [myDataOpen, setMyDataOpen] = useState(false);
   const [useMyData, setUseMyData] = useState(false);
-  const [myData, setMyData] = useState<Record<string, string>>({});
-  const [dataReady, setDataReady] = useState(false);
+  const [myData, setMyData] = useState<Record<string, string>>(() => readLocalData());
   const [copies, setCopies] = useState<Record<string, string>>({
     passport: "", permit: "", fiscal: "", insurance: "", enrollment: "", funds: "", housing: "", module2: "",
   });
@@ -87,23 +123,11 @@ export function PermessoTrainer() {
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(LOCAL_DATA_KEY);
-      if (saved) setMyData(JSON.parse(saved) as Record<string, string>);
-    } catch {
-      // Local-only helper must never block the trainer.
-    } finally {
-      setDataReady(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!dataReady) return;
-    try {
       window.localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(myData));
     } catch {
       // Storage can be unavailable in private/restricted browser modes.
     }
-  }, [dataReady, myData]);
+  }, [myData]);
 
   const extraSheets = useMemo(() => {
     let total = 0;
@@ -239,8 +263,8 @@ export function PermessoTrainer() {
     if (field.number === "31" && !/^[A-Z0-9]{16}$/i.test(clean)) return "Codice fiscale должен содержать ровно 16 букв и цифр.";
     if ((field.number === "72" || field.number === "84") && !/^\d{5}$/.test(clean)) return "CAP должен состоять из 5 цифр.";
     if (field.kind === "date" && !isValidCompactDate(clean)) return "Проверь дату: формат ДДММГГГГ и дата должна существовать.";
-    if (field.number === "45" && isValidCompactDate(clean) && compactDateToTime(clean) < Date.now()) return "Паспорт уже истёк — проверь документ до подачи.";
-    if (field.number === "20" && isValidCompactDate(clean) && compactDateToTime(clean) < Date.now()) return "Срок ВНЖ уже прошёл. Это не блокирует тренажёр, но лучше отдельно проверить порядок действий.";
+    if (field.number === "45" && isValidCompactDate(clean) && compactDateToTime(clean) < RUNTIME_NOW) return "Паспорт уже истёк — проверь документ до подачи.";
+    if (field.number === "20" && isValidCompactDate(clean) && compactDateToTime(clean) < RUNTIME_NOW) return "Срок ВНЖ уже прошёл. Это не блокирует тренажёр, но лучше отдельно проверить порядок действий.";
     return "";
   }
 
