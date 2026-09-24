@@ -73,10 +73,27 @@ const CHAPTERS: Chapter[] = [
 function ChapterBody({ chapter }: { chapter: Chapter }) {
   if (chapter.kind === "visa") return <VisaSection />;
   const guide = GUIDES[chapter.index];
-  return (
-    <>
-      <GuideDetail guide={guide} />
-      {guide.title === "Permesso di soggiorno" && (
+
+  if (guide.title === "Permesso di soggiorno") {
+    return (
+      <>
+        <dl className="space-y-2.5">
+          <div className="flex flex-col gap-0.5 border-t border-white/10 pt-2.5 text-apple-body-sm first:border-t-0 first:pt-0 sm:flex-row sm:justify-between sm:gap-4">
+            <dt className="text-cloud-body">Стоимость</dt>
+            <dd className="font-semibold text-cloud-white sm:text-right">€16 marca + €30 Poste + €30,46 карта + возможный contributo</dd>
+          </div>
+          <div className="flex flex-col gap-0.5 border-t border-white/10 pt-2.5 text-apple-body-sm sm:flex-row sm:justify-between sm:gap-4">
+            <dt className="text-cloud-body">Первое ВНЖ</dt>
+            <dd className="font-semibold text-cloud-white sm:text-right">kit через Sportello Amico в первые 8 дней после въезда</dd>
+          </div>
+          <div className="flex flex-col gap-0.5 border-t border-white/10 pt-2.5 text-apple-body-sm sm:flex-row sm:justify-between sm:gap-4">
+            <dt className="text-cloud-body">Продление</dt>
+            <dd className="font-semibold text-cloud-white sm:text-right">для code 24 Portale указывает 1 экзамен при первом rinnovo и 2 при следующих; для code 31 требования отличаются</dd>
+          </div>
+        </dl>
+        <p className="mt-3 text-apple-caption text-cloud-meta">
+          Перед подачей сверяй свой codice permesso, foglio note бумажного kit и требования Questura.
+        </p>
         <div className="mt-5">
           <Link href="/guides/permesso-modulo-1" className={styles.button + " " + styles.filled}>
             Открыть тренажёр Modulo 1
@@ -85,9 +102,11 @@ function ChapterBody({ chapter }: { chapter: Chapter }) {
             Rilascio и rinnovo · поля по секциям · без ввода личных данных.
           </p>
         </div>
-      )}
-    </>
-  );
+      </>
+    );
+  }
+
+  return <GuideDetail guide={guide} />;
 }
 
 export function GuidesExplorer() {
