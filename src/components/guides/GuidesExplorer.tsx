@@ -72,7 +72,22 @@ const CHAPTERS: Chapter[] = [
 
 function ChapterBody({ chapter }: { chapter: Chapter }) {
   if (chapter.kind === "visa") return <VisaSection />;
-  return <GuideDetail guide={GUIDES[chapter.index]} />;
+  const guide = GUIDES[chapter.index];
+  return (
+    <>
+      <GuideDetail guide={guide} />
+      {guide.title === "Permesso di soggiorno" && (
+        <div className="mt-5">
+          <Link href="/guides/permesso-modulo-1" className={styles.button + " " + styles.filled}>
+            Открыть тренажёр Modulo 1
+          </Link>
+          <p className="mt-2 text-apple-caption text-cloud-meta">
+            Rilascio и rinnovo · поля по секциям · без ввода личных данных.
+          </p>
+        </div>
+      )}
+    </>
+  );
 }
 
 export function GuidesExplorer() {
