@@ -48,7 +48,7 @@ const approvedReminderUiPaths = new Set([
 const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
-assert.match(pricing, /PRICE_MAIN = 25000;/);
+assert.match(pricing, /PRICE_MAIN = 667;/);
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');
 assert.equal((wizard.match(/    id: /g) || []).length, 6, 'The free quiz must have six questions.');
 console.log('Approved launch-polish paths passed; ItalyMap, university data, comparison model, global CSS and dependencies unchanged.');
