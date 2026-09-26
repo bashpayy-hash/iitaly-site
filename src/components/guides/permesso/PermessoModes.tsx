@@ -3,6 +3,7 @@
 import { useState, type KeyboardEvent } from "react";
 import { PermessoTrainer } from "./PermessoTrainer";
 import { EditablePermesso } from "./EditablePermesso";
+import { PermessoFieldHover } from "./PermessoFieldHover";
 import styles from "./permesso-editor.module.css";
 
 type Mode = "original" | "editable";
@@ -28,7 +29,7 @@ export function PermessoModes() {
           <button type="button" role="tab" id="permesso-tab-original" aria-selected={mode==="original"} aria-controls="permesso-panel-original" tabIndex={mode==="original"?0:-1} onKeyDown={onKey} onClick={() => activate("original")}>Оригинал</button>
           <button type="button" role="tab" id="permesso-tab-editable" aria-selected={mode==="editable"} aria-controls="permesso-panel-editable" tabIndex={mode==="editable"?0:-1} onKeyDown={onKey} onClick={() => activate("editable")}>Заполнить с подсказками</button>
         </div>
-        <p>{mode==="original" ? "Исходный PDF для просмотра и сверки." : "Ввод прямо в поля того же бланка."}</p>
+        <p>{mode==="original" ? "Исходный PDF для просмотра и сверки." : "Наведи на поле — увидишь крупную подсказку. На телефоне — коснись."}</p>
       </div>
     </div>
     <div id="permesso-panel-original" role="tabpanel" aria-labelledby="permesso-tab-original" hidden={mode!=="original"} className={styles.modePanel}>
@@ -37,6 +38,8 @@ export function PermessoModes() {
     <div id="permesso-panel-editable" role="tabpanel" aria-labelledby="permesso-tab-editable" hidden={mode!=="editable"} className={styles.modePanel}>
       {/* Keep the draft and cursor mounted when the user checks the original. */}
       {editorOpened && <EditablePermesso />}
+      {/* The reading layer unmounts on tab switch; the user's draft does not. */}
+      {mode === "editable" && <PermessoFieldHover />}
     </div>
   </>;
 }
