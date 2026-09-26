@@ -442,20 +442,30 @@ export function PermessoTrainer() {
       </div>
 
       <section id="modulo-sheet" className={styles.trainer}>
-        <nav className={styles.pageTabs} aria-label="Страницы тренажёра">
-          {FORM_PAGES.map((item, index) => (
-            <button key={item.number} type="button" data-active={index === activePage} onClick={() => showPage(index)}>
-              <span>Стр. {item.number}</span>
-              <small>{item.title}</small>
+        <div className={styles.trainerHead}>
+          <nav className={styles.pageTabs} aria-label="Страницы тренажёра">
+            {FORM_PAGES.map((item, index) => (
+              <button
+                key={item.number}
+                type="button"
+                aria-current={index === activePage ? "page" : undefined}
+                data-active={index === activePage}
+                onClick={() => showPage(index)}
+              >
+                <span>Стр. {item.number}</span>
+                <small>{item.title}</small>
+              </button>
+            ))}
+          </nav>
+          <div className={styles.journeyLinks} aria-label="Дополнительные шаги">
+            <button type="button" onClick={() => document.getElementById("pages4-8")?.scrollIntoView({ behavior: "smooth" })}>
+              Стр. 4–8: не заполнять
             </button>
-          ))}
-          <button type="button" className={styles.utilityTab} onClick={() => document.getElementById("pages4-8")?.scrollIntoView({ behavior: "smooth" })}>
-            <span>Стр. 4–8</span><small>Не трогать</small>
-          </button>
-          <button type="button" className={styles.utilityTab} onClick={() => document.getElementById("before-poste")?.scrollIntoView({ behavior: "smooth" })}>
-            <span>Перед почтой</span><small>Проверка</small>
-          </button>
-        </nav>
+            <button type="button" onClick={() => document.getElementById("before-poste")?.scrollIntoView({ behavior: "smooth" })}>
+              Перед почтой
+            </button>
+          </div>
+        </div>
 
         <div className={styles.mobileFieldCard} data-mode={modeFor(selected)}>
           <div className={styles.mobileFieldHead}>
@@ -480,13 +490,16 @@ export function PermessoTrainer() {
         <div className={styles.formLayout}>
           <div className={styles.paperExact}>
             <div className={styles.paperExactBar}>
-              <span>Оригинальный Mod. 209 · Modulo 1</span>
+              <div>
+                <span>Официальный бланк</span>
+                <strong>Mod. 209 · Modulo 1 · Pagina {activeFormPage.number}</strong>
+              </div>
               <a
                 href="https://www.portaleimmigrazione.it/media/documentazione/Modulo_1.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Открыть официальный PDF ↗
+                Открыть PDF ↗
               </a>
             </div>
             <object
@@ -508,40 +521,67 @@ export function PermessoTrainer() {
               </div>
             </object>
             <div className={styles.paperExactFooter}>
-              <span>Страница {activeFormPage.number} из 8</span>
-              <span>Форма показывается без перерисовки — линии, клетки и подписи взяты из официального PDF.</span>
+              <span>Оригинал Portale Immigrazione</span>
+              <span>Линии, клетки и подписи не перерисовываются IITALY.</span>
             </div>
           </div>
 
-          <aside className={styles.detailPanel} data-mode={modeFor(selected)}>
+          <aside
+            className={styles.detailPanel}
+            data-mode={modeFor(selected)}
+            aria-live="polite"
+            aria-label={"Подсказка к полю " + selected.number}
+          >
             <div className={styles.detailTop}>
-              <span>Поле {selected.number}</span>
-              <span>{MODE_LABEL[modeFor(selected)]}</span>
+              <span>{selectedSection?.label || "Modulo 1"} · поле {selected.number}</span>
+              <strong>{MODE_LABEL[modeFor(selected)]}</strong>
+            </div>
+            <div className={styles.detailProgress} aria-hidden>
+              <span style={{ width: selectedProgress + "%" }} />
             </div>
             <h3>{selected.it}</h3>
             <p className={styles.detailRu}>{selected.ru}</p>
             {codeHintFor(selected) && <div className={styles.codeHint}>{codeHintFor(selected)}</div>}
+            {useMyData && myData[selected.number] && (
+              <div className={styles.myValue}>
+                <span>Моё значение</span>
+                <strong>{myData[selected.number]}</strong>
+              </div>
+            )}
+            {(showExample || (useMyData && myData[selected.number])) && selected.kind !== "x" && selected.cells !== 0 && (
+              <div className={styles.detailCellPreview}>
+                <span>{useMyData && myData[selected.number] ? "Как перенести в клетки" : "Пример в клетках"}</span>
+                <FieldCells
+                  field={selected}
+                  value={useMyData && myData[selected.number] ? myData[selected.number] : suggestedValueFor(selected)}
+                  compact={false}
+                />
+              </div>
+            )}
             <dl>
               <div>
-                <dt>{modeFor(selected) === "empty" ? "Почему пусто" : "Откуда взять"}</dt>
+                <dt>{modeFor(selected) === "empty" ? "Почему пропустить" : "Откуда взять"}</dt>
                 <dd>{helpSourceFor(selected)}</dd>
               </div>
-              <div><dt>Формат</dt><dd>{selected.format}</dd></div>
-              {suggestedValueFor(selected) && <div><dt>Пример</dt><dd>{suggestedValueFor(selected)}</dd></div>}
-              <div><dt>Частая ошибка</dt><dd>{selected.mistake}</dd></div>
+              <div><dt>Как писать</dt><dd>{selected.format}</dd></div>
+              {suggestedValueFor(selected) && !showExample && <div><dt>Пример</dt><dd>{suggestedValueFor(selected)}</dd></div>}
+              <div><dt>Не перепутай</dt><dd>{selected.mistake}</dd></div>
             </dl>
-            <p className={styles.exampleNote}>
-              {useMyData ? "Тёмно-синие буквы — твои локальные данные из этого браузера." : "Серые буквы — выдуманный пример. На бумаге пиши свои данные чёрной ручкой."}
-            </p>
             <div className={styles.detailNav}>
               <button type="button" onClick={() => selectRelativeField(-1)} disabled={selectedWritableIndex <= 0}>
-                ← Предыдущее поле
+                Предыдущее
               </button>
-              <span>{Math.max(1, selectedWritableIndex + 1)} / {writablePageFields.length}</span>
-              <button type="button" onClick={() => selectRelativeField(1)} disabled={!writablePageFields.length || selectedWritableIndex >= writablePageFields.length - 1}>
-                Следующее поле →
+              <span>{Math.max(1, selectedWritableIndex + 1)} из {writablePageFields.length}</span>
+              <button
+                type="button"
+                data-primary
+                onClick={() => selectRelativeField(1)}
+                disabled={!writablePageFields.length || selectedWritableIndex >= writablePageFields.length - 1}
+              >
+                Следующее
               </button>
             </div>
+            <p className={styles.keyboardHint}>На компьютере: ↑ и ↓ переключают поля.</p>
           </aside>
         </div>
 
@@ -553,8 +593,8 @@ export function PermessoTrainer() {
 
       <section id="helpers" className={styles.toolsSection}>
         <div className={styles.toolHeader}>
-          <p className={styles.eyebrow}>Перед тем как писать в клетки</p>
-          <h2>Четыре помощника</h2>
+          <h2>Коды и расчёты</h2>
+          <p>Используй только там, где бумажный kit требует код или число. Ничего не переносится автоматически.</p>
         </div>
 
         <div className={styles.toolsGrid}>
@@ -627,8 +667,8 @@ export function PermessoTrainer() {
 
       <section id="before-poste" className={styles.checklistSection}>
         <div className={styles.toolHeader}>
-          <p className={styles.eyebrow}>Финальная проверка</p>
-          <h2>Что взять и как заполнять</h2>
+          <h2>Перед почтой</h2>
+          <p>Последняя проверка перед Sportello Amico: бумага, документы и расходы.</p>
         </div>
         <div className={styles.checklistGrid}>
           <Checklist title="На бумаге" items={[
