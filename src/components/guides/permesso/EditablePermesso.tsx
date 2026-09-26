@@ -28,15 +28,19 @@ export function EditablePermesso() {
   const [clearConfirm, setClearConfirm] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const inspector = useRef<HTMLElement>(null);
+  const reviewSection = useRef<HTMLElement>(null);
   const selected = EDITOR_FIELDS.find(f => f.id === selectedId) || EDITOR_FIELDS[0];
   const page = selected.page;
   const status = editorMode(selected, scenario);
   const applicable = EDITOR_FIELDS.filter(f => editorMode(f,scenario) !== "empty");
-  const selectedIndex = applicable.findIndex(f => f.id === selectedId);
+  const selectedIndex = EDITOR_FIELDS.indexOf(selected);
   const currentValue = valueFor(selected);
   const problem = valueProblem(selected, currentValue);
   const entered = applicable.filter(f => !["8","9"].includes(f.id) && Boolean(values[f.id]?.replace(/[\s/]/g,""))).length;
-  const nextField = applicable[selectedIndex + 1];
+  // A skipped field can still be selected for its explanation. Its next step
+  // must follow its actual paper position, not restart at the first field.
+  const nextField = applicable.find(f => EDITOR_FIELDS.indexOf(f) > selectedIndex);
+  const previousField = [...applicable].reverse().find(f => EDITOR_FIELDS.indexOf(f) < selectedIndex);
 
   function valueFor(f: EditorField) {
     if (f.id === "8") return scenario === "rilascio" ? "X" : "";
@@ -72,12 +76,12 @@ export function EditablePermesso() {
     });
   }
   function go(delta: number) {
-    const index = EDITOR_FIELDS.indexOf(selected);
-    const target = delta > 0
-      ? applicable.find(f => EDITOR_FIELDS.indexOf(f) > index)
-      : [...applicable].reverse().find(f => EDITOR_FIELDS.indexOf(f) < index);
+    const target = delta > 0 ? nextField : previousField;
     if (target) chooseField(target,true);
-    else if (delta > 0) setReview(true);
+    else if (delta > 0) {
+      setReview(true);
+      requestAnimationFrame(() => reviewSection.current?.scrollIntoView({ block: "center", behavior: smooth() }));
+    }
   }
   function changePart(f: EditorField, part: number, input: string) {
     const next = normalize(f,input);
@@ -102,7 +106,7 @@ export function EditablePermesso() {
       setMessage("Вставка длиннее поля. Прежние данные сохранены: ничего не обрезано."); return;
     }
     const previous = values[f.id] || "";
-    patch(f,(previous.padEnd(offset," ").slice(0,offset) + text + previous.slice(offset+text.length)).trimEnd());
+    patch(f,previous.padEnd(offset," ").slice(0,offset) + text + previous.slice(offset+text.length));
   }
   function toggle(f: EditorField, option?: string) {
     if (f.id === "8" || f.id === "9") { chooseScenario(f.id === "8" ? "rilascio" : "rinnovo"); return; }
@@ -166,12 +170,12 @@ export function EditablePermesso() {
         </nav>
         <div className={styles.viewTools}>
           <label><input type="checkbox" checked={hints} onChange={e => setHints(e.target.checked)} />Подсказки на листе</label>
-          <button type="button" aria-pressed={zoom>1} onClick={() => setZoom(zoom===1 ? 1.6 : 1)}>{zoom===1 ? "Увеличить лист" : "Вместить лист"}</button>
+          <button type="button" aria-pressed={zoom>1} onClick={() => setZoom(zoom===1 ? (window.matchMedia("(max-width: 600px)").matches ? 2.5 : 1.6) : 1)}>{zoom===1 ? "Увеличить лист" : "Вместить лист"}</button>
         </div>
       </div>
 
       <div className={styles.workspace}>
-        <div className={styles.document}>
+        <div className={styles.document} data-fab-yield>
           <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · {page} / 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF ↗</a></div>
           <PaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} onSelect={chooseField} onChange={changePart} onPaste={paste} onToggle={toggle} />
           <div className={styles.documentFoot}>Основа — точный рендер официальной страницы. Поля и подсказки IITALY расположены поверх неё и не меняют печатный бланк.</div>
@@ -198,13 +202,13 @@ export function EditablePermesso() {
             <div id="permesso-value-format"><dt>Как писать</dt><dd>{selected.kind === "date" ? "Две цифры дня, две месяца, четыре года. Разделители уже есть на оригинальном бланке." : selected.kind === "split" ? "Заполняй части отдельно, как подписано на бумаге. Разделитель / уже напечатан." : selected.meta.format}</dd></div>
             <div><dt>Не перепутай</dt><dd>{selected.meta.mistake}</dd></div>
           </dl>
-          <div className={styles.fieldNav}><button type="button" onClick={() => go(-1)} disabled={selectedId === applicable[0]?.id}>Назад</button><button type="button" data-next-field onClick={() => go(1)}>{nextField ? "Дальше →" : "К проверке →"}</button></div>
+          <div className={styles.fieldNav}><button type="button" onClick={() => go(-1)} disabled={!previousField}>Назад</button><button type="button" data-next-field onClick={() => go(1)}>{nextField ? "Дальше →" : "К проверке →"}</button></div>
           <p className={styles.upNext}>{nextField ? `Дальше: ${shortId(nextField)} — ${nextField.meta.ru}` : "Дальше: обзор черновика перед переносом на бумагу."}</p>
           <details className={styles.fieldJump}><summary>Перейти к полю на странице {page}</summary><div>{EDITOR_FIELDS.filter(f => f.page===page).map(f => <button type="button" key={f.id} onClick={() => chooseField(f,true)}>{shortId(f)} · {f.meta.ru}</button>)}</div></details>
         </aside>
       </div>
 
-      <section className={styles.reviewSection} aria-label="Проверка черновика">
+      <section ref={reviewSection} className={styles.reviewSection} aria-label="Проверка черновика">
         <button type="button" className={styles.reviewToggle} aria-expanded={review} onClick={() => setReview(!review)}>Проверить черновик <span>{review ? "−" : "+"}</span></button>
         {review && <div className={styles.reviewBody}><h2>Перед переносом на бумагу</h2><p>Это проверка заполненности и формата, не юридическая проверка документов или готовности заявления.</p>{issues.length ? <ul>{issues.map(f => <li key={f.id}><button type="button" onClick={() => chooseField(f,true)}><b>Стр. {f.page} · {shortId(f)} — {f.meta.ru}</b><span>{valueProblem(f,valueFor(f)) || "Пока не заполнено"}</span></button></li>)}</ul> : <p>В проверяемых полях нет пропусков или ошибок формата. Это не подтверждает правильность сведений.</p>}<p>Отдельно сверь поля «Сначала уточни», набор приложений и порядок подписания. Страницы 4–8 находятся в оригинальном PDF; семейные и другие специальные случаи не охвачены этим студенческим сценарием.</p></div>}
       </section>
@@ -241,7 +245,7 @@ function PaperSheet({ page, selectedId, values, scenario, hints, zoom, onSelect,
           const selected=f.id===selectedId;
           const checkbox=f.kind==="check" || f.kind==="radio";
           const checked=f.kind==="radio" ? value===r.label : value==="X";
-          const prompt=f.kind==="date" ? ["ДД","ММ","ГГГГ"][i] : f.runs.length>1 && i>0 ? (r.label || "Продолжение") : f.meta.ru;
+          const prompt=f.kind==="date" ? ["ДД","ММ","ГГГГ"][i] : r.count===1 && f.kind!=="line" ? "?" : r.count<=4 ? (f.meta.kind==="number" ? "Число" : "Код") : f.runs.length>1 && i>0 ? (r.label || "Продолжение") : f.meta.ru;
           return <div key={f.id+":"+i} className={styles.overlay} style={runStyle(r)} data-editor-field={f.id} data-part={i} data-selected={selected} data-locked={locked} data-state={mode}>
             {checkbox || f.kind==="signature" || locked ? <button type="button" className={styles.mark} aria-label={getLabel(f,i) + (f.kind==="radio" ? ": "+r.label : "")} aria-pressed={checkbox ? checked : undefined} onFocus={() => onSelect(f)} onClick={() => {onSelect(f);onToggle(f,f.kind==="radio" ? r.label : undefined);}}>{checkbox && checked ? "X" : f.kind==="signature" && hints ? "Подпись — на бумаге" : locked && hints && i===0 && r.count>4 ? "В этом сценарии пропусти" : ""}</button>
               : <>
