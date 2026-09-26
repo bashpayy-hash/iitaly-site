@@ -227,6 +227,10 @@ export function PermessoTrainer() {
   const activePageFields = activeFormPage.sections.flatMap((sectionId) => sectionMap.get(sectionId)?.fields || []);
   const writablePageFields = activePageFields.filter((item) => modeFor(item) === "write");
   const selectedWritableIndex = writablePageFields.findIndex((item) => item.number === selected.number);
+  const selectedSection = sectionMap.get(selected.section);
+  const selectedProgress = writablePageFields.length
+    ? Math.max(0, Math.min(100, ((Math.max(0, selectedWritableIndex) + 1) / writablePageFields.length) * 100))
+    : 0;
 
   function selectRelativeField(delta: number) {
     if (!writablePageFields.length) return;
