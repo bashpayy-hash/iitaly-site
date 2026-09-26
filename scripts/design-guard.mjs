@@ -24,6 +24,9 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
 const approvedReminderUiPaths = new Set([
   'src/components/portal/PortalExplorer.tsx',
   'src/components/portal/HelpSection.tsx',
+  // Explicit user request: selected illustration and Claude reference on login only.
+  'src/components/portal/PortalLogin.tsx',
+  'src/components/portal/portal-login.module.css',
   // The user explicitly authorized a visual/UX refresh of the personal portal.
   // Portal data, API contracts and roadmap logic remain protected elsewhere.
   'src/components/portal/TodaySection.tsx',
