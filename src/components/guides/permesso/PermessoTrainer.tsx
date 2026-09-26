@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   COUNTRY_CODES,
   PERMIT_CODES,
@@ -9,7 +9,6 @@ import {
   type FieldMode,
   type PermessoScenario,
   type TrainerField,
-  type TrainerSection,
 } from "./permessoData";
 import styles from "./permesso-trainer.module.css";
 
@@ -178,16 +177,6 @@ export function PermessoTrainer() {
     if (useMyData && field.kind === "x" && modeFor(field) === "write") return field.example?.[scenario] || "";
     if (showExample) return suggestedValueFor(field);
     return "";
-  }
-
-  function field(sectionId: string, number: string) {
-    const result = sectionMap.get(sectionId)?.fields.find((item) => item.number === number);
-    if (!result) throw new Error("Missing trainer field " + sectionId + ":" + number);
-    return result;
-  }
-
-  function allEmpty(section: TrainerSection) {
-    return section.fields.every((item) => modeFor(item) === "empty");
   }
 
   function firstWritableOnPage(pageIndex: number, targetScenario: PermessoScenario = scenario) {
@@ -480,177 +469,39 @@ export function PermessoTrainer() {
         </div>
 
         <div className={styles.formLayout}>
-          <div className={styles.paper} data-personal={useMyData || undefined}>
-            <FormHeader
-              page={activeFormPage.number}
-              showExample={showExample}
-              scenario={scenario}
-            />
-
-            {activeFormPage.number === 1 && (
-              <>
-                <FormSection section={sectionMap.get("request")!} empty={false}>
-                  <div className={styles.fullRows}>
-                    <FormField field={field("request", "3")} mode={modeFor(field("request", "3"))} example={displayValueFor(field("request", "3"))} selected={selected.number === "3"} onSelect={selectField} />
-                    <FormField field={field("request", "4")} mode={modeFor(field("request", "4"))} example={displayValueFor(field("request", "4"))} selected={selected.number === "4"} onSelect={selectField} />
-                    <div className={styles.twoColumnFields}>
-                      <FormField field={field("request", "5")} compact mode={modeFor(field("request", "5"))} example={displayValueFor(field("request", "5"))} selected={selected.number === "5"} onSelect={selectField} />
-                      <FormField field={field("request", "6")} mode={modeFor(field("request", "6"))} example={displayValueFor(field("request", "6"))} selected={selected.number === "6"} onSelect={selectField} />
-                    </div>
-                  </div>
-
-                  <div className={styles.requestChoices}>
-                    <div className={styles.choicePanel}>
-                      <p>7. RICHIEDE IL:</p>
-                      <ChoiceField field={field("request", "8")} mode={modeFor(field("request", "8"))} example={displayValueFor(field("request", "8"))} selected={selected.number === "8"} onSelect={selectField} />
-                      <ChoiceField field={field("request", "9")} mode={modeFor(field("request", "9"))} example={displayValueFor(field("request", "9"))} selected={selected.number === "9"} onSelect={selectField} />
-                      <ChoiceField field={field("request", "10")} mode={modeFor(field("request", "10"))} example="" selected={selected.number === "10"} onSelect={selectField} />
-                      <ChoiceField field={field("request", "11")} mode={modeFor(field("request", "11"))} example="" selected={selected.number === "11"} onSelect={selectField} />
-                      <ChoiceField field={field("request", "12")} mode={modeFor(field("request", "12"))} example="" selected={selected.number === "12"} onSelect={selectField} />
-                    </div>
-                    <div className={styles.choicePanel}>
-                      <p>13. DEL/DELLA:</p>
-                      <ChoiceField field={field("request", "14")} mode={modeFor(field("request", "14"))} example={displayValueFor(field("request", "14"))} selected={selected.number === "14"} onSelect={selectField} />
-                      <ChoiceField field={field("request", "15")} mode={modeFor(field("request", "15"))} example="" selected={selected.number === "15"} onSelect={selectField} />
-                      <FormField field={field("request", "16")} compact mode={modeFor(field("request", "16"))} example={displayValueFor(field("request", "16"))} selected={selected.number === "16"} onSelect={selectField} />
-                      <ChoiceField field={field("request", "17")} mode={modeFor(field("request", "17"))} example="" selected={selected.number === "17"} onSelect={selectField} />
-                    </div>
-                  </div>
-
-                  <div className={styles.permitStrip}>
-                    <FormField field={field("request", "18")} mode={modeFor(field("request", "18"))} example={displayValueFor(field("request", "18"))} selected={selected.number === "18"} onSelect={selectField} />
-                    <FormField field={field("request", "19")} compact mode={modeFor(field("request", "19"))} example={displayValueFor(field("request", "19"))} selected={selected.number === "19"} onSelect={selectField} />
-                    <FormField field={field("request", "20")} compact mode={modeFor(field("request", "20"))} example={displayValueFor(field("request", "20"))} selected={selected.number === "20"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-
-                <FormSection section={sectionMap.get("application")!} empty={false}>
-                  <div className={styles.applicationGrid}>
-                    <FormField field={field("application", "22")} compact mode={modeFor(field("application", "22"))} example={displayValueFor(field("application", "22"))} selected={selected.number === "22"} onSelect={selectField} />
-                    <ChoiceField field={field("application", "23")} mode={modeFor(field("application", "23"))} example={displayValueFor(field("application", "23"))} selected={selected.number === "23"} onSelect={selectField} />
-                    <ChoiceField field={field("application", "24")} mode={modeFor(field("application", "24"))} example={displayValueFor(field("application", "24"))} selected={selected.number === "24"} onSelect={selectField} />
-                    <FormField field={field("application", "25")} compact mode={modeFor(field("application", "25"))} example={displayValueFor(field("application", "25"))} selected={selected.number === "25"} onSelect={selectField} />
-                    <FormField field={field("application", "26")} compact mode={modeFor(field("application", "26"))} example="" selected={selected.number === "26"} onSelect={selectField} />
-                  </div>
-                  <p className={styles.legalLine}>27. RESPONSABILITÀ PER DICHIARAZIONI MENDACI · этот текст только читают, здесь ничего не пишут.</p>
-                  <div className={styles.dateSignature}>
-                    <FormField field={field("application", "28")} mode={modeFor(field("application", "28"))} example={displayValueFor(field("application", "28"))} selected={selected.number === "28"} onSelect={selectField} />
-                    <FormField field={field("application", "29")} signature mode={modeFor(field("application", "29"))} example="" selected={selected.number === "29"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-              </>
-            )}
-
-            {activeFormPage.number === 2 && (
-              <>
-                <FormSection section={sectionMap.get("identity")!} empty={false}>
-                  <div className={styles.identityGrid}>
-                    <FormField className={styles.spanAll} field={field("identity", "31")} mode={modeFor(field("identity", "31"))} example={displayValueFor(field("identity", "31"))} selected={selected.number === "31"} onSelect={selectField} />
-                    <FormField field={field("identity", "32")} compact mode={modeFor(field("identity", "32"))} example={displayValueFor(field("identity", "32"))} selected={selected.number === "32"} onSelect={selectField} />
-                    <FormField field={field("identity", "33")} compact mode={modeFor(field("identity", "33"))} example={displayValueFor(field("identity", "33"))} selected={selected.number === "33"} onSelect={selectField} />
-                    <FormField field={field("identity", "34")} compact mode={modeFor(field("identity", "34"))} example={displayValueFor(field("identity", "34"))} selected={selected.number === "34"} onSelect={selectField} />
-                    <FormField field={field("identity", "35")} compact mode={modeFor(field("identity", "35"))} example={displayValueFor(field("identity", "35"))} selected={selected.number === "35"} onSelect={selectField} />
-                    <FormField field={field("identity", "36")} compact mode={modeFor(field("identity", "36"))} example={displayValueFor(field("identity", "36"))} selected={selected.number === "36"} onSelect={selectField} />
-                    <RefugeeField field={field("identity", "37")} mode={modeFor(field("identity", "37"))} value={displayValueFor(field("identity", "37"))} selected={selected.number === "37"} onSelect={selectField} />
-                    <FormField className={styles.spanAll} field={field("identity", "38")} mode={modeFor(field("identity", "38"))} example={displayValueFor(field("identity", "38"))} selected={selected.number === "38"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-
-                <FormSection section={sectionMap.get("passport")!} empty={false}>
-                  <div className={styles.passportTop}>
-                    <ChoiceField field={field("passport", "40")} mode={modeFor(field("passport", "40"))} example={displayValueFor(field("passport", "40"))} selected={selected.number === "40"} onSelect={selectField} />
-                    <div className={styles.passportOther}>
-                      <ChoiceField field={field("passport", "41")} mode={modeFor(field("passport", "41"))} example="" selected={selected.number === "41"} onSelect={selectField} />
-                      <FormField field={field("passport", "42")} compact mode={modeFor(field("passport", "42"))} example="" selected={selected.number === "42"} onSelect={selectField} />
-                      <FormField field={field("passport", "43")} mode={modeFor(field("passport", "43"))} example="" selected={selected.number === "43"} onSelect={selectField} />
-                    </div>
-                  </div>
-                  <FormField field={field("passport", "44")} mode={modeFor(field("passport", "44"))} example={displayValueFor(field("passport", "44"))} selected={selected.number === "44"} onSelect={selectField} />
-                  <div className={styles.twoColumnFields}>
-                    <FormField field={field("passport", "45")} mode={modeFor(field("passport", "45"))} example={displayValueFor(field("passport", "45"))} selected={selected.number === "45"} onSelect={selectField} />
-                    <FormField field={field("passport", "46")} compact mode={modeFor(field("passport", "46"))} example={displayValueFor(field("passport", "46"))} selected={selected.number === "46"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-
-                <FormSection section={sectionMap.get("visa")!} empty={allEmpty(sectionMap.get("visa")!)}>
-                  <FormField field={field("visa", "48")} mode={modeFor(field("visa", "48"))} example={displayValueFor(field("visa", "48"))} selected={selected.number === "48"} onSelect={selectField} />
-                  <FormField field={field("visa", "49")} mode={modeFor(field("visa", "49"))} example={displayValueFor(field("visa", "49"))} selected={selected.number === "49"} onSelect={selectField} />
-                  <div className={styles.twoColumnFields}>
-                    <FormField field={field("visa", "50")} mode={modeFor(field("visa", "50"))} example={displayValueFor(field("visa", "50"))} selected={selected.number === "50"} onSelect={selectField} />
-                    <FormField field={field("visa", "51")} compact mode={modeFor(field("visa", "51"))} example={displayValueFor(field("visa", "51"))} selected={selected.number === "51"} onSelect={selectField} />
-                  </div>
-                  <div className={styles.twoColumnFields}>
-                    <ChoiceField field={field("visa", "52")} mode={modeFor(field("visa", "52"))} example={displayValueFor(field("visa", "52"))} selected={selected.number === "52"} onSelect={selectField} />
-                    <ChoiceField field={field("visa", "53")} mode={modeFor(field("visa", "53"))} example={displayValueFor(field("visa", "53"))} selected={selected.number === "53"} onSelect={selectField} />
-                  </div>
-                  <FormField field={field("visa", "54")} mode={modeFor(field("visa", "54"))} example={displayValueFor(field("visa", "54"))} selected={selected.number === "54"} onSelect={selectField} />
-                  <div className={styles.threeColumnFields}>
-                    <FormField field={field("visa", "55")} compact mode={modeFor(field("visa", "55"))} example={displayValueFor(field("visa", "55"))} selected={selected.number === "55"} onSelect={selectField} />
-                    <FormField field={field("visa", "56")} mode={modeFor(field("visa", "56"))} example={displayValueFor(field("visa", "56"))} selected={selected.number === "56"} onSelect={selectField} />
-                    <FormField field={field("visa", "57")} mode={modeFor(field("visa", "57"))} example={displayValueFor(field("visa", "57"))} selected={selected.number === "57"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-              </>
-            )}
-
-            {activeFormPage.number === 3 && (
-              <>
-                <FormSection section={sectionMap.get("travel")!} empty={true}>
-                  <div className={styles.travelGrid}>
-                    <ChoiceField field={field("travel", "59")} mode={modeFor(field("travel", "59"))} example="" selected={selected.number === "59"} onSelect={selectField} />
-                    <ChoiceField field={field("travel", "60")} mode={modeFor(field("travel", "60"))} example="" selected={selected.number === "60"} onSelect={selectField} />
-                    <ChoiceField field={field("travel", "61")} mode={modeFor(field("travel", "61"))} example="" selected={selected.number === "61"} onSelect={selectField} />
-                    <div className={styles.periodLabel}>62. PERIODO PER IL QUALE SI CHIEDE IL RINNOVO</div>
-                    <ChoiceField field={field("travel", "63")} mode={modeFor(field("travel", "63"))} example="" selected={selected.number === "63"} onSelect={selectField} />
-                    <ChoiceField field={field("travel", "64")} mode={modeFor(field("travel", "64"))} example="" selected={selected.number === "64"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-
-                <FormSection section={sectionMap.get("address")!} empty={false}>
-                  <div className={styles.twoColumnFields}>
-                    <FormField field={field("address", "66")} compact mode={modeFor(field("address", "66"))} example={displayValueFor(field("address", "66"))} selected={selected.number === "66"} onSelect={selectField} />
-                    <FormField field={field("address", "67")} mode={modeFor(field("address", "67"))} example={displayValueFor(field("address", "67"))} selected={selected.number === "67"} onSelect={selectField} />
-                  </div>
-                  <FormField field={field("address", "68")} mode={modeFor(field("address", "68"))} example={displayValueFor(field("address", "68"))} selected={selected.number === "68"} onSelect={selectField} />
-                  <div className={styles.threeColumnFields}>
-                    <FormField field={field("address", "69")} compact mode={modeFor(field("address", "69"))} example={displayValueFor(field("address", "69"))} selected={selected.number === "69"} onSelect={selectField} />
-                    <div className={styles.twoMiniFields}>
-                      <FormField field={field("address", "70")} compact mode={modeFor(field("address", "70"))} example={displayValueFor(field("address", "70"))} selected={selected.number === "70"} onSelect={selectField} />
-                      <FormField field={field("address", "71")} compact mode={modeFor(field("address", "71"))} example={displayValueFor(field("address", "71"))} selected={selected.number === "71"} onSelect={selectField} />
-                    </div>
-                    <FormField field={field("address", "72")} compact mode={modeFor(field("address", "72"))} example={displayValueFor(field("address", "72"))} selected={selected.number === "72"} onSelect={selectField} />
-                  </div>
-                  <FormField field={field("address", "73")} mode={modeFor(field("address", "73"))} example={displayValueFor(field("address", "73"))} selected={selected.number === "73"} onSelect={selectField} />
-                  <div className={styles.twoColumnFields}>
-                    <FormField field={field("address", "74")} mode={modeFor(field("address", "74"))} example={displayValueFor(field("address", "74"))} selected={selected.number === "74"} onSelect={selectField} />
-                    <FormField field={field("address", "75")} mode={modeFor(field("address", "75"))} example={displayValueFor(field("address", "75"))} selected={selected.number === "75"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-
-                <FormSection section={sectionMap.get("correspondence")!} empty={false}>
-                  <FormField field={field("correspondence", "77")} mode={modeFor(field("correspondence", "77"))} example={displayValueFor(field("correspondence", "77"))} selected={selected.number === "77"} onSelect={selectField} />
-                  <div className={styles.twoColumnFields}>
-                    <FormField field={field("correspondence", "78")} compact mode={modeFor(field("correspondence", "78"))} example={displayValueFor(field("correspondence", "78"))} selected={selected.number === "78"} onSelect={selectField} />
-                    <FormField field={field("correspondence", "79")} mode={modeFor(field("correspondence", "79"))} example={displayValueFor(field("correspondence", "79"))} selected={selected.number === "79"} onSelect={selectField} />
-                  </div>
-                  <FormField field={field("correspondence", "80")} mode={modeFor(field("correspondence", "80"))} example={displayValueFor(field("correspondence", "80"))} selected={selected.number === "80"} onSelect={selectField} />
-                  <div className={styles.fourColumnFields}>
-                    <FormField field={field("correspondence", "81")} compact mode={modeFor(field("correspondence", "81"))} example={displayValueFor(field("correspondence", "81"))} selected={selected.number === "81"} onSelect={selectField} />
-                    <FormField field={field("correspondence", "82")} compact mode={modeFor(field("correspondence", "82"))} example={displayValueFor(field("correspondence", "82"))} selected={selected.number === "82"} onSelect={selectField} />
-                    <FormField field={field("correspondence", "83")} compact mode={modeFor(field("correspondence", "83"))} example={displayValueFor(field("correspondence", "83"))} selected={selected.number === "83"} onSelect={selectField} />
-                    <FormField field={field("correspondence", "84")} compact mode={modeFor(field("correspondence", "84"))} example={displayValueFor(field("correspondence", "84"))} selected={selected.number === "84"} onSelect={selectField} />
-                  </div>
-                </FormSection>
-
-                <div id="pages4-8" className={styles.pagesEmpty}>
-                  <span>Страницы 4–8 бумажного Modulo 1</span>
-                  <strong>НЕ ВЫРЫВАТЬ · ОСТАВИТЬ ПУСТЫМИ</strong>
-                  <p>Для сценария студента без семьи они остаются частью комплекта и учитываются в числе листов.</p>
-                </div>
-              </>
-            )}
-
-            <footer className={styles.paperFooter}>Mod. 209 Modulo 1 · Pagina {activeFormPage.number} di 8</footer>
+          <div className={styles.paperExact}>
+            <div className={styles.paperExactBar}>
+              <span>Оригинальный Mod. 209 · Modulo 1</span>
+              <a
+                href="https://www.portaleimmigrazione.it/media/documentazione/Modulo_1.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Открыть официальный PDF ↗
+              </a>
+            </div>
+            <object
+              key={activeFormPage.number}
+              className={styles.paperPdf}
+              data={"https://www.portaleimmigrazione.it/media/documentazione/Modulo_1.pdf#page=" + activeFormPage.number + "&zoom=page-width&toolbar=0&navpanes=0&scrollbar=0"}
+              type="application/pdf"
+              aria-label={"Оригинальный Mod. 209 Modulo 1, страница " + activeFormPage.number}
+            >
+              <div className={styles.paperPdfFallback}>
+                <p>Браузер не показал встроенный PDF.</p>
+                <a
+                  href="https://www.portaleimmigrazione.it/media/documentazione/Modulo_1.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Открыть оригинальный бланк ↗
+                </a>
+              </div>
+            </object>
+            <div className={styles.paperExactFooter}>
+              <span>Страница {activeFormPage.number} из 8</span>
+              <span>Форма показывается без перерисовки — линии, клетки и подписи взяты из официального PDF.</span>
+            </div>
           </div>
 
           <aside className={styles.detailPanel} data-mode={modeFor(selected)}>
@@ -812,151 +663,6 @@ export function PermessoTrainer() {
         </details>
       </section>
     </div>
-  );
-}
-
-function FormHeader({ page, showExample, scenario }: { page: number; showExample: boolean; scenario: PermessoScenario }) {
-  return (
-    <header className={styles.paperHeader}>
-      <div className={styles.headerTop}>
-        <div className={styles.stateEmblem} aria-hidden>
-          <span>★</span>
-          <small>RI</small>
-        </div>
-
-        <div className={styles.ministry}>
-          <b>MINISTERO DELL&apos;INTERNO</b>
-          {page === 1 ? (
-            <div className={styles.questoreBlock}>
-              <div className={styles.questoreRow}>
-                <span>Al Signor Questore di:</span>
-                <span className={styles.questoreHandLine}>{showExample ? "FIRENZE" : ""}</span>
-              </div>
-              <div className={styles.questoreRow}>
-                <span>(Sigla Provincia)</span>
-                <CellRun count={2} value={showExample ? "FI" : ""} />
-              </div>
-            </div>
-          ) : (
-            <div className={styles.topInstruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
-          )}
-        </div>
-
-        <div className={styles.barcode} aria-label="Область штрихкода бумажного бланка">
-          <span className={styles.barcodeBars}><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></span>
-          <small>IL TUO KIT HA UN NUMERO UNICO · NON SCRIVERE QUI</small>
-        </div>
-      </div>
-
-      <div className={styles.headerBottom}>
-        <div className={styles.modLabel}>MOD. 209<br />MODULO 1</div>
-        <div className={styles.instruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
-        {page === 1 ? (
-          <div className={styles.stampBox}>
-            <small>MARCA DA BOLLO</small>
-            <strong>€ 16,00</strong>
-            <span>NON SCRIVERE · QUI VA LA MARCA</span>
-          </div>
-        ) : (
-          <div className={styles.pageMark}>PAGINA {page} DI 8</div>
-        )}
-      </div>
-
-      <span className={styles.headerScenario}>{scenario === "rilascio" ? "RILASCIO" : "RINNOVO"}</span>
-    </header>
-  );
-}
-
-function FormSection({ section, empty, children }: { section: TrainerSection; empty: boolean; children: ReactNode }) {
-  return (
-    <section className={styles.formSection} data-empty={empty || undefined}>
-      <header>
-        <b>{section.label.toUpperCase()} · {section.title.toUpperCase()}</b>
-        {section.note && <span>{section.note}</span>}
-        {empty && <strong className={styles.skipBadge}>ПРОПУСТИ ЦЕЛИКОМ</strong>}
-      </header>
-      <div className={styles.sectionBody}>{children}</div>
-    </section>
-  );
-}
-
-function ChoiceField({
-  field, mode, example, selected, onSelect,
-}: {
-  field: TrainerField; mode: FieldMode; example: string; selected: boolean; onSelect: (field: TrainerField) => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
-      className={styles.choiceField}
-      data-mode={mode}
-      data-selected={selected || undefined}
-      onClick={() => onSelect(field)}
-    >
-      <span><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
-      <span className={styles.xBox}>{example === "X" ? "X" : ""}</span>
-      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
-    </button>
-  );
-}
-
-function RefugeeField({
-  field, mode, value, selected, onSelect,
-}: {
-  field: TrainerField; mode: FieldMode; value: string; selected: boolean; onSelect: (field: TrainerField) => void;
-}) {
-  const upper = value.toUpperCase();
-  return (
-    <button
-      type="button"
-      aria-label={"Поле 37, Rifugiato, " + MODE_LABEL[mode]}
-      className={styles.refugeeField}
-      data-mode={mode}
-      data-selected={selected || undefined}
-      onClick={() => onSelect(field)}
-    >
-      <span className={styles.formLabel}><b>37. RIFUGIATO</b><small>Статус беженца</small></span>
-      <span className={styles.yesNo}>
-        <span><b>SI</b><i>{upper === "SI" ? "X" : ""}</i></span>
-        <span><b>NO</b><i>{upper === "NO" ? "X" : ""}</i></span>
-      </span>
-    </button>
-  );
-}
-
-function FormField({
-  field,
-  mode,
-  example,
-  selected,
-  onSelect,
-  compact = false,
-  signature = false,
-  className = "",
-}: {
-  field: TrainerField;
-  mode: FieldMode;
-  example: string;
-  selected: boolean;
-  onSelect: (field: TrainerField) => void;
-  compact?: boolean;
-  signature?: boolean;
-  className?: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
-      className={styles.formField + " " + (compact ? styles.compactField : "") + " " + (signature ? styles.signatureField : "") + " " + className}
-      data-mode={mode}
-      data-selected={selected || undefined}
-      onClick={() => onSelect(field)}
-    >
-      <span className={styles.formLabel}><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
-      {signature ? <span className={styles.signatureLine} /> : <FieldCells field={field} value={example} compact={compact} />}
-      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
-    </button>
   );
 }
 

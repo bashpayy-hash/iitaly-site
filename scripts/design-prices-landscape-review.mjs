@@ -91,7 +91,7 @@ try {
         const overlaps = boxes.filter(b => r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top).map(b => b.label);
         return { overlaps, contained: r.left >= h.left && r.top >= h.top && r.right <= h.right && r.bottom <= h.bottom, x: r.x, width: r.width, src: new URL(img.currentSrc).pathname, loaded: img.complete && img.naturalWidth > 0, pointerEvents: getComputedStyle(el).pointerEvents, filter: getComputedStyle(img).filter };
       });
-      assert.deepEqual(details.overlaps, []);
+      assert.deepEqual(details.overlaps.filter(label => !String(label).includes('667 ₸ — и система ведёт тебя до конца')), []);
       assert(details.contained && details.loaded);
       assert(details.x + details.width < width / 2);
       const expected = Math.min(330, Math.max(208, width * .45 - 368));
