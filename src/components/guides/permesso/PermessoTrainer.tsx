@@ -325,36 +325,40 @@ export function PermessoTrainer() {
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Permesso di soggiorno · учебный тренажёр</p>
-          <h1>Заполняй прямо по виду бумажного Modulo 1</h1>
+          <h1>Modulo 1 — по оригинальному бланку</h1>
           <p>
-            Макет повторяет структуру Mod. 209: те же секции, номера полей и клетки. Держи бумажный kit рядом и переноси только свои данные.
+            В центре — официальный Mod. 209 без перерисовки. IITALY только объясняет активное поле, помогает проверить формат и ведёт по шагам.
           </p>
+          <div className={styles.heroFacts} aria-label="Как работает тренажёр">
+            <span>Официальный PDF</span>
+            <span>Rilascio и Rinnovo</span>
+            <span>Данные остаются в браузере</span>
+          </div>
         </div>
-        <div className={styles.disclaimer}>
-          <b>Важно</b>
+        <aside className={styles.disclaimer} aria-label="Что важно знать">
+          <b>Бланк остаётся главным источником.</b>
           <p>
-            Учебный макет, не официальный бланк и не юридическая консультация. Сдавать нужно бумажный kit со Sportello Amico. Если foglio note твоего kit расходится с экраном — верь бумажному kit и Questura своей провинции.
+            Это учебный помощник, не замена инструкции Questura. Если foglio note твоего kit расходится с подсказкой, следуй бумажному kit и требованиям своей провинции.
           </p>
-          <a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Перед походом сверить суммы ↗</a>
-        </div>
+          <a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Сверить официальные расходы ↗</a>
+        </aside>
       </section>
 
       <section className={styles.prepStrip} aria-label="Что подготовить">
         <div>
-          <span>Подготовь на стол</span>
+          <span>Перед началом</span>
           <b>Kit · чёрная ручка · паспорт · codice fiscale{scenario === "rinnovo" ? " · карточка ВНЖ" : ""} · marca da bollo €16</b>
         </div>
-        <a href="#helpers">Коды и листы ↓</a>
+        <a href="#helpers">Коды и расчёты ↓</a>
       </section>
 
       <section className={styles.controls}>
         <div className={styles.scenarioSwitch} aria-label="Сценарий подачи">
-          <button type="button" data-active={scenario === "rilascio"} onClick={() => switchScenario("rilascio")}>
+          <button type="button" aria-pressed={scenario === "rilascio"} data-active={scenario === "rilascio"} onClick={() => switchScenario("rilascio")}>
             <span>Первое ВНЖ</span>
             <small>RILASCIO · только приехал</small>
           </button>
-          <button type="button" data-active={scenario === "rinnovo"} onClick={() => switchScenario("rinnovo")}>
+          <button type="button" aria-pressed={scenario === "rinnovo"} data-active={scenario === "rinnovo"} onClick={() => switchScenario("rinnovo")}>
             <span>Продление</span>
             <small>RINNOVO · карточка уже есть</small>
           </button>
@@ -364,6 +368,7 @@ export function PermessoTrainer() {
             type="button"
             className={styles.exampleToggle}
             aria-pressed={showExample}
+            aria-label={showExample ? "Скрыть пример заполнения" : "Показать пример заполнения"}
             onClick={() => {
               setShowExample((value) => !value);
               setUseMyData(false);
@@ -371,18 +376,18 @@ export function PermessoTrainer() {
           >
             {showExample ? "Скрыть пример" : "Показать пример"}
           </button>
-          <button type="button" className={styles.myDataButton} onClick={() => setMyDataOpen((value) => !value)}>
+          <button type="button" className={styles.myDataButton} aria-expanded={myDataOpen} aria-controls="permesso-my-data" onClick={() => setMyDataOpen((value) => !value)}>
             Мои данные
           </button>
         </div>
       </section>
 
       {myDataOpen && (
-        <section className={styles.myDataPanel}>
+        <section id="permesso-my-data" className={styles.myDataPanel}>
           <div className={styles.myDataHeader}>
             <div>
-              <span>Режим «Мои данные»</span>
-              <b>Данные остаются только в этом браузере и не отправляются на сервер.</b>
+              <h2>Мои данные</h2>
+              <p>Сохраняются только в этом браузере и не отправляются на сервер.</p>
             </div>
             <button type="button" onClick={clearMyData}>Стереть</button>
           </div>
@@ -417,9 +422,9 @@ export function PermessoTrainer() {
                 requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ behavior: "smooth", block: "start" }));
               }}
             >
-              Переносим на бумагу
+              Использовать в пошаговом режиме
             </button>
-            {useMyData && <span>Мои данные сейчас показаны тёмно-синими «чернилами».</span>}
+            {useMyData && <span>Активное значение показывается в подсказке; на телефоне — ещё и в клетках.</span>}
           </div>
         </section>
       )}
