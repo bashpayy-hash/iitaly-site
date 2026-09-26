@@ -483,7 +483,7 @@ export function PermessoTrainer() {
             <object
               key={activeFormPage.number}
               className={styles.paperPdf}
-              data={"/api/modulo-1#page=" + activeFormPage.number + "&zoom=page-width&toolbar=0&navpanes=0&scrollbar=0"}
+              data={"https://www.portaleimmigrazione.it/media/documentazione/Modulo_1.pdf#page=" + activeFormPage.number + "&zoom=page-width&toolbar=0&navpanes=0&scrollbar=0"}
               type="application/pdf"
               aria-label={"Оригинальный Mod. 209 Modulo 1, страница " + activeFormPage.number}
             >
