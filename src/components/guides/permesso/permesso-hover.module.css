@@ -1,0 +1,45 @@
+/* A reading layer, not another rendition of the form. The source image and
+   all editable coordinates remain unchanged. Warm paper / graphite reference. */
+.preview {
+  position: fixed;
+  z-index: 160;
+  visibility: hidden;
+  width: 356px;
+  max-width: calc(100vw - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  box-sizing: border-box;
+  border: 1px solid #d7d5ce;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+  color: #121212;
+  box-shadow: 0 4px 24px rgb(0 0 0 / .09);
+  font-family: var(--font-onest), system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  pointer-events: auto;
+}
+.preview *, .preview *::before, .preview *::after { box-sizing: border-box; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #68655e; font-size: 11px; line-height: 1.4; }
+.top span:last-of-type { padding: 3px 7px; background: #efeeeb; border-radius: 6px; color: #373734; }
+.preview h2 { margin: 12px 0 0; color: #121212; font-family: Charter, Georgia, serif; font-weight: 400; font-size: 24px; line-height: 1.2; overflow-wrap: anywhere; }
+.italian { margin: 6px 0 0; color: #6d6b66; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+.magnifier { margin: 16px 0; overflow: hidden; border: 1px solid #e7e6e1; border-radius: 8px; background: #fff; }
+.magnifier svg { display: block; width: 100%; height: auto; aspect-ratio: 164 / 52; overflow: hidden; }
+.magnifier figcaption { padding: 6px 9px; border-top: 1px solid #e7e6e1; background: #f8f8f6; color: #6d6b66; font-size: 11px; }
+.instructions { margin: 0; }
+.instructions > div + div { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e7e6e1; }
+.instructions dt { margin: 0 0 4px; color: #6d6b66; font-size: 12px; }
+.instructions dd { margin: 0; color: #373734; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+.footer { margin: 16px 0 0; padding-top: 12px; border-top: 1px solid #e7e6e1; color: #6d6b66; font-size: 11px; line-height: 1.5; }
+.footer kbd { border: 1px solid #e7e6e1; border-radius: 4px; padding: 1px 4px; background: #f8f8f6; font: inherit; color: #373734; }
+.top button { flex: 0 0 44px; width: 44px; height: 44px; margin: -6px -6px -6px 0; border: 0; border-radius: 8px; background: transparent; color: #373734; font: inherit; font-size: 24px; cursor: pointer; }
+.edit { display: block; width: 100%; min-height: 48px; margin-top: 16px; border: 1px solid #121212; border-radius: 8px; padding: 11px 16px; background: #121212; color: #f8f8f6; font: inherit; font-size: 15px; cursor: pointer; }
+.preview button:focus-visible { outline: 2px solid #373734; outline-offset: 3px; }
+.top button:hover { background: #efeeeb; }
+.edit:hover { background: #373734; }
+.preview[data-touch="true"] { border-radius: 16px; }
+@media (max-width: 420px) { .preview { padding: 16px; } }
+@media (forced-colors: active) { .preview, .magnifier, .edit { border-color: CanvasText; } }
