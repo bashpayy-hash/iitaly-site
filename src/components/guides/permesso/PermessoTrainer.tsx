@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   COUNTRY_CODES,
   PERMIT_CODES,
@@ -9,7 +9,6 @@ import {
   type FieldMode,
   type PermessoScenario,
   type TrainerField,
-  type TrainerSection,
 } from "./permessoData";
 import styles from "./permesso-trainer.module.css";
 
@@ -178,16 +177,6 @@ export function PermessoTrainer() {
     if (useMyData && field.kind === "x" && modeFor(field) === "write") return field.example?.[scenario] || "";
     if (showExample) return suggestedValueFor(field);
     return "";
-  }
-
-  function field(sectionId: string, number: string) {
-    const result = sectionMap.get(sectionId)?.fields.find((item) => item.number === number);
-    if (!result) throw new Error("Missing trainer field " + sectionId + ":" + number);
-    return result;
-  }
-
-  function allEmpty(section: TrainerSection) {
-    return section.fields.every((item) => modeFor(item) === "empty");
   }
 
   function firstWritableOnPage(pageIndex: number, targetScenario: PermessoScenario = scenario) {
@@ -674,151 +663,6 @@ export function PermessoTrainer() {
         </details>
       </section>
     </div>
-  );
-}
-
-function FormHeader({ page, showExample, scenario }: { page: number; showExample: boolean; scenario: PermessoScenario }) {
-  return (
-    <header className={styles.paperHeader}>
-      <div className={styles.headerTop}>
-        <div className={styles.stateEmblem} aria-hidden>
-          <span>★</span>
-          <small>RI</small>
-        </div>
-
-        <div className={styles.ministry}>
-          <b>MINISTERO DELL&apos;INTERNO</b>
-          {page === 1 ? (
-            <div className={styles.questoreBlock}>
-              <div className={styles.questoreRow}>
-                <span>Al Signor Questore di:</span>
-                <span className={styles.questoreHandLine}>{showExample ? "FIRENZE" : ""}</span>
-              </div>
-              <div className={styles.questoreRow}>
-                <span>(Sigla Provincia)</span>
-                <CellRun count={2} value={showExample ? "FI" : ""} />
-              </div>
-            </div>
-          ) : (
-            <div className={styles.topInstruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
-          )}
-        </div>
-
-        <div className={styles.barcode} aria-label="Область штрихкода бумажного бланка">
-          <span className={styles.barcodeBars}><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></span>
-          <small>IL TUO KIT HA UN NUMERO UNICO · NON SCRIVERE QUI</small>
-        </div>
-      </div>
-
-      <div className={styles.headerBottom}>
-        <div className={styles.modLabel}>MOD. 209<br />MODULO 1</div>
-        <div className={styles.instruction}>1. SCRIVERE IN STAMPATELLO CON PENNA NERA</div>
-        {page === 1 ? (
-          <div className={styles.stampBox}>
-            <small>MARCA DA BOLLO</small>
-            <strong>€ 16,00</strong>
-            <span>NON SCRIVERE · QUI VA LA MARCA</span>
-          </div>
-        ) : (
-          <div className={styles.pageMark}>PAGINA {page} DI 8</div>
-        )}
-      </div>
-
-      <span className={styles.headerScenario}>{scenario === "rilascio" ? "RILASCIO" : "RINNOVO"}</span>
-    </header>
-  );
-}
-
-function FormSection({ section, empty, children }: { section: TrainerSection; empty: boolean; children: ReactNode }) {
-  return (
-    <section className={styles.formSection} data-empty={empty || undefined}>
-      <header>
-        <b>{section.label.toUpperCase()} · {section.title.toUpperCase()}</b>
-        {section.note && <span>{section.note}</span>}
-        {empty && <strong className={styles.skipBadge}>ПРОПУСТИ ЦЕЛИКОМ</strong>}
-      </header>
-      <div className={styles.sectionBody}>{children}</div>
-    </section>
-  );
-}
-
-function ChoiceField({
-  field, mode, example, selected, onSelect,
-}: {
-  field: TrainerField; mode: FieldMode; example: string; selected: boolean; onSelect: (field: TrainerField) => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
-      className={styles.choiceField}
-      data-mode={mode}
-      data-selected={selected || undefined}
-      onClick={() => onSelect(field)}
-    >
-      <span><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
-      <span className={styles.xBox}>{example === "X" ? "X" : ""}</span>
-      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
-    </button>
-  );
-}
-
-function RefugeeField({
-  field, mode, value, selected, onSelect,
-}: {
-  field: TrainerField; mode: FieldMode; value: string; selected: boolean; onSelect: (field: TrainerField) => void;
-}) {
-  const upper = value.toUpperCase();
-  return (
-    <button
-      type="button"
-      aria-label={"Поле 37, Rifugiato, " + MODE_LABEL[mode]}
-      className={styles.refugeeField}
-      data-mode={mode}
-      data-selected={selected || undefined}
-      onClick={() => onSelect(field)}
-    >
-      <span className={styles.formLabel}><b>37. RIFUGIATO</b><small>Статус беженца</small></span>
-      <span className={styles.yesNo}>
-        <span><b>SI</b><i>{upper === "SI" ? "X" : ""}</i></span>
-        <span><b>NO</b><i>{upper === "NO" ? "X" : ""}</i></span>
-      </span>
-    </button>
-  );
-}
-
-function FormField({
-  field,
-  mode,
-  example,
-  selected,
-  onSelect,
-  compact = false,
-  signature = false,
-  className = "",
-}: {
-  field: TrainerField;
-  mode: FieldMode;
-  example: string;
-  selected: boolean;
-  onSelect: (field: TrainerField) => void;
-  compact?: boolean;
-  signature?: boolean;
-  className?: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={"Поле " + field.number + ", " + field.it + ", " + MODE_LABEL[mode]}
-      className={styles.formField + " " + (compact ? styles.compactField : "") + " " + (signature ? styles.signatureField : "") + " " + className}
-      data-mode={mode}
-      data-selected={selected || undefined}
-      onClick={() => onSelect(field)}
-    >
-      <span className={styles.formLabel}><b>{field.number}. {field.it}</b><small>{field.ru}</small></span>
-      {signature ? <span className={styles.signatureLine} /> : <FieldCells field={field} value={example} compact={compact} />}
-      {mode !== "write" && <em>{MODE_LABEL[mode]}</em>}
-    </button>
   );
 }
 
