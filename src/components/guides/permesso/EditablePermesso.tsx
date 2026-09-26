@@ -17,6 +17,15 @@ const shortId = (f: EditorField) => isNumber(f.id) ? `Поле ${f.id}` : "Ша�
 const getLabel = (f: EditorField, i: number) => `${shortId(f)}. ${f.meta.ru}${f.runs.length > 1 ? ". " + (f.runs[i].label || `Часть ${i+1}`) : ""}`;
 const smooth = (): ScrollBehavior => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
+function inputHint(f: EditorField, r: CellRun, part: number): string {
+  if (f.kind === "line") return f.meta.ru;
+  if (f.kind === "date") return ["ДД", "ММ", "ГГГГ"][part];
+  if (r.count === 1) return "?";
+  if (r.count <= 4) return f.meta.kind === "number" ? "Число" : "Код";
+  if (f.runs.length > 1 && part > 0) return r.label || "Продолжение";
+  return f.meta.ru;
+}
+
 export function EditablePermesso() {
   const [scenario, setScenario] = useState<PermessoScenario>("rilascio");
   const [values, setValues] = useState<Draft>({});
@@ -245,7 +254,7 @@ function PaperSheet({ page, selectedId, values, scenario, hints, zoom, onSelect,
           const selected=f.id===selectedId;
           const checkbox=f.kind==="check" || f.kind==="radio";
           const checked=f.kind==="radio" ? value===r.label : value==="X";
-          const prompt=f.kind==="date" ? ["ДД","ММ","ГГГГ"][i] : r.count===1 && f.kind!=="line" ? "?" : r.count<=4 ? (f.meta.kind==="number" ? "Число" : "Код") : f.runs.length>1 && i>0 ? (r.label || "Продолжение") : f.meta.ru;
+          const prompt=inputHint(f,r,i);
           return <div key={f.id+":"+i} className={styles.overlay} style={runStyle(r)} data-editor-field={f.id} data-part={i} data-selected={selected} data-locked={locked} data-state={mode}>
             {checkbox || f.kind==="signature" || locked ? <button type="button" className={styles.mark} aria-label={getLabel(f,i) + (f.kind==="radio" ? ": "+r.label : "")} aria-pressed={checkbox ? checked : undefined} onFocus={() => onSelect(f)} onClick={() => {onSelect(f);onToggle(f,f.kind==="radio" ? r.label : undefined);}}>{checkbox && checked ? "X" : f.kind==="signature" && hints ? "Подпись — на бумаге" : locked && hints && i===0 && r.count>4 ? "В этом сценарии пропусти" : ""}</button>
               : <>
