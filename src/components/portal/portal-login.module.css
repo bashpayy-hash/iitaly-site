@@ -204,10 +204,19 @@
 @media (max-width: 760px) {
   .page { padding: 24px 16px 40px; }
   .shell { grid-template-columns: minmax(0, 1fr); max-width: 520px; gap: 16px; }
-  .intro { min-height: 320px; padding: 24px; border-radius: 16px; }
+  .intro { min-height: 0; padding: 24px; border-radius: 16px; }
   .title { max-width: 360px; }
   .lead { margin-top: 12px; font-size: 13px; line-height: 1.5; }
-  .art { inset: 168px 0 0; mask-image: linear-gradient(to bottom, transparent, #000 35%); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%); }
+  /* In normal flow on phones: translated copy or larger text cannot overlap the art. */
+  .art {
+    position: relative;
+    inset: auto;
+    height: 152px;
+    flex: 0 0 152px;
+    margin: 8px -24px -24px;
+    mask-image: linear-gradient(to bottom, transparent, #000 22%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%);
+  }
   .artImage { object-position: 50% 74%; }
   .route { display: none; }
   .card { padding: 24px; border-radius: 16px; }
