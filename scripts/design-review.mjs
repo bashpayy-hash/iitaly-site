@@ -94,6 +94,12 @@ try {
       await shot(page, `${route === '/' ? 'home' : route.slice(1)}-${width}`, route === '/');
       results.push({ test: `${route} ${width}px smoke`, passed: true });
     }
+    await visit(page, '/guides/permesso-modulo-1');
+    assert.equal(await page.locator('main').count(), 1);
+    const permessoOverflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+    assert.equal(permessoOverflow, false, `permesso horizontal overflow at ${width}`);
+    await shot(page, `permesso-${width}`);
+    results.push({ test: `permesso trainer ${width}px smoke`, passed: true });
     // Compare direct entry, then entry via the redesigned client-side navigation.
     await visit(page, '/universities', 4174);
     const baseline = await mapShot(page, `universities-map-baseline-${width}`);
