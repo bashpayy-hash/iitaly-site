@@ -139,6 +139,71 @@
 .utilityTab span { color: #51515a; }
 
 .formLayout { display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 20px; align-items: start; }
+
+.paperExact {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #9f988d;
+  border-radius: 2px;
+  background: #ece8df;
+  box-shadow: 0 20px 54px -34px rgba(55,44,31,.34);
+}
+.paperExactBar,
+.paperExactFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #d4cfc5;
+  background: #f7f4ee;
+  color: #66615a;
+  font-size: 10px;
+  line-height: 1.35;
+}
+.paperExactBar span {
+  color: #33302c;
+  font-weight: 600;
+}
+.paperExactBar a {
+  color: #9f1830;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.paperPdf {
+  display: block;
+  width: 100%;
+  height: min(1160px, calc((100vw - 370px) * 1.414));
+  min-height: 820px;
+  border: 0;
+  background: #fff;
+}
+.paperPdfFallback {
+  display: grid;
+  min-height: 720px;
+  place-content: center;
+  gap: 8px;
+  padding: 24px;
+  background: #fff;
+  color: #66615a;
+  text-align: center;
+  font-size: 12px;
+}
+.paperPdfFallback a {
+  color: #9f1830;
+  font-weight: 600;
+}
+.paperExactFooter {
+  min-height: 34px;
+  border-top: 1px solid #d4cfc5;
+  border-bottom: 0;
+}
+.paperExactFooter span:last-child {
+  max-width: 520px;
+  text-align: right;
+}
+
 .paper {
   position: relative;
   isolation: isolate;
@@ -924,6 +989,10 @@
 .detailPanel[data-mode="verify"] .detailTop span:last-child { color: #6d28d9; }
 
 @media (max-width: 1000px) {
+  .paperPdf {
+    height: calc((100vw - 48px) * 1.414);
+    min-height: 900px;
+  }
   .pageTabs { width: 100%; }
   .formLayout { grid-template-columns: 1fr; }
   .detailPanel { position: static; }
@@ -1014,6 +1083,7 @@
   .mobileFieldNav span { color: #77727a; font-size: 10px; }
 
   .paper,
+  .paperExact,
   .detailPanel { display: none; }
   .formLayout { display: block; }
 
