@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { EDITOR_FIELDS, ORIGINAL_PAGES, PAPER, fieldWidth, type EditorField } from "./permessoOriginalGeometry";
 import type { FieldMode } from "./permessoData";
@@ -42,8 +42,9 @@ function candidate(target: EventTarget | null, x?: number): Preview | null {
 export function PermessoFieldHover() {
   const [preview, setPreview] = useState<Preview | null>(null);
   const current = useRef<Preview | null>(null);
-  const popup = useRef<HTMLElement | null>(null);
+  const popupRef = useRef<HTMLElement | null>(null);
   const dismissed = useRef<HTMLElement | null>(null);
+  const ignoreNextFocus = useRef(false);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const id = useId();
@@ -53,13 +54,10 @@ export function PermessoFieldHover() {
     openTimer.current = null; closeTimer.current = null;
   }, []);
   const close = useCallback(() => {
-    clearTimers();
-    current.current = null;
-    setPreview(null);
+    clearTimers(); current.current = null; setPreview(null);
   }, [clearTimers]);
   const dismiss = useCallback(() => {
-    dismissed.current = current.current?.anchor || null;
-    close();
+    dismissed.current = current.current?.anchor || null; close();
   }, [close]);
   const keep = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -69,7 +67,7 @@ export function PermessoFieldHover() {
     keep();
     closeTimer.current = setTimeout(() => {
       const p = current.current;
-      if (!p || p.touch || p.anchor.contains(document.activeElement) || p.anchor.matches(":hover") || popup.current?.matches(":hover")) return;
+      if (!p || p.touch || p.anchor.contains(document.activeElement) || p.anchor.matches(":hover") || popupRef.current?.matches(":hover")) return;
       close();
     }, 240);
   }, [keep, close]);
@@ -82,8 +80,7 @@ export function PermessoFieldHover() {
       if (dismissed.current === p.anchor) return;
       const apply = () => {
         if (!p.anchor.isConnected || !p.anchor.getClientRects().length) return;
-        current.current = p;
-        setPreview(p);
+        current.current = p; setPreview(p);
       };
       if (delay) openTimer.current = setTimeout(apply, delay); else apply();
     }
@@ -100,23 +97,26 @@ export function PermessoFieldHover() {
       if (!p || (e.relatedTarget instanceof Node && p.anchor.contains(e.relatedTarget))) return;
       if (dismissed.current === p.anchor) dismissed.current = null;
       if (openTimer.current) clearTimeout(openTimer.current);
-      if (e.relatedTarget instanceof Node && popup.current?.contains(e.relatedTarget)) { keep(); return; }
+      if (e.relatedTarget instanceof Node && popupRef.current?.contains(e.relatedTarget)) { keep(); return; }
       leave();
     }
     function focus(e: FocusEvent) {
       const p = candidate(e.target);
-      if (p) show(p, 0);
-      else if (e.target instanceof Node && !popup.current?.contains(e.target)) close();
+      if (p) {
+        if (ignoreNextFocus.current) { ignoreNextFocus.current = false; return; }
+        // A genuinely new keyboard focus is a new request, even after Escape.
+        dismissed.current = null; show(p, 0);
+      } else if (e.target instanceof Node && !popupRef.current?.contains(e.target)) close();
     }
     function blur(e: FocusEvent) {
       const p = candidate(e.target);
       if (!p) return;
       if (dismissed.current === p.anchor) dismissed.current = null;
-      if (e.relatedTarget instanceof Node && popup.current?.contains(e.relatedTarget)) return;
+      if (e.relatedTarget instanceof Node && popupRef.current?.contains(e.relatedTarget)) return;
       leave();
     }
     function down(e: PointerEvent) {
-      if (e.target instanceof Node && popup.current?.contains(e.target)) return;
+      if (e.target instanceof Node && popupRef.current?.contains(e.target)) return;
       const p = candidate(e.target, e.clientX);
       if (e.pointerType !== "touch") {
         if (current.current?.anchor !== p?.anchor) close();
@@ -132,8 +132,7 @@ export function PermessoFieldHover() {
       if (!touch || touch.id !== e.pointerId) return;
       const start = touch; touch = null;
       if (Math.hypot(e.clientX - start.x, e.clientY - start.y) > 12) return;
-      e.preventDefault();
-      dismissed.current = null;
+      e.preventDefault(); dismissed.current = null;
       show({ ...start.start, touch: true }, 0);
     }
     function cancel() { touch = null; }
@@ -148,8 +147,7 @@ export function PermessoFieldHover() {
     function input(e: Event) {
       const p = current.current;
       if (!p || e.target !== p.control || !(e.target instanceof HTMLInputElement)) return;
-      const next = { ...p, value: e.target.value };
-      current.current = next; setPreview(next);
+      const next = { ...p, value: e.target.value }; current.current = next; setPreview(next);
     }
     document.addEventListener("pointerover", over, true);
     document.addEventListener("pointerout", out, true);
@@ -179,11 +177,12 @@ export function PermessoFieldHover() {
   function editLarge() {
     const p = current.current;
     if (!p) return;
-    dismiss();
-    // Focus invokes the existing editor's selection handler, not a new data path.
-    dismissed.current = p.anchor;
+    dismiss(); dismissed.current = p.anchor;
+    // Focus invokes the existing selection handler, not a new answer/data path.
+    ignoreNextFocus.current = true;
     p.control.focus({ preventScroll: true });
     requestAnimationFrame(() => {
+      ignoreNextFocus.current = false;
       const panel = document.querySelector<HTMLElement>('#permesso-panel-editable aside[aria-label="Подсказка и ввод выбранного поля"]');
       const input = panel?.querySelector<HTMLElement>("input, textarea, select, [data-next-field]");
       input?.focus({ preventScroll: true });
@@ -191,19 +190,19 @@ export function PermessoFieldHover() {
     });
   }
   if (!preview) return null;
-  return createPortal(<FieldPreview preview={preview} id={id} popup={popup} onClose={dismiss} onEnter={keep} onLeave={leave} onEdit={editLarge} />, document.body);
+  return createPortal(<FieldPreview preview={preview} id={id} popupRef={popupRef} onClose={dismiss} onEnter={keep} onLeave={leave} onEdit={editLarge} />, document.body);
 }
 
 type PreviewProps = {
-  preview: Preview; id: string; popup: { current: HTMLElement | null };
+  preview: Preview; id: string; popupRef: RefObject<HTMLElement | null>;
   onClose: () => void; onEnter: () => void; onLeave: () => void; onEdit: () => void;
 };
-function FieldPreview({ preview: p, id, popup, onClose, onEnter, onLeave, onEdit }: PreviewProps) {
-  const card = useRef<HTMLElement>(null);
+function FieldPreview({ preview: p, id, popupRef, onClose, onEnter, onLeave, onEdit }: PreviewProps) {
+  const cardRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
-    const node = card.current;
+    const node = cardRef.current;
     if (!node) return;
-    popup.current = node;
+    popupRef.current = node;
     function position() {
       if (!node || !p.anchor.isConnected || !p.anchor.getClientRects().length) { onClose(); return; }
       const vv = window.visualViewport;
@@ -213,21 +212,18 @@ function FieldPreview({ preview: p, id, popup, onClose, onEnter, onLeave, onEdit
       node.style.width = Math.min(356, width - 2 * gap) + "px";
       node.style.maxHeight = Math.max(80, height - 2 * gap) + "px";
       const rect = p.anchor.getBoundingClientRect(), box = node.getBoundingClientRect();
-      if (rect.bottom < top || rect.top > top + height) { onClose(); return; }
+      if (rect.bottom < top || rect.top > top + height) { node.style.visibility = "hidden"; return; }
       let x = clamp(rect.left, left + gap, left + width - box.width - gap);
       let y = rect.bottom + gap;
+      // Prefer above: the card does not hide the next fields in reading order.
+      if (!p.touch && rect.top - box.height - gap >= top + gap) y = rect.top - box.height - gap;
       if (p.touch) { x = left + (width - box.width) / 2; y = top + height - box.height - gap; }
       else if (y + box.height > top + height - gap) {
-        if (rect.top - box.height - gap >= top + gap) y = rect.top - box.height - gap;
-        else {
-          // A tall card goes alongside the run rather than covering its input.
-          if (rect.right + gap + box.width <= left + width - gap) x = rect.right + gap;
-          else if (rect.left - gap - box.width >= left + gap) x = rect.left - gap - box.width;
-          y = clamp(rect.top, top + gap, top + height - box.height - gap);
-        }
+        if (rect.right + gap + box.width <= left + width - gap) x = rect.right + gap;
+        else if (rect.left - gap - box.width >= left + gap) x = rect.left - gap - box.width;
+        y = clamp(rect.top, top + gap, top + height - box.height - gap);
       }
-      node.style.left = x + "px"; node.style.top = y + "px";
-      node.style.visibility = "visible";
+      node.style.left = x + "px"; node.style.top = y + "px"; node.style.visibility = "visible";
     }
     position();
     const resize = new ResizeObserver(position); resize.observe(node);
@@ -238,14 +234,11 @@ function FieldPreview({ preview: p, id, popup, onClose, onEnter, onLeave, onEdit
     window.visualViewport?.addEventListener("scroll", position);
     if (p.touch) node.querySelector<HTMLButtonElement>("[data-close-help]")?.focus({ preventScroll: true });
     return () => {
-      resize.disconnect();
-      window.removeEventListener("scroll", onScroll, true);
-      window.removeEventListener("resize", position);
-      window.visualViewport?.removeEventListener("resize", position);
-      window.visualViewport?.removeEventListener("scroll", position);
-      if (popup.current === node) popup.current = null;
+      resize.disconnect(); window.removeEventListener("scroll", onScroll, true); window.removeEventListener("resize", position);
+      window.visualViewport?.removeEventListener("resize", position); window.visualViewport?.removeEventListener("scroll", position);
+      if (popupRef.current === node) popupRef.current = null;
     };
-  }, [p.anchor, p.touch, onClose, popup]);
+  }, [p.anchor, p.touch, onClose, popupRef]);
   useEffect(() => {
     const control = p.control;
     const tokens = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean);
@@ -262,7 +255,7 @@ function FieldPreview({ preview: p, id, popup, onClose, onEnter, onLeave, onEdit
   const crop = { x: clamp(p.center - 82, 0, PAPER.width - 164), y: clamp(run.y - 16, 0, PAPER.height - 52), w: 164, h: 52 };
   const caption = /^\d+$/.test(p.field.id) ? `Поле ${p.field.id}` : "Шапка бланка";
   const locked = p.state === "empty" || p.field.kind === "signature";
-  return <aside ref={card} id={id} className={styles.preview} data-permesso-hover={p.field.id} data-touch={p.touch} data-fab-yield role={p.touch ? "dialog" : "tooltip"} aria-label={p.touch ? `${caption}: ${p.field.meta.ru}` : undefined} onPointerEnter={onEnter} onPointerLeave={onLeave}>
+  return <aside ref={cardRef} id={id} className={styles.preview} data-permesso-hover={p.field.id} data-touch={p.touch} data-fab-yield role={p.touch ? "dialog" : "tooltip"} aria-label={p.touch ? `${caption}: ${p.field.meta.ru}` : undefined} onPointerEnter={onEnter} onPointerLeave={onLeave}>
     <div className={styles.top}><span>{caption} · стр. {p.field.page}</span><span>{STATES[p.state]}</span>{p.touch && <button type="button" data-close-help onClick={onClose} aria-label="Закрыть подсказку">×</button>}</div>
     <h2>{p.field.meta.ru}</h2>
     <p className={styles.italian}>{p.field.meta.it}{p.field.runs.length > 1 && run.label ? ` · ${run.label}` : ""}</p>
