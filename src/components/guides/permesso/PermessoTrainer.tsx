@@ -387,7 +387,7 @@ export function PermessoTrainer() {
       </section>
 
       {myDataOpen && (
-        <section id="permesso-my-data" className={styles.myDataPanel}>
+        <section id="permesso-my-data" className={styles.myDataPanel} data-fab-yield>
           <div className={styles.myDataHeader}>
             <div>
               <h2>Мои данные</h2>
@@ -467,7 +467,7 @@ export function PermessoTrainer() {
           </div>
         </div>
 
-        <div className={styles.mobileFieldCard} data-mode={modeFor(selected)}>
+        <div className={styles.mobileFieldCard} data-mode={modeFor(selected)} data-fab-yield>
           <div className={styles.mobileFieldHead}>
             <span>Стр. {activeFormPage.number} · поле {selected.number}</span>
             <b>{MODE_LABEL[modeFor(selected)]}</b>
@@ -531,6 +531,7 @@ export function PermessoTrainer() {
             data-mode={modeFor(selected)}
             aria-live="polite"
             aria-label={"Подсказка к полю " + selected.number}
+            data-fab-yield
           >
             <div className={styles.detailTop}>
               <span>{selectedSection?.label || "Modulo 1"} · поле {selected.number}</span>
