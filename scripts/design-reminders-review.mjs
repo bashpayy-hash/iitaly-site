@@ -3,11 +3,13 @@ import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { loadLoginArtwork } from './portal-login-art-fixtures.mjs';
 
 assert(process.env.REVIEW_TOOLS, 'REVIEW_TOOLS is required');
 const { chromium } = await import(pathToFileURL(resolve(process.env.REVIEW_TOOLS, 'playwright/index.mjs')).href);
 const output = resolve('design-review/reminders');
 await mkdir(output, { recursive: true });
+const loginArtwork = await loadLoginArtwork();
 const results = [], errors = [];
 const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.txt':'text/plain', '.svg':'image/svg+xml', '.png':'image/png', '.webp':'image/webp', '.jpg':'image/jpeg', '.woff2':'font/woff2', '.ico':'image/x-icon' };
 const root = resolve('out');
@@ -50,6 +52,11 @@ try {
 
     await ctx.route('**/*', async route => {
       const request = route.request(), url = new URL(request.url());
+      // Only these two hash-verified static media URLs are newly authorized.
+      // API assertions and unknown external request detection remain unchanged.
+      if (loginArtwork.has(url.href)) {
+        return route.fulfill({ status: 200, contentType: 'image/webp', body: loginArtwork.get(url.href) });
+      }
 
       if (url.pathname === '/api/portal/lookup') {
         assert.equal(request.method(), 'POST');

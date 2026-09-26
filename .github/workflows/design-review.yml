@@ -14,6 +14,8 @@ on:
       - "src/components/plan/**"
       - "src/components/portal/PortalExplorer.tsx"
       - "src/components/portal/HelpSection.tsx"
+      - "src/components/portal/PortalLogin.tsx"
+      - "src/components/portal/portal-login.module.css"
       - "src/components/prices/**"
       - "public/illustrations/editorial/**"
       - "docs/editorial-art-assets.json"
@@ -67,6 +69,8 @@ jobs:
         run: |
           npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Review approved login artwork and isolated authentication flow
+        run: node scripts/design-portal-login-review.mjs
       - name: Review desktop, mobile, quiz, checkout and protected route
         run: node scripts/design-review.mjs
       - name: Review local illustrations, unchanged copy and hero
