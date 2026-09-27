@@ -13,6 +13,9 @@ function groupStyle(f:EditorField):CSSProperties{const b=fieldBounds(f);return{l
 function partStyle(f:EditorField,r:CellRun):CSSProperties{const b=fieldBounds(f);return{left:percent((r.x/PAPER.width-b.x)/b.width),top:percent((r.y/PAPER.height-b.y)/b.height),width:percent(fieldWidth(r)/PAPER.width/b.width),height:percent(r.height/PAPER.height/b.height),"--cell-pitch":`${r.pitch/PAPER.width*100}cqw`,"--cell-pad":`${(r.cell-7.2)/2/PAPER.width*100}cqw`} as CSSProperties;}
 const label=(f:EditorField)=>`${f.kind==="block"?"Блок":"Поле"} ${f.id}, ${f.meta.it}, ${f.meta.ru}`;
 const pointerDistance=(x:number,y:number,r:DOMRect)=>Math.hypot(Math.max(r.left-x,0,x-r.right),Math.max(r.top-y,0,y-r.bottom));
+// Equal padding in original PDF points, not equal fractions of unequal axes.
+// A non-scaling stroke stays 1.5 CSS px on desktop, touch and at increased zoom.
+const padX=.7/PAPER.width,padY=.7/PAPER.height;
 
 export function PermessoPaperSheet(props:Props){
  const{page,selectedId,values,scenario,hints,zoom,showExample,onSelect,onChange,onPaste,onToggle,onEditLarge}=props;
@@ -66,17 +69,17 @@ export function PermessoPaperSheet(props:Props){
         <span className={z.outlineProbe} data-cell-outline={f.id}/>
         {checkbox||locked?<button type="button" tabIndex={-1} className={s.mark} aria-label={name} aria-pressed={checkbox?checked:undefined} onClick={()=>{pin(f);if(!locked&&!showExample)onToggle(f,f.kind==="radio"?r.label:undefined);}}>{checkbox&&checked?"X":""}</button>:<>
          <input tabIndex={-1} className={f.kind==="line"?s.lineInput:s.paperInput} aria-label={name} aria-invalid={!!valueProblem(f,real)} aria-describedby={selected?"permesso-value-format permesso-value-error":undefined} value={part} maxLength={f.kind==="line"?70:r.count} autoComplete="off" spellCheck={false} inputMode={f.kind==="date"||f.meta.kind==="number"?"numeric":"text"} placeholder={hints&&selected&&!display?(f.kind==="date"?["ДД","ММ","ГГГГ"][i]:f.meta.ru):""} onClick={()=>pin(f)} onChange={e=>{onSelect(f);onChange(f,i,e.target.value);}} onPaste={e=>{onSelect(f);onPaste(f,i,e);}}/>
-         {f.kind!=="line"&&<div className={s.glyphs} aria-hidden="true">{Array.from(glyph).map((char,k)=><span key={k} style={{left:`${(k*r.pitch+r.cell/2)/fieldWidth(r)*100}%`}}>{char}</span>)}</div>}
+         {f.kind!=="line"&&<div className={s.glyphs} aria-hidden="true">{Array.from(glyph).map((char,k)=><span key={k} data-paper-glyph={k} style={{left:`${(k*r.pitch+r.cell/2)/fieldWidth(r)*100}%`}}>{char}</span>)}</div>}
         </>}
        </div>;
       })}
      </div>;
     })}
     {ready&&activeField&&<svg className={z.focusLayer} viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" data-focused-group={activeField.id}>
-     <defs><mask id={maskId}><rect width="1" height="1" fill="white"/>{activeRects.map((r,i)=><rect key={i} x={r.x-.0015} y={r.y-.0015} width={r.width+.003} height={r.height+.003} fill="black"/>)}</mask></defs>
+     <defs><mask id={maskId}><rect width="1" height="1" fill="white"/>{activeRects.map((r,i)=><rect key={i} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="black"/>)}</mask></defs>
      <rect width="1" height="1" fill="#fffdf9" opacity=".45" mask={`url(#${maskId})`}/>
-     {pinnedField&&pinnedField.id!==activeField.id&&normalizedRuns(pinnedField).map((r,i)=><rect key={`p${i}`} x={r.x-.001} y={r.y-.001} width={r.width+.002} height={r.height+.002} fill="none" stroke="#a46155" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
-     {activeRects.map((r,i)=><rect key={i} x={r.x-.0015} y={r.y-.0015} width={r.width+.003} height={r.height+.003} fill="#b8785e" fillOpacity=".09" stroke="#944137" strokeWidth=".002"/>)}
+     {pinnedField&&pinnedField.id!==activeField.id&&normalizedRuns(pinnedField).map((r,i)=><rect key={`p${i}`} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="none" stroke="#a46155" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
+     {activeRects.map((r,i)=><rect key={i} data-highlight-for={activeField.id} data-highlight-part={i} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="#b8785e" fillOpacity=".07" stroke="#944137" strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>)}
     </svg>}
    </div>
   </div>
