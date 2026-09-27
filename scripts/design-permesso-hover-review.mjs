@@ -55,7 +55,11 @@ try{
    await page.keyboard.type('X');assert.equal(await surname.inputValue(),'TESTX');assert.equal(await field('4').inputValue(),'');
    if(width===1440)await page.screenshot({path:resolve(output,'hover-1440.png'),animations:'disabled'});
    await page.keyboard.press('Escape');await surname.evaluate(el=>el.blur());
-   await mark('10').hover();await help('10').waitFor({state:'visible'});assert.match(await help('10').innerText(),/Пропусти/);assert.equal(await mark('10').getAttribute('aria-pressed'),'false');
+   await mark('10').hover();await help('10').waitFor({state:'visible'});
+   // The card can reposition while Playwright scrolls a new anchor into view.
+   // Assert the actual visible status, not a transient root-only innerText.
+   await help('10').getByText('Пропусти',{exact:true}).waitFor({state:'visible'});
+   assert.match(await help('10').innerText(),/Пропусти/);assert.equal(await mark('10').getAttribute('aria-pressed'),'false');
    await page.keyboard.press('Escape');
    await field('16').hover();await help('16').waitFor({state:'visible'});await bounded(help('16'));
    await page.keyboard.press('Escape');
