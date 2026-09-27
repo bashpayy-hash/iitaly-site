@@ -20,3 +20,6 @@
 .close:hover { background:#f2ebe5; }
 .preview[data-touch="true"] { border-radius:16px; padding:18px; }
 @media (forced-colors:active) { .preview,.status,.edit { border:1px solid CanvasText; } }
+/* Global reduced-motion gives all elements a .15s transition. This reading layer
+   must not interpolate layout or inherited visibility while it measures the anchor. */
+.preview,.preview * { transition-property:none!important; animation:none!important; }
