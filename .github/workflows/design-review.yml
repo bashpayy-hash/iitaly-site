@@ -69,6 +69,8 @@ jobs:
         run: |
           npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Review paper transfer, explicit acknowledgements and date boundaries
+        run: node scripts/design-permesso-transfer-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
       - name: Review original and editable Permesso, exact geometry and local draft

@@ -7,6 +7,9 @@ import {
   capacity, editorMode, fieldWidth, getPart, setPart, normalize, valueProblem,
   type EditorField, type CellRun,
 } from "./permessoOriginalGeometry";
+import { PermessoPaperTransfer } from "./PermessoPaperTransfer";
+import { expiryWarning } from "./permessoTransferModel";
+import transferStyles from "./permesso-transfer.module.css";
 import styles from "./permesso-editor.module.css";
 
 type Draft = Record<string, string>;
@@ -35,9 +38,13 @@ export function EditablePermesso() {
   const [message, setMessage] = useState("");
   const [review, setReview] = useState(false);
   const [clearConfirm, setClearConfirm] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [transferEpoch, setTransferEpoch] = useState(0);
+  const [today] = useState(() => new Date());
   const root = useRef<HTMLDivElement>(null);
   const inspector = useRef<HTMLElement>(null);
   const reviewSection = useRef<HTMLElement>(null);
+  const transferLaunch = useRef<HTMLButtonElement>(null);
   const selected = EDITOR_FIELDS.find(f => f.id === selectedId) || EDITOR_FIELDS[0];
   const page = selected.page;
   const status = editorMode(selected, scenario);
@@ -45,6 +52,7 @@ export function EditablePermesso() {
   const selectedIndex = EDITOR_FIELDS.indexOf(selected);
   const currentValue = valueFor(selected);
   const problem = valueProblem(selected, currentValue);
+  const expiry = expiryWarning(selected, currentValue, today);
   const entered = applicable.filter(f => !["8","9"].includes(f.id) && Boolean(values[f.id]?.replace(/[\s/]/g,""))).length;
   // A skipped field can still be selected for its explanation. Its next step
   // must follow its actual paper position, not restart at the first field.
@@ -67,7 +75,7 @@ export function EditablePermesso() {
   }
   function chooseScenario(next: PermessoScenario) {
     setScenario(next);
-    setMessage("Сценарий изменён. Введённые значения сохранены; неприменимые поля не показываются заполненными.");
+    setMessage("Сценарий изменён. Введённые значения сохранены; неприменимые поля не показываются заполненными. Отметки переноса относятся только к выбранному сценарию.");
     if (editorMode(selected,next) === "empty") {
       setSelectedId(EDITOR_FIELDS.find(f => f.page === page && editorMode(f,next) !== "empty")?.id || "questore");
     }
@@ -141,20 +149,30 @@ export function EditablePermesso() {
       }
       setValues(restored);
       setScenario("scenario" in saved && saved.scenario === "rinnovo" ? "rinnovo" : "rilascio");
-      setMessage("Сохранённый черновик восстановлен.");
+      setTransferEpoch(epoch => epoch + 1);
+      setMessage("Сохранённый черновик восстановлен. Отметки переноса нужно поставить заново.");
     } catch { setMessage("Не удалось прочитать черновик. Текущие данные не изменены."); }
   }
   function clear() {
-    setValues({}); setClearConfirm(false); setReview(false);
+    setValues({}); setClearConfirm(false); setReview(false); setTransferOpen(false); setTransferEpoch(epoch => epoch + 1);
     try { localStorage.removeItem(STORAGE_KEY); setMessage("Черновик удалён из этой вкладки и памяти браузера."); }
     catch { setMessage("Вкладка очищена. Браузер не разрешил удалить сохранённую копию — очисти данные сайта в настройках браузера."); }
   }
+  function closeTransfer() {
+    setTransferOpen(false);
+    requestAnimationFrame(() => transferLaunch.current?.focus());
+  }
+  function editTransfer(field: EditorField) {
+    setTransferOpen(false);
+    chooseField(field, true);
+  }
   const issues = applicable.filter(f => f.kind !== "signature" && (valueProblem(f,valueFor(f)) || (editorMode(f,scenario)==="write" && !valueFor(f).trim())));
+  const expiryNotices = applicable.map(f => ({ field: f, warning: expiryWarning(f, valueFor(f), today) })).filter(item => item.warning);
 
   return (
     <div className={styles.editor} ref={root} data-permesso-editor>
       <header className={styles.intro}>
-        <div><h1>Тот же бланк. Теперь можно заполнять.</h1><p>Нажми на поле на листе: рядом появится пояснение. Ввод остаётся в своей клетке, а «Дальше» ведёт по форме.</p></div>
+        <div><h1>Тот же бланк. Теперь можно заполнять.</h1><p>Наведи на поле или коснись его: появится крупная подсказка. Заполни черновик, затем переноси на бумагу по одному полю.</p></div>
         <p className={styles.scope}>Учебный черновик для первого студенческого ВНЖ или продления. Заполняем страницы 1–3. Полный восьмистраничный документ остаётся во вкладке «Оригинал».</p>
       </header>
 
@@ -173,6 +191,13 @@ export function EditablePermesso() {
       {message && <p role="status" className={styles.notice}>{message}</p>}
       {clearConfirm && <div className={styles.confirm} role="group" aria-label="Подтверждение очистки"><span>Удалить введённые данные и сохранённую копию?</span><button type="button" onClick={clear}>Да, стереть</button><button type="button" onClick={() => setClearConfirm(false)}>Отмена</button></div>}
 
+      {!transferOpen && <div className={transferStyles.topbar}>
+        <div><b>Подготовь на стол</b><span>Бумажный kit, чёрную ручку, паспорт, codice fiscale, марку{scenario === "rinnovo" ? " и текущую карточку ВНЖ" : ""}. После заполнения — перенос по шагам.</span></div>
+        <button type="button" ref={transferLaunch} onClick={() => setTransferOpen(true)}>Переносим на бумагу</button>
+      </div>}
+      <PermessoPaperTransfer key={scenario + ":" + transferEpoch} active={transferOpen} scenario={scenario} values={values} today={today} onClose={closeTransfer} onEdit={editTransfer} />
+
+      <div hidden={transferOpen}>
       <div className={styles.pagebar}>
         <nav aria-label="Страницы электронного бланка" className={styles.pageTabs}>
           {ORIGINAL_PAGES.map(p => <button type="button" key={p.page} aria-current={page===p.page ? "page" : undefined} onClick={() => chooseField(EDITOR_FIELDS.find(f => f.page===p.page && editorMode(f,scenario)!=="empty")!)}><b>{p.page}</b><span>{p.title}</span></button>)}
@@ -206,6 +231,7 @@ export function EditablePermesso() {
           </div>
           {status === "verify" && <p className={styles.caution}>Значение можно записать в черновик, но перед переносом на бумагу уточни правило по своему kit / в Sportello Amico.</p>}
           <p id="permesso-value-error" className={styles.validation} role={problem ? "alert" : undefined}>{problem}</p>
+          {!!expiry && <p className={styles.caution} data-editor-date-warning>{expiry}</p>}
           <dl className={styles.explanation}>
             <div><dt>{status === "empty" ? "Почему пропустить" : "Откуда взять"}</dt><dd>{selected.meta.source}</dd></div>
             <div id="permesso-value-format"><dt>Как писать</dt><dd>{selected.kind === "date" ? "Две цифры дня, две месяца, четыре года. Разделители уже есть на оригинальном бланке." : selected.kind === "split" ? "Заполняй части отдельно, как подписано на бумаге. Разделитель / уже напечатан." : selected.meta.format}</dd></div>
@@ -219,8 +245,9 @@ export function EditablePermesso() {
 
       <section ref={reviewSection} className={styles.reviewSection} aria-label="Проверка черновика">
         <button type="button" className={styles.reviewToggle} aria-expanded={review} onClick={() => setReview(!review)}>Проверить черновик <span>{review ? "−" : "+"}</span></button>
-        {review && <div className={styles.reviewBody}><h2>Перед переносом на бумагу</h2><p>Это проверка заполненности и формата, не юридическая проверка документов или готовности заявления.</p>{issues.length ? <ul>{issues.map(f => <li key={f.id}><button type="button" onClick={() => chooseField(f,true)}><b>Стр. {f.page} · {shortId(f)} — {f.meta.ru}</b><span>{valueProblem(f,valueFor(f)) || "Пока не заполнено"}</span></button></li>)}</ul> : <p>В проверяемых полях нет пропусков или ошибок формата. Это не подтверждает правильность сведений.</p>}<p>Отдельно сверь поля «Сначала уточни», набор приложений и порядок подписания. Страницы 4–8 находятся в оригинальном PDF; семейные и другие специальные случаи не охвачены этим студенческим сценарием.</p></div>}
+        {review && <div className={styles.reviewBody}><h2>Перед переносом на бумагу</h2><p>Это проверка заполненности и формата, не юридическая проверка документов или готовности заявления.</p>{issues.length ? <ul>{issues.map(f => <li key={f.id}><button type="button" onClick={() => chooseField(f,true)}><b>Стр. {f.page} · {shortId(f)} — {f.meta.ru}</b><span>{valueProblem(f,valueFor(f)) || "Пока не заполнено"}</span></button></li>)}</ul> : <p>В проверяемых полях нет пропусков или ошибок формата. Это не подтверждает правильность сведений.</p>}{!!expiryNotices.length && <ul data-review-date-warnings>{expiryNotices.map(item => <li key={item.field.id}><button type="button" onClick={() => chooseField(item.field,true)}><b>{shortId(item.field)} · проверить срок документа</b><span>{item.warning}</span></button></li>)}</ul>}<p>Отдельно сверь поля «Сначала уточни», набор приложений и порядок подписания. Страницы 4–8 находятся в оригинальном PDF; семейные и другие специальные случаи не охвачены этим студенческим сценарием.</p></div>}
       </section>
+      </div>
     </div>
   );
 }
