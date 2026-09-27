@@ -1,3 +1,4 @@
+import { clickPermessoTool } from './permesso-review-interactions.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -101,9 +102,9 @@ try {
   await jump('Перед почтой');assert.equal(await guide.locator('h2').innerText(),'Перед почтой');
   assert.match(await guide.innerText(),/Полей с неуточнённым правилом/);assert.equal(await guide.getByRole('checkbox').count(),6);
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null,'No storage writes from transfer acknowledgements');
-  await editor.getByRole('button',{name:'Сохранить',exact:true}).click();
+  await clickPermessoTool(editor,'Сохранить');
   const saved=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.deepEqual(Object.keys(saved).sort(),['scenario','values','version']);
-  await editor.getByRole('button',{name:'Стереть',exact:true}).click();await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
+  await clickPermessoTool(editor,'Стереть');await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
   assert.equal(await guide.count(),0);await launch();assert.match(await guide.locator('[data-transfer-progress]').innerText(),/0 из/,'Clear also clears in-tab receipts');
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(writes,[],'No external writes');
