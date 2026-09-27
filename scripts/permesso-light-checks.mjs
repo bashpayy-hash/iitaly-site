@@ -10,7 +10,15 @@ export async function reviewLightWorkbench({ page, editor, model, width, touch, 
   const navigate = async n => { await editor.getByRole('navigation', {name:'Страницы электронного бланка'}).getByRole('button').nth(n - 1).click(); await loaded(); };
   const select = async id => {
     const zone = editor.locator(`[data-field-zone="${id}"]`);
-    if (touch) await zone.tap(); else await zone.focus().then(() => zone.press('Enter'));
+    if (touch) {
+      // Adjacent 44px hit areas may overlap; touch the actual printed cell and
+      // require the app's nearest-cell resolver to pin the right official ID.
+      const cells = editor.locator(`[data-cell-outline="${id}"]`).first();
+      await cells.evaluate(node => node.scrollIntoView({block:'center',behavior:'instant'}));
+      const b=await cells.boundingBox();
+      await page.touchscreen.tap(b.x+b.width/2,b.y+b.height/2);
+      await page.waitForFunction(expected => document.querySelector('[data-permesso-editor]')?.getAttribute('data-pinned-field') === expected,id);
+    } else await zone.focus().then(() => zone.press('Enter'));
     const help = page.locator('[data-permesso-hover]');
     if (touch && await help.count()) await help.getByRole('button', {name:'Закрыть подсказку',exact:true}).click();
     else await page.keyboard.press('Escape');
