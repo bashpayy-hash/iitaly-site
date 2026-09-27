@@ -6,16 +6,16 @@ import { ANSWER_STATUS, type FieldAnswer } from "./permessoFieldAnswer";
 import styles from "./permesso-hover.module.css";
 
 export function AnswerSummary({answer:a,field,detail=false}:{answer:FieldAnswer;field:EditorField;detail?:boolean}){
- return <div className={styles.summary} data-answer-for={field.id} data-state={a.status} data-answer-example={a.example}>
-  <span className={styles.status}>{ANSWER_STATUS[a.status]}</span>
+ return <div className={styles.summary} data-answer-detail={detail} data-answer-for={field.id} data-state={a.status} data-answer-example={a.example}>
+  {!detail&&<span className={styles.status}>{ANSWER_STATUS[a.status]}</span>}
   <strong className={styles.answer} data-quick-answer title={a.answer}>{a.answer}</strong>
   {a.example&&<span className={styles.example}>Пример — не твои данные</span>}
   <p className={styles.hint}>{a.hint}</p>
-  <p className={styles.label}>{field.meta.it} · {field.meta.ru}</p>
+  {!detail&&<p className={styles.label}>{field.meta.it} · {field.meta.ru}</p>}
   {a.cells&&<p className={styles.cells}><span>В клетки: </span>{a.cells}</p>}
-  <p className={styles.source}><span>Откуда: </span>{a.source}</p>
-  {a.dontWrite&&<p className={styles.trap}><span>Не пиши: </span>{a.dontWrite}</p>}
-  <small className={styles.caption}>{a.caption}{detail?" · закреплено":""}</small>
+  {!detail&&<p className={styles.source}><span>Откуда: </span>{a.source}</p>}
+  {!detail&&a.dontWrite&&<p className={styles.trap}><span>Не пиши: </span>{a.dontWrite}</p>}
+  {!detail&&<small className={styles.caption}>{a.caption}</small>}
  </div>;
 }
 export type FieldPreview={field:EditorField;anchor:HTMLElement;touch:boolean;pinned:boolean};
