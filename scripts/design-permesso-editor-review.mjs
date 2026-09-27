@@ -1,3 +1,4 @@
+import { clickPermessoTool } from './permesso-review-interactions.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -55,7 +56,6 @@ try{
   await loaded();await page.evaluate(()=>document.fonts.ready);
   const part=(id,i=0)=>editor.locator(`[data-editor-field="${id}"][data-part="${i}"] input`);
   const mark=(id,i=0)=>editor.locator(`[data-editor-field="${id}"][data-part="${i}"] button`);
-  // Reading a zone no longer edits its answer. Commit the intended field first.
   const pin=async id=>{if(await editor.getAttribute('data-pinned-field')!==id) await editor.locator(`[data-field-zone="${id}"]`).click();};
   const nav=editor.getByRole('navigation',{name:'Страницы электронного бланка'});
   const sheetPage=async n=>{await nav.getByRole('button').nth(n-1).click();await loaded();};
@@ -77,8 +77,8 @@ try{
   const geometry=await editor.locator('[data-editor-field="3"][data-part="0"]').evaluate(el=>{const s=el.closest('[data-sheet-page]').getBoundingClientRect(),r=el.getBoundingClientRect();return {x:(r.x-s.x)/s.width*595,y:(r.y-s.y)/s.height*842,ratio:s.height/s.width};});
   assert(Math.abs(geometry.x-45.23)<.08 && Math.abs(geometry.y-220.14)<.08,'Inputs must be registered to original PDF points');
   assert(Math.abs(geometry.ratio-842/595)<.001);
-  await editor.getByRole('button',{name:'Увеличить лист',exact:true}).click();await noOverflow();
-  await editor.getByRole('button',{name:'Вместить лист',exact:true}).click();
+  await clickPermessoTool(editor,'Увеличить лист');await noOverflow();
+  await clickPermessoTool(editor,'Вместить лист');
   await pin('10');await mark('10').click();
   await editor.getByText(/^Дальше: Поле 14 —/).waitFor();
   await editor.locator('[data-next-field]').click();
@@ -110,22 +110,21 @@ try{
   assert.equal(await part('74',0).getAttribute('maxlength'),'4');assert.equal(await part('74',1).getAttribute('maxlength'),'12');
   await part('72').fill('50129');
   if([1440,390].includes(width)) await shot(`editor-page3-${width}.png`);
-  await editor.getByRole('button',{name:'Сохранить',exact:true}).click();
+  await clickPermessoTool(editor,'Сохранить');
   const saved=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.equal(saved.values['69'],'22/B');assert.equal(saved.values['72'],'50129');
   await page.reload({waitUntil:'networkidle'});await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await loaded();
-  // Reload now intentionally restores the pinned page from the URL, not page 1.
   assert.equal(new URL(page.url()).searchParams.get('page'),'3');await sheetPage(1);
   assert.equal(await part('3').inputValue(),'','Personal data is not restored without an explicit action');
-  await editor.getByRole('button',{name:'Восстановить',exact:true}).click();assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
+  await clickPermessoTool(editor,'Восстановить');assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
   if(width===1440){
    failImage=true;await nav.getByRole('button').nth(1).click();await editor.getByText(/Не удалось загрузить основу/).waitFor();
    assert.equal(await editor.locator('[data-editor-field]').count(),0,'Never show floating inputs without the original');
    failImage=false;await editor.getByRole('button',{name:'Повторить загрузку'}).click();await loaded();
   }
-  await editor.getByRole('button',{name:'Стереть',exact:true}).click();
+  await clickPermessoTool(editor,'Стереть');
   await editor.getByRole('button',{name:'Отмена',exact:true}).click();
   assert(await page.evaluate(k=>Boolean(localStorage.getItem(k)),key),'Cancel must keep the saved draft');
-  await editor.getByRole('button',{name:'Стереть',exact:true}).click();
+  await clickPermessoTool(editor,'Стереть');
   await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(unsafe,[],'Editor must not submit private data or hit production APIs');

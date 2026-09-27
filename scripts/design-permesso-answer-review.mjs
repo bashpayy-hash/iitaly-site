@@ -1,3 +1,5 @@
+import { reviewLightWorkbench } from './permesso-light-checks.mjs';
+import { clickPermessoTool } from './permesso-review-interactions.mjs';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {readFile,writeFile,mkdir,stat} from 'node:fs/promises';
@@ -64,7 +66,7 @@ try{
    await zone('34').dispatchEvent('pointerdown',{pointerId:44,pointerType:'touch',clientX:b.x+2,clientY:b.y+2});await zone('34').dispatchEvent('pointerup',{pointerId:44,pointerType:'touch',clientX:b.x+2,clientY:b.y+62});
    assert.equal(p.url(),old,'A drag is not a pin');assert.equal(await p.locator('[data-permesso-hover]').count(),0);
   }
-  await editor.getByRole('button',{name:'Стр. 7',exact:true}).click();await sheet().waitFor();if(touch)await zone('144').tap();else await group('144').hover();await help('144').waitFor({state:'visible'});
+  await clickPermessoTool(editor,'Стр. 7');await sheet().waitFor();if(touch)await zone('144').tap();else await group('144').hover();await help('144').waitFor({state:'visible'});
   assert.equal(await help('144').locator('[data-quick-answer]').innerText(),'Весь блок пустой');assert.match(await help('144').innerText(),/ПРОПУСТИ/);assert.equal(await group('145').locator('input').count(),0,'Child fields are annotation-only');await noOverlap('144');
   if(width===1440)await p.screenshot({path:resolve(out,'answer-children-1440.png'),animations:'disabled'});
   if(touch)await help('144').getByRole('button',{name:'Закрыть подсказку'}).tap();else await p.keyboard.press('Escape');
@@ -72,13 +74,14 @@ try{
   assert.equal(await zone('3').count(),1,'A multiline name is one zone');assert.equal(await group('3').locator('input[tabindex="-1"]').count(),2);
   await zone('3').focus();assert.notEqual(query(),'3','Focus is preview only');await zone('3').press('Enter');assert.equal(query(),'3');
   if(!touch){await p.keyboard.press('Escape');await editor.locator('[data-editor-field="3"][data-part="0"] input').fill('TEST STUDENT');}else await panel.getByRole('textbox',{name:'Ввести: Фамилия',exact:true}).fill('TEST STUDENT');
-  await editor.getByRole('button',{name:'Показать пример',exact:true}).click();assert.match(await panel.innerText(),/Пример — не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
-  await editor.getByRole('button',{name:'Мои данные',exact:true}).click();await p.getByRole('tab',{name:'Оригинал',exact:true}).click();assert.equal(await p.locator('[data-permesso-hover]').count(),0);
+  await clickPermessoTool(editor,'Показать пример');assert.match(await panel.innerText(),/Пример — не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
+  await clickPermessoTool(editor,'Мои данные');await p.getByRole('tab',{name:'Оригинал',exact:true}).click();assert.equal(await p.locator('[data-permesso-hover]').count(),0);
   await p.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await sheet().waitFor();assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
   assert.equal(await p.evaluate(()=>localStorage.getItem('iitaly:permesso-paper-editor:v1')),null);
   await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).click();await p.reload({waitUntil:'networkidle'});await sheet().waitFor();assert.equal(await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).count(),0);
+  await reviewLightWorkbench({page:p,editor,model:M,width,touch,output:out});
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
-  results.push({width,touch,passed:true,checks:'exact field32; single zone; inert hover/focus; pin/URL/back; source-backed A/B; no occlusion; touch44/no jump/drag; child skip; ghost example isolation; explicit storage'});await context.close();
+  results.push({width,touch,passed:true,checks:'exact field32; single zone; inert hover/focus; pin/URL/back; source-backed A/B; no occlusion; touch44/no jump/drag; child skip; ghost example isolation; explicit storage; six primary controls; accessible tools; uniform outline and exact glyph centers at two zoom levels'});await context.close();
  }
 }catch(e){if(activePage&&!activePage.isClosed())await activePage.screenshot({path:resolve(out,'failure.png'),fullPage:true}).catch(()=>{});await writeFile(resolve(out,'failure.txt'),String(e.stack||e));throw e;}
 finally{await writeFile(resolve(out,'results.json'),JSON.stringify(results,null,2));await browser.close();await new Promise(r=>server.close(r));}
