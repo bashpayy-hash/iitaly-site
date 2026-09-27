@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
-import { usePermessoTool } from './permesso-review-interactions.mjs';
+import { clickPermessoTool } from './permesso-review-interactions.mjs';
 
 export async function reviewLightWorkbench({ page, editor, model, width, touch, output }) {
   const tools = editor.locator('[data-workbench-tools]');
@@ -41,7 +41,8 @@ export async function reviewLightWorkbench({ page, editor, model, width, touch, 
     }
   };
   await navigate(1);
-  const visible = await editor.locator('[data-workbench-bar]').evaluate(node => [...node.querySelectorAll('button,summary')].filter(item => item.getClientRects().length && getComputedStyle(item).visibility!=='hidden').length);
+  let visible = 0;
+  for (const control of await editor.locator('[data-workbench-bar]').locator('button,summary').all()) if (await control.isVisible()) visible++;
   assert(visible<=6,`Only six primary workbench controls; found ${visible}`);
   assert.equal(await editor.getByRole('button',{name:'Сохранить',exact:true}).isVisible(),false);
   await summary.focus();await summary.press('Enter');
@@ -54,14 +55,14 @@ export async function reviewLightWorkbench({ page, editor, model, width, touch, 
   await select('3');
   await panel.getByRole('textbox',{name:'Ввести: Фамилия',exact:true}).fill('TEST STUDENT'.padEnd(30,' ')+'SECOND ROW');
   await aligned('3');
-  await usePermessoTool(editor,'Увеличить лист');await aligned('3');
+  await clickPermessoTool(editor,'Увеличить лист');await aligned('3');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'Zoom stays inside the paper viewport');
-  await usePermessoTool(editor,'Вместить лист');
+  await clickPermessoTool(editor,'Вместить лист');
   await navigate(2);await select('34');
   await panel.getByRole('textbox',{name:'Ввести: Дата рождения',exact:true}).fill('14032004');
   await aligned('34');
-  await usePermessoTool(editor,'Увеличить лист');await aligned('34');
-  await usePermessoTool(editor,'Вместить лист');
+  await clickPermessoTool(editor,'Увеличить лист');await aligned('34');
+  await clickPermessoTool(editor,'Вместить лист');
   await select('32');await panel.getByRole('radio',{name:'A — Не в браке',exact:true}).check();
   await page.keyboard.press('Escape');await aligned('32');
   assert.equal(await panel.getByText('STATO CIVILE',{exact:true}).count(),1,'One Italian label in the inspector, not duplicated');
