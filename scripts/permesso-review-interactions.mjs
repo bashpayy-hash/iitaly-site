@@ -1,5 +1,5 @@
 // Use the same disclosure a person uses; never force-click hidden actions.
-export async function usePermessoTool(editor, name) {
+export async function clickPermessoTool(editor, name) {
   const target = editor.getByRole('button', { name, exact: true });
   if (!await target.isVisible()) {
     const tools = editor.locator('[data-workbench-tools]');
