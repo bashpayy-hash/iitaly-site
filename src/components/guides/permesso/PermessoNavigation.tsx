@@ -17,7 +17,7 @@ function Menu({ label, name, children, side = "left" }: MenuProps) {
     return () => document.removeEventListener("pointerdown", outside);
   }, []);
   return <details ref={ref} className={c.menu} data-compact-menu={name} data-side={side} onKeyDown={event => {
-    if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); if (ref.current) { ref.current.open = false; ref.current.querySelector("summary")?.focus(); } }
+    if (event.key === "Escape" && ref.current?.open) { event.preventDefault(); event.stopPropagation(); if (ref.current) { ref.current.open = false; ref.current.querySelector("summary")?.focus(); } }
   }}>
     <summary>{label}<span aria-hidden="true">⌄</span></summary>
     <div className={c.menuBody} onClick={event => {
