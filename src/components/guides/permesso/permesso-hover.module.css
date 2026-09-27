@@ -1,45 +1,22 @@
-/* A reading layer, not another rendition of the form. The source image and
-   all editable coordinates remain unchanged. Warm paper / graphite reference. */
-.preview {
-  position: fixed;
-  z-index: 160;
-  visibility: hidden;
-  width: 356px;
-  max-width: calc(100vw - 24px);
-  overflow: auto;
-  overscroll-behavior: contain;
-  box-sizing: border-box;
-  border: 1px solid #d7d5ce;
-  border-radius: 16px;
-  padding: 20px;
-  background: #fff;
-  color: #121212;
-  box-shadow: 0 4px 24px rgb(0 0 0 / .09);
-  font-family: var(--font-onest), system-ui, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  text-align: left;
-  pointer-events: auto;
-}
-.preview *, .preview *::before, .preview *::after { box-sizing: border-box; }
-.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #68655e; font-size: 11px; line-height: 1.4; }
-.top span:last-of-type { padding: 3px 7px; background: #efeeeb; border-radius: 6px; color: #373734; }
-.preview h2 { margin: 12px 0 0; color: #121212; font-family: Charter, Georgia, serif; font-weight: 400; font-size: 24px; line-height: 1.2; overflow-wrap: anywhere; }
-.italian { margin: 6px 0 0; color: #6d6b66; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
-.magnifier { margin: 16px 0; overflow: hidden; border: 1px solid #e7e6e1; border-radius: 8px; background: #fff; }
-.magnifier svg { display: block; width: 100%; height: auto; aspect-ratio: 164 / 52; overflow: hidden; }
-.magnifier figcaption { padding: 6px 9px; border-top: 1px solid #e7e6e1; background: #f8f8f6; color: #6d6b66; font-size: 11px; }
-.instructions { margin: 0; }
-.instructions > div + div { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e7e6e1; }
-.instructions dt { margin: 0 0 4px; color: #6d6b66; font-size: 12px; }
-.instructions dd { margin: 0; color: #373734; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
-.footer { margin: 16px 0 0; padding-top: 12px; border-top: 1px solid #e7e6e1; color: #6d6b66; font-size: 11px; line-height: 1.5; }
-.footer kbd { border: 1px solid #e7e6e1; border-radius: 4px; padding: 1px 4px; background: #f8f8f6; font: inherit; color: #373734; }
-.top button { flex: 0 0 44px; width: 44px; height: 44px; margin: -6px -6px -6px 0; border: 0; border-radius: 8px; background: transparent; color: #373734; font: inherit; font-size: 24px; cursor: pointer; }
-.edit { display: block; width: 100%; min-height: 48px; margin-top: 16px; border: 1px solid #121212; border-radius: 8px; padding: 11px 16px; background: #121212; color: #f8f8f6; font: inherit; font-size: 15px; cursor: pointer; }
-.preview button:focus-visible { outline: 2px solid #373734; outline-offset: 3px; }
-.top button:hover { background: #efeeeb; }
-.edit:hover { background: #373734; }
-.preview[data-touch="true"] { border-radius: 16px; }
-@media (max-width: 420px) { .preview { padding: 16px; } }
-@media (forced-colors: active) { .preview, .magnifier, .edit { border-color: CanvasText; } }
+.preview { position:fixed; z-index:160; visibility:hidden; width:280px; max-width:calc(100vw - 24px); overflow:auto; overscroll-behavior:contain; box-sizing:border-box; padding:16px; border:1px solid #d9ccc6; border-radius:14px; background:#fffdf9; color:#242321; box-shadow:0 5px 24px #392d2320; font-family:var(--font-onest),system-ui,sans-serif; text-align:left; pointer-events:auto; }
+.preview *, .summary * { box-sizing:border-box; }
+.summary { min-width:0; font-family:var(--font-onest),system-ui,sans-serif; }
+.status { display:inline-block; padding:4px 7px; border-radius:5px; background:#f4e9e6; color:#8b2939; font-size:11px; font-weight:600; line-height:1.2; letter-spacing:.02em; }
+.summary[data-state="empty"] .status { background:#efeeeb; color:#59544e; }
+.summary[data-state="post"] .status, .summary[data-state="verify"] .status { background:#f8f0df; color:#795423; }
+.answer { display:block; margin-top:10px; color:#28231f; font-size:24px; font-weight:550; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hint { margin:6px 0 0; color:#453f39; font-size:13px; line-height:1.4; }
+.label { margin:8px 0 0; color:#736a62; font-size:10px; line-height:1.4; overflow-wrap:anywhere; }
+.cells { margin:12px 0 0; padding-top:10px; border-top:1px solid #e6dfd7; color:#453f39; font-size:12px; line-height:1.45; }
+.cells span, .source span, .trap span { font-weight:550; }
+.source { margin:8px 0 0; color:#71675e; font-size:11px; line-height:1.4; }
+.trap { margin:8px 0 0; color:#88313b; font-size:11px; line-height:1.45; }
+.caption { display:block; margin-top:12px; color:#81796f; font-size:10px; line-height:1.3; }
+.example { display:block; margin-top:5px; color:#776c64; font-size:11px; }
+.close { position:absolute; right:7px; top:7px; width:44px; height:44px; border:0; border-radius:8px; background:transparent; color:#51463f; font-size:25px; cursor:pointer; }
+.preview[data-touch="true"] .status { margin-right:36px; }
+.edit { width:100%; min-height:44px; margin-top:14px; border:1px solid #8b2939; border-radius:8px; padding:9px 12px; background:#8b2939; color:#fffdf9; font:inherit; font-size:14px; cursor:pointer; }
+.preview button:focus-visible { outline:2px solid #8b2939; outline-offset:2px; }
+.close:hover { background:#f2ebe5; }
+.preview[data-touch="true"] { border-radius:16px; padding:18px; }
+@media (forced-colors:active) { .preview,.status,.edit { border:1px solid CanvasText; } }
