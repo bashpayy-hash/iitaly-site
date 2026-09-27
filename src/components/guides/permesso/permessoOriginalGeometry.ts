@@ -19,15 +19,13 @@ export const ORIGINAL_PAGES = [
 export type EditorKind = "text" | "date" | "split" | "check" | "radio" | "line" | "signature" | "block";
 export type CellRun = { x: number; y: number; count: number; cell: number; height: number; pitch: number; label?: string };
 /** Concise copy extends the same field record, never a second hover dictionary.
- * Literal code choices below are transcribed ONLY from this field's existing guide.
- * Examples remain examples; they are not defaults or evidence of personal facts. */
+ * Literal code choices below are transcribed ONLY from this field's existing guide. */
 export type QuickRule = { answer?: string; hint?: string; cells?: string; source?: string; dontWrite?: string; choices?: readonly { value: string; label: string }[]; verify?: boolean; sezione?: number };
 export type EditorField = { id: string; page: number; kind: EditorKind; runs: CellRun[]; meta: TrainerField; quick?: QuickRule; blockId?: string; readOnly?: boolean };
 const metadata = new Map(TRAINER_SECTIONS.flatMap(s => s.fields).map(f => [f.number, f]));
 function run(x: number, y: number, count: number, label?: string, cell = 13.174, height = 18.844, pitch = 17.004): CellRun { return { x, y, count, cell, height, pitch, label }; }
 function field(id: string, page: number, runs: CellRun[], kind?: EditorKind, quick?: QuickRule): EditorField {
-  const meta = metadata.get(id);
-  if (!meta) throw new Error("Missing source field: " + id);
+  const meta = metadata.get(id); if (!meta) throw new Error("Missing source field: " + id);
   return { id, page, runs, kind: kind || (meta.kind === "x" ? "check" : meta.kind === "date" ? "date" : "text"), meta, quick, blockId: meta.section };
 }
 const header = (id: string, ru: string, it: string, runs: CellRun[], kind: EditorKind): EditorField => ({ id, page: 1, runs, kind, quick: { source: "Инструкция kit", sezione: 1 },
@@ -38,8 +36,7 @@ export const EDITOR_FIELDS: EditorField[] = [
   header("questoreProvince", "Провинция Questura", "Sigla Provincia", [run(177.12,67.84,2,undefined,14.16,19.92,17.28)], "text"),
   field("3",1,[run(45.23,220.14,30,"Строка 1"),run(45.15,244.05,30,"Строка 2")],"text",passportName),
   field("4",1,[run(45.29,280.29,30,"Строка 1"),run(45.21,304.21,30,"Строка 2")],"text",passportName),
-  field("5",1,[run(164.35,327.96,2)]),
-  field("6",1,[run(45.23,365.48,30)]),
+  field("5",1,[run(164.35,327.96,2)]), field("6",1,[run(45.23,365.48,30)]),
   field("8",1,[run(215.44,415.39,1)]), field("9",1,[run(215.35,439.30,1)]),
   field("10",1,[run(215.31,463.14,1)]), field("11",1,[run(215.23,487.05,1)]), field("12",1,[run(215.35,510.93,1)]),
   field("14",1,[run(538.38,415.25,1)]), field("15",1,[run(538.30,439.17,1)]),
@@ -93,60 +90,46 @@ export function editorMode(f: EditorField,scenario: PermessoScenario) {
   return base !== "empty" && f.quick?.verify ? "verify" as const : base;
 }
 export const normalizedRuns = (f: EditorField) => f.runs.map(r => ({x:r.x/PAPER.width,y:r.y/PAPER.height,width:fieldWidth(r)/PAPER.width,height:r.height/PAPER.height}));
-export function fieldBounds(f: EditorField) {
-  const runs=normalizedRuns(f), x=Math.min(...runs.map(r=>r.x)), y=Math.min(...runs.map(r=>r.y));
-  return {x,y,width:Math.max(...runs.map(r=>r.x+r.width))-x,height:Math.max(...runs.map(r=>r.y+r.height))-y};
-}
+export function fieldBounds(f: EditorField) { const runs=normalizedRuns(f),x=Math.min(...runs.map(r=>r.x)),y=Math.min(...runs.map(r=>r.y)); return {x,y,width:Math.max(...runs.map(r=>r.x+r.width))-x,height:Math.max(...runs.map(r=>r.y+r.height))-y}; }
 export function sezione(f: EditorField) { return f.quick?.sezione || Number(TRAINER_SECTIONS.find(s=>s.id===f.meta.section)?.label.match(/\d+/)?.[0]) || 1; }
 export function getPart(f: EditorField,value: string,part: number): string {
-  if(f.kind==="split") return value.split("/")[part] || "";
-  if(f.kind==="line") return value;
-  const offset=f.runs.slice(0,part).reduce((n,r)=>n+r.count,0);
-  return value.slice(offset,offset+f.runs[part].count);
+  if(f.kind==="split") return value.split("/")[part] || ""; if(f.kind==="line") return value;
+  const offset=f.runs.slice(0,part).reduce((n,r)=>n+r.count,0); return value.slice(offset,offset+f.runs[part].count);
 }
 export function setPart(f: EditorField,value: string,part: number,input: string): string {
   if(f.kind==="split") { const pieces=f.runs.map((_,i)=>getPart(f,value,i));pieces[part]=input;return pieces.join("/"); }
   if(f.kind==="line") return input;
-  const offset=f.runs.slice(0,part).reduce((n,r)=>n+r.count,0), suffix=value.slice(offset+f.runs[part].count);
+  const offset=f.runs.slice(0,part).reduce((n,r)=>n+r.count,0),suffix=value.slice(offset+f.runs[part].count);
   return value.padEnd(offset," ").slice(0,offset)+input+(suffix.length ? " ".repeat(Math.max(0,f.runs[part].count-input.length))+suffix : "");
 }
-export function normalize(f: EditorField,value: string): string {
-  if(f.kind==="date") return value.replace(/[\s./-]/g,"");
-  if(f.id==="73") return value.replace(/[\r\n]/g,"");
-  return value.replace(/[\r\n\t]/g," ").toUpperCase();
-}
+export function normalize(f: EditorField,value: string): string { if(f.kind==="date")return value.replace(/[\s./-]/g,"");if(f.id==="73")return value.replace(/[\r\n]/g,"");return value.replace(/[\r\n\t]/g," ").toUpperCase(); }
 export function valueProblem(f: EditorField,value: string): string {
   if(!value.trim() || value==="/") return "";
   if(f.kind==="split") { if(value.split("/").some((v,i)=>!f.runs[i] || v.length>f.runs[i].count)) return "Текст не помещается в соответствующую часть поля. Не сокращай данные без сверки с документом."; }
   else if(value.length>capacity(f)) return "Текст не помещается в клетки. Ничего не обрезано: сверь написание с документом.";
   if(f.quick?.choices && !f.quick.choices.some(c=>c.value===value)) return "Выбери значение из вариантов, указанных в этом поле гида.";
-  if(f.kind==="date") {
-    if(!/^\d{8}$/.test(value)) return "Нужна дата: две цифры дня, две месяца и четыре года.";
-    const d=Number(value.slice(0,2)),m=Number(value.slice(2,4)),y=Number(value.slice(4)),actual=new Date(Date.UTC(y,m-1,d));
-    if(y<1900 || actual.getUTCFullYear()!==y || actual.getUTCMonth()!==m-1 || actual.getUTCDate()!==d) return "Такой даты нет. Проверь день, месяц и год.";
-  }
+  if(f.kind==="date") { if(!/^\d{8}$/.test(value)) return "Нужна дата: две цифры дня, две месяца и четыре года.";const d=Number(value.slice(0,2)),m=Number(value.slice(2,4)),y=Number(value.slice(4)),actual=new Date(Date.UTC(y,m-1,d));if(y<1900 || actual.getUTCFullYear()!==y || actual.getUTCMonth()!==m-1 || actual.getUTCDate()!==d)return "Такой даты нет. Проверь день, месяц и год."; }
   if(f.id==="31" && !/^[A-Z0-9]{16}$/.test(value)) return "Проверь 16 букв и цифр codice fiscale. Проверка формата не подтверждает действительность кода.";
   if(["72","84"].includes(f.id) && !/^\d{5}$/.test(value)) return "В CAP должно быть пять цифр.";
   if(f.kind!=="line" && f.kind!=="split" && /[А-Яа-яЁё]/.test(value)) return "На бланке нужна латиница. Перепиши из документа, не используй автоматическую транслитерацию.";
   return "";
 }
 
-/** Section reading zones are derived from the same section record. They are not
- * editable answers and never create a large field highlight across a section. */
+/** Section reading zones are projections of the existing section records. */
 function sectionHeading(id:string,page:number,sectionId:string,x:number,y:number,w:number,h:number):EditorField {
   const s=TRAINER_SECTIONS.find(s=>s.id===sectionId)!;
-  const mode=(scenario:PermessoScenario)=>s.fields.every(f=>f.mode[scenario]==="empty") ? "empty" as const : "ifExists" as const;
+  const mode=(scenario:PermessoScenario)=>s.fields.every(f=>f.mode[scenario]==="empty") ? "empty" as const : s.fields.some(f=>f.mode[scenario]==="write") ? "write" as const : "ifExists" as const;
   return {id,page,kind:"block",readOnly:true,blockId:sectionId,runs:[run(x,y,1,undefined,w,h)],quick:{answer:"Смотри поля блока",hint:s.note,source:"Инструкция kit"},meta:{number:id,it:s.title.toUpperCase(),ru:s.note||s.title,section:sectionId,mode:{rilascio:mode("rilascio"),rinnovo:mode("rinnovo")},source:s.note||"Пояснения — у каждого поля этого блока.",format:"Проверяй строки по отдельности.",mistake:""}};
 }
 export const SECTION_ZONES: EditorField[] = [
- sectionHeading("2",1,"request",47.52,186.13,506,13), sectionHeading("21",1,"application",44.52,641.38,506,13),
- sectionHeading("30",2,"identity",46.52,142.74,507,13), sectionHeading("39",2,"passport",46.19,330.29,507,13), sectionHeading("47",2,"visa",46.52,522.82,507,13),
- sectionHeading("58",3,"travel",46,124,508,13), sectionHeading("65",3,"address",46,238,508,13), sectionHeading("76",3,"correspondence",46,562,508,13),
+ sectionHeading("2",1,"request",47.52,186.13,506,13),sectionHeading("21",1,"application",44.52,641.38,506,13),
+ sectionHeading("30",2,"identity",46.52,142.74,507,13),sectionHeading("39",2,"passport",46.19,330.29,507,13),sectionHeading("47",2,"visa",46.52,522.82,507,13),
+ sectionHeading("58",3,"travel",46.27,133.99,507,13),sectionHeading("65",3,"address",46.52,240.82,507,13),sectionHeading("76",3,"correspondence",46.52,550.86,507,13),
 ];
-/** Pages 4–8: annotation-only within the existing student-without-family scope.
- * No legal assumptions about a real user's family are inferred from nationality/age. */
+/** Pages 4–8 are annotation-only in the existing student-without-family scope.
+ * Family facts are not inferred from age or nationality. */
 function skipped(id:string,page:number,sec:number,it:string,ru:string,runs:CellRun[],block=false):EditorField {
- const children=sec===12, reason=children ? "Если детей до 14 лет, живущих в Италии, нет — этот блок оставь пустым." : sec===11 ? "Если этот студенческий kit не включает супруга — блок оставь пустым." : sec===10 ? "В сценарии без совместно проживающих иждивенцев этот блок пустой." : "Это блок Carta di soggiorno, не текущий студенческий сценарий.";
+ const reason=sec===12?"Если детей до 14 лет, живущих в Италии, нет — этот блок оставь пустым.":sec===11?"Если этот студенческий kit не включает супруга — блок оставь пустым.":sec===10?"В сценарии без совместно проживающих иждивенцев этот блок пустой.":"Это блок Carta di soggiorno, не текущий студенческий сценарий.";
  return {id,page,runs,kind:block?"block":"text",readOnly:true,blockId:"sezione-"+sec,quick:{sezione:sec,answer:block?"Весь блок пустой":"Пусто",hint:reason,source:"Бланк · Sezione "+sec,dontWrite:"прочерки, нули, «нет», своё имя"},meta:{number:id,it,ru,section:"sezione-"+sec,mode:{rilascio:"empty",rinnovo:"empty"},source:reason,format:"Оставь пустым.",mistake:"Не вписывай свои данные в строки другого члена семьи."}};
 }
 function familyGroup(first:number,page:number,sec:number,y:number,x:number,x2:number,xSex:number,xDate:number,xCountry:number,xCit:number,xCity:number):EditorField[] {
@@ -155,7 +138,18 @@ function familyGroup(first:number,page:number,sec:number,y:number,x:number,x2:nu
 }
 export const READ_ONLY_FIELDS:EditorField[] = [
  skipped("85",4,9,"CARTA DI SOGGIORNO","Carta di soggiorno",[run(47.76,141.50,1,undefined,505,13)],true),
+ skipped("87",4,9,"RILASCIATA IN DATA","Дата выдачи",[run(148.91,178.52,2),run(199.94,178.52,2),run(250.96,178.52,4)]),
+ skipped("88",4,9,"DAL COMUNE","Выдано Comune",[run(148.91,211.40,1)]),skipped("89",4,9,"PROVINCIA","Провинция",[run(284.85,211.40,2)]),
+ skipped("90",4,9,"COMUNE","Comune",[run(46.87,250.36,30)]),skipped("91",4,9,"O DA ASL","Выдано ASL",[run(114.90,274.48,1)]),skipped("92",4,9,"PROVINCIA","Провинция",[run(284.97,274.48,2)]),skipped("93",4,9,"ASL","ASL",[run(46.90,313.31,30)]),
+ skipped("96",4,9,"PROVINCIA","Провинция",[run(131.93,396.36,2)]),skipped("97",4,9,"COMUNE","Comune",[run(46.90,437.19,30)]),skipped("98",4,9,"INDIRIZZO","Адрес",[run(114.99,461.27,26),run(46.87,485.19,30)]),
+ skipped("99",4,9,"PROVINCIA","Провинция",[run(131.93,526.35,2)]),skipped("100",4,9,"COMUNE","Comune",[run(46.90,567.19,30)]),skipped("101",4,9,"INDIRIZZO","Адрес",[run(114.99,591.27,26),run(46.87,615.19,30)]),
+ skipped("102",4,9,"PROVINCIA","Провинция",[run(131.81,663.48,2)]),skipped("103",4,9,"COMUNE","Comune",[run(46.77,704.31,30)]),skipped("104",4,9,"INDIRIZZO","Адрес",[run(114.86,728.40,26),run(46.75,752.31,30)]),
+ skipped("105",5,9,"PROVINCIA","Провинция",[run(131.93,145.31,2)]),skipped("106",5,9,"COMUNE","Comune",[run(46.90,190.31,30)]),skipped("107",5,9,"INDIRIZZO","Адрес",[run(114.99,214.40,26),run(46.87,238.31,30)]),
+ skipped("109",5,9,"PROVINCIA","Провинция",[run(131.89,298.44,2)]),skipped("110",5,9,"COMUNE","Comune",[run(46.77,346.19,30)]),skipped("111",5,9,"INDIRIZZO","Адрес",[run(114.86,370.27,26),run(46.75,394.19,30)]),
+ skipped("114",5,9,"SI","Да",[run(233.86,466.36,1)]),skipped("115",5,9,"NO","Нет",[run(369.92,466.36,1)]),skipped("117",5,9,"SI","Да",[run(233.92,490.44,1)]),skipped("118",5,9,"NO","Нет",[run(369.98,490.44,1)]),
  skipped("119",5,10,"FAMILIARI A CARICO CONVIVENTI","Совместно проживающие иждивенцы",[run(46.29,536.70,1,undefined,507,13)],true),
+ skipped("120",5,10,"NUMERO PERSONE CONVIVENTI","Число совместно проживающих",[run(216.90,563.31,2)]),
+ skipped("122",5,10,"CONIUGE","Супруг",[run(114.86,611.19,1)]),skipped("123",5,10,"FIGLI","Дети",[run(233.89,611.19,1)]),skipped("124",5,10,"NUMERO","Количество",[run(370.08,611.19,2)]),skipped("125",5,10,"ALTRO","Другое",[run(114.92,635.27,1)]),skipped("126",5,10,"SPECIFICARE RAPPORTO DI PARENTELA","Родство",[run(370.08,635.27,11)]),
  skipped("128",6,11,"CONIUGE","Супруг",[run(45.76,139.63,1,undefined,507,13)],true),
  ...familyGroup(129,6,11,179.305,46.26,46.17,114.33,233.38,165.37,505.29,148.37),
  skipped("136",6,12,"FIGLI MINORI DI 14 ANNI A CARICO REGOLARMENTE SOGGIORNANTI IN ITALIA","Дети до 14 лет, живущие в Италии",[run(46.19,434.85,1,undefined,507,13)],true),
