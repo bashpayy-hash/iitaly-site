@@ -23,7 +23,7 @@ export function PermessoPaperSheet(props:Props){
  const maskId=useId().replace(/:/g,"");
  const fields=ALL_GUIDANCE_FIELDS.filter(f=>f.page===page),asset=ORIGINAL_PAGES[page-1];
  const clearTimers=useCallback(()=>{if(openRef.current)clearTimeout(openRef.current);if(closeRef.current)clearTimeout(closeRef.current);},[]);
- const close=useCallback(()=>{clearTimers();previewRef.current=null;setPreview(null);},[clearTimers]);
+ const close=useCallback(()=>{clearTimers();overCardRef.current=false;previewRef.current=null;setPreview(null);},[clearTimers]);
  const keep=useCallback(()=>{overCardRef.current=true;if(closeRef.current)clearTimeout(closeRef.current);},[]);
  const leave=useCallback(()=>{overCardRef.current=false;if(openRef.current)clearTimeout(openRef.current);closeRef.current=setTimeout(()=>{const p=previewRef.current;if(!p||p.pinned||overCardRef.current||p.anchor.matches(":hover")||p.anchor.contains(document.activeElement))return;close();},180);},[close]);
  useEffect(()=>()=>clearTimers(),[clearTimers]);
@@ -72,11 +72,12 @@ export function PermessoPaperSheet(props:Props){
       })}
      </div>;
     })}
-    {ready&&activeField&&<svg className={z.focusLayer} viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" data-focused-group={activeField.id}>
-     <defs><mask id={maskId}><rect width="1" height="1" fill="white"/>{activeRects.map((r,i)=><rect key={i} x={r.x-.0015} y={r.y-.0015} width={r.width+.003} height={r.height+.003} fill="black"/>)}</mask></defs>
-     <rect width="1" height="1" fill="#fffdf9" opacity=".45" mask={`url(#${maskId})`}/>
-     {pinnedField&&pinnedField.id!==activeField.id&&normalizedRuns(pinnedField).map((r,i)=><rect key={`p${i}`} x={r.x-.001} y={r.y-.001} width={r.width+.002} height={r.height+.002} fill="none" stroke="#a46155" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
-     {activeRects.map((r,i)=><rect key={i} x={r.x-.0015} y={r.y-.0015} width={r.width+.003} height={r.height+.003} fill="#b8785e" fillOpacity=".09" stroke="#944137" strokeWidth=".002"/>)}
+    {/* Use PDF units, not a stretched square viewBox: identical stroke/offset on both axes at any zoom. */}
+    {ready&&activeField&&<svg className={z.focusLayer} viewBox={`0 0 ${PAPER.width} ${PAPER.height}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true" data-focused-group={activeField.id}>
+     <defs><mask id={maskId}><rect width={PAPER.width} height={PAPER.height} fill="white"/>{activeRects.map((r,i)=><rect key={i} x={r.x*PAPER.width-.5} y={r.y*PAPER.height-.5} width={r.width*PAPER.width+1} height={r.height*PAPER.height+1} fill="black"/>)}</mask></defs>
+     <rect width={PAPER.width} height={PAPER.height} fill="#fffdf9" opacity={preview ? .32 : .08} mask={`url(#${maskId})`}/>
+     {pinnedField&&pinnedField.id!==activeField.id&&normalizedRuns(pinnedField).map((r,i)=><rect key={`p${i}`} x={r.x*PAPER.width-.5} y={r.y*PAPER.height-.5} width={r.width*PAPER.width+1} height={r.height*PAPER.height+1} fill="none" stroke="#a46155" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
+     {activeRects.map((r,i)=><rect key={i} x={r.x*PAPER.width-.5} y={r.y*PAPER.height-.5} width={r.width*PAPER.width+1} height={r.height*PAPER.height+1} fill="#b8785e" fillOpacity=".06" stroke="#944137" strokeWidth="1.25" vectorEffect="non-scaling-stroke" data-highlight-for={activeField.id} data-highlight-part={i}/>)}
     </svg>}
    </div>
   </div>
