@@ -60,7 +60,9 @@
 .sampleRows[data-rows="true"] { display:grid; }
 .sampleRun { display:flex; gap:2px; width:max-content; }
 .sampleRun span { display:grid; place-items:center; width:22px; height:28px; flex:none; border:1px solid #cb8987; color:#8c857c; font:14px/1 "Courier New",monospace; }
-.light [data-editor-field] input::placeholder { color:transparent; }
+/* Short code/date groups cannot hold a prose placeholder. Longer fields still
+   honor the optional sheet-hints toggle; full guidance stays in the hover. */
+.light [data-editor-field] input:is([maxlength="1"],[maxlength="2"],[maxlength="3"],[maxlength="4"],[maxlength="5"])::placeholder { color:transparent; }
 /* The source form is the only printed grid. No CSS reflow of its cell geometry. */
 @media (max-width:1100px) { .workbar { gap:12px; } .light .pages button { padding-inline:8px; } .light .scenarios button { padding-inline:10px; } }
 @media (max-width:900px) { .workbar { grid-template-columns:1fr auto; gap:6px 12px; } .pages { grid-row:2; grid-column:1/-1; justify-content:flex-start; } .tools { grid-row:1; grid-column:2; } .scenarios { justify-self:start; } .light .inspector { position:static; } .extraPage { margin-left:auto; } }
