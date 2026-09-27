@@ -1,3 +1,4 @@
+import { action } from './permesso-test-controls.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -77,17 +78,17 @@ try{
   const geometry=await editor.locator('[data-editor-field="3"][data-part="0"]').evaluate(el=>{const s=el.closest('[data-sheet-page]').getBoundingClientRect(),r=el.getBoundingClientRect();return {x:(r.x-s.x)/s.width*595,y:(r.y-s.y)/s.height*842,ratio:s.height/s.width};});
   assert(Math.abs(geometry.x-45.23)<.08 && Math.abs(geometry.y-220.14)<.08,'Inputs must be registered to original PDF points');
   assert(Math.abs(geometry.ratio-842/595)<.001);
-  await editor.getByRole('button',{name:'Увеличить лист',exact:true}).click();await noOverflow();
-  await editor.getByRole('button',{name:'Вместить лист',exact:true}).click();
+  await action(editor,'Увеличить лист',{exact:true});await noOverflow();
+  await action(editor,'Вместить лист',{exact:true});
   await pin('10');await mark('10').click();
-  await editor.getByText(/^Дальше: Поле 14 —/).waitFor();
+  assert.equal(await editor.getAttribute('data-pinned-field'),'10');
   await editor.locator('[data-next-field]').click();
   assert.equal(await editor.locator('[data-editor-field="14"][data-selected="true"]').count(),1,'Guidance resumes after the selected skipped field');
   await pin('29');await mark('29').click();await editor.locator('[data-next-field]').click();await loaded();
   assert.equal(await editor.locator('[data-sheet-page="2"]').count(),1,'Next moves across page boundaries');
   assert.equal(await editor.locator('[data-editor-field="31"][data-selected="true"]').count(),1);
   await sheetPage(1);
-  await editor.getByRole('button',{name:/Продление Rinnovo/}).click();
+  await action(editor,/Продление Rinnovo/);
   await part('20',0).fill('31');await part('20',1).fill('02');await part('20',2).fill('2026');
   await editor.locator('#permesso-value-error').filter({hasText:'Такой даты нет'}).waitFor();
   await part('20',0).fill('28');assert.equal(await editor.locator('#permesso-value-error').innerText(),'');
@@ -97,7 +98,7 @@ try{
   assert.equal(await part('50').count(),0,'Renewal visa fields are annotation-only');
   await pin('37');await mark('37',0).click();await mark('37',1).click();
   assert.equal(await mark('37',0).getAttribute('aria-pressed'),'false');assert.equal(await mark('37',1).getAttribute('aria-pressed'),'true');
-  await editor.getByRole('button',{name:/Первое ВНЖ Rilascio/}).click();
+  await action(editor,/Первое ВНЖ Rilascio/);
   assert.equal(await part('50').getAttribute('maxlength'),'8');assert.equal(await part('51').getAttribute('maxlength'),'2');
   await pin('52');await mark('52').click();await pin('53');await mark('53').click();
   assert.equal(await mark('52').getAttribute('aria-pressed'),'false');assert.equal(await mark('53').getAttribute('aria-pressed'),'true');
@@ -110,22 +111,22 @@ try{
   assert.equal(await part('74',0).getAttribute('maxlength'),'4');assert.equal(await part('74',1).getAttribute('maxlength'),'12');
   await part('72').fill('50129');
   if([1440,390].includes(width)) await shot(`editor-page3-${width}.png`);
-  await editor.getByRole('button',{name:'Сохранить',exact:true}).click();
+  await action(editor,'Сохранить',{exact:true});
   const saved=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.equal(saved.values['69'],'22/B');assert.equal(saved.values['72'],'50129');
   await page.reload({waitUntil:'networkidle'});await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await loaded();
   // Reload now intentionally restores the pinned page from the URL, not page 1.
   assert.equal(new URL(page.url()).searchParams.get('page'),'3');await sheetPage(1);
   assert.equal(await part('3').inputValue(),'','Personal data is not restored without an explicit action');
-  await editor.getByRole('button',{name:'Восстановить',exact:true}).click();assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
+  await action(editor,'Восстановить',{exact:true});assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
   if(width===1440){
    failImage=true;await nav.getByRole('button').nth(1).click();await editor.getByText(/Не удалось загрузить основу/).waitFor();
    assert.equal(await editor.locator('[data-editor-field]').count(),0,'Never show floating inputs without the original');
    failImage=false;await editor.getByRole('button',{name:'Повторить загрузку'}).click();await loaded();
   }
-  await editor.getByRole('button',{name:'Стереть',exact:true}).click();
+  await action(editor,'Стереть',{exact:true});
   await editor.getByRole('button',{name:'Отмена',exact:true}).click();
   assert(await page.evaluate(k=>Boolean(localStorage.getItem(k)),key),'Cancel must keep the saved draft');
-  await editor.getByRole('button',{name:'Стереть',exact:true}).click();
+  await action(editor,'Стереть',{exact:true});
   await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(unsafe,[],'Editor must not submit private data or hit production APIs');
