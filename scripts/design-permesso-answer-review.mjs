@@ -1,3 +1,4 @@
+import { action } from './permesso-test-controls.mjs';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {readFile,writeFile,mkdir,stat} from 'node:fs/promises';
@@ -37,6 +38,29 @@ try{
   const panel=editor.locator('aside[aria-label="Подсказка и ввод выбранного поля"]');
   await sheet().waitFor();await p.evaluate(()=>document.fonts.ready);
   assert.equal(await p.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).getAttribute('aria-selected'),'true');
+  const toolbar=editor.locator('[data-compact-toolbar]');
+  assert.equal(await toolbar.locator('button:visible').count(),3,'Only the three page choices compete on the main toolbar');
+  assert.equal(await toolbar.locator(':scope > details > summary:visible').count(),2,'Scenario and secondary actions are grouped');
+  const tools=editor.locator('[data-compact-menu="tools"]');
+  const priorURL=p.url();await tools.locator(':scope > summary').click();
+  await tools.getByRole('button',{name:'Сохранить',exact:true}).waitFor({state:'visible'});
+  await tools.locator(':scope > summary').press('Escape');
+  assert.equal(await tools.evaluate(el=>el.open),false);assert.equal(p.url(),priorURL);
+  assert(await tools.locator(':scope > summary').evaluate(el=>el===document.activeElement),'Escape returns focus to the disclosure');
+  const assertRegistered=async()=>{
+    const boxes=await editor.locator('[data-editor-field]').evaluateAll(nodes=>nodes.map(el=>{
+      const r=el.getBoundingClientRect(),paper=el.closest('[data-sheet-page]').getBoundingClientRect();
+      return {id:el.dataset.editorField,part:Number(el.dataset.part),x:(r.x-paper.x)/paper.width*595,y:(r.y-paper.y)/paper.height*842,w:r.width/paper.width*595,h:r.height/paper.height*842};
+    }));
+    for(const b of boxes){const f=M.ALL_GUIDANCE_FIELDS.find(f=>f.id===b.id),r=f.runs[b.part];assert(Math.abs(b.x-r.x)<.16&&Math.abs(b.y-r.y)<.16&&Math.abs(b.w-M.fieldWidth(r))<.16&&Math.abs(b.h-r.height)<.16,`Field ${b.id}/${b.part}: original coordinates drifted`);}
+    const svg=editor.locator('[data-focused-group]');if(await svg.count()){
+      assert.equal(await svg.getAttribute('viewBox'),'0 0 595 842');
+      const aspect=await svg.evaluate(el=>{const m=el.getScreenCTM();return Math.abs(m.a-m.d);});assert(aspect<.001,'Square highlight must not stretch on A4');
+      for(const el of await svg.locator('[data-highlight-for]').all())assert.equal(await el.getAttribute('vector-effect'),'non-scaling-stroke');
+    }
+  };
+  await assertRegistered();
+
   const countHistory=()=>p.evaluate(()=>history.length),query=()=>new URL(p.url()).searchParams.get('field');
   const noOverlap=async id=>{const box=await help(id).boundingBox(),cells=await group(id).locator('[data-cell-outline]').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height};}));assert(box);const viewport=await p.evaluate(()=>({w:innerWidth,h:innerHeight}));assert(box.x>=0&&box.y>=0&&box.x+box.width<=viewport.w+1&&box.y+box.height<=viewport.h+1,'Help fits the viewport');for(const c of cells)assert(Math.max(0,Math.min(box.x+box.width,c.x+c.w)-Math.max(box.x,c.x))*Math.max(0,Math.min(box.y+box.height,c.y+c.h)-Math.max(box.y,c.y))<1,`Help covers field ${id}`);};
   const actual=await group('32').locator('[data-cell-outline]').evaluate(n=>{const a=n.getBoundingClientRect(),s=n.closest('[data-sheet-page]').getBoundingClientRect();return{x:(a.left-s.left)/s.width*595,y:(a.top-s.top)/s.height*842};});
@@ -51,6 +75,7 @@ try{
    await p.keyboard.press('Escape');await zone('32').press('Enter');assert.equal(query(),'32');
    await panel.getByRole('radio',{name:'A — Не в браке',exact:true}).check();await group('32').hover();await help('32').waitFor({state:'visible'});
    assert.equal(await help('32').locator('[data-quick-answer]').innerText(),'A');assert.equal(await panel.locator('[data-quick-answer]').innerText(),'A');await noOverlap('32');
+   await assertRegistered();
    if(width===1440)await p.screenshot({path:resolve(out,'answer-stato-1440.png'),animations:'disabled'});
    await p.keyboard.press('Escape');await zone('32').focus();await zone('32').press('ArrowDown');assert.equal(query(),'33');
    await p.goBack();await p.waitForFunction(()=>new URL(location.href).searchParams.get('field')==='32');await p.goForward();await p.waitForFunction(()=>new URL(location.href).searchParams.get('field')==='33');
@@ -64,7 +89,7 @@ try{
    await zone('34').dispatchEvent('pointerdown',{pointerId:44,pointerType:'touch',clientX:b.x+2,clientY:b.y+2});await zone('34').dispatchEvent('pointerup',{pointerId:44,pointerType:'touch',clientX:b.x+2,clientY:b.y+62});
    assert.equal(p.url(),old,'A drag is not a pin');assert.equal(await p.locator('[data-permesso-hover]').count(),0);
   }
-  await editor.getByRole('button',{name:'Стр. 7',exact:true}).click();await sheet().waitFor();if(touch)await zone('144').tap();else await group('144').hover();await help('144').waitFor({state:'visible'});
+  await action(editor,'Стр. 7',{exact:true});await sheet().waitFor();if(touch)await zone('144').tap();else await group('144').hover();await help('144').waitFor({state:'visible'});
   assert.equal(await help('144').locator('[data-quick-answer]').innerText(),'Весь блок пустой');assert.match(await help('144').innerText(),/ПРОПУСТИ/);assert.equal(await group('145').locator('input').count(),0,'Child fields are annotation-only');await noOverlap('144');
   if(width===1440)await p.screenshot({path:resolve(out,'answer-children-1440.png'),animations:'disabled'});
   if(touch)await help('144').getByRole('button',{name:'Закрыть подсказку'}).tap();else await p.keyboard.press('Escape');
@@ -72,10 +97,18 @@ try{
   assert.equal(await zone('3').count(),1,'A multiline name is one zone');assert.equal(await group('3').locator('input[tabindex="-1"]').count(),2);
   await zone('3').focus();assert.notEqual(query(),'3','Focus is preview only');await zone('3').press('Enter');assert.equal(query(),'3');
   if(!touch){await p.keyboard.press('Escape');await editor.locator('[data-editor-field="3"][data-part="0"] input').fill('TEST STUDENT');}else await panel.getByRole('textbox',{name:'Ввести: Фамилия',exact:true}).fill('TEST STUDENT');
-  await editor.getByRole('button',{name:'Показать пример',exact:true}).click();assert.match(await panel.innerText(),/Пример — не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
-  await editor.getByRole('button',{name:'Мои данные',exact:true}).click();await p.getByRole('tab',{name:'Оригинал',exact:true}).click();assert.equal(await p.locator('[data-permesso-hover]').count(),0);
+  await action(editor,'Увеличить лист',{exact:true});await assertRegistered();await action(editor,'Вместить лист',{exact:true});await assertRegistered();
+  await action(editor,'Показать пример',{exact:true});assert.match(await panel.innerText(),/Пример — не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
+  await action(editor,'Мои данные',{exact:true});await p.getByRole('tab',{name:'Оригинал',exact:true}).click();assert.equal(await p.locator('[data-permesso-hover]').count(),0);
   await p.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await sheet().waitFor();assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
   assert.equal(await p.evaluate(()=>localStorage.getItem('iitaly:permesso-paper-editor:v1')),null);
+  if([1440,390].includes(width)){
+    await p.keyboard.press('Escape');await p.mouse.move(1,1);
+    await p.evaluate(()=>{document.activeElement?.blur();window.scrollTo({top:0,behavior:'instant'});});
+    await p.waitForTimeout(220);
+    await p.screenshot({path:resolve(out,`compact-workspace-${width}.png`),animations:'disabled'});
+  }
+
   await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).click();await p.reload({waitUntil:'networkidle'});await sheet().waitFor();assert.equal(await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).count(),0);
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
   results.push({width,touch,passed:true,checks:'exact field32; single zone; inert hover/focus; pin/URL/back; source-backed A/B; no occlusion; touch44/no jump/drag; child skip; ghost example isolation; explicit storage'});await context.close();
