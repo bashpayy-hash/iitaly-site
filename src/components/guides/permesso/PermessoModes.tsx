@@ -1,18 +1,24 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import { PermessoTrainer } from "./PermessoTrainer";
 import { EditablePermesso } from "./EditablePermesso";
-import { PermessoFieldHover } from "./PermessoFieldHover";
+import { usePermessoRoute } from "./usePermessoRoute";
 import styles from "./permesso-editor.module.css";
 
 type Mode = "original" | "editable";
+const subscribeReady = () => () => {};
+const clientReady = () => true;
+const serverReady = () => false;
 
 export function PermessoModes() {
-  const [mode,setMode] = useState<Mode>("original");
+  const ready=useSyncExternalStore(subscribeReady,clientReady,serverReady);
+  const route=usePermessoRoute();
+  const [chosenMode,setMode] = useState<Mode|null>(null);
+  const mode:Mode=chosenMode || (route.explicit?"editable":"original");
   const [editorOpened,setEditorOpened] = useState(false);
   function activate(next: Mode) {
-    if(next === "editable") setEditorOpened(true);
+    if(next === "editable" || mode === "editable") setEditorOpened(true);
     setMode(next);
   }
   function onKey(event: KeyboardEvent<HTMLButtonElement>) {
@@ -33,13 +39,11 @@ export function PermessoModes() {
       </div>
     </div>
     <div id="permesso-panel-original" role="tabpanel" aria-labelledby="permesso-tab-original" hidden={mode!=="original"} className={styles.modePanel}>
-      {mode === "original" && <PermessoTrainer />}
+      {mode === "original" && ready && <PermessoTrainer />}
     </div>
     <div id="permesso-panel-editable" role="tabpanel" aria-labelledby="permesso-tab-editable" hidden={mode!=="editable"} className={styles.modePanel}>
-      {/* Keep the draft and cursor mounted when the user checks the original. */}
-      {editorOpened && <EditablePermesso />}
-      {/* The reading layer unmounts on tab switch; the user's draft does not. */}
-      {mode === "editable" && <PermessoFieldHover />}
+      {/* Keep values mounted across modes, but unmount the reading layer when hidden. */}
+      {(editorOpened || mode === "editable") && <EditablePermesso active={mode === "editable"}/>}
     </div>
   </>;
 }
