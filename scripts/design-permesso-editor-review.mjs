@@ -27,7 +27,7 @@ const server=createServer(async(req,res)=>{
  res.writeHead(404).end();}catch{res.writeHead(500).end();}
 });
 await new Promise(done=>server.listen(4194,'127.0.0.1',done));
-const browser=await chromium.launch();const results=[];let activePage;
+const browser=await chromium.launch(process.env.REVIEW_BROWSER?{executablePath:process.env.REVIEW_BROWSER,args:['--no-sandbox']}:{});const results=[];let activePage;
 const key='iitaly:permesso-paper-editor:v1';
 try{
  for(const width of [1440,1024,768,390,360]){
@@ -55,6 +55,8 @@ try{
   await loaded();await page.evaluate(()=>document.fonts.ready);
   const part=(id,i=0)=>editor.locator(`[data-editor-field="${id}"][data-part="${i}"] input`);
   const mark=(id,i=0)=>editor.locator(`[data-editor-field="${id}"][data-part="${i}"] button`);
+  // Reading a zone no longer edits its answer. Commit the intended field first.
+  const pin=async id=>{if(await editor.getAttribute('data-pinned-field')!==id) await editor.locator(`[data-field-zone="${id}"]`).click();};
   const nav=editor.getByRole('navigation',{name:'Страницы электронного бланка'});
   const sheetPage=async n=>{await nav.getByRole('button').nth(n-1).click();await loaded();};
   const noOverflow=async()=>assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`page overflow ${width}`);
@@ -77,11 +79,11 @@ try{
   assert(Math.abs(geometry.ratio-842/595)<.001);
   await editor.getByRole('button',{name:'Увеличить лист',exact:true}).click();await noOverflow();
   await editor.getByRole('button',{name:'Вместить лист',exact:true}).click();
-  await mark('10').click();
+  await pin('10');await mark('10').click();
   await editor.getByText(/^Дальше: Поле 14 —/).waitFor();
   await editor.locator('[data-next-field]').click();
   assert.equal(await editor.locator('[data-editor-field="14"][data-selected="true"]').count(),1,'Guidance resumes after the selected skipped field');
-  await mark('29').click();await editor.locator('[data-next-field]').click();await loaded();
+  await pin('29');await mark('29').click();await editor.locator('[data-next-field]').click();await loaded();
   assert.equal(await editor.locator('[data-sheet-page="2"]').count(),1,'Next moves across page boundaries');
   assert.equal(await editor.locator('[data-editor-field="31"][data-selected="true"]').count(),1);
   await sheetPage(1);
@@ -93,11 +95,11 @@ try{
   await sheetPage(2);
   assert.equal(await part('38',0).getAttribute('maxlength'),'25');assert.equal(await part('38',1).getAttribute('maxlength'),'30');
   assert.equal(await part('50').count(),0,'Renewal visa fields are annotation-only');
-  await mark('37',0).click();await mark('37',1).click();
+  await pin('37');await mark('37',0).click();await mark('37',1).click();
   assert.equal(await mark('37',0).getAttribute('aria-pressed'),'false');assert.equal(await mark('37',1).getAttribute('aria-pressed'),'true');
   await editor.getByRole('button',{name:/Первое ВНЖ Rilascio/}).click();
   assert.equal(await part('50').getAttribute('maxlength'),'8');assert.equal(await part('51').getAttribute('maxlength'),'2');
-  await mark('52').click();await mark('53').click();
+  await pin('52');await mark('52').click();await pin('53');await mark('53').click();
   assert.equal(await mark('52').getAttribute('aria-pressed'),'false');assert.equal(await mark('53').getAttribute('aria-pressed'),'true');
   await part('44').fill('TEST12345');
   if(width===1440) await shot('editor-page2-1440.png');
@@ -111,6 +113,8 @@ try{
   await editor.getByRole('button',{name:'Сохранить',exact:true}).click();
   const saved=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.equal(saved.values['69'],'22/B');assert.equal(saved.values['72'],'50129');
   await page.reload({waitUntil:'networkidle'});await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await loaded();
+  // Reload now intentionally restores the pinned page from the URL, not page 1.
+  assert.equal(new URL(page.url()).searchParams.get('page'),'3');await sheetPage(1);
   assert.equal(await part('3').inputValue(),'','Personal data is not restored without an explicit action');
   await editor.getByRole('button',{name:'Восстановить',exact:true}).click();assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
   if(width===1440){
@@ -125,7 +129,7 @@ try{
   await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(unsafe,[],'Editor must not submit private data or hit production APIs');
-  results.push({width,passed:true,checks:'original preserved; direct input; exact coordinates; spaces/multiline; mode retention; skipped-field and cross-page guidance; date format; radio/checkbox exclusivity; explicit save/restore/clear; overflow/zoom; no real API calls'});
+  results.push({width,passed:true,checks:'original preserved; direct input; exact coordinates; spaces/multiline; mode retention; explicit pin; skipped-field and cross-page guidance; date format; radio/checkbox exclusivity; explicit save/restore/clear; URL reload; overflow/zoom; no real API calls'});
   await context.close();
  }
 }catch(error){
