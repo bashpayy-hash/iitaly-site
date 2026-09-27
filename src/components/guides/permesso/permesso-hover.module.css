@@ -23,3 +23,6 @@
 /* Global reduced-motion gives all elements a .15s transition. This reading layer
    must not interpolate layout or inherited visibility while it measures the anchor. */
 .preview,.preview * { transition-property:none!important; animation:none!important; }
+
+.summary[data-answer-detail="true"] .answer { margin-top:0; white-space:normal; overflow:visible; overflow-wrap:anywhere; font-size:22px; }
+.summary[data-answer-detail="true"] .cells { margin-top:10px; padding-top:8px; }
