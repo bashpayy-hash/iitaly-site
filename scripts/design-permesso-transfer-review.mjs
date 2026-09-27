@@ -8,7 +8,6 @@ import { createHash } from 'node:crypto';
 const require = createRequire(import.meta.url);
 const { chromium } = require(resolve(process.env.REVIEW_TOOLS || '/tmp/iitaly-browser/node_modules','playwright'));
 const ts = require('typescript');
-// Compile only the pure model and its local TS imports for deterministic tests.
 const originalLoader = require.extensions['.ts'];
 require.extensions['.ts'] = (module, filename) => module._compile(ts.transpileModule(readFileSync(filename,'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, filename);
 const model = require(resolve('src/components/guides/permesso/permessoTransferModel.ts'));
@@ -28,7 +27,6 @@ assert.equal(model.paperValue(field('50'),{'50':'SECRET'},'rinnovo'),'','Inappli
 const surnameStep = steps.find(s => s.fields[0].id === '3');
 assert.notEqual(model.transferSignature(surnameStep,{'3':'FIRST'},'rinnovo'),model.transferSignature(surnameStep,{'3':'CHANGED'},'rinnovo'));
 assert.notEqual(model.transferSignature(surnameStep,{'3':'FIRST'},'rilascio'),model.transferSignature(surnameStep,{'3':'FIRST'},'rinnovo'));
-
 const output = resolve('design-review/permesso-transfer'); await mkdir(output,{recursive:true});
 const images = new Map();
 for (const p of geometry.ORIGINAL_PAGES) {
@@ -54,7 +52,7 @@ try {
   const part=(id,i=0)=>editor.locator(`[data-editor-field="${id}"][data-part="${i}"] input`);
   const launch=async()=>{await page.keyboard.press('Escape');await editor.getByRole('button',{name:'Переносим на бумагу',exact:true}).click();await guide.waitFor();};
   const noOverflow=async()=>assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`Overflow ${width}`);
-  const jump=async name=>{const details=guide.locator('details').last();if(!await details.getAttribute('open')) await details.locator('summary').click();await details.getByRole('button',{name}).click();};
+  const jump=async name=>{const details=guide.locator('details').last();if(await details.getAttribute('open')===null) await details.locator('summary').click();await details.getByRole('button',{name}).click();};
   const screenshot=async name=>{await noOverflow();await page.keyboard.press('Escape');await guide.screenshot({path:resolve(output,name),animations:'disabled'});};
   await part('questore').fill('MILANO');await part('questoreProvince').fill('MI');await part('3').fill('TEST STUDENT');await part('3',1).fill('SECOND');
   await launch();
