@@ -6,16 +6,16 @@ import { ANSWER_STATUS, type FieldAnswer } from "./permessoFieldAnswer";
 import styles from "./permesso-hover.module.css";
 
 export function AnswerSummary({answer:a,field,detail=false}:{answer:FieldAnswer;field:EditorField;detail?:boolean}){
- return <div className={styles.summary} data-answer-for={field.id} data-state={a.status} data-answer-example={a.example}>
-  <span className={styles.status}>{ANSWER_STATUS[a.status]}</span>
+ return <div className={styles.summary} data-answer-for={field.id} data-state={a.status} data-answer-example={a.example} data-answer-detail={detail}>
+  {!detail&&<span className={styles.status}>{ANSWER_STATUS[a.status]}</span>}
   <strong className={styles.answer} data-quick-answer title={a.answer}>{a.answer}</strong>
   {a.example&&<span className={styles.example}>Пример — не твои данные</span>}
   <p className={styles.hint}>{a.hint}</p>
-  <p className={styles.label}>{field.meta.it} · {field.meta.ru}</p>
+  {!detail&&<p className={styles.label}>{field.meta.it} · {field.meta.ru}</p>}
   {a.cells&&<p className={styles.cells}><span>В клетки: </span>{a.cells}</p>}
-  <p className={styles.source}><span>Откуда: </span>{a.source}</p>
+  {!detail&&<p className={styles.source}><span>Откуда: </span>{a.source}</p>}
   {a.dontWrite&&<p className={styles.trap}><span>Не пиши: </span>{a.dontWrite}</p>}
-  <small className={styles.caption}>{a.caption}{detail?" · закреплено":""}</small>
+  {!detail&&<small className={styles.caption}>{a.caption}</small>}
  </div>;
 }
 export type FieldPreview={field:EditorField;anchor:HTMLElement;touch:boolean;pinned:boolean};
@@ -46,7 +46,6 @@ export function PermessoFieldHover({preview:p,answer,onClose,onEnter,onLeave,onE
    const clear=(v:{x:number;y:number})=>active.every(r=>overlap({...v,width:box.width,height:box.height},r)<.5);
    let placement=candidates.find(v=>fits(v)&&clear(v));
    if(!placement){
-    // Short viewport: limit the reading card to free space. Never scroll the paper.
     const above=minY-top-gap*2,below=top+vh-maxY-gap*2,upper=above>below,free=Math.max(64,upper?above:below);
     node.style.maxHeight=free+"px";const height=Math.min(box.height,free);
     placement={x:clamp(minX,left+gap,left+vw-box.width-gap),y:upper?minY-height-gap:maxY+gap};placement.y=clamp(placement.y,top+gap,top+vh-height-gap);
