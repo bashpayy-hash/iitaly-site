@@ -2,10 +2,11 @@
 
 import { useRef, useState, type ClipboardEvent } from "react";
 import { type PermessoScenario } from "./permessoData";
-import { ALL_GUIDANCE_FIELDS, EDITOR_FIELDS, ORIGINAL_PAGES, OFFICIAL_PDF, capacity, editorMode, getPart, setPart, normalize, valueProblem, type EditorField } from "./permessoOriginalGeometry";
+import { ALL_GUIDANCE_FIELDS, EDITOR_FIELDS, OFFICIAL_PDF, capacity, editorMode, getPart, setPart, normalize, valueProblem, type EditorField } from "./permessoOriginalGeometry";
 import { PermessoPaperTransfer } from "./PermessoPaperTransfer";
 import { expiryWarning } from "./permessoTransferModel";
-import transferStyles from "./permesso-transfer.module.css";
+import { PermessoNavigation } from "./PermessoNavigation";
+import c from "./permesso-compact.module.css";
 import styles from "./permesso-editor.module.css";
 import z from "./permesso-zones.module.css";
 import { PermessoPaperSheet } from "./PermessoPaperSheet";
@@ -26,6 +27,7 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
   const [showExample, setShowExample] = useState(false);
   const [values, setValues] = useState<Draft>({});
   const [hints, setHints] = useState(true);
+  const [savedSnapshot, setSavedSnapshot] = useState("");
   const [zoom, setZoom] = useState(1);
   const [message, setMessage] = useState("");
   const [review, setReview] = useState(false);
@@ -36,7 +38,6 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const inspector = useRef<HTMLElement>(null);
   const reviewSection = useRef<HTMLElement>(null);
-  const transferLaunch = useRef<HTMLButtonElement>(null);
   const status = editorMode(selected, scenario);
   const applicable = EDITOR_FIELDS.filter(f => editorMode(f,scenario) !== "empty");
   const selectedIndex = ALL_GUIDANCE_FIELDS.indexOf(selected);
@@ -103,7 +104,7 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
     patch(f, option ? (values[f.id] === option ? "" : option) : (values[f.id] === "X" ? "" : "X"));
   }
   function save() {
-    try { localStorage.setItem(STORAGE_KEY,JSON.stringify({ version: 1, scenario, values })); setMessage("Снимок черновика сохранён в этом браузере. После новых изменений нажми «Сохранить» ещё раз."); }
+    try { localStorage.setItem(STORAGE_KEY,JSON.stringify({ version: 1, scenario, values })); setSavedSnapshot(JSON.stringify({ scenario, values })); setMessage("Снимок черновика сохранён в этом браузере. После новых изменений нажми «Сохранить» ещё раз."); }
     catch { setMessage("Браузер не разрешил сохранение. В открытой вкладке данные остаются доступны."); }
   }
   function restore() {
@@ -114,48 +115,40 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
       if (!saved || typeof saved !== "object" || !("version" in saved) || saved.version !== 1 || !("values" in saved) || !saved.values || typeof saved.values !== "object") throw new Error("Invalid draft");
       const restored: Draft = {};
       for (const f of EDITOR_FIELDS) { const value = (saved.values as Record<string,unknown>)[f.id]; if (typeof value === "string" && value.length <= 256) restored[f.id] = value; }
+      setSavedSnapshot(JSON.stringify({ scenario: "scenario" in saved && saved.scenario === "rinnovo" ? "rinnovo" : "rilascio", values: restored }));
       setValues(restored); pinPermessoField(selected, "scenario" in saved && saved.scenario === "rinnovo" ? "rinnovo" : "rilascio");
       setTransferEpoch(epoch => epoch + 1);
       setMessage("Сохранённый черновик восстановлен. Отметки переноса нужно поставить заново.");
     } catch { setMessage("Не удалось прочитать черновик. Текущие данные не изменены."); }
   }
   function clear() {
-    setValues({}); setShowExample(false); setClearConfirm(false); setReview(false); setTransferOpen(false); setTransferEpoch(epoch => epoch + 1);
+    setSavedSnapshot(""); setValues({}); setShowExample(false); setClearConfirm(false); setReview(false); setTransferOpen(false); setTransferEpoch(epoch => epoch + 1);
     try { localStorage.removeItem(STORAGE_KEY); setMessage("Черновик удалён из этой вкладки и памяти браузера."); }
     catch { setMessage("Вкладка очищена. Браузер не разрешил удалить сохранённую копию — очисти данные сайта в настройках браузера."); }
   }
-  function closeTransfer() { setTransferOpen(false); requestAnimationFrame(() => transferLaunch.current?.focus()); }
+  function closeTransfer() { setTransferOpen(false); requestAnimationFrame(() => root.current?.querySelector<HTMLElement>('[data-compact-menu="tools"] > summary')?.focus()); }
   function editTransfer(field: EditorField) { setTransferOpen(false); chooseField(field, true); }
   const issues = applicable.filter(f => f.kind !== "signature" && (valueProblem(f,valueFor(f)) || (editorMode(f,scenario)==="write" && !valueFor(f).trim())));
   const expiryNotices = applicable.map(f => ({ field: f, warning: expiryWarning(f, valueFor(f), today) })).filter(item => item.warning);
 
   return (
-    <div className={styles.editor} ref={root} data-permesso-editor data-pinned-field={selectedId} data-scenario={scenario}>
+    <div className={`${styles.editor} ${c.editor}`} ref={root} data-permesso-editor data-pinned-field={selectedId} data-scenario={scenario}>
       <header className={styles.intro}>
-        <div><h1>Тот же бланк. Теперь можно заполнять.</h1><p>Наведи на поле или коснись его: появится крупная подсказка. Заполни черновик, затем переноси на бумагу по одному полю.</p></div>
-        <p className={styles.scope}>Учебный черновик для первого студенческого ВНЖ или продления. Заполняем страницы 1–3. Страницы 4–8 доступны для чтения пропусков в сценарии без семьи. Оригинал не меняется.</p>
+        <div><h1>Заполни Modulo 1 без спешки.</h1><p>Выбери строку на бланке. Подсказка скажет, что писать и что пропустить.</p></div>
       </header>
-      <div className={styles.toolbar}>
-        <div className={styles.scenarios} role="group" aria-label="Сценарий электронного бланка">
-          <button type="button" aria-pressed={scenario === "rilascio"} onClick={() => chooseScenario("rilascio")}>Первое ВНЖ <small>Rilascio · только приехал</small></button>
-          <button type="button" aria-pressed={scenario === "rinnovo"} onClick={() => chooseScenario("rinnovo")}>Продление <small>Rinnovo · карточка уже есть</small></button>
-        </div>
-        <div className={styles.draftActions}><button type="button" onClick={save}>Сохранить</button><button type="button" onClick={restore}>Восстановить</button><button type="button" onClick={() => setClearConfirm(true)}>Стереть</button></div>
-      </div>
-      <div className={styles.privacy}><span>Без отправки данных на сервер. «Сохранить» оставляет копию на этом устройстве — не используй на общем компьютере.</span><span>Введено полей: {entered}</span></div>
+      <PermessoNavigation scenario={scenario} page={page} hints={hints} zoom={zoom} showExample={showExample}
+        transferOpen={transferOpen} entered={entered} saved={savedSnapshot === JSON.stringify({ scenario, values })}
+        onScenario={chooseScenario}
+        onPage={nextPage => chooseField(nextPage <= 3 ? EDITOR_FIELDS.find(f => f.page === nextPage && editorMode(f, scenario) !== "empty")! : ALL_GUIDANCE_FIELDS.find(f => f.page === nextPage)!)}
+        onSave={save} onRestore={restore} onClear={() => setClearConfirm(true)}
+        onExample={() => setShowExample(!showExample)} onMyData={() => { setShowExample(false); requestAnimationFrame(() => inspector.current?.querySelector<HTMLInputElement>("input")?.focus({ preventScroll: true })); }}
+        onHints={setHints} onZoom={() => setZoom(zoom === 1 ? (window.matchMedia("(max-width: 600px)").matches ? 2.5 : 1.6) : 1)}
+        onTransfer={() => setTransferOpen(true)} onReview={() => { setTransferOpen(false); setReview(true); requestAnimationFrame(() => reviewSection.current?.scrollIntoView({ block: "start", behavior: smooth() })); }} />
       {message && <p role="status" className={styles.notice}>{message}</p>}
       {clearConfirm && <div className={styles.confirm} role="group" aria-label="Подтверждение очистки"><span>Удалить введённые данные и сохранённую копию?</span><button type="button" onClick={clear}>Да, стереть</button><button type="button" onClick={() => setClearConfirm(false)}>Отмена</button></div>}
-      {!transferOpen && <div className={transferStyles.topbar}><div><b>Подготовь на стол</b><span>Бумажный kit, чёрную ручку, паспорт, codice fiscale, марку{scenario === "rinnovo" ? " и текущую карточку ВНЖ" : ""}. После заполнения — перенос по шагам.</span></div><button type="button" ref={transferLaunch} onClick={() => setTransferOpen(true)}>Переносим на бумагу</button></div>}
       <PermessoPaperTransfer key={scenario + ":" + transferEpoch} active={transferOpen} scenario={scenario} values={values} today={today} onClose={closeTransfer} onEdit={editTransfer} />
       <div hidden={transferOpen}>
-        <div className={styles.pagebar}>
-          <nav aria-label="Страницы электронного бланка" className={styles.pageTabs}>{ORIGINAL_PAGES.slice(0,3).map(p => <button type="button" key={p.page} aria-current={page===p.page ? "page" : undefined} onClick={() => chooseField(EDITOR_FIELDS.find(f => f.page===p.page && editorMode(f,scenario)!=="empty")!)}><b>{p.page}</b><span>{p.title}</span></button>)}</nav>
-          <div className={styles.viewTools}><label><input type="checkbox" checked={hints} onChange={e => setHints(e.target.checked)} />Подсказки на листе</label><button type="button" aria-pressed={zoom>1} onClick={() => setZoom(zoom===1 ? (window.matchMedia("(max-width: 600px)").matches ? 2.5 : 1.6) : 1)}>{zoom===1 ? "Увеличить лист" : "Вместить лист"}</button></div>
-        </div>
-        <div className={z.secondaryPages}><span>В этом сценарии не заполняй:</span>{ORIGINAL_PAGES.slice(3).map(p=><button type="button" key={p.page} aria-current={page===p.page?"page":undefined} onClick={()=>chooseField(ALL_GUIDANCE_FIELDS.find(f=>f.page===p.page)!)}>Стр. {p.page}</button>)}</div>
-        <div className={z.exampleControl}><button type="button" aria-pressed={showExample} onClick={()=>setShowExample(!showExample)}>{showExample?"Скрыть пример":"Показать пример"}</button><button type="button" aria-pressed={!showExample} onClick={()=>{setShowExample(false);requestAnimationFrame(()=>inspector.current?.querySelector<HTMLInputElement>('input')?.focus({preventScroll:true}));}}>Мои данные</button></div>
         {onboarding.visible && <div className={z.onboarding}><span>Наведи на любую строку — скажу, писать или пропустить</span><button type="button" aria-label="Больше не показывать подсказку" onClick={onboarding.dismiss}>×</button></div>}
-        <div className={z.legend}>{[["write","Заполняй"],["empty","Пропусти"],["post","Только на почте"],["ifExists","Если есть"],["verify","Уточни"]].map(([state,name])=><span key={state} data-state={state}><i aria-hidden="true"/>{name}</span>)}</div>
         {page>3 && <p className={z.scopeNote}>Эти страницы остаются в kit. Здесь показаны пропуски для студенческого сценария без семьи. Если он тебе не подходит, не используй эти подсказки как правила для семейного заявления.</p>}
         <div className={`${styles.workspace} ${z.workspace}`}>
           <div className={styles.document} data-fab-yield>
@@ -163,11 +156,10 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
             {active && !transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v)=>{setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
             <div className={styles.documentFoot}>Основа — точный рендер официальной страницы. Поля и подсказки IITALY расположены поверх неё и не меняют печатный бланк.</div>
           </div>
-          <aside className={styles.inspector} ref={inspector} data-fab-yield aria-label="Подсказка и ввод выбранного поля">
+          <aside className={`${styles.inspector} ${c.inspector}`} ref={inspector} data-fab-yield aria-label="Подсказка и ввод выбранного поля">
             <div className={styles.inspectorTop}><span>Стр. {page} · {shortId(selected)}</span><strong data-state={status}>{STATES[status]}</strong></div>
             <h2>{selected.meta.ru}</h2><p className={styles.italian}>{selected.meta.it}</p>
-            <div className={z.quickInspector}><AnswerSummary field={selected} answer={fieldAnswer(selected,scenario,currentValue,showExample)} detail/></div>
-            {showExample && fieldAnswer(selected,scenario,currentValue,true).example && <div className={z.previewCells} aria-label="Пример, не твои данные">{Array.from(fieldAnswer(selected,scenario,currentValue,true).value).map((v,i)=><span key={i}>{v}</span>)}</div>}
+            <div className={c.answer}><AnswerSummary field={selected} answer={fieldAnswer(selected,scenario,currentValue,showExample)} detail/></div>
             <div className={styles.fieldEditor} key={selectedId}>
               {selected.kind === "signature" ? <p className={styles.caution}>Здесь будет подпись на бумаге. Ввод имени не является подписью. Момент подписания уточни по инструкции своего kit.</p>
                 : status === "post" ? <p className={styles.caution}>Этот участок заполняется на почте. В режиме «Мои данные» ввод отключён.</p>
@@ -181,10 +173,9 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
             {status === "verify" && <p className={styles.caution}>Значение можно записать в черновик, но перед переносом на бумагу уточни правило по своему kit / в Sportello Amico.</p>}
             <p id="permesso-value-error" className={styles.validation} role={problem ? "alert" : undefined}>{problem}</p>
             {!!expiry && <p className={styles.caution} data-editor-date-warning>{expiry}</p>}
-            <details><summary>Подробное пояснение</summary><dl className={styles.explanation}><div><dt>{status === "empty" ? "Почему пропустить" : "Откуда взять"}</dt><dd>{selected.meta.source}</dd></div><div id="permesso-value-format"><dt>Как писать</dt><dd>{selected.kind === "date" ? "Две цифры дня, две месяца, четыре года. Разделители уже есть на оригинальном бланке." : selected.kind === "split" ? "Заполняй части отдельно, как подписано на бумаге. Разделитель / уже напечатан." : selected.meta.format}</dd></div><div><dt>Не перепутай</dt><dd>{selected.meta.mistake}</dd></div></dl></details>
-            <div className={styles.fieldNav}><button type="button" onClick={() => go(-1)} disabled={!previousField}>Назад</button><button type="button" data-next-field onClick={() => go(1)}>{nextField ? "Дальше →" : "К проверке →"}</button></div>
-            <p className={styles.upNext}>↑ / ↓ — закрепить соседнее поле страницы · {Math.max(1,applicable.indexOf(selected)+1)} из {applicable.length}</p>
-            <p className={styles.upNext}>{nextField ? `Дальше: ${shortId(nextField)} — ${nextField.meta.ru}` : "Дальше: обзор черновика перед переносом на бумагу."}</p>
+            <div className={`${styles.fieldNav} ${c.fieldNav}`}><button type="button" onClick={() => go(-1)} disabled={!previousField}>Назад</button><span>{Math.max(1,applicable.indexOf(selected)+1)} / {applicable.length}</span><button type="button" data-next-field onClick={() => go(1)}>{nextField ? "Дальше →" : "К проверке →"}</button></div>
+            <p className={c.nextHint}>{nextField ? `Дальше: ${nextField.meta.ru}` : "Дальше: проверка черновика."}</p>
+            <details className={c.details}><summary>Откуда взять и как не ошибиться</summary><dl className={styles.explanation}><div><dt>{status === "empty" ? "Почему пропустить" : "Откуда взять"}</dt><dd>{selected.meta.source}</dd></div><div id="permesso-value-format"><dt>Как писать</dt><dd>{selected.kind === "date" ? "Две цифры дня, две месяца, четыре года. Разделители уже есть на оригинальном бланке." : selected.kind === "split" ? "Заполняй части отдельно, как подписано на бумаге. Разделитель / уже напечатан." : selected.meta.format}</dd></div><div><dt>Не перепутай</dt><dd>{selected.meta.mistake}</dd></div></dl></details>
             <details className={styles.fieldJump}><summary>Перейти к полю на странице {page}</summary><div>{ALL_GUIDANCE_FIELDS.filter(f => f.page===page).map(f => <button type="button" key={f.id} onClick={() => chooseField(f,true)}>{shortId(f)} · {f.meta.ru}</button>)}</div></details>
           </aside>
         </div>
