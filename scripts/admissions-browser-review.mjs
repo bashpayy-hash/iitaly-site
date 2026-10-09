@@ -35,7 +35,9 @@ try {
     const page = await context.newPage();
     page.on('pageerror', e=>errors.push(e.message));
     async function visit(route) {
-      assert.equal((await page.goto(origin+route,{waitUntil:'networkidle'})).status(),200);
+      const response = await page.goto(origin+route,{waitUntil:'networkidle'});
+      if (response) assert.equal(response.status(),200);
+      else assert(route.includes('#'),'Only same-document hash navigation has no response');
       await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1),false,route+' overflow at '+width);
     }
