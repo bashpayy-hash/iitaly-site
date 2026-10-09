@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/guides" },
   title: "Гайды и виза D — апостиль, CIMEA, ISEEU",
   description:
-    "Апостиль, CIMEA, присяжный перевод, ISEEU parificato, виза D через BLS: сроки, стоимость и порядок шагов. Калькулятор финансовой гарантии и чек-лист документов на визу.",
+    "Аттестат Казахстана, DoV/CIMEA/ARDI, переводы, DSU по регионам, виза D через VFS и permesso. Проверено 9 октября 2026, с официальными источниками.",
 };
 
 export default function GuidesPage() {

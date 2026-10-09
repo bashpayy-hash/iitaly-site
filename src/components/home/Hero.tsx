@@ -17,7 +17,8 @@ export function Hero() {
             <AppleButtonLink href="/plan">Составить план бесплатно <span aria-hidden>↗</span></AppleButtonLink>
             <AppleButtonLink href="/universities" variant="outlined">Смотреть университеты</AppleButtonLink>
           </div>
-          <p className={styles.heroNote}>6 вопросов · Для школьников 16–18 лет и их родителей</p>
+          <p className={styles.heroNote}>Короткий опрос · Для школьников 16–18 лет и их родителей</p>
+          <Link href="/changes-2026-27" className="mt-3 inline-block min-h-11 py-2 text-sm underline underline-offset-4">Правила 2026/27–2027/28 · проверено 9 октября</Link>
         </div>
         <CampusArtwork />
       </div>
@@ -36,8 +37,8 @@ export function Hero() {
             </div>
             <div>
               <span className={styles.eyebrow}>Стипендия DSU</span>
-              <strong className={styles.scholarship}><small>до </small>€7 557<small>/год</small></strong>
-              <p>Размер зависит от города и дохода семьи. Получение стипендии не гарантируется.</p>
+              <strong className={styles.scholarship}>По региону</strong>
+              <p>Сумма, справки и сроки — по конкурсу твоего года. Жильё и денежная выплата не гарантированы.</p>
             </div>
           </div>
           <ol className={styles.route} aria-label="Этапы поступления">

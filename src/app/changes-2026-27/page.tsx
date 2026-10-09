@@ -9,9 +9,9 @@ import { ChangesExplorer } from "@/components/changes/ChangesExplorer";
    навигации, а не по строке адреса. */
 export const metadata: Metadata = {
   alternates: { canonical: "/changes-2026-27" },
-  title: "Поступление в Италию в 2026/27: новые правила, виза, CEnT-S и медицина",
+  title: "Из Казахстана в Италию: правила 2026/27 и 2027/28",
   description:
-    "Что изменилось для иностранных абитуриентов в Италии в 2026/27: финансовое подтверждение для визы, CIMEA и DoV, Universitaly, CEnT-S, медицина, IMAT и стипендии.",
+    "Проверено 9 октября 2026: аттестат Казахстана, CIMEA/ARDI/DoV, VFS, виза D, CEnT-S, региональные DSU и поступление 2027/28.",
 };
 
 export default function ChangesPage() {

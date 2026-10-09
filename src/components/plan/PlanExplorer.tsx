@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { WizAnswers } from "@/data/wizard";
-import { buildPlan, situationFromAnswers, type Plan } from "@/lib/planBuilder";
+import { WIZ, type WizAnswers } from "@/data/wizard";
+import { buildPlan, type Plan } from "@/lib/planBuilder";
 import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
@@ -16,8 +16,7 @@ export function PlanExplorer() {
   const [plan, setPlan] = useState<Plan | null>(null);
 
   function handleDone(answers: WizAnswers) {
-    const situation = situationFromAnswers(answers);
-    setPlan(buildPlan(situation));
+    setPlan(buildPlan(answers));
   }
 
   return (
@@ -31,9 +30,9 @@ export function PlanExplorer() {
           </AppleHeading>
         </div>
         <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">
-          Своими словами: класс и школа, оценки, бюджет семьи, куда мечтаешь.
-          ИИ построит план — что считать, какие документы собирать и в каком
-          порядке — и проверит каждый документ на типовые ошибки.
+          Выбери образование, год поступления и свою ситуацию. Получишь
+          маршрут с источниками, нужными документами и вопросами к вузу.
+          Проверку файла можно пройти отдельно.
         </p>
         <nav className={styles.taskLinks} aria-label="Бесплатные инструменты">
           <a href="#questionnaire">Составить план</a>
@@ -46,7 +45,7 @@ export function PlanExplorer() {
           <div id="questionnaire" className={styles.anchorTarget}>
             <div className={styles.toolHeading}>
               <p>Твой план поступления</p>
-              <span>6 вопросов · бесплатно</span>
+              <span>{WIZ.length} вопросов · бесплатно</span>
             </div>
             {plan ? (
               <PlanResult plan={plan} onReset={() => setPlan(null)} />

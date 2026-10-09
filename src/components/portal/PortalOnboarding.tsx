@@ -7,7 +7,7 @@ import styles from "./portal.module.css";
 
 const EDUCATION = [
   { value: "11 классов", title: "11 классов", note: "обычная школа" },
-  { value: "НИШ / 12 лет", title: "12 лет обучения", note: "НИШ, БИЛ или международная программа" },
+  { value: "НИШ / 12 лет", title: "NIS Grade 12", note: "для IB/A-levels и колледжа сначала уточни маршрут в гайде" },
   { value: "Студент вуза КЗ", title: "Уже учусь в вузе Казахстана", note: "есть закрытый или текущий курс" },
   { value: "Бакалавр", title: "Есть бакалавриат", note: "планирую магистратуру" },
 ] as const;
@@ -224,13 +224,13 @@ export function PortalOnboarding({
               <button type="button" className={styles.pathChoice} onClick={() => savePath("university_kz")} disabled={busy}>
                 <span className={styles.pathChoiceEyebrow}>Вариант 1</span>
                 <strong>Год в вузе Казахстана</strong>
-                <p>Поступить в местный вуз, закрыть первый курс и использовать его как 12-й год образования.</p>
+                <p>Завершить первый курс со всеми нужными экзаменами и согласовать подтверждение с выбранным итальянским вузом.</p>
                 <small>Обычно дешевле · примерно 1 учебный год</small>
               </button>
               <button type="button" className={styles.pathChoice} onClick={() => savePath("foundation")} disabled={busy}>
                 <span className={styles.pathChoiceEyebrow}>Вариант 2</span>
                 <strong>Foundation year</strong>
-                <p>Пройти подготовительный год, который признаётся как дополнительный академический год.</p>
+                <p>До оплаты подтвердить, что выбранный вуз принимает этот Foundation. Курс не гарантирует место и не заменяет аттестат.</p>
                 <small>Нужно выбирать программу заранее · примерно 1 учебный год</small>
               </button>
             </div>

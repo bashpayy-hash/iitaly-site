@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
+import { SourceRefs } from "@/components/SourceRefs";
+import { ADMISSION_SOURCES } from "@/data/admissions";
 import {
   VG_PER_YEAR,
-  VG_RATE,
   VISA_DOCS,
   VISA_KEY_FACTS,
   VISA_REJECT_REASONS,
@@ -42,11 +43,11 @@ export function VisaSection() {
     <div>
       <p className="text-apple-body-sm text-cloud-white">
         <span className="text-cloud-meta">Где подавать: </span>
-        <b>BLS в Алматы, Астане, Атырау, Оскемене, Шымкенте</b>
+        <a href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Официальный VFS для Италии в Казахстане</a>
       </p>
       <p className="mt-2 text-apple-body-sm text-cloud-body">
-        Три вещи решают всё остальное. Если запомнить только их, уже не
-        пропадёшь — детали ниже раскрываются по нажатию.
+        Университет, консульство и стипендиальный орган проверяют разные
+        условия. Начни с своего учебного года и официального чек-листа.
       </p>
 
       <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
@@ -75,7 +76,7 @@ export function VisaSection() {
           </div>
         </VisaAccordion>
 
-        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Калькулятор финансовой гарантии</b>}>
+        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Годовой минимум и пересчёт в тенге</b>}>
           <GuaranteeCalculator />
         </VisaAccordion>
 
@@ -83,7 +84,7 @@ export function VisaSection() {
           <VisaChecklist />
         </VisaAccordion>
 
-        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Частые причины отказа</b>}>
+        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Что проверить перед подачей</b>}>
           <div className="space-y-2">
             {VISA_REJECT_REASONS.map((r, i) => (
               <div key={i} className="border border-warn bg-warn/10 px-3 py-2.5 text-apple-body-sm text-cloud-white">
@@ -93,50 +94,26 @@ export function VisaSection() {
           </div>
         </VisaAccordion>
       </div>
+      <div className="text-cloud-meta"><SourceRefs ids={["visa", "procedure", "visaWhere", "visaFees", "visaTiming"]} /></div>
     </div>
   );
 }
 
 function GuaranteeCalculator() {
-  const [years, setYears] = useState<1 | 2 | 3>(3);
-  const eur = VG_PER_YEAR * years;
-  const kzt = ((eur * VG_RATE) / 1e6).toFixed(1).replace(".", ",");
-
+  const [rate, setRate] = useState("");
+  const numericRate = Number(rate.replace(",", "."));
+  const validRate = Number.isFinite(numericRate) && numericRate > 0;
+  const tenge = validRate ? Math.ceil(VG_PER_YEAR * numericRate).toLocaleString("ru-RU") + " ₸" : "Укажи курс";
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="text-apple-body-sm font-semibold text-cloud-white">Срок обучения:</span>
-        <div className="flex gap-2" role="group" aria-label="Срок обучения">
-          {([1, 2, 3] as const).map((y) => (
-            <button
-              key={y}
-              type="button"
-              onClick={() => setYears(y)}
-              aria-pressed={years === y}
-              className={`rounded-apple-pill border px-3.5 py-1.5 text-apple-caption font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ${
-                years === y ? "border-crimson bg-crimson text-white" : "border-white/20  text-cloud-white"
-              }`}
-            >
-              {y} {y === 1 ? "год" : "года"}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="border border-white/15 px-3 py-4 text-center">
-          <p className="font-apple-display text-apple-heading-sm font-semibold text-cloud-white">€ {Math.round(eur).toLocaleString("ru-RU")}</p>
-          <p className="mt-1 text-apple-caption text-cloud-meta">минимум на счёте</p>
-        </div>
-        <div className="border border-white/15 px-3 py-4 text-center">
-          <p className="font-apple-display text-apple-heading-sm font-semibold text-cloud-white">≈ {kzt} млн ₸</p>
-          <p className="mt-1 text-apple-caption text-cloud-meta">по курсу ~534 ₸/€</p>
-        </div>
-      </div>
-      <p className="mt-3 text-apple-caption text-cloud-meta">
-        {VISA_GUARANTEE_LABEL} за каждый год. Выписки за 3 месяца с QR-кодом; одного Kaspi
-        недостаточно — консульство хочет видеть банковские выписки
-        установленного вида. Подойдёт счёт родителей со спонсорским письмом.
-      </p>
+      <p className="font-apple-display text-apple-heading-sm font-semibold text-cloud-white">{VISA_GUARANTEE_LABEL}</p>
+      <p className="mt-2 text-apple-body-sm text-cloud-body">Годовой минимум для 2026/27–2027/28. Он не умножается автоматически на все годы программы при первой подаче. Консульство также оценивает устойчивость финансирования.</p>
+      <label className="mt-4 block text-apple-body-sm text-cloud-white">
+        Твой курс банка: тенге за €1
+        <input inputMode="decimal" type="text" value={rate} onChange={(event) => setRate(event.target.value)} placeholder="Введи актуальный курс" className="mt-2 block min-h-11 w-full rounded-apple-card border border-white/20 bg-frost px-3 text-cloud-white" />
+      </label>
+      <p aria-live="polite" className="mt-3 text-apple-subheading font-semibold text-cloud-white">{tenge}</p>
+      <p className="mt-3 text-apple-caption text-cloud-meta">Пересчёт по введённому курсу, не банковская котировка. Обучение, жильё, депозит, поездка и оформление требуют отдельного бюджета. Выписки — с движением за шесть месяцев по чек-листу Астаны.</p>
     </div>
   );
 }
@@ -166,6 +143,7 @@ function VisaChecklist() {
           style={{ transform: `scaleX(${done.size / VISA_DOCS.length})` }}
         />
       </div>
+      <p className="mt-3 text-apple-caption text-cloud-meta">Отметки помогают собрать пакет и не являются решением о готовности к визе. Последний пункт применяется только к несовершеннолетним.</p>
       <div className="mt-3 space-y-2">
         {VISA_DOCS.map((d, i) => {
           const isDone = done.has(i);

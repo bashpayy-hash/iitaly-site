@@ -26,10 +26,11 @@ export function PlanSection({
         <div>
           <p className={styles.kicker}>Весь маршрут</p>
           <h2>План поступления</h2>
-          <p>Открывай текущий этап. Остальные остаются на виду, но не требуют внимания заранее.</p>
+          <p>Открывай текущий этап. Уточняй сроки по своему набору и конкурсу.</p>
         </div>
       </div>
 
+      <p className="mb-5 text-sm leading-relaxed">Правила документов и DSU обновлены 9 октября 2026. Сохранённый маршрут сверяй с <a href="/changes-2026-27" className="underline underline-offset-4">актуальной справкой</a>; новый <a href="/plan" className="underline underline-offset-4">опрос по образованию, возрасту и региону</a> доступен отдельно.</p>
       <div className={styles.planStages}>
         {data.roadmap.map((stage) => {
           const total = stage.tasks.length;

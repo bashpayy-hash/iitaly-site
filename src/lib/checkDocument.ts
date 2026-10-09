@@ -1,3 +1,4 @@
+import { ADMISSIONS_CONTEXT } from "@/data/admissionsContext";
 import { BACKEND_URL } from "./backend";
 import type { DocPayload } from "./docPayload";
 
@@ -57,7 +58,7 @@ export async function checkDocument(payload: DocPayload, hint?: string): Promise
   }
 
   const body: Record<string, unknown> = { fileName: payload.fileName || "" };
-  if (hint) body.hint = hint;
+  body.hint = [hint, ADMISSIONS_CONTEXT, "Не считай документ ошибочным без применимого учебного года, вуза/региона и подтверждённого требования; запроси недостающий контекст."].filter(Boolean).join("\n\n");
   if (payload.kind === "pdf") body.pdf = payload.base64;
   else if (payload.kind === "text") body.text = payload.text;
   else {

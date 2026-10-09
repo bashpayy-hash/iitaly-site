@@ -12,62 +12,19 @@ import Link from "next/link";
 import { HeadingPin } from "@/components/motion/HeadingPin";
 import styles from "@/components/marketing/marketing.module.css";
 
-/**
- * Справочник как index + активная глава, а не пять одинаковых больших
- * карточек: на десктопе слева компактный sticky-индекс 01–08, справа
- * содержимое выбранной главы; на мобильном — обычный доступный accordion
- * (нативный <details>, не общий Accordion.tsx — тот же используется в
- * личном кабинете и не входит в этот проход, см. отчёт по редизайну).
- *
- * Порядок глав — реальная хронология процесса (не порядок объявления в
- * data/guides.ts): легализация документов → признание аттестата → перевод
- * → расчёт ISEEU → виза → уже в Италии.
- */
+/** Desktop chapter index and native mobile disclosures share stable deep links. */
 type Chapter =
   | { kind: "guide"; id: string; title: string; teaser: string; index: number }
   | { kind: "visa"; id: string; title: string; teaser: string };
 
-const guideByTitle = (title: string) => GUIDES.find((g) => g.title === title)!;
-const guideIndex = (title: string) => GUIDES.findIndex((g) => g.title === title);
-
+const guideChapters: Chapter[] = GUIDES.map((guide, index) => ({
+  kind: "guide", id: guide.id, title: guide.title, teaser: guide.teaser, index,
+}));
+const visaIndex = guideChapters.findIndex((chapter) => chapter.id === "minors");
 const CHAPTERS: Chapter[] = [
-  { kind: "guide", id: "apostille", title: "Апостиль", teaser: guideByTitle("Апостиль").teaser, index: guideIndex("Апостиль") },
-  { kind: "guide", id: "con", title: "ЦОН", teaser: guideByTitle("ЦОН").teaser, index: guideIndex("ЦОН") },
-  { kind: "guide", id: "cimea", title: "CIMEA", teaser: guideByTitle("CIMEA").teaser, index: guideIndex("CIMEA") },
-  {
-    kind: "guide",
-    id: "translation",
-    title: "Присяжный перевод",
-    teaser: guideByTitle("Присяжный перевод").teaser,
-    index: guideIndex("Присяжный перевод"),
-  },
-  {
-    kind: "guide",
-    id: "iseeu",
-    title: "ISEEU parificato",
-    teaser: guideByTitle("ISEEU parificato").teaser,
-    index: guideIndex("ISEEU parificato"),
-  },
-  {
-    kind: "visa",
-    id: "visa",
-    title: "Виза D",
-    teaser: "Национальная студенческая виза через BLS: гарантия, слоты, сроки.",
-  },
-  {
-    kind: "guide",
-    id: "permesso",
-    title: "Permesso di soggiorno",
-    teaser: guideByTitle("Permesso di soggiorno").teaser,
-    index: guideIndex("Permesso di soggiorno"),
-  },
-  {
-    kind: "guide",
-    id: "codice",
-    title: "Codice fiscale",
-    teaser: guideByTitle("Codice fiscale").teaser,
-    index: guideIndex("Codice fiscale"),
-  },
+  ...guideChapters.slice(0, visaIndex),
+  { kind: "visa", id: "visa", title: "Виза D", teaser: "Подача через VFS: средства, документы и сроки." },
+  ...guideChapters.slice(visaIndex),
 ];
 
 function ChapterBody({ chapter }: { chapter: Chapter }) {
@@ -90,7 +47,7 @@ function ChapterBody({ chapter }: { chapter: Chapter }) {
               Открыть тренажёр Modulo 1
             </Link>
             <p className="mt-2 text-apple-caption text-cloud-meta">
-              Rilascio и rinnovo · поля по секциям · без ввода личных данных.
+              Rilascio и rinnovo · учебное заполнение · сохранение черновика только по твоему действию в браузере.
             </p>
           </div>
         </>
@@ -158,7 +115,7 @@ export function GuidesExplorer() {
       <section id="guide-topics" className={`${styles.anchorTarget} ${styles.guideTopics} px-5 py-10 sm:py-14`}>
         {/* Десктоп: sticky-индекс + активная глава. */}
         <div className="mx-auto hidden max-w-[1100px] gap-12 lg:grid lg:grid-cols-[0.85fr_1.15fr]">
-          <nav aria-label="Главы справочника" className="lg:sticky lg:top-24 lg:h-fit">
+          <nav aria-label="Главы справочника" className="lg:sticky lg:top-24 lg:max-h-[75vh] lg:overflow-y-auto lg:h-fit">
             <ol className="space-y-0.5 border-t border-white/15">
               {CHAPTERS.map((c, i) => {
                 const isActive = c.id === activeId;
@@ -218,8 +175,8 @@ export function GuidesExplorer() {
           <div>
             <b className="block">Запутался в порядке шагов?</b>
             <span className="text-apple-body-sm text-cloud-meta">
-              Опиши свою ситуацию — ИИ соберёт всё в персональный план и
-              проверит документы.
+              Ответь на вопросы — получишь маршрут по своей ситуации и
+              сможешь отдельно проверить документы.
             </span>
           </div>
           <AppleButton type="button" variant="filled" onClick={() => router.push("/plan")} className="shrink-0">
