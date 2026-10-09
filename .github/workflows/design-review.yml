@@ -12,6 +12,9 @@ on:
       - "src/components/apple/**"
       - "src/components/guides/**"
       - "src/components/plan/**"
+      - "src/lib/usePlanDraft.ts"
+      - "src/components/Header.tsx"
+      - "src/components/Footer.tsx"
       - "src/components/portal/PortalExplorer.tsx"
       - "src/components/portal/HelpSection.tsx"
       - "src/components/portal/PortalLogin.tsx"
@@ -67,12 +70,14 @@ jobs:
       - name: Install isolated browser tools (no lockfile changes)
         id: browser-tools
         run: |
-          npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0
+          npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0 axe-core@4.10.3
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review paper transfer, explicit acknowledgements and date boundaries
         run: node scripts/design-permesso-transfer-review.mjs
       - name: Review admissions quiz, source links and annual visa calculator
         run: node scripts/admissions-browser-review.mjs
+      - name: Review student journey, error recovery and accessibility
+        run: node scripts/design-ux-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
       - name: Review original and editable Permesso, exact geometry and local draft

@@ -1,0 +1,319 @@
+{
+  "date": "2026-10-09",
+  "baselineCommit": "97ab9d7bd89bbc80178b8c7602859539e86fa6b1",
+  "engine": "axe-core 4.10.3 in Chromium (Playwright 1.56.1)",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21aa"
+  ],
+  "scope": "Initial public-page states at 1440 and 390 CSS px; reduced motion; isolated external network. Repeated shared elements count on each page.",
+  "before": {
+    "elementFindings": 51,
+    "runtimeErrors": [],
+    "checks": [
+      {
+        "path": "/",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 2
+          }
+        ]
+      },
+      {
+        "path": "/plan",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/guides",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 2
+          }
+        ]
+      },
+      {
+        "path": "/universities",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 8
+          },
+          {
+            "id": "nested-interactive",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/portal",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/prices",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/changes-2026-27",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 8
+          }
+        ]
+      },
+      {
+        "path": "/guides/permesso-modulo-1",
+        "width": 1440,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 4
+          },
+          {
+            "id": "select-name",
+            "impact": "critical",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/plan",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/guides",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/universities",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 8
+          },
+          {
+            "id": "nested-interactive",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/portal",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/prices",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 1
+          }
+        ]
+      },
+      {
+        "path": "/changes-2026-27",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "elements": 8
+          }
+        ]
+      },
+      {
+        "path": "/guides/permesso-modulo-1",
+        "width": 390,
+        "overflow": false,
+        "violations": [
+          {
+            "id": "scrollable-region-focusable",
+            "impact": "serious",
+            "elements": 1
+          },
+          {
+            "id": "select-name",
+            "impact": "critical",
+            "elements": 1
+          }
+        ]
+      }
+    ]
+  },
+  "after": {
+    "elementFindings": 0,
+    "runtimeErrors": [],
+    "checks": [
+      {
+        "path": "/",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/plan",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/guides",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/universities",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/portal",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/prices",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/changes-2026-27",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/guides/permesso-modulo-1",
+        "width": 1440,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/plan",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/guides",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/universities",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/portal",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/prices",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/changes-2026-27",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      },
+      {
+        "path": "/guides/permesso-modulo-1",
+        "width": 390,
+        "overflow": false,
+        "violations": []
+      }
+    ]
+  }
+}

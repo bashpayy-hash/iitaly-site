@@ -7,6 +7,7 @@
   --i-signal: #fc1c46;
   --i-action: #d7133f;
   --i-link: #b91134;
+  --color-crimson: #d7133f;
   --text-apple-body-sm: 16px;
   --text-apple-body-sm--line-height: 1.55;
   --text-apple-caption: 13px;
@@ -81,7 +82,7 @@
 .heroDescription { max-width: 540px; margin: 24px 0 0; color: #51515a; font-size: 20px; line-height: 1.5; letter-spacing: -.025em; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; margin-top: 28px; }
 .heroNote { margin-top: 20px; max-width: 500px; color: #666670; font-size: 13px; line-height: 1.6; }
-.stage { position: relative; padding: 44px 24px 0; overflow: clip; }
+.stage { position: relative; padding: 44px 24px 0; overflow: clip; background: #102017; }
 .stageLabel { display: flex; align-items: center; justify-content: space-between; max-width: 980px; margin: 0 auto 24px; color: #fff; font-size: 12px; letter-spacing: .03em; }
 .stageLabel > span:last-child { color: #d6d6e0; }
 .journey { position: relative; max-width: 1100px; margin: auto; padding: 28px 36px 28px; border: 1px solid rgba(255,255,255,.65); border-radius: 8px 8px 0 0; background: #fafafd; box-shadow: 0 20px 80px -30px rgba(0,0,0,.28); }

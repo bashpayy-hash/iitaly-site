@@ -66,7 +66,7 @@ export function Header() {
             className={`flex min-h-11 cursor-pointer list-none items-center gap-2 text-[12px] font-medium marker:content-none [&::-webkit-details-marker]:hidden ${brand}`}
           >
             Меню
-            <span aria-hidden className="text-base transition-transform group-open:rotate-45">＋</span>
+            <span aria-hidden className="text-base transition-transform group-open:rotate-45">+</span>
           </summary>
           <nav
             aria-label="Мобильная навигация"

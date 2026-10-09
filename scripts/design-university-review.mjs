@@ -37,7 +37,7 @@ async function visit(page,port=4183) {
 }
 const mapName='Карта Италии с университетами по городам';
 async function pick(page,label) {
-  const pin=page.getByRole('img',{name:mapName}).getByRole('button',{name:label,exact:true});
+  const pin=page.locator('svg[aria-label="'+mapName+'"]').getByRole('button',{name:label,exact:true});
   await pin.focus();await pin.press('Enter');
   await page.waitForFunction(label=>[...document.querySelectorAll('svg [role="button"]')].some(el=>el.getAttribute('aria-label')===label&&el.getAttribute('aria-pressed')==='true'),label);
 }
@@ -62,7 +62,7 @@ try {
   const ctx=await context(1440),head=await ctx.newPage(),base=await ctx.newPage();
   activePage=head;
   await visit(head);await visit(base,4184);
-  const labels=await base.getByRole('img',{name:mapName}).locator('[role="button"]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label')));
+  const labels=await base.locator('svg[aria-label="'+mapName+'"]').locator('[role="button"]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label')));
   assert.equal(labels.length,30);
   for(const label of labels) {
     await pick(base,label);await pick(head,label);
