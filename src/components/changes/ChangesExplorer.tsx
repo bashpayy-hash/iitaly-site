@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SourceRefs } from "@/components/SourceRefs";
 import {
   ADMISSION_ROUTES,
   CHANGES,
@@ -52,10 +53,10 @@ export function ChangesExplorer() {
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">
-            Правила приёма · 2026/27
+            Казахстан → Италия · 2026/27 и 2027/28
           </p>
           <h1 className="mt-2 font-display text-[8.5vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
-            Поступление в Италию в 2026/27: что изменилось
+            Поступление в Италию: актуальные правила
           </h1>
 
           {/* Дата проверки — не декор: по ней читатель решает, можно ли
@@ -69,13 +70,10 @@ export function ChangesExplorer() {
           </p>
 
           <p className="mt-4 max-w-2xl text-base text-ink-soft sm:text-lg">
-            В 2026/27 поступление в Италию заметно изменилось: выросла сумма
-            финансового обеспечения для студенческой визы, Universitaly
-            ограничил число подтверждаемых заявок сверх квоты, для ряда
-            англоязычных программ появился CEnT-S, а государственная медицина
-            теперь идёт по двум разным маршрутам — через semestre aperto на
-            итальянском или IMAT на английском. Ниже — только подтверждённые
-            правила и даты.
+            Аттестат, документы, DSU, виза и первые недели в Италии.
+            Здесь собраны проверенные изменения для Казахстана и уже
+            опубликованные условия 2027/28. У каждого правила — источник
+            и область применения.
           </p>
 
           <p
@@ -116,7 +114,7 @@ export function ChangesExplorer() {
       <section className="border-t-2 border-ink bg-paper px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
           <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
-            Восемь изменений
+            Что учитывать при подаче
           </h2>
           <ol className="mt-8 flex flex-col gap-10">
             {CHANGES.map((c) => (
@@ -179,6 +177,7 @@ export function ChangesExplorer() {
                     </p>
                   </>
                 )}
+                <SourceRefs ids={c.sources} />
               </Reveal>
             ))}
           </ol>

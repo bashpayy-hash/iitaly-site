@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { WIZ, type WizAnswers } from "@/data/wizard";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
-import { buildPlan, situationFromAnswers } from "@/lib/planBuilder";
+import { buildPlan } from "@/lib/planBuilder";
 import { AppleButton } from "@/components/apple/Button";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
@@ -42,7 +42,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   // ДО запроса номера, чтобы у пользователя уже было что-то ценное на руках,
   // прежде чем решать, оставлять контакт или нет.
   const preview = useMemo(
-    () => (finished ? buildPlan(situationFromAnswers(answers)) : null),
+    () => (finished ? buildPlan(answers) : null),
     [finished, answers],
   );
 

@@ -37,7 +37,7 @@ export const PLATES: Plate[] = [
     src: "/sketchbook/rome.webp",
     title: "Колизей",
     place: "Рим",
-    note: "Лацио, DiSCo — самая высокая стипендия в базе, до €7 557 в год.",
+    note: "Лацио, DiSCo — условия, суммы и жильё по конкурсу твоего учебного года.",
   },
   {
     src: "/sketchbook/venice.webp",

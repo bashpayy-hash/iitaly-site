@@ -3,8 +3,8 @@ import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { DATA_SNAPSHOT, OFFICIAL_SOURCES } from "@/data/sources";
 
 const METRICS = [
-  { value: "до €7 557", label: "денежной части DSU Lazio при низком ISEE; питание учитывается отдельно" },
-  { value: "43", label: "университета в базе IITALY с требованиями и дедлайнами" },
+  { value: "DSU", label: "условия и сумма по региональному конкурсу твоего года" },
+  { value: "43", label: "университета для сравнения; условия программы нужно сверить" },
   { value: "30", label: "городов на интерактивной карте" },
   { value: priceLabel(PRICE_MAIN), label: "полный цикл поступления, разово" },
 ];
@@ -17,13 +17,13 @@ export function Stats() {
         {METRICS.map((m) => <div key={m.label} className={styles.metric}><dt className={styles.metricValue}>{m.value}</dt><dd className={styles.metricLabel}>{m.label}</dd></div>)}
       </dl>
       <p className={styles.sourceNote}>
-        Источники 2026/27:{" "}
-        <a href={OFFICIAL_SOURCES.lazioDsu.href} target="_blank" rel="noopener noreferrer">DiSCo Lazio</a>
+        Источники правил:{" "}
+        <a href={OFFICIAL_SOURCES.padovaDsu.href} target="_blank" rel="noopener noreferrer">Padova DSU 2026/27</a>
         {" · "}
         <a href={OFFICIAL_SOURCES.universitalyInternational.href} target="_blank" rel="noopener noreferrer">Universitaly</a>
         {" · "}
         <a href={OFFICIAL_SOURCES.cimea.href} target="_blank" rel="noopener noreferrer">CIMEA</a>
-        {". "}База вузов IITALY обновлена {DATA_SNAPSHOT}. Ответы ИИ могут содержать ошибки.
+        {". "}Исходный каталог вузов — {DATA_SNAPSHOT}; это не дата проверки всех программ на 2027/28. Ответы ИИ могут содержать ошибки.
       </p>
     </section>
   );

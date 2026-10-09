@@ -109,7 +109,7 @@ try {
     page.on('pageerror', e => errors.push(e.message));
 
     await page.goto(origin + '/plan', { waitUntil: 'networkidle' });
-    const choices = ['11 классов', '4,7 и выше', 'Бакалавриат', 'Без стипендии будет сложно', 'Экономика, бизнес', 'Есть IELTS или TOEFL'];
+    const choices = ['Осенью 2027', '11 классов', '4,7 и выше', 'Бакалавриат', 'Без стипендии будет сложно', 'Экономика, бизнес', 'Есть IELTS или TOEFL', 'Ещё не будет 18', 'В Казахстане', 'Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({ hasText: choice }).click();
     await page.getByRole('button', { name: 'Пропустить и посмотреть план', exact: true }).click();
     await page.getByRole('heading', { name: 'Напоминания на телефоне', exact: true }).waitFor();

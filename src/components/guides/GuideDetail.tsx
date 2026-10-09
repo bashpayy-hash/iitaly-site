@@ -1,3 +1,4 @@
+import { SourceRefs } from "@/components/SourceRefs";
 import type { GuideCard as GuideCardData } from "@/data/guides";
 import { AppleBody } from "@/components/apple/Typography";
 
@@ -25,6 +26,7 @@ export function GuideDetail({ guide }: { guide: GuideCardData }) {
       {guide.warn && (
         <div className="mt-4 border border-warn bg-warn/10 px-4 py-3 text-apple-body-sm text-cloud-white">{guide.warn}</div>
       )}
+      <div className="text-cloud-meta"><SourceRefs ids={guide.sources} /></div>
     </div>
   );
 }

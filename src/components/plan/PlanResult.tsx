@@ -1,5 +1,6 @@
 "use client";
 
+import { SourceRefs } from "@/components/SourceRefs";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
 import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
@@ -17,8 +18,8 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
             Персональный план готов
           </p>
           <p className="mt-1 text-apple-body-sm text-cloud-body">
-            План собран по твоим ответам. Ниже — основные шаги и список
-            документов для поступления.
+            План собран по твоим ответам. Набор: {plan.intake}.
+            Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
           </p>
         </div>
       </div>
@@ -33,6 +34,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
             <div>
               <b className="text-apple-body-sm text-cloud-white">{s.t}</b>
               <p className="mt-1 text-apple-body-sm text-cloud-body">{s.p}</p>
+              {s.sources && <details className="mt-2 text-cloud-meta"><summary className="cursor-pointer min-h-11 py-2 text-sm">Источники и применимость</summary><SourceRefs ids={s.sources} /></details>}
             </div>
           </div>
         ))}
@@ -51,7 +53,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       </div>
       <p className="mt-3 text-apple-caption text-cloud-meta">
         Это чек-лист, а не результат проверки файла. Чтобы проверить настоящий
-        документ, загрузи его в блок «Проверка документа» выше — там работает
+        документ, загрузи его в блок «Проверка документа» ниже — там работает
         реальный анализ загруженного файла.
       </p>
 

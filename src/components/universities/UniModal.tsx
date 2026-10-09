@@ -46,6 +46,7 @@ export function UniModal({
               </div>
             ))}
           </dl>
+          <p className="mt-4 text-sm leading-relaxed">Стоимость и жизнь — ориентиры исходного каталога, не оферта на 2027/28. Тест, срок и стипендию сверяй с bando конкретной программы. <a href="/changes-2026-27" className="underline underline-offset-4">Актуальные правила и источники</a>.</p>
           <div className="mt-5 flex flex-wrap gap-3">
             <AppleButton
               type="button"

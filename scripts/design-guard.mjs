@@ -49,9 +49,22 @@ const approvedReminderUiPaths = new Set([
   'src/lib/socialImage.tsx',
 ]);
 const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path)), [], 'Protected source or contract changed.');
+// Explicit user request: implement the researched Kazakhstan admissions update.
+// These paths carry copy, eligibility rules and context in existing API fields.
+const approvedAdmissionsPaths = new Set([
+  'src/data/admissions.ts', 'src/data/admissionsContext.ts',
+  'src/data/guides.ts', 'src/data/wizard.ts', 'src/data/changes2026.ts',
+  'src/data/chatDemo.ts', 'src/data/italy.ts', 'src/data/sketchbook.ts',
+  'src/lib/planBuilder.ts', 'src/lib/chat.ts', 'src/lib/checkDocument.ts',
+]);
+assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 667;/);
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');
-assert.equal((wizard.match(/    id: /g) || []).length, 6, 'The free quiz must have six questions.');
-console.log('Approved launch-polish paths passed; ItalyMap, university data, comparison model, global CSS and dependencies unchanged.');
+assert.equal((wizard.match(/    id: /g) || []).length, 10, 'The quiz includes intake, age, residence and DSU scope.');
+const baseItaly = execFileSync('git', ['show', `${base}:src/data/italy.ts`], {encoding:'utf8'});
+const headItaly = readFileSync('src/data/italy.ts', 'utf8');
+assert.equal(headItaly.match(/export const ITALY_PATH = .*;/)?.[0], baseItaly.match(/export const ITALY_PATH = .*;/)?.[0], 'Map geometry is unchanged.');
+const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/region: "[^"]*", /g, '');
+assert.equal(cityGeometry(headItaly), cityGeometry(baseItaly), 'City identities, coordinates and styles are unchanged.');
+console.log('Approved admissions paths passed; map component, comparison model, global CSS and dependencies remain protected.');

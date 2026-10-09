@@ -110,13 +110,15 @@ try {
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
     await settle(page, 4176);
-    const baseHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
+    const baseHeroHeading = await page.locator('[data-section="hero"] h1').innerText();
     const beforeLayout = await heroLayout(page);
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
     await settle(page, 4175);
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
     const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
-    assert.equal(headHeroText, baseHeroText, `Hero copy unchanged at ${width}`);
+    assert.equal(await page.locator('[data-section="hero"] h1').innerText(), baseHeroHeading, `Hero heading preserved at ${width}`);
+    assert.match(headHeroText, /По региону/);
+    assert.doesNotMatch(headHeroText, /7[ \u00a0]?557/);
     assert.match(headText, /После подтверждения оплаты мы активируем личный кабинет/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
@@ -175,7 +177,7 @@ try {
       }
       await page.locator('[data-italian-accent="lemon"]').locator('..').screenshot({ path: resolve(output, `pricing-${width}.png`), animations: 'disabled' });
     }
-    results.push({ test: `${width}px: preserved hero copy, local campus art, no overflow or illustration overlap`, passed: true, visibleAccents: visible });
+    results.push({ test: `${width}px: reviewed hero copy, local campus art, no overflow or illustration overlap`, passed: true, visibleAccents: visible });
 
     // Foreground imagery is always confined to an image slot or an empty margin.
     async function inspectArtwork() {
@@ -204,7 +206,14 @@ try {
       const beforeText = await textInventory(page);
       await settle(page, 4175, route);
       const afterText = await textInventory(page);
-      assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
+      if (route === '/prices') assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
+      else if (route === '/plan') {
+        assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
+        assert(await page.getByRole('heading', {name: 'Когда хочешь начать учёбу?'}).isVisible());
+      } else {
+        assert.match(await page.locator('main').innerText(), /Аттестат и 12 лет/);
+        assert.match(await page.locator('main').innerText(), /2026/);
+      }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${route} overflow at ${width}`);
       await inspectArtwork();
       assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).filter), 'none', 'Blur never affects the heading');
@@ -223,8 +232,8 @@ try {
       }
       if (route === '/guides') {
         if (width >= 1024) {
-          await page.getByRole('navigation', {name:'Главы справочника'}).getByRole('button', {name:'CIMEA'}).click();
-          await page.getByText('03 · CIMEA', {exact:true}).waitFor({state:'visible'});
+          await page.getByRole('navigation', {name:'Главы справочника'}).getByRole('button', {name:/CIMEA/}).click();
+          await page.locator('#guide-chapter-content').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
         } else {
           const detail = page.locator('main details').filter({has:page.locator('summary').filter({hasText:'CIMEA'})}).first();
           await detail.locator('summary').click();

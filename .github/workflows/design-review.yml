@@ -71,6 +71,8 @@ jobs:
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review paper transfer, explicit acknowledgements and date boundaries
         run: node scripts/design-permesso-transfer-review.mjs
+      - name: Review admissions quiz, source links and annual visa calculator
+        run: node scripts/admissions-browser-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
       - name: Review original and editable Permesso, exact geometry and local draft
@@ -79,7 +81,7 @@ jobs:
         run: node scripts/design-portal-login-review.mjs
       - name: Review desktop, mobile, quiz, checkout and protected route
         run: node scripts/design-review.mjs
-      - name: Review local illustrations, unchanged copy and hero
+      - name: Review local illustrations, approved admissions copy and hero
         if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
         run: node scripts/design-accents-review.mjs
       - name: Review expanded comparisons and selected artwork
