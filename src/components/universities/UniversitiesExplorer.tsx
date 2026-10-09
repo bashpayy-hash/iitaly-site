@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { UNIS, type CityId, type University } from "@/data/italy";
+import { CITIES, UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
 import { Filters, type TypeFilter } from "./Filters";
@@ -70,6 +70,13 @@ export function UniversitiesExplorer() {
 
   const openUni = openUniId ? UNIS.find((u) => u.id === openUniId) ?? null : null;
 
+  function chooseCity(id: CityId | null) {
+    setActiveCity(id);
+    if (id && window.matchMedia("(max-width: 1023px)").matches) requestAnimationFrame(() => {
+      document.getElementById("selected-city")?.scrollIntoView({ block: "start", behavior: "instant" });
+    });
+  }
+
   function openUniModal(id: string) {
     setOpenUniId(id);
     track("university_opened", { id });
@@ -112,13 +119,21 @@ export function UniversitiesExplorer() {
             cities={filteredCities.size}
             filtered={filtersActive}
           />
+          <div className={ui.cityShortcut}>
+            <label htmlFor="city-shortcut">Сразу к городу</label>
+            <select id="city-shortcut" value={activeCity || ""} onChange={event => chooseCity((event.target.value || null) as CityId | null)}>
+              <option value="">Выбери из списка или на карте</option>
+              {Object.entries(CITIES).sort((a, b) => a[1].name.localeCompare(b[1].name, "ru")).map(([id, city]) => <option key={id} value={id}>{city.name}</option>)}
+            </select>
+            {filtersActive && <button type="button" className={ui.textButton} onClick={() => { setTypeFilter("all"); setEngOnly(false); }}>Сбросить фильтры</button>}
+          </div>
 
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
               <div className={ui.mapFrame} data-map-frame>
                 <ItalyMap
                   activeCity={activeCity}
-                  onSelectCity={(id) => setActiveCity(id)}
+                  onSelectCity={chooseCity}
                   matchedCities={matchedCities}
                 />
               </div>
@@ -152,7 +167,7 @@ export function UniversitiesExplorer() {
               </div>
             </div>
 
-            <div>
+            <div id="selected-city" className={ui.cityResult}>
               {activeCity ? (
                 <CityPanel
                   cityId={activeCity}
@@ -169,7 +184,7 @@ export function UniversitiesExplorer() {
                     Нажмите на любую точку на карте, чтобы увидеть университеты,
                     стипендии и факты о городе.
                   </p>
-                  <button type="button" onClick={() => setActiveCity("roma")} className={ui.primaryButton}>
+                  <button type="button" onClick={() => chooseCity("roma")} className={ui.primaryButton}>
                     Начать с Рима <span aria-hidden="true">→</span>
                   </button>
                   <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
@@ -193,7 +208,7 @@ export function UniversitiesExplorer() {
           /* Порядок важен. Сначала подсветка и выбор города — тогда панель
              города уже отрисована к моменту, когда закрывается лист. */
           setMatchedByQuiz(new Set([city]));
-          setActiveCity(city);
+          chooseCity(city);
           setMatchOpen(false);
           track("city_match_pick", { city });
         }}

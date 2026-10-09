@@ -149,3 +149,9 @@
   .heroArt, .emptyArt { display: none; }
   .filterButton[aria-pressed="true"] { background: Highlight; color: HighlightText; border-color: Highlight; }
 }
+.cityShortcut { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 20px 0 24px; }
+.cityShortcut label { font-size: 14px; font-weight: 600; }
+.cityShortcut select { min-height: 46px; max-width: 100%; min-width: 240px; border: 1px solid #d3d3d8; border-radius: 8px; padding: 10px 36px 10px 12px; background: #fff; color: #1d1d1f; font: inherit; font-size: 16px; }
+.cityShortcut select:focus-visible { outline: 2px solid #b91134; outline-offset: 4px; }
+.cityResult { scroll-margin-top: 88px; }
+@media (max-width: 639px) { .cityShortcut { align-items: stretch; gap: 8px; } .cityShortcut label, .cityShortcut select { width: 100%; } }

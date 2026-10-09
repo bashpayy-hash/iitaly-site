@@ -7,6 +7,7 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  'src/components/universities/ItalyMap.tsx',
   'src/components/PaperOverlayGate.tsx',
   'src/components/universities/UniversitiesExplorer.tsx',
   'src/components/universities/UniversityArtwork.tsx',
@@ -56,6 +57,8 @@ const approvedAdmissionsPaths = new Set([
   'src/data/guides.ts', 'src/data/wizard.ts', 'src/data/changes2026.ts',
   'src/data/chatDemo.ts', 'src/data/italy.ts', 'src/data/sketchbook.ts',
   'src/lib/planBuilder.ts', 'src/lib/chat.ts', 'src/lib/checkDocument.ts',
+  // User-authorized UX pass: a local questionnaire draft, with no API change.
+  'src/lib/usePlanDraft.ts',
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
@@ -67,4 +70,6 @@ const headItaly = readFileSync('src/data/italy.ts', 'utf8');
 assert.equal(headItaly.match(/export const ITALY_PATH = .*;/)?.[0], baseItaly.match(/export const ITALY_PATH = .*;/)?.[0], 'Map geometry is unchanged.');
 const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/region: "[^"]*", /g, '');
 assert.equal(cityGeometry(headItaly), cityGeometry(baseItaly), 'City identities, coordinates and styles are unchanged.');
+const baseMap = execFileSync('git', ['show', `${base}:src/components/universities/ItalyMap.tsx`], {encoding:'utf8'});
+assert.equal(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8'), baseMap.replace('role="img"', 'role="group"'), 'Only the accessible map role may change in this UX pass.');
 console.log('Approved admissions paths passed; map component, comparison model, global CSS and dependencies remain protected.');
