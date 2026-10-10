@@ -1,4 +1,3 @@
-import { ADMISSIONS_CONTEXT } from "@/data/admissionsContext";
 import { BACKEND_URL } from "./backend";
 import type { DocPayload } from "./docPayload";
 
@@ -57,8 +56,20 @@ export async function checkDocument(payload: DocPayload, hint?: string): Promise
     );
   }
 
+  /* hint — только то, чем человек сам назвал документ, и только если назвал.
+
+     Справку о поступлении (ADMISSIONS_CONTEXT) сюда класть нельзя, хотя
+     поле выглядит подходящим. Бэкенд берёт из hint первые 100 символов и
+     подаёт модели как «Пользователь считает, что это: …». От справки
+     доходил обрывок «Справка IITALY, проверено …; не пе», и модель на
+     каждом документе читала, что человек принёс ей «справку IITALY», —
+     паспорт, выписку, что угодно. Оговорка «не считай документ ошибочным
+     без учебного года» не доходила вовсе: её отрезало раньше.
+
+     Чтобы проверяющий видел справку, бэкенду нужно отдельное поле с
+     нормальным лимитом. Это изменение API, а не подстановка в hint. */
   const body: Record<string, unknown> = { fileName: payload.fileName || "" };
-  body.hint = [hint, ADMISSIONS_CONTEXT, "Не считай документ ошибочным без применимого учебного года, вуза/региона и подтверждённого требования; запроси недостающий контекст."].filter(Boolean).join("\n\n");
+  if (hint) body.hint = hint;
   if (payload.kind === "pdf") body.pdf = payload.base64;
   else if (payload.kind === "text") body.text = payload.text;
   else {
