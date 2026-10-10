@@ -54,7 +54,17 @@ export function StudyAtmosphere() {
 export function TomatoAccent() {
   return (
     <span aria-hidden="true" data-editorial-spot="tomatoes" className={styles.tomato}>
-      <img src={`${ROOT}/tomato-bowl-320.webp`} alt="" width={320} height={320} loading="lazy" decoding="async" draggable={false} />
+      <img
+        src={`${ROOT}/tomato-bowl-320.webp`}
+        srcSet={`${ROOT}/tomato-bowl-320.webp 320w, ${ROOT}/tomato-bowl-640.webp 640w`}
+        sizes="(min-width: 1620px) 198px, (min-width: 1280px) calc(33vw - 337px), 99px"
+        alt=""
+        width={320}
+        height={320}
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+      />
     </span>
   );
 }

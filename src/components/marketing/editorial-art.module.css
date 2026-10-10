@@ -50,10 +50,21 @@
   opacity: .055;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='137' height='137'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%2366686b' filter='url(%23n)' opacity='.5' d='M0 0h137v137H0z'/%3E%3C/svg%3E");
 }
-.tomato { display: none; position: absolute; right: 28px; bottom: 24px; width: 128px; pointer-events: none; user-select: none; }
+/* Правая половина пары с террасой в шапке цен. Отступ и ширина приходят
+   переменными из .frame (prices/prices-landscape.module.css): расстояние
+   от центра то же, что у террасы, ширина — 0,66 её ширины (см. там). */
+.tomato {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: calc(50% + var(--pair-inset));
+  width: calc(var(--pair-width) * .66);
+  transform: translateY(-50%);
+  pointer-events: none;
+  user-select: none;
+}
 .tomato img { display: block; width: 100%; height: auto; }
 @media (min-width: 1280px) { .atmosphere, .tomato { display: block; } }
-@media (min-width: 1600px) { .tomato { right: max(40px, calc((100% - 1440px) / 2)); width: 160px; } }
 @media (min-width: 1024px) {
   .guidePanel { min-height: 460px; max-height: 620px; }
   .arrivalPanel { min-height: 480px; max-height: 660px; }
