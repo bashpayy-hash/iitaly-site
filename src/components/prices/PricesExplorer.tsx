@@ -10,6 +10,7 @@ import { HeadingPin } from "@/components/motion/HeadingPin";
 import { TomatoAccent } from "@/components/marketing/EditorialArtwork";
 import art from "@/components/marketing/editorial-art.module.css";
 import { PricesLandscape } from "./PricesLandscape";
+import heroArt from "./prices-landscape.module.css";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import styles from "@/components/marketing/marketing.module.css";
 
@@ -53,24 +54,28 @@ export function PricesExplorer() {
   return (
     <>
       <section data-section="prices-header" className={`${art.headerHost} px-5 pt-16 pb-10 text-center sm:pt-24`}>
-        <TomatoAccent />
-        <div data-role="heading">
+        {/* Рамка вокруг всего текстового блока: от неё обе картинки берут
+            центр по вертикали и общую геометрию пары. */}
+        <div className={heroArt.frame}>
           <PricesLandscape />
-          <p className="text-apple-caption text-cloud-meta">Цена</p>
-          <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">
-            {priceLabel(PRICE_MAIN)} — и система ведёт тебя до конца
-          </h1>
+          <TomatoAccent />
+          <div data-role="heading">
+            <p className="text-apple-caption text-cloud-meta">Цена</p>
+            <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">
+              {priceLabel(PRICE_MAIN)} — и система ведёт тебя до конца
+            </h1>
+          </div>
+          <p className="mx-auto mt-5 max-w-2xl text-apple-body text-cloud-body">
+            Один платёж за всё поступление. Не подписка, не тарифы, без доплат
+            за этапы. Работу выполняет система — поэтому это стоит столько, а
+            не как в агентстве.
+          </p>
+          <nav className={styles.taskLinks} aria-label="На странице цен">
+            <a href="#main-package">Состав пакета</a>
+            <a href="#terms-and-refund">Условия и возврат</a>
+            <a href="#expert-review">Проверка экспертом</a>
+          </nav>
         </div>
-        <p className="mx-auto mt-5 max-w-2xl text-apple-body text-cloud-body">
-          Один платёж за всё поступление. Не подписка, не тарифы, без доплат
-          за этапы. Работу выполняет система — поэтому это стоит столько, а
-          не как в агентстве.
-        </p>
-        <nav className={styles.taskLinks} aria-label="На странице цен">
-          <a href="#main-package">Состав пакета</a>
-          <a href="#terms-and-refund">Условия и возврат</a>
-          <a href="#expert-review">Проверка экспертом</a>
-        </nav>
       </section>
 
       <section className="px-5 py-10">

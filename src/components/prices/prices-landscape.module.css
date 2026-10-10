@@ -1,31 +1,41 @@
-/* Only the pricing hero's empty left margin. The heading host is relative. */
+/* Две картинки шапки цен — терраса слева и миска томатов справа — одна
+   зеркальная пара, а не две наклейки по углам окна.
+
+   Раньше терраса шириной до 330px стояла в 8px от левого края окна на
+   уровне заголовка, а миска в 128px — в 28px от правого края, внизу у
+   ссылок. Разный размер, разная высота, обе прилипли к краям экрана, а не
+   к тексту: на широком мониторе это читалось как случайная диагональ.
+
+   Теперь обе привязаны к центру и стоят вплотную за рамкой заголовка
+   (900px пополам + 16px), на одной высоте — по центру текстового блока.
+   Миска квадратная и шириной 0,66 от террасы, то есть чуть ниже её: при
+   равной высоте плотная красная миска перетягивала взгляд у воздушного
+   пейзажа. Геометрия задана здесь, в .frame, и миска берёт её отсюда через
+   переменные: две картинки не могут разъехаться, правя одну из них.
+
+   За рамку заголовка, а не за строки текста, — из-за проверки в CI
+   (design-accents-review): миска не имеет права задевать даже пустые поля
+   900-пиксельного h1. Терраса держит ту же дистанцию ради симметрии.
+
+   Подсветки под террасой (размытый radial-gradient) больше нет: на белом
+   фоне она читалась как бежевое пятно, уходящее за край окна. */
+.frame {
+  position: relative;
+  --pair-inset: 466px;
+  --pair-width: clamp(150px, 50% - 490px, 300px);
+}
+
 .landscape {
   display: none;
   position: absolute;
-  left: 8px;
-  bottom: -62px;
-  /* 208px at 1280, 280px at 1440, capped at 330px on wide screens.
-     Grow into the outer gutter, not across the centered pricing copy. */
-  width: clamp(208px, calc(45vw - 368px), 330px);
+  top: 50%;
+  right: calc(50% + var(--pair-inset));
+  width: var(--pair-width);
   aspect-ratio: 4 / 3;
-  isolation: isolate;
+  transform: translateY(-50%);
   pointer-events: none;
   user-select: none;
 }
-.landscape img { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
-.landscape::before {
-  content: "";
-  position: absolute;
-  inset: 15% -6%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, #eaf3f880, #f7eddb60 50%, transparent 75%);
-  filter: blur(16px);
-}
+.landscape img { display: block; width: 100%; height: auto; }
 @media (min-width: 1280px) { .landscape { display: block; } }
-@media (min-width: 1600px) {
-  .landscape { left: max(8px, calc((100vw - 1600px) / 2 + 8px)); }
-}
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .landscape::before { display: none; }
-}
 @media (forced-colors: active), print { .landscape { display: none; } }
