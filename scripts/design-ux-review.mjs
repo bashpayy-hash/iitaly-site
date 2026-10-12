@@ -40,7 +40,13 @@ try {
         if(documentRequests.length===2) aiAvailable = false;
         const result = documentRequests.length===1 ? {ok:false,error:'Сервис временно недоступен'}
           : documentRequests.length===2 ? {ok:false,code:'AI_AUTH_INVALID',retryable:false,error:'Требуется исправление настроек сервиса.'}
-          : {ok:true,result:{verdict:'ok',docTitle:'Тестовый документ',summary:'Проверка завершена'}};
+          : {ok:true,result:{verdict:'ok',docTitle:'Тестовый документ',summary:'Проверка завершена',review:{
+            ...req.postDataJSON().context, profileLabel:'EDISU Piemonte',
+            rulesStatus: req.postDataJSON().context.academicYear === '2026/27' ? 'verified' : 'unverified',
+            referenceYear: req.postDataJSON().context.academicYear === '2026/27' ? 2025 : null,
+            verifiedOn:'2026-10-13',rulesVersion:'2026-10-13',notice:'Синтетический результат выбранного профиля.',
+            sources:[{id:'P26',label:'EDISU Piemonte · официальный источник',url:'https://www.edisu.piemonte.it/en/international-students'}],
+          }}};
         return route.fulfill({status:result.ok?200:503,contentType:'application/json',body:JSON.stringify(result)});
       }
       if (url.pathname === '/api/lead') { leads.push(req.postDataJSON()); return route.abort(); }
@@ -126,12 +132,29 @@ try {
     await doc.getByRole('button',{name:'Проверить доступность',exact:true}).click();
     await page.waitForFunction(()=>!Array.from(document.querySelectorAll('#document-check button')).find(b=>b.textContent==='Повторить проверку')?.disabled);
     assert.equal(documentRequests.length,2,'Availability check does not resend a document');
-    await doc.getByRole('button',{name:'Повторить проверку',exact:true}).click();
+    assert.deepEqual(documentRequests[0].context,{profile:'general',academicYear:'unspecified',applicantScope:'unspecified'},'Wizard answers must not silently choose scholarship rules');
+    await doc.getByRole('combobox',{name:'Программа',exact:true}).selectOption('piemonte');
+    await doc.getByRole('combobox',{name:'Учебный год заявки',exact:true}).selectOption('2026/27');
+    await doc.getByRole('checkbox',{name:/Моя ситуация/}).check();
+    assert.equal(documentRequests.length,2,'Changing the context does not upload the file');
+    await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();
     await doc.getByText('Проверка завершена',{exact:true}).waitFor();
     assert.equal(documentRequests.length,3);
     assert.equal(documentRequests[0].text,documentRequests[1].text);
     assert.equal(documentRequests[1].text,documentRequests[2].text);
+    assert.deepEqual(documentRequests[2].context,{profile:'piemonte',academicYear:'2026/27',applicantScope:'kz-family-abroad'});
+    await doc.getByText('Официальные источники · сверены 13.10.2026',{exact:true}).click();
+    assert.equal(await doc.getByRole('link',{name:'EDISU Piemonte · официальный источник',exact:true}).getAttribute('href'),'https://www.edisu.piemonte.it/en/international-students');
     await checkA11y('document result '+width);
+    await doc.screenshot({path:resolve(output,`document-${width}.png`)});
+    await doc.getByRole('combobox',{name:'Учебный год заявки',exact:true}).selectOption('2027/28');
+    assert.equal(await doc.getByText('Проверка завершена',{exact:true}).count(),0,'Changing context clears an obsolete verdict');
+    assert(await doc.getByText('example.txt',{exact:true}).isVisible(),'Changing context retains the local file');
+    assert.equal(documentRequests.length,3,'Changing context requires an explicit recheck');
+    await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();
+    await doc.getByText('Проверка завершена',{exact:true}).waitFor();
+    assert.equal(documentRequests[3].context.academicYear,'2027/28');
+    assert.equal(await doc.getByText('Год доходов:',{exact:false}).count(),0,'Unverified years do not show a default reference year');
     await visit('/universities');
     await page.getByLabel('Сразу к городу').selectOption('milano');
     assert(await page.locator('#selected-city').getByRole('heading',{name:'Милан',exact:true}).isVisible());
