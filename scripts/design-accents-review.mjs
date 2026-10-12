@@ -189,12 +189,23 @@ try {
         assert(image.loaded, 'Local illustration loaded');
         assert(image.src.startsWith('/illustrations/editorial/'));
         if (width <= 390 && await art.getAttribute('data-editorial-art')) assert(image.src.includes('-480.webp'), 'Phone selects the smaller source');
+        // Controls keep their full boxes. A text block (h1–h3, p) counts as
+        // covered only when the art enters its box AND comes within 24px of a
+        // rendered line: content-page h1s are 900px balanced boxes that are
+        // mostly blank, and that blank margin is the empty margin artwork may
+        // use (design-prices-landscape-review measures lines the same way).
+        // Never stricter than a plain box test, looser only in blank margins.
         const overlaps = await art.evaluate(el => {
           const box = el.getBoundingClientRect();
-          return [...el.closest('section').querySelectorAll('h1,h2,h3,p,a,button,input,summary')].filter(node => {
-            const r = node.getBoundingClientRect();
-            return r.width && r.height && box.left < r.right - 1 && box.right > r.left + 1 && box.top < r.bottom - 1 && box.bottom > r.top + 1;
-          }).map(el => el.textContent?.slice(0, 70));
+          const hit = (r, pad) => r.width && r.height && box.left < r.right + pad - 1 && box.right > r.left - pad + 1 && box.top < r.bottom + pad - 1 && box.bottom > r.top - pad + 1;
+          const section = el.closest('section');
+          const controls = [...section.querySelectorAll('a,button,input,summary')].filter(node => hit(node.getBoundingClientRect(), 0));
+          const text = [...section.querySelectorAll('h1,h2,h3,p')].filter(node => {
+            if (!hit(node.getBoundingClientRect(), 0)) return false;
+            const range = document.createRange(); range.selectNodeContents(node);
+            return [...range.getClientRects()].some(r => hit(r, 24));
+          });
+          return [...controls, ...text].map(node => node.textContent?.slice(0, 70));
         });
         assert.deepEqual(overlaps, [], `${width}: art cannot cover content`);
         assert.equal(await art.evaluate(el => getComputedStyle(el).pointerEvents), 'none');

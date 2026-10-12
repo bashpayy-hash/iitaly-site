@@ -96,16 +96,16 @@ try {
       assert(details.x + details.width < width / 2);
       // Терраса и миска томатов — зеркальная пара вокруг центра шапки: одна
       // дистанция от центра, общий центр по вертикали, миска 0,66 ширины
-      // террасы. Ширина террасы растёт с полем у заголовка (900px + 16px).
+      // террасы. Ширина террасы растёт с полем у текста, до 440px.
       const pair = await art.evaluate(el => {
         const frame = el.parentElement.getBoundingClientRect(), a = el.getBoundingClientRect();
         const b = el.parentElement.querySelector('[data-editorial-spot="tomatoes"]').getBoundingClientRect();
         const mid = frame.left + frame.width / 2;
         return { frameWidth: frame.width, leftGap: mid - a.right, rightGap: b.left - mid, centerA: a.top + a.height / 2, centerB: b.top + b.height / 2, ratio: b.width / a.width };
       });
-      const expected = Math.min(300, Math.max(150, pair.frameWidth / 2 - 490));
+      const expected = Math.min(440, Math.max(200, pair.frameWidth / 2 - 384));
       assert(Math.abs(details.width - expected) < 1, 'Responsive width follows the gutter beside the heading');
-      assert(Math.abs(pair.leftGap - 466) < 1 && Math.abs(pair.rightGap - 466) < 1, 'Both artworks sit 466px from the center');
+      assert(Math.abs(pair.leftGap - 368) < 1 && Math.abs(pair.rightGap - 368) < 1, 'Both artworks sit 368px from the center');
       assert(Math.abs(pair.centerA - pair.centerB) < 1, 'Both artworks share one vertical center');
       assert(Math.abs(pair.ratio - .66) < .01, 'Tomato bowl is 0.66 of the terrace width');
       artWidth = details.width;
