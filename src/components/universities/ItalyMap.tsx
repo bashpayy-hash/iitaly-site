@@ -30,7 +30,7 @@ export function ItalyMap({
   return (
     <svg
       viewBox={`0 0 ${MAP_W_PX} ${MAP_H_PX}`}
-      role="img"
+      role="group"
       aria-label="Карта Италии с университетами по городам"
       className="h-auto w-full select-none"
     >

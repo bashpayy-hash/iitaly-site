@@ -68,7 +68,7 @@ async function shot(page, name, fullPage = false) {
 // Retain visual evidence, but compare the actual SVG structure and computed
 // presentation rather than asserting the old page chrome remains unchanged.
 async function mapShot(page, name) {
-  const map = page.getByRole('img', { name: 'Карта Италии с университетами по городам' });
+  const map = page.locator('svg[aria-label="Карта Италии с университетами по городам"]');
   await map.screenshot({ path: resolve(output, `${name}.png`), animations: 'disabled' });
   return map.evaluate(svg => ({
     viewBox: svg.getAttribute('viewBox'),
@@ -126,7 +126,7 @@ try {
   assert.equal(await fileInput.evaluate(el => document.activeElement === el), true, 'Document picker remains keyboard accessible');
   const choices = ['Осенью 2027', '11 классов', '4,7 и выше', 'Бакалавриат', 'Без стипендии будет сложно', 'Экономика, бизнес', 'Есть IELTS или TOEFL', 'Ещё не будет 18', 'В Казахстане', 'Пьемонт · EDISU'];
   for (const name of choices) await page.getByRole('button', { name: new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) }).click();
-  await page.getByRole('button', { name: 'Пропустить и посмотреть план', exact: true }).click();
+  await page.getByRole('button', { name: 'Открыть мой план', exact: true }).click();
   await settle(page);
   assert.equal(await page.getByText('Что заканчиваешь?', { exact: true }).count(), 0);
   await shot(page, 'plan-complete', true);

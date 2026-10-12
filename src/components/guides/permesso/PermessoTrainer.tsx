@@ -433,7 +433,7 @@ export function PermessoTrainer() {
         </section>
       )}
 
-      <div className={styles.legendBar}>
+      <div className={styles.legendBar} role="region" aria-label="Обозначения полей" tabIndex={0}>
         <span data-mode="write"><i /> Обычное поле — заполняй</span>
         <span data-mode="empty"><i /> Пропусти</span>
         <span data-mode="post"><i /> Только на почте</span>
@@ -602,15 +602,15 @@ export function PermessoTrainer() {
           <section className={styles.toolCard}>
             <h3>Код в поле 16</h3>
             <p>Не подставляем 24 или 31 автоматически. Выбери только после сверки с типом обучения и своим kit.</p>
-            <select value={requestCode} onChange={(e) => setRequestCode(e.target.value)}>
+            <select aria-label="Код типа обучения для поля 16" value={requestCode} onChange={(e) => setRequestCode(e.target.value)}>
               <option value="">Выбери код</option>
               {PERMIT_CODES.map((item) => <option key={item.code} value={item.code}>{item.code} · {item.title}</option>)}
             </select>
             {requestCode && <p className={styles.helperText}>{PERMIT_CODES.find((item) => item.code === requestCode)?.note}</p>}
             {scenario === "rinnovo" && (
               <>
-                <label className={styles.smallLabel}>Код на текущей карточке для поля 19</label>
-                <select value={currentCardCode} onChange={(e) => setCurrentCardCode(e.target.value)}>
+                <label htmlFor="current-card-code" className={styles.smallLabel}>Код на текущей карточке для поля 19</label>
+                <select id="current-card-code" value={currentCardCode} onChange={(e) => setCurrentCardCode(e.target.value)}>
                   <option value="">Совпадает / пока не выбрано</option>
                   {PERMIT_CODES.map((item) => <option key={item.code} value={item.code}>{item.code}</option>)}
                 </select>

@@ -28,6 +28,7 @@ type State =
   | { step: "ready"; file: File; payload: DocPayload }
   | { step: "checking"; file: File; payload: DocPayload }
   | { step: "done"; file: File; payload: DocPayload; result: DocCheckResult }
+  | { step: "retry"; file: File; payload: DocPayload; message: string }
   | { step: "error"; message: string };
 
 export function DocCheck() {
@@ -54,7 +55,7 @@ export function DocCheck() {
   }
 
   async function run() {
-    if (state.step !== "ready" && state.step !== "done") return;
+    if (state.step !== "ready" && state.step !== "done" && state.step !== "retry") return;
     const { file, payload } = state;
     setState({ step: "checking", file, payload });
     track("doc_check_start");
@@ -75,7 +76,7 @@ export function DocCheck() {
          ни его содержимое. */
       track("doc_check_error", { kind: err?.kind ?? "unknown", status: err?.status ?? 0 });
       setState({
-        step: "error",
+        step: "retry", file, payload,
         message: err
           ? err.message
           : "Не удалось проверить документ. Попробуй ещё раз через минуту.",
@@ -179,11 +180,12 @@ export function DocCheck() {
               >
                 {state.step === "checking"
                   ? "Проверяю…"
+                  : state.step === "retry" ? "Повторить проверку"
                   : state.step === "done"
                     ? "Проверить ещё раз"
                     : "Проверить документ"}
               </AppleButton>
-              <AppleButton type="button" variant="outlined" size="sm" onClick={reset}>
+              <AppleButton type="button" variant="outlined" size="sm" onClick={reset} disabled={state.step === "checking"}>
                 Выбрать другой
               </AppleButton>
             </div>
@@ -192,9 +194,10 @@ export function DocCheck() {
       )}
 
       <div aria-live="polite" className="mt-5">
-        {state.step === "error" && (
-          <div className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
+        {(state.step === "error" || state.step === "retry") && (
+          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
             {state.message}
+            {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}
           </div>
         )}
         {(state.step === "checking" || state.step === "reading") && (

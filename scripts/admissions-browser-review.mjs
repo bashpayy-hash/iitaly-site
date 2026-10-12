@@ -46,8 +46,8 @@ try {
     const choices = ['Осенью 2027','11 классов','4,7 и выше','Бакалавриат','Без стипендии будет сложно',
       'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
-    await page.getByRole('button',{name:'Пропустить и посмотреть план',exact:true}).click();
-    const result = await page.locator('main').innerText();
+    await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
+    const result = await page.locator('main').textContent();
     assert.match(result,/компенсацию 11-летней школы/);
     assert.match(result,/Документы несовершеннолетнего/);
     assert.match(result,/Для 2027\/28 годы справок пока не назначаем/);
@@ -56,6 +56,13 @@ try {
     for (const id of ['cimea','iseeu','visa']) {
       await visit('/guides#'+id);
       const body = width >= 1024 ? page.locator('#guide-chapter-content') : page.locator('details#'+id);
+      // Same-document goto resolves before hashchange + React + the next frame.
+      // Wait for the visible chapter, not font loading or an arbitrary delay.
+      if (width < 1024) await page.waitForFunction(id => document.getElementById(id)?.open === true, id);
+      else {
+        const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
+        await page.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
+      }
       if (width < 1024) assert(await body.evaluate(el=>el.open),'Mobile deep link opens '+id);
       assert.match(await body.innerText(),/9 октября 2026/);
       assert(await body.locator('a[href^="https://"]').count()>0,'Official sources are accessible');

@@ -1,0 +1,13 @@
+.routeHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; margin-top: 28px; }
+.routeHeading h2 { font-size: 26px; line-height: 1.2; }
+.routeHeading button { min-height: 44px; color: var(--i-link); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+.steps { margin-top: 20px; border-top: 1px solid var(--i-line); }
+.step { border-bottom: 1px solid var(--i-line); }
+.step > summary { display: flex; align-items: center; gap: 14px; min-height: 66px; padding: 14px 8px; list-style: none; font-size: 16px; font-weight: 600; line-height: 1.45; }
+.step > summary::-webkit-details-marker { display: none; }
+.step > summary::after { content: ''; margin-left: auto; flex-shrink: 0; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
+.step[open] > summary::after { transform: rotate(225deg); }
+.step[open] > summary { color: var(--i-link); }
+.stepNumber { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0; border: 1px solid var(--i-line); border-radius: 50%; font-size: 13px; font-weight: 500; color: var(--color-cloud-body); font-variant-numeric: tabular-nums; }
+.stepBody { padding: 0 16px 20px 52px; }
+@media (max-width: 639px) { .stepBody { padding: 0 8px 20px; } .routeHeading h2 { font-size: 24px; } }

@@ -6,6 +6,7 @@ import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
 import { AppleButton } from "@/components/apple/Button";
+import type { PlanDraft } from "@/lib/usePlanDraft";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -17,9 +18,8 @@ function ruPlural(n: number, one: string, few: string, many: string): string {
   return many;
 }
 
-export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<WizAnswers>({});
+export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onDraftChange: (draft: PlanDraft) => void; onDone: (answers: WizAnswers) => void }) {
+  const { step, answers } = draft;
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState(false);
   const [sending, setSending] = useState(false);
@@ -56,10 +56,9 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
   function choose(id: string, value: string) {
     stepChanged.current = true;
     if (step === 0) track("plan_started");
-    setAnswers((prev) => ({ ...prev, [id]: value }));
+    onDraftChange({ answers: { ...answers, [id]: value }, step: step + 1, complete: false });
     track("wiz_step", { s: id });
     track("plan_step_completed", { step: step, of: WIZ.length });
-    setStep((s) => s + 1);
   }
 
   async function finish(withPhone: boolean) {
@@ -122,11 +121,10 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
                 </p>
               </div>
             )}
-            <p className="font-apple-text text-apple-subheading font-semibold text-cloud-white">Куда прислать план?</p>
-            <p className="mt-2 text-apple-body-sm text-cloud-body">
-              Пришлём маршрут и напоминания о дедлайнах в WhatsApp. Можно
-              пропустить — план всё равно откроется прямо здесь.
-            </p>
+            <AppleButton type="button" variant="filled" onClick={() => finish(false)} disabled={sending} className="w-full">Открыть мой план</AppleButton>
+            <p className="mt-2 text-center text-apple-caption text-cloud-meta">Номер телефона не нужен.</p>
+            <details className="mt-5 border-t border-white/15 pt-2">
+            <summary className="min-h-11 cursor-pointer py-3 text-apple-body-sm text-cloud-body">Оставить номер для связи</summary>
             <label className="mt-4 block">
               <span className="mb-2 block text-apple-body-sm font-medium text-cloud-white">Номер телефона для WhatsApp</span>
               <input
@@ -151,20 +149,13 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
             )}
             <AppleButton
               type="button"
-              variant="filled"
+              variant="outlined"
               onClick={() => finish(true)}
               disabled={sending}
               className="mt-3 w-full"
             >
-              {sending ? "Отправляю…" : "Составить план"}
+              {sending ? "Отправляю…" : "Отправить номер"}
             </AppleButton>
-            <button
-              type="button"
-              onClick={() => finish(false)}
-              className="mt-3 block min-h-11 w-full text-center text-apple-body-sm text-cloud-body underline underline-offset-4 hover:text-cloud-white"
-            >
-              Пропустить и посмотреть план
-            </button>
             <p className="mt-4 text-apple-caption text-cloud-meta">
               Оставляя номер, ты соглашаешься, что мы напишем по поводу
               поступления. Рассылок и передачи третьим лицам не будет,
@@ -174,6 +165,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
               </a>
               . Если тебе меньше 18, заполняй вместе с родителем.
             </p>
+            </details>
           </>
         ) : (
           <WizStep
@@ -188,7 +180,7 @@ export function Wizard({ onDone }: { onDone: (answers: WizAnswers) => void }) {
       <div className="mt-6 flex items-center justify-between border-t border-white/15 pt-4">
         <button
           type="button"
-          onClick={() => { stepChanged.current = true; setStep((s) => Math.max(0, s - 1)); }}
+          onClick={() => { stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
           className={`min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
         >
           ← Назад

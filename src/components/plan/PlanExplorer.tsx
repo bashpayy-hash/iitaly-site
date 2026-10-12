@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { WIZ, type WizAnswers } from "@/data/wizard";
-import { buildPlan, type Plan } from "@/lib/planBuilder";
+import { buildPlan } from "@/lib/planBuilder";
+import { EMPTY_PLAN_DRAFT, usePlanDraft } from "@/lib/usePlanDraft";
 import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
@@ -13,15 +13,25 @@ import art from "@/components/marketing/editorial-art.module.css";
 import styles from "@/components/marketing/marketing.module.css";
 
 export function PlanExplorer() {
-  const [plan, setPlan] = useState<Plan | null>(null);
+  const [draft, updateDraft] = usePlanDraft();
+  const plan = draft.complete ? buildPlan(draft.answers) : null;
+
+  function focusPlan() {
+    requestAnimationFrame(() => {
+      const target = document.getElementById("questionnaire");
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: "start", behavior: "instant" });
+    });
+  }
 
   function handleDone(answers: WizAnswers) {
-    setPlan(buildPlan(answers));
+    updateDraft({ answers, step: WIZ.length, complete: true });
+    focusPlan();
   }
 
   return (
     <>
-      <section data-section="plan-header" className={`${art.headerHost} px-5 pt-16 pb-10 text-center sm:pt-24`}>
+      <section data-section="plan-header" className={`${art.headerHost} px-5 pt-9 pb-6 text-center sm:pt-14 sm:pb-9`}>
         <StudyAtmosphere />
         <div data-role="heading">
           <AppleCaption as="p">Персональный маршрут</AppleCaption>
@@ -30,9 +40,8 @@ export function PlanExplorer() {
           </AppleHeading>
         </div>
         <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">
-          Выбери образование, год поступления и свою ситуацию. Получишь
-          маршрут с источниками, нужными документами и вопросами к вузу.
-          Проверку файла можно пройти отдельно.
+          {WIZ.length} вопросов, затем понятные шаги и список документов.
+          Бесплатно, без регистрации. Проверка файла доступна отдельно.
         </p>
         <nav className={styles.taskLinks} aria-label="Бесплатные инструменты">
           <a href="#questionnaire">Составить план</a>
@@ -40,18 +49,22 @@ export function PlanExplorer() {
         </nav>
       </section>
 
-      <section className="px-5 py-10">
+      <section className="px-5 py-7 sm:py-10">
         <div className={`${styles.planWorkspace} mx-auto max-w-[760px] space-y-10`}>
-          <div id="questionnaire" className={styles.anchorTarget}>
+          <div id="questionnaire" tabIndex={-1} className={styles.anchorTarget}>
             <div className={styles.toolHeading}>
               <p>Твой план поступления</p>
               <span>{WIZ.length} вопросов · бесплатно</span>
             </div>
             {plan ? (
-              <PlanResult plan={plan} onReset={() => setPlan(null)} />
+              <PlanResult plan={plan} onReset={() => { updateDraft({ ...draft, complete: false, step: 0 }); focusPlan(); }} />
             ) : (
-              <Wizard onDone={handleDone} />
+              <Wizard draft={draft} onDraftChange={updateDraft} onDone={handleDone} />
             )}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-x-5 text-apple-caption text-cloud-meta">
+              <p>Ответы сохраняются в этой вкладке. Телефон и файлы в черновик не записываются.</p>
+              {Object.keys(draft.answers).length > 0 && <button type="button" className="min-h-11 underline underline-offset-4" onClick={() => { updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }}>Начать заново</button>}
+            </div>
           </div>
           <div id="document-check" className={styles.anchorTarget}>
             <DocCheck />

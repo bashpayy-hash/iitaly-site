@@ -17,9 +17,9 @@ export function GuideDetail({ guide }: { guide: GuideCardData }) {
       )}
       <dl className={`space-y-2.5 ${guide.lead ? "mt-4" : ""}`}>
         {guide.rows.map((r) => (
-          <div key={r.label} className="flex flex-col gap-0.5 border-t border-white/10 pt-2.5 text-apple-body-sm first:border-t-0 first:pt-0 sm:flex-row sm:justify-between sm:gap-4">
-            <dt className="text-cloud-body">{r.label}</dt>
-            <dd className="font-semibold text-cloud-white sm:text-right">{r.value}</dd>
+          <div key={r.label} className="border-t border-white/10 pt-4 pb-2 text-apple-body-sm first:border-t-0 first:pt-0">
+            <dt className="font-semibold text-cloud-white">{r.label}</dt>
+            <dd className="mt-1 max-w-[68ch] text-cloud-body">{r.value}</dd>
           </div>
         ))}
       </dl>

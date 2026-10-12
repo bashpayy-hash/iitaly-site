@@ -31,7 +31,7 @@ export function MarketingHeader() {
         <Link href="/" className={styles.wordmark} aria-label="IITALY — главная">IITALY<span aria-hidden>.</span></Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           {links.map(({ href, label }) => (
-            <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>{label}</Link>
+            <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
         <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>
@@ -41,7 +41,7 @@ export function MarketingHeader() {
             event.currentTarget.querySelector("summary")?.focus();
           }
         }}>
-          <summary aria-label="Открыть меню">Меню <span aria-hidden>＋</span></summary>
+          <summary aria-label="Открыть меню">Меню <span aria-hidden>+</span></summary>
           <nav aria-label="Мобильная навигация" onClick={(event) => {
             if ((event.target as HTMLElement).closest("a,button")) {
               const details = event.currentTarget.closest("details");
@@ -49,7 +49,7 @@ export function MarketingHeader() {
             }
           }}>
             {links.map(({ href, label }) => (
-              <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>{label}<span aria-hidden>↗</span></Link>
+              <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}<span aria-hidden>↗</span></Link>
             ))}
             <Link href="/portal">Личный кабинет <span aria-hidden>↗</span></Link>
             <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button>

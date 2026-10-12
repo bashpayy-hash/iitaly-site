@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GUIDES } from "@/data/guides";
 import { GuideDetail } from "./GuideDetail";
@@ -11,6 +11,7 @@ import art from "@/components/marketing/editorial-art.module.css";
 import Link from "next/link";
 import { HeadingPin } from "@/components/motion/HeadingPin";
 import styles from "@/components/marketing/marketing.module.css";
+import ui from "./guide-browser.module.css";
 
 /** Desktop chapter index and native mobile disclosures share stable deep links. */
 type Chapter =
@@ -56,25 +57,39 @@ function ChapterBody({ chapter }: { chapter: Chapter }) {
   );
 }
 
+const GROUPS = [
+  { title: "Выбрать маршрут", ids: ["education", "tests"] },
+  { title: "Подготовиться к отъезду", ids: ["apostille", "translation", "cimea", "con", "iseeu", "visa", "minors", "military"] },
+  { title: "После приезда", ids: ["permesso", "codice", "health-travel"] },
+];
+function searchable(chapter: Chapter) {
+  const guide = chapter.kind === "guide" ? GUIDES[chapter.index] : null;
+  return [chapter.title, chapter.teaser, guide?.lead, guide?.warn,
+    ...(guide?.rows.map(row => row.label + " " + row.value) || []),
+    chapter.kind === "visa" ? "банк счет выписка деньги средства страховка консульство VFS финансовая гарантия" : "",
+  ].join(" ").toLocaleLowerCase("ru").replaceAll("ё", "е");
+}
+
 export function GuidesExplorer() {
   const router = useRouter();
   const [activeId, setActiveId] = useState(CHAPTERS[0].id);
-  const activeIndex = Math.max(
-    0,
-    CHAPTERS.findIndex((c) => c.id === activeId),
-  );
-  const active = CHAPTERS[activeIndex];
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+  const terms = query.trim().toLocaleLowerCase("ru").replaceAll("ё", "е").split(/\s+/).filter(Boolean);
+  const visible = CHAPTERS.filter(chapter => terms.every(term => searchable(chapter).includes(term)));
+  const active = visible.find(chapter => chapter.id === activeId) || visible[0];
+  const groups = GROUPS.map(group => ({ ...group, chapters: visible.filter(chapter => group.ids.includes(chapter.id)) })).filter(group => group.chapters.length);
 
   useEffect(() => {
     function openLinkedChapter() {
       const id = window.location.hash.slice(1);
-      if (!CHAPTERS.some((chapter) => chapter.id === id)) return;
+      if (!CHAPTERS.some(chapter => chapter.id === id)) return;
+      setQuery("");
       setActiveId(id);
-      const mobileChapter = document.getElementById(id);
-      if (mobileChapter instanceof HTMLDetailsElement) mobileChapter.open = true;
       requestAnimationFrame(() => {
-        const target = window.matchMedia("(min-width: 1024px)").matches
-          ? document.getElementById("guide-topics") : mobileChapter;
+        const mobile = document.getElementById(id);
+        if (mobile instanceof HTMLDetailsElement) mobile.open = true;
+        const target = window.matchMedia("(min-width: 1024px)").matches ? document.getElementById("guide-topics") : mobile;
         target?.scrollIntoView({ block: "start", behavior: "instant" });
       });
     }
@@ -83,10 +98,17 @@ export function GuidesExplorer() {
     return () => window.removeEventListener("hashchange", openLinkedChapter);
   }, []);
 
+  function backToTopics(event: React.MouseEvent<HTMLButtonElement>) {
+    const detail = event.currentTarget.closest("details");
+    if (detail) detail.open = false;
+    searchRef.current?.focus({ preventScroll: true });
+    document.getElementById("guide-topics")?.scrollIntoView({ block: "start", behavior: "instant" });
+  }
+
   return (
     <>
       <section data-section="guides-header" className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="order-1 flex flex-col justify-center px-5 py-12 sm:py-16 lg:px-16">
+        <div className="order-1 flex flex-col justify-center px-5 py-9 sm:py-12 lg:px-16">
           <div data-role="heading" className="mx-auto max-w-md lg:mx-0">
             <p className="text-apple-caption text-cloud-meta">Справочник · бесплатно</p>
             <h1 className="mt-2 font-apple-display text-[32px] font-semibold uppercase text-cloud-white sm:text-[44px]">
@@ -111,66 +133,50 @@ export function GuidesExplorer() {
           <EditorialArtwork scene="terrace" priority />
         </div>
       </section>
-
-      <section id="guide-topics" className={`${styles.anchorTarget} ${styles.guideTopics} px-5 py-10 sm:py-14`}>
-        {/* Десктоп: sticky-индекс + активная глава. */}
-        <div className="mx-auto hidden max-w-[1100px] gap-12 lg:grid lg:grid-cols-[0.85fr_1.15fr]">
-          <nav aria-label="Главы справочника" className="lg:sticky lg:top-24 lg:max-h-[75vh] lg:overflow-y-auto lg:h-fit">
-            <ol className="space-y-0.5 border-t border-white/15">
-              {CHAPTERS.map((c, i) => {
-                const isActive = c.id === activeId;
-                return (
-                  <li key={c.id}>
-                    <button
-                      type="button"
-                      onClick={() => { setActiveId(c.id); window.history.replaceState(null, "", `#${c.id}`); }}
-                      aria-controls="guide-chapter-content"
-                      aria-current={isActive ? "true" : undefined}
-                      className={`flex w-full items-baseline gap-3 border-b border-white/10 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ${
-                        isActive ? "text-cloud-white" : "text-cloud-meta hover:text-cloud-white"
-                      }`}
-                    >
-                      <span className={`text-apple-caption tabular-nums ${isActive ? "text-crimson" : "text-cloud-meta"}`}>
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className={`text-apple-body-sm ${isActive ? "font-semibold" : "font-normal"}`}>{c.title}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          </nav>
-
-          <div key={active.id} id="guide-chapter-content" className="relative min-w-0" aria-live="polite">
-            <p className="text-apple-caption text-cloud-meta">
-              {String(activeIndex + 1).padStart(2, "0")} · {active.title}
-            </p>
-            <p className="mt-2 max-w-[60ch] text-apple-body-sm text-cloud-body">{active.teaser}</p>
-            <div className="mt-6">
-              <ChapterBody chapter={active} />
-            </div>
+      <section id="guide-topics" className="px-5 py-8 sm:py-10">
+        <div className={ui.searchArea}>
+          <label htmlFor="guide-search">Найти тему</label>
+          <div className={ui.searchRow}>
+            <input ref={searchRef} id="guide-search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Например, апостиль, DSU или виза" />
+            {query && <button type="button" onClick={() => { setQuery(""); searchRef.current?.focus(); }}>Сбросить</button>}
           </div>
+          <p role="status">{query ? `Найдено тем: ${visible.length}` : "Выбери тему или введи слово из своего вопроса."}</p>
         </div>
-
-        {/* Мобильный/планшет: нативный accordion. */}
-        <div className="mx-auto max-w-[900px] space-y-2 lg:hidden">
-          {CHAPTERS.map((c, i) => (
-            <details key={c.id} id={c.id} className={`${styles.anchorTarget} group rounded-apple-card border border-white/15 bg-white`}>
-              <summary className="flex cursor-pointer list-none items-baseline gap-3 px-4 py-4 text-left marker:content-none [&::-webkit-details-marker]:hidden">
-                <span className="text-apple-caption text-cloud-meta tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                <div className="min-w-0 flex-1">
-                  <b className="block text-apple-body-sm font-semibold text-cloud-white">{c.title}</b>
-                  <span className="mt-1 block text-apple-caption text-cloud-meta">{c.teaser}</span>
-                </div>
-                <svg aria-hidden="true" viewBox="0 0 16 10" className="mt-2 h-2.5 w-4 shrink-0 text-crimson transition-transform group-open:rotate-180 motion-reduce:transition-none"><path d="M1 1.5 8 8.5 15 1.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </summary>
-              <div className="border-t border-white/10 px-4 pt-4 pb-5">
-                <ChapterBody chapter={c} />
+        {!visible.length && <div className={ui.empty}>
+          <h2>Такой темы не нашли</h2>
+          <p>Попробуй другое слово, например «перевод» или «стипендия».</p>
+          <button type="button" onClick={() => { setQuery(""); searchRef.current?.focus(); }}>Показать все темы</button>
+        </div>}
+        {active && <div className={ui.desktop}>
+          <nav aria-label="Главы справочника" className={ui.index}>
+            {groups.map(group => <div key={group.title} className={ui.topicGroup}>
+              <h2>{group.title}</h2>
+              {group.chapters.map(chapter => <button key={chapter.id} type="button"
+                aria-controls="guide-chapter-content" aria-current={active.id === chapter.id ? "true" : undefined}
+                onClick={() => { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); requestAnimationFrame(() => { const heading = document.getElementById("active-guide-title"); heading?.focus({ preventScroll: true }); heading?.scrollIntoView({ block: "start", behavior: "instant" }); }); }}>
+                {chapter.title}
+              </button>)}
+            </div>)}
+          </nav>
+          <div id="guide-chapter-content" className={ui.content} role="region" aria-labelledby="active-guide-title">
+            <h2 id="active-guide-title" tabIndex={-1}>{active.title}</h2>
+            <p className="mt-3 text-apple-body-sm text-cloud-body">{active.teaser}</p>
+            <div className="mt-6"><ChapterBody chapter={active} /></div>
+          </div>
+        </div>}
+        <div className={ui.mobile}>
+          {groups.map(group => <div key={group.title} className={ui.topicGroup}>
+            <h2>{group.title}</h2>
+            {group.chapters.map(chapter => <details key={chapter.id} id={chapter.id} name="guide-chapter" onToggle={event => { if (event.currentTarget.open) { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); } }} className={`${styles.anchorTarget} ${ui.chapter}`}>
+              <summary><span>{chapter.title}</span></summary>
+              <div className={ui.chapterBody}>
+                <p className="mb-5 text-apple-body-sm text-cloud-body">{chapter.teaser}</p>
+                <ChapterBody chapter={chapter} />
+                <button className={ui.back} type="button" onClick={backToTopics}>К списку тем</button>
               </div>
-            </details>
-          ))}
+            </details>)}
+          </div>)}
         </div>
-
         <div className="mx-auto mt-10 flex max-w-[900px] flex-col items-start justify-between gap-4 border border-white/15 p-5 text-cloud-white sm:flex-row sm:items-center lg:max-w-[1100px]">
           <div>
             <b className="block">Запутался в порядке шагов?</b>

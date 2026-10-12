@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
 import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
 import { VespaReveal } from "@/components/VespaReveal";
+import styles from "./plan-journey.module.css";
 
 export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void }) {
   const router = useRouter();
@@ -24,19 +25,21 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         </div>
       </div>
 
-      <p className="mt-8 text-apple-caption text-cloud-meta uppercase">Твои шаги</p>
-      <div className="mt-3 space-y-3">
+      <div className={styles.routeHeading}>
+        <h2>С чего начать</h2>
+        <button type="button" onClick={onReset}>Изменить ответы</button>
+      </div>
+      <p className="mt-2 text-apple-body-sm text-cloud-body">Первый шаг уже открыт. Остальные раскрывай по мере необходимости.</p>
+      <div className={styles.steps}>
         {plan.steps.map((s, i) => (
-          <div key={i} className="flex gap-4 border border-white/15 p-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-carbon font-apple-text text-apple-body-sm font-semibold text-white">
-              {i + 1}
-            </div>
-            <div>
-              <b className="text-apple-body-sm text-cloud-white">{s.t}</b>
-              <p className="mt-1 text-apple-body-sm text-cloud-body">{s.p}</p>
+          <details key={s.t} className={styles.step} open={i === 0}>
+            <summary><span className={styles.stepNumber}>{i + 1}</span><span>{s.t}</span></summary>
+            <div className={styles.stepBody}>
+              <p className="text-apple-body-sm text-cloud-body">{s.p}</p>
+              {i === 0 && <AppleButtonLink href="/guides#education" variant="outlined" size="sm" className="mt-4">Открыть разбор аттестата и диплома</AppleButtonLink>}
               {s.sources && <details className="mt-2 text-cloud-meta"><summary className="cursor-pointer min-h-11 py-2 text-sm">Источники и применимость</summary><SourceRefs ids={s.sources} /></details>}
             </div>
-          </div>
+          </details>
         ))}
       </div>
 
@@ -79,9 +82,6 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       <div className="mt-6 flex flex-wrap gap-3">
         <AppleButton type="button" variant="filled" size="sm" onClick={() => router.push("/prices")}>
           Собрать документы с IITALY
-        </AppleButton>
-        <AppleButton type="button" variant="outlined" size="sm" onClick={onReset}>
-          Заново
         </AppleButton>
       </div>
     </div>
