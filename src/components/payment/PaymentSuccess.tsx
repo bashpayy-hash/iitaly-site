@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { clearPendingPayment, fetchPaymentStatus, readPendingPayment, type PendingPayment } from "@/lib/payment";
+import { clearPendingPayment, fetchPaymentStatus, PAY_WA, readPendingPayment, type PendingPayment } from "@/lib/payment";
 
 type View =
   | { kind: "checking"; text: string }
@@ -22,7 +22,7 @@ export function PaymentSuccess() {
   const pendingRef = useRef<PendingPayment | null>(null);
   const stoppedRef = useRef(false);
 
-  async function check(attempt = 0) {
+  const check = useCallback(async function checkStatus(attempt = 0) {
     const pending = pendingRef.current;
     if (!pending || stoppedRef.current) return;
 
@@ -30,10 +30,6 @@ export function PaymentSuccess() {
     if (stoppedRef.current) return;
 
     if (!result.ok) {
-      if (attempt < 3) {
-        setTimeout(() => check(attempt + 1), 1200);
-        return;
-      }
       setView({ kind: "error", text: result.error });
       return;
     }
@@ -66,14 +62,14 @@ export function PaymentSuccess() {
     if (attempt >= 24) {
       setView({
         kind: "waiting",
-        text: "Stripe уже вернул тебя на сайт, но webhook ещё обрабатывается. Обычно это занимает несколько секунд.",
+        text: "Подтверждение ещё не пришло. Проверь статус ещё раз через минуту. Если деньги списались, повторно платить не нужно.",
       });
       return;
     }
 
-    setView({ kind: "checking", text: "Оплата прошла — ждём подтверждение от Stripe…" });
-    setTimeout(() => check(attempt + 1), 1250);
-  }
+    setView({ kind: "checking", text: "Ждём подтверждение платежа от Stripe. Пока статус не подтверждён, повторно платить не нужно." });
+    setTimeout(() => checkStatus(attempt + 1), 1250);
+  }, []);
 
   useEffect(() => {
     stoppedRef.current = false;
@@ -93,7 +89,7 @@ export function PaymentSuccess() {
       stoppedRef.current = true;
       clearTimeout(timer);
     };
-  }, []);
+  }, [check]);
 
   async function copy(code: string) {
     try {
@@ -118,7 +114,7 @@ export function PaymentSuccess() {
 
   return (
     <section className="px-5 py-16 sm:py-24">
-      <div className="mx-auto max-w-[620px] rounded-2xl border border-white/15 bg-black/20 p-6 text-center backdrop-blur-sm sm:p-9">
+      <div className="mx-auto max-w-[620px] rounded-2xl border border-white/15 bg-white p-6 text-center sm:p-9" aria-busy={view.kind === "checking"}>
         {view.kind === "activated" ? (
           <>
             <p className="text-apple-caption font-semibold text-green uppercase">Оплата подтверждена</p>
@@ -161,11 +157,10 @@ export function PaymentSuccess() {
           </>
         ) : (
           <>
-            <p className="text-apple-caption font-semibold text-crimson uppercase">Stripe checkout</p>
             <h1 className="mt-3 font-apple-display text-apple-heading font-semibold text-cloud-white">
               {view.kind === "checking" ? "Подтверждаем оплату" : "Статус оплаты"}
             </h1>
-            <p className="mt-4 text-apple-body-sm text-cloud-body">{view.text}</p>
+            <p role="status" className="mt-4 text-apple-body-sm text-cloud-body">{view.text}</p>
             {view.kind === "checking" && (
               <span aria-hidden className="mx-auto mt-6 block h-7 w-7 animate-spin rounded-full border-2 border-white/15 border-t-crimson motion-reduce:animate-none" />
             )}
@@ -178,7 +173,7 @@ export function PaymentSuccess() {
                 Проверить ещё раз
               </button>
             )}
-            {(view.kind === "expired" || view.kind === "missing") && (
+            {view.kind === "expired" && (
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Link href="/prices" className="rounded-pill bg-crimson px-5 py-3 text-sm font-semibold text-white">
                   Вернуться к оплате
@@ -186,6 +181,22 @@ export function PaymentSuccess() {
                 <Link href="/portal" className="rounded-pill border border-white/20 px-5 py-3 text-sm text-cloud-white">
                   Личный кабинет
                 </Link>
+              </div>
+            )}
+            {(view.kind === "missing" || view.kind === "error" || view.kind === "waiting") && (
+              <div className="mt-6 border-t border-white/15 pt-5">
+                <p className="text-apple-body-sm text-cloud-body">
+                  Уже оплатил, но доступа нет? Напиши в поддержку — поможем найти заказ. Повторно платить не нужно.
+                </p>
+                <div className="mt-4 flex flex-wrap justify-center gap-3">
+                  <a href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex min-h-11 items-center justify-center rounded-pill border border-crimson px-5 py-3 text-sm font-semibold text-crimson">
+                    Написать в поддержку
+                  </a>
+                  <Link href="/portal" className="inline-flex min-h-11 items-center justify-center rounded-pill border border-white/20 px-5 py-3 text-sm text-cloud-white">
+                    Войти в кабинет
+                  </Link>
+                </div>
               </div>
             )}
           </>

@@ -85,6 +85,9 @@ export function ChatWidget() {
   const logRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const menuTriggerRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
 
   useDraggableHeader(panelRef, headRef, open);
@@ -94,10 +97,37 @@ export function ChatWidget() {
   // freezing on whatever `send` looked like when the listener was attached.
   const sendRef = useRef<(overrideText?: string) => void>(() => {});
 
+  function rememberTrigger() {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || panelRef.current?.contains(active)) return;
+    triggerRef.current = active;
+    menuTriggerRef.current = active.closest("details")?.querySelector("summary") ?? null;
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+    return () => {
+      cancelAnimationFrame(frame);
+      requestAnimationFrame(() => {
+        const initiator = triggerRef.current;
+        const menuTrigger = menuTriggerRef.current;
+        const visible = (element: HTMLElement | null): element is HTMLElement => {
+          if (!element?.isConnected || !element.getClientRects().length || element.closest('[aria-hidden="true"]')) return false;
+          const closedMenu = element.closest("details:not([open])");
+          return !closedMenu || Boolean(closedMenu.querySelector("summary")?.contains(element));
+        };
+        const target = visible(initiator) ? initiator : visible(menuTrigger) ? menuTrigger : document.getElementById("chat-launcher");
+        if (target instanceof HTMLElement && visible(target)) target.focus({ preventScroll: true });
+      });
+    };
+  }, [open]);
+
   useEffect(() => {
     function onOpenRequest(e: Event) {
       const detail = (e as CustomEvent<{ prefill?: string; source?: string }>)
         .detail;
+      rememberTrigger();
       setOpen(true);
       track("chat_open");
       track("ai_assistant_opened", { source: detail?.source ?? "portal" });
@@ -117,6 +147,7 @@ export function ChatWidget() {
   }
 
   function openChat() {
+    rememberTrigger();
     setOpen(true);
     track("chat_open");
     track("ai_assistant_opened", { source: "fab" });
@@ -135,15 +166,17 @@ export function ChatWidget() {
 
     setInput("");
     setMessages((m) => [...m, { who: "user", text }]);
-    bumpAsked();
-    track("chat_message_sent", { n: askedCount() });
+    track("chat_message_sent", { n: askedCount() + 1 });
+    setBusy(true);
     setTyping(true);
     scrollDown();
 
     if (!BACKEND_URL) {
       setTimeout(
         () => {
+          bumpAsked();
           setTyping(false);
+          setBusy(false);
           setMessages((m) => [...m, { who: "ai", text: demoReply(text) }]);
           scrollDown();
         },
@@ -152,17 +185,17 @@ export function ChatWidget() {
       return;
     }
 
-    setBusy(true);
-    historyRef.current = [
+    const nextHistory: ChatMessage[] = [
       ...historyRef.current,
       { role: "user", content: text },
     ];
     try {
-      const reply = await sendChatMessage(historyRef.current);
+      const reply = await sendChatMessage(nextHistory);
       historyRef.current = [
-        ...historyRef.current,
+        ...nextHistory,
         { role: "assistant", content: reply },
       ];
+      bumpAsked();
       setMessages((m) => [...m, { who: "ai", text: reply }]);
       const left = FREE_LIMIT - askedCount();
       if (!leadCaptured() && left > 0 && left <= 3) {
@@ -178,11 +211,12 @@ export function ChatWidget() {
         ]);
       }
     } catch {
+      setInput((current) => current.trim() ? current : text);
       setMessages((m) => [
         ...m,
         {
           who: "ai",
-          text: "Не получилось соединиться с сервером. Проверь интернет и попробуй ещё раз.",
+          text: "Не удалось получить ответ. Вопрос не списан — попробуй отправить его ещё раз.",
         },
       ]);
     } finally {
@@ -207,15 +241,22 @@ export function ChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="iitaly-chat"
             key="panel"
             ref={panelRef}
             role="dialog"
             aria-modal="false"
             aria-label="ИИ-консультант"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.stopPropagation();
+                setOpen(false);
+              }
+            }}
             className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-float"
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98, y: 4, transition: PANEL_EXIT }}
+            exit={{ opacity: 0, scale: 0.98, y: 4, transition: reducedMotion ? { duration: 0 } : PANEL_EXIT }}
             transition={reducedMotion ? { duration: 0 } : PANEL_SPRING}
           >
             <div
@@ -286,6 +327,7 @@ export function ChatWidget() {
                 Вопрос ИИ-консультанту
               </label>
               <input
+                ref={inputRef}
                 id="chat-input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -293,13 +335,14 @@ export function ChatWidget() {
                   if (e.key === "Enter") send();
                 }}
                 placeholder="Спроси про поступление…"
-                className="h-11 flex-1 rounded-md border-2 border-ink bg-cream px-3 text-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                className="h-11 min-w-0 flex-1 rounded-md border-2 border-ink bg-cream px-3 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
               />
               <button
                 type="button"
                 onClick={() => send()}
-                aria-label="Отправить"
-                className="flex size-11 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-red text-cream transition-colors duration-[var(--duration-fast)] hover:bg-red-deep hover:border-red-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                disabled={busy || !input.trim()}
+                aria-label={busy ? "Ожидаем ответ" : "Отправить"}
+                className="flex size-11 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-red text-cream transition-colors duration-[var(--duration-fast)] hover:bg-red-deep hover:border-red-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <SendIcon />
               </button>
@@ -318,15 +361,21 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   const [done, setDone] = useState(false);
 
   async function submit() {
+    if (sending) return;
     if (!isValidPhone(phone)) {
       setError("Проверь номер телефона.");
       return;
     }
     setSending(true);
-    await submitLead({ phone: phone.trim(), from: "chat" });
+    setError(null);
+    const result = await submitLead({ phone: phone.trim(), from: "chat" });
+    setSending(false);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
     markLeadCaptured();
     track("lead_captured", { from: "chat" });
-    setSending(false);
     setDone(true);
     setTimeout(onDone, 1400);
   }
@@ -361,11 +410,16 @@ function LeadForm({ onDone }: { onDone: () => void }) {
         }}
         placeholder="+7 ___ ___ __ __"
         inputMode="tel"
+        type="tel"
+        autoComplete="tel"
+        disabled={sending}
         aria-label="Номер телефона для WhatsApp"
-        className="mt-3 w-full rounded-md border-2 border-ink bg-paper px-3 py-2.5 text-sm outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+        aria-invalid={(error && !isValidPhone(phone)) ? true : undefined}
+        aria-describedby={error ? "chat-phone-error" : undefined}
+        className="mt-3 min-h-11 w-full rounded-md border-2 border-ink bg-paper px-3 py-2.5 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
       />
       {error && (
-        <p role="alert" className="mt-1.5 text-xs font-bold text-red">
+        <p id="chat-phone-error" role="alert" className="mt-1.5 text-xs font-bold text-red">
           {error}
         </p>
       )}
@@ -373,9 +427,9 @@ function LeadForm({ onDone }: { onDone: () => void }) {
         type="button"
         onClick={submit}
         disabled={sending}
-        className="mt-2.5 w-full rounded-pill border-2 border-ink bg-red px-4 py-2.5 text-xs font-extrabold text-cream uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        className="mt-2.5 min-h-11 w-full rounded-pill border-2 border-ink bg-red px-4 py-2.5 text-xs font-extrabold text-cream uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {sending ? "Отправляю…" : "Получить план"}
+        {sending ? "Отправляю…" : "Отправить номер"}
       </button>
     </div>
   );

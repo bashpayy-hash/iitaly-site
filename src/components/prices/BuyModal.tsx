@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
@@ -31,6 +31,13 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const inFlight = useRef(false);
+  const active = useRef(true);
+
+  useEffect(() => {
+    active.current = true;
+    return () => { active.current = false; };
+  }, []);
 
   function reset() {
     setStep("form");
@@ -39,22 +46,24 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
     setPhone("");
     setError(null);
     setCopied(false);
+    inFlight.current = false;
   }
 
   function close() {
     if (step === "sending") return;
     onClose();
-    setTimeout(reset, 200);
+    reset();
   }
 
   async function submit() {
-    if (!product || step === "sending") return;
+    if (!product || inFlight.current) return;
     if (!isValidName(name) || !isValidName(surname) || !isValidPhone(phone)) {
       setError("Проверь имя, фамилию и телефон.");
       return;
     }
 
     setError(null);
+    inFlight.current = true;
     setStep("sending");
 
     if (STRIPE_ENABLED) {
@@ -64,7 +73,9 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
         surname: surname.trim(),
         phone: phone.trim(),
       });
+      if (!active.current) return;
       if (!result.ok) {
+        inFlight.current = false;
         setError(result.error);
         setStep("form");
         return;
@@ -82,7 +93,9 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
       surname: surname.trim(),
       phone: phone.trim(),
     });
+    if (!active.current) return;
     if (!result.ok) {
+      inFlight.current = false;
       setError(result.error);
       setStep("form");
       return;
@@ -90,6 +103,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
     track("order_submitted", { product: product.name, price: product.price, provider: "manual" });
     track("lead_submitted", { product: product.name, price: product.price, from: "buy_modal" });
     setStep("manual");
+    inFlight.current = false;
   }
 
   async function copyPhone() {
@@ -174,6 +188,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               <p id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {STRIPE_ENABLED ? "Открываю Stripe…" : "Оформляю заказ…"}
               </p>
+              <p className="text-apple-body-sm text-cloud-body">Это может занять несколько секунд. Твои данные останутся в форме, если связь прервётся.</p>
             </div>
           )}
 

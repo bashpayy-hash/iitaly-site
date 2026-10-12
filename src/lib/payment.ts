@@ -2,6 +2,7 @@ import { BACKEND_URL } from "./backend";
 import { STRIPE_ENABLED } from "./paymentMode";
 
 export { STRIPE_ENABLED };
+export { isValidPhone } from "./phone";
 
 export const PAY_MODE: "transfer" | "kaspi" = "transfer";
 export const PAY_PHONE = "+7 775 937 0598";
@@ -16,8 +17,30 @@ export function isValidName(name: string): boolean {
   return name.trim().length >= 2;
 }
 
-export function isValidPhone(phone: string): boolean {
-  return /^[+0-9() -]{10,18}$/.test(phone);
+// Keep checkout and its JSON response bounded, including a stalled response body.
+// An aborted request does not confirm or cancel a payment on the server.
+async function paymentRequest(path: string, fields: Record<string, unknown>) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20_000);
+  try {
+    const response = await fetch(`${BACKEND_URL}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+      signal: controller.signal,
+    });
+    const data = await response.json().catch((error: unknown) => {
+      if (controller.signal.aborted) throw error;
+      return null;
+    });
+    return { response, data };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function isTimeout(error: unknown) {
+  return error instanceof Error && error.name === "AbortError";
 }
 
 export type OrderResult = { ok: true; orderId?: string } | { ok: false; error: string };
@@ -33,17 +56,13 @@ export async function submitOrder(fields: {
     return { ok: false, error: "Приём заявок временно не работает. Напиши в WhatsApp — оформим вручную." };
   }
   try {
-    const r = await fetch(`${BACKEND_URL}/api/order`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fields),
-    });
-    const data = await r.json().catch(() => null);
+    const { response: r, data } = await paymentRequest("/api/order", fields);
     if (!r.ok || !data?.ok) {
       return { ok: false, error: data?.error || "Не удалось отправить заявку. Попробуй ещё раз или напиши в WhatsApp." };
     }
     return { ok: true, orderId: typeof data.orderId === "string" ? data.orderId : undefined };
-  } catch {
+  } catch (error) {
+    if (isTimeout(error)) return { ok: false, error: "Сервер отвечает дольше обычного. Данные остались в форме — попробуй ещё раз или напиши в WhatsApp." };
     return { ok: false, error: "Нет связи с сервером. Проверь интернет или напиши в WhatsApp." };
   }
 }
@@ -82,12 +101,7 @@ export async function startStripeCheckout(fields: {
     return { ok: false, error: "Оплата временно недоступна: сервер не подключён." };
   }
   try {
-    const r = await fetch(`${BACKEND_URL}/api/stripe/checkout`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(fields),
-    });
-    const data = await r.json().catch(() => null);
+    const { response: r, data } = await paymentRequest("/api/stripe/checkout", fields);
     if (!r.ok || !data?.ok || typeof data.url !== "string" ||
         typeof data.orderId !== "string" || typeof data.orderToken !== "string") {
       return { ok: false, error: data?.error || "Не удалось открыть Stripe Checkout." };
@@ -105,7 +119,8 @@ export async function startStripeCheckout(fields: {
       createdAt: new Date().toISOString(),
     });
     return result;
-  } catch {
+  } catch (error) {
+    if (isTimeout(error)) return { ok: false, error: "Не удалось открыть оплату вовремя. Данные остались в форме — попробуй ещё раз." };
     return { ok: false, error: "Нет связи с сервером. Проверь интернет и попробуй ещё раз." };
   }
 }
@@ -113,15 +128,11 @@ export async function startStripeCheckout(fields: {
 export async function fetchPaymentStatus(orderId: string, orderToken: string): Promise<PaymentStatusResult> {
   if (!BACKEND_URL) return { ok: false, error: "Нет связи с сервером." };
   try {
-    const r = await fetch(`${BACKEND_URL}/api/order/status`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId, orderToken }),
-    });
-    const data = await r.json().catch(() => null);
+    const { response: r, data } = await paymentRequest("/api/order/status", { orderId, orderToken });
     if (!r.ok || !data?.ok) return { ok: false, error: data?.error || "Заказ не найден." };
     return data as PaymentStatusResult;
-  } catch {
+  } catch (error) {
+    if (isTimeout(error)) return { ok: false, error: "Не удалось получить статус вовремя. Если деньги списались, не оплачивай повторно — проверь статус ещё раз или напиши в поддержку." };
     return { ok: false, error: "Нет связи с сервером." };
   }
 }

@@ -21,6 +21,14 @@ on:
       - "src/components/portal/PortalLogin.tsx"
       - "src/components/portal/portal-login.module.css"
       - "src/components/prices/**"
+      - "src/components/payment/**"
+      - "src/components/chat/**"
+      - "src/components/Modal.tsx"
+      - "src/lib/lead.ts"
+      - "src/lib/phone.ts"
+      - "src/lib/chat.ts"
+      - "src/lib/payment.ts"
+      - "scripts/launch-*.mjs"
       - "public/illustrations/editorial/**"
       - "public/permesso/**"
       - "docs/editorial-art-assets.json"
@@ -46,6 +54,7 @@ jobs:
     timeout-minutes: 15
     env:
       NEXT_PUBLIC_BACKEND_URL: https://example.invalid
+      NEXT_PUBLIC_STRIPE_ENABLED: "true"
       BASE_SHA: ${{ github.event.pull_request.base.sha }}
       REVIEW_TOOLS: /tmp/iitaly-browser/node_modules
       BASELINE_OUT: /tmp/iitaly-base/out
@@ -80,6 +89,12 @@ jobs:
         run: node scripts/admissions-browser-review.mjs
       - name: Review student journey, error recovery and accessibility
         run: node scripts/design-ux-review.mjs
+      - name: Review launch document retry, long filenames and modal focus
+        run: node scripts/launch-document-review.mjs
+      - name: Review launch chat, contact recovery and free-plan access
+        run: node scripts/launch-chat-review.mjs
+      - name: Review launch checkout and portal failure recovery
+        run: node scripts/launch-flow-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
       - name: Review single-mode Permesso, local verified pages, exact geometry and local draft

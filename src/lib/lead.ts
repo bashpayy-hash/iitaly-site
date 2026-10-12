@@ -1,18 +1,27 @@
 import { BACKEND_URL } from "./backend";
 
-export async function submitLead(fields: Record<string, string>) {
-  if (!BACKEND_URL) return;
+export { isValidPhone } from "./phone";
+
+type LeadSubmission = { ok: true } | { ok: false; error: string };
+
+export async function submitLead(fields: Record<string, string>): Promise<LeadSubmission> {
+  const error = "Не удалось отправить номер. Попробуй ещё раз чуть позже.";
+  if (!BACKEND_URL) return { ok: false, error };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
   try {
-    await fetch(`${BACKEND_URL}/api/lead`, {
+    const response = await fetch(`${BACKEND_URL}/api/lead`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(fields),
+      signal: controller.signal,
     });
+    if (!response.ok) return { ok: false, error };
+    const data = await response.json();
+    return data?.ok === true ? { ok: true } : { ok: false, error };
   } catch {
-    // best-effort — the wizard/chat flow continues regardless
+    return { ok: false, error };
+  } finally {
+    clearTimeout(timeout);
   }
-}
-
-export function isValidPhone(phone: string): boolean {
-  return /^[+0-9() -]{10,18}$/.test(phone);
 }

@@ -132,7 +132,7 @@ function DocGroup({
           const state = verdict === "ok" ? "ok" : verdict ? verdict : "missing";
           const isPrimaryAction = primary && index === firstActionable && !blocked;
           return (
-            <div key={row.id} className={styles.docRow} data-blocked={blocked || undefined}>
+            <div key={row.id} className={styles.docRow} data-fab-yield data-blocked={blocked || undefined}>
               <div>
                 <div className={styles.docTitle}>{row.title}</div>
                 <div className={styles.docMeta}>

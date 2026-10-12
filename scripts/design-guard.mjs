@@ -64,7 +64,12 @@ const approvedAdmissionsPaths = new Set([
   // User-authorized UX pass: a local questionnaire draft, with no API change.
   'src/lib/usePlanDraft.ts',
 ]);
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path)), [], 'Protected source or contract changed.');
+// User-authorized launch polish: shared phone validation and truthful contact/focus states.
+// This does not permit new API fields, prices, catalogue data or dependency changes.
+const approvedLaunchPaths = new Set([
+  'src/lib/phone.ts', 'src/lib/lead.ts', 'src/components/chat/ChatLauncher.tsx',
+]);
+assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 667;/);
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');

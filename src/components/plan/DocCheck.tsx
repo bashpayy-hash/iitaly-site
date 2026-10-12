@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
@@ -137,9 +137,8 @@ export function DocCheck() {
         Проверь документ перед подачей
       </h2>
       <p className="mt-2 text-apple-body-sm text-cloud-body">
-        Справка о доходах, состав семьи, банковская выписка или перевод.
-        Выбери программу и учебный год: требования к датам и оформлению различаются.
-        Если ещё не определился, проверим читаемость, сведения и арифметику.
+        Загрузи справку о доходах, состав семьи, банковскую выписку или перевод.
+        Для проверки требований укажи программу и учебный год.
       </p>
 
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
@@ -185,20 +184,6 @@ export function DocCheck() {
         </p>
       </fieldset>
 
-      <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-        {[
-          ["Соединение зашифровано", "файл идёт по HTTPS, как в банковском приложении"],
-          ["Не публикуем и не продаём", "документ виден только тебе и проверяющему эксперту"],
-          ["Не идёт на обучение моделей", "используется один раз — для твоего разбора"],
-          ["Удалим по запросу", "напиши, и данные сотрём"],
-        ].map(([b, s]) => (
-          <div key={b} className="border border-white/10 px-3 py-2 text-apple-caption">
-            <b className="block text-cloud-white">{b}</b>
-            <span className="text-cloud-meta">{s}</span>
-          </div>
-        ))}
-      </div>
-
       {(availabilityPending || unavailable) && <div role="status" className="mt-5 border border-white/15 p-4 text-apple-body-sm text-cloud-body">
         <b className="block text-cloud-white">{availabilityPending ? "Проверяем доступность ИИ…" : "Проверка документов пока недоступна"}</b>
         {unavailable && <>
@@ -233,29 +218,30 @@ export function DocCheck() {
             disabled={state.step === "reading" || unavailable || availabilityPending}
             onChange={(e) => accept(e.target.files?.[0])}
           />
-          <span aria-hidden className="text-3xl">
-            📄
-          </span>
+          <svg aria-hidden="true" width="28" height="32" viewBox="0 0 28 32" fill="none" className="mb-1 text-crimson">
+            <path d="M16 2H5a2 2 0 0 0-2 2v24a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V11L16 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+            <path d="M16 2v9h9M8 17h12M8 22h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           <b className="text-cloud-white">Выбрать документ</b>
           <span className="text-apple-body-sm text-cloud-body">или перетащи сюда · фото, PDF, Word до 5 МБ</span>
         </label>
       ) : (
-        <div className="mt-5 flex flex-col gap-4 border border-white/15  p-4 sm:flex-row sm:items-center">
+        <div className="mt-5 flex items-start gap-3 rounded-apple-input border border-white/15 p-4 sm:items-center sm:gap-4">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={preview}
               alt="документ"
-              className="h-28 w-28 shrink-0 border border-white/15 object-cover"
+              className="h-14 w-14 shrink-0 rounded-md border border-white/15 object-cover sm:h-20 sm:w-20"
             />
           ) : (
-            <div className="flex h-28 w-28 shrink-0 items-center justify-center border border-white/15 font-apple-display text-apple-subheading font-semibold text-cloud-meta">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-white/15 text-apple-caption font-semibold text-cloud-meta sm:h-20 sm:w-20">
               {fileIcon}
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-apple-body-sm font-semibold text-cloud-white">{state.file.name}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <p className="break-words text-apple-body-sm font-semibold text-cloud-white [overflow-wrap:anywhere]">{state.file.name}</p>
+            <div className="mt-3 flex flex-wrap gap-2 [&>button]:w-full sm:[&>button]:w-auto">
               <AppleButton
                 type="button"
                 variant="filled"
@@ -278,6 +264,11 @@ export function DocCheck() {
           </div>
         </div>
       )}
+
+      <p className="mt-3 text-apple-caption text-cloud-meta">
+        После нажатия «Проверить документ» файл передаётся в Anthropic для ИИ-анализа.{" "}
+        <a href="/privacy" className="font-semibold text-crimson underline underline-offset-2">Как обрабатываются данные</a>
+      </p>
 
       <div aria-live="polite" className="mt-5">
         {(state.step === "error" || state.step === "retry") && !unavailable && (
@@ -303,12 +294,7 @@ export function DocCheck() {
       <p className="mt-5 text-apple-caption text-cloud-meta">
         Это предварительная проверка одного файла. Она не подтверждает
         подлинность документа и не гарантирует его принятие: решение принимает
-        университет, CAF или стипендиальный орган. Подробнее о
-        работе с данными — в{" "}
-        <a href="/privacy" className="font-semibold text-crimson">
-          политике конфиденциальности
-        </a>
-        .
+        университет, CAF или стипендиальный орган.
       </p>
     </div>
   );
@@ -316,8 +302,11 @@ export function DocCheck() {
 
 function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => void }) {
   const v = result.verdict || "warn";
+  const headingId = useId();
+  const resultRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { resultRef.current?.focus({ preventScroll: true }); }, []);
   return (
-    <div className="border border-white/15 p-4">
+    <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
       <div className="flex flex-wrap items-center gap-2.5">
         {v === "ok" && <VespaReveal pose="success" className="h-9 w-auto shrink-0" />}
         <span
@@ -333,8 +322,10 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
         >
           {LABEL[v] || "Результат"}
         </span>
-        <span className="font-apple-display text-apple-subheading font-semibold text-cloud-white">{result.docTitle || "Документ"}</span>
+        <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
       </div>
+
+      {result.summary && <p className="mt-3 text-apple-body-sm text-cloud-body">{result.summary}</p>}
 
       {result.review && <div className="mt-4 border-b border-white/15 pb-4 text-apple-body-sm text-cloud-body">
         <p className="font-semibold text-cloud-white">
@@ -343,7 +334,7 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
         <p className="mt-1">{result.review.notice}</p>
         {result.review.referenceYear !== null && <p className="mt-1">Год доходов: {result.review.referenceYear}. Имущество — на 31 декабря {result.review.referenceYear}; допустимые альтернативы зависят от программы.</p>}
         <details className="mt-3 text-apple-caption">
-          <summary className="cursor-pointer py-1 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+          <summary className="min-h-11 cursor-pointer py-3 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
             Официальные источники · сверены {result.review.verifiedOn.split("-").reverse().join(".")}
           </summary>
           <p className="mt-2 text-cloud-meta">Это дата сверки базы. Сайты учреждений не просматриваются заново при каждой проверке.</p>
@@ -354,8 +345,6 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
           </ul>
         </details>
       </div>}
-
-      {result.summary && <p className="mt-3 text-apple-body-sm text-cloud-body">{result.summary}</p>}
 
       {result.checks && result.checks.length > 0 && (
         <div className="mt-4 space-y-2">

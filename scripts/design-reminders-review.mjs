@@ -122,7 +122,10 @@ try {
     await settle(page);
 
     const mainText = await page.locator('#main').innerText();
-    assert.doesNotMatch(mainText, /Claude|Anthropic|Клод/i);
+    // The free plan must not claim an AI document verdict. The separate upload
+    // flow deliberately names its processor in the data disclosure.
+    assert.doesNotMatch(await page.locator('#questionnaire').innerText(), /Claude|Anthropic|Клод/i);
+    assert.match(await page.locator('#document-check').innerText(), /После нажатия «Проверить документ» файл передаётся в Anthropic/);
     assert.match(mainText, /План собран по твоим ответам/);
     assert.match(mainText, /Это чек-лист, а не результат проверки файла/);
 
