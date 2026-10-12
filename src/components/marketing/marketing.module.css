@@ -70,10 +70,22 @@
 .ghost { min-height: 44px; padding: 8px 0; color: var(--i-link, #b91134); font-size: 16px; }
 .ghost:hover { text-decoration: underline; text-underline-offset: 5px; }
 .hero { position: relative; }
-.heroIntro { display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr); align-items: center; gap: 8px; padding: 64px max(32px, calc((100vw - 1240px)/2)) 56px; background: #f5f5f7; }
+.heroIntro { --hero-gutter: max(32px, calc((100vw - 1240px)/2)); display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr); align-items: center; gap: 8px; padding: 64px var(--hero-gutter) 56px; background: #f5f5f7; }
 .heroCopy { position: relative; z-index: 1; min-width: 0; text-align: left; }
-.campusArtwork { display: block; align-self: stretch; pointer-events: none; user-select: none; }
-.campusArtwork img { display: block; width: 100%; height: 100%; min-height: 360px; object-fit: cover; object-position: 66% center; }
+/* Картинка кампуса — панель, а не вставленный прямоугольник. Справа она
+   доходит до края окна, сверху упирается в шапку, снизу — в тёмную секцию:
+   обрез совпадает с границами страницы, и сцена уходит за кадр. Раньше
+   она кончалась по краю колонки и оставляла справа пустую полосу шириной
+   с боковое поле (172px на экране 1584), а сверху и снизу висела жёсткими
+   краями посреди серого фона.
+   Левый край рисунка растворяется в белый, а фон героя — #f5f5f7, поэтому
+   белый прямоугольник был виден на сером. Маска уводит левую треть в
+   прозрачность, и рисунок переходит прямо в фон страницы. */
+.campusArtwork { position: relative; display: block; align-self: stretch; min-height: 480px; margin: -64px calc(-1 * var(--hero-gutter)) -56px 0; pointer-events: none; user-select: none; }
+/* Картинка лежит абсолютно и не участвует в расчёте высоты: высоту героя
+   задаёт текст. Иначе на широких экранах собственные пропорции рисунка
+   растягивали весь первый экран. */
+.campusArtwork img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 66% center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 34%); mask-image: linear-gradient(90deg, transparent, #000 34%); }
 .heroCopy .actions { justify-content: flex-start; gap: 12px 16px; }
 .eyebrow { color: #666670; font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
 .signal { display: inline-block; width: 7px; height: 7px; margin-right: 9px; border-radius: 50%; background: var(--i-signal); vertical-align: 1px; }
@@ -180,8 +192,8 @@
   .heroIntro { grid-template-columns: 1fr; gap: 16px; padding: 40px 20px 0; }
   .heroCopy { text-align: center; padding: 0; }
   .heroCopy .actions { justify-content: center; }
-  .campusArtwork { width: 100%; max-width: 480px; margin-inline: auto; height: 210px; overflow: hidden; }
-  .campusArtwork img { min-height: 0; height: 100%; object-fit: cover; object-position: 70% 64%; }
+  .campusArtwork { width: 100%; max-width: 480px; min-height: 0; margin: 0 auto; height: 210px; overflow: hidden; }
+  .campusArtwork img { min-height: 0; height: 100%; object-fit: cover; object-position: 70% 64%; -webkit-mask-image: none; mask-image: none; }
   .heroNote { margin-inline: auto; }
   .heroTitle { margin: 16px auto 0; font-size: clamp(32px, 8.5vw, 54px); letter-spacing: -.03em; }
   .heroDescription { font-size: 17px; max-width: 430px; margin: 20px auto 0; }
