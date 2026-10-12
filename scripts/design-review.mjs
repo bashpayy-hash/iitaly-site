@@ -36,6 +36,7 @@ async function makePage(width, reducedMotion = 'reduce') {
   const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion, deviceScaleFactor: 1, locale: 'ru-RU', timezoneId: 'Europe/Rome' });
   await context.route('**/*', route => {
     const url = new URL(route.request().url());
+    if (url.pathname === '/health/ai') return route.fulfill({status:200,contentType:'application/json',body:'{"ok":true,"code":"AI_READY","retryable":true}'});
     return ['127.0.0.1', 'localhost'].includes(url.hostname) || url.protocol === 'data:' ? route.continue() : route.abort();
   });
   if (reducedMotion === 'reduce') {

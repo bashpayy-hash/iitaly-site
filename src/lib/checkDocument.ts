@@ -39,12 +39,39 @@ export type DocCheckFailureKind = "no-backend" | "network" | "server";
 export class DocCheckError extends Error {
   readonly kind: DocCheckFailureKind;
   readonly status?: number;
+  readonly code?: string;
+  readonly retryable: boolean;
 
-  constructor(kind: DocCheckFailureKind, message: string, status?: number) {
+  constructor(kind: DocCheckFailureKind, message: string, status?: number, code?: string, retryable = true) {
     super(message);
     this.name = "DocCheckError";
     this.kind = kind;
     this.status = status;
+    this.code = code;
+    this.retryable = retryable;
+  }
+}
+
+export type DocumentAvailability = { ok: boolean; code: string; error?: string; retryable: boolean };
+
+export async function getDocumentAvailability(signal?: AbortSignal): Promise<DocumentAvailability> {
+  if (!BACKEND_URL) throw new DocCheckError("no-backend", "Проверка заработает после подключения сервера.", undefined, "AI_BACKEND_MISSING", false);
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  signal?.addEventListener("abort", abort, { once: true });
+  if (signal?.aborted) controller.abort();
+  const timer = setTimeout(abort, 10000);
+  try {
+    const response = await fetch(`${BACKEND_URL}/health/ai`, { cache: "no-store", signal: controller.signal });
+    const data = await response.json();
+    if (typeof data?.ok !== "boolean" || (data.ok && !response.ok)) throw new Error("Invalid readiness response");
+    return { ok: data.ok, code: typeof data.code === "string" ? data.code : "AI_UNAVAILABLE",
+      error: typeof data.error === "string" ? data.error : "ИИ-проверка временно недоступна.", retryable: data.retryable !== false };
+  } catch {
+    throw new DocCheckError("network", "Не удалось проверить доступность сервиса. Попробуй проверить доступность ещё раз.", undefined, "AI_CONNECTION_UNAVAILABLE");
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", abort);
   }
 }
 
@@ -55,6 +82,10 @@ export async function checkDocument(payload: DocPayload, hint?: string): Promise
       "Проверка заработает после подключения сервера.",
     );
   }
+
+  // Verify the provider before transmitting the user's document to the backend.
+  const availability = await getDocumentAvailability();
+  if (!availability.ok) throw new DocCheckError("server", availability.error || "ИИ-проверка временно недоступна.", 503, availability.code, availability.retryable);
 
   /* hint — только то, чем человек сам назвал документ, и только если назвал.
 
@@ -100,7 +131,7 @@ export async function checkDocument(payload: DocPayload, hint?: string): Promise
      SyntaxError, и он неотличим от обрыва связи — снова «проверь
      интернет» вместо «сервер отдал 502». */
   const raw = await res.text().catch(() => "");
-  let data: { ok?: boolean; error?: unknown; result?: DocCheckResult } | null = null;
+  let data: { ok?: boolean; error?: unknown; code?: unknown; retryable?: unknown; result?: DocCheckResult } | null = null;
   try {
     data = raw ? JSON.parse(raw) : null;
   } catch {
@@ -125,6 +156,8 @@ export async function checkDocument(payload: DocPayload, hint?: string): Promise
       "server",
       fromServer || `Сервер отказал (код ${res.status}). Попробуй ещё раз через минуту.`,
       res.status,
+      typeof data.code === "string" ? data.code : undefined,
+      data.retryable !== false,
     );
   }
 

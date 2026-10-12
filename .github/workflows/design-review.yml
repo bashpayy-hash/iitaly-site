@@ -13,6 +13,7 @@ on:
       - "src/components/guides/**"
       - "src/components/plan/**"
       - "src/lib/usePlanDraft.ts"
+      - "src/lib/checkDocument.ts"
       - "src/components/Header.tsx"
       - "src/components/Footer.tsx"
       - "src/components/portal/PortalExplorer.tsx"
