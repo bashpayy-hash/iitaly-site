@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
-import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability } from "@/lib/checkDocument";
+import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
 import { VespaRide } from "./VespaRide";
@@ -11,8 +11,8 @@ import { VespaReveal } from "@/components/VespaReveal";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
-  ok: "Всё в порядке",
-  warn: "Есть замечания",
+  ok: "Видимых ошибок нет",
+  warn: "Нужно уточнить",
   error: "Найдены ошибки",
   unreadable: "Плохо видно",
 };
@@ -34,6 +34,14 @@ type State =
 export function DocCheck() {
   const router = useRouter();
   const [state, setState] = useState<State>({ step: "idle" });
+  const [context, setContext] = useState<DocumentReviewContext>({
+    profile: "general", academicYear: "unspecified", applicantScope: "unspecified",
+  });
+  function updateContext(value: Partial<DocumentReviewContext>) {
+    setContext(current => ({ ...current, ...value }));
+    setState(current => current.step === "done" || current.step === "retry"
+      ? { step: "ready", file: current.file, payload: current.payload } : current);
+  }
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [availability, setAvailability] = useState<DocumentAvailability | null>(null);
@@ -85,7 +93,7 @@ export function DocCheck() {
     setState({ step: "checking", file, payload });
     track("doc_check_start");
     try {
-      const result = await checkDocument(payload);
+      const result = await checkDocument(payload, undefined, context);
       setState({ step: "done", file, payload, result });
       track("doc_check_done", { verdict: result.verdict });
     } catch (e) {
@@ -126,13 +134,56 @@ export function DocCheck() {
         Проверка документов · бесплатно
       </p>
       <h2 className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-cloud-white">
-        Загрузи документ — ИИ найдёт ошибки до подачи
+        Проверь документ перед подачей
       </h2>
       <p className="mt-2 text-apple-body-sm text-cloud-body">
-        Справка о доходах, свидетельство о рождении, состав семьи, банковская
-        выписка, апостиль. Система сверит с правилами DSU и ISU: референсный
-        год, цепочка «апостиль → перевод → нотариус», реквизиты, арифметика.
+        Справка о доходах, состав семьи, банковская выписка или перевод.
+        Выбери программу и учебный год: требования к датам и оформлению различаются.
+        Если ещё не определился, проверим читаемость, сведения и арифметику.
       </p>
+
+      <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
+        <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="min-w-0 text-apple-caption text-cloud-body">
+            Программа
+            <select value={context.profile}
+              onChange={e => updateContext({ profile: e.target.value as DocumentReviewContext["profile"] })}
+              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              <option value="general">Не знаю / другая программа</option>
+              <option value="bocconi">Bocconi · ISU / ISEEU</option>
+              <option value="piemonte">EDISU Piemonte</option>
+              <option value="toscana">DSU Toscana</option>
+              <option value="ergo">ER.GO · Emilia-Romagna</option>
+            </select>
+          </label>
+          <label className="min-w-0 text-apple-caption text-cloud-body">
+            Учебный год заявки
+            <select value={context.academicYear}
+              onChange={e => updateContext({ academicYear: e.target.value as DocumentReviewContext["academicYear"] })}
+              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              <option value="unspecified">Ещё не определился</option>
+              <option value="2026/27">2026/27</option>
+              <option value="2027/28">2027/28</option>
+            </select>
+          </label>
+        </div>
+        {context.profile !== "general" && <label className="flex cursor-pointer items-start gap-3 py-1 text-apple-body-sm text-cloud-body">
+          <input type="checkbox" checked={context.applicantScope === "kz-family-abroad"}
+            onChange={e => updateContext({ applicantScope: e.target.checked ? "kz-family-abroad" : "unspecified" })}
+            className="mt-1 h-5 w-5 shrink-0 accent-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson" />
+          <span><b className="text-cloud-white">Моя ситуация: Казахстан, семья за рубежом</b>
+            <span className="mt-1 block text-apple-caption">Я гражданин Казахстана, подаю сведения о семейных доходах и имуществе за пределами Италии и не заявляю финансовую независимость.</span>
+          </span>
+        </label>}
+        <p className="text-apple-caption text-cloud-meta">
+          {context.academicYear === "2027/28"
+            ? "Правила 2027/28 в этой базе пока не подтверждены окончательно. Доступна проверка содержания файла."
+            : context.profile === "general" || context.academicYear === "unspecified" || context.applicantScope === "unspecified"
+              ? "Без уточнения заявки проверим содержание. Год доходов и обязательное оформление оценим только для подходящего профиля."
+              : "Применим правила выбранной программы 2026/27 для указанной ситуации. Источники покажем в результате."}
+        </p>
+      </fieldset>
 
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
         {[
@@ -240,7 +291,7 @@ export function DocCheck() {
             text={
               state.step === "reading"
                 ? "Читаю файл — сжимаю фото, чтобы оно доехало"
-                : "Сверяю с правилами DSU и ISU — это занимает 10–20 секунд"
+                : "Проверяю содержание и применимые требования — это может занять около минуты"
             }
           />
         )}
@@ -250,8 +301,9 @@ export function DocCheck() {
       </div>
 
       <p className="mt-5 text-apple-caption text-cloud-meta">
-        Проверка помогает не подать документ с ошибкой, но результат не
-        гарантирует: решение о стипендии принимает регион Италии. Подробнее о
+        Это предварительная проверка одного файла. Она не подтверждает
+        подлинность документа и не гарантирует его принятие: решение принимает
+        университет, CAF или стипендиальный орган. Подробнее о
         работе с данными — в{" "}
         <a href="/privacy" className="font-semibold text-crimson">
           политике конфиденциальности
@@ -283,6 +335,25 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
         </span>
         <span className="font-apple-display text-apple-subheading font-semibold text-cloud-white">{result.docTitle || "Документ"}</span>
       </div>
+
+      {result.review && <div className="mt-4 border-b border-white/15 pb-4 text-apple-body-sm text-cloud-body">
+        <p className="font-semibold text-cloud-white">
+          {result.review.profileLabel}{result.review.academicYear !== "unspecified" ? ` · ${result.review.academicYear}` : ""}
+        </p>
+        <p className="mt-1">{result.review.notice}</p>
+        {result.review.referenceYear !== null && <p className="mt-1">Год доходов: {result.review.referenceYear}. Имущество — на 31 декабря {result.review.referenceYear}; допустимые альтернативы зависят от программы.</p>}
+        <details className="mt-3 text-apple-caption">
+          <summary className="cursor-pointer py-1 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+            Официальные источники · сверены {result.review.verifiedOn.split("-").reverse().join(".")}
+          </summary>
+          <p className="mt-2 text-cloud-meta">Это дата сверки базы. Сайты учреждений не просматриваются заново при каждой проверке.</p>
+          <ul className="mt-2 space-y-2">
+            {result.review.sources.map(source => <li key={source.id}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-crimson underline underline-offset-2">{source.label}</a>
+            </li>)}
+          </ul>
+        </details>
+      </div>}
 
       {result.summary && <p className="mt-3 text-apple-body-sm text-cloud-body">{result.summary}</p>}
 

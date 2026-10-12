@@ -4,6 +4,22 @@ import type { DocPayload } from "./docPayload";
 export type CheckVerdict = "ok" | "warn" | "error" | "unreadable";
 export type CheckStatus = "ok" | "warn" | "error" | "unknown";
 
+export interface DocumentReviewContext {
+  profile: "general" | "bocconi" | "piemonte" | "toscana" | "ergo";
+  academicYear: "unspecified" | "2026/27" | "2027/28";
+  applicantScope: "unspecified" | "kz-family-abroad";
+}
+
+export interface DocumentReview extends DocumentReviewContext {
+  profileLabel: string;
+  rulesStatus: "verified" | "unspecified" | "provisional" | "unverified";
+  referenceYear: number | null;
+  rulesVersion: string;
+  verifiedOn: string;
+  notice: string;
+  sources: { id: string; label: string; url: string }[];
+}
+
 export interface DocCheckResult {
   verdict?: CheckVerdict;
   docTitle?: string;
@@ -11,6 +27,7 @@ export interface DocCheckResult {
   checks?: { status?: CheckStatus; label?: string; note?: string }[];
   problems?: { severity?: "critical" | "minor"; text?: string; fix?: string }[];
   nextSteps?: string[];
+  review?: DocumentReview;
 }
 
 /**
@@ -75,7 +92,7 @@ export async function getDocumentAvailability(signal?: AbortSignal): Promise<Doc
   }
 }
 
-export async function checkDocument(payload: DocPayload, hint?: string): Promise<DocCheckResult> {
+export async function checkDocument(payload: DocPayload, hint?: string, context?: DocumentReviewContext): Promise<DocCheckResult> {
   if (!BACKEND_URL) {
     throw new DocCheckError(
       "no-backend",
@@ -87,20 +104,11 @@ export async function checkDocument(payload: DocPayload, hint?: string): Promise
   const availability = await getDocumentAvailability();
   if (!availability.ok) throw new DocCheckError("server", availability.error || "ИИ-проверка временно недоступна.", 503, availability.code, availability.retryable);
 
-  /* hint — только то, чем человек сам назвал документ, и только если назвал.
-
-     Справку о поступлении (ADMISSIONS_CONTEXT) сюда класть нельзя, хотя
-     поле выглядит подходящим. Бэкенд берёт из hint первые 100 символов и
-     подаёт модели как «Пользователь считает, что это: …». От справки
-     доходил обрывок «Справка IITALY, проверено …; не пе», и модель на
-     каждом документе читала, что человек принёс ей «справку IITALY», —
-     паспорт, выписку, что угодно. Оговорка «не считай документ ошибочным
-     без учебного года» не доходила вовсе: её отрезало раньше.
-
-     Чтобы проверяющий видел справку, бэкенду нужно отдельное поле с
-     нормальным лимитом. Это изменение API, а не подстановка в hint. */
+  // A short document label is separate from the allowlisted application context.
+  // Official rules, verification dates and source URLs are owned by the server.
   const body: Record<string, unknown> = { fileName: payload.fileName || "" };
   if (hint) body.hint = hint;
+  if (context) body.context = context;
   if (payload.kind === "pdf") body.pdf = payload.base64;
   else if (payload.kind === "text") body.text = payload.text;
   else {
