@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
-import { checkDocument, DocCheckError, type DocCheckResult } from "@/lib/checkDocument";
+import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
 import { VespaRide } from "./VespaRide";
@@ -36,9 +36,33 @@ export function DocCheck() {
   const [state, setState] = useState<State>({ step: "idle" });
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [availability, setAvailability] = useState<DocumentAvailability | null>(null);
+  const [availabilityPending, setAvailabilityPending] = useState(true);
+  const unavailable = availability?.ok === false;
+
+  function unavailableFrom(error: unknown): DocumentAvailability {
+    return { ok: false, code: error instanceof DocCheckError ? error.code || "AI_UNAVAILABLE" : "AI_UNAVAILABLE",
+      error: error instanceof Error ? error.message : "ИИ-проверка временно недоступна.", retryable: true };
+  }
+
+  useEffect(() => {
+    const controller = new AbortController();
+    getDocumentAvailability(controller.signal)
+      .then(value => { if (!controller.signal.aborted) setAvailability(value); })
+      .catch(error => { if (!controller.signal.aborted) setAvailability(unavailableFrom(error)); })
+      .finally(() => { if (!controller.signal.aborted) setAvailabilityPending(false); });
+    return () => controller.abort();
+  }, []);
+
+  async function refreshAvailability() {
+    setAvailabilityPending(true);
+    try { setAvailability(await getDocumentAvailability()); }
+    catch (error) { setAvailability(unavailableFrom(error)); }
+    finally { setAvailabilityPending(false); }
+  }
 
   async function accept(file: File | null | undefined) {
-    if (!file) return;
+    if (!file || unavailable || availabilityPending) return;
     setState({ step: "reading" });
     const res = await preparePayload(file);
     if ("error" in res) {
@@ -55,6 +79,7 @@ export function DocCheck() {
   }
 
   async function run() {
+    if (unavailable || availabilityPending) return;
     if (state.step !== "ready" && state.step !== "done" && state.step !== "retry") return;
     const { file, payload } = state;
     setState({ step: "checking", file, payload });
@@ -71,6 +96,7 @@ export function DocCheck() {
          подменялся советом проверить интернет. Человек чинил связь,
          которая работала, а настоящая причина до него не доходила. */
       const err = e instanceof DocCheckError ? e : null;
+      if (err?.code?.startsWith("AI_")) setAvailability({ ok: false, code: err.code, error: err.message, retryable: err.retryable });
       /* В аналитику уходит только вид сбоя и код ответа — по ним видно,
          что именно ломается в проде, и для этого не нужны ни имя файла,
          ни его содержимое. */
@@ -122,6 +148,15 @@ export function DocCheck() {
         ))}
       </div>
 
+      {(availabilityPending || unavailable) && <div role="status" className="mt-5 border border-white/15 p-4 text-apple-body-sm text-cloud-body">
+        <b className="block text-cloud-white">{availabilityPending ? "Проверяем доступность ИИ…" : "Проверка документов пока недоступна"}</b>
+        {unavailable && <>
+          <p className="mt-2">{availability.error}</p>
+          {"file" in state && <p className="mt-2">Выбранный файл остаётся в этой вкладке, пока страница открыта.</p>}
+          <AppleButton type="button" variant="outlined" size="sm" className="mt-3" onClick={refreshAvailability} disabled={availabilityPending}>Проверить доступность</AppleButton>
+        </>}
+      </div>}
+
       {state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
           className={`relative mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-apple-card border border-dashed px-6 py-8 text-center transition-colors focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-crimson ${
@@ -144,7 +179,7 @@ export function DocCheck() {
             accept="image/*,application/pdf,.pdf,.doc,.docx,.txt,.rtf"
             className="sr-only"
             aria-label="Выбрать документ для проверки"
-            disabled={state.step === "reading"}
+            disabled={state.step === "reading" || unavailable || availabilityPending}
             onChange={(e) => accept(e.target.files?.[0])}
           />
           <span aria-hidden className="text-3xl">
@@ -175,7 +210,7 @@ export function DocCheck() {
                 variant="filled"
                 size="sm"
                 onClick={run}
-                disabled={state.step === "checking"}
+                disabled={state.step === "checking" || unavailable || availabilityPending}
                 className={state.step === "checking" ? "vespa-wait-pulse" : undefined}
               >
                 {state.step === "checking"
@@ -194,7 +229,7 @@ export function DocCheck() {
       )}
 
       <div aria-live="polite" className="mt-5">
-        {(state.step === "error" || state.step === "retry") && (
+        {(state.step === "error" || state.step === "retry") && !unavailable && (
           <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
             {state.message}
             {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}

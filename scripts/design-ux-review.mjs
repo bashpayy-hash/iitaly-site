@@ -31,11 +31,17 @@ try {
   for (const width of [1440,768,390,320]) {
     const context = await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce',locale:'ru-RU'});
     const documentRequests = [], leads = [];
+    let aiAvailable = false;
     await context.route('**/*', route => {
       const req = route.request(), url = new URL(req.url());
+      if (url.pathname === '/health/ai') return route.fulfill({status:aiAvailable?200:503,contentType:'application/json',body:JSON.stringify(aiAvailable?{ok:true,code:'AI_READY',retryable:true}:{ok:false,code:'AI_AUTH_INVALID',retryable:false,error:'Требуется исправление настроек сервиса.'})});
       if (url.pathname === '/api/check-document') {
         documentRequests.push(req.postDataJSON());
-        return route.fulfill({status:documentRequests.length===1?503:200,contentType:'application/json',body:JSON.stringify(documentRequests.length===1?{ok:false,error:'Сервис временно недоступен'}:{ok:true,result:{verdict:'ok',docTitle:'Тестовый документ',summary:'Проверка завершена'}})});
+        if(documentRequests.length===2) aiAvailable = false;
+        const result = documentRequests.length===1 ? {ok:false,error:'Сервис временно недоступен'}
+          : documentRequests.length===2 ? {ok:false,code:'AI_AUTH_INVALID',retryable:false,error:'Требуется исправление настроек сервиса.'}
+          : {ok:true,result:{verdict:'ok',docTitle:'Тестовый документ',summary:'Проверка завершена'}};
+        return route.fulfill({status:result.ok?200:503,contentType:'application/json',body:JSON.stringify(result)});
       }
       if (url.pathname === '/api/lead') { leads.push(req.postDataJSON()); return route.abort(); }
       if (url.pathname === '/api/event') return route.fulfill({status:200,contentType:'application/json',body:'{"ok":true}'});
@@ -51,6 +57,12 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where+' overflow');
     }
     await visit('/plan');
+    await page.getByText('Проверка документов пока недоступна',{exact:true}).waitFor();
+    assert(await page.getByLabel('Выбрать документ для проверки').isDisabled());
+    assert.equal(documentRequests.length,0,'No document is sent while provider credentials are invalid');
+    aiAvailable = true;
+    await page.getByRole('button',{name:'Проверить доступность',exact:true}).click();
+    await page.waitForFunction(()=>!document.querySelector('input[type="file"]').disabled);
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     await page.getByRole('button').filter({hasText:'11 классов'}).click();
     await visit('/guides');
@@ -106,9 +118,19 @@ try {
     await doc.getByRole('button',{name:'Повторить проверку',exact:true}).waitFor();
     assert(await doc.getByText('example.txt',{exact:true}).isVisible(),'File survives a server error');
     await doc.getByRole('button',{name:'Повторить проверку',exact:true}).click();
-    await doc.getByText('Проверка завершена',{exact:true}).waitFor();
+    await doc.getByText('Проверка документов пока недоступна',{exact:true}).waitFor();
+    assert(await doc.getByRole('button',{name:'Повторить проверку',exact:true}).isDisabled(),'A revoked key stops document retries');
+    assert(await doc.getByText('example.txt',{exact:true}).isVisible(),'File survives a provider authorization failure');
     assert.equal(documentRequests.length,2);
+    aiAvailable = true;
+    await doc.getByRole('button',{name:'Проверить доступность',exact:true}).click();
+    await page.waitForFunction(()=>!Array.from(document.querySelectorAll('#document-check button')).find(b=>b.textContent==='Повторить проверку')?.disabled);
+    assert.equal(documentRequests.length,2,'Availability check does not resend a document');
+    await doc.getByRole('button',{name:'Повторить проверку',exact:true}).click();
+    await doc.getByText('Проверка завершена',{exact:true}).waitFor();
+    assert.equal(documentRequests.length,3);
     assert.equal(documentRequests[0].text,documentRequests[1].text);
+    assert.equal(documentRequests[1].text,documentRequests[2].text);
     await checkA11y('document result '+width);
     await visit('/universities');
     await page.getByLabel('Сразу к городу').selectOption('milano');
@@ -125,7 +147,7 @@ try {
     await context.close();
   }
   assert.deepEqual(errors,[],'No runtime errors');
-  console.log('UX review passed: guide search/recovery, one mobile chapter, preserved plan draft, optional contact, first action, file retry, city shortcut and axe checks at 1440/768/390/320px.');
+  console.log('UX review passed: provider readiness blocks upload and recovers, guide search/recovery, one mobile chapter, preserved plan draft, optional contact, first action, file retry, city shortcut and axe checks at 1440/768/390/320px.');
 } finally {
   await browser.close();
   await new Promise(done=>server.close(done));
