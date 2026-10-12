@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ClipboardEvent } from "react";
+import { useEffect, useRef, useState, type ClipboardEvent } from "react";
 import { type PermessoScenario } from "./permessoData";
 import { ALL_GUIDANCE_FIELDS, EDITOR_FIELDS, OFFICIAL_PDF, capacity, editorMode, getPart, setPart, normalize, valueProblem, type EditorField } from "./permessoOriginalGeometry";
 import { PermessoPaperTransfer } from "./PermessoPaperTransfer";
@@ -16,11 +16,15 @@ import { usePermessoRoute, pinPermessoField, usePermessoHint } from "./usePermes
 
 type Draft = Record<string, string>;
 const STORAGE_KEY = "iitaly:permesso-paper-editor:v1";
+/* Убранный режим «Оригинал» сам писал «Мои данные» сюда на каждое нажатие.
+   Вместе с режимом ушла и его кнопка «Стереть», поэтому личные данные
+   удаляем, а не оставляем в браузере без способа их увидеть или стереть. */
+const RETIRED_TRAINER_KEY = "iitaly:permesso-modulo1-local-data";
 const STATES = { write: "Заполняй", empty: "Пропусти", ifExists: "Если есть", recommended: "Необязательно", verify: "Уточни", post: "На почте" };
 const shortId = (f: EditorField) => /^\d+$/.test(f.id) ? `Поле ${f.id}` : "Шапка бланка";
 const smooth = (): ScrollBehavior => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
-export function EditablePermesso({ active = true }: { active?: boolean }) {
+export function EditablePermesso() {
   const route = usePermessoRoute();
   const scenario = route.scenario, selected = route.field, selectedId = selected.id, page = selected.page;
   const onboarding = usePermessoHint();
@@ -38,6 +42,7 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
   const inspector = useRef<HTMLElement>(null);
   const reviewSection = useRef<HTMLElement>(null);
   const transferLaunch = useRef<HTMLButtonElement>(null);
+  useEffect(() => { try { localStorage.removeItem(RETIRED_TRAINER_KEY); } catch { /* Storage can be unavailable in restricted modes. */ } }, []);
   const status = editorMode(selected, scenario);
   const applicable = EDITOR_FIELDS.filter(f => editorMode(f,scenario) !== "empty");
   const selectedIndex = ALL_GUIDANCE_FIELDS.indexOf(selected);
@@ -138,7 +143,26 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
 
   return (
     <div className={`${styles.editor} ${light.light}`} ref={root} data-permesso-editor data-pinned-field={selectedId} data-scenario={scenario}>
-      <header className={light.heading}><h1>Заполни Modulo 1</h1><p>Твой черновик — на точной копии бумажного бланка.</p></header>
+      {/* Один режим вместо двух вкладок. Вкладка «Оригинал» показывала тот же
+          бланк встроенным PDF со своим пошаговым гидом («1 из 9»), а черновик —
+          своим («1 / 55»): два параллельных маршрута по одним и тем же полям.
+          Оригинал теперь — ссылка на официальный PDF, справочник — под
+          бланком (PermessoHelpers). */}
+      <header className={light.heading}>
+        <div>
+          <h1>Заполни Modulo 1</h1>
+          <p>Твой черновик — на точной копии бумажного бланка.</p>
+          <p className={light.prep}><span>Перед началом</span> Kit · чёрная ручка · паспорт · codice fiscale{scenario === "rinnovo" ? " · карточка ВНЖ" : ""} · marca da bollo €16</p>
+        </div>
+        <aside className={light.scope} aria-label="Что важно знать">
+          <p><b>Бланк остаётся главным источником.</b> Это учебный помощник, не замена инструкции Questura. Если foglio note твоего kit расходится с подсказкой, следуй бумажному kit и требованиям своей провинции.</p>
+          <nav className={light.headLinks} aria-label="Оригинал и справка">
+            <a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF ↗</a>
+            <a href="#helpers">Коды и расчёты ↓</a>
+            <a href="#before-poste">Перед почтой ↓</a>
+          </nav>
+        </aside>
+      </header>
       <PermessoWorkbenchControls scenario={scenario} page={page} entered={entered} zoom={zoom} hints={hints} showExample={showExample} transferOpen={transferOpen} onScenario={chooseScenario} onPage={choosePage} onSave={save} onRestore={restore} onClear={() => setClearConfirm(true)} onExample={() => setShowExample(!showExample)} onPersonal={personal} onHints={setHints} onZoom={() => setZoom(zoom === 1 ? (window.matchMedia("(max-width: 600px)").matches ? 2.5 : 1.6) : 1)} />
       {message && <p role="status" className={styles.notice}>{message}</p>}
       {clearConfirm && <div className={styles.confirm} role="group" aria-label="Подтверждение очистки"><span>Удалить введённые данные и сохранённую копию?</span><button type="button" onClick={clear}>Да, стереть</button><button type="button" onClick={() => setClearConfirm(false)}>Отмена</button></div>}
@@ -149,7 +173,7 @@ export function EditablePermesso({ active = true }: { active?: boolean }) {
         <div className={`${styles.workspace} ${z.workspace}`}>
           <div className={styles.document} data-fab-yield>
             <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · страница {page} из 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF ↗</a></div>
-            {active && !transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v) => {setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
+            {!transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v) => {setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
             <div className={styles.documentFoot}>Оригинальные клетки и подписи не изменены. Это учебный черновик, не подача заявления.</div>
           </div>
           <aside className={`${styles.inspector} ${light.inspector}`} ref={inspector} data-fab-yield aria-label="Подсказка и ввод выбранного поля">

@@ -5,7 +5,7 @@ import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
 import { createRequire } from 'node:module';
-import { createHash } from 'node:crypto';
+import { verifyPermessoPages } from './permesso-page-assets.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require(resolve(process.env.REVIEW_TOOLS || '/tmp/iitaly-browser/node_modules','playwright'));
 const ts = require('typescript');
@@ -29,11 +29,7 @@ const surnameStep = steps.find(s => s.fields[0].id === '3');
 assert.notEqual(model.transferSignature(surnameStep,{'3':'FIRST'},'rinnovo'),model.transferSignature(surnameStep,{'3':'CHANGED'},'rinnovo'));
 assert.notEqual(model.transferSignature(surnameStep,{'3':'FIRST'},'rilascio'),model.transferSignature(surnameStep,{'3':'FIRST'},'rinnovo'));
 const output = resolve('design-review/permesso-transfer'); await mkdir(output,{recursive:true});
-const images = new Map();
-for (const p of geometry.ORIGINAL_PAGES) {
- const r = await fetch(p.url,{signal:AbortSignal.timeout(30000)});assert.equal(r.status,200);
- const bytes = Buffer.from(await r.arrayBuffer());assert.equal(createHash('sha256').update(bytes).digest('hex'),p.sha256);images.set(p.url,bytes);
-}
+await verifyPermessoPages(geometry.ORIGINAL_PAGES);
 const root = resolve('out');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.woff2':'font/woff2','.txt':'text/plain'};
 const server=createServer(async(req,res)=>{try{const p=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));assert(p===root||p.startsWith(root+sep));for(const f of [p,p+'.html',resolve(p,'index.html')])if((await stat(f).catch(()=>null))?.isFile()){res.writeHead(200,{'Content-Type':mime[extname(f)]||'application/octet-stream'});res.end(await readFile(f));return;}res.writeHead(404).end();}catch{res.writeHead(500).end();}});
@@ -44,10 +40,9 @@ try {
  for (const width of [1440,1024,768,390,360]) {
   const context=await browser.newContext({viewport:{width,height:1000},hasTouch:width<600,isMobile:width<600,reducedMotion:'reduce',locale:'ru-RU'});
   const errors=[],writes=[];
-  await context.route('**/*',async route=>{const request=route.request(),url=new URL(request.url());if(images.has(url.href))return route.fulfill({status:200,contentType:'image/webp',body:images.get(url.href)});if(url.hostname==='127.0.0.1')return route.continue();if(request.method()!=='GET'||request.postData())writes.push(url.origin+url.pathname);return route.abort();});
+  await context.route('**/*',async route=>{const request=route.request(),url=new URL(request.url());if(url.hostname==='127.0.0.1')return route.continue();if(request.method()!=='GET'||request.postData())writes.push(url.origin+url.pathname);return route.abort();});
   const page=await context.newPage();activePage=page;page.setDefaultTimeout(12000);page.on('pageerror',e=>errors.push(e.message));
   await page.goto('http://127.0.0.1:4198/guides/permesso-modulo-1',{waitUntil:'networkidle'});
-  await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();
   const editor=page.locator('[data-permesso-editor]'); const guide=page.locator('[data-permesso-transfer]');
   const loaded=()=>editor.locator('[data-sheet-page][data-ready="true"]').waitFor(); await loaded();await page.evaluate(()=>document.fonts.ready);
   const part=(id,i=0)=>editor.locator(`[data-editor-field="${id}"][data-part="${i}"] input`);
@@ -69,9 +64,8 @@ try {
   await part('3').fill('UPDATED TEST');await launch();
   assert.equal(await guide.getByText('Этот шаг уже отмечен для текущего значения.',{exact:true}).count(),0,'Changed answer invalidates receipt');
   await guide.locator('[data-transfer-confirm]').click();assert.equal(await guide.locator('[data-transfer-confirm]').isDisabled(),true,'Empty required field is never marked as copied');
-  await page.getByRole('tab',{name:'Оригинал',exact:true}).click();assert.equal(await page.locator('#permesso-panel-original object').count(),1);
-  await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await guide.waitFor();
-  assert.match(await guide.locator('[data-transfer-progress]').innerText(),/3 из/,'Original tab retains in-tab transfer progress');
+  await page.locator('#helpers').getByRole('combobox',{name:'Код типа обучения для поля 16'}).selectOption('24');await guide.waitFor();
+  assert.match(await guide.locator('[data-transfer-progress]').innerText(),/3 из/,'Using the reference below keeps in-tab transfer progress');
   await guide.getByRole('button',{name:'Вернуться к бланку',exact:true}).click();await loaded();
   assert.equal((await part('3').inputValue()).trimEnd(),'UPDATED TEST');
   const nav=editor.getByRole('navigation',{name:'Страницы электронного бланка'});
@@ -108,7 +102,7 @@ try {
   assert.equal(await guide.count(),0);await launch();assert.match(await guide.locator('[data-transfer-progress]').innerText(),/0 из/,'Clear also clears in-tab receipts');
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(writes,[],'No external writes');
-  results.push({width,passed:true,checks:'unchanged original and editor; clear large glyphs; exact mini-map; explicit acknowledgements; edited-value invalidation; empty required guard; deferred uncertain rules; nonblocking expiry; skip groups; draft/privacy; clear; viewport'});
+  results.push({width,passed:true,checks:'single mode; local verified pages; clear large glyphs; exact mini-map; explicit acknowledgements; edited-value invalidation; empty required guard; deferred uncertain rules; nonblocking expiry; skip groups; draft/privacy; clear; viewport'});
   await context.close();
  }
 } catch(error) {

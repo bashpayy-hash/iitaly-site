@@ -5,17 +5,14 @@ import {createServer} from 'node:http';
 import {readFile,writeFile,mkdir,stat} from 'node:fs/promises';
 import {resolve,extname,sep} from 'node:path';
 import {createRequire} from 'node:module';
-import {createHash} from 'node:crypto';
+import {verifyPermessoPages} from './permesso-page-assets.mjs';
 const require=createRequire(import.meta.url);
 const {chromium}=require(resolve(process.env.REVIEW_TOOLS||'/tmp/iitaly-browser/node_modules','playwright'));
 const out=resolve('design-review/permesso-answer');await mkdir(out,{recursive:true});
-const source=await readFile('src/components/guides/permesso/permessoOriginalGeometry.ts','utf8');
-const prefix=source.match(/const CDN = "([^"]+)"/)[1];
-const assets=[...source.matchAll(/url: CDN \+ "([^"]+)", sha256: "([^"]+)"/g)],images=new Map();
-await Promise.all(assets.map(async([,name,hash])=>{const r=await fetch(prefix+name,{signal:AbortSignal.timeout(30000)});assert.equal(r.status,200);const b=Buffer.from(await r.arrayBuffer());assert.equal(createHash('sha256').update(b).digest('hex'),hash);images.set(prefix+name,b);}));
 const ts=require('typescript'),tmp=resolve('/tmp/permesso-answer-model');await mkdir(tmp,{recursive:true});
 for(const name of ['permessoData','permessoOriginalGeometry','permessoFieldAnswer']){const input=await readFile(`src/components/guides/permesso/${name}.ts`,'utf8');const result=ts.transpileModule(input,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}});await writeFile(`${tmp}/${name}.js`,result.outputText);}
 const M=require(tmp+'/permessoOriginalGeometry.js'),A=require(tmp+'/permessoFieldAnswer.js');
+await verifyPermessoPages(M.ORIGINAL_PAGES);
 const f32=M.EDITOR_FIELDS.find(f=>f.id==='32'),f35=M.EDITOR_FIELDS.find(f=>f.id==='35');
 assert.equal(A.fieldAnswer(f32,'rilascio').answer,'A / B','Unknown marital status is not inferred');
 assert.equal(A.fieldAnswer(f32,'rilascio','A').answer,'A');assert.equal(A.fieldAnswer(f32,'rinnovo','B').answer,'B');
@@ -31,14 +28,14 @@ try{
  for(const[width,touch]of[[1440,false],[1024,false],[768,false],[390,true],[360,true]]){
   const context=await browser.newContext({viewport:{width,height:1000},hasTouch:touch,isMobile:touch,locale:'ru-RU',reducedMotion:'reduce'});
   const errors=[],writes=[];
-  await context.route('**/*',route=>{const r=route.request(),u=new URL(r.url());if(images.has(u.href))return route.fulfill({status:200,contentType:'image/webp',body:images.get(u.href)});if(u.hostname==='127.0.0.1')return route.continue();if(r.method()!=='GET'||r.postData())writes.push(u.origin+u.pathname);return route.abort();});
+  await context.route('**/*',route=>{const r=route.request(),u=new URL(r.url());if(u.hostname==='127.0.0.1')return route.continue();if(r.method()!=='GET'||r.postData())writes.push(u.origin+u.pathname);return route.abort();});
   const p=await context.newPage();activePage=p;p.setDefaultTimeout(15000);p.on('pageerror',e=>errors.push(e.message));
   await p.goto('http://127.0.0.1:4199/guides/permesso-modulo-1?scenario=rilascio&page=2&field=31',{waitUntil:'networkidle'});
   const editor=p.locator('[data-permesso-editor]'),sheet=()=>editor.locator('[data-ready="true"]');
   const group=id=>editor.locator(`[data-zone-field="${id}"]`),zone=id=>editor.locator(`[data-field-zone="${id}"]`),help=id=>p.locator(`[data-permesso-hover="${id}"]`);
   const panel=editor.locator('aside[aria-label="Подсказка и ввод выбранного поля"]');
   await sheet().waitFor();await p.evaluate(()=>document.fonts.ready);
-  assert.equal(await p.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).getAttribute('aria-selected'),'true');
+  assert.equal(await p.getByRole('tab').count(),0,'One mode: no original/editable tabs');
   const countHistory=()=>p.evaluate(()=>history.length),query=()=>new URL(p.url()).searchParams.get('field');
   const noOverlap=async id=>{const box=await help(id).boundingBox(),cells=await group(id).locator('[data-cell-outline]').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height};}));assert(box);const viewport=await p.evaluate(()=>({w:innerWidth,h:innerHeight}));assert(box.x>=0&&box.y>=0&&box.x+box.width<=viewport.w+1&&box.y+box.height<=viewport.h+1,'Help fits the viewport');for(const c of cells)assert(Math.max(0,Math.min(box.x+box.width,c.x+c.w)-Math.max(box.x,c.x))*Math.max(0,Math.min(box.y+box.height,c.y+c.h)-Math.max(box.y,c.y))<1,`Help covers field ${id}`);};
   const actual=await group('32').locator('[data-cell-outline]').evaluate(n=>{const a=n.getBoundingClientRect(),s=n.closest('[data-sheet-page]').getBoundingClientRect();return{x:(a.left-s.left)/s.width*595,y:(a.top-s.top)/s.height*842};});
@@ -75,8 +72,7 @@ try{
   await zone('3').focus();assert.notEqual(query(),'3','Focus is preview only');await zone('3').press('Enter');assert.equal(query(),'3');
   if(!touch){await p.keyboard.press('Escape');await editor.locator('[data-editor-field="3"][data-part="0"] input').fill('TEST STUDENT');}else await panel.getByRole('textbox',{name:'Ввести: Фамилия',exact:true}).fill('TEST STUDENT');
   await clickPermessoTool(editor,'Показать пример');assert.match(await panel.innerText(),/Пример — не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
-  await clickPermessoTool(editor,'Мои данные');await p.getByRole('tab',{name:'Оригинал',exact:true}).click();assert.equal(await p.locator('[data-permesso-hover]').count(),0);
-  await p.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await sheet().waitFor();assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
+  await clickPermessoTool(editor,'Мои данные');assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
   assert.equal(await p.evaluate(()=>localStorage.getItem('iitaly:permesso-paper-editor:v1')),null);
   await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).click();await p.reload({waitUntil:'networkidle'});await sheet().waitFor();assert.equal(await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).count(),0);
   await reviewLightWorkbench({page:p,editor,model:M,width,touch,output:out});

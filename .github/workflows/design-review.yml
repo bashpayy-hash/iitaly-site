@@ -22,6 +22,7 @@ on:
       - "src/components/portal/portal-login.module.css"
       - "src/components/prices/**"
       - "public/illustrations/editorial/**"
+      - "public/permesso/**"
       - "docs/editorial-art-assets.json"
       - "docs/selected-accents-assets.json"
       - "src/components/motion/HeadingPin.tsx"
@@ -81,7 +82,7 @@ jobs:
         run: node scripts/design-ux-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
-      - name: Review original and editable Permesso, exact geometry and local draft
+      - name: Review single-mode Permesso, local verified pages, exact geometry and local draft
         run: node scripts/design-permesso-editor-review.mjs
       - name: Review approved login artwork and isolated authentication flow
         run: node scripts/design-portal-login-review.mjs

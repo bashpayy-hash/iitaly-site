@@ -1,8 +1,18 @@
 /* Scoped to the existing editor. The official paper, site header and tokens are untouched. */
 .light { padding-top:24px; }
-.heading { margin:0 auto 22px; }
+/* Шапка в две колонки: слева задача и что подготовить, справа — оговорка
+   и ссылки на оригинал PDF и справочник под бланком. */
+.heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,400px); gap:14px 48px; align-items:end; margin:0 auto 22px; }
 .heading h1 { margin:0; font:400 32px/1.2 Charter,Georgia,serif; color:#242321; }
 .heading p { margin:8px 0 0; color:#66635d; font-size:14px; line-height:1.5; }
+.heading .prep { margin-top:14px; color:#45413b; font-size:13px; }
+.prep span { display:block; margin-bottom:2px; color:#776f65; font-size:12px; }
+.scope { padding-left:20px; border-left:1px solid #ddd9d1; }
+.heading .scope p { margin:0; color:#66635d; font-size:12px; line-height:1.55; }
+.scope b { color:#242321; font-weight:500; }
+.headLinks { display:flex; flex-wrap:wrap; gap:0 18px; margin-top:4px; }
+.headLinks a { display:inline-flex; align-items:center; min-height:44px; color:#8b2939; font-size:13px; text-decoration:none; }
+.headLinks a:hover { text-decoration:underline; text-underline-offset:3px; }
 .workbar { position:sticky; top:64px; z-index:30; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:24px; padding:10px 0; border-block:1px solid #ddd9d1; background:#f8f8f6; }
 .scenarios { display:flex; padding:3px; border:1px solid #d7d3ca; border-radius:9px; background:#efeeeb; }
 .light .scenarios button { min-height:38px; border:0; border-radius:6px; padding:8px 12px; background:transparent; font-size:13px; color:#66635d; white-space:nowrap; }
@@ -65,5 +75,5 @@
 .light [data-editor-field] input:is([maxlength="1"],[maxlength="2"],[maxlength="3"],[maxlength="4"],[maxlength="5"])::placeholder { color:transparent; }
 /* The source form is the only printed grid. No CSS reflow of its cell geometry. */
 @media (max-width:1100px) { .workbar { gap:12px; } .light .pages button { padding-inline:8px; } .light .scenarios button { padding-inline:10px; } }
-@media (max-width:900px) { .workbar { grid-template-columns:1fr auto; gap:6px 12px; } .pages { grid-row:2; grid-column:1/-1; justify-content:flex-start; } .tools { grid-row:1; grid-column:2; } .scenarios { justify-self:start; } .light .inspector { position:static; } .extraPage { margin-left:auto; } }
-@media (max-width:600px) { .heading { margin-bottom:16px; } .heading h1 { font-size:28px; } .heading p { font-size:13px; } .workbar { top:60px; padding-block:6px; gap:3px 8px; } .light .scenarios button { font-size:12px; padding:6px 9px; min-height:38px; } .tools > summary { padding:7px 9px; font-size:12px; } .light .pages button { flex:1; justify-content:center; padding:6px; font-size:12px; min-height:44px; } .extraPage { font-size:10px; } .toolPanel { padding:16px; max-height:calc(100dvh - 138px); } .contextLine { font-size:10px; padding-block:7px; } .light .inspector { padding:18px; } .finishBar { align-items:stretch; flex-direction:column; gap:12px; } .exampleNotice { padding:8px 10px; font-size:12px; } }
+@media (max-width:900px) { .heading { grid-template-columns:1fr; align-items:start; } .scope { padding:0; border-left:0; } .workbar { grid-template-columns:1fr auto; gap:6px 12px; } .pages { grid-row:2; grid-column:1/-1; justify-content:flex-start; } .tools { grid-row:1; grid-column:2; } .scenarios { justify-self:start; } .light .inspector { position:static; } .extraPage { margin-left:auto; } }
+@media (max-width:600px) { .heading { margin-bottom:16px; } .headLinks { gap:0 14px; } .heading h1 { font-size:28px; } .heading p { font-size:13px; } .workbar { top:60px; padding-block:6px; gap:3px 8px; } .light .scenarios button { font-size:12px; padding:6px 9px; min-height:38px; } .tools > summary { padding:7px 9px; font-size:12px; } .light .pages button { flex:1; justify-content:center; padding:6px; font-size:12px; min-height:44px; } .extraPage { font-size:10px; } .toolPanel { padding:16px; max-height:calc(100dvh - 138px); } .contextLine { font-size:10px; padding-block:7px; } .light .inspector { padding:18px; } .finishBar { align-items:stretch; flex-direction:column; gap:12px; } .exampleNotice { padding:8px 10px; font-size:12px; } }
