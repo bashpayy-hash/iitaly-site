@@ -58,6 +58,12 @@ try {
         return route.fulfill({ status: 200, contentType: 'image/webp', body: loginArtwork.get(url.href) });
       }
 
+      if (url.pathname === '/health/ai') {
+        assert.equal(request.method(), 'GET');
+        assert.equal(request.postData(), null);
+        return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true,"code":"AI_READY","retryable":true}' });
+      }
+
       if (url.pathname === '/api/portal/lookup') {
         assert.equal(request.method(), 'POST');
         assert.deepEqual(request.postDataJSON(), { code: 'TEST-01', surname: 'Testov' });
