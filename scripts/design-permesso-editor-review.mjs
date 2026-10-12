@@ -4,21 +4,12 @@ import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { createRequire } from 'node:module';
-import { createHash } from 'node:crypto';
+import { loadPermessoGeometry, verifyPermessoPages } from './permesso-page-assets.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require(resolve(process.env.REVIEW_TOOLS || '/tmp/iitaly-browser/node_modules','playwright'));
 const output=resolve('design-review/permesso-editor'); await mkdir(output,{recursive:true});
-const prefix='https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/';
-const assets=[
- ['0a9ea39b-6d11-49a1-9f44-1d8ac459a4d8.webp','f609784102d429bb79c2e747f56119dc6e69c2f506eca27394d57148640d86bd'],
- ['6197ee86-f592-42aa-b2f4-880ba25fa2d6.webp','a82548859c5f466b448165012d57b15277b8d316f9ce0890763b04068213355d'],
- ['651d4291-4411-47e0-a06c-c5660305144b.webp','e1c7c928c00d0b80bdb4ef073f790927f6c077ae3309232ea978c1fbab5f608c'],
-];
-const images=new Map();
-for(const [name,hash] of assets){
- const r=await fetch(prefix+name,{signal:AbortSignal.timeout(30000)});assert.equal(r.status,200);
- const bytes=Buffer.from(await r.arrayBuffer());assert.equal(createHash('sha256').update(bytes).digest('hex'),hash);images.set(prefix+name,bytes);
-}
+const paper=loadPermessoGeometry();
+await verifyPermessoPages(paper.ORIGINAL_PAGES);
 const root=resolve('out');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.woff2':'font/woff2','.txt':'text/plain'};
 const server=createServer(async(req,res)=>{
@@ -36,7 +27,7 @@ try{
   const errors=[],unsafe=[];let failImage=false;
   await context.route('**/*',async route=>{
    const request=route.request(),url=new URL(request.url());
-   if(images.has(url.href)) return failImage ? route.abort() : route.fulfill({status:200,contentType:'image/webp',body:images.get(url.href)});
+   if(failImage && url.pathname.startsWith('/permesso/')) return route.abort();
    if(url.hostname==='127.0.0.1') return route.continue();
    if(request.method()!=='GET' || request.postData()) unsafe.push({url:url.origin+url.pathname,method:request.method()});
    return route.abort();
@@ -48,9 +39,12 @@ try{
    await page.screenshot({path:resolve(output,name),fullPage:true,animations:'disabled'});
   }
   await page.goto('http://127.0.0.1:4194/guides/permesso-modulo-1',{waitUntil:'networkidle'});
-  assert.equal(await page.getByRole('tab',{name:'Оригинал',exact:true}).getAttribute('aria-selected'),'true');
-  assert.equal(await page.locator('#permesso-panel-original object[type="application/pdf"]').count(),1);
-  await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();
+  // One mode: the draft on the original geometry. The original is a link to the official PDF, not a second tab.
+  assert.equal(await page.getByRole('tab').count(),0,'No parallel original/editable modes');
+  assert.equal(await page.locator('object[type="application/pdf"]').count(),0,'No embedded PDF with its own step guide');
+  assert.equal(await page.getByRole('link',{name:'Оригинал PDF ↗',exact:true}).getAttribute('href'),paper.OFFICIAL_PDF);
+  for(const id of ['helpers','before-poste']) assert.equal(await page.locator(`a[href="#${id}"]`).count(),1,`Header links to #${id}`);
+  assert.equal(await page.locator('#helpers h2').innerText(),'Коды и расчёты');assert.equal(await page.locator('#before-poste h2').innerText(),'Перед почтой');
   const editor=page.locator('[data-permesso-editor]');
   const loaded=()=>editor.locator('[data-sheet-page][data-ready="true"]').waitFor();
   await loaded();await page.evaluate(()=>document.fonts.ready);
@@ -71,9 +65,9 @@ try{
   assert.equal(await editor.locator('[data-panel-input]').inputValue(),'TEST STUDENT');
   await part('3',1).fill('SECOND ROW');
   assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
-  await page.getByRole('tab',{name:'Оригинал',exact:true}).click();
-  await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();
-  assert.equal(await part('3',1).inputValue(),'SECOND ROW','Draft survives switching to original and back');
+  await page.locator('a[href="#helpers"]').click();await page.locator('#helpers').getByRole('combobox',{name:'Код типа обучения для поля 16'}).selectOption('31');
+  assert.equal(await part('3',1).inputValue(),'SECOND ROW','Draft survives using the reference below the form');
+  assert.deepEqual(await editor.locator('[data-editor-field="16"] input').evaluateAll(nodes=>nodes.filter(n=>n.value.trim()).length),0,'A code picked in the reference is never copied into the draft');
   const geometry=await editor.locator('[data-editor-field="3"][data-part="0"]').evaluate(el=>{const s=el.closest('[data-sheet-page]').getBoundingClientRect(),r=el.getBoundingClientRect();return {x:(r.x-s.x)/s.width*595,y:(r.y-s.y)/s.height*842,ratio:s.height/s.width};});
   assert(Math.abs(geometry.x-45.23)<.08 && Math.abs(geometry.y-220.14)<.08,'Inputs must be registered to original PDF points');
   assert(Math.abs(geometry.ratio-842/595)<.001);
@@ -112,7 +106,7 @@ try{
   if([1440,390].includes(width)) await shot(`editor-page3-${width}.png`);
   await clickPermessoTool(editor,'Сохранить');
   const saved=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.equal(saved.values['69'],'22/B');assert.equal(saved.values['72'],'50129');
-  await page.reload({waitUntil:'networkidle'});await page.getByRole('tab',{name:'Заполнить с подсказками',exact:true}).click();await loaded();
+  await page.reload({waitUntil:'networkidle'});await loaded();
   assert.equal(new URL(page.url()).searchParams.get('page'),'3');await sheetPage(1);
   assert.equal(await part('3').inputValue(),'','Personal data is not restored without an explicit action');
   await clickPermessoTool(editor,'Восстановить');assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
@@ -128,7 +122,7 @@ try{
   await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(unsafe,[],'Editor must not submit private data or hit production APIs');
-  results.push({width,passed:true,checks:'original preserved; direct input; exact coordinates; spaces/multiline; mode retention; explicit pin; skipped-field and cross-page guidance; date format; radio/checkbox exclusivity; explicit save/restore/clear; URL reload; overflow/zoom; no real API calls'});
+  results.push({width,passed:true,checks:'single mode; official PDF link; local verified pages; reference below the form; direct input; exact coordinates; spaces/multiline; mode retention; explicit pin; skipped-field and cross-page guidance; date format; radio/checkbox exclusivity; explicit save/restore/clear; URL reload; overflow/zoom; no real API calls'});
   await context.close();
  }
 }catch(error){

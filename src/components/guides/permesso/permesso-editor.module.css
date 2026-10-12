@@ -1,12 +1,3 @@
-.modeRegion { background: #f8f8f6; padding: 18px 24px 0; }
-.modeBar { display: flex; align-items: center; gap: 20px; max-width: 1200px; margin: 0 auto; }
-.modeBar > p { margin: 0; color: #6d6b66; font-size: 12px; }
-.modeTabs { display: flex; overflow: hidden; border: 1px solid #d7d5ce; border-radius: 9px; background: #fff; }
-.modeTabs button { min-height: 48px; padding: 10px 18px; border: 0; background: transparent; color: #5e5b56; font: inherit; font-size: 13px; cursor: pointer; }
-.modeTabs button + button { border-left: 1px solid #e7e6e1; }
-.modeTabs button[aria-selected="true"] { background: #121212; color: #f8f8f6; }
-.modeTabs button:focus-visible { outline: 3px solid #d97757; outline-offset: -3px; }
-.modePanel[hidden] { display: none; }
 .editor { --ink: #242321; --muted: #66635d; --line: #ddd9d1; --canvas: #f8f8f6; --focus: #234d78; padding: 34px 24px 72px; background: var(--canvas); color: var(--ink); font-family: var(--font-onest), system-ui, sans-serif; }
 .editor *, .editor *::before, .editor *::after { box-sizing: border-box; }
 .editor > * { max-width: 1200px; margin-left: auto; margin-right: auto; }
@@ -108,11 +99,10 @@
 @media (max-width: 1100px) { .workspace { grid-template-columns: minmax(0,1fr) 300px; gap: 16px; } .inspector { padding: 18px; } .pagebar { align-items: flex-start; } }
 @media (max-width: 900px) { .intro { grid-template-columns: 1fr; gap: 12px; } .intro .scope { padding-left: 0; border-left: 0; max-width: 650px; } .workspace { grid-template-columns: minmax(0,1fr); } .inspector { position: static; order: -1; } .fieldEditor { max-width: 640px; } .fieldNav { max-width: 460px; } .fieldJump { display: none; } .explanation { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; } .explanation div:last-child { grid-column: 1/-1; } }
 @media (max-width: 600px) {
-  .modeRegion { padding: 14px 12px 0; } .modeBar { display: block; } .modeBar > p { margin-top: 8px; font-size: 10px; } .modeTabs { width: 100%; } .modeTabs button { flex: 1; padding: 9px 10px; font-size: 12px; }
   .editor { padding: 24px 12px 48px; } .intro h1 { font-size: 30px; } .intro p { font-size: 13px; } .intro .scope { font-size: 11px; }
   .toolbar { top: 60px; display: grid; gap: 6px; padding: 7px 0; } .scenarios button { flex: 1; min-width: 0; min-height: 46px; font-size: 12px; } .draftActions { justify-content: stretch; } .draftActions button { flex: 1; min-height: 40px; font-size: 11px; }
   .privacy { display: block; padding-bottom: 12px; } .privacy span:last-child { display: block; margin-top: 5px; }
   .pagebar { gap: 8px; } .pageTabs { width: 100%; } .pageTabs button { flex: 1; font-size: 10px; padding: 6px; gap: 5px; } .viewTools { width: 100%; justify-content: space-between; font-size: 10px; } .viewTools button { font-size: 11px; }
   .inspector { padding: 18px; } .inspector h2 { font-size: 26px; } .explanation { display: block; } .documentBar { font-size: 10px; padding: 9px; } .documentFoot { font-size: 9px; padding: 9px; }
 }
-@media (prefers-reduced-motion: reduce) { .editor *, .modeRegion * { scroll-behavior: auto !important; transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .editor * { scroll-behavior: auto !important; transition: none !important; } }

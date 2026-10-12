@@ -21,6 +21,11 @@ export function PermessoPaperSheet(props:Props){
  const{page,selectedId,values,scenario,hints,zoom,showExample,onSelect,onChange,onPaste,onToggle,onEditLarge}=props;
  const[ready,setReady]=useState(false),[failed,setFailed]=useState(false),[retry,setRetry]=useState(0),[preview,setPreview]=useState<FieldPreview|null>(null);
  const previewRef=useRef<FieldPreview|null>(null),rootRef=useRef<HTMLDivElement>(null);
+ const imageRef=useRef<HTMLImageElement>(null);
+ // Лист есть уже в статическом HTML и может догрузиться раньше, чем React
+ // подключит onLoad/onError. Тогда событие потеряно, и «Загружаю
+ // оригинальный лист…» висит вечно — досматриваем состояние картинки сами.
+ useEffect(()=>{const img=imageRef.current;if(!img?.complete)return;const ok=img.naturalWidth>0;setReady(ok);setFailed(!ok);},[retry]);
  const openRef=useRef<ReturnType<typeof setTimeout>|null>(null),closeRef=useRef<ReturnType<typeof setTimeout>|null>(null);
  const overCardRef=useRef(false),touchRef=useRef<{x:number;y:number;scroll:number;id:number}|null>(null),cancelClickRef=useRef(false);
  const maskId=useId().replace(/:/g,"");
@@ -55,7 +60,7 @@ export function PermessoPaperSheet(props:Props){
   <div className={s.sheetViewport} aria-label="Лист: при увеличении можно прокручивать" data-sheet-viewport>
    <div className={s.sheet} ref={rootRef} style={{width:`${zoom*100}%`}} data-sheet-page={page} data-ready={ready}>
     {/* eslint-disable-next-line @next/next/no-img-element -- unchanged lossless original, no generated replacement */}
-    <img key={retry} className={s.background} src={asset.url} width={1785} height={2526} alt="" aria-hidden="true" referrerPolicy="no-referrer" onLoad={()=>{setReady(true);setFailed(false);}} onError={()=>{setFailed(true);setReady(false);close();}}/>
+    <img key={retry} ref={imageRef} className={s.background} src={asset.url} width={1785} height={2526} alt="" aria-hidden="true" referrerPolicy="no-referrer" onLoad={()=>{setReady(true);setFailed(false);}} onError={()=>{setFailed(true);setReady(false);close();}}/>
     {!ready&&<div className={s.loading} role="status">{failed?<><p>Не удалось загрузить основу бланка. Поля скрыты, чтобы не показывать их без оригинала.</p><button type="button" onClick={()=>{setFailed(false);setRetry(retry+1);}}>Повторить загрузку</button><a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Открыть PDF</a></>:"Загружаю оригинальный лист…"}</div>}
     {ready&&fields.map(f=>{
      const mode=editorMode(f,scenario),selected=selectedId===f.id,locked=mode==="empty"||mode==="post"||f.readOnly||f.kind==="signature";

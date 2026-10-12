@@ -5,16 +5,20 @@ import { TRAINER_SECTIONS, type TrainerField, type PermessoScenario } from "./pe
 export const OFFICIAL_PDF = "https://www.portaleimmigrazione.it/media/documentazione/Modulo_1.pdf";
 export const SOURCE_SHA256 = "adb5ac7d05f49513856214e1c3d7ee904c1a65bf69643eb0ffd3cd5a3a511f7e";
 export const PAPER = { width: 595, height: 842 } as const;
-const CDN = "https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/";
+/* Страницы лежат в public/permesso, а не на чужом CDN: бланк — главный
+   экран тренажёра, и его доступность не должна зависеть от стороннего
+   аккаунта. sha256 и размер — те же, что у исходных файлов; review-скрипты
+   сверяют их до запуска браузера. */
+const PAGE = (n: number) => "/permesso/modulo1-page-" + n + ".webp";
 export const ORIGINAL_PAGES = [
-  { page: 1, title: "Заявление", url: CDN + "0a9ea39b-6d11-49a1-9f44-1d8ac459a4d8.webp", sha256: "f609784102d429bb79c2e747f56119dc6e69c2f506eca27394d57148640d86bd", bytes: 90386 },
-  { page: 2, title: "Личные данные и виза", url: CDN + "6197ee86-f592-42aa-b2f4-880ba25fa2d6.webp", sha256: "a82548859c5f466b448165012d57b15277b8d316f9ce0890763b04068213355d", bytes: 79908 },
-  { page: 3, title: "Адрес в Италии", url: CDN + "651d4291-4411-47e0-a06c-c5660305144b.webp", sha256: "e1c7c928c00d0b80bdb4ef073f790927f6c077ae3309232ea978c1fbab5f608c", bytes: 82922 },
-  { page: 4, title: "Carta · пропуски", url: CDN + "f70f382a-e77a-4261-b0b4-c48ebc9a7498.webp", sha256: "0c8cf0eee1ab556a9989f76b6879e61f88b8bbe42e90b10962ee5519c3e31c79", bytes: 65758 },
-  { page: 5, title: "Семья · пропуски", url: CDN + "6ef1ed32-a4a6-46c6-b9b8-6ede05a3dccf.webp", sha256: "aa9cf13a4ebec64c01c796ff02158c210147d69a2e34d1671f50ec85891f4abb", bytes: 67152 },
-  { page: 6, title: "Супруг и дети", url: CDN + "d03ebc7a-608c-4b75-bc81-a6b7a00c54bf.webp", sha256: "03de277fcf481b40ce1554cdb7ed58e085bafd41c03eb8b428731fd51af2eb8b", bytes: 66704 },
-  { page: 7, title: "Дети · продолжение", url: CDN + "54eaf595-6863-424f-8556-f2e4c52d4048.webp", sha256: "db6bbff34424554ff31330086fd6a443407bb26d12d190d0b58ad1bce4ea3ead", bytes: 64236 },
-  { page: 8, title: "Дети · продолжение", url: CDN + "bef86551-3367-4929-a598-0b108fdca545.webp", sha256: "7d38a02204d682c7fdb8197c0f58543b9a156906154224e973e2e3b09b735484", bytes: 64668 },
+  { page: 1, title: "Заявление", url: PAGE(1), sha256: "f609784102d429bb79c2e747f56119dc6e69c2f506eca27394d57148640d86bd", bytes: 90386 },
+  { page: 2, title: "Личные данные и виза", url: PAGE(2), sha256: "a82548859c5f466b448165012d57b15277b8d316f9ce0890763b04068213355d", bytes: 79908 },
+  { page: 3, title: "Адрес в Италии", url: PAGE(3), sha256: "e1c7c928c00d0b80bdb4ef073f790927f6c077ae3309232ea978c1fbab5f608c", bytes: 82922 },
+  { page: 4, title: "Carta · пропуски", url: PAGE(4), sha256: "0c8cf0eee1ab556a9989f76b6879e61f88b8bbe42e90b10962ee5519c3e31c79", bytes: 65758 },
+  { page: 5, title: "Семья · пропуски", url: PAGE(5), sha256: "aa9cf13a4ebec64c01c796ff02158c210147d69a2e34d1671f50ec85891f4abb", bytes: 67152 },
+  { page: 6, title: "Супруг и дети", url: PAGE(6), sha256: "03de277fcf481b40ce1554cdb7ed58e085bafd41c03eb8b428731fd51af2eb8b", bytes: 66704 },
+  { page: 7, title: "Дети · продолжение", url: PAGE(7), sha256: "db6bbff34424554ff31330086fd6a443407bb26d12d190d0b58ad1bce4ea3ead", bytes: 64236 },
+  { page: 8, title: "Дети · продолжение", url: PAGE(8), sha256: "7d38a02204d682c7fdb8197c0f58543b9a156906154224e973e2e3b09b735484", bytes: 64668 },
 ] as const;
 export type EditorKind = "text" | "date" | "split" | "check" | "radio" | "line" | "signature" | "block";
 export type CellRun = { x: number; y: number; count: number; cell: number; height: number; pitch: number; label?: string };

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
-import { PermessoModes } from "@/components/guides/permesso/PermessoModes";
+import { EditablePermesso } from "@/components/guides/permesso/EditablePermesso";
+import { PermessoHelpers } from "@/components/guides/permesso/PermessoHelpers";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/guides/permesso-modulo-1" },
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 export default function PermessoModuloPage() {
   return (
     <MarketingLayout>
-      <PermessoModes />
+      <EditablePermesso />
+      <PermessoHelpers />
     </MarketingLayout>
   );
 }
