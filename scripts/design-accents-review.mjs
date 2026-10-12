@@ -119,7 +119,9 @@ try {
     assert.equal(await page.locator('[data-section="hero"] h1').innerText(), baseHeroHeading, `Hero heading preserved at ${width}`);
     assert.match(headHeroText, /По региону/);
     assert.doesNotMatch(headHeroText, /7[ \u00a0]?557/);
-    assert.match(headText, /После подтверждения оплаты мы активируем личный кабинет/);
+    assert.match(headText, process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true'
+      ? /После подтверждённой оплаты кабинет создаётся автоматически/
+      : /После подтверждения оплаты мы активируем личный кабинет/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-polished-${width}.png`), animations: 'disabled' });
@@ -182,7 +184,7 @@ try {
     // Foreground imagery is always confined to an image slot or an empty margin.
     async function inspectArtwork() {
       for (const art of await page.locator('[data-editorial-art], [data-editorial-spot]').all()) {
-        assert.equal(await art.getAttribute('aria-hidden'), 'true');
+        assert(await art.locator('img').evaluate(img => Boolean(img.closest('[aria-hidden="true"]'))), 'Decorative art is hidden from assistive technology');
         assert.equal(await art.locator('img').getAttribute('alt'), '');
         if (!await art.isVisible()) continue;
         const image = await art.locator('img').evaluate(img => ({loaded: img.complete && img.naturalWidth > 0, src: new URL(img.currentSrc).pathname}));

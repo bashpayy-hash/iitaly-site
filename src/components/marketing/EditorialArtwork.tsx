@@ -33,6 +33,7 @@ export function EditorialArtwork({
         width={width}
         height={height}
         alt=""
+        aria-hidden="true"
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : undefined}
         decoding="async"
