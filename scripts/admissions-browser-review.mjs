@@ -56,6 +56,13 @@ try {
     for (const id of ['cimea','iseeu','visa']) {
       await visit('/guides#'+id);
       const body = width >= 1024 ? page.locator('#guide-chapter-content') : page.locator('details#'+id);
+      // Same-document goto resolves before hashchange + React + the next frame.
+      // Wait for the visible chapter, not font loading or an arbitrary delay.
+      if (width < 1024) await page.waitForFunction(id => document.getElementById(id)?.open === true, id);
+      else {
+        const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
+        await page.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
+      }
       if (width < 1024) assert(await body.evaluate(el=>el.open),'Mobile deep link opens '+id);
       assert.match(await body.innerText(),/9 октября 2026/);
       assert(await body.locator('a[href^="https://"]').count()>0,'Official sources are accessible');
