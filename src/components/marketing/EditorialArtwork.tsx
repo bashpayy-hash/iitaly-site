@@ -57,7 +57,7 @@ export function TomatoAccent() {
       <img
         src={`${ROOT}/tomato-bowl-320.webp`}
         srcSet={`${ROOT}/tomato-bowl-320.webp 320w, ${ROOT}/tomato-bowl-640.webp 640w`}
-        sizes="(min-width: 1620px) 198px, (min-width: 1280px) calc(33vw - 337px), 99px"
+        sizes="(min-width: 1688px) 290px, (min-width: 1280px) calc(33vw - 267px), 156px"
         alt=""
         width={320}
         height={320}

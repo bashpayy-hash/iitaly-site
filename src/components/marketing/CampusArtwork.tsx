@@ -7,7 +7,7 @@ export function CampusArtwork() {
       <img
         src="/illustrations/editorial/campus-arrival-960.webp"
         srcSet="/illustrations/editorial/campus-arrival-480.webp 480w, /illustrations/editorial/campus-arrival-960.webp 960w, /illustrations/editorial/campus-arrival-1168.webp 1168w"
-        sizes="(max-width: 767px) 100vw, (max-width: 1199px) 44vw, 560px"
+        sizes="(max-width: 767px) 100vw, (max-width: 1303px) 47vw, calc(50vw - 50px)"
         width={1168}
         height={880}
         alt=""
