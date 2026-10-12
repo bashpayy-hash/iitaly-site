@@ -35,15 +35,20 @@ export function PermessoFieldHover({preview:p,answer,onClose,onEnter,onLeave,onE
    const bounds=p.anchor.getBoundingClientRect(),box=node.getBoundingClientRect(),sheet=p.anchor.closest('[data-sheet-page]');
    const rectangles=Array.from(sheet?.querySelectorAll<HTMLElement>(`[data-cell-outline="${p.field.id}"]`)||[]).map(el=>el.getBoundingClientRect()),active=rectangles.length?rectangles:[bounds];
    const minX=Math.min(...active.map(r=>r.left)),maxX=Math.max(...active.map(r=>r.right)),minY=Math.min(...active.map(r=>r.top)),maxY=Math.max(...active.map(r=>r.bottom));
+   // Справа от клеток, иначе над полем или под ним; слева — последним:
+   // там карточка закрывает подпись той самой строки, которую заполняют.
    const candidates=[
     {x:maxX+gap,y:clamp(minY,top+gap,top+vh-box.height-gap)},
-    {x:minX-box.width-gap,y:clamp(minY,top+gap,top+vh-box.height-gap)},
     {x:clamp(minX,left+gap,left+vw-box.width-gap),y:minY-box.height-gap},
     {x:clamp(minX,left+gap,left+vw-box.width-gap),y:maxY+gap},
+    {x:minX-box.width-gap,y:clamp(minY,top+gap,top+vh-box.height-gap)},
    ];
    if(p.touch)candidates.unshift({x:left+(vw-box.width)/2,y:top+vh-box.height-gap});
    const fits=(v:{x:number;y:number})=>v.x>=left+gap-1&&v.y>=top+gap-1&&v.x+box.width<=left+vw-gap+1&&v.y+box.height<=top+vh-gap+1;
-   const clear=(v:{x:number;y:number})=>active.every(r=>overlap({...v,width:box.width,height:box.height},r)<.5);
+   // Панель справа («Твоё значение», «Дальше») — тоже препятствие: карточка
+   // поля ставилась справа от клеток прямо поверх неё и закрывала ввод.
+   const panels=Array.from(document.querySelectorAll<HTMLElement>('[data-permesso-inspector]')).map(el=>el.getBoundingClientRect()).filter(r=>r.width&&r.height);
+   const clear=(v:{x:number;y:number})=>active.every(r=>overlap({...v,width:box.width,height:box.height},r)<.5)&&panels.every(r=>overlap({...v,width:box.width,height:box.height},r)<.5);
    let placement=candidates.find(v=>fits(v)&&clear(v));
    if(!placement){
     const above=minY-top-gap*2,below=top+vh-maxY-gap*2,upper=above>below,free=Math.max(64,upper?above:below);

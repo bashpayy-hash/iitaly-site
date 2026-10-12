@@ -10,9 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function PortalPage() {
-  return (
-    <main id="main">
-      <PortalExplorer />
-    </main>
-  );
+  // <main> ставит сам PortalExplorer: у экрана входа над ним шапка сайта,
+  // а у кабинета — своя боковая навигация.
+  return <PortalExplorer />;
 }

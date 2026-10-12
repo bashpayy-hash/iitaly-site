@@ -102,7 +102,7 @@ export function UniversitiesExplorer() {
               жизни там. Можно сравнить до трёх университетов.
             </p>
           </div>
-          <UniversityArtwork variant="postcard" />
+          <UniversityArtwork variant="balcony" />
         </div>
       </section>
 

@@ -61,7 +61,14 @@ try {
     assert.equal((await page.goto('http://127.0.0.1:4178/portal', { waitUntil: 'networkidle' })).status(), 200);
     await page.evaluate(() => document.fonts.ready);
     await page.locator('[data-portal-login-art]').evaluate((image) => image.decode());
-    assert(await page.locator('[data-portal-login-art]').evaluate((image) => image.naturalWidth >= 640));
+    // With w-descriptors naturalWidth is density-corrected, so check the chosen file instead.
+    const art = await page.locator('[data-portal-login-art]').evaluate((image) => ({ loaded: image.complete && image.naturalWidth > 0, file: new URL(image.currentSrc).pathname }));
+    assert(art.loaded, 'Login artwork decoded');
+    assert.match(art.file, width <= 760 ? /\/campus-arrival-480\.webp$/ : /\/campus-arrival-(960|1168)\.webp$/);
+    // The login sits on the site: the shared header and its navigation are present.
+    assert.equal(await page.getByRole('link', { name: 'IITALY — главная', exact: true }).count(), 1);
+    assert.equal(await page.locator('header nav[aria-label="Основная навигация"] a[href="/universities"]').count(), 1);
+    assert.equal(await page.locator('main').count(), 1);
     assert.equal(await page.locator('[data-portal-login]').count(), 1);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Overflow at ${width}px`);
     const form = page.locator('form[aria-labelledby="portal-login-heading"]');

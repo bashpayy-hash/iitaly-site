@@ -37,7 +37,9 @@
 .table .groupRow th { width: auto; padding: 11px 18px; color: #1d1d1f; background: #ececf0; font-size: 12px; letter-spacing: .03em; font-weight: 600; }
 .table small { display: block; font-size: 11px; color: #666670; margin-top: 4px; }
 .uniName { display: block; font-size: 18px; line-height: 1.25; letter-spacing: -.025em; }
-.city { display: block; margin-top: 6px; color: #666670; font-size: 12px; }
+.city { display: flex; align-items: center; gap: 7px; margin-top: 8px; color: #666670; font-size: 12px; }
+/* Значок города: тот же рисунок, что на карте, в мягкой плашке. */
+.cityGlyph { flex: none; width: 24px; height: 24px; padding: 4px; border-radius: 7px; background: #f1f1f4; color: #3d3d44; }
 .notes { display: grid; gap: 12px; margin-top: 20px; color: #666670; font-size: 12px; line-height: 1.6; }
 .notes strong { color: #51515a; font-weight: 600; }
 .note { margin: 18px 0; font-size: 14px; color: #666670; }

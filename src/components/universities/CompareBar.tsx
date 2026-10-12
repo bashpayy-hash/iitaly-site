@@ -2,6 +2,7 @@
 
 import { UNIS } from "@/data/italy";
 import { AppleButton } from "@/components/apple/Button";
+import { CityGlyph } from "./CityGlyph";
 import ui from "./university-ui.module.css";
 
 export function CompareBar({
@@ -35,6 +36,7 @@ export function CompareBar({
               key={u.id}
               className={ui.compareChip}
             >
+              <CityGlyph city={u.city} className={ui.chipGlyph} />
               {u.name}
               <button
                 type="button"

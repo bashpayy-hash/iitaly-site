@@ -6,12 +6,12 @@
 .summary[data-state="post"] .status, .summary[data-state="verify"] .status { background:#f8f0df; color:#795423; }
 .answer { display:block; margin-top:10px; color:#28231f; font-size:24px; font-weight:550; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .hint { margin:6px 0 0; color:#453f39; font-size:13px; line-height:1.4; }
-.label { margin:8px 0 0; color:#736a62; font-size:10px; line-height:1.4; overflow-wrap:anywhere; }
+.label { margin:8px 0 0; color:#736a62; font-size:11px; line-height:1.4; overflow-wrap:anywhere; }
 .cells { margin:12px 0 0; padding-top:10px; border-top:1px solid #e6dfd7; color:#453f39; font-size:12px; line-height:1.45; }
 .cells span, .source span, .trap span { font-weight:550; }
 .source { margin:8px 0 0; color:#71675e; font-size:11px; line-height:1.4; }
 .trap { margin:8px 0 0; color:#88313b; font-size:11px; line-height:1.45; }
-.caption { display:block; margin-top:12px; color:#81796f; font-size:10px; line-height:1.3; }
+.caption { display:block; margin-top:12px; color:#81796f; font-size:11px; line-height:1.3; }
 .example { display:block; margin-top:5px; color:#776c64; font-size:11px; }
 .close { position:absolute; right:7px; top:7px; width:44px; height:44px; border:0; border-radius:8px; background:transparent; color:#51463f; font-size:25px; cursor:pointer; }
 .preview[data-touch="true"] .status { margin-right:36px; }

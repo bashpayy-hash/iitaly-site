@@ -8,7 +8,7 @@ export function PricesLandscape() {
       <img
         src="/illustrations/editorial/coastal-terrace-360.webp"
         srcSet="/illustrations/editorial/coastal-terrace-360.webp 360w, /illustrations/editorial/coastal-terrace-720.webp 720w"
-        sizes="(min-width: 1688px) 440px, (min-width: 1280px) calc(50vw - 404px), 236px"
+        sizes="(min-width: 1570px) 520px, (min-width: 1280px) calc(64vw - 485px), 236px"
         width={360}
         height={270}
         alt=""

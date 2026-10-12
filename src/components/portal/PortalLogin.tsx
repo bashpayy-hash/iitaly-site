@@ -1,14 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useId, useRef, useState, type FormEvent } from "react";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import marketing from "@/components/marketing/marketing.module.css";
 import styles from "./portal-login.module.css";
 
-// The user's selected, existing illustration, optimized and hosted in Higgsfield.
-// These are confirmed permanent asset URLs, not expiring upload URLs.
-const ART_DESKTOP = "https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/fe1a7012-e883-4026-a630-67bb8babf92e.webp";
-const ART_SMALL = "https://d2ol7oe51mr4n9.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/9273dd44-3498-4309-9c30-d763a10345b6.webp";
+/* Экран входа — в общем стиле сайта: шапка сайта, те же шрифты и цвета,
+   акварель кампуса, что и на главной и в самом кабинете. Раньше он жил в
+   отдельном референсе (бежевый фон, засечки, чёрная кнопка, картинка со
+   стороннего CDN) и выглядел другим сайтом, без навигации назад. */
 
 export function PortalLogin({
   onSubmit,
@@ -56,6 +57,9 @@ export function PortalLogin({
   const shownError = localError || error;
 
   return (
+    <div className={marketing.surface}>
+    <MarketingHeader />
+    <main id="main">
     <section className={styles.page} data-portal-login>
       <div className={styles.shell}>
         <div className={styles.intro}>
@@ -69,18 +73,19 @@ export function PortalLogin({
 
           <div className={styles.art} aria-hidden="true">
             <picture>
-              <source media="(max-width: 760px)" srcSet={ART_SMALL} />
-              <Image
-                src={ART_DESKTOP}
+              <source media="(max-width: 760px)" srcSet="/illustrations/editorial/campus-arrival-480.webp" />
+              <img
+                src="/illustrations/editorial/campus-arrival-960.webp"
+                srcSet="/illustrations/editorial/campus-arrival-960.webp 960w, /illustrations/editorial/campus-arrival-1168.webp 1168w"
+                sizes="(max-width: 1000px) 60vw, 700px"
                 alt=""
-                width={1280}
-                height={960}
+                width={1168}
+                height={880}
                 className={styles.artImage}
-                unoptimized
                 loading="eager"
                 fetchPriority="high"
+                decoding="async"
                 draggable={false}
-                referrerPolicy="no-referrer"
                 data-portal-login-art
               />
             </picture>
@@ -155,5 +160,7 @@ export function PortalLogin({
         </form>
       </div>
     </section>
+    </main>
+    </div>
   );
 }
