@@ -177,6 +177,10 @@
 
 .mobileNav { display: none; }
 .panel { outline: none; }
+.actionError { margin-bottom: 24px; padding: 16px 18px; border: 1px solid var(--portal-danger); border-radius: 8px; background: var(--portal-surface); color: var(--portal-danger); }
+.actionError p { max-width: 70ch; margin: 0; font-size: 16px; line-height: 1.55; }
+.actionError button { margin-top: 12px; }
+.actionError:focus-visible { outline: 2px solid var(--portal-accent); outline-offset: 4px; }
 
 .hero,
 .docsHero {

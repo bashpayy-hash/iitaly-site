@@ -41,14 +41,22 @@ export interface ChatMessage {
 }
 
 export async function sendChatMessage(history: ChatMessage[]): Promise<string> {
-  const res = await fetch(`${BACKEND_URL}/api/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: history.map((message, index) => index === 0 && message.role === "user"
-      ? { ...message, content: "[Проверенная справка сайта]\n" + ADMISSIONS_CONTEXT + "\n[Вопрос пользователя]\n" + message.content }
-      : message) }),
-  });
-  const data = await res.json();
-  if (!data || !data.reply) throw new Error("no-reply");
-  return data.reply as string;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 90000);
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: history.map((message, index) => index === 0 && message.role === "user"
+        ? { ...message, content: "[Проверенная справка сайта]\n" + ADMISSIONS_CONTEXT + "\n[Вопрос пользователя]\n" + message.content }
+        : message) }),
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error("chat-unavailable");
+    const data = await res.json();
+    if (typeof data?.reply !== "string" || !data.reply.trim()) throw new Error("no-reply");
+    return data.reply;
+  } finally {
+    clearTimeout(timeout);
+  }
 }

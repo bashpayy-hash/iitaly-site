@@ -138,7 +138,7 @@ try {
   await page.getByRole('textbox', { name: 'Фамилия', exact: true }).pressSequentially('Тестов');
   assert.equal(await page.getByRole('textbox', { name: 'Фамилия', exact: true }).inputValue(), 'Тестов');
   assert.equal(await page.getByRole('textbox', { name: 'Фамилия', exact: true }).evaluate(el => document.activeElement === el), true, 'Typing does not move focus to another field');
-  await page.getByRole('button', { name: 'Оформить заказ', exact: true }).click();
+  await page.getByRole('button', { name: /^(Оформить заказ|Перейти к оплате)$/ }).click();
   assert.equal(await page.getByRole('dialog').getByRole('alert').innerText(), 'Проверь имя, фамилию и телефон.');
   assert.equal(await page.getByRole('textbox', { name: 'Телефон', exact: true }).getAttribute('aria-invalid'), 'true');
   await shot(page, 'checkout-open');

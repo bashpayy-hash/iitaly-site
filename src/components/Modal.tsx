@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 const FOCUSABLE =
-  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function Modal({
   open,
@@ -20,29 +20,37 @@ export function Modal({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => { onCloseRef.current = onClose; }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
     triggerRef.current = document.activeElement;
 
     const panel = panelRef.current;
-    const focusables = panel?.querySelectorAll<HTMLElement>(FOCUSABLE);
-    focusables?.[0]?.focus();
+    const first = Array.from(panel?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).find(el => el.offsetParent !== null);
+    (first ?? panel)?.focus();
+    const previousOverflow = document.body.style.overflow;
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.stopPropagation();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (e.key !== "Tab" || !panel) return;
       const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
         (el) => el.offsetParent !== null,
       );
-      if (items.length === 0) return;
+      if (items.length === 0) {
+        e.preventDefault();
+        panel.focus();
+        return;
+      }
       const first = items[0];
       const last = items[items.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === panel)) {
         e.preventDefault();
         last.focus();
       } else if (!e.shiftKey && document.activeElement === last) {
@@ -55,10 +63,10 @@ export function Modal({
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKeyDown, true);
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
       if (triggerRef.current instanceof HTMLElement) triggerRef.current.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -74,7 +82,9 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className={`max-h-[88vh] w-full overflow-y-auto rounded-t-xl border-2 border-ink bg-paper shadow-xl sm:rounded-xl ${className || "max-w-lg"}`}
+        tabIndex={-1}
+        data-lenis-prevent
+        className={`max-h-[88vh] w-full overflow-y-auto overscroll-contain rounded-t-xl border-2 border-ink bg-paper shadow-xl sm:rounded-xl ${className || "max-w-lg"}`}
       >
         {children}
       </div>

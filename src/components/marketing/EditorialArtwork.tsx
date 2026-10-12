@@ -22,7 +22,7 @@ export function EditorialArtwork({
 }) {
   const { width, height } = scenes[scene];
   return (
-    <picture aria-hidden="true" data-editorial-art={scene} className={`${styles.picture} ${className}`}>
+    <picture data-editorial-art={scene} className={`${styles.picture} ${className}`}>
       <source
         type="image/webp"
         srcSet={`${ROOT}/${scene}-480.webp 480w, ${ROOT}/${scene}.webp ${width}w`}

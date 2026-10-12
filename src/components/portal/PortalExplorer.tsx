@@ -23,7 +23,7 @@ import {
   type PortalTask,
 } from "@/lib/portalApi";
 import { preparePayload } from "@/lib/docPayload";
-import { checkDocument } from "@/lib/checkDocument";
+import { checkDocument, DocCheckError, type DocCheckResult } from "@/lib/checkDocument";
 import { ACT_PAGE, DOC_TASKS, TASK_META, dlText } from "@/lib/portalMeta";
 import { track } from "@/lib/track";
 
@@ -31,6 +31,7 @@ const KEY = "iitaly_portal_code";
 const KEY_SN = "iitaly_portal_surname";
 
 type Section = "today" | "plan" | "docs" | "help" | "profile";
+type ActionError = { message: string; retryLabel?: string; retry?: () => void };
 
 const NAV: { id: Section; label: string }[] = [
   { id: "today", label: "Обзор" },
@@ -80,7 +81,10 @@ export function PortalExplorer() {
   const [section, setSection] = useState<Section>("today");
   const [openStage, setOpenStage] = useState<string>("");
   const [busyTask, setBusyTask] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<ActionError | null>(null);
   const [editingProfile, setEditingProfile] = useState(false);
+  const actionErrorRef = useRef<HTMLDivElement>(null);
+  const sessionVersion = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskRef = useRef<string | null>(null);
   const triedAutoLogin = useRef(false);
@@ -92,6 +96,9 @@ export function PortalExplorer() {
       return;
     }
     setLoginError(null);
+    sessionVersion.current += 1;
+    setActionError(null);
+    setBusyTask(null);
     setCode(c);
     setSurname(sn);
     setData(res.data);
@@ -123,7 +130,16 @@ export function PortalExplorer() {
     return () => window.removeEventListener("popstate", syncSection);
   }, []);
 
+  useEffect(() => {
+    if (!actionError) return;
+    actionErrorRef.current?.focus({ preventScroll: true });
+    actionErrorRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
+  }, [actionError]);
+
   function exit() {
+    sessionVersion.current += 1;
+    setActionError(null);
+    setBusyTask(null);
     try {
       localStorage.removeItem(KEY);
       localStorage.removeItem(KEY_SN);
@@ -145,13 +161,25 @@ export function PortalExplorer() {
 
   async function handleToggle(taskId: string, value: boolean) {
     if (!code || !surname || !data) return;
+    const version = sessionVersion.current;
+    const taskTitle = tasksWithStages(data).find(({ task }) => task.id === taskId)?.task.t || "Шаг маршрута";
     setBusyTask(taskId);
-    const res = await toggleTask(code, surname, taskId, value);
-    if (res && res.ok) {
-      setData({ ...data, done: res.done, progress: res.progress });
+    setActionError(null);
+    try {
+      const res = await toggleTask(code, surname, taskId, value);
+      if (version !== sessionVersion.current) return;
+      if (!res?.ok) throw new Error(typeof res?.error === "string" ? res.error : "Отметка не сохранена. Попробуй ещё раз.");
+      setData((prev) => prev ? { ...prev, done: res.done, progress: res.progress } : prev);
       track("portal_task", { done: value });
+    } catch (error) {
+      if (version === sessionVersion.current) setActionError({
+        message: `${taskTitle}: ${error instanceof Error ? error.message : "Не удалось сохранить отметку."}`,
+        retryLabel: "Сохранить отметку ещё раз",
+        retry: () => { void handleToggle(taskId, value); },
+      });
+    } finally {
+      if (version === sessionVersion.current) setBusyTask(null);
     }
-    setBusyTask(null);
   }
 
   async function handleSaveProfile(payload: {
@@ -172,24 +200,55 @@ export function PortalExplorer() {
     fileInputRef.current?.click();
   }
 
-  async function handleFileChosen(file: File | null) {
-    const taskId = pendingTaskRef.current;
-    if (!file || !taskId || !code || !surname) return;
+  async function saveDocumentResult(taskId: string, result: DocCheckResult, fileName: string) {
+    if (!code || !surname) return;
+    const version = sessionVersion.current;
     setBusyTask(taskId);
-    const res = await preparePayload(file);
-    if ("error" in res) {
-      setBusyTask(null);
-      return;
-    }
+    setActionError(null);
     try {
-      const result = await checkDocument(res.payload, DOC_TASKS[taskId] || "");
-      const saved = await uploadPortalDoc(code, surname, taskId, result, file.name);
-      if (saved && saved.ok) {
-        setData((prev) => (prev ? { ...prev, docs: saved.docs, done: saved.done, progress: saved.progress } : prev));
-        track("portal_doc", { verdict: result.verdict });
+      const saved = await uploadPortalDoc(code, surname, taskId, result, fileName);
+      if (version !== sessionVersion.current) return;
+      if (!saved?.ok) throw new Error(typeof saved?.error === "string" ? saved.error : "Не удалось сохранить результат.");
+      setData((prev) => (prev ? { ...prev, docs: saved.docs, done: saved.done, progress: saved.progress } : prev));
+      track("portal_doc", { verdict: result.verdict });
+    } catch (error) {
+      if (version === sessionVersion.current) setActionError({
+        message: `${DOC_TASKS[taskId] || "Документ"}: проверка завершена, но результат не сохранён. ${error instanceof Error ? error.message : "Попробуй ещё раз."}`,
+        retryLabel: "Сохранить результат",
+        // Retain the result only in this tab. Retrying storage must not run or bill the AI check again.
+        retry: () => { void saveDocumentResult(taskId, result, fileName); },
+      });
+    } finally {
+      if (version === sessionVersion.current) setBusyTask(null);
+    }
+  }
+
+  async function handleFileChosen(file: File | null, taskId = pendingTaskRef.current) {
+    if (!file || !taskId || !code || !surname) return;
+    const version = sessionVersion.current;
+    setBusyTask(taskId);
+    setActionError(null);
+    try {
+      const res = await preparePayload(file);
+      if (version !== sessionVersion.current) return;
+      if ("error" in res) {
+        setActionError({ message: `${DOC_TASKS[taskId] || "Документ"}: ${res.error}`, retryLabel: "Выбрать другой файл", retry: () => requestUpload(taskId) });
+        return;
       }
-    } catch {}
-    setBusyTask(null);
+      const result = await checkDocument(res.payload, DOC_TASKS[taskId] || "");
+      if (version !== sessionVersion.current) return;
+      await saveDocumentResult(taskId, result, file.name);
+    } catch (error) {
+      if (version === sessionVersion.current) setActionError({
+        message: `${DOC_TASKS[taskId] || "Документ"}: ${error instanceof Error ? error.message : "Не удалось проверить файл. Попробуй ещё раз."}`,
+        ...(error instanceof DocCheckError && !error.retryable ? {} : {
+          retryLabel: "Проверить файл ещё раз",
+          retry: () => { void handleFileChosen(file, taskId); },
+        }),
+      });
+    } finally {
+      if (version === sessionVersion.current) setBusyTask(null);
+    }
   }
 
   async function handleCreateTelegramLink() {
@@ -359,6 +418,12 @@ export function PortalExplorer() {
           )}
 
           <div id="portal-panel" className={styles.panel}>
+            {actionError && (
+              <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
+                <p role="alert">{actionError.message}</p>
+                {actionError.retry && <button type="button" onClick={actionError.retry} disabled={busyTask !== null} className={styles.secondaryButton}>{actionError.retryLabel}</button>}
+              </div>
+            )}
             {section === "today" && (
               <TodaySection
                 data={data}

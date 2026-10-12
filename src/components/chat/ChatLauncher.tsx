@@ -118,11 +118,14 @@ export function ChatLauncher({
     }
 
     check();
+    const resizeObserver = new ResizeObserver(schedule);
+    resizeObserver.observe(document.body);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", schedule);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", schedule);
+      resizeObserver.disconnect();
       if (frame) cancelAnimationFrame(frame);
       window.clearTimeout(settle);
     };
@@ -141,9 +144,13 @@ export function ChatLauncher({
       />
 
       <motion.button
+        id="chat-launcher"
         type="button"
         onClick={onOpen}
         aria-label="Задать вопрос ИИ-консультанту"
+        aria-haspopup="dialog"
+        aria-controls={hidden ? "iitaly-chat" : undefined}
+        aria-expanded={hidden}
         title="Задать вопрос"
         // inert, пока кнопка уехала: иначе она остаётся в порядке обхода
         // с клавиатуры и ловит клики в пустом месте у края экрана

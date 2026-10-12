@@ -21,7 +21,7 @@ function ruPlural(n: number, one: string, few: string, many: string): string {
 export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onDraftChange: (draft: PlanDraft) => void; onDone: (answers: WizAnswers) => void }) {
   const { step, answers } = draft;
   const [phone, setPhone] = useState("");
-  const [phoneError, setPhoneError] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const liveRef = useRef<HTMLDivElement>(null);
   const previewTracked = useRef(false);
@@ -62,21 +62,27 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   }
 
   async function finish(withPhone: boolean) {
+    if (sending) return;
     if (withPhone) {
       if (!isValidPhone(phone)) {
-        setPhoneError(true);
+        setPhoneError("Проверь номер телефона.");
         return;
       }
       setSending(true);
-      await submitLead({
+      setPhoneError(null);
+      const result = await submitLead({
         phone: phone.trim(),
         education: answers.education || "—",
         goal: answers.goal || "—",
         budget: answers.budget || "—",
       });
+      setSending(false);
+      if (!result.ok) {
+        setPhoneError("Не удалось отправить номер. Попробуй ещё раз или нажми «Открыть мой план» — он уже готов.");
+        return;
+      }
       track("lead_captured", { from: "wizard" });
       track("lead_submitted", { from: "wizard" });
-      setSending(false);
     }
     track("plan_completed", { withPhone });
     onDone(answers);
@@ -131,20 +137,21 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
-                aria-invalid={phoneError || undefined}
+                disabled={sending}
+                aria-invalid={(phoneError && !isValidPhone(phone)) ? true : undefined}
                 aria-describedby={phoneError ? "plan-phone-error" : undefined}
                 placeholder="+7 ___ ___ __ __"
                 value={phone}
                 onChange={(e) => {
                   setPhone(e.target.value);
-                  setPhoneError(false);
+                  setPhoneError(null);
                 }}
-                className="w-full rounded-apple-card border border-white/20 bg-frost px-4 py-3 text-apple-body-sm text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
+                className="w-full rounded-apple-card border border-white/20 bg-frost px-4 py-3 text-base text-cloud-white outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson"
               />
             </label>
             {phoneError && (
               <p id="plan-phone-error" role="alert" className="mt-1.5 text-apple-caption text-crimson">
-                Проверь номер телефона.
+                {phoneError}
               </p>
             )}
             <AppleButton

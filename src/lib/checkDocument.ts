@@ -116,21 +116,29 @@ export async function checkDocument(payload: DocPayload, hint?: string, context?
     body.mediaType = payload.mediaType;
   }
 
+  const controller = new AbortController();
+  // Allow the server's 60-second analysis deadline plus upload/response time.
+  const timer = setTimeout(() => controller.abort(), 90000);
   let res: Response;
+  let raw: string;
   try {
     res = await fetch(`${BACKEND_URL}/api/check-document`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
+    // Include response-body stalls in the deadline as well as connection stalls.
+    raw = await res.text();
   } catch {
-    // Сюда попадаем, только если запрос не дошёл: нет сети, не
-    // разрезолвился домен, заблокирован CORS. Здесь совет про интернет
-    // уместен — в остальных случаях нет.
     throw new DocCheckError(
       "network",
-      "Нет связи с сервером. Проверь интернет и попробуй снова.",
+      controller.signal.aborted
+        ? "Проверка занимает слишком много времени. Файл остался выбран — попробуй ещё раз через минуту."
+        : "Связь с сервером прервалась. Проверь интернет и попробуй снова.",
     );
+  } finally {
+    clearTimeout(timer);
   }
 
   /* Читаем текстом, а не res.json(). Ответ не всегда JSON: у хостинга
@@ -138,7 +146,6 @@ export async function checkDocument(payload: DocPayload, hint?: string, context?
      и приходят они как HTML. res.json() на таком теле бросает
      SyntaxError, и он неотличим от обрыва связи — снова «проверь
      интернет» вместо «сервер отдал 502». */
-  const raw = await res.text().catch(() => "");
   let data: { ok?: boolean; error?: unknown; code?: unknown; retryable?: unknown; result?: DocCheckResult } | null = null;
   try {
     data = raw ? JSON.parse(raw) : null;
@@ -154,7 +161,7 @@ export async function checkDocument(payload: DocPayload, hint?: string, context?
     );
   }
 
-  if (!data.ok) {
+  if (!res.ok || !data.ok) {
     // Текст с сервера показываем как есть: он написан по-русски и для
     // человека — «раздели PDF», «подожди немного», «проверка временно
     // недоступна». Подменять его своим общим текстом значит выкидывать
