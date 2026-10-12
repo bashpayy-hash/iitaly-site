@@ -353,96 +353,30 @@ export function PermessoTrainer() {
           <span>Перед началом</span>
           <b>Kit · чёрная ручка · паспорт · codice fiscale{scenario === "rinnovo" ? " · карточка ВНЖ" : ""} · marca da bollo €16</b>
         </div>
-        <a href="#helpers">Коды и расчёты ↓</a>
+        <nav className={styles.prepLinks} aria-label="Ниже на странице">
+          <a href="#helpers">Коды и расчёты ↓</a>
+          <a href="#before-poste">Перед почтой ↓</a>
+        </nav>
       </section>
-
-      <section className={styles.controls}>
-        <div className={styles.scenarioSwitch} aria-label="Сценарий подачи">
-          <button type="button" aria-pressed={scenario === "rilascio"} data-active={scenario === "rilascio"} onClick={() => switchScenario("rilascio")}>
-            <span>Первое ВНЖ</span>
-            <small>RILASCIO · только приехал</small>
-          </button>
-          <button type="button" aria-pressed={scenario === "rinnovo"} data-active={scenario === "rinnovo"} onClick={() => switchScenario("rinnovo")}>
-            <span>Продление</span>
-            <small>RINNOVO · карточка уже есть</small>
-          </button>
-        </div>
-        <div className={styles.controlActions}>
-          <button
-            type="button"
-            className={styles.exampleToggle}
-            aria-pressed={showExample}
-            aria-label={showExample ? "Скрыть пример заполнения" : "Показать пример заполнения"}
-            onClick={() => {
-              setShowExample((value) => !value);
-              setUseMyData(false);
-            }}
-          >
-            {showExample ? "Скрыть пример" : "Показать пример"}
-          </button>
-          <button type="button" className={styles.myDataButton} aria-expanded={myDataOpen} aria-controls="permesso-my-data" onClick={() => setMyDataOpen((value) => !value)}>
-            Мои данные
-          </button>
-        </div>
-      </section>
-
-      {myDataOpen && (
-        <section id="permesso-my-data" className={styles.myDataPanel} data-fab-yield>
-          <div className={styles.myDataHeader}>
-            <div>
-              <h2>Мои данные</h2>
-              <p>Сохраняются только в этом браузере и не отправляются на сервер.</p>
-            </div>
-            <button type="button" onClick={clearMyData}>Стереть</button>
-          </div>
-          <div className={styles.myDataGrid}>
-            {editableMyDataFields.map((item) => {
-              const value = myData[item.number] || "";
-              const error = validationFor(item, value);
-              return (
-                <label key={item.section + ":" + item.number} className={styles.myDataField}>
-                  <span><b>{item.number}. {item.ru}</b><small>{item.it}</small></span>
-                  <input
-                    value={value}
-                    inputMode={item.kind === "number" || item.kind === "date" ? "numeric" : "text"}
-                    placeholder={item.kind === "date" ? "ДДММГГГГ" : ""}
-                    onChange={(event) => setMyData((prev) => ({ ...prev, [item.number]: event.target.value.toUpperCase() }))}
-                  />
-                  {error && <em>{error}</em>}
-                </label>
-              );
-            })}
-          </div>
-          <div className={styles.myDataFooter}>
-            <button
-              type="button"
-              className={styles.useMyDataButton}
-              onClick={() => {
-                setUseMyData(true);
-                setShowExample(false);
-                setMyDataOpen(false);
-                const first = firstWritableOnPage(activePage);
-                if (first) selectField(first, true);
-                requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ behavior: "smooth", block: "start" }));
-              }}
-            >
-              Использовать в пошаговом режиме
-            </button>
-            {useMyData && <span>Активное значение показывается в подсказке; на телефоне — ещё и в клетках.</span>}
-          </div>
-        </section>
-      )}
-
-      <div className={styles.legendBar} role="region" aria-label="Обозначения полей" tabIndex={0}>
-        <span data-mode="write"><i /> Обычное поле — заполняй</span>
-        <span data-mode="empty"><i /> Пропусти</span>
-        <span data-mode="post"><i /> Только на почте</span>
-        <span data-mode="ifExists"><i /> Если есть</span>
-        <span data-mode="verify"><i /> Уточни</span>
-      </div>
 
       <section id="modulo-sheet" className={styles.trainer}>
-        <div className={styles.trainerHead}>
+        {/* Одна строка управления вместо трёх. Раньше над бланком стояли
+            липкая полупрозрачная полоса сценариев (сквозь неё просвечивал
+            бланк), легенда из пяти цветов (на встроенном PDF им нечему
+            соответствовать: пометка поля и так есть в карточке) и ряд
+            вкладок страниц с двумя ссылками. Теперь сценарий, страница и
+            действия — в одном ряду, и он не прилипает. */}
+        <div className={styles.toolbar}>
+          <div className={styles.scenarioSwitch} role="group" aria-label="Сценарий подачи">
+            <button type="button" aria-pressed={scenario === "rilascio"} data-active={scenario === "rilascio"} onClick={() => switchScenario("rilascio")}>
+              <span>Первое ВНЖ</span>
+              <small>Rilascio</small>
+            </button>
+            <button type="button" aria-pressed={scenario === "rinnovo"} data-active={scenario === "rinnovo"} onClick={() => switchScenario("rinnovo")}>
+              <span>Продление</span>
+              <small>Rinnovo</small>
+            </button>
+          </div>
           <nav className={styles.pageTabs} aria-label="Страницы тренажёра">
             {FORM_PAGES.map((item, index) => (
               <button
@@ -457,15 +391,75 @@ export function PermessoTrainer() {
               </button>
             ))}
           </nav>
-          <div className={styles.journeyLinks} aria-label="Дополнительные шаги">
-            <button type="button" onClick={() => document.getElementById("pages4-8")?.scrollIntoView({ behavior: "smooth" })}>
-              Стр. 4–8: не заполнять
+          {/* Была кнопкой, которая прокручивала к #pages4-8 — такого
+              элемента на странице нет, и нажатие ничего не делало. Это
+              пометка, а не действие. */}
+          <p className={styles.pagesNote}>Стр. 4–8: не заполнять</p>
+          <div className={styles.controlActions}>
+            <button
+              type="button"
+              className={styles.exampleToggle}
+              aria-pressed={showExample}
+              aria-label={showExample ? "Скрыть пример заполнения" : "Показать пример заполнения"}
+              onClick={() => {
+                setShowExample((value) => !value);
+                setUseMyData(false);
+              }}
+            >
+              {showExample ? "Скрыть пример" : "Пример"}
             </button>
-            <button type="button" onClick={() => document.getElementById("before-poste")?.scrollIntoView({ behavior: "smooth" })}>
-              Перед почтой
+            <button type="button" className={styles.myDataButton} aria-expanded={myDataOpen} aria-controls="permesso-my-data" onClick={() => setMyDataOpen((value) => !value)}>
+              Мои данные
             </button>
           </div>
         </div>
+
+        {myDataOpen && (
+          <section id="permesso-my-data" className={styles.myDataPanel} data-fab-yield>
+            <div className={styles.myDataHeader}>
+              <div>
+                <h2>Мои данные</h2>
+                <p>Сохраняются только в этом браузере и не отправляются на сервер.</p>
+              </div>
+              <button type="button" onClick={clearMyData}>Стереть</button>
+            </div>
+            <div className={styles.myDataGrid}>
+              {editableMyDataFields.map((item) => {
+                const value = myData[item.number] || "";
+                const error = validationFor(item, value);
+                return (
+                  <label key={item.section + ":" + item.number} className={styles.myDataField}>
+                    <span><b>{item.number}. {item.ru}</b><small>{item.it}</small></span>
+                    <input
+                      value={value}
+                      inputMode={item.kind === "number" || item.kind === "date" ? "numeric" : "text"}
+                      placeholder={item.kind === "date" ? "ДДММГГГГ" : ""}
+                      onChange={(event) => setMyData((prev) => ({ ...prev, [item.number]: event.target.value.toUpperCase() }))}
+                    />
+                    {error && <em>{error}</em>}
+                  </label>
+                );
+              })}
+            </div>
+            <div className={styles.myDataFooter}>
+              <button
+                type="button"
+                className={styles.useMyDataButton}
+                onClick={() => {
+                  setUseMyData(true);
+                  setShowExample(false);
+                  setMyDataOpen(false);
+                  const first = firstWritableOnPage(activePage);
+                  if (first) selectField(first, true);
+                  requestAnimationFrame(() => document.getElementById("modulo-sheet")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+                }}
+              >
+                Использовать в пошаговом режиме
+              </button>
+              {useMyData && <span>Активное значение показывается в подсказке; на телефоне — ещё и в клетках.</span>}
+            </div>
+          </section>
+        )}
 
         <div className={styles.mobileFieldCard} data-mode={modeFor(selected)} data-fab-yield>
           <div className={styles.mobileFieldHead}>
