@@ -110,5 +110,25 @@
         "sha256": "31650bf798803d94fcb0ed557bf6d22759c370f467fa3f954fc1c474bf1a75aa"
       }
     ]
+  },
+  "balcony-window": {
+    "origin": "Derived from balcony-accent.webp (project asset): transparent margins trimmed to the drawing plus 10px, resized; no new generation",
+    "source": "balcony-accent.webp",
+    "variants": [
+      {
+        "file": "balcony-window-150.webp",
+        "width": 150,
+        "height": 303,
+        "bytes": 21450,
+        "sha256": "f5c36d7fa339be989c739aac18b71f5a1531f63552b7727fe74f5de658a0c653"
+      },
+      {
+        "file": "balcony-window-300.webp",
+        "width": 300,
+        "height": 605,
+        "bytes": 68068,
+        "sha256": "1199370760d953071d70e0596e6c25497e03a75ca64596d4380baaa34aaaf9cc"
+      }
+    ]
   }
 }

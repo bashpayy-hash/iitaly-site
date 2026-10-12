@@ -53,13 +53,15 @@
 /* Правая половина пары с террасой в шапке цен. Отступ и ширина приходят
    переменными из .frame (prices/prices-landscape.module.css): расстояние
    от центра то же, что у террасы, ширина — 0,66 её ширины (см. там). */
+/* Миска у правого края окна, боком и чуть за экраном. Геометрия и
+   объяснение — в prices-landscape.module.css (.frame задаёт --edge). */
 .tomato {
   display: none;
   position: absolute;
   top: 50%;
-  left: calc(50% + var(--pair-inset));
-  width: calc(var(--pair-width) * .66);
-  transform: translateY(-50%);
+  right: calc(-1 * var(--edge, 20px));
+  width: calc(var(--pair-width, 300px) * .66);
+  transform: translate(18%, -50%) rotate(-14deg);
   pointer-events: none;
   user-select: none;
 }

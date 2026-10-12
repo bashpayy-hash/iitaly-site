@@ -73,7 +73,10 @@ export function PermessoPaperSheet(props:Props){
        return <div className={`${s.overlay} ${z.part}`} style={partStyle(f,r)} key={i} data-editor-field={f.id} data-part={i} data-selected={selected} data-state={mode} data-example={!!sample} data-locked={locked}>
         <span className={z.outlineProbe} data-cell-outline={f.id}/>
         {checkbox||locked?<button type="button" tabIndex={-1} className={s.mark} aria-label={name} aria-pressed={checkbox?checked:undefined} onClick={()=>{pin(f);if(!locked&&!showExample)onToggle(f,f.kind==="radio"?r.label:undefined);}}>{checkbox&&checked?"X":""}</button>:<>
-         <input tabIndex={-1} className={f.kind==="line"?s.lineInput:s.paperInput} aria-label={name} aria-invalid={!!valueProblem(f,real)} aria-describedby={selected?"permesso-value-format permesso-value-error":undefined} value={part} maxLength={f.kind==="line"?70:r.count} autoComplete="off" spellCheck={false} inputMode={f.kind==="date"||f.meta.kind==="number"?"numeric":"text"} placeholder={hints&&selected&&!display?(f.kind==="date"?["ДД","ММ","ГГГГ"][i]:f.meta.ru):""} onClick={()=>pin(f)} onChange={e=>{onSelect(f);onChange(f,i,e.target.value);}} onPaste={e=>{onSelect(f);onPaste(f,i,e);}}/>
+         {/* Название поля — подсказкой только на сплошной строке. В клетках оно
+             шло пропорциональным шрифтом поперёк печатных линий («Налоговый код»
+             наслаивалось на сетку); для клеток название есть в панели справа. */}
+         <input tabIndex={-1} className={f.kind==="line"?s.lineInput:s.paperInput} aria-label={name} aria-invalid={!!valueProblem(f,real)} aria-describedby={selected?"permesso-value-format permesso-value-error":undefined} value={part} maxLength={f.kind==="line"?70:r.count} autoComplete="off" spellCheck={false} inputMode={f.kind==="date"||f.meta.kind==="number"?"numeric":"text"} placeholder={hints&&selected&&!display&&f.kind==="line"?f.meta.ru:""} onClick={()=>pin(f)} onChange={e=>{onSelect(f);onChange(f,i,e.target.value);}} onPaste={e=>{onSelect(f);onPaste(f,i,e);}}/>
          {f.kind!=="line"&&<div className={s.glyphs} aria-hidden="true">{Array.from(glyph).map((char,k)=><span key={k} data-paper-glyph={k} style={{left:`${(k*r.pitch+r.cell/2)/fieldWidth(r)*100}%`}}>{char}</span>)}</div>}
         </>}
        </div>;

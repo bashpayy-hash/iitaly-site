@@ -53,7 +53,7 @@ export function PricesExplorer() {
 
   return (
     <>
-      <section data-section="prices-header" className={`${art.headerHost} px-5 pt-16 pb-10 text-center sm:pt-24`}>
+      <section data-section="prices-header" className={`${art.headerHost} ${heroArt.bleed} px-5 pt-16 pb-10 text-center sm:pt-24`}>
         {/* Рамка вокруг всего текстового блока: от неё обе картинки берут
             центр по вертикали и общую геометрию пары. */}
         <div className={heroArt.frame}>

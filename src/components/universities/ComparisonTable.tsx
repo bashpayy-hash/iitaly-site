@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { CITIES, type University } from "@/data/italy";
 import { COMPARISON_GROUPS } from "./comparison-model";
+import { CityGlyph } from "./CityGlyph";
 import styles from "./comparison.module.css";
 
 /** Same source-backed comparison on the page and in the existing modal. */
@@ -42,7 +43,7 @@ export function ComparisonTable({ universities }: { universities: University[] }
               <th scope="col">Что сравниваем</th>
               {universities.map(u => <th scope="col" key={u.id}>
                 <span className={styles.uniName}>{u.name}</span>
-                <span className={styles.city}>{CITIES[u.city].name}</span>
+                <span className={styles.city}><CityGlyph city={u.city} className={styles.cityGlyph} />{CITIES[u.city].name}</span>
               </th>)}
             </tr>
           </thead>

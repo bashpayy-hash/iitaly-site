@@ -265,6 +265,7 @@ export function PortalExplorer() {
 
   if (!data.client.onboardingComplete || editingProfile) {
     return (
+      <main id="main">
       <PortalOnboarding
         key={editingProfile ? "editing" : "first-run"}
         data={data}
@@ -278,10 +279,12 @@ export function PortalExplorer() {
           changeSection(editingProfile ? "profile" : "today");
         }}
       />
+      </main>
     );
   }
 
   return (
+    <main id="main">
     <section className={styles.portal}>
       <div className={styles.shell}>
         <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
@@ -404,5 +407,6 @@ export function PortalExplorer() {
         }}
       />
     </section>
+    </main>
   );
 }

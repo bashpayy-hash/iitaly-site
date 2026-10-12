@@ -83,9 +83,13 @@
 .fieldNav button:last-child { color: #f8f8f6; background: #121212; border-color: #121212; }
 .upNext { margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
 .fieldJump { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); }
-.fieldJump summary { font-size: 11px; color: var(--muted); min-height: 36px; }
+/* Как «Подробное пояснение» выше: ＋/− вместо системного треугольника. */
+.fieldJump summary { display: flex; align-items: center; min-height: 44px; color: #6d6259; font-size: 12px; list-style: none; }
+.fieldJump summary::-webkit-details-marker { display: none; }
+.fieldJump summary::after { content: "＋"; margin-left: auto; font-size: 17px; }
+.fieldJump[open] summary::after { content: "−"; }
 .fieldJump > div { max-height: 220px; overflow: auto; }
-.fieldJump button { display: block; width: 100%; border: 0; border-bottom: 1px solid #efede8; background: #fff; color: #373734; padding: 9px 0; font-size: 11px; text-align: left; }
+.fieldJump button { display: block; width: 100%; min-height: 40px; border: 0; border-bottom: 1px solid #efede8; background: #fff; color: #373734; padding: 10px 0; font-size: 12px; text-align: left; }
 .reviewSection { padding-top: 32px; }
 .reviewToggle { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 56px; border: 0; border-block: 1px solid var(--line); padding: 15px 0; background: transparent; text-align: left; font-size: 16px; color: var(--ink); }
 .reviewBody { max-width: 800px; padding-block: 20px; }

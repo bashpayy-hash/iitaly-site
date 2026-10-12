@@ -20,6 +20,10 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/CompareModal.tsx',
   'src/components/universities/CityMatch.tsx',
   'src/components/universities/comparison.module.css',
+  // Explicit user request: small city icons in the comparison table and bar.
+  // Presentation only — comparison-model.ts and the data stay protected.
+  'src/components/universities/ComparisonTable.tsx',
+  'src/components/universities/CityGlyph.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([

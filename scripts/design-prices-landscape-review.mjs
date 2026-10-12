@@ -71,7 +71,7 @@ try {
     let artWidth = 0;
     if (width >= 1280) {
       const details = await art.evaluate(el => {
-        const r = el.getBoundingClientRect(), host = el.closest('section'), h = host.getBoundingClientRect(), img = el.querySelector('img');
+        const r = el.getBoundingClientRect(), host = el.closest('section'), img = el.querySelector('img');
         // h1 is a 900px centered block: its blank outer margins are not text.
         // Protect real text line rectangles with an additional 24px clear zone.
         // Controls and the right artwork keep their full hit/layout rectangles.
@@ -89,25 +89,28 @@ try {
           if (b.width && b.height) boxes.push({left:b.left,right:b.right,top:b.top,bottom:b.bottom,label:node.textContent});
         }
         const overlaps = boxes.filter(b => r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top).map(b => b.label);
-        return { overlaps, contained: r.left >= h.left && r.top >= h.top && r.right <= h.right && r.bottom <= h.bottom, x: r.x, width: r.width, src: new URL(img.currentSrc).pathname, loaded: img.complete && img.naturalWidth > 0, pointerEvents: getComputedStyle(el).pointerEvents, filter: getComputedStyle(img).filter };
+        return { overlaps, x: r.x, width: r.width, src: new URL(img.currentSrc).pathname, loaded: img.complete && img.naturalWidth > 0, pointerEvents: getComputedStyle(el).pointerEvents, filter: getComputedStyle(img).filter };
       });
       assert.deepEqual(details.overlaps.filter(label => !String(label).includes('667 ₸ — и система ведёт тебя до конца')), []);
-      assert(details.contained && details.loaded);
+      assert(details.loaded);
       assert(details.x + details.width < width / 2);
-      // Терраса и миска томатов — зеркальная пара вокруг центра шапки: одна
-      // дистанция от центра, общий центр по вертикали, миска 0,66 ширины
-      // террасы. Ширина террасы растёт с полем у текста, до 440px.
+      // Терраса и миска стоят у краёв окна, боком и чуть за экраном (см.
+      // prices-landscape.module.css). Ширины — от поля у текста; повёрнутую
+      // картинку меряем по offsetWidth, а не по её описанному прямоугольнику.
       const pair = await art.evaluate(el => {
         const frame = el.parentElement.getBoundingClientRect(), a = el.getBoundingClientRect();
-        const b = el.parentElement.querySelector('[data-editorial-spot="tomatoes"]').getBoundingClientRect();
-        const mid = frame.left + frame.width / 2;
-        return { frameWidth: frame.width, leftGap: mid - a.right, rightGap: b.left - mid, centerA: a.top + a.height / 2, centerB: b.top + b.height / 2, ratio: b.width / a.width };
+        const bowl = el.parentElement.querySelector('[data-editorial-spot="tomatoes"]'), b = bowl.getBoundingClientRect();
+        const angle = node => { const m = new DOMMatrix(getComputedStyle(node).transform); return Math.atan2(m.b, m.a) * 180 / Math.PI; };
+        return { frameWidth: frame.width, terraceWidth: el.offsetWidth, bowlWidth: bowl.offsetWidth, terraceLeft: a.left, bowlRight: b.right,
+          viewport: document.documentElement.clientWidth, centerA: a.top + a.height / 2, centerB: b.top + b.height / 2, terraceAngle: angle(el), bowlAngle: angle(bowl) };
       });
-      const expected = Math.min(440, Math.max(200, pair.frameWidth / 2 - 384));
-      assert(Math.abs(details.width - expected) < 1, 'Responsive width follows the gutter beside the heading');
-      assert(Math.abs(pair.leftGap - 368) < 1 && Math.abs(pair.rightGap - 368) < 1, 'Both artworks sit 368px from the center');
-      assert(Math.abs(pair.centerA - pair.centerB) < 1, 'Both artworks share one vertical center');
-      assert(Math.abs(pair.ratio - .66) < .01, 'Tomato bowl is 0.66 of the terrace width');
+      const expected = Math.min(520, (pair.frameWidth / 2 - 368) / .78);
+      assert(Math.abs(pair.terraceWidth - expected) < 1, 'Terrace width follows the gutter beside the heading');
+      assert(pair.terraceLeft < 0 && pair.terraceLeft > -pair.terraceWidth * .3, 'Terrace runs slightly past the left edge');
+      assert(pair.bowlRight > pair.viewport && pair.bowlRight < pair.viewport + pair.bowlWidth * .45, 'Bowl runs slightly past the right edge');
+      assert(Math.abs(pair.bowlWidth / pair.terraceWidth - .66) < .01, 'The landscape is the larger one: the bowl is 0.66 of it');
+      assert(Math.abs(pair.terraceAngle + 3) < .5 && Math.abs(pair.bowlAngle + 14) < .5, 'Both lie at an angle');
+      assert(Math.abs(pair.centerA - pair.centerB) < 2, 'Both share one vertical center');
       artWidth = details.width;
       assert.equal(details.pointerEvents, 'none'); assert.equal(details.filter, 'none');
       assert.match(details.src, /^\/illustrations\/editorial\/coastal-terrace-/);

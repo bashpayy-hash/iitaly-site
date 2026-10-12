@@ -176,7 +176,7 @@ export function EditablePermesso() {
             {!transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v) => {setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
             <div className={styles.documentFoot}>Оригинальные клетки и подписи не изменены. Это учебный черновик, не подача заявления.</div>
           </div>
-          <aside className={`${styles.inspector} ${light.inspector}`} ref={inspector} data-fab-yield aria-label="Подсказка и ввод выбранного поля">
+          <aside className={`${styles.inspector} ${light.inspector}`} ref={inspector} data-fab-yield data-permesso-inspector aria-label="Подсказка и ввод выбранного поля">
             <div className={styles.inspectorTop}><span>Стр. {page} · {shortId(selected)}</span><strong data-state={status}>{STATES[status]}</strong></div>
             <h2>{selected.meta.ru}</h2><p className={styles.italian}>{selected.meta.it}</p>
             <div className={light.quick}><AnswerSummary field={selected} answer={quickAnswer} detail /></div>
