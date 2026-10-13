@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
 import { TodaySection } from "./TodaySection";
+import { PortalProgress } from "./PortalProgress";
 import { PlanSection } from "./PlanSection";
 import { DocsSection } from "./DocsSection";
 import { HelpSection } from "./HelpSection";
@@ -88,6 +89,7 @@ export function PortalExplorer() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskRef = useRef<string | null>(null);
   const triedAutoLogin = useRef(false);
+  const focusPlanStage = useRef(false);
 
   async function login(sn: string, c: string, silent = false) {
     const res = await fetchPortal(c, sn);
@@ -135,6 +137,13 @@ export function PortalExplorer() {
     actionErrorRef.current?.focus({ preventScroll: true });
     actionErrorRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
   }, [actionError]);
+
+  useEffect(() => {
+    if (section !== "plan" || !focusPlanStage.current) return;
+    focusPlanStage.current = false;
+    const stage = document.getElementById("portal-stage-" + openStage);
+    stage?.querySelector<HTMLButtonElement>("button[aria-expanded]")?.focus();
+  }, [section, openStage]);
 
   function exit() {
     sessionVersion.current += 1;
@@ -391,6 +400,18 @@ export function PortalExplorer() {
               </button>
             ))}
           </div>
+
+          {(section === "today" || section === "plan") && (
+            <PortalProgress
+              progress={data.progress}
+              stageTitle={focus?.stageTitle}
+              onOpenPlan={section === "today" ? () => {
+                focusPlanStage.current = true;
+                setOpenStage(focus?.stageId || data.roadmap[0]?.id || "");
+                changeSection("plan");
+              } : undefined}
+            />
+          )}
 
           {focus && (
             <section className={styles.globalFocus} aria-label="Главное действие">

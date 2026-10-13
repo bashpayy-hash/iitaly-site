@@ -141,12 +141,6 @@ export function TodaySection({
               </span>
               <span aria-hidden>→</span>
             </button>
-            <div className={styles.statusRailItemStatic}>
-              <span>
-                <small>Прогресс</small>
-                <strong>{data.progress.done} из {data.progress.total} шагов · {data.progress.pct}%</strong>
-              </span>
-            </div>
           </div>
         </div>
       </section>

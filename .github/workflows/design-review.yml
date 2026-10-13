@@ -95,6 +95,8 @@ jobs:
         run: node scripts/launch-chat-review.mjs
       - name: Review launch checkout and portal failure recovery
         run: node scripts/launch-flow-review.mjs
+      - name: Review portal progress, keyboard navigation and responsive states
+        run: node scripts/design-portal-progress-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
       - name: Review single-mode Permesso, local verified pages, exact geometry and local draft
