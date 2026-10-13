@@ -2,6 +2,7 @@
 
 import type { PortalData } from "@/lib/portalApi";
 import { DOC_TASKS, dlText, fmtDate } from "@/lib/portalMeta";
+import { documentOutcome } from "@/lib/portalDocument";
 import styles from "./portal.module.css";
 
 type FlatItem = {
@@ -38,20 +39,24 @@ export function TodaySection({
   onOpenDocs: () => void;
   onOpenHelp: () => void;
 }) {
-  const rows = flatTasks(data).filter(({ task }) => !data.done[task.id]);
+  const allRows = flatTasks(data);
+  const rows = allRows.filter(({ task }) => !data.done[task.id]);
   const available = rows.filter(({ task }) => task.available !== false);
   const blocked = rows.filter(({ task }) => task.available === false).slice(0, 2);
-  const parents = available.filter(({ task }) => task.owner?.includes("Родители")).slice(0, 2);
+  const parents = available.filter(({ task }) => task.owner?.toLowerCase().includes("родител")).slice(0, 2);
   const parallel = available.find(({ task }) => task.id === "test");
   const next = available
-    .filter(({ task }) => !task.owner?.includes("Родители") && task.id !== "test")
+    .filter(({ task }) => !task.owner?.toLowerCase().includes("родител") && task.id !== "test")
     .slice(1, 3);
   const deadlines = dateRows(data);
 
-  const docRows = rows.filter(({ task }) => Boolean(DOC_TASKS[task.id]));
-  const docsReady = docRows.filter(({ task }) => data.docs?.[task.id]?.verdict === "ok").length;
-  const docsIssues = docRows.filter(({ task }) => data.docs?.[task.id] && data.docs[task.id].verdict !== "ok").length;
-  const docsMissing = docRows.length - docsReady - docsIssues;
+  const outcomes = allRows.filter(({ task }) => Boolean(DOC_TASKS[task.id]))
+    .map(({ task }) => documentOutcome(data.docs?.[task.id]).kind);
+  const docsReady = outcomes.filter(kind => kind === "approved").length;
+  const docsIssues = outcomes.filter(kind => kind === "fix").length;
+  const docsClarify = outcomes.filter(kind => kind === "clarify").length;
+  const docsUnreadable = outcomes.filter(kind => kind === "unreadable").length;
+  const docsMissing = outcomes.filter(kind => kind === "missing").length;
   const tgOn = Boolean(data.client.tgLinked) && data.client.notify?.telegram !== false;
 
   return (
@@ -130,7 +135,7 @@ export function TodaySection({
             <button type="button" className={styles.statusRailItem} onClick={onOpenDocs}>
               <span>
                 <small>Документы</small>
-                <strong>Проверены: {docsReady} · С замечаниями: {docsIssues} · Не загружены: {docsMissing}</strong>
+                <strong>Проверены: {docsReady} · Исправить: {docsIssues} · Уточнить: {docsClarify} · Не читаются: {docsUnreadable} · Не загружены: {docsMissing}</strong>
               </span>
               <span aria-hidden>→</span>
             </button>

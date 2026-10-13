@@ -24,8 +24,8 @@ export interface DocCheckResult {
   verdict?: CheckVerdict;
   docTitle?: string;
   summary?: string;
-  checks?: { status?: CheckStatus; label?: string; note?: string }[];
-  problems?: { severity?: "critical" | "minor"; text?: string; fix?: string }[];
+  checks?: { status?: CheckStatus; label?: string; note?: string; code?: string; sourceId?: string }[];
+  problems?: { severity?: "critical" | "minor"; text?: string; fix?: string; observed?: string; code?: string; sourceId?: string; field?: string }[];
   nextSteps?: string[];
   review?: DocumentReview;
 }

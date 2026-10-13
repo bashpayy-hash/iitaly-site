@@ -2,7 +2,8 @@
 
 import { Accordion } from "@/components/Accordion";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
-import { DOC_TASKS, V_LABEL, dlText } from "@/lib/portalMeta";
+import { DOC_TASKS, dlText } from "@/lib/portalMeta";
+import { documentOutcome } from "@/lib/portalDocument";
 import styles from "./portal.module.css";
 
 export function PlanSection({
@@ -10,6 +11,7 @@ export function PlanSection({
   openStage,
   onToggleTask,
   onUploadDoc,
+  onOpenDoc,
   busyTask,
   onAsk,
 }: {
@@ -17,6 +19,7 @@ export function PlanSection({
   openStage: string;
   onToggleTask: (taskId: string, value: boolean) => void;
   onUploadDoc: (taskId: string) => void;
+  onOpenDoc: (taskId: string) => void;
   busyTask: string | null;
   onAsk: (task: PortalTask) => void;
 }) {
@@ -61,6 +64,7 @@ export function PlanSection({
                       busy={busyTask === task.id}
                       onToggle={onToggleTask}
                       onUploadDoc={onUploadDoc}
+                      onOpenDoc={onOpenDoc}
                       onAsk={onAsk}
                     />
                   ))}
@@ -81,6 +85,7 @@ function TaskRow({
   busy,
   onToggle,
   onUploadDoc,
+  onOpenDoc,
   onAsk,
 }: {
   task: PortalTask;
@@ -89,6 +94,7 @@ function TaskRow({
   busy: boolean;
   onToggle: (taskId: string, value: boolean) => void;
   onUploadDoc: (taskId: string) => void;
+  onOpenDoc: (taskId: string) => void;
   onAsk: (task: PortalTask) => void;
 }) {
   const needDoc = DOC_TASKS[task.id];
@@ -128,29 +134,30 @@ function TaskRow({
           {task.time && <span className={styles.taskChip}>{task.time}</span>}
           {task.deadline && <span className={styles.taskChip}>{task.deadlineKind || "Ориентир"} · {dlText(task, done)}</span>}
           {task.timingLabel && <span className={styles.taskChip}>{task.timingLabel}</span>}
-          {doc && <span className={styles.taskChip}>Документ: {V_LABEL[doc.verdict] || "проверен"}</span>}
+          {doc && <span className={styles.taskChip}>Документ: {documentOutcome(doc).label}</span>}
         </div>
 
         {task.note && <p className={styles.taskNote}>{task.note}</p>}
         {task.warn && <p className={styles.taskWarn}>{task.warn}</p>}
         {doc?.summary && <p className={styles.taskNote}>{doc.summary}</p>}
 
-        {!blocked && (
+        {(!blocked || (needDoc && doc)) && (
           <div className={styles.taskActions}>
             {needDoc && (
               <button
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
-                  onUploadDoc(task.id);
+                  if (doc) onOpenDoc(task.id);
+                  else onUploadDoc(task.id);
                 }}
                 disabled={busy}
                 className={doc ? styles.secondaryButton : styles.primaryButton}
               >
-                {busy ? "Проверяю…" : doc ? "Проверить другой файл" : "Загрузить документ"}
+                {busy ? "Проверяю…" : doc ? "Открыть разбор" : "Загрузить документ"}
               </button>
             )}
-            {(task.ai || task.expert) && (
+            {!blocked && (task.ai || task.expert) && (
               <button type="button" onClick={() => onAsk(task)} className={styles.secondaryButton}>
                 Спросить про этот шаг
               </button>

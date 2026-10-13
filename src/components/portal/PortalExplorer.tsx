@@ -9,6 +9,7 @@ import { TodaySection } from "./TodaySection";
 import { PortalProgress } from "./PortalProgress";
 import { PlanSection } from "./PlanSection";
 import { DocsSection } from "./DocsSection";
+import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
 import styles from "./portal.module.css";
@@ -25,7 +26,7 @@ import {
   type PortalTask,
 } from "@/lib/portalApi";
 import { preparePayload } from "@/lib/docPayload";
-import { checkDocument, DocCheckError, type DocCheckResult } from "@/lib/checkDocument";
+import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewContext } from "@/lib/checkDocument";
 import { ACT_PAGE, DOC_TASKS, TASK_META, dlText } from "@/lib/portalMeta";
 import { track } from "@/lib/track";
 
@@ -74,6 +75,12 @@ function sectionFromLocation(): Section {
   return NAV.some((item) => item.id === view) ? view as Section : "today";
 }
 
+function documentFromLocation(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  const task = params.get("doc");
+  return params.get("view") === "docs" && task && Object.hasOwn(DOC_TASKS, task) ? task : null;
+}
+
 function settingsTargetFromLocation(): SettingsTarget {
   const view = new URLSearchParams(window.location.search).get("view");
   return view === "help" || window.location.hash === "#notifications" ? "notifications" : "profile";
@@ -99,6 +106,9 @@ export function PortalExplorer() {
   const [busyTask, setBusyTask] = useState<string | null>(null);
   const [actionError, setActionError] = useState<ActionError | null>(null);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [openDocument, setOpenDocument] = useState<string | null>(null);
+  const [reviewContext, setReviewContext] = useState<DocumentReviewContext>({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
+  const documentReturnFocus = useRef<string | null>(null);
   const actionErrorRef = useRef<HTMLDivElement>(null);
   const sessionVersion = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -124,6 +134,7 @@ export function PortalExplorer() {
     if (nextSection === "settings") focusSettingsTarget.current = settingsTargetFromLocation();
     canonicalizeSettingsLocation();
     setSection(nextSection);
+    setOpenDocument(documentFromLocation());
     const first = res.data.roadmap.find((st) => st.tasks.some((t) => !res.data.done[t.id] && t.available !== false));
     setOpenStage((first || res.data.roadmap[0])?.id || "");
     try {
@@ -152,6 +163,7 @@ export function PortalExplorer() {
       canonicalizeSettingsLocation();
       setEditingProfile(false);
       setSection(next);
+      setOpenDocument(documentFromLocation());
       // A hash-only history entry may retain the same React section.
       if (next === "settings") focusSettings();
     }
@@ -192,10 +204,18 @@ export function PortalExplorer() {
     stage?.querySelector<HTMLButtonElement>("button[aria-expanded]")?.focus();
   }, [section, openStage]);
 
+  useEffect(() => {
+    if (section !== "docs" || openDocument || !documentReturnFocus.current) return;
+    document.getElementById(`portal-doc-action-${documentReturnFocus.current}`)?.focus();
+    documentReturnFocus.current = null;
+  }, [section, openDocument]);
+
   function exit() {
     sessionVersion.current += 1;
     setActionError(null);
     setBusyTask(null);
+    setOpenDocument(null);
+    setReviewContext({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
     focusSettingsTarget.current = null;
     try {
       localStorage.removeItem(KEY);
@@ -210,6 +230,7 @@ export function PortalExplorer() {
   function changeSection(next: Section, push = true) {
     if (next !== "settings") focusSettingsTarget.current = null;
     setSection(next);
+    setOpenDocument(null);
     if (push) {
       const url = next === "today" ? "/portal" : "/portal?view=" + next;
       if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
@@ -220,6 +241,7 @@ export function PortalExplorer() {
   function openSettings(target: SettingsTarget = "profile") {
     focusSettingsTarget.current = target;
     setSection("settings");
+    setOpenDocument(null);
     const url = "/portal?view=settings" + (target === "notifications" ? "#notifications" : "");
     if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
     if (section === "settings") focusSettings();
@@ -263,8 +285,23 @@ export function PortalExplorer() {
   }
 
   function requestUpload(taskId: string) {
+    if (busyTask) return;
     pendingTaskRef.current = taskId;
     fileInputRef.current?.click();
+  }
+
+  function showDocument(taskId: string, restoreContext = true) {
+    const review = data?.docs?.[taskId]?.result?.review;
+    if (review && restoreContext) setReviewContext({ profile: review.profile, academicYear: review.academicYear, applicantScope: review.applicantScope });
+    setSection("docs");
+    setOpenDocument(taskId);
+    const url = `/portal?view=docs&doc=${encodeURIComponent(taskId)}`;
+    if (window.location.pathname + window.location.search !== url) window.history.pushState({}, "", url);
+  }
+
+  function closeDocument() {
+    documentReturnFocus.current = openDocument;
+    changeSection("docs");
   }
 
   async function saveDocumentResult(taskId: string, result: DocCheckResult, fileName: string) {
@@ -277,6 +314,7 @@ export function PortalExplorer() {
       if (version !== sessionVersion.current) return;
       if (!saved?.ok) throw new Error(typeof saved?.error === "string" ? saved.error : "Не удалось сохранить результат.");
       setData((prev) => (prev ? { ...prev, docs: saved.docs, done: saved.done, progress: saved.progress } : prev));
+      showDocument(taskId, false);
       track("portal_doc", { verdict: result.verdict });
     } catch (error) {
       if (version === sessionVersion.current) setActionError({
@@ -290,7 +328,7 @@ export function PortalExplorer() {
     }
   }
 
-  async function handleFileChosen(file: File | null, taskId = pendingTaskRef.current) {
+  async function handleFileChosen(file: File | null, taskId = pendingTaskRef.current, context = reviewContext) {
     if (!file || !taskId || !code || !surname) return;
     const version = sessionVersion.current;
     setBusyTask(taskId);
@@ -302,7 +340,7 @@ export function PortalExplorer() {
         setActionError({ message: `${DOC_TASKS[taskId] || "Документ"}: ${res.error}`, retryLabel: "Выбрать другой файл", retry: () => requestUpload(taskId) });
         return;
       }
-      const result = await checkDocument(res.payload, DOC_TASKS[taskId] || "");
+      const result = await checkDocument(res.payload, DOC_TASKS[taskId] || "", context);
       if (version !== sessionVersion.current) return;
       await saveDocumentResult(taskId, result, file.name);
     } catch (error) {
@@ -310,7 +348,7 @@ export function PortalExplorer() {
         message: `${DOC_TASKS[taskId] || "Документ"}: ${error instanceof Error ? error.message : "Не удалось проверить файл. Попробуй ещё раз."}`,
         ...(error instanceof DocCheckError && !error.retryable ? {} : {
           retryLabel: "Проверить файл ещё раз",
-          retry: () => { void handleFileChosen(file, taskId); },
+          retry: () => { void handleFileChosen(file, taskId, context); },
         }),
       });
     } finally {
@@ -521,11 +559,18 @@ export function PortalExplorer() {
                 openStage={openStage}
                 onToggleTask={handleToggle}
                 onUploadDoc={requestUpload}
+                onOpenDoc={showDocument}
                 busyTask={busyTask}
                 onAsk={(task) => openChat("Объясни мне этот шаг простыми словами: " + task.t)}
               />
             )}
-            {section === "docs" && <DocsSection data={data} onUploadDoc={requestUpload} busyTask={busyTask} />}
+            {section === "docs" && (openDocument && data.docs?.[openDocument] && data.roadmap.some(stage => stage.tasks.some(task => task.id === openDocument)) ? (
+              <PortalDocumentReport title={DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
+                onBack={closeDocument} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
+                context={reviewContext} onContextChange={setReviewContext}
+                onAsk={() => openChat(`Где уточнить требования к документу «${DOC_TASKS[openDocument]}» для моей заявки? Помоги определить учреждение и официальный источник, которые нужно проверить.`)} />
+            ) : <DocsSection data={data} onUploadDoc={requestUpload} onOpenDoc={showDocument} busyTask={busyTask}
+              context={reviewContext} onContextChange={setReviewContext} />)}
             {section === "settings" && (
               <ProfileSection
                 data={data}

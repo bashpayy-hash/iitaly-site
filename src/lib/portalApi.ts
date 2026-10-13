@@ -1,4 +1,5 @@
 import { BACKEND_URL } from "./backend";
+import type { DocCheckResult } from "./checkDocument";
 
 // Типы данных кабинета — форма ответа /api/portal/:code, выведена из
 // старого сайта (index.html, IIFE «ЛИЧНЫЙ КАБИНЕТ»). Кабинет полностью
@@ -31,6 +32,10 @@ export interface PortalDoc {
   verdict: "ok" | "warn" | "error" | "unreadable";
   summary?: string;
   critical?: number;
+  problems?: number;
+  fileName?: string;
+  checkedAt?: string;
+  result?: DocCheckResult;
 }
 
 export interface PortalProfile {

@@ -67,7 +67,9 @@ async function makePage(width, options = {}) {
     if (url.pathname === '/api/portal/TEST-01/doc') {
       calls.save += 1;
       if (calls.save === 1 && options.failSave) return json(503, { ok: false, error: 'Тест: соединение прервалось.' });
-      return json(200, { ok: true, docs: { statements: { verdict: 'ok', summary: 'Тестовый результат сохранён.' } }, done: { statements: true }, progress: { done: 1, total: 2, pct: 50 } });
+      const saved = route.request().postDataJSON();
+      assert.deepEqual(saved.result, { verdict: 'ok', summary: 'Тестовый результат: видимых ошибок нет.' });
+      return json(200, { ok: true, docs: { statements: { verdict: 'ok', summary: saved.result.summary, result: saved.result, fileName: saved.fileName, checkedAt: '2026-10-13T12:00:00.000Z' } }, done: { statements: true }, progress: { done: 1, total: 2, pct: 50 } });
     }
     if (url.pathname === '/api/portal/TEST-01/task') {
       calls.task += 1;
@@ -133,7 +135,7 @@ try {
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
     await page.getByRole('heading', { name: '0 из 1 готовы', exact: true }).waitFor();
     const input = page.locator('input[type=file]');
-    await page.getByRole('button', { name: 'Загрузить', exact: true }).click();
+    await page.getByRole('button', { name: 'Загрузить: Банковские выписки', exact: true }).click();
     await input.setInputFiles({ name: 'unsupported.exe', mimeType: 'application/octet-stream', buffer: Buffer.from('synthetic fixture') });
     await page.getByRole('button', { name: 'Выбрать другой файл', exact: true }).waitFor();
     assert.equal(calls.check, 0);
@@ -158,6 +160,11 @@ try {
     }, null, { timeout: 3000 });
     await page.screenshot({ path: resolve(output, 'portal-save-recovery-390.png'), fullPage: true });
     await page.getByRole('button', { name: 'Сохранить результат', exact: true }).click();
+    const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
+    await report.waitFor();
+    await report.getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
+    assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
+    await report.getByRole('button', { name: '← К списку документов', exact: true }).click();
     await page.getByRole('heading', { name: '1 из 1 готовы', exact: true }).waitFor();
     assert.equal(calls.check, 2, 'Retrying storage must not run another AI check');
     assert.equal(calls.save, 2);
