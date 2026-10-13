@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { BACKEND_URL } from "@/lib/backend";
 import {
@@ -70,6 +71,8 @@ function SendIcon() {
 }
 
 export function ChatWidget() {
+  const pathname = usePathname();
+  const stepContext = useRef<{ portal?: boolean; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string }>({});
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     {
@@ -125,8 +128,11 @@ export function ChatWidget() {
 
   useEffect(() => {
     function onOpenRequest(e: Event) {
-      const detail = (e as CustomEvent<{ prefill?: string; source?: string }>)
+      const detail = (e as CustomEvent<{ prefill?: string; source?: string; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string }>)
         .detail;
+      stepContext.current = detail?.source === "portal-header" ? {
+        portal: true, taskId: detail.taskId, taskTitle: detail.taskTitle, taskOwner: detail.taskOwner, taskContext: detail.taskContext,
+      } : {};
       rememberTrigger();
       setOpen(true);
       track("chat_open");
@@ -135,8 +141,15 @@ export function ChatWidget() {
         setTimeout(() => sendRef.current(detail.prefill), 50);
       }
     }
+    function onPortalContext(event: Event) {
+      stepContext.current = (event as CustomEvent<typeof stepContext.current>).detail || {};
+    }
     window.addEventListener("iitaly:open-chat", onOpenRequest);
-    return () => window.removeEventListener("iitaly:open-chat", onOpenRequest);
+    window.addEventListener("iitaly:portal-context", onPortalContext);
+    return () => {
+      window.removeEventListener("iitaly:open-chat", onOpenRequest);
+      window.removeEventListener("iitaly:portal-context", onPortalContext);
+    };
   }, []);
 
   function scrollDown() {
@@ -185,9 +198,13 @@ export function ChatWidget() {
       return;
     }
 
+    const context = stepContext.current;
+    const scopedText = context.taskId
+      ? `[Открытый шаг IITALY: ${context.taskId}; название: ${context.taskTitle || ""}; кто делает: ${context.taskOwner || "Ты"}. ${context.taskContext || ""}]\n${text}`
+      : context.portal ? `[Личный кабинет IITALY: шаг сейчас не открыт.]\n${text}` : text;
     const nextHistory: ChatMessage[] = [
       ...historyRef.current,
-      { role: "user", content: text },
+      { role: "user", content: scopedText },
     ];
     try {
       const reply = await sendChatMessage(nextHistory);
@@ -236,7 +253,7 @@ export function ChatWidget() {
          пришлось бы гонять его через AnimatePresence, а он рендерит
          фрагмент (якорь + кнопка) — у фрагмента нет узла, за выход
          которого AnimatePresence могла бы отвечать. */}
-      <ChatLauncher hidden={open} onOpen={openChat} />
+      {pathname !== "/portal" && <ChatLauncher hidden={open} onOpen={openChat} />}
 
       <AnimatePresence>
         {open && (
@@ -273,6 +290,16 @@ export function ChatWidget() {
               <span className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
                 правила 2026/27
               </span>
+              {pathname === "/portal" ? (
+              <a
+                href="#main"
+                aria-label="Закрыть чат"
+                onClick={event => { event.preventDefault(); setOpen(false); }}
+                className="chp-close ml-auto -mr-2 flex size-11 items-center justify-center rounded-pill text-cream/70 transition-colors duration-[var(--duration-fast)] hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
+              >
+                <CloseIcon />
+              </a>
+              ) : (
               <button
                 type="button"
                 aria-label="Закрыть чат"
@@ -281,6 +308,7 @@ export function ChatWidget() {
               >
                 <CloseIcon />
               </button>
+              )}
             </div>
 
             <div

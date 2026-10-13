@@ -37,6 +37,9 @@ const approvedReminderUiPaths = new Set([
   'src/components/portal/TodaySection.tsx',
   // Explicit user request: simpler navigation over the unchanged roadmap.
   'src/lib/portalNavigation.ts',
+  'src/components/portal/PortalTaskDetail.tsx',
+  'src/components/portal/portal-step.module.css',
+  'src/components/portal/portal-settings.module.css',
   'src/components/portal/portal-overview.module.css',
   'src/components/portal/portal-plan.module.css',
   'src/components/portal/portal-documents.module.css',

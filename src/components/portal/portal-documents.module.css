@@ -12,20 +12,16 @@
 .groupLabel[data-outcome="fix"] { color: var(--portal-danger); }
 .groupLabel[data-outcome="approved"] { color: var(--portal-green); }
 .list { padding-bottom: 8px; }
-.row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; border-top: 1px solid var(--portal-border); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 60px; padding: 16px 0; border-top: 1px solid var(--portal-border); color: var(--portal-ink); text-decoration: none; }
 .row:first-child { padding-top: 4px; border-top: 0; }
+.row:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
+.arrow { flex-shrink: 0; color: var(--portal-muted); font-size: 18px; }
 .file { min-width: 0; }
 .file h3 { font-size: 14px; line-height: 1.5; font-weight: 500; }
 .fileName { margin-top: 4px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
 .meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 12px; line-height: 1.55; }
 .empty { margin: 0 0 18px; }
-.textAction { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--portal-ink); text-align: left; font-size: 13px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
-.row > button { flex-shrink: 0; }
-.textAction:hover { text-decoration-thickness: 2px; }
-.textAction:disabled { cursor: wait; opacity: .6; }
-.documents :is(button, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+.documents :is(a, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 @media (max-width: 540px) {
-  .row { align-items: flex-start; flex-direction: column; gap: 8px; }
-  .row > button { max-width: 100%; white-space: normal; }
-  .textAction { justify-content: flex-start; }
+  .row { gap: 12px; }
 }
