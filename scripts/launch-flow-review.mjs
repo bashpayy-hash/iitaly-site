@@ -74,7 +74,7 @@ async function makePage(width, options = {}) {
     if (url.pathname === '/api/portal/TEST-01/task') {
       calls.task += 1;
       if (calls.task === 1) return json(503, { ok: false, error: 'Тест: отметка не сохранена.' });
-      return json(200, { ok: true, done: { 'test-task': true }, progress: { done: 1, total: 2, pct: 50 } });
+      return json(200, { ok: true, done: { statements: true, 'test-task': true }, progress: { done: 2, total: 2, pct: 100 } });
     }
     return route.abort(); // No production payment, login, document, analytics or lead requests.
   });
@@ -133,7 +133,7 @@ try {
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
-    await page.getByRole('heading', { name: '0 из 1 готовы', exact: true }).waitFor();
+    await page.locator('[data-document-group=missing][open]').waitFor();
     const input = page.locator('input[type=file]');
     await page.getByRole('button', { name: 'Загрузить: Банковские выписки', exact: true }).click();
     await input.setInputFiles({ name: 'unsupported.exe', mimeType: 'application/octet-stream', buffer: Buffer.from('synthetic fixture') });
@@ -152,8 +152,9 @@ try {
     });
     await page.waitForFunction(() => {
       const launcher = document.getElementById('chat-launcher');
-      const row = document.querySelector('[data-state="missing"]')?.closest('[data-fab-yield]');
-      if (!launcher || !row) return false;
+      const row = document.querySelector('[data-document="statements"]');
+      if (!row) return false;
+      if (!launcher) return true;
       if (launcher.getAttribute('aria-hidden') === 'true' || launcher.inert) return true;
       const fab = launcher.getBoundingClientRect(), doc = row.getBoundingClientRect();
       return !(fab.left < doc.right && fab.right > doc.left && fab.top < doc.bottom && fab.bottom > doc.top);
@@ -165,14 +166,17 @@ try {
     await report.getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
     await report.getByRole('button', { name: '← К списку документов', exact: true }).click();
-    await page.getByRole('heading', { name: '1 из 1 готовы', exact: true }).waitFor();
+    await page.locator('[data-document-group=approved]').waitFor();
+    const passedGroup = page.locator('[data-document-group=approved]');
+    if (!(await passedGroup.evaluate(element => element.open))) await passedGroup.locator('summary').click();
+    assert.match(await passedGroup.locator('summary').innerText(), /Проверка пройдена/);
     assert.equal(calls.check, 2, 'Retrying storage must not run another AI check');
     assert.equal(calls.save, 2);
     await page.getByRole('button', { name: 'План', exact: true }).filter({ visible: true }).click();
-    await page.getByRole('button', { name: /Тестовый шаг/ }).click();
+    await page.locator('[data-portal-task="test-task"]').getByRole('button', { name: 'Я это сделал', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor();
     await page.getByRole('button', { name: 'Сохранить отметку ещё раз', exact: true }).click();
-    await page.getByText('Нажми строку, чтобы вернуть задачу', { exact: true }).waitFor();
+    await page.locator('[data-portal-task="test-task"][data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);
     results.push({ test: 'Portal exposes file, check, storage and task errors with precise recovery; saved result retry does not recheck', passed: true });
     await context.close();

@@ -1,173 +1,162 @@
 "use client";
 
-import { Accordion } from "@/components/Accordion";
-import type { PortalData, PortalTask } from "@/lib/portalApi";
-import { DOC_TASKS, dlText } from "@/lib/portalMeta";
+import { useId, useState } from "react";
+import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
+import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
-import styles from "./portal.module.css";
+import { isManualTask, portalPosition, taskAction, taskBlockedReason, taskDate, taskTitle } from "@/lib/portalNavigation";
+import portal from "./portal.module.css";
+import styles from "./portal-plan.module.css";
 
-export function PlanSection({
-  data,
-  openStage,
-  onToggleTask,
-  onUploadDoc,
-  onOpenDoc,
-  busyTask,
-  onAsk,
-}: {
-  data: PortalData;
-  openStage: string;
+type PlanActions = {
   onToggleTask: (taskId: string, value: boolean) => void;
   onUploadDoc: (taskId: string) => void;
   onOpenDoc: (taskId: string) => void;
-  busyTask: string | null;
+  onOpenTask: (task: PortalTask) => void;
   onAsk: (task: PortalTask) => void;
-}) {
-  return (
-    <div>
-      <div className={styles.sectionHeading}>
-        <div>
-          <p className={styles.kicker}>Весь маршрут</p>
-          <h2>План поступления</h2>
-          <p>Открывай текущий этап. Уточняй сроки по своему набору и конкурсу.</p>
-        </div>
-      </div>
+  busyTask: string | null;
+};
 
-      <p className="mb-5 text-sm leading-relaxed">Правила документов и DSU обновлены 9 октября 2026. Сохранённый маршрут сверяй с <a href="/changes-2026-27" className="underline underline-offset-4">актуальной справкой</a>; новый <a href="/plan" className="underline underline-offset-4">опрос по образованию, возрасту и региону</a> доступен отдельно.</p>
-      <div className={styles.planStages}>
-        {data.roadmap.map((stage) => {
-          const total = stage.tasks.length;
-          const done = stage.tasks.filter((task) => data.done[task.id]).length;
-          const pct = total ? Math.round((done / total) * 100) : 0;
-          return (
-            <div key={stage.id} id={"portal-stage-" + stage.id}>
-              <Accordion
-                variant="quiet"
-                defaultOpen={stage.id === openStage}
-                summary={
-                  <div className={styles.stageSummary}>
-                    <span className={styles.stageName}>{stage.title}</span>
-                    <span className={styles.miniTrack} aria-hidden>
-                      <span className={styles.miniFill} style={{ width: pct + "%" }} />
-                    </span>
-                    <span className={styles.stageMeta}>{done}/{total}</span>
-                  </div>
-                }
-              >
-                <div>
-                  {stage.tasks.map((task) => (
-                    <TaskRow
-                      key={task.id}
-                      task={task}
-                      done={!!data.done[task.id]}
-                      doc={data.docs?.[task.id]}
-                      busy={busyTask === task.id}
-                      onToggle={onToggleTask}
-                      onUploadDoc={onUploadDoc}
-                      onOpenDoc={onOpenDoc}
-                      onAsk={onAsk}
-                    />
-                  ))}
-                </div>
-              </Accordion>
-            </div>
-          );
-        })}
-      </div>
+export function PlanSection({ data, ...actions }: PlanActions & { data: PortalData; openStage: string }) {
+  const position = portalPosition(data);
+  const nextStage = position.stageIndex >= 0 ? data.roadmap.slice(position.stageIndex + 1).find(stage => stage.tasks.some(task => !data.done[task.id])) : undefined;
+  const otherStages = data.roadmap.filter((stage) => stage.id !== position.stage?.id && stage.id !== nextStage?.id);
+
+  function stageView(stage: PortalStage, current = false, next = false) {
+    return (
+      <StageView
+        key={`${position.stage?.id || "complete"}-${stage.id}`}
+        stage={stage}
+        data={data}
+        currentTask={position.task?.id}
+        current={current}
+        next={next}
+        {...actions}
+      />
+    );
+  }
+
+  return (
+    <div className={styles.plan}>
+      <h2 className={styles.heading}>План поступления</h2>
+      <details className={styles.rules}>
+        <summary>Правила сверены 9 октября 2026</summary>
+        <p>
+          Сверь маршрут с <a href="/changes-2026-27">актуальной справкой по документам и стипендиям</a>.
+          {" "}Если изменились образование, возраст или регион, <a href="/plan">пройди опрос заново</a>.
+        </p>
+      </details>
+
+      {position.stage ? stageView(position.stage, true) : <p className={styles.complete}>Все шаги маршрута отмечены.</p>}
+      {nextStage && stageView(nextStage, false, true)}
+
+      {otherStages.length > 0 && (
+        <details className={styles.wholeRoute}>
+          <summary>Весь маршрут</summary>
+          <div>{otherStages.map((stage) => stageView(stage))}</div>
+        </details>
+      )}
     </div>
   );
 }
 
-function TaskRow({
-  task,
-  done,
-  doc,
-  busy,
-  onToggle,
-  onUploadDoc,
-  onOpenDoc,
-  onAsk,
-}: {
+function StageView({ stage, data, currentTask, current, next, ...actions }: PlanActions & {
+  stage: PortalStage;
+  data: PortalData;
+  currentTask?: string;
+  current?: boolean;
+  next?: boolean;
+}) {
+  const [open, setOpen] = useState(Boolean(current));
+  const contentId = useId();
+  const completed = stage.tasks.filter((task) => data.done[task.id]).length;
+  // Keep the active action visible; completed rows remain in the same stage.
+  // This only orders the presentation, never the server roadmap or saved progress.
+  const visibleTasks = current ? [
+    ...stage.tasks.filter(task => task.id === currentTask),
+    ...stage.tasks.filter(task => task.id !== currentTask && !data.done[task.id]),
+    ...stage.tasks.filter(task => data.done[task.id]),
+  ] : stage.tasks;
+
+  return (
+    <section id={`portal-stage-${stage.id}`} className={styles.stage} data-current={current || undefined}>
+      <h3 className={styles.stageHeading} id={`portal-stage-heading-${stage.id}`} tabIndex={-1}>
+        <button type="button" className={styles.stageToggle} aria-expanded={open} aria-controls={contentId} onClick={() => setOpen(!open)}>
+          <span className={styles.stageTitle}>{!current && <span className={styles.nextLabel}>{next ? "Потом · " : completed === stage.tasks.length ? "Пройдено · " : "Позже · "}</span>}{stage.title}</span>
+          <span className={styles.stageCount}>{completed} из {stage.tasks.length}</span>
+          <span className={styles.chevron} aria-hidden="true">{open ? "−" : "+"}</span>
+        </button>
+      </h3>
+      <div id={contentId} hidden={!open}>
+        <ol className={styles.tasks}>
+          {visibleTasks.map((task) => (
+            <TaskRow
+              key={task.id}
+              task={task}
+              done={Boolean(data.done[task.id])}
+              doc={data.docs?.[task.id]}
+              current={task.id === currentTask}
+              {...actions}
+            />
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function TaskRow({ task, done, doc, current, busyTask, onToggleTask, onUploadDoc, onOpenDoc, onOpenTask, onAsk }: PlanActions & {
   task: PortalTask;
   done: boolean;
   doc: PortalData["docs"][string] | undefined;
-  busy: boolean;
-  onToggle: (taskId: string, value: boolean) => void;
-  onUploadDoc: (taskId: string) => void;
-  onOpenDoc: (taskId: string) => void;
-  onAsk: (task: PortalTask) => void;
+  current: boolean;
 }) {
-  const needDoc = DOC_TASKS[task.id];
-  const systemTracked = task.id === "profile" || task.id === "path12" || Boolean(needDoc) || Boolean(task.ai) || Boolean(task.expert);
+  const needDoc = Boolean(DOC_TASKS[task.id]);
   const blocked = task.available === false;
-
-  function activate() {
-    if (busy || blocked || systemTracked) return;
-    onToggle(task.id, !done);
-  }
+  const busy = busyTask === task.id;
+  const manual = isManualTask(task);
+  const outcome = doc ? documentOutcome(doc) : null;
+  const date = taskDate(task);
+  const primary = current && !done;
+  const actionClass = primary ? portal.primaryButton : styles.textAction;
 
   return (
-    <div
-      role={!systemTracked && !blocked ? "button" : undefined}
-      tabIndex={!systemTracked && !blocked ? 0 : undefined}
-      onClick={activate}
-      onKeyDown={(event) => {
-        if (!systemTracked && !blocked && (event.key === "Enter" || event.key === " ")) {
-          event.preventDefault();
-          activate();
-        }
-      }}
-      className={styles.taskRow}
-      data-blocked={blocked || undefined}
-      style={{ opacity: busy ? .55 : 1, cursor: !systemTracked && !blocked ? "pointer" : "default" }}
-    >
-      <span className={styles.taskCheck} data-done={done ? "true" : "false"} data-system={systemTracked ? "true" : "false"} aria-hidden>
-        {done ? "✓" : systemTracked ? "·" : ""}
-      </span>
-
-      <div className={styles.taskContent}>
-        <div className={styles.taskTitle}>{task.t}</div>
-        {task.explain && <p className={styles.taskExplain}>{task.explain}</p>}
-
-        <div className={styles.taskChips}>
-          {task.owner && <span className={styles.taskChip}>{task.owner}</span>}
-          {task.time && <span className={styles.taskChip}>{task.time}</span>}
-          {task.deadline && <span className={styles.taskChip}>{task.deadlineKind || "Ориентир"} · {dlText(task, done)}</span>}
-          {task.timingLabel && <span className={styles.taskChip}>{task.timingLabel}</span>}
-          {doc && <span className={styles.taskChip}>Документ: {documentOutcome(doc).label}</span>}
-        </div>
-
-        {task.note && <p className={styles.taskNote}>{task.note}</p>}
-        {task.warn && <p className={styles.taskWarn}>{task.warn}</p>}
-        {doc?.summary && <p className={styles.taskNote}>{doc.summary}</p>}
-
-        {(!blocked || (needDoc && doc)) && (
-          <div className={styles.taskActions}>
-            {needDoc && (
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (doc) onOpenDoc(task.id);
-                  else onUploadDoc(task.id);
-                }}
-                disabled={busy}
-                className={doc ? styles.secondaryButton : styles.primaryButton}
-              >
-                {busy ? "Проверяю…" : doc ? "Открыть разбор" : "Загрузить документ"}
-              </button>
-            )}
-            {!blocked && (task.ai || task.expert) && (
-              <button type="button" onClick={() => onAsk(task)} className={styles.secondaryButton}>
-                Спросить про этот шаг
-              </button>
-            )}
-            {!systemTracked && (
-              <span className={styles.taskTapHint}>{done ? "Нажми строку, чтобы вернуть задачу" : "Нажми строку, когда сделаешь"}</span>
-            )}
-          </div>
-        )}
+    <li className={styles.task} data-portal-task={task.id} data-current-task={current || undefined} data-blocked={blocked || undefined} data-done={done || undefined} aria-busy={busy || undefined}>
+      <div className={styles.taskHeading}>
+        <span className={styles.taskMarker} aria-hidden="true">{done ? "✓" : current ? "→" : "·"}</span>
+        <h4>{taskTitle(task)}</h4>
+        {done && <span className={styles.doneLabel}>Сделано</span>}
       </div>
-    </div>
+      {!done && (
+        <>
+          <p className={styles.now}>{current ? "Сейчас" : blocked ? "Позже" : "Потом"}</p>
+          <p className={styles.meta}>{[task.owner, task.time, date].filter(Boolean).join(" · ")}</p>
+          {task.explain && <p className={styles.explain}>{task.explain}</p>}
+          {task.note && <p className={styles.note}>{task.note}</p>}
+          {task.warn && <p className={styles.note}>{task.warn}</p>}
+        </>
+      )}
+      {outcome && <p className={styles.documentStatus} data-outcome={outcome.kind}>{outcome.label}</p>}
+      {blocked && !done && <p className={styles.blockedReason}>{taskBlockedReason(task)}</p>}
+
+      <div className={styles.actions}>
+        {!blocked && !done && (
+          needDoc ? (
+            <button type="button" className={actionClass} data-primary-action={primary || undefined} disabled={busy} onClick={() => doc ? onOpenDoc(task.id) : onUploadDoc(task.id)}>
+              {busy ? "Проверяю…" : doc ? "Открыть разбор" : "Загрузить документ"}
+            </button>
+          ) : manual ? (
+            <button type="button" className={actionClass} data-primary-action={primary || undefined} disabled={busy} onClick={() => onToggleTask(task.id, true)}>
+              {busy ? "Сохраняю…" : "Я это сделал"}
+            </button>
+          ) : (
+            <button type="button" className={actionClass} data-primary-action={primary || undefined} disabled={busy} onClick={() => onOpenTask(task)}>{taskAction(task)}</button>
+          )
+        )}
+        {doc && (done || blocked) && <button type="button" className={styles.textAction} onClick={() => onOpenDoc(task.id)}>Открыть разбор</button>}
+        {done && manual && !blocked && <button type="button" className={styles.textAction} disabled={busy} onClick={() => onToggleTask(task.id, false)}>Вернуть шаг</button>}
+        <button type="button" className={styles.textAction} onClick={() => onAsk(task)}>Спросить</button>
+      </div>
+    </li>
   );
 }

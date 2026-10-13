@@ -63,6 +63,8 @@ async function backToList(page) {
   assert.equal(new URL(page.url()).searchParams.get('doc'), null);
 }
 async function openReport(page, task) {
+  const group = row(page, task).locator('xpath=ancestor::details[@data-document-group]');
+  if (await group.count() && !(await group.evaluate(element => element.open))) await group.locator('summary').click();
   await row(page, task).getByRole('button', { name: `Открыть разбор: ${titles[task]}`, exact: true }).click();
   await report(page).waitFor();
   assert.equal(new URL(page.url()).searchParams.get('doc'), task);
@@ -70,6 +72,15 @@ async function openReport(page, task) {
 }
 async function noOverflow(page, label) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label);
+}
+async function oneFilledAction(page, label) {
+  const filled = await page.locator('button, a').evaluateAll(elements => elements.filter(element => {
+    const box = element.getBoundingClientRect(), style = getComputedStyle(element);
+    if (!box.width || !box.height || style.visibility === 'hidden' || element.closest('nav,[aria-label="Разделы кабинета"]')) return false;
+    const color = style.backgroundColor.match(/[\d.]+/g)?.map(Number);
+    return color && (color[3] ?? 1) > 0.7 && Math.min(...color.slice(0, 3)) < 170;
+  }).map(element => element.textContent.trim()));
+  assert.equal(filled.length, 1, `${label}: exactly one filled action (${filled.join(', ')})`);
 }
 
 try {
@@ -109,6 +120,14 @@ try {
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
+    await page.locator('[data-document-group=missing][open]').waitFor();
+    const groups = page.locator('details[data-document-group]');
+    assert.equal(await groups.count(), 5);
+    assert.deepEqual(await groups.evaluateAll(elements => elements.map(element => element.dataset.documentGroup)), ['approved', 'fix', 'clarify', 'unreadable', 'missing']);
+    const groupNames = ['Проверка пройдена', 'Нужно исправить', 'Нужно уточнить', 'Нужна читаемая копия', 'Не загружен'];
+    for (let index = 0; index < groupNames.length; index++) assert((await groups.nth(index).locator('summary').innerText()).includes(groupNames[index]));
+    assert.deepEqual(await groups.evaluateAll(elements => elements.map(element => element.open)), [false, true, true, true, true], 'Only attention groups and the current-step file are expanded');
+    await oneFilledAction(page, `Document list ${width}px`);
     await page.getByText('Параметры следующей проверки', { exact: true }).click();
     assert.equal(await page.getByRole('combobox', { name: /^Стипендиальная программа/ }).inputValue(), 'general');
     assert.equal(await page.getByRole('combobox', { name: /^Учебный год заявки/ }).inputValue(), 'unspecified');
@@ -122,6 +141,7 @@ try {
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.doesNotMatch(await report(page).innerText(), /Нужно исправить|Критических ошибок:/);
     await noOverflow(page, `Clarification report ${width}px`);
+    await oneFilledAction(page, `Clarification report ${width}px`);
     if (width === 390) await page.screenshot({ path: resolve(output, 'portal-document-clarify-390.png'), fullPage: true });
     await page.reload({ waitUntil: 'networkidle' });
     await report(page).waitFor();
@@ -129,7 +149,12 @@ try {
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
     await backToList(page);
-    assert.match(await row(page, 'statements').innerText(), /Нужно уточнить/);
+    assert.match(await row(page, 'statements').locator('xpath=ancestor::details[@data-document-group]').locator('summary').innerText(), /Нужно уточнить/);
+    const clarifyColor = await page.locator('[data-document-group=clarify] [data-outcome=clarify]').evaluate(element => getComputedStyle(element).color);
+    const fixColor = await page.locator('[data-document-group=fix] [data-outcome=fix]').evaluate(element => getComputedStyle(element).color);
+    assert.notEqual(clarifyColor, fixColor, 'Clarification is not coloured as a document error');
+    assert.equal(await page.locator('[data-document-group=approved]').evaluate(element => element.open), false);
+    assert.equal(await page.locator('[data-document-group=missing]').evaluate(element => element.open), false, 'Missing files collapse once the current file moves to clarification');
     await noOverflow(page, `Document list ${width}px`);
     if (width === 390) await page.screenshot({ path: resolve(output, 'portal-document-list-390.png'), fullPage: true });
     await openReport(page, 'statements');
@@ -141,6 +166,12 @@ try {
     assert.match(await report(page).innerText(), /Загрузи исправленную справку после получения/);
     assert.equal(await report(page).locator(`a[href="${sourceUrl}"]`).count(), 1);
     await noOverflow(page, `Full report ${width}px`);
+    await oneFilledAction(page, `Full report ${width}px`);
+    const sources = report(page).locator('details').filter({ hasText: 'Источники и дата сверки правил' });
+    assert.equal(await sources.evaluate(element => element.open), false, 'Sources remain available in a closed disclosure');
+    const nextStep = report(page).getByRole('heading', { name: 'Следующий шаг', exact: true });
+    const checks = report(page).getByRole('heading', { name: 'Что проверено', exact: true });
+    assert((await nextStep.boundingBox()).y < (await checks.boundingBox()).y, 'The next action is shown before supporting checks');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[aria-label="Разбор документа"]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(v => ['serious', 'critical'].includes(v.impact)).map(v => ({ id: v.id, nodes: v.nodes.map(n => ({ target: n.target, failureSummary: n.failureSummary })) })));
     await page.screenshot({ path: resolve(output, `portal-document-report-${width}.png`), fullPage: true });
@@ -155,24 +186,23 @@ try {
         assert.match(await report(page).innerText(), /От этой проверки сохранился только краткий итог\./);
       }
       await noOverflow(page, `${task} ${width}px`);
+      await oneFilledAction(page, `${task} report ${width}px`);
       await backToList(page);
     }
     await page.getByRole('button', { name: 'Обзор', exact: true }).filter({ visible: true }).click();
-    const summary = await page.getByText(/^Проверены:/).innerText();
-    assert.match(summary, /Проверены: 1/);
-    assert.match(summary, /Исправить: 1/);
-    assert.match(summary, /Уточнить: 2/);
-    assert.match(summary, /Не читаются: 1/);
-    assert.match(summary, /Не загружены: 1/);
+    assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
+    const overview = page.locator('[data-portal-overview]');
+    assert.match(await overview.innerText(), /Нужно уточнить/);
+    assert((await overview.innerText()).includes(data.docs.statements.fileName), 'Overview names the current document file');
     await noOverflow(page, `Document summary ${width}px`);
     await page.getByRole('button', { name: 'План', exact: true }).filter({ visible: true }).click();
     const plan = page.locator('#portal-stage-documents');
-    assert.match(await plan.innerText(), /Документ: Нужно уточнить/);
+    assert.match(await plan.innerText(), /Нужно уточнить/);
     await plan.getByRole('button', { name: 'Открыть разбор', exact: true }).first().click();
     await report(page).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
     assert.deepEqual(calls, { check: 1, save: 1 });
-    results.push({ width, fullReportAndReload: true, clarificationIsNotAnError: true, consistentSummary: true, planReopensReport: true, overflow: false, seriousAxe: violations });
+    results.push({ width, fullReportAndReload: true, clarificationIsNotAnError: true, fiveExactGroups: true, automaticAttentionDisclosure: true, consistentStatus: true, planReopensReport: true, overflow: false, seriousAxe: violations });
     await context.close();
   }
   assert.deepEqual(errors, []);

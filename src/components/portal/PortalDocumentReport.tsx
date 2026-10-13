@@ -44,7 +44,7 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy
     missing: "Результат проверки пока отсутствует.",
   };
   return <section role="region" aria-label="Разбор документа" className={styles.report}>
-    <button type="button" className={portal.secondaryButton} onClick={onBack}>← К списку документов</button>
+    <button type="button" className={styles.textAction} onClick={onBack}>← К списку документов</button>
     <header className={styles.heading}>
       <p className={portal.kicker}>Разбор документа</p>
       <h2 ref={heading} tabIndex={-1}>{title}</h2>
@@ -59,7 +59,23 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy
     {!result ? <div className={styles.block}>
       <h3>Для полного разбора нужна новая проверка</h3>
       <p>От этой проверки сохранился только краткий итог. Подробности старого разбора восстановить нельзя. Загрузи файл ещё раз — новый полный отчёт останется в кабинете.</p>
-    </div> : <>
+    </div> : <div className={styles.block}>
+      <h3>Следующий шаг</h3>
+      {nextSteps.length ? <ol className={styles.steps}>{nextSteps.map((step, index) => <li key={index}>{step}</li>)}</ol>
+        : <p>{outcome.kind === "approved" ? "Вернись к списку документов и продолжай маршрут." : reasons[outcome.kind]}</p>}
+    </div>}
+
+    <div className={styles.actions} data-fab-yield>
+      {outcome.kind === "approved" && result && <button type="button" className={portal.primaryButton} data-primary-action onClick={onBack}>Продолжить маршрут</button>}
+      {outcome.kind === "clarify" && result && <button type="button" className={portal.primaryButton} data-primary-action onClick={onAsk}>Где уточнить требования?</button>}
+      <button type="button" className={outcome.kind === "fix" || outcome.kind === "unreadable" || !result ? portal.primaryButton : styles.textAction}
+        data-primary-action={outcome.kind === "fix" || outcome.kind === "unreadable" || !result || undefined}
+        disabled={busy} onClick={onUpload}>
+        {busy ? "Проверяю…" : !result ? "Загрузить для полного разбора" : outcome.kind === "unreadable" ? "Загрузить читаемую копию" : outcome.kind === "fix" ? "Загрузить исправленный файл" : "Проверить другой файл"}
+      </button>
+    </div>
+
+    {result && <>
       {problems.length > 0 && <div className={styles.block}>
         <h3>Что исправить</h3>
         <ol className={styles.findings}>
@@ -86,20 +102,7 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy
         <p>{review.notice}</p>
         {review.referenceYear !== null && <p>Год доходов в выбранном профиле: {review.referenceYear}.</p>}
       </div>}
-      <div className={styles.block}>
-        <h3>Следующий шаг</h3>
-        {nextSteps.length ? <ol className={styles.steps}>{nextSteps.map((step, index) => <li key={index}>{step}</li>)}</ol>
-          : <p>{outcome.kind === "approved" ? "Вернись к списку документов и продолжай маршрут." : reasons[outcome.kind]}</p>}
-      </div>
     </>}
-
-    <div className={styles.actions} data-fab-yield>
-      {outcome.kind === "approved" && <button type="button" className={portal.primaryButton} onClick={onBack}>Продолжить маршрут</button>}
-      {outcome.kind === "clarify" && result && <button type="button" className={portal.primaryButton} onClick={onAsk}>Где уточнить требования?</button>}
-      <button type="button" className={outcome.kind === "fix" || outcome.kind === "unreadable" || !result ? portal.primaryButton : portal.secondaryButton} disabled={busy} onClick={onUpload}>
-        {busy ? "Проверяю…" : !result ? "Загрузить для полного разбора" : outcome.kind === "unreadable" ? "Загрузить читаемую копию" : outcome.kind === "fix" ? "Загрузить исправленный файл" : "Проверить другой файл"}
-      </button>
-    </div>
     <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />
     {review && <details className={styles.sources}>
       <summary>Источники и дата сверки правил</summary>
