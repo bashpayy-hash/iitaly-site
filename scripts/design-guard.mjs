@@ -41,6 +41,11 @@ const approvedReminderUiPaths = new Set([
   'src/components/portal/portal-navigation.module.css',
   'src/components/portal/PlanSection.tsx',
   'src/components/portal/DocsSection.tsx',
+  // User-authorized full saved document reports and truthful outcome states.
+  'src/components/portal/PortalDocumentReport.tsx',
+  'src/components/portal/PortalDocumentContext.tsx',
+  'src/components/portal/portal-document.module.css',
+  'src/lib/portalDocument.ts',
   // Explicitly authorized critique pass: first-run onboarding and profile settings.
   'src/components/portal/PortalOnboarding.tsx',
   'src/components/portal/ProfileSection.tsx',

@@ -97,6 +97,8 @@ jobs:
         run: node scripts/launch-flow-review.mjs
       - name: Review portal progress, keyboard navigation and responsive states
         run: node scripts/design-portal-progress-review.mjs
+      - name: Review saved document reports, outcome clarity and mobile accessibility
+        run: node scripts/design-portal-document-report-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help
         run: node scripts/design-permesso-hover-review.mjs
       - name: Review single-mode Permesso, local verified pages, exact geometry and local draft
