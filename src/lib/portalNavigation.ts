@@ -92,3 +92,21 @@ export function taskExplanation(task: PortalTask): string {
   const source = task.explain || TASK_META[task.id]?.why || "Открой шаг, чтобы узнать, что подготовить.";
   return explanations[task.id] || source.split(/(?<=[.!?])\s+(?=[А-ЯЁA-Z])/)[0];
 }
+
+// Read-only detail is a presentation rule; the roadmap's availability is unchanged.
+export function taskReadOnlyReason(data: PortalData, task: PortalTask, documentScreen = false): string {
+  const position = portalPosition(data);
+  const owner = task.owner || "Ты";
+  if (task.available === false) return `${owner}. ${taskBlockedReason(task)}`;
+  const parents = /родител/i.test(owner);
+  const future = !data.done[task.id] && position.task?.id !== task.id;
+  if (future) return `${owner}. Сначала в плане: ${position.task ? taskTitle(position.task) : "дождись доступного шага"}.`;
+  if (parents && !documentScreen) return `${owner}. Этот шаг делает семья; обсуди с родителями, что нужно подготовить.${task.timingLabel ? ` ${task.timingLabel}` : ""}`;
+  return "";
+}
+
+export function portalTaskHref(_data: PortalData, task: PortalTask): string {
+  return DOC_TASKS[task.id] && !/родител/i.test(task.owner || "")
+    ? `/portal?view=docs&doc=${encodeURIComponent(task.id)}`
+    : `/portal?view=plan&task=${encodeURIComponent(task.id)}`;
+}

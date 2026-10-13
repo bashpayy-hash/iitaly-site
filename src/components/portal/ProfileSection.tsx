@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import type { PortalData } from "@/lib/portalApi";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
+import settings from "./portal-settings.module.css";
 
 export function ProfileSection({
   data,
@@ -25,7 +26,7 @@ export function ProfileSection({
     for (const stage of data.roadmap) {
       for (const task of stage.tasks) {
         if (!task.owner?.toLowerCase().includes("родител") || data.done[task.id]) continue;
-        rows.push("• " + task.t + (task.timingLabel ? " — " + task.timingLabel : task.deadline ? " — " + (task.deadlineKind || "Ориентир") + ": " + task.deadline : ""));
+        rows.push("• " + task.t + (task.timingLabel ? " — " + task.timingLabel : task.deadline ? " — Ориентир: " + task.deadline : ""));
       }
     }
     return rows;
@@ -67,7 +68,7 @@ export function ProfileSection({
         <section className={styles.card}>
           <div className={navigation.profileHeading}>
             <h3 className={styles.profileCardTitle}>Данные для маршрута</h3>
-            <button type="button" className={styles.secondaryButton} onClick={onEditProfile}>Изменить профиль</button>
+            <a href="/portal?view=settings#profile" className={settings.textAction} onClick={(event) => { event.preventDefault(); onEditProfile(); }}>Изменить профиль</a>
           </div>
           <dl className={styles.profileList}>
             <div><dt>Поступление</dt><dd>сентябрь {data.client.intakeYear || "—"}</dd></div>
@@ -84,9 +85,11 @@ export function ProfileSection({
           <p className={styles.actionBody}>
             Мы не создаём отдельный родительский логин без твоего согласия. Вместо этого можно скопировать только список задач, где нужна помощь семьи.
           </p>
-          <button type="button" className={styles.secondaryButton} onClick={copyParents} disabled={!parentTasks.length}>
-            {copied ? "Скопировано" : parentTasks.length ? "Поделиться списком с родителями" : "Пока задач нет"}
-          </button>
+          {parentTasks.length ? (
+            <a href="/portal?view=settings#parents" className={settings.textAction} onClick={(event) => { event.preventDefault(); void copyParents(); }}>
+              {copied ? "Скопировано" : "Скопировать список для родителей"}
+            </a>
+          ) : <p className={styles.taskNote}>Пока задач нет</p>}
         </section>
       </div>
 
@@ -99,7 +102,7 @@ export function ProfileSection({
           <h3 className={styles.profileCardTitle}>Вход в кабинет</h3>
           <p>Выйди, если это чужое устройство. Твой маршрут сохранится.</p>
         </div>
-        <button type="button" onClick={onLogout} className={styles.secondaryButton}>Выйти</button>
+        <a href="/portal" className={settings.textAction} onClick={(event) => { event.preventDefault(); onLogout(); }}>Выйти</a>
       </section>
 
       <section className={styles.profileDanger}>
@@ -107,7 +110,7 @@ export function ProfileSection({
           <h3>Удалить данные кабинета</h3>
           <p>Профиль, прогресс, результаты проверок и Telegram-привязка будут удалены без восстановления.</p>
         </div>
-        <button type="button" onClick={onDelete} className={styles.dangerButton}>Удалить мои данные</button>
+        <a href="/portal?view=settings#delete" className={settings.textAction} onClick={(event) => { event.preventDefault(); onDelete(); }}>Удалить мои данные</a>
       </section>
     </div>
   );

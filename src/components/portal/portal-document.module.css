@@ -19,10 +19,13 @@
 .checks p { margin-top: 4px; }
 .checkStatus { font-size: 12px; line-height: 1.5; color: var(--portal-muted); }
 .checkStatus[data-status="ok"] { color: var(--portal-green); }
-.actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 24px 0 12px; }
+.actions { display: grid; gap: 10px; padding: 24px 0 12px; }
+.fileArea { width: 100%; min-height: 84px; padding: 20px; border: 1px dashed var(--portal-muted); border-radius: 12px; background: var(--portal-surface); color: var(--portal-ink); font-size: 15px; font-weight: 550; cursor: pointer; }
+.fileArea:hover { background: var(--portal-surface-soft); border-color: var(--portal-ink); }
+.fileArea:disabled { cursor: wait; opacity: .6; }
+.readOnly { margin: 24px 0 12px; color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
 .textAction { display: inline-flex; align-items: center; justify-content: flex-start; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--portal-ink); text-align: left; font-size: 13px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .textAction:hover { text-decoration-thickness: 2px; }
-.textAction:disabled { cursor: wait; opacity: .6; }
 .context, .sources { margin: 16px 0; border-top: 1px solid var(--portal-border); font-size: 13px; }
 .context summary, .sources summary { cursor: pointer; padding: 14px 0; min-height: 48px; font-weight: 500; }
 .context fieldset { min-width: 0; padding: 12px 0; }

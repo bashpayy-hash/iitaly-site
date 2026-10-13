@@ -1,0 +1,67 @@
+.textAction[href] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 0;
+  color: var(--portal-ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.textAction:hover { text-decoration-thickness: 2px; }
+.textAction[aria-disabled="true"] { opacity: .6; cursor: wait; }
+.textAction:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+
+.message {
+  margin: 16px 0 0;
+  color: var(--portal-ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.profileForm { margin-top: 22px; }
+
+.question {
+  min-width: 0;
+  margin: 24px 0 0;
+  border: 0;
+  padding: 0;
+}
+
+.question legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.question:disabled { opacity: .65; }
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.choice input {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--portal-ink);
+}
+
+.choice:has(input:focus-visible) { outline: 2px solid var(--portal-ink); outline-offset: 3px; }
+.choice .choiceCopy { margin-top: 0; color: var(--portal-ink); }
+.choiceCopy > span { line-height: 1.5; }
+
+.pathNote {
+  margin: -2px 0 12px;
+  color: var(--portal-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}

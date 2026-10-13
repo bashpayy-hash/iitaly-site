@@ -14,15 +14,16 @@ function dateLabel(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value));
 }
 
-export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy, context, onContextChange }: {
+export function PortalDocumentReport({ title, doc, onBack, onUpload, busy, context, onContextChange, canUpload = true, readOnlyReason }: {
   title: string;
   doc: PortalDoc;
   onBack: () => void;
   onUpload: () => void;
-  onAsk: () => void;
   busy: boolean;
   context: DocumentReviewContext;
   onContextChange: (context: DocumentReviewContext) => void;
+  canUpload?: boolean;
+  readOnlyReason?: string;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -44,7 +45,11 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy
     missing: "Результат проверки пока отсутствует.",
   };
   return <section role="region" aria-label="Разбор документа" className={styles.report}>
-    <button type="button" className={styles.textAction} onClick={onBack}>← К списку документов</button>
+    <a href="/portal?view=docs" className={styles.textAction} onClick={event => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      onBack();
+    }}>← К списку документов</a>
     <header className={styles.heading}>
       <p className={portal.kicker}>Разбор документа</p>
       <h2 ref={heading} tabIndex={-1}>{title}</h2>
@@ -65,15 +70,10 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy
         : <p>{outcome.kind === "approved" ? "Вернись к списку документов и продолжай маршрут." : reasons[outcome.kind]}</p>}
     </div>}
 
-    <div className={styles.actions} data-fab-yield>
-      {outcome.kind === "approved" && result && <button type="button" className={portal.primaryButton} data-primary-action onClick={onBack}>Продолжить маршрут</button>}
-      {outcome.kind === "clarify" && result && <button type="button" className={portal.primaryButton} data-primary-action onClick={onAsk}>Где уточнить требования?</button>}
-      <button type="button" className={outcome.kind === "fix" || outcome.kind === "unreadable" || !result ? portal.primaryButton : styles.textAction}
-        data-primary-action={outcome.kind === "fix" || outcome.kind === "unreadable" || !result || undefined}
-        disabled={busy} onClick={onUpload}>
-        {busy ? "Проверяю…" : !result ? "Загрузить для полного разбора" : outcome.kind === "unreadable" ? "Загрузить читаемую копию" : outcome.kind === "fix" ? "Загрузить исправленный файл" : "Проверить другой файл"}
-      </button>
-    </div>
+    {canUpload ? <div className={styles.actions} data-fab-yield>
+      <button type="button" className={styles.fileArea} data-primary-action disabled={busy} onClick={onUpload}>Выбрать файл</button>
+      {busy && <p className={styles.meta} role="status">Проверяю…</p>}
+    </div> : readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
 
     {result && <>
       {problems.length > 0 && <div className={styles.block}>
@@ -103,7 +103,7 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, onAsk, busy
         {review.referenceYear !== null && <p>Год доходов в выбранном профиле: {review.referenceYear}.</p>}
       </div>}
     </>}
-    <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />
+    {canUpload && <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />}
     {review && <details className={styles.sources}>
       <summary>Источники и дата сверки правил</summary>
       <p className={styles.meta}>База сверена {dateLabel(review.verifiedOn) || review.verifiedOn}. Это дата проверки базы; сайты учреждений не просматриваются заново при каждом разборе.</p>

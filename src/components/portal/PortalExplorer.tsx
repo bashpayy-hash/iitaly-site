@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
+import { PortalTaskDetail } from "./PortalTaskDetail";
 import { TodaySection } from "./TodaySection";
 import { PortalProgress } from "./PortalProgress";
 import { PlanSection } from "./PlanSection";
@@ -27,8 +28,8 @@ import {
 } from "@/lib/portalApi";
 import { preparePayload } from "@/lib/docPayload";
 import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewContext } from "@/lib/checkDocument";
-import { ACT_PAGE, DOC_TASKS } from "@/lib/portalMeta";
-import { portalPosition } from "@/lib/portalNavigation";
+import { DOC_TASKS } from "@/lib/portalMeta";
+import { portalPosition, taskReadOnlyReason } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
 
 const KEY = "iitaly_portal_code";
@@ -62,6 +63,15 @@ function sectionFromLocation(): Section {
   return NAV.some((item) => item.id === view) ? view as Section : "today";
 }
 
+function taskFromLocation(): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("view") === "plan" ? params.get("task") : null;
+}
+
+function sectionUrl(section: Section): string {
+  return section === "today" ? "/portal" : `/portal?view=${section}`;
+}
+
 function documentFromLocation(): string | null {
   const params = new URLSearchParams(window.location.search);
   const task = params.get("doc");
@@ -89,11 +99,11 @@ export function PortalExplorer() {
   const [data, setData] = useState<PortalData | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [section, setSection] = useState<Section>("today");
-  const [openStage, setOpenStage] = useState<string>("");
   const [busyTask, setBusyTask] = useState<string | null>(null);
   const [actionError, setActionError] = useState<ActionError | null>(null);
   const [editingProfile, setEditingProfile] = useState(false);
   const [openDocument, setOpenDocument] = useState<string | null>(null);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [reviewContext, setReviewContext] = useState<DocumentReviewContext>({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
   const documentReturnFocus = useRef<string | null>(null);
   const actionErrorRef = useRef<HTMLDivElement>(null);
@@ -101,7 +111,6 @@ export function PortalExplorer() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pendingTaskRef = useRef<string | null>(null);
   const triedAutoLogin = useRef(false);
-  const focusPlanStage = useRef(false);
   const focusSettingsTarget = useRef<SettingsTarget | null>(null);
 
   async function login(sn: string, c: string, silent = false) {
@@ -122,7 +131,7 @@ export function PortalExplorer() {
     canonicalizeSettingsLocation();
     setSection(nextSection);
     setOpenDocument(documentFromLocation());
-    setOpenStage(portalPosition(res.data).stage?.id || "");
+    setOpenTaskId(taskFromLocation());
     try {
       localStorage.setItem(KEY, c);
       localStorage.setItem(KEY_SN, sn);
@@ -150,6 +159,7 @@ export function PortalExplorer() {
       setEditingProfile(false);
       setSection(next);
       setOpenDocument(documentFromLocation());
+      setOpenTaskId(taskFromLocation());
       // A hash-only history entry may retain the same React section.
       if (next === "settings") focusSettings();
     }
@@ -184,11 +194,9 @@ export function PortalExplorer() {
   }, [actionError]);
 
   useEffect(() => {
-    if (section !== "plan" || !focusPlanStage.current) return;
-    focusPlanStage.current = false;
-    const stage = document.getElementById("portal-stage-" + openStage);
-    stage?.querySelector<HTMLButtonElement>("button[aria-expanded]")?.focus();
-  }, [section, openStage]);
+    if (section !== "plan" || !openTaskId) return;
+    document.getElementById("portal-step-heading")?.focus({ preventScroll: true });
+  }, [section, openTaskId]);
 
   useEffect(() => {
     if (section !== "docs" || openDocument || !documentReturnFocus.current) return;
@@ -204,6 +212,7 @@ export function PortalExplorer() {
     setActionError(null);
     setBusyTask(null);
     setOpenDocument(null);
+    setOpenTaskId(null);
     setReviewContext({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
     focusSettingsTarget.current = null;
     try {
@@ -220,6 +229,7 @@ export function PortalExplorer() {
     if (next !== "settings") focusSettingsTarget.current = null;
     setSection(next);
     setOpenDocument(null);
+    setOpenTaskId(null);
     if (push) {
       const url = next === "today" ? "/portal" : "/portal?view=" + next;
       if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
@@ -232,6 +242,7 @@ export function PortalExplorer() {
     focusSettingsTarget.current = target;
     setSection("settings");
     setOpenDocument(null);
+    setOpenTaskId(null);
     const url = "/portal?view=settings" + (target === "notifications" ? "#notifications" : "");
     if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
     if (section === "settings") focusSettings();
@@ -285,6 +296,7 @@ export function PortalExplorer() {
     if (review && restoreContext) setReviewContext({ profile: review.profile, academicYear: review.academicYear, applicantScope: review.applicantScope });
     setSection("docs");
     setOpenDocument(taskId);
+    setOpenTaskId(null);
     const url = `/portal?view=docs&doc=${encodeURIComponent(taskId)}`;
     if (window.location.pathname + window.location.search !== url) window.history.pushState({}, "", url);
   }
@@ -388,33 +400,39 @@ export function PortalExplorer() {
     }
   }
 
-  function openChat(prefill?: string) {
-    window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: prefill ? { prefill } : undefined }));
+  const position = useMemo(() => data ? portalPosition(data) : null, [data]);
+  const activeTask = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === (openDocument || openTaskId)) || null;
+  const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask, Boolean(openDocument)) : "";
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {
+      portal: true, taskId: activeTask?.id, taskTitle: activeTask?.t, taskOwner: activeTask?.owner,
+      taskContext: activeTask ? [activeTask.explain, readOnlyReason].filter(Boolean).join(" ") : undefined,
+    } }));
+    return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
+  }, [activeTask, readOnlyReason]);
+
+  function openAssistant() {
+    window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: {
+      source: "portal-header",
+      taskId: activeTask?.id,
+      taskTitle: activeTask?.t,
+      taskOwner: activeTask?.owner,
+      taskContext: activeTask ? [activeTask.explain, readOnlyReason].filter(Boolean).join(" ") : undefined,
+    } }));
   }
 
-  const position = useMemo(() => data ? portalPosition(data) : null, [data]);
-
   function openTask(task: PortalTask) {
-    if (task.id === "profile" || task.id === "path12") {
-      setEditingProfile(true);
+    if (DOC_TASKS[task.id] && !/родител/i.test(task.owner || "")) {
+      showDocument(task.id);
       return;
     }
-    const page = ACT_PAGE[task.id];
-    if (page && task.id !== "profile") {
-      router.push(page);
-      return;
-    }
-    if (DOC_TASKS[task.id]) {
-      changeSection("docs");
-      return;
-    }
-    if (task.ai || task.expert) {
-      openChat("Помоги с шагом: " + task.t);
-      return;
-    }
-    focusPlanStage.current = true;
-    setOpenStage(data?.roadmap.find(stage => stage.tasks.some(row => row.id === task.id))?.id || "");
-    changeSection("plan");
+    setOpenDocument(null);
+    setOpenTaskId(task.id);
+    setSection("plan");
+    const url = `/portal?view=plan&task=${encodeURIComponent(task.id)}`;
+    if (window.location.pathname + window.location.search !== url) window.history.pushState({}, "", url);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   if (!code || !surname || !data) {
@@ -428,6 +446,7 @@ export function PortalExplorer() {
         key={editingProfile ? "editing" : "first-run"}
         data={data}
         editing={editingProfile}
+        onCancel={() => { setEditingProfile(false); openSettings(); }}
         onSaveProfile={handleSaveProfile}
         onCreateTelegramLink={handleCreateTelegramLink}
         onRefreshNotifications={handleRefreshNotifications}
@@ -451,16 +470,19 @@ export function PortalExplorer() {
           <p className={styles.sidebarLabel}>Личный кабинет</p>
           <nav className={styles.nav} aria-label="Разделы личного кабинета">
             {NAV.map((item) => (
-              <button
+              <a
                 key={item.id}
-                type="button"
+                href={sectionUrl(item.id)}
                 aria-current={section === item.id ? "page" : undefined}
-                onClick={() => changeSection(item.id)}
+                onClick={event => {
+                  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault(); changeSection(item.id);
+                }}
                 className={styles.navItem + " " + (section === item.id ? styles.navItemActive : "")}
               >
                 <span className={styles.navDot} aria-hidden />
                 {item.label}
-              </button>
+              </a>
             ))}
           </nav>
           <div className={styles.sidebarArt} aria-hidden>
@@ -476,20 +498,29 @@ export function PortalExplorer() {
               <p className={styles.subline}>Набор: сентябрь {data.client.intakeYear || "—"}</p>
               {section === "today" && position && <PortalProgress stageTitle={position.stage?.title} done={position.done} total={position.total} />}
             </div>
-            <a href="/portal?view=settings" onClick={(event) => { event.preventDefault(); openSettings(); }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton}>Настройки</a>
+            <div className={navigation.headerLinks}>
+              <a href="#iitaly-chat" data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}>Помощник</a>
+              <a href="/portal?view=settings" onClick={event => {
+                if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                event.preventDefault(); openSettings();
+              }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton}>Настройки</a>
+            </div>
           </div>
 
           <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
             {NAV.map((item) => (
-              <button
+              <a
                 key={item.id}
-                type="button"
+                href={sectionUrl(item.id)}
                 aria-current={section === item.id ? "page" : undefined}
-                onClick={() => changeSection(item.id)}
+                onClick={event => {
+                  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault(); changeSection(item.id);
+                }}
                 className={styles.navItem + " " + (section === item.id ? styles.navItemActive : "")}
               >
                 {item.label}
-              </button>
+              </a>
             ))}
           </nav>
 
@@ -497,42 +528,30 @@ export function PortalExplorer() {
             {actionError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
                 <p role="alert">{actionError.message}</p>
-                {actionError.retry && <button type="button" onClick={actionError.retry} disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</button>}
+                {actionError.retry && <a href="#portal-panel" onClick={event => { event.preventDefault(); if (!busyTask) actionError.retry?.(); }} aria-disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</a>}
               </div>
             )}
-            {section === "today" && (
-              <TodaySection
-                data={data}
-                onOpenTask={openTask}
-                onOpenDoc={showDocument}
-                onAsk={(task) => openChat("Объясни мне этот шаг простыми словами: " + task.t)}
-                onOpenPlan={() => {
-                  focusPlanStage.current = true;
-                  setOpenStage(position?.stage?.id || "");
-                  changeSection("plan");
-                }}
-                onOpenHelp={() => openSettings("notifications")}
-              />
-            )}
-            {section === "plan" && (
-              <PlanSection
-                data={data}
-                openStage={openStage}
-                onOpenTask={openTask}
-                onToggleTask={handleToggle}
-                onUploadDoc={requestUpload}
-                onOpenDoc={showDocument}
-                busyTask={busyTask}
-                onAsk={(task) => openChat("Объясни мне этот шаг простыми словами: " + task.t)}
-              />
-            )}
-            {section === "docs" && (openDocument && data.docs?.[openDocument] && data.roadmap.some(stage => stage.tasks.some(task => task.id === openDocument)) ? (
+            {section === "today" && <TodaySection data={data} onOpenTask={openTask} onOpenDoc={showDocument} />}
+            {section === "plan" && (activeTask && openTaskId ? <PortalTaskDetail
+              key={activeTask.id + ":" + Boolean(data.done[activeTask.id])}
+              data={data} task={activeTask} busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)}
+              context={reviewContext} onContextChange={setReviewContext}
+              onBack={() => changeSection("plan")} onUpload={() => requestUpload(activeTask.id)}
+              onToggle={value => { void handleToggle(activeTask.id, value); }}
+              onEditProfile={() => setEditingProfile(true)} onOpenDoc={() => showDocument(activeTask.id)}
+            /> : <PlanSection data={data} onOpenTask={openTask} />)}
+            {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
               <PortalDocumentReport title={DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 onBack={closeDocument} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
-                context={reviewContext} onContextChange={setReviewContext}
-                onAsk={() => openChat(`Где уточнить требования к документу «${DOC_TASKS[openDocument]}» для моей заявки? Помоги определить учреждение и официальный источник, которые нужно проверить.`)} />
-            ) : <DocsSection currentTaskId={position?.task?.id} data={data} onUploadDoc={requestUpload} onOpenDoc={showDocument} busyTask={busyTask}
-              context={reviewContext} onContextChange={setReviewContext} />)}
+                canUpload={!readOnlyReason && !actionError?.retry} readOnlyReason={readOnlyReason}
+                context={reviewContext} onContextChange={setReviewContext} />
+            ) : <PortalTaskDetail
+              key={activeTask.id + ":file"} documentScreen data={data} task={activeTask} busy={busyTask !== null}
+              hasRetry={Boolean(actionError?.retry)} context={reviewContext} onContextChange={setReviewContext}
+              onBack={closeDocument} onUpload={() => requestUpload(activeTask.id)}
+              onToggle={value => { void handleToggle(activeTask.id, value); }}
+              onEditProfile={() => setEditingProfile(true)} onOpenDoc={() => showDocument(activeTask.id)}
+            /> : <DocsSection currentTaskId={position?.task?.id} data={data} onOpenDoc={showDocument} />)}
             {section === "settings" && (
               <ProfileSection
                 data={data}

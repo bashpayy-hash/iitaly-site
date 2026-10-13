@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { PortalClient } from "@/lib/portalApi";
 import styles from "./portal.module.css";
+import settings from "./portal-settings.module.css";
 
 export function HelpSection({
   client,
@@ -65,7 +66,7 @@ export function HelpSection({
       <div className={styles.sectionHeading}>
         <div>
           <p className={styles.kicker}>Напоминания</p>
-          <h2>Не держи дедлайны в голове</h2>
+          <h2>Получай напоминания в Telegram</h2>
           <p>Telegram получает только напоминания по твоему маршруту.</p>
         </div>
       </div>
@@ -81,9 +82,9 @@ export function HelpSection({
 
         <div className={styles.reminderActions}>
           {!tgEnabled && !telegramUrl && (
-            <button type="button" onClick={createTgLink} disabled={telegramBusy} className={styles.primaryButton}>
+            <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void createTgLink(); }} aria-disabled={telegramBusy} className={settings.textAction}>
               {telegramBusy ? "Создаю…" : "Подключить Telegram"}
-            </button>
+            </a>
           )}
           {!tgEnabled && telegramUrl && (
             <>
@@ -92,23 +93,23 @@ export function HelpSection({
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerPolicy="no-referrer"
-                className={styles.primaryButton}
+                className={settings.textAction}
               >
                 Открыть Telegram
               </a>
-              <button type="button" onClick={refreshTelegram} disabled={telegramBusy} className={styles.secondaryButton}>
-                {telegramBusy ? "Проверяю…" : "Я запустил бота"}
-              </button>
+              <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void refreshTelegram(); }} aria-disabled={telegramBusy} className={settings.textAction}>
+                {telegramBusy ? "Проверяю…" : "Проверить подключение"}
+              </a>
             </>
           )}
           {tgEnabled && (
-            <button type="button" onClick={disableTg} disabled={telegramBusy} className={styles.secondaryButton}>
+            <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void disableTg(); }} aria-disabled={telegramBusy} className={settings.textAction}>
               {telegramBusy ? "Сохраняю…" : "Отключить"}
-            </button>
+            </a>
           )}
         </div>
 
-        {msg && <p role="alert" className={msg.bad ? styles.taskWarn : styles.taskNote}>{msg.text}</p>}
+        {msg && <p role={msg.bad ? "alert" : "status"} className={settings.message}>{msg.text}</p>}
       </section>
 
       <section className={styles.reminderExplainer}>

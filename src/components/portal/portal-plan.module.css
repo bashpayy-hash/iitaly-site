@@ -1,47 +1,39 @@
 .plan { min-width: 0; }
 .heading { margin: 0; font-size: clamp(21px, 2.4vw, 26px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; }
-.rules { margin: 8px 0 16px; color: var(--portal-muted); font-size: 12px; line-height: 1.55; }
-.rules summary, .wholeRoute > summary { width: fit-content; min-height: 44px; padding: 12px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.rules { margin: 8px 0 12px; color: var(--portal-muted); font-size: 12px; line-height: 1.55; }
+.rules summary { width: fit-content; min-height: 44px; padding: 12px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
 .rules p { max-width: 68ch; margin: 0 0 12px; }
 .rules a { color: var(--portal-ink); text-decoration: underline; text-underline-offset: 3px; }
-.stage { border-top: 1px solid var(--portal-border); scroll-margin-top: 16px; }
-.stageHeading { margin: 0; }
-.stageToggle { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 60px; padding: 16px 0; border: 0; background: transparent; color: var(--portal-ink); text-align: left; }
+.stage { border-top: 1px solid var(--portal-border); scroll-margin-top: 72px; }
+.stage:last-child { border-bottom: 1px solid var(--portal-border); }
+.stageHeading { display: flex; align-items: center; gap: 14px; min-height: 60px; margin: 0; padding: 16px 0; color: var(--portal-ink); list-style: none; cursor: pointer; }
+.stageHeading::-webkit-details-marker { display: none; }
 .stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 500; }
 .nextLabel { color: var(--portal-muted); font-weight: 400; }
 .stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 12px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .chevron { flex-shrink: 0; width: 16px; color: var(--portal-muted); font-size: 21px; font-weight: 400; text-align: center; }
+.chevron::before { content: "+"; }
+.stage[open] > .stageHeading .chevron::before { content: "−"; }
 .tasks { margin: 0; padding: 0; list-style: none; }
-.task { position: relative; padding: 16px 0 18px 24px; border-top: 1px solid var(--portal-border); }
-.taskHeading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
-.taskHeading h4 { flex: 1; min-width: 0; margin: 0; font-size: 15px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
-.taskMarker { position: absolute; left: 0; top: 16px; width: 16px; color: var(--portal-muted); line-height: 1.5; }
-.task[data-current-task] .taskHeading h4 { font-size: 17px; }
-.task[data-done] { padding-top: 10px; padding-bottom: 10px; }
-.task[data-done] .taskMarker { top: 10px; }
-.task[data-done] .taskHeading h4 { color: var(--portal-muted); }
-.doneLabel { color: var(--portal-muted); font-size: 12px; }
-.now { margin: 4px 0 0; font-size: 12px; font-weight: 500; }
-.meta { margin: 5px 0 0; color: var(--portal-muted); font-size: 12px; line-height: 1.6; }
-.explain { max-width: 67ch; margin: 8px 0 0; font-size: 14px; line-height: 1.55; }
-.note, .blockedReason { max-width: 67ch; margin: 8px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.6; }
-.blockedReason { font-weight: 500; }
-.documentStatus { margin: 8px 0 0; color: var(--portal-ink); font-size: 13px; font-weight: 500; line-height: 1.5; }
+.task { border-top: 1px solid var(--portal-border); }
+.taskLink { display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px 0; color: var(--portal-ink); text-decoration: none; }
+.taskContent { flex: 1; min-width: 0; }
+.phase { display: block; margin-bottom: 4px; color: var(--portal-muted); font-size: 11px; font-weight: 500; line-height: 1.5; }
+.taskLink[data-current-task] .phase { color: var(--portal-ink); }
+.taskTitle { display: block; font-size: 15px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
+.taskLink[data-current-task] .taskTitle { font-size: 18px; }
+.taskLink[data-done] .taskTitle { color: var(--portal-muted); }
+.taskLink:hover .taskTitle { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.meta { display: block; margin-top: 5px; color: var(--portal-muted); font-size: 12px; line-height: 1.6; }
+.documentStatus { display: block; margin-top: 5px; color: var(--portal-ink); font-size: 12px; font-weight: 500; line-height: 1.5; }
 .documentStatus[data-outcome="fix"] { color: var(--portal-danger); }
 .documentStatus[data-outcome="approved"] { color: var(--portal-green); }
-.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 18px; margin-top: 6px; }
-.actions > button { max-width: 100%; }
-.textAction { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; border: 0; border-radius: 2px; background: transparent; color: var(--portal-ink); font-size: 13px; line-height: 1.45; text-align: left; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
-.textAction:disabled { color: var(--portal-muted); cursor: wait; }
-.wholeRoute { border-top: 1px solid var(--portal-border); }
-.wholeRoute > summary { color: var(--portal-ink); font-size: 14px; }
+.arrow { flex-shrink: 0; width: 20px; color: var(--portal-muted); font-size: 18px; text-align: right; }
 .complete { margin: 16px 0; color: var(--portal-muted); font-size: 14px; line-height: 1.5; }
-.plan button:focus-visible, .plan summary:focus-visible, .plan a:focus-visible, .stageHeading:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
-
+.plan summary:focus-visible, .plan a:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
 @media (max-width: 480px) {
-  .rules { margin-bottom: 8px; }
-  .stageToggle { gap: 10px; }
+  .rules { margin-bottom: 4px; }
+  .stageHeading { gap: 10px; }
   .stageTitle { font-size: 15px; }
-  .task { padding-left: 20px; }
-  .task[data-current-task] .taskHeading h4 { font-size: 16px; }
+  .taskLink[data-current-task] .taskTitle { font-size: 17px; }
 }
