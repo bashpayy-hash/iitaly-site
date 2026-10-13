@@ -1,17 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type { PortalData } from "@/lib/portalApi";
 import styles from "./portal.module.css";
+import navigation from "./portal-navigation.module.css";
 
 export function ProfileSection({
   data,
   onEditProfile,
   onDelete,
+  onLogout,
+  notifications,
 }: {
   data: PortalData;
   onEditProfile: () => void;
   onDelete: () => void;
+  onLogout: () => void;
+  notifications: ReactNode;
 }) {
   const [copied, setCopied] = useState(false);
   const profile = data.client.profile || {};
@@ -19,7 +24,7 @@ export function ProfileSection({
     const rows: string[] = [];
     for (const stage of data.roadmap) {
       for (const task of stage.tasks) {
-        if (!task.owner?.includes("Родители") || data.done[task.id]) continue;
+        if (!task.owner?.toLowerCase().includes("родител") || data.done[task.id]) continue;
         rows.push("• " + task.t + (task.timingLabel ? " — " + task.timingLabel : task.deadline ? " — " + (task.deadlineKind || "Ориентир") + ": " + task.deadline : ""));
       }
     }
@@ -53,15 +58,17 @@ export function ProfileSection({
     <div>
       <div className={styles.sectionHeading}>
         <div>
-          <p className={styles.kicker}>Профиль</p>
-          <h2>Данные, которые меняют маршрут</h2>
-          <p>Здесь только то, что влияет на этапы и порядок задач.</p>
+          <h2 id="portal-settings-heading" tabIndex={-1} className={navigation.focusTarget}>Настройки</h2>
+          <p>Профиль, напоминания и доступ к кабинету.</p>
         </div>
-        <button type="button" className={styles.secondaryButton} onClick={onEditProfile}>Изменить</button>
       </div>
 
       <div className={styles.profileGrid}>
         <section className={styles.card}>
+          <div className={navigation.profileHeading}>
+            <h3 className={styles.profileCardTitle}>Данные для маршрута</h3>
+            <button type="button" className={styles.secondaryButton} onClick={onEditProfile}>Изменить профиль</button>
+          </div>
           <dl className={styles.profileList}>
             <div><dt>Поступление</dt><dd>сентябрь {data.client.intakeYear || "—"}</dd></div>
             <div><dt>Образование</dt><dd>{profile.education || "Не заполнено"}</dd></div>
@@ -82,6 +89,18 @@ export function ProfileSection({
           </button>
         </section>
       </div>
+
+      <div id="portal-notification-settings" tabIndex={-1} className={`${navigation.notifications} ${navigation.focusTarget}`}>
+        {notifications}
+      </div>
+
+      <section className={navigation.session}>
+        <div>
+          <h3 className={styles.profileCardTitle}>Вход в кабинет</h3>
+          <p>Выйди, если это чужое устройство. Твой маршрут сохранится.</p>
+        </div>
+        <button type="button" onClick={onLogout} className={styles.secondaryButton}>Выйти</button>
+      </section>
 
       <section className={styles.profileDanger}>
         <div>

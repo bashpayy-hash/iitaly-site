@@ -12,6 +12,7 @@ import { DocsSection } from "./DocsSection";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
 import styles from "./portal.module.css";
+import navigation from "./portal-navigation.module.css";
 import {
   createTelegramLink,
   deletePortalData,
@@ -31,15 +32,14 @@ import { track } from "@/lib/track";
 const KEY = "iitaly_portal_code";
 const KEY_SN = "iitaly_portal_surname";
 
-type Section = "today" | "plan" | "docs" | "help" | "profile";
+type Section = "today" | "plan" | "docs" | "settings";
+type SettingsTarget = "profile" | "notifications";
 type ActionError = { message: string; retryLabel?: string; retry?: () => void };
 
 const NAV: { id: Section; label: string }[] = [
   { id: "today", label: "Обзор" },
   { id: "plan", label: "План" },
   { id: "docs", label: "Документы" },
-  { id: "help", label: "Напоминания" },
-  { id: "profile", label: "Профиль" },
 ];
 
 type TaskWithStage = { task: PortalTask; stageId: string; stageTitle: string; order: number };
@@ -70,7 +70,22 @@ function primaryTask(data: PortalData): TaskWithStage | null {
 function sectionFromLocation(): Section {
   if (typeof window === "undefined") return "today";
   const view = new URLSearchParams(window.location.search).get("view");
+  if (view === "settings" || view === "help" || view === "profile") return "settings";
   return NAV.some((item) => item.id === view) ? view as Section : "today";
+}
+
+function settingsTargetFromLocation(): SettingsTarget {
+  const view = new URLSearchParams(window.location.search).get("view");
+  return view === "help" || window.location.hash === "#notifications" ? "notifications" : "profile";
+}
+
+function canonicalizeSettingsLocation() {
+  const url = new URL(window.location.href);
+  const view = url.searchParams.get("view");
+  if (view !== "help" && view !== "profile") return;
+  url.searchParams.set("view", "settings");
+  if (view === "help") url.hash = "notifications";
+  window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
 }
 
 export function PortalExplorer() {
@@ -90,6 +105,7 @@ export function PortalExplorer() {
   const pendingTaskRef = useRef<string | null>(null);
   const triedAutoLogin = useRef(false);
   const focusPlanStage = useRef(false);
+  const focusSettingsTarget = useRef<SettingsTarget | null>(null);
 
   async function login(sn: string, c: string, silent = false) {
     const res = await fetchPortal(c, sn);
@@ -104,7 +120,10 @@ export function PortalExplorer() {
     setCode(c);
     setSurname(sn);
     setData(res.data);
-    setSection(sectionFromLocation());
+    const nextSection = sectionFromLocation();
+    if (nextSection === "settings") focusSettingsTarget.current = settingsTargetFromLocation();
+    canonicalizeSettingsLocation();
+    setSection(nextSection);
     const first = res.data.roadmap.find((st) => st.tasks.some((t) => !res.data.done[t.id] && t.available !== false));
     setOpenStage((first || res.data.roadmap[0])?.id || "");
     try {
@@ -127,10 +146,38 @@ export function PortalExplorer() {
   }, []);
 
   useEffect(() => {
-    function syncSection() { setSection(sectionFromLocation()); }
+    function syncSection() {
+      const next = sectionFromLocation();
+      focusSettingsTarget.current = next === "settings" ? settingsTargetFromLocation() : null;
+      canonicalizeSettingsLocation();
+      setEditingProfile(false);
+      setSection(next);
+      // A hash-only history entry may retain the same React section.
+      if (next === "settings") focusSettings();
+    }
     window.addEventListener("popstate", syncSection);
-    return () => window.removeEventListener("popstate", syncSection);
+    window.addEventListener("hashchange", syncSection);
+    return () => {
+      window.removeEventListener("popstate", syncSection);
+      window.removeEventListener("hashchange", syncSection);
+    };
   }, []);
+
+  function focusSettings() {
+    const target = focusSettingsTarget.current;
+    if (!target) return;
+    const element = document.getElementById(target === "notifications" ? "portal-notification-settings" : "portal-settings-heading");
+    if (!element) return;
+    element.focus({ preventScroll: true });
+    const scrollTarget = target === "notifications" ? document.getElementById("notifications") || element : element;
+    scrollTarget.scrollIntoView({ block: "start", behavior: "instant" });
+    focusSettingsTarget.current = null;
+  }
+
+  // Wait for login or profile editing to finish before focusing a deep-linked section.
+  useEffect(() => {
+    if (section === "settings" && !editingProfile && data?.client.onboardingComplete) focusSettings();
+  });
 
   useEffect(() => {
     if (!actionError) return;
@@ -149,6 +196,7 @@ export function PortalExplorer() {
     sessionVersion.current += 1;
     setActionError(null);
     setBusyTask(null);
+    focusSettingsTarget.current = null;
     try {
       localStorage.removeItem(KEY);
       localStorage.removeItem(KEY_SN);
@@ -160,12 +208,22 @@ export function PortalExplorer() {
   }
 
   function changeSection(next: Section, push = true) {
+    if (next !== "settings") focusSettingsTarget.current = null;
     setSection(next);
     if (push) {
       const url = next === "today" ? "/portal" : "/portal?view=" + next;
-      window.history.pushState({}, "", url);
+      if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
     }
     track("portal_sec", { s: next });
+  }
+
+  function openSettings(target: SettingsTarget = "profile") {
+    focusSettingsTarget.current = target;
+    setSection("settings");
+    const url = "/portal?view=settings" + (target === "notifications" ? "#notifications" : "");
+    if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
+    if (section === "settings") focusSettings();
+    track("portal_sec", { s: "settings" });
   }
 
   async function handleToggle(taskId: string, value: boolean) {
@@ -344,7 +402,8 @@ export function PortalExplorer() {
         onDone={(next) => {
           setData(next);
           setEditingProfile(false);
-          changeSection(editingProfile ? "profile" : "today");
+          if (editingProfile) openSettings();
+          else changeSection("today");
         }}
       />
       </main>
@@ -379,15 +438,15 @@ export function PortalExplorer() {
 
         <div className={styles.main}>
           <div className={styles.topbar}>
-            <div>
+            <div className={navigation.topCopy}>
               <span className={styles.mobileBrand}>IITALY</span>
               <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
               <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
             </div>
-            <button type="button" onClick={exit} className={styles.ghostButton}>Выйти</button>
+            <button type="button" onClick={() => openSettings()} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton}>Настройки</button>
           </div>
 
-          <div className={styles.mobileNav} aria-label="Разделы кабинета">
+          <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
             {NAV.map((item) => (
               <button
                 key={item.id}
@@ -399,7 +458,7 @@ export function PortalExplorer() {
                 {item.label}
               </button>
             ))}
-          </div>
+          </nav>
 
           {(section === "today" || section === "plan") && (
             <PortalProgress
@@ -413,7 +472,7 @@ export function PortalExplorer() {
             />
           )}
 
-          {focus && (
+          {focus && (section === "today" || section === "plan") && (
             <section className={styles.globalFocus} aria-label="Главное действие">
               <div className={styles.globalFocusCopy}>
                 <div className={styles.globalFocusEyebrow}>
@@ -453,7 +512,7 @@ export function PortalExplorer() {
                   changeSection("plan");
                 }}
                 onOpenDocs={() => changeSection("docs")}
-                onOpenHelp={() => changeSection("help")}
+                onOpenHelp={() => openSettings("notifications")}
               />
             )}
             {section === "plan" && (
@@ -467,16 +526,19 @@ export function PortalExplorer() {
               />
             )}
             {section === "docs" && <DocsSection data={data} onUploadDoc={requestUpload} busyTask={busyTask} />}
-            {section === "help" && (
-              <HelpSection
-                client={data.client}
-                onCreateTelegramLink={handleCreateTelegramLink}
-                onDisableTelegram={handleDisableTelegram}
-                onRefreshNotifications={handleRefreshNotifications}
+            {section === "settings" && (
+              <ProfileSection
+                data={data}
+                onEditProfile={() => setEditingProfile(true)}
+                onDelete={handleDelete}
+                onLogout={exit}
+                notifications={<HelpSection
+                  client={data.client}
+                  onCreateTelegramLink={handleCreateTelegramLink}
+                  onDisableTelegram={handleDisableTelegram}
+                  onRefreshNotifications={handleRefreshNotifications}
+                />}
               />
-            )}
-            {section === "profile" && (
-              <ProfileSection data={data} onEditProfile={() => setEditingProfile(true)} onDelete={handleDelete} />
             )}
           </div>
         </div>

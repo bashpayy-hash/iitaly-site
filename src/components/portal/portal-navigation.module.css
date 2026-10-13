@@ -1,0 +1,16 @@
+.topCopy { min-width: 0; flex: 1; }
+.topCopy h1 { overflow-wrap: anywhere; }
+.settingsButton { flex-shrink: 0; min-height: 44px; padding: 8px 0 8px 10px; border: 0; border-radius: 4px; background: transparent; color: var(--portal-muted); font-size: 13px; font-weight: 500; }
+.settingsButton:hover, .settingsButton[aria-current="page"] { color: var(--portal-accent-deep); text-decoration: underline; text-underline-offset: 4px; }
+.settingsButton:focus-visible, .focusTarget:focus-visible { outline: 2px solid var(--portal-accent); outline-offset: 4px; }
+.mobileNav { display: none; }
+.profileHeading { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; margin-bottom: 18px; }
+.profileHeading button { margin-top: 0 !important; }
+.notifications { margin-top: 36px; scroll-margin-top: 20px; }
+.session { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px 24px; padding-top: 24px; margin-top: 32px; border-top: 1px solid var(--portal-border); }
+.session p { max-width: 65ch; margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
+
+@media (max-width: 900px) {
+  .mobileNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 20px; }
+  .mobileNav > button { justify-content: center; min-width: 0; min-height: 44px; width: 100%; padding: 9px 6px; font-size: 13px; text-align: center; white-space: nowrap; }
+}
