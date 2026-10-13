@@ -191,8 +191,18 @@
 .routeProgressCount { margin: 0; font-size: 18px; font-weight: 500; line-height: 1.4; }
 .routeProgressPercent { flex-shrink: 0; color: var(--portal-accent-deep); font-size: 30px; font-weight: 500; line-height: 1; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
 .routeProgressPercent > span { margin-left: 2px; font-size: 16px; }
-.routeProgressTrack { height: 10px; margin-top: 14px; overflow: hidden; border-radius: 999px; background: #e9e3da; }
-.routeProgressFill { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transition: width 280ms ease; }
+.routeProgressRoad { margin-top: 4px; padding-top: 5px; overflow: hidden; }
+.routeMascotPosition { width: 100%; height: 54px; transition: transform 650ms cubic-bezier(.22,1,.36,1); }
+.routeMascotArt { display: block; width: 76px; height: 54px; margin-left: -38px; transform-origin: 50% 90%; animation: routeMascotArrive 850ms cubic-bezier(.22,1,.36,1) 1; }
+.routeProgressTrack { height: 10px; overflow: hidden; border-radius: 999px; background: #e9e3da; }
+.routeProgressFill { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transition: width 650ms cubic-bezier(.22,1,.36,1); }
+
+@keyframes routeMascotArrive {
+  0% { transform: translateX(-8px) rotate(-3deg); }
+  55% { transform: translateX(1px) rotate(1.5deg); }
+  78% { transform: translateY(-2px) rotate(-.5deg); }
+  100% { transform: none; }
+}
 .routeProgressFooter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0 12px; margin-top: 5px; }
 .routeProgressFooter p { min-width: 0; margin: 0; padding: 8px 0; color: var(--portal-muted); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
 .routeProgressFooter strong { color: var(--portal-ink); font-weight: 500; }
@@ -208,7 +218,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .routeProgressFill { transition: none; }
+  .routeProgressFill,
+  .routeMascotPosition { transition: none; }
+  .routeMascotArt { animation: none; }
 }
 
 .panel { outline: none; }

@@ -37,6 +37,8 @@ const approvedReminderUiPaths = new Set([
   'src/components/portal/TodaySection.tsx',
   // Explicit user request: visible progress for the existing personal plan.
   'src/components/portal/PortalProgress.tsx',
+  // Explicit user request: three primary destinations and unified settings.
+  'src/components/portal/portal-navigation.module.css',
   'src/components/portal/PlanSection.tsx',
   'src/components/portal/DocsSection.tsx',
   // Explicitly authorized critique pass: first-run onboarding and profile settings.

@@ -28,16 +28,36 @@ export function PortalProgress({
 
       {total > 0 && (
         <>
-          <div
-            className={styles.routeProgressTrack}
-            role="progressbar"
-            aria-label="Выполнение плана"
-            aria-valuemin={0}
-            aria-valuemax={total}
-            aria-valuenow={done}
-            aria-valuetext={count}
-          >
-            <span className={styles.routeProgressFill} style={{ width: `${pct}%` }} />
+          <div className={styles.routeProgressRoad}>
+            <div
+              className={styles.routeMascotPosition}
+              data-progress-mascot
+              aria-hidden="true"
+              style={{ transform: `translateX(clamp(38px, ${pct}%, calc(100% - 38px)))` }}
+            >
+              {/* Static brand geometry; only these small HTML layers animate. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                key={`${done}-${total}`}
+                className={styles.routeMascotArt}
+                data-progress-mascot-art
+                src="/mascot/source/mascot-progress.svg"
+                width={76}
+                height={54}
+                alt=""
+              />
+            </div>
+            <div
+              className={styles.routeProgressTrack}
+              role="progressbar"
+              aria-label="Выполнение плана"
+              aria-valuemin={0}
+              aria-valuemax={total}
+              aria-valuenow={done}
+              aria-valuetext={count}
+            >
+              <span className={styles.routeProgressFill} style={{ width: `${pct}%` }} />
+            </div>
           </div>
           <div className={styles.routeProgressFooter}>
             <p>
