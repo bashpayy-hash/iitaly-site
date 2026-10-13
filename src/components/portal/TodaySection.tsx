@@ -1,199 +1,51 @@
 "use client";
 
-import type { PortalData } from "@/lib/portalApi";
-import { DOC_TASKS, dlText, fmtDate } from "@/lib/portalMeta";
+import type { PortalData, PortalTask } from "@/lib/portalApi";
+import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
-import styles from "./portal.module.css";
+import { portalPosition, taskAction, taskDate, taskExplanation, taskTitle } from "@/lib/portalNavigation";
+import portal from "./portal.module.css";
+import styles from "./portal-overview.module.css";
 
-type FlatItem = {
-  stageId: string;
-  stageTitle: string;
-  order: number;
-  task: PortalData["roadmap"][number]["tasks"][number];
-};
-
-function flatTasks(data: PortalData): FlatItem[] {
-  const out: FlatItem[] = [];
-  let order = 0;
-  for (const stage of data.roadmap) {
-    for (const task of stage.tasks) out.push({ stageId: stage.id, stageTitle: stage.title, order: order++, task });
-  }
-  return out;
-}
-
-function dateRows(data: PortalData) {
-  return flatTasks(data)
-    .filter(({ task }) => !data.done[task.id] && task.available !== false && task.deadline)
-    .sort((a, b) => String(a.task.deadline).localeCompare(String(b.task.deadline)))
-    .slice(0, 3);
-}
-
-export function TodaySection({
-  data,
-  onGoto,
-  onOpenDocs,
-  onOpenHelp,
-}: {
+export function TodaySection({ data, onOpenTask, onOpenDoc, onAsk, onOpenHelp, onOpenPlan }: {
   data: PortalData;
-  onGoto: (stageId: string) => void;
-  onOpenDocs: () => void;
+  onOpenTask: (task: PortalTask) => void;
+  onOpenDoc: (id: string) => void;
+  onAsk: (task: PortalTask) => void;
   onOpenHelp: () => void;
+  onOpenPlan: () => void;
 }) {
-  const allRows = flatTasks(data);
-  const rows = allRows.filter(({ task }) => !data.done[task.id]);
-  const available = rows.filter(({ task }) => task.available !== false);
-  const blocked = rows.filter(({ task }) => task.available === false).slice(0, 2);
-  const parents = available.filter(({ task }) => task.owner?.toLowerCase().includes("родител")).slice(0, 2);
-  const parallel = available.find(({ task }) => task.id === "test");
-  const next = available
-    .filter(({ task }) => !task.owner?.toLowerCase().includes("родител") && task.id !== "test")
-    .slice(1, 3);
-  const deadlines = dateRows(data);
-
-  const outcomes = allRows.filter(({ task }) => Boolean(DOC_TASKS[task.id]))
-    .map(({ task }) => documentOutcome(data.docs?.[task.id]).kind);
-  const docsReady = outcomes.filter(kind => kind === "approved").length;
-  const docsIssues = outcomes.filter(kind => kind === "fix").length;
-  const docsClarify = outcomes.filter(kind => kind === "clarify").length;
-  const docsUnreadable = outcomes.filter(kind => kind === "unreadable").length;
-  const docsMissing = outcomes.filter(kind => kind === "missing").length;
-  const tgOn = Boolean(data.client.tgLinked) && data.client.notify?.telegram !== false;
+  const { task, next, stage } = portalPosition(data);
+  const uploaded = data.roadmap.flatMap(row => row.tasks).filter(row => DOC_TASKS[row.id] && data.docs?.[row.id]);
+  const priorities = { fix: 0, clarify: 1, unreadable: 2, approved: 3, missing: 4 };
+  const fileTask = uploaded.find(row => row.id === task?.id) || uploaded.sort((a, b) => priorities[documentOutcome(data.docs[a.id]).kind] - priorities[documentOutcome(data.docs[b.id]).kind])[0];
+  const doc = fileTask ? data.docs[fileTask.id] : null;
+  const outcome = doc ? documentOutcome(doc) : null;
+  const urgent = task?.deadline && task.daysLeft != null && task.daysLeft >= 0 && task.daysLeft < 7;
 
   return (
-    <div>
-      <section className={styles.sectionCompact}>
-        <div className={styles.weekBoard}>
-          <div className={styles.weekBoardHeader}>
-            <div>
-              <p className={styles.kicker}>После главного шага</p>
-              <h2>Что держать в поле зрения</h2>
-            </div>
-            <p>Не список на весь год — только ближайший контекст.</p>
-          </div>
-
-          <div className={styles.weekColumns}>
-            <GuidanceColumn
-              title="Следом"
-              items={next}
-              onGoto={onGoto}
-              empty="Сначала закрой главное действие."
-            />
-            <GuidanceColumn
-              title="Родителям"
-              items={parents}
-              onGoto={onGoto}
-              empty="Сейчас ничего не требуется."
-            />
-            <GuidanceColumn
-              title="Позже"
-              items={blocked}
-              onGoto={onGoto}
-              empty="Нет отложенных задач."
-              blocked
-            />
-          </div>
-
-          {parallel && (
-            <button type="button" className={styles.parallelStrip} onClick={() => onGoto(parallel.stageId)}>
-              <span>
-                <small>Параллельно</small>
-                <strong>{parallel.task.t}</strong>
-              </span>
-              <span>
-                {parallel.task.time || "начни заранее"} · {parallel.task.owner || "Ты"}
-              </span>
-              <span aria-hidden>→</span>
-            </button>
-          )}
+    <div className={styles.overview} data-portal-overview>
+      {task ? <section className={styles.now} data-current-step={task.id} aria-labelledby="portal-current-step">
+        <p className={styles.eyebrow}>{urgent ? "Сделай сегодня" : "Сейчас"}{(task.time || TASK_META[task.id]?.min) && <span> · {task.time || TASK_META[task.id]?.min}</span>}</p>
+        <h2 id="portal-current-step">{taskTitle(task)}</h2>
+        <p className={styles.explain}>{taskExplanation(task)}</p>
+        <p className={styles.date}>{taskDate(task) || "Ориентир пока не указан"}</p>
+        <div className={styles.actions}>
+          <button type="button" className={portal.primaryButton} data-primary-action onClick={() => onOpenTask(task)}>{taskAction(task)}</button>
+          <button type="button" className={styles.textLink} onClick={() => onAsk(task)}>Не понятно — спросить</button>
         </div>
-      </section>
-
-      <section className={styles.section}>
-        <div className={styles.overviewGrid}>
-          <div className={styles.card}>
-            <div className={styles.sectionHeading}>
-              <div>
-                <p className={styles.kicker}>Ближайшие даты</p>
-                <h3>Что нельзя потерять из виду</h3>
-              </div>
-            </div>
-            <div className={styles.deadlineList}>
-              {deadlines.length ? deadlines.map(({ task, stageId }) => (
-                <button key={task.id} type="button" className={styles.deadlineRowButton} onClick={() => onGoto(stageId)}>
-                  <span className={styles.deadlineDate}>{fmtDate(task.deadline)}</span>
-                  <span className={styles.deadlineName}>{task.t}</span>
-                  <span className={styles.deadlineState}>{dlText(task, false)}</span>
-                  <span className={styles.rowArrow} aria-hidden>→</span>
-                </button>
-              )) : (
-                <p className={styles.actionBody}>Ближайших дат пока нет — маршрут не торопит тебя зря.</p>
-              )}
-            </div>
-          </div>
-
-          <div className={styles.statusRail}>
-            <button type="button" className={styles.statusRailItem} onClick={onOpenDocs}>
-              <span>
-                <small>Документы</small>
-                <strong>Проверены: {docsReady} · Исправить: {docsIssues} · Уточнить: {docsClarify} · Не читаются: {docsUnreadable} · Не загружены: {docsMissing}</strong>
-              </span>
-              <span aria-hidden>→</span>
-            </button>
-            <button type="button" className={styles.statusRailItem} onClick={onOpenHelp}>
-              <span>
-                <small>Напоминания</small>
-                <strong>{tgOn ? "Telegram подключён" : "Telegram не подключён"}</strong>
-              </span>
-              <span aria-hidden>→</span>
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function GuidanceColumn({
-  title,
-  items,
-  empty,
-  onGoto,
-  blocked = false,
-}: {
-  title: string;
-  items: FlatItem[];
-  empty: string;
-  onGoto: (stageId: string) => void;
-  blocked?: boolean;
-}) {
-  return (
-    <div className={styles.weekColumn}>
-      <h3>{title}</h3>
-      {items.length ? (
-        <div className={styles.weekColumnRows}>
-          {items.map(({ task, stageId }) => (
-            <button
-              key={task.id}
-              type="button"
-              onClick={() => !blocked && onGoto(stageId)}
-              disabled={blocked}
-              className={styles.weekRow}
-            >
-              <span>
-                <strong>{task.t}</strong>
-                <small>
-                  {task.owner || "Ты"}
-                  {task.time ? " · " + task.time : ""}
-                  {task.timingLabel ? " · " + task.timingLabel : ""}
-                </small>
-              </span>
-              {!blocked && <span aria-hidden>→</span>}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <p className={styles.weekEmpty}>{empty}</p>
-      )}
+      </section> : <section className={styles.now} aria-labelledby="portal-current-step">
+        <h2 id="portal-current-step">{stage ? "Дождись следующего шага" : "Все шаги маршрута отмечены"}</h2>
+        <p className={styles.explain}>{stage ? "Посмотри в плане, когда можно продолжить." : "Отметки показывают твой прогресс по плану."}</p>
+        <button type="button" className={portal.primaryButton} data-primary-action onClick={onOpenPlan}>Открыть план</button>
+      </section>}
+      {next && <p className={styles.next}><span>Потом</span><strong>{taskTitle(next)}</strong><span>{next.owner || "Ты"}</span></p>}
+      {fileTask && doc && outcome && <div className={styles.document} data-overview-document>
+        <span className={styles.fileName}>{doc.fileName || DOC_TASKS[fileTask.id]}</span>
+        <span className={styles.status} data-outcome={outcome.kind}>{outcome.label}</span>
+        <button type="button" className={styles.textLink} onClick={() => onOpenDoc(fileTask.id)}>Открыть разбор</button>
+      </div>}
+      {(!data.client.tgLinked || data.client.notify?.telegram === false) && <button type="button" className={styles.textLink + " " + styles.telegram} onClick={onOpenHelp}>Подключить Telegram</button>}
     </div>
   );
 }

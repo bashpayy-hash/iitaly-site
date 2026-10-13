@@ -1,0 +1,31 @@
+.documents { max-width: 780px; }
+.heading { margin-bottom: 20px; }
+.heading h2 { font-size: clamp(23px, 3.5vw, 30px); font-weight: 550; line-height: 1.2; letter-spacing: -.025em; }
+.heading p { margin-top: 8px; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
+.group { border-top: 1px solid var(--portal-border); }
+.group:last-of-type { border-bottom: 1px solid var(--portal-border); }
+.group > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 15px 0; cursor: pointer; list-style: none; }
+.group > summary::-webkit-details-marker { display: none; }
+.group > summary::after { content: "+"; color: var(--portal-muted); font-size: 22px; font-weight: 400; line-height: 1; }
+.group[open] > summary::after { content: "−"; }
+.groupLabel { font-size: 15px; line-height: 1.45; font-weight: 550; color: var(--portal-ink); }
+.groupLabel[data-outcome="fix"] { color: var(--portal-danger); }
+.groupLabel[data-outcome="approved"] { color: var(--portal-green); }
+.list { padding-bottom: 8px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; border-top: 1px solid var(--portal-border); }
+.row:first-child { padding-top: 4px; border-top: 0; }
+.file { min-width: 0; }
+.file h3 { font-size: 14px; line-height: 1.5; font-weight: 500; }
+.fileName { margin-top: 4px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 12px; line-height: 1.55; }
+.empty { margin: 0 0 18px; }
+.textAction { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--portal-ink); text-align: left; font-size: 13px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.row > button { flex-shrink: 0; }
+.textAction:hover { text-decoration-thickness: 2px; }
+.textAction:disabled { cursor: wait; opacity: .6; }
+.documents :is(button, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+@media (max-width: 540px) {
+  .row { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .row > button { max-width: 100%; white-space: normal; }
+  .textAction { justify-content: flex-start; }
+}

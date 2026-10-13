@@ -27,7 +27,8 @@ import {
 } from "@/lib/portalApi";
 import { preparePayload } from "@/lib/docPayload";
 import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewContext } from "@/lib/checkDocument";
-import { ACT_PAGE, DOC_TASKS, TASK_META, dlText } from "@/lib/portalMeta";
+import { ACT_PAGE, DOC_TASKS } from "@/lib/portalMeta";
+import { portalPosition } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
 
 const KEY = "iitaly_portal_code";
@@ -52,20 +53,6 @@ function tasksWithStages(data: PortalData): TaskWithStage[] {
     for (const task of stage.tasks) out.push({ task, stageId: stage.id, stageTitle: stage.title, order: order++ });
   }
   return out;
-}
-
-function primaryTask(data: PortalData): TaskWithStage | null {
-  const rows = tasksWithStages(data).filter(({ task }) => !data.done[task.id] && task.available !== false);
-  rows.sort((a, b) => {
-    const aParent = a.task.owner?.includes("Родители") ? 1 : 0;
-    const bParent = b.task.owner?.includes("Родители") ? 1 : 0;
-    const ad = a.task.daysLeft;
-    const bd = b.task.daysLeft;
-    const aUrgent = ad != null && ad <= 14 ? -1000 + ad : 0;
-    const bUrgent = bd != null && bd <= 14 ? -1000 + bd : 0;
-    return (aUrgent - bUrgent) || (aParent - bParent) || (a.order - b.order);
-  });
-  return rows[0] || null;
 }
 
 function sectionFromLocation(): Section {
@@ -135,8 +122,7 @@ export function PortalExplorer() {
     canonicalizeSettingsLocation();
     setSection(nextSection);
     setOpenDocument(documentFromLocation());
-    const first = res.data.roadmap.find((st) => st.tasks.some((t) => !res.data.done[t.id] && t.available !== false));
-    setOpenStage((first || res.data.roadmap[0])?.id || "");
+    setOpenStage(portalPosition(res.data).stage?.id || "");
     try {
       localStorage.setItem(KEY, c);
       localStorage.setItem(KEY_SN, sn);
@@ -206,7 +192,10 @@ export function PortalExplorer() {
 
   useEffect(() => {
     if (section !== "docs" || openDocument || !documentReturnFocus.current) return;
-    document.getElementById(`portal-doc-action-${documentReturnFocus.current}`)?.focus();
+    const action = document.getElementById(`portal-doc-action-${documentReturnFocus.current}`);
+    const group = action?.closest("details");
+    if (group) group.open = true;
+    action?.focus();
     documentReturnFocus.current = null;
   }, [section, openDocument]);
 
@@ -235,6 +224,7 @@ export function PortalExplorer() {
       const url = next === "today" ? "/portal" : "/portal?view=" + next;
       if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
     }
+    window.scrollTo({ top: 0, behavior: "instant" });
     track("portal_sec", { s: next });
   }
 
@@ -402,10 +392,13 @@ export function PortalExplorer() {
     window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: prefill ? { prefill } : undefined }));
   }
 
-  const focus = useMemo(() => data ? primaryTask(data) : null, [data]);
+  const position = useMemo(() => data ? portalPosition(data) : null, [data]);
 
-  function openTask(row: TaskWithStage) {
-    const task = row.task;
+  function openTask(task: PortalTask) {
+    if (task.id === "profile" || task.id === "path12") {
+      setEditingProfile(true);
+      return;
+    }
     const page = ACT_PAGE[task.id];
     if (page && task.id !== "profile") {
       router.push(page);
@@ -419,7 +412,8 @@ export function PortalExplorer() {
       openChat("Помоги с шагом: " + task.t);
       return;
     }
-    setOpenStage(row.stageId);
+    focusPlanStage.current = true;
+    setOpenStage(data?.roadmap.find(stage => stage.tasks.some(row => row.id === task.id))?.id || "");
     changeSection("plan");
   }
 
@@ -450,7 +444,7 @@ export function PortalExplorer() {
 
   return (
     <main id="main">
-    <section className={styles.portal}>
+    <section className={styles.portal} data-portal-navigation>
       <div className={styles.shell}>
         <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
           <Link href="/" className={styles.portalBrand}>IITALY</Link>
@@ -479,9 +473,10 @@ export function PortalExplorer() {
             <div className={navigation.topCopy}>
               <span className={styles.mobileBrand}>IITALY</span>
               <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
-              <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
+              <p className={styles.subline}>Набор: сентябрь {data.client.intakeYear || "—"}</p>
+              {section === "today" && position && <PortalProgress stageTitle={position.stage?.title} done={position.done} total={position.total} />}
             </div>
-            <button type="button" onClick={() => openSettings()} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton}>Настройки</button>
+            <a href="/portal?view=settings" onClick={(event) => { event.preventDefault(); openSettings(); }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton}>Настройки</a>
           </div>
 
           <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
@@ -498,58 +493,24 @@ export function PortalExplorer() {
             ))}
           </nav>
 
-          {(section === "today" || section === "plan") && (
-            <PortalProgress
-              progress={data.progress}
-              stageTitle={focus?.stageTitle}
-              onOpenPlan={section === "today" ? () => {
-                focusPlanStage.current = true;
-                setOpenStage(focus?.stageId || data.roadmap[0]?.id || "");
-                changeSection("plan");
-              } : undefined}
-            />
-          )}
-
-          {focus && (section === "today" || section === "plan") && (
-            <section className={styles.globalFocus} aria-label="Главное действие">
-              <div className={styles.globalFocusCopy}>
-                <div className={styles.globalFocusEyebrow}>
-                  <span>Сделай сегодня</span>
-                  {focus.task.time && <span>· {focus.task.time}</span>}
-                </div>
-                <h2>{focus.task.t}</h2>
-                <p>{focus.task.explain || TASK_META[focus.task.id]?.why || "Следующий шаг твоего маршрута."}</p>
-                <div className={styles.globalFocusMeta}>
-                  <span>{focus.task.owner || "Ты"}</span>
-                  {focus.task.deadline && <span>{focus.task.deadlineKind || "Ориентир"}: {dlText(focus.task, false)}</span>}
-                </div>
-              </div>
-              <div className={styles.globalFocusActions}>
-                <button type="button" className={styles.primaryButton} onClick={() => openTask(focus)}>
-                  {TASK_META[focus.task.id]?.act || (DOC_TASKS[focus.task.id] ? "Открыть документы" : "Открыть шаг")}
-                </button>
-                <button type="button" className={styles.textLink} onClick={() => openChat("Объясни мне этот шаг простыми словами: " + focus.task.t)}>
-                  Спросить про этот шаг
-                </button>
-              </div>
-            </section>
-          )}
-
           <div id="portal-panel" className={styles.panel}>
             {actionError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
                 <p role="alert">{actionError.message}</p>
-                {actionError.retry && <button type="button" onClick={actionError.retry} disabled={busyTask !== null} className={styles.secondaryButton}>{actionError.retryLabel}</button>}
+                {actionError.retry && <button type="button" onClick={actionError.retry} disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</button>}
               </div>
             )}
             {section === "today" && (
               <TodaySection
                 data={data}
-                onGoto={(stageId) => {
-                  setOpenStage(stageId);
+                onOpenTask={openTask}
+                onOpenDoc={showDocument}
+                onAsk={(task) => openChat("Объясни мне этот шаг простыми словами: " + task.t)}
+                onOpenPlan={() => {
+                  focusPlanStage.current = true;
+                  setOpenStage(position?.stage?.id || "");
                   changeSection("plan");
                 }}
-                onOpenDocs={() => changeSection("docs")}
                 onOpenHelp={() => openSettings("notifications")}
               />
             )}
@@ -557,6 +518,7 @@ export function PortalExplorer() {
               <PlanSection
                 data={data}
                 openStage={openStage}
+                onOpenTask={openTask}
                 onToggleTask={handleToggle}
                 onUploadDoc={requestUpload}
                 onOpenDoc={showDocument}
@@ -569,7 +531,7 @@ export function PortalExplorer() {
                 onBack={closeDocument} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
                 context={reviewContext} onContextChange={setReviewContext}
                 onAsk={() => openChat(`Где уточнить требования к документу «${DOC_TASKS[openDocument]}» для моей заявки? Помоги определить учреждение и официальный источник, которые нужно проверить.`)} />
-            ) : <DocsSection data={data} onUploadDoc={requestUpload} onOpenDoc={showDocument} busyTask={busyTask}
+            ) : <DocsSection currentTaskId={position?.task?.id} data={data} onUploadDoc={requestUpload} onOpenDoc={showDocument} busyTask={busyTask}
               context={reviewContext} onContextChange={setReviewContext} />)}
             {section === "settings" && (
               <ProfileSection

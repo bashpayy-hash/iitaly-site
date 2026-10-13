@@ -35,6 +35,11 @@ const approvedReminderUiPaths = new Set([
   // The user explicitly authorized a visual/UX refresh of the personal portal.
   // Portal data, API contracts and roadmap logic remain protected elsewhere.
   'src/components/portal/TodaySection.tsx',
+  // Explicit user request: simpler navigation over the unchanged roadmap.
+  'src/lib/portalNavigation.ts',
+  'src/components/portal/portal-overview.module.css',
+  'src/components/portal/portal-plan.module.css',
+  'src/components/portal/portal-documents.module.css',
   // Explicit user request: visible progress for the existing personal plan.
   'src/components/portal/PortalProgress.tsx',
   // Explicit user request: three primary destinations and unified settings.

@@ -1,22 +1,23 @@
 "use client";
 
-import type { PortalData } from "@/lib/portalApi";
+import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
-import { documentOutcome } from "@/lib/portalDocument";
+import { documentOutcome, type DocumentOutcomeKind } from "@/lib/portalDocument";
+import { taskBlockedReason } from "@/lib/portalNavigation";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalDocumentContext } from "./PortalDocumentContext";
-import styles from "./portal.module.css";
+import portal from "./portal.module.css";
+import styles from "./portal-documents.module.css";
 
-type Row = {
-  id: string;
-  title: string;
-  stage: string;
-  owner?: string;
-  time?: string | null;
-  available?: boolean;
-  timingLabel?: string | null;
-  doc?: PortalData["docs"][string];
-};
+type Row = PortalTask & { title: string; doc?: PortalData["docs"][string] };
+
+const GROUPS: { kind: DocumentOutcomeKind; label: string }[] = [
+  { kind: "approved", label: "Проверка пройдена" },
+  { kind: "fix", label: "Нужно исправить" },
+  { kind: "clarify", label: "Нужно уточнить" },
+  { kind: "unreadable", label: "Нужна читаемая копия" },
+  { kind: "missing", label: "Не загружен" },
+];
 
 export function DocsSection({
   data,
@@ -25,6 +26,7 @@ export function DocsSection({
   onOpenDoc,
   context,
   onContextChange,
+  currentTaskId,
 }: {
   data: PortalData;
   onUploadDoc: (taskId: string) => void;
@@ -32,149 +34,66 @@ export function DocsSection({
   onOpenDoc: (taskId: string) => void;
   context: DocumentReviewContext;
   onContextChange: (context: DocumentReviewContext) => void;
+  currentTaskId?: string;
 }) {
-  const rows: Row[] = [];
-  for (const st of data.roadmap) {
-    for (const t of st.tasks) {
-      if (!DOC_TASKS[t.id]) continue;
-      rows.push({
-        id: t.id,
-        title: DOC_TASKS[t.id],
-        stage: st.title,
-        owner: t.owner,
-        time: t.time,
-        available: t.available,
-        timingLabel: t.timingLabel,
-        doc: data.docs?.[t.id],
-      });
-    }
-  }
-
-  const ready = rows.filter((r) => documentOutcome(r.doc).kind === "approved").length;
-  const issues = rows.filter((r) => documentOutcome(r.doc).kind === "fix").length;
-  const clarify = rows.filter((r) => documentOutcome(r.doc).kind === "clarify").length;
-  const unreadable = rows.filter((r) => documentOutcome(r.doc).kind === "unreadable").length;
-  const missing = rows.filter((r) => !r.doc).length;
-
-  const now = rows.filter((r) => r.available !== false && !r.owner?.toLowerCase().includes("родител"));
-  const parents = rows.filter((r) => r.available !== false && r.owner?.toLowerCase().includes("родител"));
-  const later = rows.filter((r) => r.available === false);
+  const rows: Row[] = data.roadmap.flatMap(stage => stage.tasks
+    .filter(task => DOC_TASKS[task.id])
+    .map(task => ({ ...task, title: DOC_TASKS[task.id], doc: data.docs?.[task.id] })));
+  const needsAttention = (row: Row) => ["fix", "clarify", "unreadable"].includes(documentOutcome(row.doc).kind);
+  const current = rows.find(row => row.id === currentTaskId);
+  const primaryId = rows.find(row => documentOutcome(row.doc).kind === "fix")?.id
+    || rows.find(needsAttention)?.id
+    || (current && (current.doc || current.available !== false) ? current.id : undefined)
+    || rows.find(row => !row.doc && row.available !== false)?.id;
 
   return (
-    <div>
-      <div className={styles.sectionHeading}>
-        <div>
-          <p className={styles.kicker}>Документы</p>
-          <h2>{ready} из {rows.length} готовы</h2>
-          <p>{[issues ? `Исправить: ${issues}` : null, clarify ? `Уточнить: ${clarify}` : null, unreadable ? `Не читаются: ${unreadable}` : null, `Не загружены: ${missing}`].filter(Boolean).join(" · ")}</p>
-          <p>Открой разбор, чтобы увидеть итог проверки, причины и следующий шаг.</p>
-        </div>
-      </div>
+    <section className={styles.documents} aria-labelledby="portal-documents-heading">
+      <header className={styles.heading}>
+        <h2 id="portal-documents-heading">Документы</h2>
+        <p>Открой разбор или загрузи файл текущего шага.</p>
+      </header>
+
+      {GROUPS.map(group => {
+        const groupRows = rows.filter(row => documentOutcome(row.doc).kind === group.kind);
+        const defaultOpen = groupRows.some(row => needsAttention(row) || row.id === currentTaskId);
+        return (
+          <details key={group.kind} className={styles.group} open={defaultOpen} data-document-group={group.kind}>
+            <summary>
+              <span className={styles.groupLabel} data-outcome={group.kind}>{group.label}</span>
+            </summary>
+            {groupRows.length ? <div className={styles.list}>
+              {groupRows.map(row => {
+                const blocked = row.available === false;
+                return (
+                  <div key={row.id} className={styles.row} data-document={row.id} data-fab-yield data-blocked={blocked || undefined}>
+                    <div className={styles.file}>
+                      <h3>{row.title}</h3>
+                      {row.doc?.fileName && <p className={styles.fileName}>{row.doc.fileName}</p>}
+                      {row.id === currentTaskId && <p className={styles.meta}>Файл текущего шага</p>}
+                      {blocked && !row.doc
+                        ? <p className={styles.meta}>{taskBlockedReason(row)}</p>
+                        : !row.doc && <p className={styles.meta}>{row.owner || "Ты"}{row.time ? ` · ${row.time}` : ""}</p>}
+                    </div>
+                    {(!blocked || row.doc) && <button
+                      type="button"
+                      onClick={() => row.doc ? onOpenDoc(row.id) : onUploadDoc(row.id)}
+                      aria-label={row.doc ? `Открыть разбор: ${row.title}` : `Загрузить: ${row.title}`}
+                      id={`portal-doc-action-${row.id}`}
+                      disabled={busyTask !== null}
+                      data-primary-action={row.id === primaryId || undefined}
+                      className={row.id === primaryId ? portal.primaryButton : styles.textAction}
+                    >
+                      {busyTask === row.id ? "Проверяю…" : row.doc ? "Открыть разбор" : "Загрузить файл"}
+                    </button>}
+                  </div>
+                );
+              })}
+            </div> : <p className={styles.empty}>Здесь пока нет документов.</p>}
+          </details>
+        );
+      })}
 
       <PortalDocumentContext value={context} onChange={onContextChange} disabled={busyTask !== null} />
-
-      <DocGroup
-        title="Нужно сейчас"
-        note="Только документы, которые уже можно готовить."
-        rows={now}
-        onUploadDoc={onUploadDoc}
-        onOpenDoc={onOpenDoc}
-        busyTask={busyTask}
-        primary
-      />
-
-      {parents.length > 0 && (
-        <DocGroup
-          title="От родителей"
-          note="Собери это вместе с семьёй — не нужно делать всё самостоятельно."
-          rows={parents}
-          onUploadDoc={onUploadDoc}
-          onOpenDoc={onOpenDoc}
-          busyTask={busyTask}
-        />
-      )}
-
-      {later.length > 0 && (
-        <DocGroup
-          title="Позже по маршруту"
-          note="Срок появления документа указан рядом с ним. Уже сохранённый разбор можно открыть сейчас."
-          rows={later}
-          onUploadDoc={onUploadDoc}
-          onOpenDoc={onOpenDoc}
-          busyTask={busyTask}
-          blocked
-        />
-      )}
-
-    </div>
-  );
-}
-
-function DocGroup({
-  title,
-  note,
-  rows,
-  onUploadDoc,
-  onOpenDoc,
-  busyTask,
-  primary = false,
-  blocked = false,
-}: {
-  title: string;
-  note: string;
-  rows: Row[];
-  onUploadDoc: (taskId: string) => void;
-  onOpenDoc: (taskId: string) => void;
-  busyTask: string | null;
-  primary?: boolean;
-  blocked?: boolean;
-}) {
-  if (!rows.length) return null;
-  const firstActionable = rows.findIndex((row) => !row.doc || row.doc.verdict !== "ok");
-
-  return (
-    <section className={styles.docGroup}>
-      <div className={styles.docGroupHeading}>
-        <div>
-          <h3>{title}</h3>
-          <p>{note}</p>
-        </div>
-      </div>
-      <div className={styles.docList}>
-        {rows.map((row, index) => {
-          const outcome = documentOutcome(row.doc);
-          const state = outcome.kind === "approved" ? "ok" : outcome.kind === "fix" ? "error" : outcome.kind === "unreadable" ? "unreadable" : "missing";
-          const isPrimaryAction = primary && index === firstActionable && !blocked;
-          return (
-            <div key={row.id} className={styles.docRow} data-document={row.id} data-fab-yield data-blocked={blocked || undefined}>
-              <div>
-                <div className={styles.docTitle}>{row.title}</div>
-                <div className={styles.docMeta}>
-                  {row.owner || "Ты"}{row.time ? " · " + row.time : ""}{row.timingLabel ? " · " + row.timingLabel : ""}
-                </div>
-                {row.doc?.summary && <p className={styles.taskNote}>{row.doc.summary}</p>}
-              </div>
-
-              <span className={styles.statusChip} data-state={state}>
-                {blocked && !row.doc ? "Не сейчас" : outcome.label}
-              </span>
-
-              {(!blocked || row.doc) && (
-                <button
-                  type="button"
-                  onClick={() => row.doc ? onOpenDoc(row.id) : onUploadDoc(row.id)}
-                  aria-label={row.doc ? `Открыть разбор: ${row.title}` : `Загрузить: ${row.title}`}
-                  id={`portal-doc-action-${row.id}`}
-                  disabled={busyTask === row.id}
-                  className={isPrimaryAction ? styles.primaryButton : styles.secondaryButton}
-                >
-                  {busyTask === row.id ? "Проверяю…" : row.doc ? "Открыть разбор" : "Загрузить"}
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
     </section>
   );
 }
