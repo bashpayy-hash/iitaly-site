@@ -4,7 +4,7 @@ import type { MouseEvent } from "react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
-import { portalPosition, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import styles from "./portal-overview.module.css";
 
@@ -34,6 +34,11 @@ export function TodaySection({ data, onOpenTask, onOpenDoc, travel, onTravelStar
   const summary = (doc?.result?.summary || doc?.summary || "").replace(/\s+/g, " ").trim();
   const shortSummary = summary.length > 160 ? `${summary.slice(0, 160).replace(/\s+\S*$/, "")}…` : summary;
   const nextOwner = /родител/i.test(next?.owner || "") ? "родители" : (next?.owner || "ты").toLocaleLowerCase("ru");
+  // Surface existing dates across stages, without turning a planning date into
+  // a university deadline or promoting a future task to the current action.
+  const orientirs = tasks.filter(row => row.id !== current?.id && !data.done[row.id]
+    && Number.isFinite(row.daysLeft) && (row.daysLeft as number) <= 7 && taskDate(row))
+    .sort((a, b) => (a.daysLeft as number) - (b.daysLeft as number)).slice(0, 2);
 
   return (
     <div className={styles.overview} data-portal-overview>
@@ -55,6 +60,13 @@ export function TodaySection({ data, onOpenTask, onOpenDoc, travel, onTravelStar
         <span className={styles.status} data-outcome={outcome.kind}>{outcome.label}</span>
         {shortSummary && <span className={styles.documentReason}>{shortSummary}</span>}
       </a>}
+      {orientirs.length > 0 && <section className={styles.orientirs} aria-label="Ближайшие сроки" data-near-orientirs>
+        <h2>Ближайшие сроки</h2>
+        {orientirs.map(row => <p key={row.id} data-orientir-task={row.id}>
+          <span>{taskTitle(row)}</span>
+          <span>{taskDate(row)} · {row.owner || "Ты"}</span>
+        </p>)}
+      </section>}
     </div>
   );
 }

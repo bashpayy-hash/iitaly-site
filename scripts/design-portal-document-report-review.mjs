@@ -63,8 +63,6 @@ async function backToList(page) {
   assert.equal(new URL(page.url()).searchParams.get('doc'), null);
 }
 async function openReport(page, task) {
-  const group = row(page, task).locator('xpath=ancestor::details[@data-document-group]');
-  if (await group.count() && !(await group.evaluate(element => element.open))) await group.locator('summary').click();
   const target = row(page, task);
   const link = await target.evaluate(element => element.tagName === 'A') ? target : target.getByRole('link');
   assert.equal(await link.count(), 1, 'Document row has one navigation path');
@@ -127,13 +125,16 @@ try {
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
-    await page.locator('[data-document-group=missing][open]').waitFor();
-    const groups = page.locator('details[data-document-group]');
-    assert.equal(await groups.count(), 5);
-    assert.deepEqual(await groups.evaluateAll(elements => elements.map(element => element.dataset.documentGroup)), ['approved', 'fix', 'clarify', 'unreadable', 'missing']);
-    const groupNames = ['Проверка пройдена', 'Нужно исправить', 'Нужно уточнить', 'Нужна читаемая копия', 'Не загружен'];
-    for (let index = 0; index < groupNames.length; index++) assert((await groups.nth(index).locator('summary').innerText()).includes(groupNames[index]));
-    assert.deepEqual(await groups.evaluateAll(elements => elements.map(element => element.open)), [false, true, true, true, true], 'Only attention groups and the current-step file are expanded');
+    await page.locator('[data-document-list]').waitFor();
+    assert.equal(await page.locator('[data-document]').count(), 6, 'All required documents are visible without opening status groups');
+    assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'approved', 'fix', 'clarify', 'unreadable', 'missing']);
+    assert.deepEqual(await page.locator('[data-document]').evaluateAll(elements => elements.map(element => element.dataset.document)), ['statements', 'apostille', 'cimea', 'familyDocs', 'insurance', 'translate'], 'Current file first, then documents needing action, then approved');
+    assert.match(await page.locator('[data-document-filter=all]').innerText(), /Все 6/);
+    assert.match(await page.locator('[data-document-filter=missing]').innerText(), /Не загружен 2/);
+    await page.locator('[data-document-filter=fix]').click();
+    assert.equal(await page.locator('[data-document]').count(), 1);
+    assert.equal(await row(page, 'apostille').isVisible(), true);
+    await page.locator('[data-document-filter=all]').click();
     await noListButtons(page, `Document list ${width}px`);
     await row(page, 'statements').click();
     await page.locator('[data-step-detail=statements]').waitFor();
@@ -160,12 +161,13 @@ try {
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
     await backToList(page);
-    assert.match(await row(page, 'statements').locator('xpath=ancestor::details[@data-document-group]').locator('summary').innerText(), /Нужно уточнить/);
-    const clarifyColor = await page.locator('[data-document-group=clarify] [data-outcome=clarify]').evaluate(element => getComputedStyle(element).color);
-    const fixColor = await page.locator('[data-document-group=fix] [data-outcome=fix]').evaluate(element => getComputedStyle(element).color);
+    assert.match(await row(page, 'statements').innerText(), /Нужно уточнить/);
+    const clarifyColor = await page.locator('[data-document=statements] [data-outcome=clarify]').evaluate(element => getComputedStyle(element).color);
+    const fixColor = await page.locator('[data-document=apostille] [data-outcome=fix]').evaluate(element => getComputedStyle(element).color);
     assert.notEqual(clarifyColor, fixColor, 'Clarification is not coloured as a document error');
-    assert.equal(await page.locator('[data-document-group=approved]').evaluate(element => element.open), false);
-    assert.equal(await page.locator('[data-document-group=missing]').evaluate(element => element.open), false, 'Missing files collapse once the current file moves to clarification');
+    assert.match(await page.locator('[data-document-filter=clarify]').innerText(), /Нужно уточнить 2/);
+    assert.match(await page.locator('[data-document-filter=missing]').innerText(), /Не загружен 1/);
+    assert.equal(await row(page, 'translate').isVisible(), true, 'Approved files stay discoverable in the complete list');
     await noListButtons(page, `Document list ${width}px`);
     await noOverflow(page, `Document list ${width}px`);
     if (width === 390) await page.screenshot({ path: resolve(output, 'portal-document-list-390.png'), fullPage: true });

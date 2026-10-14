@@ -60,3 +60,7 @@
   .scooterBody, .wheel, .dashes, .nextCopy[data-entering="true"] { animation: none !important; }
   .road[data-road-moving="true"] .dashes { opacity: 0; }
 }
+.orientirs { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--portal-border); }
+.orientirs h2 { margin: 0 0 10px; font-size: 14px; font-weight: 500; line-height: 1.5; }
+.orientirs p { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 16px; padding: 7px 0; font-size: 13px; line-height: 1.6; }
+.orientirs p > span:last-child { color: var(--portal-muted); }
