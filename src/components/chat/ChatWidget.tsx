@@ -270,7 +270,7 @@ export function ChatWidget() {
                 setOpen(false);
               }
             }}
-            className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom,0px))] z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-float"
+            className={`fixed right-4 ${pathname === "/portal" ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-float`}
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 4, transition: reducedMotion ? { duration: 0 } : PANEL_EXIT }}
@@ -370,7 +370,7 @@ export function ChatWidget() {
                 onClick={() => send()}
                 disabled={busy || !input.trim()}
                 aria-label={busy ? "Ожидаем ответ" : "Отправить"}
-                className="flex size-11 shrink-0 items-center justify-center rounded-md border-2 border-ink bg-red text-cream transition-colors duration-[var(--duration-fast)] hover:bg-red-deep hover:border-red-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
+                className={`flex size-11 shrink-0 items-center justify-center rounded-md border-2 border-ink ${pathname === "/portal" ? "bg-transparent text-ink hover:bg-cream" : "bg-red text-cream hover:bg-red-deep hover:border-red-deep"} transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50`}
               >
                 <SendIcon />
               </button>

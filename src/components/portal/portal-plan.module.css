@@ -1,39 +1,50 @@
 .plan { min-width: 0; }
-.heading { margin: 0; font-size: clamp(21px, 2.4vw, 26px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; }
-.rules { margin: 8px 0 12px; color: var(--portal-muted); font-size: 12px; line-height: 1.55; }
-.rules summary { width: fit-content; min-height: 44px; padding: 12px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.heading { margin: 0; font-family: var(--font-apple-display); font-size: clamp(23px, 2.4vw, 28px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; }
+.rules { margin: 8px 0 12px; color: var(--portal-muted); font-size: 13px; line-height: 1.55; }
+.rules summary { position: relative; min-height: 44px; padding: 12px 30px 12px 0; cursor: pointer; list-style: none; }
+.rules summary::-webkit-details-marker { display: none; }
+.plan summary::marker { content: ""; }
+.rules summary::before, .rules summary::after { position: absolute; content: ""; top: 50%; right: 3px; width: 10px; height: 1px; background: currentColor; }
+.rules summary::after { transform: rotate(90deg); }
+.rules[open] > summary::after { transform: none; }
 .rules p { max-width: 68ch; margin: 0 0 12px; }
 .rules a { color: var(--portal-ink); text-decoration: underline; text-underline-offset: 3px; }
 .stage { border-top: 1px solid var(--portal-border); scroll-margin-top: 72px; }
-.stage:last-child { border-bottom: 1px solid var(--portal-border); }
+.fullRoute { border-top: 1px solid var(--portal-border); border-bottom: 1px solid var(--portal-border); }
+.routeHeading { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 60px; padding: 16px 0; color: var(--portal-ink); font-size: 15px; line-height: 1.45; list-style: none; cursor: pointer; }
+.routeHeading::-webkit-details-marker { display: none; }
 .stageHeading { display: flex; align-items: center; gap: 14px; min-height: 60px; margin: 0; padding: 16px 0; color: var(--portal-ink); list-style: none; cursor: pointer; }
 .stageHeading::-webkit-details-marker { display: none; }
 .stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 500; }
 .nextLabel { color: var(--portal-muted); font-weight: 400; }
-.stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 12px; font-weight: 400; font-variant-numeric: tabular-nums; }
-.chevron { flex-shrink: 0; width: 16px; color: var(--portal-muted); font-size: 21px; font-weight: 400; text-align: center; }
-.chevron::before { content: "+"; }
-.stage[open] > .stageHeading .chevron::before { content: "−"; }
+.stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.chevron { position: relative; flex-shrink: 0; width: 16px; height: 16px; color: var(--portal-muted); }
+.chevron::before, .chevron::after { position: absolute; content: ""; top: 7px; left: 3px; width: 10px; height: 1px; background: currentColor; }
+.chevron::after { transform: rotate(90deg); }
+.stage[open] > .stageHeading .chevron::after, .fullRoute[open] > .routeHeading .chevron::after { transform: none; }
 .tasks { margin: 0; padding: 0; list-style: none; }
 .task { border-top: 1px solid var(--portal-border); }
-.taskLink { display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px 0; color: var(--portal-ink); text-decoration: none; }
+.taskLink { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: start; gap: 14px; min-height: 72px; padding: 18px 0; color: var(--portal-ink); text-decoration: none; }
+.point { width: 8px; height: 8px; margin-top: 8px; border: 1px solid var(--portal-muted); border-radius: 50%; }
+.taskLink[data-done] .point { background: var(--portal-ink); border-color: var(--portal-ink); }
+.taskLink[data-current-task] .point { border: 2px solid var(--portal-ink); }
 .taskContent { flex: 1; min-width: 0; }
-.phase { display: block; margin-bottom: 4px; color: var(--portal-muted); font-size: 11px; font-weight: 500; line-height: 1.5; }
+.phase { max-width: 9ch; padding-top: 3px; color: var(--portal-muted); font-size: 13px; font-weight: 400; line-height: 1.5; text-align: right; overflow-wrap: anywhere; }
 .taskLink[data-current-task] .phase { color: var(--portal-ink); }
-.taskTitle { display: block; font-size: 15px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
-.taskLink[data-current-task] .taskTitle { font-size: 18px; }
-.taskLink[data-done] .taskTitle { color: var(--portal-muted); }
+.taskTitle { display: block; font-size: 16px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.taskLink[data-current-task] .taskTitle { font-weight: 500; }
+.taskLink[data-done] .taskTitle { color: var(--portal-muted); text-decoration: none; }
 .taskLink:hover .taskTitle { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-.meta { display: block; margin-top: 5px; color: var(--portal-muted); font-size: 12px; line-height: 1.6; }
-.documentStatus { display: block; margin-top: 5px; color: var(--portal-ink); font-size: 12px; font-weight: 500; line-height: 1.5; }
+.meta { display: block; margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.6; }
+.documentStatus { display: block; margin-top: 5px; color: var(--portal-ink); font-size: 13px; font-weight: 500; line-height: 1.5; }
 .documentStatus[data-outcome="fix"] { color: var(--portal-danger); }
 .documentStatus[data-outcome="approved"] { color: var(--portal-green); }
-.arrow { flex-shrink: 0; width: 20px; color: var(--portal-muted); font-size: 18px; text-align: right; }
 .complete { margin: 16px 0; color: var(--portal-muted); font-size: 14px; line-height: 1.5; }
 .plan summary:focus-visible, .plan a:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
 @media (max-width: 480px) {
   .rules { margin-bottom: 4px; }
   .stageHeading { gap: 10px; }
   .stageTitle { font-size: 15px; }
-  .taskLink[data-current-task] .taskTitle { font-size: 17px; }
+  .taskLink { gap: 10px; padding: 16px 0; }
+  .phase { max-width: 8ch; padding-top: 3px; }
 }

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { PortalClient } from "@/lib/portalApi";
-import styles from "./portal.module.css";
 import settings from "./portal-settings.module.css";
 
 export function HelpSection({
@@ -62,61 +61,38 @@ export function HelpSection({
   }
 
   return (
-    <div>
-      <div className={styles.sectionHeading}>
-        <div>
-          <p className={styles.kicker}>Напоминания</p>
-          <h2>Получай напоминания в Telegram</h2>
-          <p>Telegram получает только напоминания по твоему маршруту.</p>
-        </div>
+    <details id="notifications" className={settings.reminders} data-telegram-status={tgEnabled ? "connected" : "disconnected"}>
+      <summary>{tgEnabled ? "Напоминания включены" : "Напоминания выключены"}</summary>
+      <p>Telegram получает только напоминания по твоему маршруту — за 7, 3 и 1 день до важных дат.</p>
+      <div>
+        {!tgEnabled && !telegramUrl && (
+          <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void createTgLink(); }} aria-disabled={telegramBusy} className={settings.textAction}>
+            {telegramBusy ? "Создаю…" : "Подключить Telegram"}
+          </a>
+        )}
+        {!tgEnabled && telegramUrl && (
+          <>
+            <a
+              href={telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              referrerPolicy="no-referrer"
+              className={settings.textAction}
+            >
+              Открыть Telegram
+            </a>
+            <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void refreshTelegram(); }} aria-disabled={telegramBusy} className={settings.textAction}>
+              {telegramBusy ? "Проверяю…" : "Проверить подключение"}
+            </a>
+          </>
+        )}
+        {tgEnabled && (
+          <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void disableTg(); }} aria-disabled={telegramBusy} className={settings.textAction}>
+            {telegramBusy ? "Сохраняю…" : "Отключить"}
+          </a>
+        )}
       </div>
-
-      <section id="notifications" className={styles.reminderCard} data-telegram-status={tgEnabled ? "connected" : "disconnected"}>
-        <div className={styles.reminderState}>
-          <span className={styles.reminderDot} data-on={tgEnabled ? "true" : "false"} aria-hidden />
-          <div>
-            <h3>{tgEnabled ? "Telegram подключён" : "Telegram не подключён"}</h3>
-            <p>{tgEnabled ? "Напомним за 7, 3 и 1 день до важных дат." : "Подключение занимает около минуты."}</p>
-          </div>
-        </div>
-
-        <div className={styles.reminderActions}>
-          {!tgEnabled && !telegramUrl && (
-            <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void createTgLink(); }} aria-disabled={telegramBusy} className={settings.textAction}>
-              {telegramBusy ? "Создаю…" : "Подключить Telegram"}
-            </a>
-          )}
-          {!tgEnabled && telegramUrl && (
-            <>
-              <a
-                href={telegramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                referrerPolicy="no-referrer"
-                className={settings.textAction}
-              >
-                Открыть Telegram
-              </a>
-              <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void refreshTelegram(); }} aria-disabled={telegramBusy} className={settings.textAction}>
-                {telegramBusy ? "Проверяю…" : "Проверить подключение"}
-              </a>
-            </>
-          )}
-          {tgEnabled && (
-            <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void disableTg(); }} aria-disabled={telegramBusy} className={settings.textAction}>
-              {telegramBusy ? "Сохраняю…" : "Отключить"}
-            </a>
-          )}
-        </div>
-
-        {msg && <p role={msg.bad ? "alert" : "status"} className={settings.message}>{msg.text}</p>}
-      </section>
-
-      <section className={styles.reminderExplainer}>
-        <div><strong>7 дней</strong><span>пора начать, если задача ещё не готова</span></div>
-        <div><strong>3 дня</strong><span>проверить документы и бронь</span></div>
-        <div><strong>1 день</strong><span>последнее напоминание</span></div>
-      </section>
-    </div>
+      {msg && <p role={msg.bad ? "alert" : "status"} className={settings.message}>{msg.text}</p>}
+    </details>
   );
 }

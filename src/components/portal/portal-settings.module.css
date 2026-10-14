@@ -22,6 +22,29 @@
   line-height: 1.5;
 }
 
+.reminders {
+  color: var(--portal-ink);
+  border-top: 1px solid var(--portal-border);
+  border-bottom: 1px solid var(--portal-border);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.reminders summary {
+  min-height: 48px;
+  padding: 14px 0;
+  cursor: pointer;
+}
+
+.reminders summary:focus-visible {
+  outline: 2px solid var(--portal-ink);
+  outline-offset: 4px;
+}
+
+.reminders > p { margin: 0 0 12px; color: var(--portal-muted); }
+.reminders > div { display: flex; flex-wrap: wrap; gap: 4px 24px; padding-bottom: 10px; }
+.reminders .message { margin: 4px 0 16px; color: var(--portal-ink); }
+
 .profileForm { margin-top: 22px; }
 
 .question {

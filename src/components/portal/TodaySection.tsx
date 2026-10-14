@@ -2,9 +2,10 @@
 
 import type { MouseEvent } from "react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
-import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
+import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
-import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, taskTitle } from "@/lib/portalNavigation";
+import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import styles from "./portal-overview.module.css";
 
 function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
@@ -13,64 +14,46 @@ function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
   open();
 }
 
-export function TodaySection({ data, onOpenTask, onOpenDoc }: {
+export function TodaySection({ data, onOpenTask, onOpenDoc, travel, onTravelStart }: {
   data: PortalData;
   onOpenTask: (task: PortalTask) => void;
   onOpenDoc: (id: string) => void;
+  travel?: RoadTravel;
+  onTravelStart?: () => void;
 }) {
-  const { task, next, stage } = portalPosition(data);
-  const current = task || stage?.tasks.find(row => !data.done[row.id]);
-  const uploaded = data.roadmap.flatMap(row => row.tasks).filter(row => DOC_TASKS[row.id] && data.docs?.[row.id]);
+  const { task, stage } = portalPosition(data);
+  const tasks = data.roadmap.flatMap(row => row.tasks);
+  const current = task || stage?.tasks.find(row => !data.done[row.id]) || null;
+  const currentIndex = current ? tasks.findIndex(row => row.id === current.id) : -1;
+  const next = currentIndex < 0 ? null : tasks.slice(currentIndex + 1).find(row => !data.done[row.id]);
+  const uploaded = tasks.filter(row => DOC_TASKS[row.id] && data.docs?.[row.id]);
   const priorities = { fix: 0, clarify: 1, unreadable: 2, approved: 3, missing: 4 };
-  const fileTask = uploaded.find(row => row.id === task?.id) || uploaded.sort((a, b) => priorities[documentOutcome(data.docs[a.id]).kind] - priorities[documentOutcome(data.docs[b.id]).kind])[0];
+  const fileTask = uploaded.find(row => row.id === current?.id) || uploaded.sort((a, b) => priorities[documentOutcome(data.docs[a.id]).kind] - priorities[documentOutcome(data.docs[b.id]).kind])[0];
   const doc = fileTask ? data.docs[fileTask.id] : null;
   const outcome = doc ? documentOutcome(doc) : null;
+  const summary = (doc?.result?.summary || doc?.summary || "").replace(/\s+/g, " ").trim();
+  const shortSummary = summary.length > 160 ? `${summary.slice(0, 160).replace(/\s+\S*$/, "")}…` : summary;
+  const nextOwner = /родител/i.test(next?.owner || "") ? "родители" : (next?.owner || "ты").toLocaleLowerCase("ru");
 
   return (
     <div className={styles.overview} data-portal-overview>
-      {current ? <a
-        className={`${styles.row} ${styles.current}`}
-        href={portalTaskHref(data, current)}
-        data-current-step={current.id}
-        onClick={event => followRow(event, () => onOpenTask(current))}
-      >
-        <span className={styles.label}>Сейчас</span>
-        <span className={styles.content}>
-          <span className={styles.title}>{taskTitle(current)}</span>
-          <span className={styles.meta}>{[current.owner || "Ты", current.time || TASK_META[current.id]?.min, taskDate(current)].filter(Boolean).join(" · ")}</span>
-        </span>
-        <span className={styles.arrow} aria-hidden="true">→</span>
-      </a> : <div className={`${styles.row} ${styles.complete}`}>
-        <span className={styles.label}>Сейчас</span>
-        <span className={styles.title}>Все шаги маршрута отмечены</span>
-      </div>}
+      <PortalRoad data={data} current={current} stage={stage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
 
-      {next && <a
-        className={styles.row}
-        href={portalTaskHref(data, next)}
-        onClick={event => followRow(event, () => onOpenTask(next))}
-      >
-        <span className={styles.label}>Потом</span>
-        <span className={styles.content}>
-          <span className={styles.title}>{taskTitle(next)}</span>
-          <span className={styles.meta}>{[next.owner || "Ты", taskDate(next)].filter(Boolean).join(" · ")}</span>
-        </span>
-        <span className={styles.arrow} aria-hidden="true">→</span>
-      </a>}
+      {next && <p className={styles.next} data-road-later>
+        <span className={styles.label}>Потом</span>{" · "}{taskTitle(next)}. Это {nextOwner}, сейчас открывать не нужно.
+      </p>}
 
       {fileTask && doc && outcome && <a
-        className={styles.row}
+        className={styles.document}
         href={`/portal?view=docs&doc=${encodeURIComponent(fileTask.id)}`}
         data-overview-document
         data-document-outcome={outcome.kind}
         onClick={event => followRow(event, () => onOpenDoc(fileTask.id))}
       >
-        <span className={styles.label}>Уточнить</span>
-        <span className={styles.content}>
-          <span className={`${styles.title} ${styles.fileName}`}>{doc.fileName || DOC_TASKS[fileTask.id]}</span>
-          <span className={styles.status} data-outcome={outcome.kind}>{outcome.label}</span>
-        </span>
-        <span className={styles.arrow} aria-hidden="true">→</span>
+        <span className={styles.label}>Уточнить</span>{" · "}
+        <span className={styles.fileName}>{DOC_TASKS[fileTask.id]}</span>{" · "}
+        <span className={styles.status} data-outcome={outcome.kind}>{outcome.label}</span>
+        {shortSummary && <span className={styles.documentReason}>{shortSummary}</span>}
       </a>}
     </div>
   );

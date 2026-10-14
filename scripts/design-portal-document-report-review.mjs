@@ -58,7 +58,7 @@ function fixture() {
 const report = page => page.getByRole('region', { name: 'Разбор документа', exact: true });
 const row = (page, task) => page.locator(`[data-document="${task}"]`);
 async function backToList(page) {
-  await page.getByRole('link', { name: '← К списку документов', exact: true }).click();
+  await page.getByRole('link', { name: 'Назад', exact: true }).click();
   await report(page).waitFor({ state: 'hidden' });
   assert.equal(new URL(page.url()).searchParams.get('doc'), null);
 }
@@ -86,7 +86,7 @@ async function noListButtons(page, label) {
 async function reportActionLimit(page, label) {
   const buttons = page.locator('button');
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
-  if (await buttons.count()) assert.equal(await buttons.innerText(), 'Выбрать файл', 'The only report action is file selection');
+  if (await buttons.count()) assert.equal(await buttons.innerText(), 'Приложить файл', 'The only report action is file selection');
   assert.doesNotMatch(await report(page).innerText(), /Спросить про этот шаг|Продолжить маршрут|Открыть разбор/);
 }
 
@@ -143,7 +143,7 @@ try {
     assert.equal(await page.getByRole('combobox', { name: /^Стипендиальная программа/ }).inputValue(), 'general');
     assert.equal(await page.getByRole('combobox', { name: /^Учебный год заявки/ }).inputValue(), 'unspecified');
     await page.getByText('Параметры следующей проверки', { exact: true }).click();
-    await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles({ name: 'test-bank-statement-' + 'long-filename-'.repeat(12) + '.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC DOCUMENT: bank balance is zero KZT on 31 December 2025. Test fixture without personal data.') });
     await report(page).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements', 'The saved result opens automatically and has an address');
@@ -192,7 +192,10 @@ try {
     for (const [task, summary] of [['translate', approved.summary], ['familyDocs', unreadable.summary], ['cimea', data.docs.cimea.summary]]) {
       await openReport(page, task);
       assert((await report(page).innerText()).includes(summary));
-      if (task === 'translate') assert.doesNotMatch(await report(page).innerText(), /Нужно исправить/);
+      if (task === 'translate') {
+        assert.doesNotMatch(await report(page).innerText(), /Нужно исправить/);
+        assert.equal(await page.locator('button').count(), 0, 'Completed file has no upload action');
+      }
       if (task === 'familyDocs') {
         assert.match(await report(page).innerText(), /Загрузи чёткий скан всех страниц/);
         assert.equal(await page.locator('button').count(), 0, 'Parent-owned reports contain no student action');
@@ -209,7 +212,8 @@ try {
     assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
     const overview = page.locator('[data-portal-overview]');
     assert.match(await overview.innerText(), /Нужно уточнить/);
-    assert((await overview.innerText()).includes(data.docs.statements.fileName), 'Overview names the current document file');
+    assert.match(await overview.innerText(), /Банковские выписки/, 'Overview identifies the document rather than an opaque filename');
+    assert((await overview.innerText()).includes(data.docs.statements.summary), 'Overview includes the saved review reason');
     await noOverflow(page, `Document summary ${width}px`);
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).click();
     const plan = page.locator('#portal-stage-documents');

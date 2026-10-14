@@ -53,7 +53,9 @@ export function taskDate(task: PortalTask): string {
 }
 
 export function isManualTask(task: PortalTask): boolean {
-  return task.id !== "profile" && task.id !== "path12" && !DOC_TASKS[task.id] && !task.ai && !task.expert;
+  // AI is help for a step, not a completion event. The existing task endpoint
+  // accepts a self-report for all non-file steps except the profile choices.
+  return task.id !== "profile" && task.id !== "path12" && !DOC_TASKS[task.id];
 }
 
 export function taskBlockedReason(task: PortalTask): string {
@@ -94,19 +96,17 @@ export function taskExplanation(task: PortalTask): string {
 }
 
 // Read-only detail is a presentation rule; the roadmap's availability is unchanged.
-export function taskReadOnlyReason(data: PortalData, task: PortalTask, documentScreen = false): string {
+export function taskReadOnlyReason(data: PortalData, task: PortalTask): string {
   const position = portalPosition(data);
-  const owner = task.owner || "Ты";
-  if (task.available === false) return `${owner}. ${taskBlockedReason(task)}`;
-  const parents = /родител/i.test(owner);
+  if (data.done[task.id]) return "Этот шаг уже сделан.";
   const future = !data.done[task.id] && position.task?.id !== task.id;
-  if (future) return `${owner}. Сначала в плане: ${position.task ? taskTitle(position.task) : "дождись доступного шага"}.`;
-  if (parents && !documentScreen) return `${owner}. Этот шаг делает семья; обсуди с родителями, что нужно подготовить.${task.timingLabel ? ` ${task.timingLabel}` : ""}`;
+  if (future && position.task) return `Сначала: ${taskTitle(position.task)}.${task.available === false ? ` ${taskBlockedReason(task)}` : ""}`;
+  if (task.available === false) return taskBlockedReason(task);
   return "";
 }
 
 export function portalTaskHref(_data: PortalData, task: PortalTask): string {
-  return DOC_TASKS[task.id] && !/родител/i.test(task.owner || "")
+  return DOC_TASKS[task.id]
     ? `/portal?view=docs&doc=${encodeURIComponent(task.id)}`
     : `/portal?view=plan&task=${encodeURIComponent(task.id)}`;
 }

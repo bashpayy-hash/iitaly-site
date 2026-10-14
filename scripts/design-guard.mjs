@@ -35,6 +35,8 @@ const approvedReminderUiPaths = new Set([
   // The user explicitly authorized a visual/UX refresh of the personal portal.
   // Portal data, API contracts and roadmap logic remain protected elsewhere.
   'src/components/portal/TodaySection.tsx',
+  // Explicit user request: the existing route becomes one animated scooter road.
+  'src/components/portal/PortalRoad.tsx',
   // Explicit user request: simpler navigation over the unchanged roadmap.
   'src/lib/portalNavigation.ts',
   'src/components/portal/PortalTaskDetail.tsx',
