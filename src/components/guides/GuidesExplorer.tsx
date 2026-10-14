@@ -87,6 +87,8 @@ export function GuidesExplorer() {
       setQuery("");
       setActiveId(id);
       requestAnimationFrame(() => {
+        // A newer deep link can arrive before the previous frame runs.
+        if (window.location.hash.slice(1) !== id) return;
         const mobile = document.getElementById(id);
         if (mobile instanceof HTMLDetailsElement) mobile.open = true;
         const target = window.matchMedia("(min-width: 1024px)").matches ? document.getElementById("guide-topics") : mobile;
@@ -167,7 +169,7 @@ export function GuidesExplorer() {
         <div className={ui.mobile}>
           {groups.map(group => <div key={group.title} className={ui.topicGroup}>
             <h2>{group.title}</h2>
-            {group.chapters.map(chapter => <details key={chapter.id} id={chapter.id} name="guide-chapter" onToggle={event => { if (event.currentTarget.open) { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); } }} className={`${styles.anchorTarget} ${ui.chapter}`}>
+            {group.chapters.map(chapter => <details key={chapter.id} id={chapter.id} name="guide-chapter" onToggle={event => { if (event.currentTarget.open && !window.matchMedia("(min-width: 1024px)").matches) { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); } }} className={`${styles.anchorTarget} ${ui.chapter}`}>
               <summary><span>{chapter.title}</span></summary>
               <div className={ui.chapterBody}>
                 <p className="mb-5 text-apple-body-sm text-cloud-body">{chapter.teaser}</p>
