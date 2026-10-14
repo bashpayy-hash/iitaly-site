@@ -1,6 +1,8 @@
 .overview { min-width: 0; }
 .road { display: block; width: 100%; overflow: hidden; padding: 24px 28px 26px; border: 1px solid var(--portal-border); border-left: 3px solid var(--portal-accent); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
-.road:hover:not([data-road-static="true"]) { border-color: var(--portal-muted); }
+.road:hover:not([data-road-static="true"]) { border-color: var(--portal-muted); border-left-color: var(--portal-accent-deep); }
+.road:hover .stepTitle { background: var(--portal-accent-deep); }
+.road:hover .arrow { transform: translateX(3px); }
 .road:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .road[data-road-static="true"] { cursor: default; }
 .roadHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
@@ -30,7 +32,7 @@
 .nextLabel { display: block; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
 .stepTitle { display: inline-block; max-width: 32ch; margin-top: 9px; padding: 12px 20px; border-radius: 28px; background: var(--portal-accent); color: #fff; font-family: var(--font-apple-display); font-size: clamp(22px, 2.4vw, 26px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; overflow-wrap: anywhere; text-wrap: balance; }
 .meta { display: block; margin-top: 10px; color: var(--portal-muted); font-size: 13px; line-height: 1.6; }
-.arrow { flex: 0 0 auto; align-self: center; color: var(--portal-ink); }
+.arrow { flex: 0 0 auto; align-self: center; color: var(--portal-ink); transition: transform 160ms ease-out; }
 .next, .document { display: block; max-width: 75ch; margin: 20px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
 .label { color: var(--portal-ink); font-weight: 500; }
 .document { padding: 0 0 8px; color: var(--portal-ink); text-decoration: none; }
@@ -56,7 +58,8 @@
   .next, .document { margin-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .road .fill, .road .scooter, .road .scooterBody, .road .wheel, .road .dashes, .road .nextCopy { transition: none !important; }
+  .road .fill, .road .scooter, .road .scooterBody, .road .wheel, .road .dashes, .road .nextCopy, .road .arrow { transition: none !important; }
+  .road:hover .arrow { transform: none; }
   .scooterBody, .wheel, .dashes, .nextCopy[data-entering="true"] { animation: none !important; }
   .road[data-road-moving="true"] .dashes { opacity: 0; }
 }

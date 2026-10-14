@@ -4,7 +4,7 @@
 .rules summary { position: relative; min-height: 44px; padding: 12px 30px 12px 0; cursor: pointer; list-style: none; }
 .rules summary::-webkit-details-marker { display: none; }
 .plan summary::marker { content: ""; }
-.rules summary::before, .rules summary::after { position: absolute; content: ""; top: 50%; right: 3px; width: 10px; height: 1px; background: currentColor; }
+.rules summary::before, .rules summary::after { position: absolute; content: ""; top: 50%; right: 3px; width: 10px; height: 0; border-top: 1px solid currentColor; }
 .rules summary::after { transform: rotate(90deg); }
 .rules[open] > summary::after { transform: none; }
 .rules p { max-width: 68ch; margin: 0 0 12px; }
@@ -19,7 +19,7 @@
 .nextLabel { color: var(--portal-muted); font-weight: 400; }
 .stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .chevron { position: relative; flex-shrink: 0; width: 16px; height: 16px; color: var(--portal-muted); }
-.chevron::before, .chevron::after { position: absolute; content: ""; top: 7px; left: 3px; width: 10px; height: 1px; background: currentColor; }
+.chevron::before, .chevron::after { position: absolute; content: ""; top: 7px; left: 3px; width: 10px; height: 0; border-top: 1px solid currentColor; }
 .chevron::after { transform: rotate(90deg); }
 .stage[open] > .stageHeading .chevron::after, .fullRoute[open] > .routeHeading .chevron::after { transform: none; }
 .tasks { margin: 0; padding: 0; list-style: none; }

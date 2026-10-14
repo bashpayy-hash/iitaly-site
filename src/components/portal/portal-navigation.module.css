@@ -15,7 +15,7 @@
 @media (max-width: 900px) {
   .mobileNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; position: fixed; inset: auto 0 0; z-index: 20; padding: 8px 12px max(8px, env(safe-area-inset-bottom)); background: var(--portal-canvas); border-top: 1px solid var(--portal-border); }
   .mobileNav > a { justify-content: center; min-width: 0; min-height: 44px; width: 100%; padding: 9px 6px; font-size: 13px; text-align: center; white-space: nowrap; border: 0; border-radius: 0; background: transparent; text-decoration: none; }
-  .mobileNav > a[aria-current="page"] { box-shadow: inset 0 -2px var(--portal-ink); font-weight: 500; }
+  .mobileNav > a[aria-current="page"] { border-bottom: 2px solid currentColor; font-weight: 500; }
 }
 
 .headerLinks { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: flex-end; }
