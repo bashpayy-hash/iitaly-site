@@ -1,5 +1,5 @@
 .overview { min-width: 0; }
-.road { display: block; width: 100%; overflow: hidden; padding: 24px 28px 26px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
+.road { display: block; width: 100%; overflow: hidden; padding: 24px 28px 26px; border: 1px solid var(--portal-border); border-left: 3px solid var(--portal-accent); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
 .road:hover:not([data-road-static="true"]) { border-color: var(--portal-muted); }
 .road:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .road[data-road-static="true"] { cursor: default; }

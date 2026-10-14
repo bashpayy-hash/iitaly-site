@@ -1,0 +1,225 @@
+{
+  "baseline": "PR79 static export",
+  "captures": [
+    {
+      "name": "overview",
+      "mode": "partial",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "plan",
+      "mode": "partial",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal?view=plan",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "План поступления"
+      ]
+    },
+    {
+      "name": "step",
+      "mode": "partial",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal?view=plan&task=shortlist",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "Выбрать программы"
+      ]
+    },
+    {
+      "name": "documents",
+      "mode": "partial",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal?view=docs",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "Документы"
+      ]
+    },
+    {
+      "name": "settings",
+      "mode": "partial",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal?view=settings",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "Настройки",
+        "Данные для маршрута",
+        "Что понадобится от семьи",
+        "Получай напоминания в Telegram",
+        "Telegram не подключён",
+        "Вход в кабинет",
+        "Удалить данные кабинета"
+      ]
+    },
+    {
+      "name": "onboarding",
+      "mode": "onboarding",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 1,
+      "headings": [
+        "Расскажи о себе"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "near",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "parent-file",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "late-current",
+      "width": 1440,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "partial",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "plan",
+      "mode": "partial",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal?view=plan",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "План поступления"
+      ]
+    },
+    {
+      "name": "step",
+      "mode": "partial",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal?view=plan&task=shortlist",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "Выбрать программы"
+      ]
+    },
+    {
+      "name": "documents",
+      "mode": "partial",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal?view=docs",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "Документы"
+      ]
+    },
+    {
+      "name": "settings",
+      "mode": "partial",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal?view=settings",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль",
+        "Настройки",
+        "Данные для маршрута",
+        "Что понадобится от семьи",
+        "Получай напоминания в Telegram",
+        "Telegram не подключён",
+        "Вход в кабинет",
+        "Удалить данные кабинета"
+      ]
+    },
+    {
+      "name": "onboarding",
+      "mode": "onboarding",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 1,
+      "headings": [
+        "Расскажи о себе"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "near",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "parent-file",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    },
+    {
+      "name": "overview",
+      "mode": "late-current",
+      "width": 390,
+      "url": "http://127.0.0.1:37667/portal",
+      "overflow": false,
+      "buttons": 0,
+      "headings": [
+        "Привет, Тестовый профиль"
+      ]
+    }
+  ],
+  "errors": [],
+  "unexpectedApi": []
+}

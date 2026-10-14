@@ -226,7 +226,7 @@ try {
     await report(page).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
     assert.deepEqual(calls, { check: 1, save: 1 });
-    results.push({ width, fullReportAndReload: true, clarificationIsNotAnError: true, fiveExactGroups: true, automaticAttentionDisclosure: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, overflow: false, seriousAxe: violations });
+    results.push({ width, fullReportAndReload: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, overflow: false, seriousAxe: violations });
     await context.close();
   }
   assert.deepEqual(errors, []);

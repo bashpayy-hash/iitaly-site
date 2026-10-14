@@ -108,6 +108,7 @@ export function PortalOnboarding({
 
         <form className={styles.onboardingCard + " " + settings.profileForm} onSubmit={(event) => { event.preventDefault(); void saveProfile(); }}>
           <h1 className={styles.onboardingTitle}>{editing ? "Измени профиль" : "Расскажи о себе"}</h1>
+          {!editing && !needs12 && <p className={settings.formHint}>3 вопроса · 30 секунд</p>}
           <p className={styles.onboardingLead}>Ответы помогут выбрать шаги маршрута. Даты в нём — ориентиры.</p>
 
           <fieldset className={settings.question} disabled={busy}>
@@ -162,7 +163,7 @@ export function PortalOnboarding({
           )}
 
           {error && <p role="alert" className={settings.message}>{error}</p>}
-          <button type="submit" className={styles.onboardingPrimary} disabled={busy} data-primary-action>{busy ? "Сохраняю…" : "Сохранить"}</button>
+          <button type="submit" className={styles.onboardingPrimary} disabled={busy} data-primary-action>{busy ? "Сохраняю…" : editing ? "Сохранить" : "Построить маршрут"}</button>
         </form>
       </div>
     </section>

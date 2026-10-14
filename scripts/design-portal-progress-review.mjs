@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 
 assert(process.env.REVIEW_TOOLS, 'REVIEW_TOOLS must point to the isolated browser tools.');
 const { chromium } = await import(pathToFileURL(resolve(process.env.REVIEW_TOOLS, 'playwright/index.mjs')).href);
-const root = resolve('out'), output = resolve('design-review/portal-progress');
+const root = resolve('out'), output = resolve(process.env.PORTAL_RELEASE_CAPTURE ? 'design-review/after' : 'design-review/portal-progress');
 await mkdir(output, { recursive: true });
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.ico': 'image/x-icon' };
 const server = createServer(async (request, response) => {
@@ -45,6 +45,7 @@ const ids = roadmap.flatMap(stage => stage.tasks.map(task => task.id));
 function fixture(mode = 'partial') {
   const data = { ok: true, client: { name: 'Тестовый профиль', surname: 'Testov', intakeYear: 2027, tgLinked: false, notify: { telegram: false }, onboardingComplete: true, profile: { education: 'NIS Grade 12', goal: 'Бакалавриат', budget: 'До 3 млн ₸/год', educationPath: 'university_kz', onboardingDone: true } }, roadmap: structuredClone(roadmap), done: { profile: true, 'obsolete-task': true }, docs: {} };
   if (mode === 'zero') data.done = {};
+  if (mode === 'onboarding') { data.client.onboardingComplete = false; data.client.profile = {}; data.done = {}; }
   if (mode === 'profile') { data.client.profile.education = 'НИШ / 12 лет'; delete data.client.profile.educationPath; }
   if (mode === 'complete') data.done = Object.fromEntries([...ids, 'obsolete-task'].map(id => [id, true]));
   if (mode === 'empty') { data.roadmap = []; data.done = {}; }
@@ -142,7 +143,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
   await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
-  await page.locator('[data-portal-overview]').waitFor();
+  await page.locator(mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]').waitFor();
   return { context, page, calls, chatCalls, profileCalls, fileCalls };
 }
 const overview = page => page.locator('[data-portal-overview]');
@@ -196,8 +197,10 @@ async function checkSettings(page) {
   assert.equal(await page.getByText('NIS Grade 12', { exact: true }).isVisible(), true);
   assert.equal(await page.locator('#notifications').getAttribute('data-telegram-status'), 'disconnected');
   assert.equal(await page.locator('#notifications').locator('summary').innerText(), 'Напоминания выключены');
-  assert.equal(await page.locator('#notifications').getByRole('link', { name: 'Подключить Telegram', exact: true, includeHidden: true }).count(), 1);
+  assert.equal(await page.locator('#notifications').getByRole('button', { name: 'Подключить Telegram', exact: true, includeHidden: true }).count(), 1);
   assert.equal(await page.getByRole('link', { name: 'Выйти', exact: true }).count(), 1);
+  assert.equal(await page.getByRole('link', { name: 'Настройки', exact: true }).getAttribute('aria-current'), 'page');
+  assert.equal(await page.locator('[data-settings-back]').isVisible(), true);
   assert((await page.locator('button').count()) <= 1, 'Settings obey the page button limit');
   await noOverflow(page, 'Settings have no horizontal overflow');
   await checkNavigation(page);
@@ -237,6 +240,35 @@ async function openStep(page, locator, id, screen = 'plan') {
 }
 
 try {
+  if (process.env.PORTAL_RELEASE_CAPTURE) {
+    async function capture(page, name, mode, width) {
+      await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0, 0); await new Promise(requestAnimationFrame); });
+      await noOverflow(page, `${name} ${mode} ${width}px`);
+      await page.screenshot({ path: resolve(output, `${name}-${mode}-${width}.png`), fullPage: true });
+      results.push({ name, mode, width, overflow: false, buttons: await page.locator('button').count() });
+    }
+    for (const width of [1440, 390]) {
+      const viewport = { width, height: width === 390 ? 844 : 900 };
+      const { context, page } = await openPortal(viewport);
+      await capture(page, 'overview', 'partial', width);
+      await go(page, 'План');
+      await capture(page, 'plan', 'partial', width);
+      await page.locator('[data-portal-task=shortlist]').click();
+      await detail(page).waitFor();
+      await capture(page, 'step', 'partial', width);
+      await go(page, 'Документы');
+      await capture(page, 'documents', 'partial', width);
+      await page.getByRole('link', { name: 'Настройки', exact: true }).click();
+      await capture(page, 'settings', 'partial', width);
+      await context.close();
+      for (const mode of ['onboarding', 'near', 'parent-file', 'late-current']) {
+        const { context, page } = await openPortal(viewport, mode);
+        if (mode === 'onboarding') assert.equal(await page.getByRole('button', { name: 'Построить маршрут', exact: true }).count(), 1);
+        await capture(page, mode === 'onboarding' ? 'onboarding' : 'overview', mode, width);
+        await context.close();
+      }
+    }
+  } else {
   for (const viewport of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 390, height: 667 }, { width: 320, height: 740 }]) {
     const { context, page, calls } = await openPortal(viewport);
     const label = `${viewport.width}x${viewport.height}`;
@@ -553,6 +585,7 @@ try {
     await context.close();
   }
   assert.deepEqual(lateFailures, [], 'The current step stays visible after completed tasks');
+  }
   assert.deepEqual(errors, []);
   assert.deepEqual(unexpectedApi, []);
   await writeFile(resolve(output, 'results.json'), JSON.stringify({ results, errors, unexpectedApi }, null, 2));
