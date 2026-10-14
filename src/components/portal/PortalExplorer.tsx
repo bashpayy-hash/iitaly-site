@@ -131,6 +131,7 @@ export function PortalExplorer() {
     setSurname(sn);
     setData(res.data);
     const nextSection = sectionFromLocation();
+    stepReturnSection.current = nextSection === "docs" ? "docs" : "plan";
     if (nextSection === "settings") focusSettingsTarget.current = settingsTargetFromLocation();
     canonicalizeSettingsLocation();
     setSection(nextSection);

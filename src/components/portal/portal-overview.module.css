@@ -56,7 +56,7 @@
   .next, .document { margin-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .road .fill, .road .scooter { transition: none !important; }
+  .road .fill, .road .scooter, .road .scooterBody, .road .wheel, .road .dashes, .road .nextCopy { transition: none !important; }
   .scooterBody, .wheel, .dashes, .nextCopy[data-entering="true"] { animation: none !important; }
   .road[data-road-moving="true"] .dashes { opacity: 0; }
 }
