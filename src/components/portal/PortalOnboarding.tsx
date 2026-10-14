@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import type { PortalData, PortalProfile, PortalResult } from "@/lib/portalApi";
 import styles from "./portal.module.css";
@@ -99,12 +98,9 @@ export function PortalOnboarding({
   return (
     <section className={styles.onboardingPage} data-portal-profile>
       <div className={styles.onboardingShell}>
-        <div className={styles.onboardingTop}>
-          <Link href="/" className={styles.portalBrand}>IITALY</Link>
-          {editing && (
+        {editing && <div className={styles.onboardingTop}>
             <a href="/portal?view=settings" className={settings.textAction} onClick={(event) => { event.preventDefault(); if (busy) return; if (onCancel) onCancel(); else onDone(data); }} aria-disabled={busy}>Вернуться в настройки</a>
-          )}
-        </div>
+        </div>}
 
         <form className={styles.onboardingCard + " " + settings.profileForm} onSubmit={(event) => { event.preventDefault(); void saveProfile(); }}>
           <h1 className={styles.onboardingTitle}>{editing ? "Измени профиль" : "Расскажи о себе"}</h1>

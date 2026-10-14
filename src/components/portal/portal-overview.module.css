@@ -1,12 +1,12 @@
 .overview { min-width: 0; }
-.road { display: block; width: 100%; overflow: hidden; padding: 24px 28px 26px; border: 1px solid var(--portal-border); border-left: 3px solid var(--portal-accent); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
-.road:hover:not([data-road-static="true"]) { border-color: var(--portal-muted); border-left-color: var(--portal-accent-deep); }
+.road { display: block; width: 100%; overflow: hidden; padding: 24px 28px 26px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
+.road:hover:not([data-road-static="true"]) { border-color: var(--portal-muted); }
 .road:hover .stepTitle { background: var(--portal-accent-deep); }
 .road:hover .arrow { transform: translateX(3px); }
 .road:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .road[data-road-static="true"] { cursor: default; }
 .roadHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.stageTitle { font-size: 14px; line-height: 1.5; font-weight: 500; }
+.stageTitle { font-size: 14px; line-height: 1.5; font-weight: 600; }
 .count { color: var(--portal-muted); font-size: 13px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .roadVisual { display: block; position: relative; height: 164px; margin-top: 14px; }
 .track { position: absolute; top: 64px; left: 0; right: 0; height: 9px; overflow: hidden; border-radius: 10px; background: var(--portal-border); }
@@ -30,7 +30,7 @@
 .nextCopy { display: block; min-width: 0; }
 .nextCopy[data-entering="true"] { animation: nextStep 420ms cubic-bezier(.22, 1, .36, 1) both; }
 .nextLabel { display: block; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
-.stepTitle { display: inline-block; max-width: 32ch; margin-top: 9px; padding: 12px 20px; border-radius: 28px; background: var(--portal-accent); color: #fff; font-family: var(--font-apple-display); font-size: clamp(22px, 2.4vw, 26px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; overflow-wrap: anywhere; text-wrap: balance; }
+.stepTitle { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; max-width: 38ch; margin-top: 10px; padding: 12px 24px; border: 1px solid transparent; border-radius: 980px; background: var(--portal-accent); color: #fff; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: left; overflow-wrap: anywhere; text-wrap: balance; }
 .meta { display: block; margin-top: 10px; color: var(--portal-muted); font-size: 13px; line-height: 1.6; }
 .arrow { flex: 0 0 auto; align-self: center; color: var(--portal-ink); transition: transform 160ms ease-out; }
 .next, .document { display: block; max-width: 75ch; margin: 20px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
@@ -50,7 +50,7 @@
   .roadVisual { height: 100px; margin-top: 10px; }
   .stageLabel { display: none; }
   .stageTitle { font-size: 13px; }
-  .stepTitle { font-size: 22px; padding: 12px 18px; }
+  .stepTitle { padding: 12px 20px; }
   .roadCopy { gap: 10px; }
   .arrow { width: 20px; height: 20px; }
   .scooter { height: 55px; top: 14px; }
