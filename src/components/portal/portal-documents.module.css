@@ -1,27 +1,25 @@
-.documents { max-width: 780px; }
+.documents { max-width: 860px; }
 .heading { margin-bottom: 20px; }
-.heading h2 { font-size: clamp(23px, 3.5vw, 30px); font-weight: 550; line-height: 1.2; letter-spacing: -.025em; }
+.heading h2 { font-family: var(--font-apple-display); font-size: clamp(24px, 3.5vw, 30px); font-weight: 500; line-height: 1.2; letter-spacing: -.025em; }
 .heading p { margin-top: 8px; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
-.group { border-top: 1px solid var(--portal-border); }
-.group:last-of-type { border-bottom: 1px solid var(--portal-border); }
-.group > summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 15px 0; cursor: pointer; list-style: none; }
-.group > summary::-webkit-details-marker { display: none; }
-.group > summary::after { content: "+"; color: var(--portal-muted); font-size: 22px; font-weight: 400; line-height: 1; }
-.group[open] > summary::after { content: "−"; }
-.groupLabel { font-size: 15px; line-height: 1.45; font-weight: 550; color: var(--portal-ink); }
-.groupLabel[data-outcome="fix"] { color: var(--portal-danger); }
-.groupLabel[data-outcome="approved"] { color: var(--portal-green); }
-.list { padding-bottom: 8px; }
-.row { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 60px; padding: 16px 0; border-top: 1px solid var(--portal-border); color: var(--portal-ink); text-decoration: none; }
-.row:first-child { padding-top: 4px; border-top: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 4px 14px; border: 0; padding: 0 0 16px; margin: 0; }
+.filter { display: inline-flex; min-height: 44px; max-width: 100%; align-items: center; gap: 7px; padding: 7px 0; color: var(--portal-muted); font-size: 13px; line-height: 1.5; cursor: pointer; }
+.filter input { appearance: none; width: 0; height: 0; margin: 0; position: absolute; opacity: 0; }
+.filter[data-selected="true"] { color: var(--portal-ink); text-decoration: underline; text-underline-offset: 5px; font-weight: 500; }
+.filter:has(input:focus-visible) { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 3px; }
+.count { font-variant-numeric: tabular-nums; margin-left: 3px; }
+.list { border-top: 1px solid var(--portal-border); }
+.row { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 16px; min-height: 76px; padding: 20px 0; border-bottom: 1px solid var(--portal-border); color: var(--portal-ink); text-decoration: none; }
 .row:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
-.arrow { flex-shrink: 0; color: var(--portal-muted); font-size: 18px; }
 .file { min-width: 0; }
-.file h3 { font-size: 14px; line-height: 1.5; font-weight: 500; }
-.fileName { margin-top: 4px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.file h3 { font-size: 16px; line-height: 1.5; font-weight: 500; }
+.fileName { margin-top: 4px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; color: var(--portal-muted); }
 .meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.55; }
-.empty { margin: 0 0 18px; }
-.documents :is(a, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
-@media (max-width: 540px) {
-  .row { gap: 12px; }
-}
+.empty { padding: 20px 0; }
+.status { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 9px; padding: 3px 8px; border: 1px solid var(--portal-border); border-radius: 8px; color: var(--portal-ink); background: var(--portal-surface); font-size: 13px; line-height: 1.45; }
+.status svg, .rowAction svg { flex-shrink: 0; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.status[data-outcome="fix"] { color: var(--portal-danger); }
+.status[data-outcome="approved"] { color: var(--portal-green); }
+.rowAction { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; max-width: 120px; font-size: 13px; line-height: 1.5; text-align: right; }
+.row:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+@media(max-width:540px) { .row { gap: 10px; } .rowAction { max-width: 85px; } }

@@ -133,7 +133,7 @@ try {
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
-    await page.locator('[data-document-group=missing][open]').waitFor();
+    await page.locator('[data-document=statements]').waitFor();
     const input = page.locator('input[type=file]');
     assert.equal(await page.locator('button').count(), 0, 'Document list has no buttons');
     await page.locator('[data-document=statements]').click();
@@ -167,10 +167,8 @@ try {
     assert.equal(await page.locator('button').count(), 0, 'A completed document has no upload button');
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
     await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
-    await page.locator('[data-document-group=approved]').waitFor();
-    const passedGroup = page.locator('[data-document-group=approved]');
-    if (!(await passedGroup.evaluate(element => element.open))) await passedGroup.locator('summary').click();
-    assert.match(await passedGroup.locator('summary').innerText(), /Проверка пройдена/);
+    await page.locator('[data-document-outcome=approved]').waitFor();
+    assert.match(await page.locator('[data-document=statements]').innerText(), /Проверка пройдена/);
     assert.equal(calls.check, 2, 'Retrying storage must not run another AI check');
     assert.equal(calls.save, 2);
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();

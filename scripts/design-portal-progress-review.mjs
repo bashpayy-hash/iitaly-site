@@ -50,6 +50,11 @@ function fixture(mode = 'partial') {
   if (mode === 'empty') { data.roadmap = []; data.done = {}; }
   if (mode === 'blocked') data.roadmap.forEach(stage => stage.tasks.forEach(task => { task.available = false; }));
   if (mode === 'near') data.roadmap[0].tasks[1].daysLeft = 3;
+  if (mode === 'dates') {
+    data.roadmap[1].tasks[0].deadline = '2026-10-15'; data.roadmap[1].tasks[0].daysLeft = 2;
+    data.roadmap[1].tasks[1].daysLeft = -1; // Missing date must not become an invented deadline.
+    data.roadmap[3].tasks[0].deadline = '2026-10-19'; data.roadmap[3].tasks[0].daysLeft = 6;
+  }
   if (mode === 'parents') data.done.shortlist = true;
   if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
@@ -253,6 +258,10 @@ try {
     assert.equal(await current.count(), 1, 'A near-dated future stage cannot replace the current step');
     assert.match(await current.innerText(), /Дальше/);
     assert.match(await current.innerText(), /Ориентир.*15 ноя 2026/);
+    assert.match(await page.locator('[data-near-orientirs]').innerText(), /Ближайшие сроки/);
+    assert.match(await page.locator('[data-orientir-task=visa-task]').innerText(), /Собрать визовый пакет.*Ориентир:/s);
+    assert.equal(await page.locator('[data-near-orientirs] a, [data-near-orientirs] button').count(), 0, 'Nearby dates do not create competing future-step actions');
+    assert.equal(await page.locator('[data-orientir-task=shortlist]').count(), 0, 'The current date appears once, on the road');
     assert.equal(await overview(page).locator('[data-overview-document]').count(), 0, 'No document line is shown when no document exists');
     await page.evaluate(() => document.fonts.ready);
     const rowBox = await current.boundingBox();
@@ -305,6 +314,10 @@ try {
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await checkNavigation(page, true);
     await noOverflow(page, `Plan ${label}`);
+    await go(page, 'Документы');
+    assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'missing'], 'Empty status filters are hidden');
+    assert.equal(await page.locator('[data-document]').count(), 2);
+    await noButtons(page, 'Document list');
     await go(page, 'Обзор');
     await page.getByRole('link', { name: 'Настройки', exact: true }).click();
     await checkSettings(page);
@@ -327,7 +340,7 @@ try {
     results.push({ viewport, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
-  for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'parents', 'manual']) {
+  for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual']) {
     const { context, page, calls } = await openPortal({ width: 390, height: 844 }, mode);
     assert.equal(await page.getByRole('progressbar').count(), 0);
     assert.equal(calls.length, 0, 'Rendering never mutates route data');
@@ -335,10 +348,19 @@ try {
     if (mode === 'zero') await checkRoad(page, 'Старт', 0, ids.length);
     if (mode === 'complete') {
       assert.match(await road(page).innerText(), /Готово/);
+      assert.equal(await page.locator('[data-near-orientirs]').count(), 0, 'Completed dates are hidden');
       assert.equal(await page.locator('[data-current-step]').count(), 0, 'A finished route cannot reopen a completed task as current');
     }
     if (mode === 'blocked') assert.doesNotMatch(await road(page).innerText(), /Готово/, 'Unavailable unfinished steps must not claim completion');
-    if (mode === 'near') assert.match(await overview(page).innerText(), /Дальше/);
+    if (mode === 'near') {
+      assert.match(await overview(page).innerText(), /Дальше/);
+      assert.equal(await page.locator('[data-orientir-task=shortlist]').count(), 0);
+      assert.equal(await page.locator('[data-orientir-task]').count(), 1);
+    }
+    if (mode === 'dates') {
+      assert.deepEqual(await page.locator('[data-orientir-task]').evaluateAll(elements => elements.map(element => element.dataset.orientirTask)), ['statements', 'visa-task'], 'Show at most two real dates, ordered by daysLeft across stages');
+      assert.equal(await page.locator('[data-current-step=shortlist]').count(), 1, 'Nearby dates never change route availability or order');
+    }
     if (mode === 'parents') {
       await checkRoad(page, 'Старт', 2, ids.length);
       assert.match(await overview(page).innerText(), /Попросить родителей/);
