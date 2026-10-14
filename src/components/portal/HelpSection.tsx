@@ -66,9 +66,9 @@ export function HelpSection({
       <p>Telegram получает только напоминания по твоему маршруту — за 7, 3 и 1 день до важных дат.</p>
       <div>
         {!tgEnabled && !telegramUrl && (
-          <a href="/portal?view=settings#notifications" onClick={(event) => { event.preventDefault(); void createTgLink(); }} aria-disabled={telegramBusy} className={settings.textAction}>
+          <button type="button" onClick={() => { void createTgLink(); }} disabled={telegramBusy} className={settings.primaryAction}>
             {telegramBusy ? "Создаю…" : "Подключить Telegram"}
-          </a>
+          </button>
         )}
         {!tgEnabled && telegramUrl && (
           <>

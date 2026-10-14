@@ -9,12 +9,14 @@ import settings from "./portal-settings.module.css";
 export function ProfileSection({
   data,
   onEditProfile,
+  onBack,
   onDelete,
   onLogout,
   notifications,
 }: {
   data: PortalData;
   onEditProfile: () => void;
+  onBack: () => void;
   onDelete: () => void;
   onLogout: () => void;
   notifications: ReactNode;
@@ -57,6 +59,7 @@ export function ProfileSection({
 
   return (
     <div>
+      <a href="/portal" data-settings-back className={settings.textAction} onClick={event => { if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onBack(); }}>Назад к обзору</a>
       <div className={styles.sectionHeading}>
         <div>
           <h2 id="portal-settings-heading" tabIndex={-1} className={navigation.focusTarget}>Настройки</h2>
@@ -110,7 +113,7 @@ export function ProfileSection({
           <h3>Удалить данные кабинета</h3>
           <p>Профиль, прогресс, результаты проверок и Telegram-привязка будут удалены без восстановления.</p>
         </div>
-        <a href="/portal?view=settings#delete" className={settings.textAction} onClick={(event) => { event.preventDefault(); onDelete(); }}>Удалить мои данные</a>
+        <a href="/portal?view=settings#delete" className={settings.dangerAction} onClick={(event) => { event.preventDefault(); onDelete(); }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" /></svg>Удалить мои данные</a>
       </section>
     </div>
   );

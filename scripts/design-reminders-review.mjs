@@ -155,7 +155,7 @@ try {
     assert.equal(writes.length, 0, 'Viewing settings must not opt users in');
     assert.equal(await panel.getByRole('link', { name: /провер/i }).count(), 0, 'No connection check before a handoff URL exists');
 
-    await panel.getByRole('link', { name: 'Подключить Telegram', exact: true }).click();
+    await panel.getByRole('button', { name: 'Подключить Telegram', exact: true }).click();
     const open = panel.getByRole('link', { name: 'Открыть Telegram', exact: true });
     await open.waitFor();
     assert.equal(await open.getAttribute('href'), 'https://t.me/IitalyReminderTestBot?start=' + safeToken);
@@ -177,7 +177,7 @@ try {
     await page.locator('#notifications[data-telegram-status="disconnected"]').waitFor();
     assert.deepEqual(writes, [{ surname: 'Testov', notifyTelegram: false }]);
 
-    await panel.getByRole('link', { name: 'Подключить Telegram', exact: true }).click();
+    await panel.getByRole('button', { name: 'Подключить Telegram', exact: true }).click();
     lookupFails = true;
     await panel.getByRole('link', { name: 'Проверить подключение', exact: true }).click();
     await panel.getByRole('alert').filter({ hasText: 'Тестовая ошибка соединения' }).waitFor();
@@ -187,7 +187,7 @@ try {
     await page.locator('#notifications[data-telegram-status="disconnected"]').waitFor();
     linkFails = true;
     await panel.locator('summary').filter({ hasText: 'Напоминания выключены' }).click();
-    await panel.getByRole('link', { name: 'Подключить Telegram', exact: true }).click();
+    await panel.getByRole('button', { name: 'Подключить Telegram', exact: true }).click();
     await panel.getByRole('alert').filter({ hasText: 'Тестовая ошибка ссылки' }).waitFor();
 
     await noOverflow(page, 'settings ' + width);
