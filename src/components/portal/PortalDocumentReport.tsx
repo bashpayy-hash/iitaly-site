@@ -14,16 +14,19 @@ function dateLabel(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value));
 }
 
-export function PortalDocumentReport({ title, doc, onBack, onUpload, busy, context, onContextChange, canUpload = true, readOnlyReason }: {
+export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?view=docs", onUpload, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, orientir }: {
   title: string;
   doc: PortalDoc;
   onBack: () => void;
+  backHref?: string;
   onUpload: () => void;
   busy: boolean;
   context: DocumentReviewContext;
   onContextChange: (context: DocumentReviewContext) => void;
   canUpload?: boolean;
   readOnlyReason?: string;
+  stepMeta?: string;
+  orientir?: string;
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -45,15 +48,17 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, busy, conte
     missing: "Результат проверки пока отсутствует.",
   };
   return <section role="region" aria-label="Разбор документа" className={styles.report}>
-    <a href="/portal?view=docs" className={styles.textAction} onClick={event => {
+    <a href={backHref} className={styles.textAction} onClick={event => {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       onBack();
-    }}>← К списку документов</a>
+    }}>Назад</a>
     <header className={styles.heading}>
       <p className={portal.kicker}>Разбор документа</p>
       <h2 ref={heading} tabIndex={-1}>{title}</h2>
+      {stepMeta && <p className={styles.meta}>{stepMeta}</p>}
       {(doc.fileName || checked) && <p className={styles.meta}>{doc.fileName}{doc.fileName && checked ? " · " : ""}{checked ? `Проверено ${checked}` : ""}</p>}
+      {orientir && <p className={styles.meta}>{orientir} — это не срок конкретного вуза.</p>}
     </header>
     <div className={styles.decision} data-outcome={outcome.kind}>
       <h3>{outcome.label}</h3>
@@ -71,7 +76,7 @@ export function PortalDocumentReport({ title, doc, onBack, onUpload, busy, conte
     </div>}
 
     {canUpload ? <div className={styles.actions} data-fab-yield>
-      <button type="button" className={styles.fileArea} data-primary-action disabled={busy} onClick={onUpload}>Выбрать файл</button>
+      <button type="button" className={styles.fileArea} data-primary-action disabled={busy} onClick={onUpload}>Приложить файл</button>
       {busy && <p className={styles.meta} role="status">Проверяю…</p>}
     </div> : readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
 

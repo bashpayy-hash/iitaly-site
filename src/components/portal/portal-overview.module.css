@@ -1,24 +1,62 @@
-.overview { min-width: 0; border-bottom: 1px solid var(--portal-border); }
-.row { display: grid; grid-template-columns: 72px minmax(0, 1fr) 20px; align-items: baseline; gap: 16px; min-height: 84px; padding: 22px 0; border-top: 1px solid var(--portal-border); color: var(--portal-ink); text-decoration: none; }
-.row:where(a):hover .title { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-.row:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
-.label { color: var(--portal-muted); font-size: 12px; font-weight: 500; line-height: 1.5; }
-.content { min-width: 0; }
-.title { display: block; font-size: 17px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
-.current .title { max-width: 30ch; font-size: clamp(22px, 2.5vw, 28px); line-height: 1.25; letter-spacing: -.025em; }
-.meta { display: block; margin-top: 7px; color: var(--portal-muted); font-size: 12px; font-weight: 400; line-height: 1.6; }
-.arrow { color: var(--portal-muted); font-size: 18px; line-height: 1.4; text-align: right; }
-.current .arrow { color: var(--portal-ink); }
-.fileName { font-size: 15px; }
-.status { display: block; margin-top: 5px; color: var(--portal-ink); font-size: 12px; line-height: 1.6; }
+.overview { min-width: 0; }
+.road { display: block; width: 100%; overflow: hidden; padding: 24px 28px 26px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
+.road:hover:not([data-road-static="true"]) { border-color: var(--portal-muted); }
+.road:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+.road[data-road-static="true"] { cursor: default; }
+.roadHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.stageTitle { font-size: 14px; line-height: 1.5; font-weight: 500; }
+.count { color: var(--portal-muted); font-size: 13px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.roadVisual { display: block; position: relative; height: 164px; margin-top: 14px; }
+.track { position: absolute; top: 64px; left: 0; right: 0; height: 9px; overflow: hidden; border-radius: 10px; background: var(--portal-border); }
+.fill { display: block; position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: inherit; background: var(--portal-accent); transform-origin: left center; }
+.dashes { display: block; position: absolute; inset: 4px -13px auto; height: 1px; opacity: 0; background: repeating-linear-gradient(90deg, var(--portal-surface) 0 5px, transparent 5px 13px); }
+.stagePoint { position: absolute; top: 68.5px; transform: translate(-50%, -50%); }
+.point { display: block; width: 13px; height: 13px; border: 2px solid var(--portal-muted); border-radius: 50%; background: var(--portal-surface); }
+.stagePoint[data-road-stage-state="done"] .point { border-color: var(--portal-accent); background: var(--portal-accent); }
+.stagePoint[data-road-stage-state="current"] .point { width: 17px; height: 17px; border: 3px solid var(--portal-accent); background: var(--portal-surface); }
+.stageLabel { position: absolute; top: 93px; display: block; padding: 0 4px; color: var(--portal-muted); font-size: 13px; line-height: 1.35; text-align: center; overflow-wrap: anywhere; text-wrap: balance; }
+.stageLabel[data-road-stage-state="current"] { color: var(--portal-ink); font-weight: 500; }
+.scooter { display: block; position: absolute; top: 7px; left: 0; z-index: 1; width: 100%; height: 62px; pointer-events: none; }
+.scooterAnchor { display: block; width: 88px; height: 62px; transform: translateX(-50%); }
+.scooterArt { display: block; width: 100%; height: 100%; overflow: visible; }
+.scooterBody { animation: idleRide 2.8s ease-in-out infinite; }
+.road[data-road-transition="true"] .fill, .road[data-road-transition="true"] .scooter { transition: transform 920ms cubic-bezier(.22, 1, .36, 1); }
+.road[data-road-moving="true"] .wheel { animation: wheelTurn 330ms linear infinite; }
+.road[data-road-moving="true"] .scooterBody { animation: none; }
+.road[data-road-moving="true"] .dashes { opacity: .7; animation: roadDash 520ms linear infinite; }
+.roadCopy { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nextCopy { display: block; min-width: 0; }
+.nextCopy[data-entering="true"] { animation: nextStep 420ms cubic-bezier(.22, 1, .36, 1) both; }
+.nextLabel { display: block; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
+.stepTitle { display: inline-block; max-width: 32ch; margin-top: 9px; padding: 12px 20px; border-radius: 28px; background: var(--portal-accent); color: #fff; font-family: var(--font-apple-display); font-size: clamp(22px, 2.4vw, 26px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; overflow-wrap: anywhere; text-wrap: balance; }
+.meta { display: block; margin-top: 10px; color: var(--portal-muted); font-size: 13px; line-height: 1.6; }
+.arrow { flex: 0 0 auto; align-self: center; color: var(--portal-ink); }
+.next, .document { display: block; max-width: 75ch; margin: 20px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.label { color: var(--portal-ink); font-weight: 500; }
+.document { padding: 0 0 8px; color: var(--portal-ink); text-decoration: none; }
+.documentReason { display: block; margin-top: 4px; color: var(--portal-muted); }
+.document:hover .fileName { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.document:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
+.status { color: var(--portal-ink); }
 .status[data-outcome="fix"] { color: var(--portal-danger); }
-.status[data-outcome="approved"] { color: var(--portal-green); }
-.complete { grid-template-columns: 72px minmax(0, 1fr); }
-@media (max-width: 480px) {
-  .row { grid-template-columns: minmax(0, 1fr) 20px; gap: 7px 12px; padding: 18px 0; }
-  .label { grid-column: 1 / -1; }
-  .current .title { font-size: 23px; }
-  .title { font-size: 16px; }
-  .fileName { font-size: 15px; }
-  .complete { grid-template-columns: minmax(0, 1fr); }
+@keyframes idleRide { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+@keyframes wheelTurn { to { transform: rotate(360deg); } }
+@keyframes roadDash { to { transform: translateX(-13px); } }
+@keyframes nextStep { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) {
+  .road { padding: 20px 20px 24px; }
+  .roadVisual { height: 100px; margin-top: 10px; }
+  .stageLabel { display: none; }
+  .stageTitle { font-size: 13px; }
+  .stepTitle { font-size: 22px; padding: 12px 18px; }
+  .roadCopy { gap: 10px; }
+  .arrow { width: 20px; height: 20px; }
+  .scooter { height: 55px; top: 14px; }
+  .scooterAnchor { width: 78px; height: 55px; }
+  .next, .document { margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .road .fill, .road .scooter, .road .scooterBody, .road .wheel, .road .dashes, .road .nextCopy { transition: none !important; }
+  .scooterBody, .wheel, .dashes, .nextCopy[data-entering="true"] { animation: none !important; }
+  .road[data-road-moving="true"] .dashes { opacity: 0; }
 }

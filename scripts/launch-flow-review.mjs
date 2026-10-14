@@ -139,7 +139,7 @@ try {
     await page.locator('[data-document=statements]').click();
     await page.locator('[data-step-detail=statements]').waitFor();
     assert.equal(await page.locator('button').count(), 1);
-    await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
     await input.setInputFiles({ name: 'unsupported.exe', mimeType: 'application/octet-stream', buffer: Buffer.from('synthetic fixture') });
     await page.getByRole('link', { name: 'Выбрать другой файл', exact: true }).waitFor();
     assert.equal(calls.check, 0);
@@ -159,10 +159,14 @@ try {
     await page.screenshot({ path: resolve(output, 'portal-save-recovery-390.png'), fullPage: true });
     await page.getByRole('link', { name: 'Сохранить результат', exact: true }).click();
     const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
+    await page.locator('[data-portal-overview]').waitFor();
+    assert.equal(await page.locator('[data-current-step=test-task]').count(), 1, 'A confirmed file completion returns directly to the road and names the next step');
+    await page.locator('[data-overview-document]').click();
     await report.waitFor();
     await report.getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
+    assert.equal(await page.locator('button').count(), 0, 'A completed document has no upload button');
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
-    await report.getByRole('link', { name: '← К списку документов', exact: true }).click();
+    await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
     await page.locator('[data-document-group=approved]').waitFor();
     const passedGroup = page.locator('[data-document-group=approved]');
     if (!(await passedGroup.evaluate(element => element.open))) await passedGroup.locator('summary').click();
@@ -180,6 +184,9 @@ try {
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor();
     await page.getByRole('link', { name: 'Сохранить отметку ещё раз', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor({ state: 'hidden' });
+    await page.locator('[data-portal-overview]').waitFor();
+    assert.match(await page.locator('[data-portal-road]').innerText(), /Готово/);
+    assert.equal(await page.locator('button').count(), 0, 'The completed route has no action to click');
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
     await page.locator('[data-portal-task="test-task"][data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);

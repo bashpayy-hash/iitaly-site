@@ -26,11 +26,12 @@ await new Promise(done => server.listen(0, '127.0.0.1', done));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch();
 const errors = [], unexpectedApi = [], results = [];
+let activePage;
 
 const roadmap = [
   { id: 'start', title: 'Старт', tasks: [
     { id: 'profile', t: 'Заполнить профиль', available: true, owner: 'Ты' },
-    { id: 'shortlist', ai: true, t: 'Выбрать программы', explain: 'Сравни программы и сохрани подходящие.', time: '15 мин', available: true, owner: 'Ты', deadline: '2026-11-15', deadlineKind: 'application', daysLeft: 30 },
+    { id: 'shortlist', ai: true, t: 'Выбрать программы', explain: 'Сравни программы и выбери подходящие.', time: '15 мин', available: true, owner: 'Ты', deadline: '2026-11-15', deadlineKind: 'application', daysLeft: 30 },
     { id: 'family-budget', t: 'Обсудить бюджет', explain: 'Уточни сумму на учёбу и жизнь.', time: '10 мин', available: true, owner: 'Ты + родители' },
   ] },
   { id: 'documents', title: 'Документы', tasks: [
@@ -52,6 +53,19 @@ function fixture(mode = 'partial') {
   if (mode === 'parents') data.done.shortlist = true;
   if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
+  if (mode === 'full-route') {
+    // Real backend stage names and conditional first-year route distribution.
+    // Keep this a local synthetic fixture, never import or call the live backend.
+    data.roadmap = [
+      ['start', 'Старт', ['profile', 'shortlist', 'chances']],
+      ['education12', '12 лет образования', ['path12', 'enroll12']],
+      ['docs', 'Документы', ['apostille', 'translate', 'notary', 'cimea', 'checkDocs']],
+      ['apply', 'Поступление', ['test', 'uniApply', 'universitaly', 'checkpoint1']],
+      ['dsu', 'Стипендия и льготы (DSU)', ['familyDocs', 'iseeu', 'dsuApply', 'checkpoint2']],
+      ['visa', 'Виза', ['money', 'statements', 'insurance', 'housing', 'blsSlot', 'visaSubmit', 'checkpoint3']],
+      ['arrival', 'После приезда', ['kit', 'codice', 'questura']],
+    ].map(([id, title, taskIds]) => ({ id, title, tasks: taskIds.map(taskId => ({ id: taskId, t: taskId === 'shortlist' ? 'Выбрать программы и вузы' : `Подготовить шаг: ${title}`, owner: 'Ты', available: true })) }));
+  }
   if (mode === 'late-current') {
     data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [
       { id: 'apostille', t: 'Поставить апостиль на аттестат', available: true, owner: 'Ты' },
@@ -116,6 +130,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
     return route.abort(); // Only synthetic local fixtures; never call a live account or service.
   });
   const page = await context.newPage();
+  activePage = page;
   if (captureAssistantEvent) await page.addInitScript(() => { window.addEventListener('iitaly:open-chat', event => { window.__portalAssistantEvent = event.detail; event.stopImmediatePropagation(); }, true); });
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${origin}/portal`, { waitUntil: 'networkidle' });
@@ -126,7 +141,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   return { context, page, calls, chatCalls, profileCalls, fileCalls };
 }
 const overview = page => page.locator('[data-portal-overview]');
-const currentStage = page => page.locator('[data-current-stage]');
+const road = page => page.locator('[data-portal-road]');
 const detail = page => page.locator('[data-step-detail]');
 const navigation = page => page.locator('nav[aria-label="Разделы личного кабинета"], [aria-label="Разделы кабинета"]').filter({ visible: true });
 const assistant = page => page.locator('a[data-portal-assistant]');
@@ -138,18 +153,24 @@ async function noButtons(page, label) {
   assert.equal(await page.locator('[role="button"]').count(), 0, `${label}: links must not disguise secondary buttons`);
   assert.doesNotMatch(await page.locator('main').innerText(), /Спросить про этот шаг|Не понятно — спросить|Открыть план|Открыть разбор|Загрузить документ/);
 }
-async function checkStage(page, title, done, total) {
-  const text = await currentStage(page).innerText();
-  assert.match(text, new RegExp(`${title}[\\s,·]*${done}\\s*из\\s*${total}(?!\\d)`));
-  assert.equal(await page.getByRole('progressbar').count(), 0, 'There is no global percentage or long progress bar');
+async function checkRoad(page, title, done, total) {
+  const card = road(page);
+  assert.match(await card.innerText(), new RegExp(title));
+  assert.equal(Number(await card.getAttribute('data-road-done')), done, 'Only existing route steps contribute to completion');
+  assert.equal(Number(await card.getAttribute('data-road-total')), total, 'The denominator comes from this user’s real roadmap');
+  assert.match(await card.innerText(), new RegExp(`сделано ${done} из ${total}(?!\\d)`, 'i'));
+  assert.equal(await page.getByRole('progressbar').count(), 0, 'The road replaces the generic percentage bar');
   assert.doesNotMatch(await overview(page).innerText(), /\d+\s*%|Проверены:|Не загружены:|Параллельно|Следом|Telegram/);
-  assert.doesNotMatch(await page.locator('main').innerText(), new RegExp(`\\d+\\s*из\\s*${ids.length}(?!\\d)`), 'Overview must not show the total-route counter');
-  const rows = overview(page).locator(':scope > a');
-  assert((await rows.count()) <= 3, 'Overview contains at most three navigation rows');
-  for (const row of await rows.all()) {
-    assert.equal(await row.evaluate(el => el.tagName), 'A', 'Every overview row is a single link');
-    assert.equal(await row.locator('a, button').count(), 0, 'A row has no nested actions');
+  const current = page.locator('[data-current-step]');
+  assert.equal(await page.locator('button').count(), 0, 'The whole road is a navigation link, with no overview buttons');
+  if (await current.count()) {
+    assert.equal(await current.evaluate(element => element.tagName), 'A');
+    assert.equal(await current.locator('a, button').count(), 0, 'No secondary action is nested on the road');
+    assert.match(await current.getAttribute('aria-label'), /^Дальше: .+\. Открыть этот шаг\.$/);
   }
+  const links = overview(page).locator('a:not([data-portal-road])');
+  assert((await links.count()) <= 1, 'Only the optional document clarification is a link below the road');
+  assert.equal(await overview(page).locator('a').filter({ hasText: 'Потом' }).count(), 0, 'The next step is plain text');
   await noOverflow(page, 'Overview does not overflow');
 }
 async function checkNavigation(page, afterScroll = false) {
@@ -161,7 +182,7 @@ async function checkNavigation(page, afterScroll = false) {
   assert.equal(await assistant(page).count(), 1, 'The only assistant entry is in the header');
   if (page.viewportSize().width <= 768 && afterScroll) {
     const box = await nav.boundingBox();
-    assert(box && box.y >= -1 && box.y + box.height <= page.viewportSize().height + 1, 'The three mobile sections remain visible after scrolling');
+    assert(box && box.y >= page.viewportSize().height * 0.75 && box.y + box.height <= page.viewportSize().height + 1, 'The three mobile sections remain visible at the bottom after scrolling');
   }
 }
 async function checkSettings(page) {
@@ -169,37 +190,42 @@ async function checkSettings(page) {
   assert.equal(await page.getByRole('heading', { name: 'Данные для маршрута', exact: true }).isVisible(), true);
   assert.equal(await page.getByText('NIS Grade 12', { exact: true }).isVisible(), true);
   assert.equal(await page.locator('#notifications').getAttribute('data-telegram-status'), 'disconnected');
-  assert.equal(await page.locator('#notifications').getByRole('link', { name: 'Подключить Telegram', exact: true }).count(), 1);
+  assert.equal(await page.locator('#notifications').locator('summary').innerText(), 'Напоминания выключены');
+  assert.equal(await page.locator('#notifications').getByRole('link', { name: 'Подключить Telegram', exact: true, includeHidden: true }).count(), 1);
   assert.equal(await page.getByRole('link', { name: 'Выйти', exact: true }).count(), 1);
   assert((await page.locator('button').count()) <= 1, 'Settings obey the page button limit');
   await noOverflow(page, 'Settings have no horizontal overflow');
   await checkNavigation(page);
 }
-async function checkMascot(page, reduced = true) {
-  const mascot = page.locator('[data-progress-mascot]');
-  assert.equal(await mascot.getAttribute('aria-hidden'), 'true');
-  const image = mascot.locator('img');
-  await image.evaluate(async image => { await image.decode(); });
-  const animation = await image.evaluate(element => ({ name: getComputedStyle(element).animationName, duration: getComputedStyle(element).animationDuration, iterations: getComputedStyle(element).animationIterationCount }));
-  if (reduced) assert.equal(animation.name, 'none', 'Reduced motion disables mascot animation');
-  else if (animation.name !== 'none') {
-    assert(animation.duration.split(',').every(value => parseFloat(value) <= 1), 'Mascot motion is short');
-    assert(animation.iterations.split(',').every(value => Number(value) === 1), 'Mascot does not loop');
+async function checkRoadMotion(page, reduced = true) {
+  const card = road(page);
+  assert.equal(await card.getAttribute('data-traveling'), 'false', 'Initial presentation never drives the scooter');
+  const motion = await card.locator('[data-road-scooter], [data-road-fill], [data-road-spokes], [data-road-body], [data-road-text]').evaluateAll(elements => elements.map(element => ({
+    animation: getComputedStyle(element).animationName,
+    transition: getComputedStyle(element).transitionDuration,
+  })));
+  assert(motion.length >= 2, 'The scooter and fill are independently inspectable');
+  if (reduced) for (const style of motion) {
+    assert.equal(style.animation, 'none', 'Reduced motion disables every road animation');
+    assert(style.transition.split(',').every(value => parseFloat(value) === 0), 'Reduced motion updates immediately');
   }
-  const art = await mascot.boundingBox(), action = await page.locator('[data-current-step]').boundingBox();
-  assert(art && action && !(art.x < action.x + action.width && art.x + art.width > action.x && art.y < action.y + action.height && art.y + art.height > action.y), 'Mascot never overlaps the current row');
 }
 async function go(page, name) {
   await navigation(page).getByRole('link', { name, exact: true }).click();
 }
 async function openStep(page, locator, id, screen = 'plan') {
-  const link = await locator.evaluate(element => element.tagName === 'A') ? locator : locator.getByRole('link');
-  assert.equal(await link.count(), 1, 'A task has exactly one navigation path');
-  const href = new URL(await link.getAttribute('href'), origin);
-  assert.equal(href.pathname, '/portal');
-  assert.equal(href.searchParams.get('view'), screen);
-  assert.equal(href.searchParams.get(screen === 'docs' ? 'doc' : 'task'), id);
-  await link.click();
+  if (await locator.evaluate(element => element.tagName === 'BUTTON')) {
+    assert.equal(await locator.getAttribute('data-current-step'), id, 'The road opens its named current step');
+    await locator.click();
+  } else {
+    const link = await locator.evaluate(element => element.tagName === 'A') ? locator : locator.getByRole('link');
+    assert.equal(await link.count(), 1, 'A task has exactly one navigation path');
+    const href = new URL(await link.getAttribute('href'), origin);
+    assert.equal(href.pathname, '/portal');
+    assert.equal(href.searchParams.get('view'), screen);
+    assert.equal(href.searchParams.get(screen === 'docs' ? 'doc' : 'task'), id);
+    await link.click();
+  }
   await page.locator(`[data-step-detail="${id}"]`).waitFor();
   assert.equal(new URL(page.url()).searchParams.get(screen === 'docs' ? 'doc' : 'task'), id);
   assert.equal(await assistant(page).getAttribute('data-step-id'), id, 'Header assistant receives the open step ID');
@@ -209,14 +235,23 @@ try {
   for (const viewport of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 390, height: 667 }, { width: 320, height: 740 }]) {
     const { context, page, calls } = await openPortal(viewport);
     const label = `${viewport.width}x${viewport.height}`;
-    await checkStage(page, 'Старт', 1, 3);
+    await checkRoad(page, 'Старт', 1, ids.length);
     await checkNavigation(page);
-    await noButtons(page, `Overview ${label}`);
-    await checkMascot(page);
+    assert.match(await page.locator('main').innerText(), /Привет, Тестовый профиль/);
+    assert.match(await page.locator('main').innerText(), /Поступление: сентябрь 2027/);
+    await checkRoadMotion(page);
+    assert.deepEqual(await road(page).locator('[data-road-stage]').evaluateAll(elements => elements.map(element => ({ id: element.dataset.roadStage, state: element.dataset.roadStageState, position: parseFloat(element.style.left) }))), [
+      { id: 'start', state: 'current', position: 8 },
+      { id: 'documents', state: 'future', position: 44 },
+      { id: 'visa', state: 'future', position: 68 },
+      { id: 'arrival', state: 'future', position: 80 },
+    ], 'Stage points start at the actual cumulative task offset, independent of completion');
+    const scooterPosition = await road(page).locator('[data-road-scooter]').evaluate(element => parseFloat(element.style.transform.match(/translateX\(([^%]+)/)[1]));
+    assert.equal(scooterPosition, 20, 'The scooter uses 8% + (real done / total) × 84%');
     assert.equal(await page.getByRole('link', { name: 'Выйти', exact: true }).count(), 0, 'Logout belongs to settings');
     const current = page.locator('[data-current-step="shortlist"]');
     assert.equal(await current.count(), 1, 'A near-dated future stage cannot replace the current step');
-    assert.match(await current.innerText(), /Сейчас/);
+    assert.match(await current.innerText(), /Дальше/);
     assert.match(await current.innerText(), /Ориентир.*15 ноя 2026/);
     assert.equal(await overview(page).locator('[data-overview-document]').count(), 0, 'No document line is shown when no document exists');
     await page.evaluate(() => document.fonts.ready);
@@ -245,7 +280,7 @@ try {
     if (await stages.count()) assert.equal(await stages.evaluateAll(elements => elements.filter(element => element.open).length), 1, 'Only the current stage starts open');
     assert.equal(await page.locator('[data-current-task=true]').count(), 1, 'Exactly one task is labelled current');
     const currentRow = page.locator('[data-portal-task="shortlist"]');
-    assert.match(await page.locator('[data-portal-task="family-budget"]').innerText(), /Потом/);
+    assert.match(await page.locator('[data-portal-task="family-budget"]').innerText(), /родител/i);
     for (const task of await page.locator('[data-portal-task]').all()) {
       const tag = await task.evaluate(element => element.tagName);
       assert.equal(tag === 'A' ? 1 : await task.getByRole('link').count(), 1, 'Each plan row is a single link');
@@ -259,13 +294,13 @@ try {
     const blocked = page.locator('[data-portal-task="statements"]');
     await openStep(page, blocked, 'statements', 'docs');
     await noButtons(page, 'Future document step');
-    assert.match(await detail(page).innerText(), /Сначала выбрать программы/);
+    assert.match(await detail(page).innerText(), /Сначала:.*Выбрать программы/);
     await page.goBack();
     if (!(await documents.evaluate(element => element.open))) await documents.locator('summary').click();
-    await openStep(page, page.locator('[data-portal-task="familyDocs"]'), 'familyDocs');
+    await openStep(page, page.locator('[data-portal-task="familyDocs"]'), 'familyDocs', 'docs');
     await noButtons(page, 'Parent step');
     assert.match(await detail(page).innerText(), /родител/i);
-    assert.match(await detail(page).innerText(), /Сначала выбрать программы/);
+    assert.match(await detail(page).innerText(), /Сначала:.*Выбрать программы/);
     await go(page, 'План');
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await checkNavigation(page, true);
@@ -289,52 +324,93 @@ try {
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), [null, null]);
     }
-    results.push({ viewport, stageCountOnly: true, currentVerbAboveFold: true, listsHaveZeroButtons: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 sticky links + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
+    results.push({ viewport, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
   for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'parents', 'manual']) {
     const { context, page, calls } = await openPortal({ width: 390, height: 844 }, mode);
     assert.equal(await page.getByRole('progressbar').count(), 0);
     assert.equal(calls.length, 0, 'Rendering never mutates route data');
-    await noButtons(page, `${mode} overview`);
-    if (mode === 'zero') await checkStage(page, 'Старт', 0, 3);
-    if (mode === 'near') assert.match(await overview(page).innerText(), /Сейчас/);
+    assert((await page.locator('button').count()) <= 1, `${mode}: overview has at most the one whole-road action`);
+    if (mode === 'zero') await checkRoad(page, 'Старт', 0, ids.length);
+    if (mode === 'complete') {
+      assert.match(await road(page).innerText(), /Готово/);
+      assert.equal(await page.locator('[data-current-step]').count(), 0, 'A finished route cannot reopen a completed task as current');
+    }
+    if (mode === 'blocked') assert.doesNotMatch(await road(page).innerText(), /Готово/, 'Unavailable unfinished steps must not claim completion');
+    if (mode === 'near') assert.match(await overview(page).innerText(), /Дальше/);
     if (mode === 'parents') {
-      await checkStage(page, 'Старт', 2, 3);
+      await checkRoad(page, 'Старт', 2, ids.length);
       assert.match(await overview(page).innerText(), /Попросить родителей/);
       await openStep(page, page.locator('[data-current-step="family-budget"]'), 'family-budget');
-      await noButtons(page, 'Even a current parent-owned step has no buttons');
-      await detail(page).getByRole('checkbox', { name: 'Родители сделали этот шаг', exact: true }).click();
-      await page.waitForFunction(() => document.querySelector('[data-step-detail] input[type=checkbox]')?.checked);
-      assert.deepEqual(calls.map(call => [call.task, call.value]), [['family-budget', true]], 'Parent confirmation can advance the existing route without a button');
-      await noButtons(page, 'Parent confirmation remains button-free');
+      assert.equal(await page.locator('button').count(), 1, 'A current parent self-report has exactly one necessary action');
+      await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
+      await overview(page).waitFor();
+      assert.deepEqual(calls.map(call => [call.task, call.value]), [['family-budget', true]], 'Parent confirmation advances the existing route');
     }
     if (mode === 'manual') {
       await openStep(page, page.locator('[data-current-step="manual-task"]'), 'manual-task');
       assert.equal(await page.locator('button').count(), 1, 'Manual self-report has one explicit action');
       await page.getByRole('button', { name: 'Готово', exact: true }).click();
-      await detail(page).getByRole('checkbox').waitFor();
-      assert.equal(await detail(page).getByRole('checkbox').isChecked(), true, 'Completed self-report can be reviewed');
+      await overview(page).waitFor();
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true]]);
-      await go(page, 'Обзор');
-      await checkStage(page, 'Старт', 2, 3);
+      await checkRoad(page, 'Старт', 2, ids.length);
+      await checkRoadMotion(page);
       await go(page, 'План');
       await openStep(page, page.locator('[data-portal-task=manual-task]'), 'manual-task');
-      await detail(page).getByRole('checkbox').uncheck();
-      await page.getByRole('button', { name: 'Готово', exact: true }).click();
-      await detail(page).getByRole('checkbox').waitFor({ state: 'hidden' });
-      assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true], ['manual-task', false]], 'One save action also preserves undo for an old self-report');
-      await go(page, 'Обзор');
-      await checkStage(page, 'Старт', 1, 3);
+      await noButtons(page, 'Completed steps contain no buttons');
+      assert.match(await detail(page).innerText(), /Этот шаг уже сделан\./);
+      await detail(page).getByRole('link', { name: 'Снять отметку', exact: true }).click();
+      await overview(page).waitFor();
+      assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true], ['manual-task', false]], 'The quiet undo link preserves the old self-report action');
+      await checkRoad(page, 'Старт', 1, ids.length);
     }
     await noOverflow(page, `${mode} state`);
     results.push({ state: mode, passed: true });
     await context.close();
   }
   if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {
-    const { context, page } = await openPortal({ width: 390, height: 844 }, 'partial', 'no-preference');
-    await checkMascot(page, false);
-    results.push({ motion: 'normal', finiteOrStatic: true, passed: true });
+    const { context, page, calls } = await openPortal({ width: 390, height: 844 }, 'manual', 'no-preference');
+    await checkRoadMotion(page, false);
+    const idle = await road(page).locator('[data-road-body]').evaluate(element => ({ name: getComputedStyle(element).animationName, duration: getComputedStyle(element).animationDuration }));
+    assert.notEqual(idle.name, 'none');
+    assert.equal(idle.duration, '2.8s', 'Only the scooter body quietly idles');
+    await openStep(page, page.locator('[data-current-step=manual-task]'), 'manual-task');
+    await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'true');
+    const traveling = await road(page).evaluate(element => {
+      const scooter = element.querySelector('[data-road-scooter]');
+      const fill = element.querySelector('[data-road-fill]');
+      const text = element.querySelector('[data-road-text]');
+      const wheel = element.querySelector('[data-road-spokes]');
+      return { current: element.dataset.currentStep, done: element.dataset.roadDone,
+        title: text.textContent, live: element.querySelector('[data-road-next]').getAttribute('aria-live'),
+        transition: getComputedStyle(scooter).transitionDuration, easing: getComputedStyle(scooter).transitionTimingFunction,
+        left: new DOMMatrix(getComputedStyle(scooter).transform).m41, destination: scooter.parentElement.clientWidth * parseFloat(scooter.style.transform.match(/translateX\(([^%]+)/)[1]) / 100,
+        fillWidth: fill.getBoundingClientRect().width, wheelAnimation: getComputedStyle(wheel).animationName,
+        copyAnimation: getComputedStyle(text).animationDuration,
+      };
+    });
+    assert.equal(traveling.current, 'family-budget');
+    assert.equal(traveling.done, '2');
+    assert.match(traveling.title, /Попросить родителей/);
+    assert.doesNotMatch(traveling.title, /Подготовить сведения/, 'The old completed step never remains on the moving road');
+    assert.equal(traveling.live, 'polite');
+    assert.equal(traveling.transition, '0.92s');
+    assert.equal(traveling.easing, 'cubic-bezier(0.22, 1, 0.36, 1)');
+    assert(traveling.left < traveling.destination, 'The scooter interpolates instead of snapping to the destination');
+    assert(Math.abs(traveling.fillWidth - traveling.left) < 2, 'The fill travels with the scooter');
+    assert.notEqual(traveling.wheelAnimation, 'none', 'Spokes rotate only while driving');
+    assert.equal(traveling.copyAnimation, '0.42s');
+    await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'false');
+    const settled = await road(page).locator('[data-road-scooter]').evaluate(element => ({ actual: new DOMMatrix(getComputedStyle(element).transform).m41, expected: element.parentElement.clientWidth * parseFloat(element.style.transform.match(/translateX\(([^%]+)/)[1]) / 100 }));
+    assert(Math.abs(settled.actual - settled.expected) < 1, 'The scooter reaches its real completion position');
+    assert.equal(await road(page).locator('[data-road-spokes]').first().evaluate(element => getComputedStyle(element).animationName), 'none');
+    await page.reload({ waitUntil: 'networkidle' });
+    await overview(page).waitFor();
+    await checkRoadMotion(page, false);
+    assert.equal(calls.length, 1, 'Reload never repeats the completion action');
+    results.push({ motion: 'normal', initialAndReloadDoNotDrive: true, confirmedCompletionDrives: true, newStepImmediate: true, fillAndScooterTravelTogether: true, reducedMotionCovered: true });
     await context.close();
   }
   if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {
@@ -367,7 +443,7 @@ try {
     await chat.getByLabel('Вопрос ИИ-консультанту', { exact: true }).focus();
     await page.keyboard.press('Escape');
     await chat.waitFor({ state: 'hidden' });
-    await noButtons(page, 'Closing the helper restores a button-free overview');
+    await checkRoad(page, 'Старт', 1, ids.length);
     results.push({ helper: 'one header entry', stepContextSentOnlyOnUserQuestion: true, oldContextClearedOnList: true });
     await context.close();
   }
@@ -402,24 +478,41 @@ try {
   }
   if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {
     const { context, page, calls, fileCalls } = await openPortal({ width: 390, height: 844 }, 'parent-file');
-    await openStep(page, page.locator('[data-current-step=familyDocs]'), 'familyDocs');
-    await noButtons(page, 'Parent-owned step information');
+    await openStep(page, page.locator('[data-current-step=familyDocs]'), 'familyDocs', 'docs');
     assert.equal(await detail(page).getByRole('checkbox').count(), 0, 'Document preparation has no separate self-report');
-    const fileLink = detail(page).locator('a[href="/portal?view=docs&doc=familyDocs"]');
-    assert.equal(await fileLink.count(), 1, 'The parent step has one canonical file destination');
-    await openStep(page, fileLink, 'familyDocs', 'docs');
     assert.equal(await page.locator('button').count(), 1, 'A family-prepared current document can still be uploaded');
-    await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles({ name: 'synthetic-family.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC FAMILY DOCUMENT. No personal data.') });
-    await page.getByRole('region', { name: 'Разбор документа', exact: true }).getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
+    await overview(page).waitFor();
     assert.deepEqual(fileCalls, { check: 1, save: 1 });
     assert.equal(calls.length, 0, 'File upload never requires a separate task completion request');
-    await go(page, 'Обзор');
     await page.locator('[data-current-step=insurance]').waitFor();
-    await checkStage(page, 'Документы', 1, 2);
-    results.push({ parentDocument: 'one canonical document screen', parentStepHasZeroButtons: true, uploadClosesTaskAutomatically: true });
+    await checkRoad(page, 'Документы', 1, 2);
+    results.push({ parentDocument: 'one canonical document screen', parentCurrentFileHasOneAction: true, uploadClosesTaskAndReturnsAutomatically: true });
     await context.close();
   }
+  const labelFailures = [];
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 667 }]) {
+    const { context, page } = await openPortal(viewport, 'full-route');
+    await checkRoad(page, 'Старт', 1, 28);
+    assert.equal(await road(page).locator('[data-road-stage]').count(), 7);
+    const labelBoxes = await road(page).locator('[data-road-stage-label]').evaluateAll(elements => elements.map(element => {
+      const label = element;
+      const range = document.createRange();
+      range.selectNodeContents(label);
+      return { title: label.textContent, visible: getComputedStyle(label).display !== 'none', lines: Array.from(range.getClientRects()).map(box => ({ x: box.x, y: box.y, right: box.right, bottom: box.bottom })) };
+    }).filter(label => label.visible));
+    for (let index = 0; index < labelBoxes.length - 1; index++) {
+      const left = labelBoxes[index], right = labelBoxes[index + 1];
+      if (left.lines.some(a => right.lines.some(b => a.right > b.x + 1 && a.x < b.right - 1 && a.y < b.bottom - 1 && a.bottom > b.y + 1))) labelFailures.push({ viewport, left, right });
+    }
+    assert.equal(labelBoxes.length, viewport.width <= 900 ? 0 : 7, 'Stage names are visible on desktop and hidden on narrow screens');
+    await noOverflow(page, 'The real seven-stage route does not overflow');
+    await page.screenshot({ path: resolve(output, `portal-road-real-stages-${viewport.width}x${viewport.height}.png`), fullPage: true });
+    results.push({ viewport, realSevenStageRoute: true, realTotal: 28, labelsDoNotOverlap: !labelFailures.some(failure => failure.viewport === viewport) });
+    await context.close();
+  }
+  assert.deepEqual(labelFailures, [], 'Labels for the real route must not overlap');
   const lateFailures = [];
   for (const viewport of [{ width: 390, height: 667 }, { width: 768, height: 1024 }, { width: 1024, height: 768 }]) {
     const { context, page } = await openPortal(viewport, 'late-current');
@@ -427,13 +520,13 @@ try {
     const action = await current.boundingBox();
     const visible = action && action.y >= 0 && action.y + action.height <= viewport.height;
     if (!visible) lateFailures.push({ viewport, action });
-    await noButtons(page, 'Late-current overview');
+    await checkRoad(page, 'Документы', 4, 7);
     await go(page, 'План');
     await noButtons(page, 'Late-current plan');
     await page.screenshot({ path: resolve(output, `portal-plan-late-${viewport.width}x${viewport.height}.png`), fullPage: true });
     await openStep(page, page.locator('[data-portal-task="statements"]'), 'statements', 'docs');
     assert.equal(await page.locator('button').count(), 1);
-    assert.equal(await page.getByRole('button', { name: 'Выбрать файл', exact: true }).count(), 1);
+    assert.equal(await page.getByRole('button', { name: 'Приложить файл', exact: true }).count(), 1);
     results.push({ viewport, lateCurrentActionAboveFold: Boolean(visible), documentStepHasOnlyFileAction: true });
     await context.close();
   }
@@ -442,6 +535,9 @@ try {
   assert.deepEqual(unexpectedApi, []);
   await writeFile(resolve(output, 'results.json'), JSON.stringify({ results, errors, unexpectedApi }, null, 2));
   console.log(JSON.stringify({ results, errors, unexpectedApi }, null, 2));
+} catch (error) {
+  if (activePage && !activePage.isClosed()) await activePage.screenshot({ path: resolve(output, 'failure.png'), fullPage: true }).catch(() => {});
+  throw error;
 } finally {
   await browser.close();
   await new Promise(done => server.close(done));

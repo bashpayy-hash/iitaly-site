@@ -148,7 +148,9 @@ try {
     const panel = page.locator('#notifications');
     await panel.waitFor();
     assert.equal(await panel.getAttribute('data-telegram-status'), 'disconnected');
-    assert.match(await panel.innerText(), /Подключение занимает около минуты/);
+    assert.equal(await panel.evaluate(element => element.open), false, 'Telegram starts as a single quiet settings row');
+    await panel.locator('summary').filter({ hasText: 'Напоминания выключены' }).click();
+    assert.match(await panel.innerText(), /Telegram получает только напоминания/);
     assert.doesNotMatch(await panel.innerText(), /Почта|email|SMS/i);
     assert.equal(writes.length, 0, 'Viewing settings must not opt users in');
     assert.equal(await panel.getByRole('link', { name: /провер/i }).count(), 0, 'No connection check before a handoff URL exists');
@@ -184,6 +186,7 @@ try {
     await page.reload({ waitUntil: 'networkidle' });
     await page.locator('#notifications[data-telegram-status="disconnected"]').waitFor();
     linkFails = true;
+    await panel.locator('summary').filter({ hasText: 'Напоминания выключены' }).click();
     await panel.getByRole('link', { name: 'Подключить Telegram', exact: true }).click();
     await panel.getByRole('alert').filter({ hasText: 'Тестовая ошибка ссылки' }).waitFor();
 

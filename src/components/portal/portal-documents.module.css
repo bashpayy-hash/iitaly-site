@@ -19,7 +19,7 @@
 .file { min-width: 0; }
 .file h3 { font-size: 14px; line-height: 1.5; font-weight: 500; }
 .fileName { margin-top: 4px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
-.meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 12px; line-height: 1.55; }
+.meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.55; }
 .empty { margin: 0 0 18px; }
 .documents :is(a, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 @media (max-width: 540px) {
