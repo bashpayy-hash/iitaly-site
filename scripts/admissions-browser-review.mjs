@@ -67,6 +67,17 @@ try {
       assert.match(await body.innerText(),/9 октября 2026/);
       assert(await body.locator('a[href^="https://"]').count()>0,'Official sources are accessible');
       if (id==='visa') {
+        if (width >= 1024) {
+          // A delayed toggle from the hidden mobile copy must not replace the
+          // currently selected desktop chapter or its address.
+          await page.evaluate(() => new Promise(resolve => {
+            const previous = document.getElementById('iseeu');
+            previous.addEventListener('toggle', () => requestAnimationFrame(resolve), {once:true});
+            previous.open = true;
+          }));
+          assert.equal(await page.locator('#active-guide-title').innerText(), 'Виза D', 'A hidden mobile toggle cannot change the desktop chapter');
+          assert.equal(new URL(page.url()).hash, '#visa');
+        }
         await body.getByText('Годовой минимум и пересчёт в тенге',{exact:true}).click();
         const rate = body.getByLabel('Твой курс банка: тенге за €1');
         assert.equal(await rate.inputValue(),'');
