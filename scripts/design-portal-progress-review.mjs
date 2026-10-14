@@ -59,6 +59,7 @@ function fixture(mode = 'partial') {
   if (mode === 'parents') data.done.shortlist = true;
   if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
+  if (mode === 'last') { data.roadmap = [{ id: 'arrival', title: 'Переезд', tasks: [{ id: 'manual-task', t: 'Подготовить сведения', available: true, owner: 'Ты' }] }]; data.done = {}; }
   if (mode === 'full-route') {
     // Real backend stage names and conditional first-year route distribution.
     // Keep this a local synthetic fixture, never import or call the live backend.
@@ -327,6 +328,22 @@ try {
       assert.equal(tag === 'A' ? 1 : await task.getByRole('link').count(), 1, 'Each plan row is a single link');
     }
     await page.screenshot({ path: resolve(output, `portal-plan-${label}.png`), fullPage: true });
+    if (viewport.width === 390 && viewport.height === 844) {
+      await page.emulateMedia({ forcedColors: 'active' });
+      const activeTab = await navigation(page).locator('[aria-current=page]').evaluate(element => {
+        const style = getComputedStyle(element);
+        return { width: parseFloat(style.borderBottomWidth), style: style.borderBottomStyle, color: style.borderBottomColor };
+      });
+      assert(activeTab.width >= 2 && activeTab.style === 'solid' && activeTab.color !== 'rgba(0, 0, 0, 0)', 'The active tab stays marked when forced colors remove shadows');
+      const toggles = page.locator('#portal-panel details > summary').filter({ visible: true });
+      const marks = await toggles.evaluateAll(elements => elements.map(element => {
+        const mark = element.querySelector('[aria-hidden=true]') || element;
+        const style = getComputedStyle(mark, '::before');
+        return { width: parseFloat(style.borderTopWidth), style: style.borderTopStyle, color: style.borderTopColor };
+      }));
+      assert(marks.length >= 3 && marks.every(mark => mark.width >= 1 && mark.style === 'solid' && mark.color !== 'rgba(0, 0, 0, 0)'), 'Expanders keep visible strokes when forced colors remove backgrounds');
+      await page.emulateMedia({ forcedColors: 'none' });
+    }
     await openStep(page, currentRow, 'shortlist');
     await page.goBack();
     await noButtons(page, 'Back restores plan list');
@@ -349,6 +366,10 @@ try {
     await go(page, 'Документы');
     assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'missing'], 'Empty status filters are hidden');
     assert.equal(await page.locator('[data-document]').count(), 2);
+    for (const filter of await page.locator('[data-document-filter]').all()) {
+      const box = await filter.boundingBox();
+      assert(box && box.width >= 44 && box.height >= 44, 'Every document filter has a 44px touch target, including All');
+    }
     await noButtons(page, 'Document list');
     await go(page, 'Обзор');
     await page.getByRole('link', { name: 'Настройки', exact: true }).click();
@@ -372,7 +393,7 @@ try {
     results.push({ viewport, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
-  for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual']) {
+  for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual', 'last']) {
     const { context, page, calls } = await openPortal({ width: 390, height: 844 }, mode);
     assert.equal(await page.getByRole('progressbar').count(), 0);
     assert.equal(calls.length, 0, 'Rendering never mutates route data');
@@ -403,10 +424,13 @@ try {
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['family-budget', true]], 'Parent confirmation advances the existing route');
     }
     if (mode === 'manual') {
+      assert.equal(await road(page).evaluate(element => element === document.activeElement), false, 'Initial login does not move focus onto the road');
       await openStep(page, page.locator('[data-current-step="manual-task"]'), 'manual-task');
       assert.equal(await page.locator('button').count(), 1, 'Manual self-report has one explicit action');
-      await page.getByRole('button', { name: 'Готово', exact: true }).click();
+      await page.getByRole('button', { name: 'Готово', exact: true }).focus();
+      await page.keyboard.press('Enter');
       await overview(page).waitFor();
+      assert.equal(await road(page).evaluate(element => element === document.activeElement), true, 'Confirmed completion focuses the next step instead of losing focus to body');
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true]]);
       await checkRoad(page, 'Старт', 2, ids.length);
       await checkRoadMotion(page);
@@ -418,6 +442,15 @@ try {
       await overview(page).waitFor();
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true], ['manual-task', false]], 'The quiet undo link preserves the old self-report action');
       await checkRoad(page, 'Старт', 1, ids.length);
+    }
+    if (mode === 'last') {
+      await openStep(page, page.locator('[data-current-step="manual-task"]'), 'manual-task');
+      await page.getByRole('button', { name: 'Готово', exact: true }).focus();
+      await page.keyboard.press('Enter');
+      await overview(page).waitFor();
+      assert.match(await road(page).innerText(), /Готово/);
+      assert.equal(await road(page).evaluate(element => element === document.activeElement), true, 'Completing the final task focuses the static route summary');
+      assert.equal(await road(page).getAttribute('tabindex'), '-1', 'The completed summary is programmatically focusable without becoming another tab stop');
     }
     await noOverflow(page, `${mode} state`);
     results.push({ state: mode, passed: true });
@@ -541,6 +574,7 @@ try {
     assert.deepEqual(fileCalls, { check: 1, save: 1 });
     assert.equal(calls.length, 0, 'File upload never requires a separate task completion request');
     await page.locator('[data-current-step=insurance]').waitFor();
+    assert.equal(await road(page).evaluate(element => element === document.activeElement), true, 'A server-confirmed file completion focuses the next step');
     await checkRoad(page, 'Документы', 1, 2);
     results.push({ parentDocument: 'one canonical document screen', parentCurrentFileHasOneAction: true, uploadClosesTaskAndReturnsAutomatically: true });
     await context.close();

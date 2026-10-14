@@ -114,6 +114,7 @@ export function PortalExplorer() {
   const focusSettingsTarget = useRef<SettingsTarget | null>(null);
   const stepReturnSection = useRef<Section>("plan");
   const travelSequence = useRef(0);
+  const completionFocusPending = useRef(false);
   const profileFromTask = useRef(false);
 
   async function login(sn: string, c: string, silent = false) {
@@ -127,6 +128,7 @@ export function PortalExplorer() {
     setActionError(null);
     setBusyTask(null);
     setRoadTravel(undefined);
+    completionFocusPending.current = false;
     setCode(c);
     setSurname(sn);
     setData(res.data);
@@ -207,6 +209,14 @@ export function PortalExplorer() {
   }, [section, openTaskId]);
 
   useEffect(() => {
+    if (!completionFocusPending.current || section !== "today" || editingProfile || !data?.client.onboardingComplete) return;
+    const road = document.querySelector<HTMLElement>("[data-portal-road]");
+    if (!road) return;
+    road.focus({ preventScroll: true });
+    completionFocusPending.current = false;
+  }, [section, editingProfile, data]);
+
+  useEffect(() => {
     if (section !== "docs" || openDocument || !documentReturnFocus.current) return;
     const action = document.getElementById(`portal-doc-action-${documentReturnFocus.current}`);
     const group = action?.closest("details");
@@ -222,6 +232,7 @@ export function PortalExplorer() {
     setOpenDocument(null);
     setOpenTaskId(null);
     setRoadTravel(undefined);
+    completionFocusPending.current = false;
     setReviewContext({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
     focusSettingsTarget.current = null;
     try {
@@ -270,6 +281,7 @@ export function PortalExplorer() {
       if (!res?.ok) throw new Error(typeof res?.error === "string" ? res.error : "Отметка не сохранена. Попробуй ещё раз.");
       setData((prev) => prev ? { ...prev, done: res.done, progress: res.progress } : prev);
       if (value && !data.done[taskId] && res.done[taskId]) {
+        completionFocusPending.current = true;
         setRoadTravel({ fromDone: data.roadmap.flatMap(stage => stage.tasks).filter(task => data.done[task.id]).length, id: ++travelSequence.current });
       } else setRoadTravel(undefined);
       changeSection("today");
@@ -299,9 +311,11 @@ export function PortalExplorer() {
         const previousTasks = data.roadmap.flatMap(stage => stage.tasks);
         const nextTasks = res.data.roadmap.flatMap(stage => stage.tasks);
         const current = portalPosition(data).task;
-        if (current && !data.done[current.id] && res.data.done[current.id]
-          && previousTasks.map(task => task.id).join("|") === nextTasks.map(task => task.id).join("|")) {
-          setRoadTravel({ fromDone: previousTasks.filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+        if (current && !data.done[current.id] && res.data.done[current.id]) {
+          completionFocusPending.current = true;
+          if (previousTasks.map(task => task.id).join("|") === nextTasks.map(task => task.id).join("|")) {
+            setRoadTravel({ fromDone: previousTasks.filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+          }
         }
       }
       setData(res.data);
@@ -343,7 +357,10 @@ export function PortalExplorer() {
       if (!saved?.ok) throw new Error(typeof saved?.error === "string" ? saved.error : "Не удалось сохранить результат.");
       setData((prev) => (prev ? { ...prev, docs: saved.docs, done: saved.done, progress: saved.progress } : prev));
       if (data && saved.done[taskId]) {
-        if (!data.done[taskId]) setRoadTravel({ fromDone: data.roadmap.flatMap(stage => stage.tasks).filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+        if (!data.done[taskId]) {
+          completionFocusPending.current = true;
+          setRoadTravel({ fromDone: data.roadmap.flatMap(stage => stage.tasks).filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+        }
         changeSection("today");
       } else showDocument(taskId, false);
       track("portal_doc", { verdict: result.verdict });

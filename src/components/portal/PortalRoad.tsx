@@ -13,32 +13,43 @@ function roadPosition(done: number, total: number) {
 }
 
 function Scooter() {
-  return <svg className={styles.scooterArt} viewBox="0 0 120 84" fill="none" aria-hidden="true">
+  // Higgsfield art direction, redrawn as small layered SVG: no image request,
+  // raster scaling or animation payload on the applicant's connection.
+  return <svg className={styles.scooterArt} viewBox="0 0 120 84" fill="none" aria-hidden="true" data-road-art="higgsfield-refined">
     <g className={styles.wheel} data-road-spokes style={{ transformOrigin: "28px 65px" }}>
       <circle cx="28" cy="65" r="12" fill="var(--portal-ink)" />
-      <circle cx="28" cy="65" r="8" fill="var(--portal-surface)" />
-      <path d="M28 57v16m-8-8h16m-13.7-5.7 11.4 11.4m0-11.4L22.3 70.7" stroke="var(--portal-muted)" strokeWidth="1.5" />
-      <circle cx="28" cy="65" r="2.5" fill="var(--portal-ink)" />
+      <circle cx="28" cy="65" r="8.5" fill="#f3ead4" />
+      <circle cx="28" cy="65" r="6.5" fill="var(--portal-surface)" />
+      <path d="M28 58v14m-6.1-10.5 12.2 7m0-7-12.2 7" stroke="#d1c9b7" strokeWidth="1.5" />
+      <circle cx="28" cy="65" r="2.5" fill="var(--portal-muted)" />
     </g>
     <g className={styles.wheel} data-road-spokes style={{ transformOrigin: "96px 65px" }}>
       <circle cx="96" cy="65" r="12" fill="var(--portal-ink)" />
-      <circle cx="96" cy="65" r="8" fill="var(--portal-surface)" />
-      <path d="M96 57v16m-8-8h16m-13.7-5.7 11.4 11.4m0-11.4L90.3 70.7" stroke="var(--portal-muted)" strokeWidth="1.5" />
-      <circle cx="96" cy="65" r="2.5" fill="var(--portal-ink)" />
+      <circle cx="96" cy="65" r="8.5" fill="#f3ead4" />
+      <circle cx="96" cy="65" r="6.5" fill="var(--portal-surface)" />
+      <path d="M96 58v14m-6.1-10.5 12.2 7m0-7-12.2 7" stroke="#d1c9b7" strokeWidth="1.5" />
+      <circle cx="96" cy="65" r="2.5" fill="var(--portal-muted)" />
     </g>
     <g className={styles.scooterBody} data-road-body>
-      <path d="m94 27 2 38" stroke="var(--portal-muted)" strokeWidth="3" strokeLinecap="round" />
-      <path d="M15 58c1-13 9-21 24-21h13l-1 14c-1 4 2 6 7 6h11c4 0 7-4 8-9l5-25h10l6 27c-12 0-18 6-18 13H48c-3-13-20-19-33-5Z" fill="var(--portal-accent)" stroke="var(--portal-accent-deep)" strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="M18 49c6-8 14-9 26-8m42-14 3 20" stroke="var(--portal-surface)" strokeWidth="2" strokeLinecap="round" />
-      <path d="M18 59c2-8 8-12 17-12 7 0 12 4 15 10" stroke="var(--portal-accent-deep)" strokeWidth="2" strokeLinecap="round" />
-      <path d="M37 34h19c3 0 5 2 4 5H33c-1-3 1-5 4-5Z" fill="var(--portal-ink)" />
-      <path d="M78 21h18" stroke="var(--portal-ink)" strokeWidth="3" strokeLinecap="round" />
-      <path d="m84 21-1-9 4-4" stroke="var(--portal-muted)" strokeWidth="1.8" strokeLinecap="round" />
-      <ellipse cx="90" cy="7" rx="5" ry="3" fill="var(--portal-surface)" stroke="var(--portal-muted)" strokeWidth="1.5" />
-      <path d="M92 19h5c2 0 3 2 3 4s-1 4-3 4h-5Z" fill="var(--portal-surface-soft)" stroke="var(--portal-accent-deep)" strokeWidth="1.5" />
-      <path d="M86 57c6-6 16-5 22 1" stroke="var(--portal-accent)" strokeWidth="4" strokeLinecap="round" />
-      <path d="M55 62h18" stroke="var(--portal-surface-soft)" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M16 43h-4" stroke="var(--portal-muted)" strokeWidth="3" strokeLinecap="round" />
+      <path d="m89 47 7 18" stroke="var(--portal-accent-deep)" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M40 49h12c-2 7 0 10 9 10h9c11 0 15-22 8-34l10-4 8 25c-7 6-9 17-20 19H48L38 58Z" fill="var(--portal-accent-deep)" />
+      <path d="M51 59h20c11 0 17-20 10-34l7-4 8 25c-8 5-10 17-20 17H51Z" fill="var(--portal-accent)" />
+      <path d="M50 62h22c11 0 17-24 10-35" stroke="#f3ead4" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="M12 58c3-15 16-23 33-23h12c4 0 5 2 3 5-5 5-5 12-9 17-9 1-16-2-24-1l-15 4Z" fill="var(--portal-accent)" />
+      <path d="M15 52c7-10 18-15 29-14 9 0 13 4 11 12-1-6-5-10-12-10-10-1-20 3-28 12Z" fill="#f3ead4" />
+      <path d="M32 56h15c5 0 8 4 6 8l-12 3c-10 1-13-4-9-11Z" fill="var(--portal-accent-deep)" />
+      <path d="m36 59 9 .5m-9 2.5 10 .5" stroke="#f3ead4" strokeWidth="1.1" strokeLinecap="round" />
+      <path d="M27 30c10 1 23 0 31 1 3 0 4 2 3 5H29c-3 0-5-2-5-4 0-1 1-2 3-2Z" fill="var(--portal-ink)" />
+      <path d="M29 31h28" stroke="var(--portal-muted)" strokeWidth="1.3" strokeLinecap="round" />
+      <path d="m80 20-1-7-4-5" stroke="var(--portal-muted)" strokeWidth="1.5" strokeLinecap="round" />
+      <ellipse cx="74" cy="7" rx="2.6" ry="4" fill="#f3ead4" stroke="var(--portal-muted)" />
+      <path d="M76 24c1-6 10-8 15-8v9c-7-2-9-1-13 2Z" fill="var(--portal-accent)" />
+      <ellipse cx="91" cy="20.5" rx="2.4" ry="4.8" fill="#f3ead4" />
+      <path d="m80 22-8 3" stroke="var(--portal-ink)" strokeWidth="3" strokeLinecap="round" />
+      <path d="M81 57c4-8 10-12 18-10 5 1 8 4 10 9-11-3-17-2-28 1Z" fill="var(--portal-accent)" />
+      <path d="M91 49c5-1 10 1 13 4-4-2-8-3-13-4Z" fill="#f3ead4" />
+      <path d="m13 43 4 1-2 4-4-1Z" fill="var(--portal-accent-deep)" />
+      <path d="m16 43 2 1-2 4-2-1Z" fill="#f3ead4" />
     </g>
   </svg>;
 }
@@ -144,6 +155,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     className={styles.road}
     data-portal-road
     data-road-static={!current ? "true" : undefined}
+    tabIndex={!current ? -1 : undefined}
     data-current-step={current?.id}
     data-road-done={done}
     data-road-total={total}
