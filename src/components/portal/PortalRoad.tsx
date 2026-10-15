@@ -160,6 +160,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     className={styles.road}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
     data-portal-road
+    data-road-dense={stages.length > 6 ? "true" : undefined}
     data-road-static={!interactive ? "true" : undefined}
     tabIndex={!current ? -1 : undefined}
     data-road-current-open={currentOpen ? "true" : undefined}
@@ -202,7 +203,11 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           const next = stages[index + 1];
           const left = previous ? (previous.position + point.position) / 2 : 0;
           const right = next ? (next.position + point.position) / 2 : 100;
-          return <span key={point.id} className={styles.stageLabel} data-road-stage-label={point.id} data-road-stage-state={point.state} style={{ left: `${left}%`, width: `${right - left}%` }}>{point.title}</span>;
+          const width = right - left;
+          // The label belongs to its milestone, not the midpoint of unequal
+          // neighbouring stages. Keep the allocated space and edge clearance.
+          const labelLeft = Math.max(0, Math.min(100 - width, point.position - width / 2));
+          return <span key={point.id} className={styles.stageLabel} data-road-stage-label={point.id} data-road-stage-state={point.state} style={{ left: `${labelLeft}%`, width: `${width}%` }}>{point.title}</span>;
         })}
         <span className={styles.scooter} data-road-scooter style={{ transform: `translateX(${motion.position}%)` }} onTransitionEnd={event => {
           // The browser owns interpolation, including interrupted trips. Finish
