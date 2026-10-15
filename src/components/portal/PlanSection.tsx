@@ -1,17 +1,25 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
+import dynamic from "next/dynamic";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
 import styles from "./portal-plan.module.css";
+import rules from "./portal-rules.module.css";
+
+const PortalRules = dynamic(() => import("./PortalRules").then(module => module.PortalRules), {
+  loading: () => <p role="status" className={rules.loading}>Загружаю справку…</p>,
+});
 
 type PlanActions = { onOpenTask: (task: PortalTask) => void };
 
 export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalData }) {
+  const [rulesOpen, setRulesOpen] = useState(false);
   const position = portalPosition(data);
+  const assessmentTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "chances");
   const nextStage = position.stageIndex >= 0 ? data.roadmap[position.stageIndex + 1] : undefined;
   const remainingStages = data.roadmap.filter(stage => stage.id !== position.stage?.id && stage.id !== nextStage?.id);
 
@@ -34,12 +42,15 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
           <h2 className={styles.heading}>План поступления</h2>
           <PortalArtwork placement="plan" />
         </div>
-        <details className={styles.rules}>
+        <details className={rules.disclosure} data-portal-rules-disclosure onToggle={event => setRulesOpen(event.currentTarget.open)}>
           <summary>Правила сверены 9 октября 2026</summary>
-          <p>
-            Сверь маршрут с <a href="/changes-2026-27">актуальной справкой по документам и стипендиям</a>.
-            {" "}Если изменились образование, возраст или регион, <a href="/plan">пройди опрос заново</a>.
-          </p>
+          {rulesOpen && <PortalRules />}
+          {assessmentTask && <p>
+            Если изменились образование, возраст или регион, <a href={portalTaskHref(data, assessmentTask)} onClick={event => {
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault(); onOpenTask(assessmentTask);
+            }}>открой оценку ситуации</a>.
+          </p>}
         </details>
       </div>
       {!position.stage && <p className={styles.complete}>Все шаги маршрута отмечены.</p>}

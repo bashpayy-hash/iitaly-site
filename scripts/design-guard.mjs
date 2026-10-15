@@ -29,6 +29,14 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-16: keep assessment, rules and the unchanged trainer
+  // inside the personal cabinet, with existing data and completion endpoints.
+  'src/components/portal/PortalAssessment.tsx',
+  'src/components/portal/portal-assessment.module.css',
+  'src/components/portal/PortalRules.tsx',
+  'src/components/portal/portal-rules.module.css',
+  'src/components/portal/PortalPermessoStep.tsx',
+  'src/components/portal/portal-permesso.module.css',
   // User request 2026-10-15: choose universities inside the portal, keep the API.
   'src/components/portal/PortalUniversityStep.tsx',
   'src/components/portal/portal-universities.module.css',

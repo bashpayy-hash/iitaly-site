@@ -13,7 +13,7 @@ const links = [
 ];
 
 /** Shared site chrome; the portal keeps its three task destinations below. */
-export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
+export function MarketingHeader({ variant = "public", actions, onHome }: { variant?: "public" | "portal"; actions?: ReactNode; onHome?: () => void }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
 
@@ -28,7 +28,12 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
   return (
     <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
       <div className={styles.navInner}>
-        <Link href="/" className={styles.wordmark} aria-label="IITALY — главная">IITALY<span aria-hidden>.</span></Link>
+        <Link href={variant === "portal" ? "/portal" : "/"} className={styles.wordmark}
+          aria-label={variant === "portal" ? "IITALY — личный кабинет" : "IITALY — главная"}
+          onClick={event => {
+            if (!onHome || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault(); onHome();
+          }}>IITALY<span aria-hidden>.</span></Link>
         {variant === "portal" ? actions : <>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           {links.map(({ href, label }) => (

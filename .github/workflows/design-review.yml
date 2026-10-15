@@ -99,6 +99,8 @@ jobs:
         run: node scripts/design-portal-progress-review.mjs
       - name: Review in-portal university selection, persistence and comparison
         run: node scripts/design-portal-university-selection-review.mjs
+      - name: Review contained portal assessment, rules, documents and navigation
+        run: node scripts/design-portal-contained-flow-review.mjs
       - name: Review saved document reports, outcome clarity and mobile accessibility
         run: node scripts/design-portal-document-report-review.mjs
       - name: Review readable Permesso hover, keyboard focus and touch help

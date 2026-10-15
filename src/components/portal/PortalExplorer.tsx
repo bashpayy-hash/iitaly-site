@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
 import { PortalTaskDetail } from "./PortalTaskDetail";
@@ -35,6 +36,15 @@ import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
 import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist } from "@/lib/portalShortlist";
+import { WIZ } from "@/data/wizard";
+import { EMPTY_PLAN_DRAFT, type PlanDraft } from "@/lib/usePlanDraft";
+
+const PortalAssessment = dynamic(() => import("./PortalAssessment").then(module => module.PortalAssessment), {
+  loading: () => <p role="status">Загружаю вопросы…</p>,
+});
+const PortalPermessoStep = dynamic(() => import("./PortalPermessoStep").then(module => module.PortalPermessoStep), {
+  loading: () => <p role="status">Загружаю тренировочный бланк…</p>,
+});
 
 const KEY = "iitaly_portal_code";
 const KEY_SN = "iitaly_portal_surname";
@@ -110,6 +120,9 @@ export function PortalExplorer() {
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [roadTravel, setRoadTravel] = useState<{ fromDone: number; id: number }>();
   const [shortlist, setShortlist] = useState<string[]>([]);
+  // Kept only in this authenticated session, never shared with the public quiz
+  // or another account. Switching portal views must not discard these answers.
+  const [assessmentDraft, setAssessmentDraft] = useState<PlanDraft>(EMPTY_PLAN_DRAFT);
   const shortlistKey = useRef<string | null>(null);
   const [reviewContext, setReviewContext] = useState<DocumentReviewContext>({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
   const documentReturnFocus = useRef<string | null>(null);
@@ -120,6 +133,7 @@ export function PortalExplorer() {
   const triedAutoLogin = useRef(false);
   const focusSettingsTarget = useRef<SettingsTarget | null>(null);
   const stepReturnSection = useRef<Section>("plan");
+  const documentReturnTask = useRef<string | null>(null);
   const travelSequence = useRef(0);
   const completionFocusPending = useRef(false);
   const profileFromTask = useRef(false);
@@ -153,6 +167,12 @@ export function PortalExplorer() {
     if (version !== sessionVersion.current) return;
     shortlistKey.current = key;
     setShortlist(key ? readShortlist(key) : []);
+    const profileAnswers = { ...res.data.client.profile, intake: res.data.client.intakeYear === 2027 ? "2027/28" : res.data.client.intakeYear === 2026 ? "2026/27" : undefined };
+    const answers = Object.fromEntries(WIZ.flatMap(question => {
+      const value = profileAnswers[question.id as keyof typeof profileAnswers];
+      return typeof value === "string" && question.opts.some(option => option.v === value) ? [[question.id, value]] : [];
+    }));
+    setAssessmentDraft({ answers, step: Math.max(0, WIZ.findIndex(question => !answers[question.id])), complete: false });
     setActionError(null);
     setBusyTask(null);
     setRoadTravel(undefined);
@@ -166,6 +186,7 @@ export function PortalExplorer() {
     canonicalizeSettingsLocation();
     setSection(nextSection);
     setOpenDocument(documentFromLocation());
+    documentReturnTask.current = typeof window.history.state?.portalDocumentReturnTask === "string" ? window.history.state.portalDocumentReturnTask : null;
     setOpenTaskId(taskFromLocation());
     try {
       localStorage.setItem(KEY, c);
@@ -197,6 +218,7 @@ export function PortalExplorer() {
       setEditingProfile(false);
       setSection(next);
       setOpenDocument(documentFromLocation());
+      documentReturnTask.current = typeof window.history.state?.portalDocumentReturnTask === "string" ? window.history.state.portalDocumentReturnTask : null;
       setOpenTaskId(taskFromLocation());
       stepReturnSection.current = next === "docs" ? "docs" : "plan";
       // A hash-only history entry may retain the same React section.
@@ -267,6 +289,8 @@ export function PortalExplorer() {
     setReviewContext({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
     shortlistKey.current = null;
     setShortlist([]);
+    setAssessmentDraft(EMPTY_PLAN_DRAFT);
+    documentReturnTask.current = null;
     focusSettingsTarget.current = null;
     try {
       localStorage.removeItem(KEY);
@@ -283,6 +307,7 @@ export function PortalExplorer() {
     setSection(next);
     setOpenDocument(null);
     setOpenTaskId(null);
+    documentReturnTask.current = null;
     if (push) {
       const url = next === "today" ? "/portal" : "/portal?view=" + next;
       if (window.location.pathname + window.location.search + window.location.hash !== url) window.history.pushState({}, "", url);
@@ -386,18 +411,28 @@ export function PortalExplorer() {
   }
 
   function showDocument(taskId: string, restoreContext = true, returnTo?: Section) {
-    if (openDocument !== taskId) stepReturnSection.current = returnTo || (section === "today" ? "today" : section === "plan" ? "plan" : "docs");
+    if (openDocument !== taskId) {
+      stepReturnSection.current = returnTo || (section === "today" ? "today" : section === "plan" ? "plan" : "docs");
+      documentReturnTask.current = section === "plan" && openTaskId === "checkDocs" ? openTaskId : null;
+    }
     const review = data?.docs?.[taskId]?.result?.review;
     if (review && restoreContext) setReviewContext({ profile: review.profile, academicYear: review.academicYear, applicantScope: review.applicantScope });
     setSection("docs");
     setOpenDocument(taskId);
     setOpenTaskId(null);
     const url = `/portal?view=docs&doc=${encodeURIComponent(taskId)}`;
-    if (window.location.pathname + window.location.search !== url) window.history.pushState({}, "", url);
+    if (window.location.pathname + window.location.search !== url) window.history.pushState({ portalDocumentReturnTask: documentReturnTask.current }, "", url);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   function closeDocument() {
+    const parent = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === documentReturnTask.current);
+    if (parent) {
+      documentReturnTask.current = null;
+      openTask(parent);
+      stepReturnSection.current = "plan";
+      return;
+    }
     if (stepReturnSection.current === "docs") documentReturnFocus.current = openDocument;
     changeSection(stepReturnSection.current);
   }
@@ -507,6 +542,7 @@ export function PortalExplorer() {
   const currentTask = position?.task || position?.stage?.tasks.find(task => !data?.done[task.id]) || null;
   const activeTask = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === (openDocument || openTaskId)) || null;
   const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask) : "";
+  const documentBackHref = documentReturnTask.current ? `/portal?view=plan&task=${encodeURIComponent(documentReturnTask.current)}` : sectionUrl(stepReturnSection.current);
   const shortlistEditable = Boolean(activeTask?.id === "shortlist" && (data?.done.shortlist || !readOnlyReason));
   const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
     && (data.done[activeTask.id] || activeTask.available !== false));
@@ -553,7 +589,10 @@ export function PortalExplorer() {
     return (
       <div className={styles.portal}>
       <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
-      <MarketingHeader variant="portal" />
+      <MarketingHeader variant="portal" onHome={() => {
+        if (!editingProfile) return;
+        profileFromTask.current = false; setEditingProfile(false); changeSection("today");
+      }} />
       {editingProfile && data.client.onboardingComplete && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
         <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen />
       </section>}
@@ -563,7 +602,11 @@ export function PortalExplorer() {
         key={editingProfile ? "editing" : "first-run"}
         data={data}
         editing={editingProfile}
-        onCancel={() => { profileFromTask.current = false; setEditingProfile(false); openSettings(); }}
+        onCancel={() => {
+          const fromTask = profileFromTask.current;
+          profileFromTask.current = false; setEditingProfile(false);
+          if (!fromTask) openSettings();
+        }}
         onSaveProfile={handleSaveProfile}
         onCreateTelegramLink={handleCreateTelegramLink}
         onRefreshNotifications={handleRefreshNotifications}
@@ -583,7 +626,7 @@ export function PortalExplorer() {
   return (
     <div className={styles.portal} data-portal-navigation data-portal-design="shared-site">
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
-    <MarketingHeader variant="portal" actions={
+    <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
       <div className={navigation.headerLinks}>
         <a href="#iitaly-chat" data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-4 3v-11a9 9 0 0 1 19 0Z" /><path d="M7 10h8M7 14h5" /></svg><span>Помощник</span></a>
         <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
@@ -669,18 +712,24 @@ export function PortalExplorer() {
               onBack={() => changeSection(stepReturnSection.current)} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(activeTask.id)}
               onToggle={value => { void handleToggle(activeTask.id, value); }}
               onEditProfile={() => { profileFromTask.current = true; setEditingProfile(true); }}
-            /> : <PlanSection data={data} onOpenTask={openTask} />)}
+              managesCompletion={activeTask.id === "chances"}
+            >
+              {activeTask.id === "chances" && <PortalAssessment draft={assessmentDraft} onDraftChange={setAssessmentDraft}
+                busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)} onComplete={() => { void handleToggle(activeTask.id, true); }} />}
+              {activeTask.id === "checkDocs" && <DocsSection data={data} currentTaskId={position?.task?.id} onOpenDoc={showDocument} embedded />}
+              {activeTask.id === "kit" && <PortalPermessoStep />}
+            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
               <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}
                 orientir={taskDate(activeTask)}
-                onBack={closeDocument} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
+                onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
                 canUpload={(!readOnlyReason || canRecheckDocument) && !actionError?.retry} readOnlyReason={readOnlyReason}
                 context={reviewContext} onContextChange={setReviewContext} />
             ) : <PortalTaskDetail
               key={activeTask.id + ":file"} data={data} task={activeTask} busy={busyTask !== null}
               hasRetry={Boolean(actionError?.retry)} context={reviewContext} onContextChange={setReviewContext}
-              onBack={closeDocument} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(activeTask.id)}
+              onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(activeTask.id)}
               onToggle={value => { void handleToggle(activeTask.id, value); }}
               onEditProfile={() => { profileFromTask.current = true; setEditingProfile(true); }}
             /> : <DocsSection currentTaskId={position?.task?.id} data={data} onOpenDoc={showDocument} />)}

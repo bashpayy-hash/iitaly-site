@@ -1,14 +1,15 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
-import { ACT_PAGE, DOC_TASKS, TASK_META } from "@/lib/portalMeta";
-import { isManualTask, taskAction, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
+import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
+import { isManualTask, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { PortalDocumentContext } from "./PortalDocumentContext";
 import portal from "./portal.module.css";
 import styles from "./portal-step.module.css";
 
-export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContextChange, onBack, backHref = "/portal?view=plan", onUpload, onToggle, onEditProfile }: {
+export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContextChange, onBack, backHref = "/portal?view=plan", onUpload, onToggle, onEditProfile, children, managesCompletion = false }: {
   data: PortalData;
   task: PortalTask;
   busy: boolean;
@@ -20,12 +21,13 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
   onUpload: () => void;
   onToggle: (value: boolean) => void;
   onEditProfile: () => void;
+  children?: ReactNode;
+  managesCompletion?: boolean;
 }) {
   const done = Boolean(data.done[task.id]);
   const readOnly = taskReadOnlyReason(data, task);
   const needDoc = Boolean(DOC_TASKS[task.id]);
   const manual = isManualTask(task);
-  const page = ACT_PAGE[task.id];
   const date = taskDate(task);
   const help = taskHelpDetails(task);
   const stage = data.roadmap.find(row => row.tasks.some(item => item.id === task.id));
@@ -58,9 +60,9 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
         </button>}
         <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />
       </> : <>
-        {page && <a className={styles.primaryLink} href={page} aria-describedby={!hasRetry ? "portal-step-action-hint" : undefined}>{taskAction(task)}</a>}
-        {manual && <form className={styles.selfReport} onSubmit={event => { event.preventDefault(); if (!busy) onToggle(true); }}>
-          {!hasRetry && <button type="submit" className={page ? styles.secondaryDone : portal.primaryButton} aria-describedby="portal-step-action-hint" data-primary-action disabled={busy}>{busy ? "Сохраняю…" : "Готово"}</button>}
+        {children}
+        {manual && !managesCompletion && <form className={styles.selfReport} onSubmit={event => { event.preventDefault(); if (!busy) onToggle(true); }}>
+          {!hasRetry && <button type="submit" className={portal.primaryButton} aria-describedby="portal-step-action-hint" data-primary-action disabled={busy}>{busy ? "Сохраняю…" : "Готово"}</button>}
         </form>}
       </>}
     {help.length > 0 && <details className={styles.notes} data-step-help>
