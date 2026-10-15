@@ -24,7 +24,7 @@
 }
 .portal ::selection { color: var(--portal-ink); background: #f8d6de; }
 .portal :where(input, textarea) { caret-color: var(--portal-accent); }
-.portal :where([id]) { scroll-margin-top: 88px; }
+.portal :is([id], [tabindex], a, button, input, textarea, select, summary) { scroll-margin-top: calc(var(--portal-chrome-height, 64px) + 16px); scroll-margin-bottom: 76px; }
 
 .shell {
   display: grid;
@@ -32,12 +32,12 @@
   gap: 40px;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 32px 32px 72px;
+  padding: 24px 32px 72px;
 }
 
 .sidebar {
   position: sticky;
-  top: 96px;
+  top: calc(var(--portal-chrome-height, 64px) + 24px);
   align-self: start;
   padding: 6px 0 12px;
   display: flex;

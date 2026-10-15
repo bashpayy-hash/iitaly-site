@@ -1,0 +1,48 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "fullReportAndReload": true,
+      "autoFocusedHeadingBelowProgress": true,
+      "clarificationIsNotAnError": true,
+      "fiveExactOutcomes": true,
+      "visibleListAndCountedFilters": true,
+      "consistentStatus": true,
+      "listsHaveZeroButtons": true,
+      "reportHasAtMostOneFileAction": true,
+      "planReopensReport": true,
+      "overflow": false,
+      "seriousAxe": []
+    },
+    {
+      "width": 390,
+      "fullReportAndReload": true,
+      "autoFocusedHeadingBelowProgress": true,
+      "clarificationIsNotAnError": true,
+      "fiveExactOutcomes": true,
+      "visibleListAndCountedFilters": true,
+      "consistentStatus": true,
+      "listsHaveZeroButtons": true,
+      "reportHasAtMostOneFileAction": true,
+      "planReopensReport": true,
+      "overflow": false,
+      "seriousAxe": []
+    },
+    {
+      "width": 320,
+      "fullReportAndReload": true,
+      "autoFocusedHeadingBelowProgress": true,
+      "clarificationIsNotAnError": true,
+      "fiveExactOutcomes": true,
+      "visibleListAndCountedFilters": true,
+      "consistentStatus": true,
+      "listsHaveZeroButtons": true,
+      "reportHasAtMostOneFileAction": true,
+      "planReopensReport": true,
+      "overflow": false,
+      "seriousAxe": []
+    }
+  ],
+  "errors": [],
+  "unexpectedApi": []
+}

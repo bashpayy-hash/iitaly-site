@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { useRouter } from "next/navigation";
 import { PortalLogin } from "./PortalLogin";
@@ -13,6 +13,7 @@ import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
 import { PortalArtwork } from "./PortalArtwork";
+import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
 import artwork from "./portal-artwork.module.css";
@@ -118,6 +119,21 @@ export function PortalExplorer() {
   const travelSequence = useRef(0);
   const completionFocusPending = useRef(false);
   const profileFromTask = useRef(false);
+  const chromeRef = useRef<HTMLDivElement>(null);
+  const hasPortalData = Boolean(code && surname && data);
+
+  // The persistent guide can wrap with real task names or zoomed text. Measure
+  // its actual height so sidebar and keyboard/anchor targets remain below it.
+  useLayoutEffect(() => {
+    const chrome = chromeRef.current;
+    const portal = chrome?.parentElement;
+    if (!chrome || !portal) return;
+    const measure = () => portal.style.setProperty("--portal-chrome-height", `${chrome.getBoundingClientRect().height}px`);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(chrome);
+    return () => observer.disconnect();
+  }, [hasPortalData, data?.client.onboardingComplete, editingProfile]);
 
   async function login(sn: string, c: string, silent = false) {
     const res = await fetchPortal(c, sn);
@@ -452,6 +468,7 @@ export function PortalExplorer() {
   }
 
   const position = useMemo(() => data ? portalPosition(data) : null, [data]);
+  const currentTask = position?.task || position?.stage?.tasks.find(task => !data?.done[task.id]) || null;
   const activeTask = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === (openDocument || openTaskId)) || null;
   const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask) : "";
 
@@ -474,7 +491,7 @@ export function PortalExplorer() {
   }
 
   function openTask(task: PortalTask) {
-    stepReturnSection.current = section === "today" ? "today" : "plan";
+    stepReturnSection.current = section;
     if (DOC_TASKS[task.id]) {
       showDocument(task.id, true, stepReturnSection.current);
       return;
@@ -494,7 +511,12 @@ export function PortalExplorer() {
   if (!data.client.onboardingComplete || editingProfile) {
     return (
       <div className={styles.portal}>
+      <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
       <MarketingHeader variant="portal" />
+      {editingProfile && data.client.onboardingComplete && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
+        <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen />
+      </section>}
+      </div>
       <main id="main">
       <PortalOnboarding
         key={editingProfile ? "editing" : "first-run"}
@@ -519,6 +541,7 @@ export function PortalExplorer() {
 
   return (
     <div className={styles.portal} data-portal-navigation data-portal-design="shared-site">
+    <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
     <MarketingHeader variant="portal" actions={
       <div className={navigation.headerLinks}>
         <a href="#iitaly-chat" data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-4 3v-11a9 9 0 0 1 19 0Z" /><path d="M7 10h8M7 14h5" /></svg><span>Помощник</span></a>
@@ -528,6 +551,12 @@ export function PortalExplorer() {
         }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton + " " + navigation.settingsLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z" /><circle cx="12" cy="12" r="3" /></svg><span>Настройки</span></a>
       </div>
     } />
+    <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
+      <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
+        currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
+        onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
+    </section>
+    </div>
     <main id="main">
       <div className={styles.shell}>
         <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
@@ -553,15 +582,15 @@ export function PortalExplorer() {
         </aside>
 
         <div className={styles.main}>
-          <div className={styles.topbar}>
+          {section === "today" ? <div className={styles.topbar}>
             <div className={artwork.greetingHeading}>
               <div className={navigation.topCopy}>
                 <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
                 <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
               </div>
-              {section === "today" && <PortalArtwork placement="greeting" />}
+              <PortalArtwork placement="greeting" />
             </div>
-          </div>
+          </div> : <h1 className="sr-only">Личный кабинет — {activeTask ? taskTitle(activeTask) : section === "plan" ? "план поступления" : section === "docs" ? "документы" : "настройки"}</h1>}
 
           <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
             {NAV.map((item) => (
@@ -587,7 +616,7 @@ export function PortalExplorer() {
                 {actionError.retry && <a href="#portal-panel" onClick={event => { event.preventDefault(); if (!busyTask) actionError.retry?.(); }} aria-disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</a>}
               </div>
             )}
-            {section === "today" && <TodaySection data={data} onOpenTask={openTask} onOpenDoc={showDocument} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />}
+            {section === "today" && <TodaySection data={data} onOpenDoc={showDocument} />}
             {section === "plan" && (activeTask && openTaskId ? <PortalTaskDetail
               key={activeTask.id + ":" + Boolean(data.done[activeTask.id])}
               data={data} task={activeTask} busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)}
