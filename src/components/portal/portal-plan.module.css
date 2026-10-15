@@ -1,6 +1,9 @@
-.plan { min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); }
-.heading { margin: 0; font-family: var(--font-apple-display); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
-.rules { margin: 8px 0 12px; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
+.plan { min-width: 0; width: 100%; }
+.intro { margin-bottom: 12px; }
+.titleRow { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+.titleRow > [data-portal-art] { width: 72px; height: 54px; }
+.heading { margin: 0; font-family: var(--font-apple-display); font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
+.rules { margin: 0; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
 .rules summary { position: relative; min-height: 44px; padding: 12px 30px 12px 0; cursor: pointer; list-style: none; }
 .rules summary::-webkit-details-marker { display: none; }
 .plan summary::marker { content: ""; }
@@ -10,7 +13,7 @@
 .rules p { max-width: 68ch; margin: 0 0 12px; font-size: 15px; line-height: 1.6; }
 .rules a { color: var(--portal-ink); text-decoration: underline; text-underline-offset: 3px; }
 .stage { border-top: 1px solid var(--portal-border); scroll-margin-top: 72px; }
-.fullRoute { border-top: 1px solid var(--portal-border); border-bottom: 1px solid var(--portal-border); }
+.fullRoute { border-top: 1px solid var(--portal-border); }
 .routeHeading { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 60px; padding: 16px 0; color: var(--portal-ink); font-size: 16px; line-height: 1.45; list-style: none; cursor: pointer; }
 .routeHeading::-webkit-details-marker { display: none; }
 .stageHeading { display: flex; align-items: center; gap: 14px; min-height: 60px; margin: 0; padding: 16px 0; color: var(--portal-ink); list-style: none; cursor: pointer; }
@@ -23,7 +26,7 @@
 .chevron::after { transform: rotate(90deg); }
 .stage[open] > .stageHeading .chevron::after, .fullRoute[open] > .routeHeading .chevron::after { transform: none; }
 .tasks { margin: 0; padding: 0; list-style: none; }
-.task { border-top: 1px solid var(--portal-border); }
+.task + .task { border-top: 1px solid var(--portal-border); }
 .taskLink { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: start; gap: 14px; min-height: 72px; padding: 18px 0; color: var(--portal-ink); text-decoration: none; }
 .point { width: 8px; height: 8px; margin-top: 8px; border: 1px solid var(--portal-muted); border-radius: 50%; }
 .taskLink[data-done] .point { background: var(--portal-ink); border-color: var(--portal-ink); }
@@ -32,7 +35,7 @@
 .phase { max-width: 9ch; padding-top: 3px; color: var(--portal-muted); font-size: 13px; font-weight: 400; line-height: 1.5; text-align: right; overflow-wrap: anywhere; }
 .taskLink[data-current-task] .phase { color: var(--portal-ink); }
 .taskTitle { display: block; font-size: 16px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
-.taskLink[data-current-task] .taskTitle { font-weight: 500; }
+.taskLink[data-current-task] .taskTitle { font-weight: 600; }
 .taskLink[data-done] .taskTitle { color: var(--portal-muted); text-decoration: none; }
 .taskLink:hover .taskTitle { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .meta { display: block; margin-top: 5px; color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
@@ -42,11 +45,13 @@
 .complete { margin: 16px 0; color: var(--portal-muted); font-size: 16px; line-height: 1.5; }
 .plan summary:focus-visible, .plan a:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
 @media (max-width: 900px) {
-  .plan { padding: 20px; }
   .heading { font-size: 28px; }
 }
 @media (max-width: 480px) {
-  .rules { margin-bottom: 4px; }
+  .intro { margin-bottom: 8px; }
+  .titleRow { min-height: 48px; gap: 12px; }
+  .titleRow > [data-portal-art] { width: 52px; height: 39px; }
+  .heading { font-size: 26px; }
   .stageHeading { gap: 10px; }
   .stageTitle { font-size: 16px; }
   .taskLink { gap: 10px; padding: 16px 0; }

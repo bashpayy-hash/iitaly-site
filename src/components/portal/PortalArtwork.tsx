@@ -7,7 +7,7 @@ type ArtworkPlacement = "overview" | "plan" | "documents";
 export function PortalArtwork({ placement }: { placement: ArtworkPlacement }) {
   const scene = placement === "overview" ? "study" : placement === "plan" ? "route" : "documents";
   const landscape = placement === "overview" || placement === "plan";
-  const sizes = placement === "overview" ? "(max-width: 540px) 88px, (max-width: 1100px) 128px, 320px"
+  const sizes = placement === "overview" ? "(max-width: 540px) 88px, (max-width: 1100px) 128px, 160px"
     : placement === "plan" ? "(max-width: 900px) 64px, 136px"
     : "(max-width: 900px) 64px, 112px";
 

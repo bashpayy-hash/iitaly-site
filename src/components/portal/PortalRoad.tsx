@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { TASK_META } from "@/lib/portalMeta";
 import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
@@ -8,22 +8,24 @@ import styles from "./portal-overview.module.css";
 
 export type RoadTravel = { fromDone: number; id: number };
 
+const ROAD_TRAVEL_MS = 1080;
+
 function roadPosition(done: number, total: number) {
   return 8 + (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 84;
 }
 
-function Scooter() {
+function Scooter({ position }: { position: number }) {
   // Higgsfield art direction, redrawn as small layered SVG: no image request,
   // raster scaling or animation payload on the applicant's connection.
   return <svg className={styles.scooterArt} viewBox="0 0 120 84" fill="none" aria-hidden="true" data-road-art="higgsfield-refined">
-    <g className={styles.wheel} data-road-spokes style={{ transformOrigin: "28px 65px" }}>
+    <g className={styles.wheel} data-road-spokes style={{ transformOrigin: "28px 65px", transform: `rotate(${position * 36}deg)` }}>
       <circle cx="28" cy="65" r="12" fill="var(--portal-ink)" />
       <circle cx="28" cy="65" r="8.5" fill="#f3ead4" />
       <circle cx="28" cy="65" r="6.5" fill="var(--portal-surface)" />
       <path d="M28 58v14m-6.1-10.5 12.2 7m0-7-12.2 7" stroke="#d1c9b7" strokeWidth="1.5" />
       <circle cx="28" cy="65" r="2.5" fill="var(--portal-muted)" />
     </g>
-    <g className={styles.wheel} data-road-spokes style={{ transformOrigin: "96px 65px" }}>
+    <g className={styles.wheel} data-road-spokes style={{ transformOrigin: "96px 65px", transform: `rotate(${position * 36}deg)` }}>
       <circle cx="96" cy="65" r="12" fill="var(--portal-ink)" />
       <circle cx="96" cy="65" r="8.5" fill="#f3ead4" />
       <circle cx="96" cy="65" r="6.5" fill="var(--portal-surface)" />
@@ -111,7 +113,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
         timers.current.push(window.setTimeout(() => {
           inFlight.current = false;
           setMotion(value => ({ ...value, moving: false }));
-        }, 920));
+        }, ROAD_TRAVEL_MS + 150));
       };
       // Two paints establish the previous position on a remounted Overview.
       // Retargeting a running transition keeps the currently painted position.
@@ -156,6 +158,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   return <RoadFrame
     href={interactive && current ? portalTaskHref(data, current) : undefined}
     className={styles.road}
+    style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
     data-portal-road
     data-road-static={!interactive ? "true" : undefined}
     tabIndex={!current ? -1 : undefined}
@@ -201,19 +204,26 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           const right = next ? (next.position + point.position) / 2 : 100;
           return <span key={point.id} className={styles.stageLabel} data-road-stage-label={point.id} data-road-stage-state={point.state} style={{ left: `${left}%`, width: `${right - left}%` }}>{point.title}</span>;
         })}
-        <span className={styles.scooter} data-road-scooter style={{ transform: `translateX(${motion.position}%)` }}><span className={styles.scooterAnchor}><Scooter /></span></span>
+        <span className={styles.scooter} data-road-scooter style={{ transform: `translateX(${motion.position}%)` }} onTransitionEnd={event => {
+          // The browser owns interpolation, including interrupted trips. Finish
+          // when its transform settles instead of cutting off at a JS timer.
+          if (event.target !== event.currentTarget || event.propertyName !== "transform") return;
+          inFlight.current = false;
+          setMotion(value => ({ ...value, moving: false }));
+        }}><span className={styles.scooterAnchor}><Scooter position={motion.position} /></span></span>
       </span>
     </span>
     <span className={styles.roadCopy} aria-live="polite" aria-atomic="true" data-road-next>
-      <span key={current?.id || "complete"} className={styles.nextCopy} data-road-text data-entering={motion.entering ? "true" : "false"}>
-        <span className={styles.nextLabel}>{current ? currentOpen ? "Сейчас" : "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
-        {current && <>
-          <span className={styles.stepAction}>
-            <span className={styles.stepTitle} role="heading" aria-level={2} data-road-step-title>{title}</span>
-            {!currentOpen && <svg className={styles.arrow} width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-          </span>
-          <span className={styles.meta}>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", taskDate(current)].filter(Boolean).join(" · ")}</span>
-        </>}
+      <span key={current?.id || "complete"} className={styles.nextCopy} data-road-text data-entering={motion.entering || Boolean(travel) ? "true" : "false"}>
+        <span className={styles.stepCopy}>
+          <span className={styles.nextLabel}>{current ? currentOpen ? "Сейчас" : "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
+          {current && <span className={styles.stepTitle} role="heading" aria-level={2} data-road-step-title>{title}</span>}
+        </span>
+        {interactive && <span className={styles.stepAction} data-road-action aria-hidden="true">
+          Открыть
+          <svg className={styles.arrow} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </span>}
+        {current && <span className={styles.meta} data-road-meta>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", taskDate(current)].filter(Boolean).join(" · ")}</span>}
       </span>
     </span>
   </RoadFrame>;

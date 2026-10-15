@@ -106,3 +106,23 @@
 .reminders summary::-webkit-details-marker { display: none; }
 .reminders summary::after { content: "+"; color: var(--portal-muted); }
 .reminders[open] summary::after { content: "−"; }
+
+/* One settings column: profile first, secondary details on request. */
+.page { max-width: 880px; }
+.profile { margin-top: 24px; padding-bottom: 24px; }
+.profileHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0 12px; margin-bottom: 12px; }
+.profileHeading h3 { font-size: 18px; }
+.page .profileList > div { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 12px 0; }
+.page .profileList dd { overflow-wrap: anywhere; }
+.disclosure { border-top: 1px solid var(--portal-border); font-size: 15px; line-height: 1.5; }
+.disclosure summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; padding: 12px 0; list-style: none; cursor: pointer; }
+.disclosure summary::-webkit-details-marker { display: none; }
+.disclosure summary::after { content: "+"; color: var(--portal-muted); }
+.disclosure[open] summary::after { content: "−"; }
+.disclosure summary:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+.disclosure > p { max-width: 65ch; margin: 0 0 8px; color: var(--portal-muted); }
+.disclosure > a { margin-bottom: 12px; }
+.page :global(#portal-notification-settings) { margin-top: 0; }
+.page .reminders { border-bottom: 0; font-size: 15px; }
+.page .reminders summary { min-height: 52px; padding: 12px 0; }
+.page .session { margin-top: 0; padding: 16px 0; }

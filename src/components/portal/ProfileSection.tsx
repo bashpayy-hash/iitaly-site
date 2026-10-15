@@ -58,7 +58,7 @@ export function ProfileSection({
       : "Не требуется / не выбран";
 
   return (
-    <div>
+    <div className={settings.page}>
       <a href="/portal" data-settings-back className={settings.textAction} onClick={event => { if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onBack(); }}>Назад к обзору</a>
       <div className={styles.sectionHeading}>
         <div>
@@ -67,13 +67,12 @@ export function ProfileSection({
         </div>
       </div>
 
-      <div className={styles.profileGrid}>
-        <section className={styles.card}>
-          <div className={navigation.profileHeading}>
+        <section className={settings.profile}>
+          <div className={settings.profileHeading}>
             <h3 className={styles.profileCardTitle}>Данные для маршрута</h3>
             <a href="/portal?view=settings#profile" className={settings.textAction} onClick={(event) => { event.preventDefault(); onEditProfile(); }}>Изменить профиль</a>
           </div>
-          <dl className={styles.profileList}>
+          <dl className={`${styles.profileList} ${settings.profileList}`}>
             <div><dt>Поступление</dt><dd>сентябрь {data.client.intakeYear || "—"}</dd></div>
             <div><dt>Образование</dt><dd>{profile.education || "Не заполнено"}</dd></div>
             <div><dt>Цель</dt><dd>{profile.goal || "Не заполнено"}</dd></div>
@@ -82,10 +81,9 @@ export function ProfileSection({
           </dl>
         </section>
 
-        <section className={styles.card}>
-          <p className={styles.kicker}>Родителям</p>
-          <h3 className={styles.profileCardTitle}>Что понадобится от семьи</h3>
-          <p className={styles.actionBody}>
+        <details id="parents" className={settings.disclosure}>
+          <summary>Что понадобится от семьи</summary>
+          <p>
             Мы не создаём отдельный родительский логин без твоего согласия. Вместо этого можно скопировать только список задач, где нужна помощь семьи.
           </p>
           {parentTasks.length ? (
@@ -93,14 +91,13 @@ export function ProfileSection({
               {copied ? "Скопировано" : "Скопировать список для родителей"}
             </a>
           ) : <p className={styles.taskNote}>Пока задач нет</p>}
-        </section>
-      </div>
+        </details>
 
       <div id="portal-notification-settings" tabIndex={-1} className={`${navigation.notifications} ${navigation.focusTarget}`}>
         {notifications}
       </div>
 
-      <section className={navigation.session}>
+      <section className={`${navigation.session} ${settings.session}`}>
         <div>
           <h3 className={styles.profileCardTitle}>Вход в кабинет</h3>
           <p>Выйди, если это чужое устройство. Твой маршрут сохранится.</p>
@@ -108,13 +105,11 @@ export function ProfileSection({
         <a href="/portal" className={settings.textAction} onClick={(event) => { event.preventDefault(); onLogout(); }}>Выйти</a>
       </section>
 
-      <section className={styles.profileDanger}>
-        <div>
-          <h3>Удалить данные кабинета</h3>
+      <details id="delete" className={settings.disclosure}>
+          <summary>Удалить данные кабинета</summary>
           <p>Профиль, прогресс, результаты проверок и Telegram-привязка будут удалены без восстановления.</p>
-        </div>
         <a href="/portal?view=settings#delete" className={settings.dangerAction} onClick={(event) => { event.preventDefault(); onDelete(); }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" /></svg>Удалить мои данные</a>
-      </section>
+      </details>
     </div>
   );
 }

@@ -7,7 +7,6 @@ import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
 import styles from "./portal-plan.module.css";
-import artwork from "./portal-artwork.module.css";
 
 type PlanActions = { onOpenTask: (task: PortalTask) => void };
 
@@ -30,18 +29,18 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
 
   return (
     <div className={styles.plan}>
-      <div className={artwork.planHeading}>
-        <div className={artwork.documentCopy}>
+      <div className={styles.intro}>
+        <div className={styles.titleRow}>
           <h2 className={styles.heading}>План поступления</h2>
-          <details className={styles.rules}>
-            <summary>Правила сверены 9 октября 2026</summary>
-            <p>
-              Сверь маршрут с <a href="/changes-2026-27">актуальной справкой по документам и стипендиям</a>.
-              {" "}Если изменились образование, возраст или регион, <a href="/plan">пройди опрос заново</a>.
-            </p>
-          </details>
+          <PortalArtwork placement="plan" />
         </div>
-        <PortalArtwork placement="plan" />
+        <details className={styles.rules}>
+          <summary>Правила сверены 9 октября 2026</summary>
+          <p>
+            Сверь маршрут с <a href="/changes-2026-27">актуальной справкой по документам и стипендиям</a>.
+            {" "}Если изменились образование, возраст или регион, <a href="/plan">пройди опрос заново</a>.
+          </p>
+        </details>
       </div>
       {!position.stage && <p className={styles.complete}>Все шаги маршрута отмечены.</p>}
       {position.stage && renderStage(position.stage)}
