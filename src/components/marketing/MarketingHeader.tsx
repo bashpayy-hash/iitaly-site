@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./marketing.module.css";
 
 const links = [
@@ -12,8 +12,8 @@ const links = [
   { href: "/guides", label: "Гайды и виза" },
 ];
 
-/** Navigation for the public marketing pages. */
-export function MarketingHeader() {
+/** Shared site chrome; the portal keeps its three task destinations below. */
+export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
 
@@ -26,9 +26,10 @@ export function MarketingHeader() {
     return () => document.removeEventListener("pointerdown", closeOutside);
   }, []);
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
       <div className={styles.navInner}>
         <Link href="/" className={styles.wordmark} aria-label="IITALY — главная">IITALY<span aria-hidden>.</span></Link>
+        {variant === "portal" ? actions : <>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           {links.map(({ href, label }) => (
             <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
@@ -55,6 +56,7 @@ export function MarketingHeader() {
             <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button>
           </nav>
         </details>
+        </>}
       </div>
     </header>
   );

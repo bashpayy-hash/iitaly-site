@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { useRouter } from "next/navigation";
 import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
@@ -488,6 +488,8 @@ export function PortalExplorer() {
 
   if (!data.client.onboardingComplete || editingProfile) {
     return (
+      <div className={styles.portal}>
+      <MarketingHeader variant="portal" />
       <main id="main">
       <PortalOnboarding
         key={editingProfile ? "editing" : "first-run"}
@@ -506,15 +508,24 @@ export function PortalExplorer() {
         }}
       />
       </main>
+      </div>
     );
   }
 
   return (
+    <div className={styles.portal} data-portal-navigation data-portal-design="shared-site">
+    <MarketingHeader variant="portal" actions={
+      <div className={navigation.headerLinks}>
+        <a href="#iitaly-chat" data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-4 3v-11a9 9 0 0 1 19 0Z" /><path d="M7 10h8M7 14h5" /></svg><span>Помощник</span></a>
+        <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
+          if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault(); openSettings();
+        }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton + " " + navigation.settingsLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z" /><circle cx="12" cy="12" r="3" /></svg><span>Настройки</span></a>
+      </div>
+    } />
     <main id="main">
-    <section className={styles.portal} data-portal-navigation>
       <div className={styles.shell}>
         <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
-          <Link href="/" className={styles.portalBrand}>IITALY</Link>
           <p className={styles.sidebarLabel}>Личный кабинет</p>
           <nav className={styles.nav} aria-label="Разделы личного кабинета">
             {NAV.map((item) => (
@@ -538,16 +549,8 @@ export function PortalExplorer() {
         <div className={styles.main}>
           <div className={styles.topbar}>
             <div className={navigation.topCopy}>
-              <span className={styles.mobileBrand}>IITALY</span>
               <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
               <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
-            </div>
-            <div className={navigation.headerLinks}>
-              <a href="#iitaly-chat" data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-4 3v-11a9 9 0 0 1 19 0Z" /><path d="M7 10h8M7 14h5" /></svg><span>Помощник</span></a>
-              <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
-                if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                event.preventDefault(); openSettings();
-              }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton + " " + navigation.settingsLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z" /><circle cx="12" cy="12" r="3" /></svg><span>Настройки</span></a>
             </div>
           </div>
 
@@ -627,7 +630,7 @@ export function PortalExplorer() {
           e.target.value = "";
         }}
       />
-    </section>
     </main>
+    </div>
   );
 }

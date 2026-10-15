@@ -1,6 +1,6 @@
 .topCopy { min-width: 0; flex: 1; }
 .topCopy h1 { overflow-wrap: anywhere; }
-.settingsButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); font-size: 13px; font-weight: 500; text-decoration: none; }
+.settingsButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); font-size: 14px; font-weight: 500; text-decoration: none; }
 .settingsButton svg { flex-shrink: 0; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .settingsButton:hover, .settingsButton[aria-current="page"] { background: var(--portal-surface-soft); border-color: var(--portal-muted); }
 .settingsLink { border-color: transparent; background: transparent; }
@@ -13,17 +13,13 @@
 .session p { max-width: 65ch; margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
 
 @media (max-width: 900px) {
-  .mobileNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; position: fixed; inset: auto 0 0; z-index: 20; padding: 8px 12px max(8px, env(safe-area-inset-bottom)); background: var(--portal-canvas); border-top: 1px solid var(--portal-border); }
+  .mobileNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; position: fixed; inset: auto 0 0; z-index: 20; padding: 8px 12px max(8px, env(safe-area-inset-bottom)); background: var(--portal-surface); border-top: 1px solid var(--portal-border); }
   .mobileNav > a { justify-content: center; min-width: 0; min-height: 44px; width: 100%; padding: 9px 6px; font-size: 13px; text-align: center; white-space: nowrap; border: 0; border-radius: 0; background: transparent; text-decoration: none; }
   .mobileNav > a[aria-current="page"] { border-bottom: 2px solid currentColor; font-weight: 500; }
 }
 
 .headerLinks { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: flex-end; }
 @media(max-width:900px) {
-  .topCopy { display: contents; }
-  .topCopy h1 { grid-column: 1 / -1; grid-row: 2; margin-top: 8px; }
-  .topCopy p { grid-column: 1 / -1; grid-row: 3; margin-top: 0; }
-  .headerLinks { grid-column: 2; grid-row: 1; }
   .settingsLink { width: 44px; padding: 8px; }
   .settingsLink span { display: none; }
 }

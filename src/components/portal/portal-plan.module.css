@@ -1,5 +1,5 @@
-.plan { min-width: 0; }
-.heading { margin: 0; font-family: var(--font-apple-display); font-size: clamp(23px, 2.4vw, 28px); font-weight: 500; line-height: 1.25; letter-spacing: -.025em; }
+.plan { min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); }
+.heading { margin: 0; font-family: var(--font-apple-display); font-size: clamp(24px, 2.4vw, 30px); font-weight: 600; line-height: 1.2; letter-spacing: -.03em; }
 .rules { margin: 8px 0 12px; color: var(--portal-muted); font-size: 13px; line-height: 1.55; }
 .rules summary { position: relative; min-height: 44px; padding: 12px 30px 12px 0; cursor: pointer; list-style: none; }
 .rules summary::-webkit-details-marker { display: none; }
@@ -15,7 +15,7 @@
 .routeHeading::-webkit-details-marker { display: none; }
 .stageHeading { display: flex; align-items: center; gap: 14px; min-height: 60px; margin: 0; padding: 16px 0; color: var(--portal-ink); list-style: none; cursor: pointer; }
 .stageHeading::-webkit-details-marker { display: none; }
-.stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 500; }
+.stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 600; }
 .nextLabel { color: var(--portal-muted); font-weight: 400; }
 .stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .chevron { position: relative; flex-shrink: 0; width: 16px; height: 16px; color: var(--portal-muted); }
@@ -41,10 +41,13 @@
 .documentStatus[data-outcome="approved"] { color: var(--portal-green); }
 .complete { margin: 16px 0; color: var(--portal-muted); font-size: 14px; line-height: 1.5; }
 .plan summary:focus-visible, .plan a:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
+@media (max-width: 900px) {
+  .plan { padding: 20px; }
+}
 @media (max-width: 480px) {
   .rules { margin-bottom: 4px; }
   .stageHeading { gap: 10px; }
   .stageTitle { font-size: 15px; }
   .taskLink { gap: 10px; padding: 16px 0; }
-  .phase { max-width: 8ch; padding-top: 3px; }
+  .phase { max-width: 10ch; padding-top: 3px; overflow-wrap: normal; }
 }

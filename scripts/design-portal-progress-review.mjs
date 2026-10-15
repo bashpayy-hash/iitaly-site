@@ -90,6 +90,29 @@ function upstreamProgress(data) {
   const done = tasks.filter(task => data.done[task.id]).length;
   return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
 }
+async function siteBrand(page, contentSelector) {
+  await page.evaluate(() => document.fonts.ready);
+  const logo = page.getByRole('link', { name: 'IITALY — главная', exact: true });
+  assert.equal(await logo.count(), 1, 'The shared site logo appears once, including after login');
+  return logo.evaluate((element, selector) => {
+    const style = getComputedStyle(element), dot = element.querySelector('span');
+    return {
+      logo: { fontFamily: style.fontFamily, fontSize: style.fontSize, fontWeight: style.fontWeight, letterSpacing: style.letterSpacing, color: style.color },
+      dot: { text: dot?.textContent, color: dot && getComputedStyle(dot).color },
+      headerHeight: element.closest('header').getBoundingClientRect().height,
+      bodyFont: getComputedStyle(document.querySelector(selector)).fontFamily,
+    };
+  }, contentSelector);
+}
+async function checkSharedBrand(page, loginBrand, contentSelector) {
+  // User-requested site continuity: compare the actual shared login chrome,
+  // rather than duplicating marketing tokens in this review.
+  assert.deepEqual(await siteBrand(page, contentSelector), loginBrand, 'Portal and onboarding keep the site logo, header proportions and text font after login');
+  const header = page.locator('[data-portal-header]');
+  assert.equal(await header.count(), 1, 'Authenticated screens use one shared site header');
+  assert.equal(await page.getByRole('banner').count(), 1, 'No duplicate global header is introduced');
+  assert.equal(await header.locator('nav, details, button').count(), 0, 'The shared portal header does not add public-site navigation or competing buttons');
+}
 async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', captureAssistantEvent = true) {
   const data = fixture(mode), calls = [], chatCalls = [], profileCalls = [], fileCalls = { check: 0, save: 0 };
   const context = await browser.newContext({ viewport, reducedMotion, locale: 'ru-RU' });
@@ -141,11 +164,14 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   if (captureAssistantEvent) await page.addInitScript(() => { window.addEventListener('iitaly:open-chat', event => { window.__portalAssistantEvent = event.detail; event.stopImmediatePropagation(); }, true); });
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${origin}/portal`, { waitUntil: 'networkidle' });
+  const loginBrand = await siteBrand(page, '[data-portal-login]');
+  assert.equal(loginBrand.dot.text, '.', 'The site wordmark retains its literal red dot');
   await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
   await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
   await page.locator(mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]').waitFor();
-  return { context, page, calls, chatCalls, profileCalls, fileCalls };
+  await checkSharedBrand(page, loginBrand, mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]');
+  return { context, page, calls, chatCalls, profileCalls, fileCalls, loginBrand };
 }
 const overview = page => page.locator('[data-portal-overview]');
 const road = page => page.locator('[data-portal-road]');
@@ -244,6 +270,7 @@ try {
   if (process.env.PORTAL_RELEASE_CAPTURE) {
     async function capture(page, name, mode, width) {
       await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0, 0); await new Promise(requestAnimationFrame); });
+      await page.mouse.move(0, 0);
       await noOverflow(page, `${name} ${mode} ${width}px`);
       await page.screenshot({ path: resolve(output, `${name}-${mode}-${width}.png`), fullPage: true });
       results.push({ name, mode, width, overflow: false, buttons: await page.locator('button').count() });
@@ -390,7 +417,7 @@ try {
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), [null, null]);
     }
-    results.push({ viewport, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
+    results.push({ viewport, sharedSiteBrand: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
   for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual', 'last']) {
@@ -535,11 +562,12 @@ try {
     await context.close();
   }
   if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {
-    const { context, page, profileCalls } = await openPortal({ width: 390, height: 844 }, 'profile');
+    const { context, page, profileCalls, loginBrand } = await openPortal({ width: 390, height: 844 }, 'profile');
     await page.getByRole('link', { name: 'Настройки', exact: true }).click();
     await page.getByRole('link', { name: 'Изменить профиль', exact: true }).click();
     const form = page.locator('[data-portal-profile]');
     await form.waitFor();
+    await checkSharedBrand(page, loginBrand, '[data-portal-profile]');
     assert.equal(await page.locator('button').count(), 1, 'Profile editor has one save button');
     assert.equal(await form.locator('input[name=education][value="НИШ / 12 лет"]').isChecked(), true, 'Stored education enum remains selected');
     assert.equal(await form.locator('input[name=goal][value="Бакалавриат"]').isChecked(), true);
