@@ -6,7 +6,8 @@ import { pathToFileURL } from 'node:url';
 
 assert(process.env.REVIEW_TOOLS, 'REVIEW_TOOLS must point to the isolated browser tools.');
 const { chromium } = await import(pathToFileURL(resolve(process.env.REVIEW_TOOLS, 'playwright/index.mjs')).href);
-const root = resolve('out'), output = resolve(process.env.PORTAL_RELEASE_CAPTURE ? 'design-review/after' : 'design-review/portal-progress');
+const roadDesignOnly = process.env.ROAD_DESIGN_REVIEW_ONLY === '1';
+const root = resolve('out'), output = resolve(process.env.ROAD_DESIGN_REVIEW_OUTPUT || (roadDesignOnly ? 'design-review/road-design' : process.env.PORTAL_RELEASE_CAPTURE ? 'design-review/after' : 'design-review/portal-progress'));
 await mkdir(output, { recursive: true });
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.ico': 'image/x-icon' };
 const server = createServer(async (request, response) => {
@@ -68,7 +69,7 @@ function fixture(mode = 'partial') {
   if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
   if (mode === 'last') { data.roadmap = [{ id: 'arrival', title: 'Переезд', tasks: [{ id: 'manual-task', t: 'Подготовить сведения', available: true, owner: 'Ты' }] }]; data.done = {}; }
-  if (mode === 'full-route') {
+  if (mode === 'full-route' || mode === 'screenshot-parent') {
     // Real backend stage names and conditional first-year route distribution.
     // Keep this a local synthetic fixture, never import or call the live backend.
     data.roadmap = [
@@ -80,6 +81,16 @@ function fixture(mode = 'partial') {
       ['visa', 'Виза', ['money', 'statements', 'insurance', 'housing', 'blsSlot', 'visaSubmit', 'checkpoint3']],
       ['arrival', 'После приезда', ['kit', 'codice', 'questura']],
     ].map(([id, title, taskIds]) => ({ id, title, tasks: taskIds.map(taskId => ({ id: taskId, t: taskId === 'shortlist' ? 'Выбрать программы и вузы' : `Подготовить шаг: ${title}`, owner: 'Ты', available: true })) }));
+  }
+  if (mode === 'screenshot-parent') {
+    // Reproduce the user's long parent-owned current title and six-stage route
+    // with synthetic data only. Two completed later documents deliberately
+    // make overall progress differ from progress inside the current stage.
+    data.roadmap = data.roadmap.filter(stage => stage.id !== 'education12');
+    Object.assign(data.roadmap[0].tasks.find(task => task.id === 'chances'), {
+      t: 'Оценить шансы на стипендию', owner: 'Ты + родители', time: '10 мин',
+    });
+    data.done = { profile: true, shortlist: true, apostille: true, translate: true, 'obsolete-task': true };
   }
   if (mode === 'late-current') {
     data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [
@@ -449,8 +460,65 @@ async function openStep(page, locator, id, screen = 'plan') {
   }
 }
 
+async function reviewRoadDesign() {
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 1200, height: 800 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 667 }]) {
+    const { context, page, calls } = await openPortal(viewport, 'screenshot-parent');
+    const label = `${viewport.width}x${viewport.height}`;
+    await checkRoad(page, 'Старт', 4, 26);
+    await checkNavigation(page);
+    await checkRoadMotion(page);
+    assert.equal(await road(page).getAttribute('data-current-step'), 'chances');
+    assert.equal(await road(page).locator('[data-road-step-title]').innerText(), 'Попросить родителей оценить шансы на стипендию');
+    assert.equal(await road(page).locator('[data-road-stage]').count(), 6, 'The screenshot fixture has six real route stages');
+    const metrics = await checkCompactRoadAction(page, `Long parent task at ${label}`);
+    const stageLabels = await road(page).locator('[data-road-stage-label]').evaluateAll(elements => elements.map(element => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return { title: element.textContent, visible: getComputedStyle(element).display !== 'none', lines: Array.from(range.getClientRects()).map(box => ({ x: box.x, y: box.y, right: box.right, bottom: box.bottom })) };
+    }).filter(element => element.visible));
+    assert.equal(stageLabels.length, viewport.width <= 900 ? 0 : 6, 'The six-stage route keeps desktop labels and hides them on narrow screens');
+    const routeBox = await road(page).boundingBox();
+    for (const stageLabel of stageLabels) {
+      assert(stageLabel.lines.every(line => line.x >= routeBox.x - 1 && line.right <= routeBox.x + routeBox.width + 1 && line.y >= routeBox.y - 1 && line.bottom <= routeBox.y + routeBox.height + 1), `${label}: the full stage label “${stageLabel.title}” fits inside the route`);
+    }
+    for (let index = 1; index < stageLabels.length; index++) {
+      const previous = stageLabels[index - 1], current = stageLabels[index];
+      assert(!previous.lines.some(a => current.lines.some(b => a.right > b.x + 1 && a.x < b.right - 1 && a.y < b.bottom - 1 && a.bottom > b.y + 1)), `${label}: adjacent route labels do not overlap`);
+    }
+    await page.mouse.move(0, 0);
+    await page.screenshot({ path: resolve(output, `portal-road-parent-${label}.png`), fullPage: false });
+    await go(page, 'План');
+    await page.getByText('Весь маршрут', { exact: true }).click();
+    const stages = await page.locator('#portal-panel details[id^="portal-stage-"]').all();
+    assert.equal(stages.length, 6);
+    for (const stage of stages) {
+      if (await stage.isVisible() && !(await stage.evaluate(element => element.open))) await stage.locator(':scope > summary').click();
+    }
+    await checkStickyScroll(page, `parent-route-${label}`, { capture: true });
+    await noButtons(page, 'The six-stage parent route keeps navigation-only rows');
+    await openStep(page, page.locator('[data-portal-task="notary"]'), 'notary', 'docs');
+    await noButtons(page, 'A future document stays read-only in the parent route');
+    // The assessment manages its own completion after the questionnaire;
+    // inspect the current-step shell without requiring the later Done button.
+    await road(page).click();
+    await page.locator('[data-step-detail="chances"]').waitFor();
+    await page.locator('[data-portal-assessment]').waitFor();
+    assert.equal(new URL(page.url()).searchParams.get('task'), 'chances');
+    assert.equal(await assistant(page).getAttribute('data-step-id'), 'chances');
+    await checkPersistentRoad(page, { currentOpen: true });
+    await noOverflow(page, `Current parent step at ${label}`);
+    assert.equal(calls.length, 0, 'Viewing the parent route and future steps cannot complete a task');
+    results.push({ viewport, fixture: 'screenshot-parent', realDone: 4, realTotal: 26, stageCount: 6, longParentTitleUnclipped: true, compactAction: metrics, stageLabelsDoNotOverlap: true, stickyAfterRealScroll: true, futureStepReadOnly: true, currentGuideStatic: true, reducedMotion: true, overflow: false });
+    await context.close();
+  }
+}
+
 try {
-  if (process.env.PORTAL_RELEASE_CAPTURE) {
+  if (roadDesignOnly) {
+    // Explicit local before/after mode only. CI/default runs this fixture plus
+    // every existing navigation, completion, accessibility and motion check.
+    await reviewRoadDesign();
+  } else if (process.env.PORTAL_RELEASE_CAPTURE) {
     async function capture(page, name, mode, width) {
       await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0, 0); await new Promise(requestAnimationFrame); });
       await page.mouse.move(0, 0);
@@ -481,6 +549,7 @@ try {
       }
     }
   } else {
+  await reviewRoadDesign();
   for (const viewport of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : [{ width: 1440, height: 900 }, { width: 1024, height: 768 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 390, height: 667 }, { width: 320, height: 740 }]) {
     const { context, page, calls } = await openPortal(viewport);
     const label = `${viewport.width}x${viewport.height}`;
