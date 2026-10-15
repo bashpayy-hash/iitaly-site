@@ -5,7 +5,9 @@ import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { PortalArtwork } from "./PortalArtwork";
 import styles from "./portal-plan.module.css";
+import artwork from "./portal-artwork.module.css";
 
 type PlanActions = { onOpenTask: (task: PortalTask) => void };
 
@@ -28,14 +30,19 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
 
   return (
     <div className={styles.plan}>
-      <h2 className={styles.heading}>План поступления</h2>
-      <details className={styles.rules}>
-        <summary>Правила сверены 9 октября 2026</summary>
-        <p>
-          Сверь маршрут с <a href="/changes-2026-27">актуальной справкой по документам и стипендиям</a>.
-          {" "}Если изменились образование, возраст или регион, <a href="/plan">пройди опрос заново</a>.
-        </p>
-      </details>
+      <div className={artwork.planHeading}>
+        <div className={artwork.documentCopy}>
+          <h2 className={styles.heading}>План поступления</h2>
+          <details className={styles.rules}>
+            <summary>Правила сверены 9 октября 2026</summary>
+            <p>
+              Сверь маршрут с <a href="/changes-2026-27">актуальной справкой по документам и стипендиям</a>.
+              {" "}Если изменились образование, возраст или регион, <a href="/plan">пройди опрос заново</a>.
+            </p>
+          </details>
+        </div>
+        <PortalArtwork placement="plan" />
+      </div>
       {!position.stage && <p className={styles.complete}>Все шаги маршрута отмечены.</p>}
       {position.stage && renderStage(position.stage)}
       {nextStage && renderStage(nextStage)}

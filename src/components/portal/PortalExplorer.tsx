@@ -578,19 +578,18 @@ export function PortalExplorer() {
               </a>
             ))}
           </nav>
-          <PortalArtwork placement="sidebar" />
         </aside>
 
-        <div className={styles.main}>
-          {section === "today" ? <div className={styles.topbar}>
+        <div className={styles.main + (section === "today" ? " " + artwork.overviewLayout : "")}>
+          {section === "today" ? <div className={styles.topbar + " " + artwork.overviewIntro}>
             <div className={artwork.greetingHeading}>
               <div className={navigation.topCopy}>
                 <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
                 <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
               </div>
-              <PortalArtwork placement="greeting" />
             </div>
           </div> : <h1 className="sr-only">Личный кабинет — {activeTask ? taskTitle(activeTask) : section === "plan" ? "план поступления" : section === "docs" ? "документы" : "настройки"}</h1>}
+          {section === "today" && <PortalArtwork placement="overview" />}
 
           <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
             {NAV.map((item) => (
@@ -609,7 +608,7 @@ export function PortalExplorer() {
             ))}
           </nav>
 
-          <div id="portal-panel" className={styles.panel}>
+          <div id="portal-panel" className={styles.panel + (section === "today" ? " " + artwork.overviewContent : "")}>
             {actionError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
                 <p role="alert">{actionError.message}</p>
