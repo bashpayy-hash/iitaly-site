@@ -194,6 +194,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   await checkSharedBrand(page, loginBrand, mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]');
   if (mode === 'onboarding') assert.equal(await road(page).count(), 0, 'A route guide appears only after the initial route is built');
   else await checkPersistentRoad(page);
+  if (mode !== 'onboarding') await checkCompletionFeedback(page, false);
   if (mode !== 'onboarding') await checkArtwork(page, 'study');
   return { context, page, calls, chatCalls, profileCalls, fileCalls, loginBrand };
 }
@@ -299,7 +300,7 @@ async function checkPersistentRoad(page, { currentOpen = false, afterScroll = fa
   assert.equal(layout.cssTop, 0, 'The shared chrome pins to the top without a guessed header offset');
   assert(Math.abs(layout.chromeTop) <= 1, 'The shared header remains at the viewport top');
   assert(layout.top >= layout.headerBottom - 1 && layout.top <= layout.headerBottom + 1, 'Progress sits directly below the site header');
-  assert(layout.height <= 210, 'The persistent progress guide stays compact even when a parent task title wraps');
+  assert(layout.height <= 210, `The persistent progress guide stays compact even when a parent task title wraps (${JSON.stringify({ viewport: page.viewportSize(), height: layout.height })})`);
   assert(layout.bottom <= page.viewportSize().height * 0.5, 'The guide leaves at least half of a short phone viewport for the actual screen');
   if (afterScroll) assert(layout.scrollY >= 80, 'Sticky positioning is checked after a real content scroll');
   if (currentOpen) {
@@ -405,6 +406,32 @@ async function checkRoadMotion(page, reduced = true) {
     assert(Math.abs(position.fill - position.scooter) < 1, 'The resting fill ends at the scooter');
   }
   assert(Math.abs(positions[1].scooter - positions[0].scooter) < 0.1, 'Initial display and reduced-motion completion do not animate between frames');
+}
+async function checkCompletionFeedback(page, visible, { reduced = false } = {}) {
+  const feedback = road(page).locator('[data-road-feedback][data-visible="true"]');
+  if (!visible) {
+    assert.equal(await feedback.count(), 0, 'Reading a route, reloading or an unconfirmed action never claims a completed step');
+    return;
+  }
+  await feedback.waitFor({ state: 'attached' });
+  assert.equal((await feedback.innerText()).trim(), 'Шаг сделан', 'Confirmed completion has one concise acknowledgement');
+  const state = await feedback.evaluate(element => ({
+    announced: Boolean(element.closest('[role="status"], [aria-live="polite"]')),
+    interactive: element.matches('a, button, [role="button"]') || Boolean(element.querySelector('a, button, [role="button"]')),
+    motion: [element, ...element.querySelectorAll('*')].map(node => ({
+      element: node.tagName,
+      animation: getComputedStyle(node).animationName,
+      transition: getComputedStyle(node).transitionDuration,
+      running: node.getAnimations().filter(animation => !['finished', 'idle'].includes(animation.playState)).length,
+    })),
+  }));
+  assert(state.announced, 'Completion feedback is announced without interrupting assistive technology');
+  assert.equal(state.interactive, false, 'Completion feedback adds no action or dismissal button');
+  if (reduced) for (const style of state.motion) {
+    assert.equal(style.animation, 'none', 'Reduced motion preserves feedback with no animated reveal');
+    assert.equal(style.running, 0, 'Reduced-motion feedback and its checkmark have no active animation');
+  }
+  if (reduced) assert(state.motion[0].transition.split(',').every(value => parseFloat(value) === 0), 'Reduced-motion feedback appears immediately');
 }
 async function checkCompactRoadAction(page, label) {
   const action = road(page).locator('[data-road-action]');
@@ -719,6 +746,7 @@ try {
       assert.equal(await page.locator('button').count(), 1, 'A current parent self-report has exactly one necessary action');
       await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
       await waitForOverview(page);
+      await checkCompletionFeedback(page, true, { reduced: true });
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['family-budget', true]], 'Parent confirmation advances the existing route');
     }
     if (mode === 'manual') {
@@ -728,6 +756,7 @@ try {
       await page.getByRole('button', { name: 'Готово', exact: true }).focus();
       await page.keyboard.press('Enter');
       await waitForOverview(page);
+      await checkCompletionFeedback(page, true, { reduced: true });
       assert.equal(await road(page).evaluate(element => element === document.activeElement), true, 'Confirmed completion focuses the next step instead of losing focus to body');
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true]]);
       await checkRoad(page, 'Старт', 2, ids.length);
@@ -738,6 +767,7 @@ try {
       assert.match(await detail(page).innerText(), /Этот шаг уже сделан\./);
       await detail(page).getByRole('link', { name: 'Снять отметку', exact: true }).click();
       await waitForOverview(page);
+      await checkCompletionFeedback(page, false);
       assert.deepEqual(calls.map(call => [call.task, call.value]), [['manual-task', true], ['manual-task', false]], 'The quiet undo link preserves the old self-report action');
       await checkRoad(page, 'Старт', 1, ids.length);
     }
@@ -746,6 +776,7 @@ try {
       await page.getByRole('button', { name: 'Готово', exact: true }).focus();
       await page.keyboard.press('Enter');
       await waitForOverview(page);
+      await checkCompletionFeedback(page, true, { reduced: true });
       assert.match(await road(page).innerText(), /Готово/);
       assert.equal(await road(page).evaluate(element => element === document.activeElement), true, 'Completing the final task focuses the static route summary');
       assert.equal(await road(page).getAttribute('tabindex'), '-1', 'The completed summary is programmatically focusable without becoming another tab stop');
@@ -761,7 +792,20 @@ try {
     assert.notEqual(idle.name, 'none');
     assert.equal(idle.duration, '2.8s', 'Only the scooter body quietly idles');
     await openStep(page, page.locator('[data-current-step=manual-task]'), 'manual-task');
+    let confirmCompletion, completionRequested;
+    const confirmation = new Promise(resolve => { confirmCompletion = resolve; });
+    const requested = new Promise(resolve => { completionRequested = resolve; });
+    await context.route('**/api/portal/TEST-01/task', async route => {
+      completionRequested();
+      await confirmation;
+      await route.fallback();
+    });
     await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
+    await requested;
+    await checkCompletionFeedback(page, false);
+    assert.equal(await road(page).getAttribute('data-road-done'), '1', 'A pending save does not increment the route');
+    assert.equal(await road(page).getAttribute('data-traveling'), 'false', 'The scooter waits for server confirmation');
+    confirmCompletion();
     await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'true');
     const traveling = await road(page).evaluate(element => {
       const scooter = element.querySelector('[data-road-scooter]');
@@ -796,6 +840,7 @@ try {
     assert(Math.abs(traveling.fillWidth - traveling.left) < 2, 'The fill travels with the scooter');
     assert.equal(traveling.wheelAnimation, 'none', 'Wheels follow actual travel instead of an independent constant-speed animation');
     assert.equal(traveling.copyAnimation, '0.42s');
+    await checkCompletionFeedback(page, true);
     const frames = await road(page).evaluate(async element => {
       const scooter = element.querySelector('[data-road-scooter]'), fill = element.querySelector('[data-road-fill]');
       const wheels = [...element.querySelectorAll('[data-road-spokes]')], frames = [];
@@ -826,11 +871,42 @@ try {
     const settled = await road(page).locator('[data-road-scooter]').evaluate(element => ({ actual: new DOMMatrix(getComputedStyle(element).transform).m41, expected: element.parentElement.clientWidth * parseFloat(element.style.transform.match(/translateX\(([^%]+)/)[1]) / 100 }));
     assert(Math.abs(settled.actual - settled.expected) < 1, 'The scooter reaches its real completion position');
     assert.equal(await road(page).locator('[data-road-spokes]').first().evaluate(element => getComputedStyle(element).animationName), 'none');
+    await checkCompletionFeedback(page, true);
+    await page.screenshot({ path: resolve(output, 'portal-completion-feedback-390.png'), fullPage: false });
+    await page.waitForFunction(() => !document.querySelector('[data-road-feedback][data-visible="true"]'), {}, { timeout: 4000 });
+    await checkCompletionFeedback(page, false);
+    assert.match(await road(page).innerText(), /сделано 2 из 7/i, 'The real count returns after the acknowledgement');
     await page.reload({ waitUntil: 'networkidle' });
     await waitForOverview(page);
     await checkRoadMotion(page, false);
+    await checkCompletionFeedback(page, false);
     assert.equal(calls.length, 1, 'Reload never repeats the completion action');
-    results.push({ motion: 'normal', initialAndReloadDoNotDrive: true, confirmedCompletionDrives: true, newStepImmediate: true, fillAndScooterTravelTogether: true, sampledTravelFrames: frames.length, synchronizedWheelEasing: true, reducedMotionCovered: true });
+    await openStep(page, page.locator('[data-current-step=family-budget]'), 'family-budget');
+    await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'true');
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'false');
+    await checkRoadMotion(page);
+    await checkCompletionFeedback(page, true, { reduced: true });
+    assert.equal(calls.length, 2, 'Changing motion preferences never repeats a completion request');
+    results.push({ motion: 'normal', initialAndReloadDoNotDrive: true, confirmedCompletionDrives: true, pendingSaveDoesNotCelebrate: true, oneTemporaryAcknowledgement: true, acknowledgementReturnsToRealCount: true, newStepImmediate: true, fillAndScooterTravelTogether: true, sampledTravelFrames: frames.length, synchronizedWheelEasing: true, reducedMotionCovered: true, midrideReducedMotionSettlesImmediately: true });
+    await context.close();
+  }
+  if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {
+    const { context, page, calls } = await openPortal({ width: 390, height: 844 }, 'manual', 'no-preference');
+    await context.route('**/api/portal/TEST-01/task', route => route.fulfill({
+      status: 200, contentType: 'application/json', body: JSON.stringify({ ok: false, error: 'Синтетический отказ сохранения.' }),
+    }));
+    await openStep(page, page.locator('[data-current-step=manual-task]'), 'manual-task');
+    await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
+    await page.getByRole('alert').filter({ hasText: 'Синтетический отказ сохранения.' }).waitFor();
+    await checkCompletionFeedback(page, false);
+    assert.equal(await road(page).getAttribute('data-road-done'), '1', 'A rejected save leaves the real count unchanged');
+    assert.equal(await road(page).getAttribute('data-current-step'), 'manual-task', 'A rejected save leaves the same task current');
+    assert.equal(await road(page).getAttribute('data-traveling'), 'false', 'A rejected save cannot drive the scooter');
+    assert.equal(calls.length, 0, 'The failure fixture does not update synthetic completion data');
+    assert.equal(await page.getByRole('link', { name: 'Сохранить отметку ещё раз', exact: true }).isVisible(), true, 'A rejected save keeps the existing retry path');
+    results.push({ failedCompletion: 'no acknowledgement, movement or progress mutation', retryRemainsAvailable: true });
     await context.close();
   }
   for (const viewport of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
@@ -968,6 +1044,7 @@ try {
     await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles({ name: 'synthetic-family.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC FAMILY DOCUMENT. No personal data.') });
     await waitForOverview(page);
+    await checkCompletionFeedback(page, true, { reduced: true });
     assert.deepEqual(fileCalls, { check: 1, save: 1 });
     assert.equal(calls.length, 0, 'File upload never requires a separate task completion request');
     await page.locator('[data-current-step=insurance]').waitFor();
