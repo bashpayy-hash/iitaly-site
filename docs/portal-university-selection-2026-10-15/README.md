@@ -63,6 +63,9 @@ The former tests requiring `/universities` navigation and counting every button
 on `shortlist` changed intentionally: embedded map/filter controls are allowed,
 but only one Save action commits the choice. The document test now explicitly
 requires rechecking an approved file; future-unavailable gating remains tested.
+The launch recovery review likewise expects one explicit new-version action on
+an approved report. Its check/save retry assertions stay intact; opening a saved
+report must not trigger a new check, and the road remains visually secondary.
 
 ## Screenshots
 
