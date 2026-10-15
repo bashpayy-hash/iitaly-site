@@ -27,6 +27,14 @@ interface Msg {
   text: string;
 }
 
+interface PortalChatContext {
+  portal?: boolean;
+  taskId?: string;
+  taskTitle?: string;
+  taskOwner?: string;
+  taskContext?: string;
+}
+
 /**
  * Вход панели — пружиной из угла, где стоял лаунчер (origin bottom right):
  * панель растёт из точки, по которой щёлкнули, поэтому причина и следствие
@@ -72,7 +80,9 @@ function SendIcon() {
 
 export function ChatWidget() {
   const pathname = usePathname();
-  const stepContext = useRef<{ portal?: boolean; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string }>({});
+  const portalMode = pathname === "/portal";
+  const stepContext = useRef<PortalChatContext>({});
+  const [displayContext, setDisplayContext] = useState<PortalChatContext>({});
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     {
@@ -92,6 +102,21 @@ export function ChatWidget() {
   const triggerRef = useRef<HTMLElement | null>(null);
   const menuTriggerRef = useRef<HTMLElement | null>(null);
   const reducedMotion = useReducedMotion();
+  const hasConversation = messages.some(message => message.who === "user");
+  const questions = displayContext.taskId === "shortlist"
+    ? ["Как выбрать программы?", "Что сравнить у программ?"]
+    : displayContext.taskId
+      ? /родител/i.test(displayContext.taskOwner || "")
+        ? ["Что попросить у родителей?", "Что подготовить вместе?"]
+        : ["С чего начать этот шаг?", "Что нужно подготовить?"]
+      : ["С чего начать поступление?", "Как пользоваться маршрутом?"];
+  const portalHint = displayContext.taskId === "shortlist"
+    ? "Помогу разобраться, что сравнить при выборе программ."
+    : displayContext.taskId
+      ? /родител/i.test(displayContext.taskOwner || "")
+        ? "Разберём, что подготовить вместе с родителями."
+        : "Разберём, с чего начать и что подготовить для этого шага."
+      : "Открой шаг, чтобы обсудить его детали. Или спроси про поступление здесь.";
 
   useDraggableHeader(panelRef, headRef, open);
 
@@ -130,19 +155,25 @@ export function ChatWidget() {
     function onOpenRequest(e: Event) {
       const detail = (e as CustomEvent<{ prefill?: string; source?: string; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string }>)
         .detail;
-      stepContext.current = detail?.source === "portal-header" ? {
+      const nextContext: PortalChatContext = detail?.source === "portal-header" ? {
         portal: true, taskId: detail.taskId, taskTitle: detail.taskTitle, taskOwner: detail.taskOwner, taskContext: detail.taskContext,
       } : {};
+      stepContext.current = nextContext;
+      setDisplayContext(nextContext);
       rememberTrigger();
       setOpen(true);
       track("chat_open");
       track("ai_assistant_opened", { source: detail?.source ?? "portal" });
-      if (detail?.prefill) {
+      if (detail?.prefill && nextContext.portal) {
+        setInput(current => current.trim() ? current : detail.prefill || "");
+      } else if (detail?.prefill) {
         setTimeout(() => sendRef.current(detail.prefill), 50);
       }
     }
     function onPortalContext(event: Event) {
-      stepContext.current = (event as CustomEvent<typeof stepContext.current>).detail || {};
+      const nextContext = (event as CustomEvent<PortalChatContext>).detail || {};
+      stepContext.current = nextContext;
+      setDisplayContext(nextContext);
     }
     window.addEventListener("iitaly:open-chat", onOpenRequest);
     window.addEventListener("iitaly:portal-context", onPortalContext);
@@ -164,6 +195,13 @@ export function ChatWidget() {
     setOpen(true);
     track("chat_open");
     track("ai_assistant_opened", { source: "fab" });
+  }
+
+  function prepareQuestion(question: string) {
+    // Suggestions help compose a question; only Send can spend a chat request.
+    // A draft belongs to the user and is never replaced by a suggestion.
+    setInput(current => current.trim() ? current : question);
+    inputRef.current?.focus({ preventScroll: true });
   }
 
   async function send(overrideText?: string) {
@@ -253,7 +291,7 @@ export function ChatWidget() {
          пришлось бы гонять его через AnimatePresence, а он рендерит
          фрагмент (якорь + кнопка) — у фрагмента нет узла, за выход
          которого AnimatePresence могла бы отвечать. */}
-      {pathname !== "/portal" && <ChatLauncher hidden={open} onOpen={openChat} />}
+      {!portalMode && <ChatLauncher hidden={open} onOpen={openChat} />}
 
       <AnimatePresence>
         {open && (
@@ -270,7 +308,7 @@ export function ChatWidget() {
                 setOpen(false);
               }
             }}
-            className={`fixed right-4 ${pathname === "/portal" ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden rounded-xl border-2 border-ink bg-paper shadow-float`}
+            className={`fixed right-4 ${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4 rounded-[24px] border border-[#e3e3e8] bg-white font-[family-name:var(--font-apple-text)] text-[#1d1d1f] shadow-[0_12px_36px_rgba(29,29,31,0.12)]" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper shadow-float"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 4, transition: reducedMotion ? { duration: 0 } : PANEL_EXIT }}
@@ -278,24 +316,24 @@ export function ChatWidget() {
           >
             <div
               ref={headRef}
-              className="flex shrink-0 cursor-grab touch-none items-center gap-2 border-b-2 border-ink bg-ink px-4 py-3 text-cream select-none active:cursor-grabbing"
+              className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${portalMode ? "border-b border-[#e3e3e8] bg-white text-[#1d1d1f]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream/10">
+              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${portalMode ? "bg-[#fafafa]" : "bg-cream/10"}`}>
                 <Vespa pose="avatar" className="h-6 w-6" />
               </span>
               <b className="text-sm">Веспа</b>
               {/* Было «база 2026»: непонятно, что за база и почему 2026.
                  На остальных страницах это называется «правила приёма
                  2026/27» — одна формулировка на весь продукт. */}
-              <span className="font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase">
+              <span className={portalMode ? "text-[13px] text-[#68686d]" : "font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase"}>
                 правила 2026/27
               </span>
-              {pathname === "/portal" ? (
+              {portalMode ? (
               <a
                 href="#main"
                 aria-label="Закрыть чат"
                 onClick={event => { event.preventDefault(); setOpen(false); }}
-                className="chp-close ml-auto -mr-2 flex size-11 items-center justify-center rounded-pill text-cream/70 transition-colors duration-[var(--duration-fast)] hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cream"
+                className="chp-close ml-auto -mr-2 flex size-11 shrink-0 items-center justify-center rounded-pill text-[#68686d] hover:text-[#1d1d1f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1d1d1f]"
               >
                 <CloseIcon />
               </a>
@@ -311,16 +349,50 @@ export function ChatWidget() {
               )}
             </div>
 
+            {portalMode && (
+              <div
+                data-chat-step-context={displayContext.taskId || ""}
+                aria-live="polite"
+                className="shrink-0 border-b border-[#e3e3e8] bg-[#fafafa] px-4 py-3"
+              >
+                <p className="text-[13px] leading-5 text-[#68686d]">
+                  {displayContext.taskId ? "Открыт шаг" : "Помощь по кабинету"}
+                </p>
+                {displayContext.taskId && displayContext.taskTitle && (
+                  <p className="mt-1 text-sm leading-5 font-semibold [overflow-wrap:anywhere]">{displayContext.taskTitle}</p>
+                )}
+              </div>
+            )}
+
             <div
               ref={logRef}
               aria-live="polite"
               className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
             >
-              {messages.map((m, i) => (
+              {portalMode && !hasConversation && !showLead && (
+                <div className="text-sm leading-6">
+                  <p>{portalHint}</p>
+                  <div className="mt-3 flex flex-col items-start">
+                    {questions.map(question => (
+                      <a
+                        key={question}
+                        href="#chat-input"
+                        onClick={event => { event.preventDefault(); prepareQuestion(question); }}
+                        className="flex min-h-11 items-center py-2 text-[#1d1d1f] underline decoration-[#b9b9c0] underline-offset-4 hover:decoration-current focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1d1d1f]"
+                      >
+                        {question}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {(portalMode ? messages.slice(1) : messages).map((m, i) => (
                 <div
                   key={i}
                   className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
-                    m.who === "user"
+                    portalMode
+                      ? m.who === "user" ? "ml-auto bg-[#f1f1f4] text-[#1d1d1f]" : "bg-[#fafafa] text-[#1d1d1f]"
+                      : m.who === "user"
                       ? "ml-auto bg-ink text-cream"
                       : "bg-cream text-ink"
                   }`}
@@ -329,7 +401,7 @@ export function ChatWidget() {
                 </div>
               ))}
               {typing && (
-                <div className="flex w-fit items-center gap-2 rounded-lg bg-cream px-3 py-2">
+                <div className={`flex w-fit items-center gap-2 rounded-lg px-3 py-2 ${portalMode ? "bg-[#fafafa]" : "bg-cream"}`}>
                   <VespaReveal pose="thinking" className="h-7 w-auto shrink-0" />
                   <span className="flex items-center gap-1.5">
                     <span
@@ -350,7 +422,7 @@ export function ChatWidget() {
               {showLead && <LeadForm onDone={() => setShowLead(false)} />}
             </div>
 
-            <div className="flex shrink-0 gap-2 border-t-2 border-ink p-3">
+            <div className={`flex shrink-0 gap-2 p-3 ${portalMode ? "border-t border-[#e3e3e8]" : "border-t-2 border-ink"}`}>
               <label className="sr-only" htmlFor="chat-input">
                 Вопрос ИИ-консультанту
               </label>
@@ -362,15 +434,15 @@ export function ChatWidget() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") send();
                 }}
-                placeholder="Спроси про поступление…"
-                className="h-11 min-w-0 flex-1 rounded-md border-2 border-ink bg-cream px-3 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                placeholder={portalMode && displayContext.taskId ? "Спроси про этот шаг…" : "Спроси про поступление…"}
+                className={`h-11 min-w-0 flex-1 px-3 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${portalMode ? "rounded-xl border border-[#e3e3e8] bg-white focus-visible:outline-[#1d1d1f]" : "rounded-md border-2 border-ink bg-cream focus-visible:outline-red"}`}
               />
               <button
                 type="button"
                 onClick={() => send()}
                 disabled={busy || !input.trim()}
                 aria-label={busy ? "Ожидаем ответ" : "Отправить"}
-                className={`flex size-11 shrink-0 items-center justify-center rounded-md border-2 border-ink ${pathname === "/portal" ? "bg-transparent text-ink hover:bg-cream" : "bg-red text-cream hover:bg-red-deep hover:border-red-deep"} transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50`}
+                className={`flex size-11 shrink-0 items-center justify-center ${portalMode ? "rounded-full border border-[#e3e3e8] bg-transparent text-[#1d1d1f] hover:bg-[#fafafa]" : "rounded-md border-2 border-ink bg-red text-cream hover:bg-red-deep hover:border-red-deep"} transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50`}
               >
                 <SendIcon />
               </button>

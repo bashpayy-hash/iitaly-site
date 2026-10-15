@@ -4,8 +4,12 @@
 .meta { color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
 .explain { max-width: 65ch; margin: 18px 0; font-size: 16px; line-height: 1.6; }
 .date { margin: 14px 0; color: var(--portal-muted); font-size: 15px; line-height: 1.6; }
-.notes { margin: 12px 0; font-size: 15px; }
-.notes summary { display: list-item; min-height: 44px; padding: 10px 0; cursor: pointer; }
+.actionHint { max-width: 60ch; margin: 16px 0 12px; color: var(--portal-muted); font-size: 14px; line-height: 1.5; }
+.notes { margin: 20px 0 0; border-top: 1px solid var(--portal-border); font-size: 15px; }
+.notes summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 10px 0; cursor: pointer; list-style: none; }
+.notes summary::-webkit-details-marker { display: none; }
+.notes summary::after { content: "+"; flex: 0 0 auto; color: var(--portal-muted); font-size: 20px; line-height: 1; }
+.notes[open] summary::after { content: "−"; }
 .note, .reason { max-width: 65ch; margin: 12px 0; color: var(--portal-muted); font-size: 16px; line-height: 1.6; }
 .reason { padding-top: 16px; border-top: 1px solid var(--portal-border); }
 .fileArea { display: grid; gap: 7px; justify-items: start; min-height: 92px; width: 100%; margin-top: 24px; padding: 20px; border: 1px solid var(--portal-accent); border-radius: 24px; background: var(--portal-accent); color: var(--portal-surface); text-align: left; }
