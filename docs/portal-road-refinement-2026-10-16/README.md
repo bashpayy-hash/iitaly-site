@@ -14,6 +14,9 @@ and next step into one outlined surface.
   Labels are centred on their milestones instead of uneven interval midpoints.
 - The action remains one compact visual target inside the existing whole-guide
   link. There is no new navigation, button, completion action or API call.
+- Inside an already open step on mobile, “Сейчас” shares a row with the title.
+  This keeps the first city choice visible on a short 390 × 667 phone while
+  retaining the stage, count, road, complete title and timing information.
 
 The real route denominator, global completion position formula, current-step
 selection, 1080 ms interruptible transform motion, first-load behaviour and
@@ -33,6 +36,8 @@ step are used on both sides.
 | 1024 × 768 | [Before](before-1024.webp) | [After](after-1024.webp) |
 | 768 × 1024 | [Before](before-768.webp) | [After](after-768.webp) |
 | 390 × 667 | [Before](before-390.webp) | [After](after-390.webp) |
+
+[Opened university step on a short phone](open-step-390.webp).
 
 ## Verification
 

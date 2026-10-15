@@ -99,6 +99,10 @@
   .scooterAnchor { width: 48px; height: 33px; }
   .meta { margin-top: 4px; }
   .next, .document { padding-bottom: 16px; }
+  /* The task is already open: keep its context on one line where possible,
+     leaving the first city choice visible on short phone screens. */
+  .road[data-road-current-open="true"] .nextCopy { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "label title" "meta meta"; gap: 0 8px; align-items: baseline; }
+  .road[data-road-current-open="true"] .nextLabel { margin-bottom: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .road .fill, .road .scooter, .road .scooterBody, .road .wheel, .road .dashes, .road .nextCopy, .road .arrow { transition: none !important; }
