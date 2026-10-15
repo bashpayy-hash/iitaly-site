@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-15",
+  "provider": "Higgsfield",
+  "model": "gpt_image_2_5",
+  "purpose": "Contextual portal illustrations requested after PR #87; fictional scenes, no admission or document approval claims.",
+  "assets": [
+    {
+      "scene": "study",
+      "job": "d96d69b6-f936-41ec-aaae-fb4e2ef55567",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261015_185619_d96d69b6-f936-41ec-aaae-fb4e2ef55567.png",
+      "parameters": {
+        "prompt": "Create ONE new editorial watercolor spot illustration matching the supplied reference's handmade watercolor, delicate sepia pencil detail, warm ochre stone, restrained cypress green, terracotta and burgundy accents. Subject: a quiet Italian university study terrace. A low stone arcade with three elegant arches and a leafy courtyard beyond, in the foreground a small wooden study table with one open blank notebook, a burgundy folder and two books. A cypress and a small terracotta pot frame the right edge. Compose as a coherent low horizontal vignette with generous transparent negative space around its irregular painted silhouette, subtle watercolour edges and very limited ground wash. Eye-level three-quarter view, restful daylight, delicate yet legible at 280 CSS px. The scene feels like preparation for study, not a tourist postcard. Fictional campus; no identifiable university. No people, no text, no letters or numbers, no logos, no seals, no passport, no graduation hat, no visa stamp, no UI, no labels, no border or card, no solid rectangular background, no gradients or digital glow. True transparent alpha background; keep all painted objects comfortably inside frame. Not a collage of icons. Match the reference rendering style, invent this new scene rather than copying the arch illustration.",
+        "aspect_ratio": "4:3",
+        "reference_images": [
+          "dad260bb-c531-4d8c-aac3-2a86c595d4ec"
+        ],
+        "quality": "high",
+        "resolution": "1k",
+        "background": "transparent"
+      },
+      "derivatives": [
+        {
+          "path": "public/illustrations/editorial/portal-study-256.webp",
+          "width": 256,
+          "height": 192,
+          "bytes": 23344,
+          "sha256": "5f5749a7969dffc7b5d17d8d0ea73e7eb9d13059be74a614c2e48b79aa21b9fd"
+        },
+        {
+          "path": "public/illustrations/editorial/portal-study-512.webp",
+          "width": 512,
+          "height": 384,
+          "bytes": 80142,
+          "sha256": "da30be043daf6841887b1bbd90ecb8c6e5b7b29c39d0a1f18a78655f0ac7f2bb"
+        }
+      ],
+      "sourceSha256": "325346cb83d897d1ebfc67c9a69618e1ec77b1d043239cc9f48b50997a07c317",
+      "sourceSize": [
+        1168,
+        880
+      ],
+      "processing": "Aspect-preserving Lanczos resize inside a 4:3 transparent canvas; WebP quality 86, alpha preserved. No generative edits or colour changes."
+    },
+    {
+      "scene": "route",
+      "job": "1eda2a44-5424-49ae-a548-58feacf0f7c1",
+      "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261015_185637_1eda2a44-5424-49ae-a548-58feacf0f7c1.png",
+      "parameters": {
+        "prompt": "Create ONE new elegant editorial watercolor spot illustration in exactly the supplied reference family: hand-painted translucent watercolor with delicate sepia pencil lines, restrained terracotta and ochre, muted cypress green, warm cream paper and one burgundy accent. Subject: preparing a study journey, a low still-life of one open blank cream notebook, a softly folded unlabelled paper map, a slim green pencil and a small closed burgundy travel folio. A tiny olive sprig rests beside them. Three-quarter slightly elevated view, calm natural shapes, considered asymmetrical composition, all objects belong to one scene resting on the same very light watercolor ground shadow. Clear enough to read at 120 CSS px, not busy or photorealistic, no separate icons. Irregular watercolor silhouette with true transparent alpha background and generous transparent edges. No text, letters, numbers, logos, passport emblems, stamps, ticks, checkmarks, approvals, plane tickets, dates, university branding, UI, frames, borders, solid rectangle background or digital gradient. Match the references' craftsmanship and warm natural pigments; do not copy their document pile or campus subjects. Output one clean horizontal 4:3 vignette.",
+        "aspect_ratio": "4:3",
+        "reference_images": [
+          "fc7f2627-ab4e-45ae-8a2f-70a208cbfd35",
+          "cc51e42a-f1a5-435e-8ddd-bd283e595ef3"
+        ],
+        "quality": "high",
+        "resolution": "1k",
+        "background": "transparent"
+      },
+      "derivatives": [
+        {
+          "path": "public/illustrations/editorial/portal-route-256.webp",
+          "width": 256,
+          "height": 192,
+          "bytes": 17780,
+          "sha256": "b1dbe6a92bc68d53a752c6a890c07adcdc4db918672ffe61bc1a15fb5140f597"
+        },
+        {
+          "path": "public/illustrations/editorial/portal-route-512.webp",
+          "width": 512,
+          "height": 384,
+          "bytes": 56760,
+          "sha256": "72d0c8b9aaa067e88eda0a5f00cac825d5f8f949bf6b817a864da76dd2bd15f5"
+        }
+      ],
+      "sourceSha256": "78ea64f61a4cfb65da46f2c375771de44a3764b0527a8359fd965d19e21315fb",
+      "sourceSize": [
+        1168,
+        880
+      ],
+      "processing": "Aspect-preserving Lanczos resize inside a 4:3 transparent canvas; WebP quality 86, alpha preserved. No generative edits or colour changes."
+    }
+  ]
+}

@@ -175,7 +175,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   await checkSharedBrand(page, loginBrand, mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]');
   if (mode === 'onboarding') assert.equal(await road(page).count(), 0, 'A route guide appears only after the initial route is built');
   else await checkPersistentRoad(page);
-  if (mode !== 'onboarding') await checkArtwork(page, 'campus');
+  if (mode !== 'onboarding') await checkArtwork(page, 'study');
   return { context, page, calls, chatCalls, profileCalls, fileCalls, loginBrand };
 }
 const overview = page => page.locator('[data-portal-overview]');
@@ -217,6 +217,9 @@ async function checkArtwork(page, expectedScene) {
       lazy: image.loading,
       pointerEvents: getComputedStyle(artwork).pointerEvents,
       inSidebar: Boolean(artwork.closest('aside')),
+      inMain: Boolean(artwork.closest('main')),
+      inChrome: Boolean(artwork.closest('[data-portal-chrome]')),
+      objectFit: getComputedStyle(image).objectFit,
       interactive: Boolean(artwork.closest('a, button')) || Boolean(artwork.querySelector('a, button, [tabindex]')),
     };
   })));
@@ -224,7 +227,12 @@ async function checkArtwork(page, expectedScene) {
     assert.equal(image.hidden, 'true', 'Portal artwork is decorative and hidden from assistive technology');
     assert.equal(image.alt, '', 'Decorative images do not repeat page content');
     assert(image.width > 0 && image.height > 0, 'Artwork reserves intrinsic dimensions before loading');
-    assert(image.naturalWidth > 0 && image.naturalHeight === image.naturalWidth, 'Visible artwork decodes without distortion');
+    const expectedRatio = ['study', 'route'].includes(image.scene) ? 4 / 3 : 1;
+    assert(['study', 'route', 'campus', 'documents'].includes(image.scene), 'Artwork uses an approved contextual scene');
+    assert.equal(image.width, 512);
+    assert.equal(image.height, expectedRatio === 1 ? 512 : 384, 'The intrinsic box reserves the actual scene ratio');
+    assert(image.naturalWidth > 0 && image.naturalHeight > 0 && Math.abs(image.naturalWidth / image.naturalHeight - image.width / image.height) < 0.005, 'The loaded responsive asset matches its intrinsic ratio without distortion');
+    assert.equal(image.objectFit, 'contain', 'The full illustration remains visible without cropping');
     assert([256, 512].some(size => image.selectedSrc === `/illustrations/editorial/portal-${image.scene}-${size}.webp`), 'The browser selected a local responsive WebP');
     assert.equal(image.src, `/illustrations/editorial/portal-${image.scene}-256.webp`);
     assert.equal(image.srcSet, `/illustrations/editorial/portal-${image.scene}-256.webp 256w, /illustrations/editorial/portal-${image.scene}-512.webp 512w`, 'Artwork uses local responsive assets');
@@ -232,11 +240,14 @@ async function checkArtwork(page, expectedScene) {
     assert.equal(image.lazy, 'lazy');
     assert.equal(image.pointerEvents, 'none', 'Artwork cannot intercept the current action');
     assert.equal(image.interactive, false, 'Artwork introduces no additional action');
+    assert.equal(image.inMain, true, 'Contextual artwork belongs to the current screen content');
+    assert.equal(image.inSidebar, false, 'An unrelated illustration no longer repeats below the navigation');
+    assert.equal(image.inChrome, false, 'Decorative imagery does not enlarge the persistent progress guide');
   }
+  assert.equal(visible.length, expectedScene ? 1 : 0, 'Each main screen has one contextual scene; detail and settings screens do not repeat it');
   if (expectedScene) {
     const expected = visible.filter(image => image.scene === expectedScene);
     assert.equal(expected.length, 1, `One ${expectedScene} illustration is visible`);
-    assert.equal(expected[0].inSidebar, expectedScene === 'campus' && page.viewportSize().width > 900, 'Campus artwork follows the existing desktop/mobile layout');
   }
 }
 async function noOverflow(page, label) {
@@ -360,6 +371,7 @@ async function checkRoadMotion(page, reduced = true) {
 async function go(page, name) {
   await navigation(page).getByRole('link', { name, exact: true }).click();
   await checkPersistentRoad(page);
+  await checkArtwork(page, { 'Обзор': 'study', 'План': 'route', 'Документы': 'documents' }[name]);
 }
 async function openStep(page, locator, id, screen = 'plan') {
   if (await locator.evaluate(element => element.tagName === 'BUTTON')) {
@@ -390,7 +402,7 @@ try {
     async function capture(page, name, mode, width) {
       await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0, 0); await new Promise(requestAnimationFrame); });
       await page.mouse.move(0, 0);
-      await checkArtwork(page, name === 'overview' ? 'campus' : name === 'documents' ? 'documents' : undefined);
+      await checkArtwork(page, { overview: 'study', plan: 'route', documents: 'documents' }[name]);
       await noOverflow(page, `${name} ${mode} ${width}px`);
       await page.screenshot({ path: resolve(output, `${name}-${mode}-${width}.png`), fullPage: true });
       results.push({ name, mode, width, overflow: false, buttons: await page.locator('button').count() });
@@ -455,7 +467,7 @@ try {
       greeting: parseFloat(getComputedStyle(document.querySelector('h1')).fontSize),
       metadata: parseFloat(getComputedStyle(element.closest('[data-road-text]').lastElementChild).fontSize),
     }));
-    assert(hierarchy.action >= 18 && hierarchy.action >= hierarchy.greeting, 'The compact current action is readable and at least as prominent as the identity line');
+    assert(hierarchy.action >= 18 && hierarchy.action >= hierarchy.greeting, `${label}: the compact current action is readable and at least as prominent as the identity line (${JSON.stringify(hierarchy)})`);
     assert(hierarchy.metadata >= 13, 'Current-step guidance is readable without zoom');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run({ include: [['[data-portal-chrome]'], ['[data-portal-overview]']] }, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));

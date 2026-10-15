@@ -129,10 +129,10 @@
 
 .greeting {
   font-family: var(--portal-heading-font);
-  font-size: 18px;
-  line-height: 1.5;
-  letter-spacing: -.015em;
-  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  font-weight: 600;
 }
 
 .subline {
@@ -651,6 +651,7 @@
 }
 
 @media (max-width: 900px) {
+  .greeting { font-size: 18px; }
   .topbar { display: block; margin-bottom: 20px; }
   .mobileBrand { align-self: center; grid-column: 1; grid-row: 1; }
   .shell { display: block; padding: 24px 24px; padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
@@ -712,7 +713,6 @@
 @media (max-width: 480px) {
   .shell { padding-left: 20px; padding-right: 20px; }
   .topbar { gap: 10px; }
-  .greeting { font-size: 18px; }
   .subline { font-size: 14px; }
   .intakeChip { display: none; }
   .hero::after,
