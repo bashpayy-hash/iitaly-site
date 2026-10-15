@@ -7,7 +7,6 @@ import { documentOutcome, type DocumentOutcomeKind } from "@/lib/portalDocument"
 import { taskBlockedReason, taskDate } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
 import styles from "./portal-documents.module.css";
-import artwork from "./portal-artwork.module.css";
 
 const GROUPS: { kind: DocumentOutcomeKind; label: string }[] = [
   { kind: "approved", label: "Проверка пройдена" },
@@ -37,13 +36,12 @@ export function DocsSection({ data, onOpenDoc, currentTaskId }: {
   const visible = rows.filter(row => filter === "all" || row.outcome.kind === filter);
 
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
-    <header className={`${styles.heading} ${artwork.documentHeading}`}>
-      <div className={artwork.documentCopy}>
+    <header className={styles.heading}>
+      <div className={styles.titleRow}>
         <h2 id="portal-documents-heading">Проверяй документы без лимита</h2>
-        <p>Загружай исправленные версии — получай итог, причину и следующий шаг.</p>
-        <p className={styles.serviceNote} data-document-check-limits>До 12 файлов за 5 минут. В кабинете сохраняется последний разбор.</p>
+        <PortalArtwork placement="documents" />
       </div>
-      <PortalArtwork placement="documents" />
+      <p>Загружай исправленные версии — получай итог, причину и следующий шаг.</p>
     </header>
     {rows.length > 0 && <fieldset className={styles.filters}>
       <legend className="sr-only">Статус проверки</legend>
@@ -66,14 +64,16 @@ export function DocsSection({ data, onOpenDoc, currentTaskId }: {
       >
         <div className={styles.file}>
           <h3>{row.title}</h3>
-          {row.doc?.fileName && <p className={styles.fileName}>{row.doc.fileName}</p>}
-          <p className={styles.meta}>{[row.owner || "Ты", taskDate(row)].filter(Boolean).join(" · ")}</p>
+          <p className={styles.meta}>{[row.owner || "Ты", taskDate(row), row.doc?.fileName].filter(Boolean).join(" · ")}</p>
           {row.available === false && !row.doc && <p className={styles.meta}>{taskBlockedReason(row)}</p>}
-          <span className={styles.status} data-outcome={row.outcome.kind}><StatusMark kind={row.outcome.kind} />{row.outcome.label}</span>
         </div>
-        <span className={styles.rowAction}>{row.doc ? "Разбор" : row.id === currentTaskId && row.available !== false ? "Приложить файл" : "Подробнее"}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg></span>
+        <div className={styles.rowFooter}>
+          <span className={styles.status} data-outcome={row.outcome.kind}><StatusMark kind={row.outcome.kind} />{row.outcome.label}</span>
+          <span className={styles.rowAction}>{row.doc ? "Разбор" : row.id === currentTaskId && row.available !== false ? "Приложить файл" : "Подробнее"}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg></span>
+        </div>
       </a>)}
       {!rows.length && <p className={styles.empty}>Здесь пока нет документов.</p>}
     </div>
+    <p className={styles.serviceNote} data-document-check-limits>До 12 файлов за 5 минут. В кабинете сохраняется последний разбор.</p>
   </section>;
 }

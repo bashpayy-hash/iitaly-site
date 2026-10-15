@@ -295,6 +295,7 @@ async function checkPersistentRoad(page, { currentOpen = false, afterScroll = fa
     assert.equal(await road(page).evaluate(element => element.tagName), 'DIV', 'An open current step has a static guide instead of a second action');
     assert.equal(await road(page).getAttribute('href'), null);
     assert.equal(await road(page).locator('a, button, [role="button"]').count(), 0, 'The static guide has no hidden competing action');
+    assert.equal(await road(page).locator('[data-road-action]').count(), 0, 'An already open current step has no repeated visual action in the guide');
     assert.equal(await road(page).getAttribute('data-road-static'), 'true');
   }
   await noOverflow(page, 'The persistent progress guide does not cause horizontal scrolling');
@@ -368,7 +369,7 @@ async function checkSettings(page) {
 async function checkRoadMotion(page, reduced = true) {
   const card = road(page);
   assert.equal(await card.getAttribute('data-traveling'), 'false', 'Initial presentation never drives the scooter');
-  const motion = await card.locator('[data-road-scooter], [data-road-fill], [data-road-spokes], [data-road-body], [data-road-text]').evaluateAll(elements => elements.map(element => ({
+  const motion = await card.locator('[data-road-scooter], [data-road-fill], [data-road-spokes], [data-road-body], [data-road-text], [data-road-dashes]').evaluateAll(elements => elements.map(element => ({
     animation: getComputedStyle(element).animationName,
     transition: getComputedStyle(element).transitionDuration,
   })));
@@ -377,6 +378,41 @@ async function checkRoadMotion(page, reduced = true) {
     assert.equal(style.animation, 'none', 'Reduced motion disables every road animation');
     assert(style.transition.split(',').every(value => parseFloat(value) === 0), 'Reduced motion updates immediately');
   }
+  const positions = await card.evaluate(async element => {
+    const sample = () => {
+      const scooter = element.querySelector('[data-road-scooter]');
+      return { scooter: new DOMMatrix(getComputedStyle(scooter).transform).m41,
+        fill: element.querySelector('[data-road-fill]').getBoundingClientRect().width,
+        destination: scooter.parentElement.clientWidth * parseFloat(scooter.style.transform.match(/translateX\(([^%]+)/)[1]) / 100 };
+    };
+    const before = sample();
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    return [before, sample()];
+  });
+  for (const position of positions) {
+    assert(Math.abs(position.scooter - position.destination) < 1, 'An initial or reduced-motion presentation starts at its final position');
+    assert(Math.abs(position.fill - position.scooter) < 1, 'The resting fill ends at the scooter');
+  }
+  assert(Math.abs(positions[1].scooter - positions[0].scooter) < 0.1, 'Initial display and reduced-motion completion do not animate between frames');
+}
+async function checkCompactRoadAction(page, label) {
+  const action = road(page).locator('[data-road-action]');
+  assert.equal(await action.count(), 1, `${label}: one compact visual action identifies the whole-road link`);
+  assert.equal(await action.locator('a, button, [role="button"], [data-road-step-title]').count(), 0, 'The full step title stays outside the compact action, with no nested interaction');
+  const metrics = await road(page).evaluate(element => {
+    const title = element.querySelector('[data-road-step-title]'), action = element.querySelector('[data-road-action]');
+    const titleBox = title.getBoundingClientRect(), actionBox = action.getBoundingClientRect();
+    return { width: actionBox.width, height: actionBox.height, label: action.textContent.trim(),
+      actionAboveFold: actionBox.top >= 0 && actionBox.bottom <= innerHeight,
+      titleAboveFold: titleBox.top >= 0 && titleBox.bottom <= innerHeight,
+      titleUnclipped: title.scrollWidth <= title.clientWidth + 1 && title.scrollHeight <= title.clientHeight + 1,
+      overlap: titleBox.left < actionBox.right - 1 && titleBox.right > actionBox.left + 1 && titleBox.top < actionBox.bottom - 1 && titleBox.bottom > actionBox.top + 1 };
+  });
+  assert(metrics.height >= 44 && metrics.height <= 52, `${label}: the red target is a single compact touch row (${JSON.stringify(metrics)})`);
+  assert(metrics.width <= 150, `${label}: a long step title cannot grow the action into a red banner (${JSON.stringify(metrics)})`);
+  assert(metrics.titleUnclipped && !metrics.overlap, `${label}: the complete title and action remain separate and readable`);
+  assert(metrics.titleAboveFold && metrics.actionAboveFold, `${label}: the current verb, full title and action are visible without scrolling`);
+  return metrics;
 }
 async function go(page, name) {
   await navigation(page).getByRole('link', { name, exact: true }).click();
@@ -481,20 +517,13 @@ try {
     const hierarchy = await page.locator('[data-road-step-title]').evaluate(element => ({
       action: parseFloat(getComputedStyle(element).fontSize),
       greeting: parseFloat(getComputedStyle(document.querySelector('h1')).fontSize),
-      metadata: parseFloat(getComputedStyle(element.closest('[data-road-text]').lastElementChild).fontSize),
+      metadata: parseFloat(getComputedStyle(element.closest('[data-road-text]').querySelector('[data-road-meta]')).fontSize),
     }));
     assert(hierarchy.action >= 18 && hierarchy.action >= hierarchy.greeting, `${label}: the compact current action is readable and at least as prominent as the identity line (${JSON.stringify(hierarchy)})`);
     assert(hierarchy.metadata >= 13, 'Current-step guidance is readable without zoom');
-    const pill = await page.locator('[data-road-step-title]').evaluate(element => {
-      const text = element.getBoundingClientRect(), action = element.parentElement.getBoundingClientRect();
-      const road = element.closest('[data-portal-road]').getBoundingClientRect();
-      return { width: action.width, height: action.height, textWidth: text.width, roadWidth: road.width,
-        unclipped: element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1 };
-    });
-    assert(pill.height >= 44, `${label}: the compact red target retains its minimum touch height`);
-    assert(pill.width <= pill.textWidth + 80, `${label}: the red target fits its title and arrow instead of filling a column (${JSON.stringify(pill)})`);
-    assert(pill.unclipped, `${label}: the current action title is not clipped`);
-    if (viewport.width >= 1024) assert(pill.width <= 400 && pill.width < pill.roadWidth * 0.55, 'The desktop action stays intrinsic-width instead of becoming a full-width red banner');
+    // The step title is now ordinary readable text; the short action remains
+    // one fixed-size target even when a parent or document title is long.
+    await checkCompactRoadAction(page, label);
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run({ include: [['[data-portal-chrome]'], ['[data-portal-overview]']] }, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
     assert.deepEqual(violations, [], `${label} overview accessibility`);
@@ -616,6 +645,7 @@ try {
     if (mode === 'parents') {
       await checkRoad(page, 'Старт', 2, ids.length);
       assert.match(await road(page).innerText(), /Попросить родителей/);
+      await checkCompactRoadAction(page, 'Parent task at 390px');
       await openStep(page, page.locator('[data-current-step="family-budget"]'), 'family-budget');
       assert.equal(await page.locator('button').count(), 1, 'A current parent self-report has exactly one necessary action');
       await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
@@ -672,6 +702,12 @@ try {
       return { current: element.dataset.currentStep, done: element.dataset.roadDone,
         title: text.textContent, live: element.querySelector('[data-road-next]').getAttribute('aria-live'),
         transition: getComputedStyle(scooter).transitionDuration, easing: getComputedStyle(scooter).transitionTimingFunction,
+        synchronizedTransitions: [scooter, fill, ...element.querySelectorAll('[data-road-spokes]')].map(node => ({
+          property: getComputedStyle(node).transitionProperty,
+          duration: getComputedStyle(node).transitionDuration,
+          delay: getComputedStyle(node).transitionDelay,
+          easing: getComputedStyle(node).transitionTimingFunction,
+        })),
         left: new DOMMatrix(getComputedStyle(scooter).transform).m41, destination: scooter.parentElement.clientWidth * parseFloat(scooter.style.transform.match(/translateX\(([^%]+)/)[1]) / 100,
         fillWidth: fill.getBoundingClientRect().width, wheelAnimation: getComputedStyle(wheel).animationName,
         copyAnimation: getComputedStyle(text).animationDuration,
@@ -682,12 +718,41 @@ try {
     assert.match(traveling.title, /Попросить родителей/);
     assert.doesNotMatch(traveling.title, /Подготовить сведения/, 'The old completed step never remains on the moving road');
     assert.equal(traveling.live, 'polite');
-    assert.equal(traveling.transition, '0.92s');
-    assert.equal(traveling.easing, 'cubic-bezier(0.22, 1, 0.36, 1)');
+    assert.equal(traveling.transition, '1.08s');
+    assert.equal(traveling.easing, 'cubic-bezier(0.4, 0, 0.2, 1)');
+    for (const transition of traveling.synchronizedTransitions) assert.deepEqual(transition, {
+      property: 'transform', duration: traveling.transition, delay: '0s', easing: traveling.easing,
+    }, 'Fill, scooter and both wheels share one transform-only acceleration and deceleration');
     assert(traveling.left < traveling.destination, 'The scooter interpolates instead of snapping to the destination');
     assert(Math.abs(traveling.fillWidth - traveling.left) < 2, 'The fill travels with the scooter');
-    assert.notEqual(traveling.wheelAnimation, 'none', 'Spokes rotate only while driving');
+    assert.equal(traveling.wheelAnimation, 'none', 'Wheels follow actual travel instead of an independent constant-speed animation');
     assert.equal(traveling.copyAnimation, '0.42s');
+    const frames = await road(page).evaluate(async element => {
+      const scooter = element.querySelector('[data-road-scooter]'), fill = element.querySelector('[data-road-fill]');
+      const wheels = [...element.querySelectorAll('[data-road-spokes]')], frames = [];
+      const started = performance.now();
+      await new Promise(resolve => {
+        const record = now => {
+          frames.push({ time: now - started,
+            scooter: new DOMMatrix(getComputedStyle(scooter).transform).m41,
+            fill: fill.getBoundingClientRect().width,
+            wheels: wheels.map(wheel => getComputedStyle(wheel).transform),
+          });
+          if (now - started >= 320 || element.dataset.traveling !== 'true') resolve();
+          else requestAnimationFrame(record);
+        };
+        requestAnimationFrame(record);
+      });
+      return frames;
+    });
+    assert(frames.length >= 3, 'Progress is observed over multiple rendered frames');
+    assert(frames.at(-1).scooter - frames[0].scooter > 1, 'The scooter visibly advances during the sampled interval');
+    for (let index = 0; index < frames.length; index++) {
+      const frame = frames[index];
+      assert(Math.abs(frame.fill - frame.scooter) < 2, 'Fill and scooter stay aligned throughout the trip, not only at its ends');
+      if (index) assert(frame.scooter >= frames[index - 1].scooter - 0.1, 'The scooter does not jump backwards during a forward completion');
+    }
+    for (let index = 0; index < 2; index++) assert.notEqual(frames.at(-1).wheels[index], frames[0].wheels[index], 'Both wheels turn with the advancing scooter');
     await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'false');
     const settled = await road(page).locator('[data-road-scooter]').evaluate(element => ({ actual: new DOMMatrix(getComputedStyle(element).transform).m41, expected: element.parentElement.clientWidth * parseFloat(element.style.transform.match(/translateX\(([^%]+)/)[1]) / 100 }));
     assert(Math.abs(settled.actual - settled.expected) < 1, 'The scooter reaches its real completion position');
@@ -696,7 +761,7 @@ try {
     await waitForOverview(page);
     await checkRoadMotion(page, false);
     assert.equal(calls.length, 1, 'Reload never repeats the completion action');
-    results.push({ motion: 'normal', initialAndReloadDoNotDrive: true, confirmedCompletionDrives: true, newStepImmediate: true, fillAndScooterTravelTogether: true, reducedMotionCovered: true });
+    results.push({ motion: 'normal', initialAndReloadDoNotDrive: true, confirmedCompletionDrives: true, newStepImmediate: true, fillAndScooterTravelTogether: true, sampledTravelFrames: frames.length, synchronizedWheelEasing: true, reducedMotionCovered: true });
     await context.close();
   }
   for (const viewport of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
@@ -789,8 +854,8 @@ try {
     await checkRoad(page, 'Старт', 1, ids.length);
     const guideMetrics = await road(page).evaluate(element => ({
       height: element.getBoundingClientRect().height,
-      actionWidth: element.querySelector('[data-road-step-title]').parentElement.getBoundingClientRect().width,
-      actionHeight: element.querySelector('[data-road-step-title]').parentElement.getBoundingClientRect().height,
+      actionWidth: element.querySelector('[data-road-action]').getBoundingClientRect().width,
+      actionHeight: element.querySelector('[data-road-action]').getBoundingClientRect().height,
     }));
     results.push({ viewport, helper: 'one header entry', optionalGuidanceKeyboardAccessible: true, guidanceDoesNotMutateData: true, twoContextualPrompts: true, promptOnlyPrefillsAndFocuses: true, unsentDraftPreserved: true, stepContextSentOnlyOnUserQuestion: true, oldContextClearedOnList: true, axe: 'pass', guideMetrics });
     await context.close();
@@ -907,6 +972,7 @@ try {
     const visible = action && action.y >= 0 && action.y + action.height <= viewport.height;
     if (!visible) lateFailures.push({ viewport, action });
     await checkRoad(page, 'Документы', 4, 7);
+    await checkCompactRoadAction(page, `Later document task at ${viewport.width}x${viewport.height}`);
     await go(page, 'План');
     await noButtons(page, 'Late-current plan');
     await page.screenshot({ path: resolve(output, `portal-plan-late-${viewport.width}x${viewport.height}.png`), fullPage: true });

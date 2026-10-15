@@ -595,7 +595,7 @@ export function PortalExplorer() {
     <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
-        secondaryAction={Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
+        secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
     </section>
     </div>

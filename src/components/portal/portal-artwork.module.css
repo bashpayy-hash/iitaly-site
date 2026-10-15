@@ -21,16 +21,16 @@
 
 .overviewLayout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  grid-template-rows: auto 1fr;
-  column-gap: 32px;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  grid-template-rows: auto auto;
+  column-gap: 24px;
   align-items: start;
   align-content: start;
 }
 
-.overviewIntro { grid-column: 1; grid-row: 1; margin-bottom: 28px; }
-.overviewContent { grid-column: 1; grid-row: 2; }
-.overview { grid-column: 2; grid-row: 1 / span 2; width: 320px; aspect-ratio: 4 / 3; margin-top: 12px; }
+.overviewIntro { grid-column: 1; grid-row: 1; margin-bottom: 24px; align-self: center; }
+.overviewContent { grid-column: 1 / -1; grid-row: 2; }
+.overview { grid-column: 2; grid-row: 1; width: 160px; aspect-ratio: 4 / 3; margin-top: -8px; align-self: center; }
 
 .planHeading {
   display: flex;

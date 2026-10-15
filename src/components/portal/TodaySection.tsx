@@ -45,18 +45,10 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, shortlist, onOp
   return (
     <div className={styles.overview} data-portal-overview>
       <a href="/portal?view=docs" className={styles.documentFeature} data-unlimited-documents onClick={event => followRow(event, onOpenDocuments)}>
-        <span className={styles.featureEyebrow}>В твоём кабинете</span>
         <h2>Проверяй документы без лимита</h2>
         <p>Загружай исправленные версии. Получай итог, причину и следующий шаг.</p>
         <span className={styles.featureLink}>Выбрать документ <span aria-hidden="true">→</span></span>
       </a>
-      {universityStep && universityNames.length > 0 && <a className={styles.universityChoice} href="/portal?view=plan&task=shortlist" data-saved-universities onClick={event => followRow(event, () => onOpenTask(universityStep))}>
-        <span className={styles.label}>Твои вузы</span><span>{universityNames.join(" · ")}</span><span className={styles.choiceNote}>Выбраны в этом браузере · изменить</span>
-      </a>}
-      {next && <p className={styles.next} data-road-later>
-        <span className={styles.label}>Потом</span>{" · "}{taskTitle(next)}. Это {nextOwner}, сейчас открывать не нужно.
-      </p>}
-
       {fileTask && doc && outcome && <a
         className={styles.document}
         href={`/portal?view=docs&doc=${encodeURIComponent(fileTask.id)}`}
@@ -64,10 +56,15 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, shortlist, onOp
         data-document-outcome={outcome.kind}
         onClick={event => followRow(event, () => onOpenDoc(fileTask.id))}
       >
-        <span className={styles.label}>Уточнить</span>{" · "}
+        <span className={styles.label}>{outcome.kind === "approved" ? "Последняя проверка" : "Уточнить"}</span>{" · "}
         <span className={styles.fileName}>{DOC_TASKS[fileTask.id]}</span>{" · "}
         <span className={styles.status} data-outcome={outcome.kind}>{outcome.label}</span>
         {shortSummary && <span className={styles.documentReason}>{shortSummary}</span>}
+      </a>}
+      <div className={styles.routeContext} data-overview-support>
+      {universityStep && universityNames.length > 0 && <a className={styles.universityChoice} href="/portal?view=plan&task=shortlist" data-saved-universities onClick={event => followRow(event, () => onOpenTask(universityStep))}>
+        <span className={styles.label}>Твои вузы</span>
+        <span className={styles.rowContent}>{universityNames.join(" · ")}<span className={styles.choiceNote}>Выбраны в этом браузере · изменить</span></span>
       </a>}
       {orientirs.length > 0 && <section className={styles.orientirs} aria-label="Ближайшие сроки" data-near-orientirs>
         <h2>Ближайшие сроки</h2>
@@ -76,6 +73,11 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, shortlist, onOp
           <span>{taskDate(row)} · {row.owner || "Ты"}</span>
         </p>)}
       </section>}
+      {next && <p className={styles.next} data-road-later>
+        <span className={styles.label}>Потом</span>
+        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>Это {nextOwner}, сейчас открывать не нужно.</span></span>
+      </p>}
+      </div>
     </div>
   );
 }
