@@ -172,6 +172,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   await page.locator(mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]').waitFor();
   assert.equal(await page.evaluate(() => window.scrollY), 0, 'The login form scroll position does not hide the new current step');
   await checkSharedBrand(page, loginBrand, mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]');
+  if (mode !== 'onboarding') await checkArtwork(page, 'campus');
   return { context, page, calls, chatCalls, profileCalls, fileCalls, loginBrand };
 }
 const overview = page => page.locator('[data-portal-overview]');
@@ -179,6 +180,50 @@ const road = page => page.locator('[data-portal-road]');
 const detail = page => page.locator('[data-step-detail]');
 const navigation = page => page.locator('nav[aria-label="Разделы личного кабинета"], [aria-label="Разделы кабинета"]').filter({ visible: true });
 const assistant = page => page.locator('a[data-portal-assistant]');
+async function checkArtwork(page, expectedScene) {
+  // Decode only the visible responsive variant; hidden desktop/mobile copies
+  // stay lazy. A missing asset must fail the review rather than make a blank shot.
+  const images = page.locator('[data-portal-art] img').filter({ visible: true });
+  const visible = await images.evaluateAll(async elements => Promise.all(elements.map(async image => {
+    await image.decode();
+    const artwork = image.closest('[data-portal-art]');
+    return {
+      scene: artwork.dataset.portalArt,
+      hidden: artwork.getAttribute('aria-hidden'),
+      alt: image.getAttribute('alt'),
+      width: Number(image.getAttribute('width')),
+      height: Number(image.getAttribute('height')),
+      naturalWidth: image.naturalWidth,
+      naturalHeight: image.naturalHeight,
+      src: image.getAttribute('src'),
+      selectedSrc: new URL(image.currentSrc).pathname,
+      srcSet: image.getAttribute('srcset'),
+      sizes: image.getAttribute('sizes'),
+      lazy: image.loading,
+      pointerEvents: getComputedStyle(artwork).pointerEvents,
+      inSidebar: Boolean(artwork.closest('aside')),
+      interactive: Boolean(artwork.closest('a, button')) || Boolean(artwork.querySelector('a, button, [tabindex]')),
+    };
+  })));
+  for (const image of visible) {
+    assert.equal(image.hidden, 'true', 'Portal artwork is decorative and hidden from assistive technology');
+    assert.equal(image.alt, '', 'Decorative images do not repeat page content');
+    assert(image.width > 0 && image.height > 0, 'Artwork reserves intrinsic dimensions before loading');
+    assert(image.naturalWidth > 0 && image.naturalHeight === image.naturalWidth, 'Visible artwork decodes without distortion');
+    assert([256, 512].some(size => image.selectedSrc === `/illustrations/editorial/portal-${image.scene}-${size}.webp`), 'The browser selected a local responsive WebP');
+    assert.equal(image.src, `/illustrations/editorial/portal-${image.scene}-256.webp`);
+    assert.equal(image.srcSet, `/illustrations/editorial/portal-${image.scene}-256.webp 256w, /illustrations/editorial/portal-${image.scene}-512.webp 512w`, 'Artwork uses local responsive assets');
+    assert(image.sizes, 'The browser can choose the appropriately sized asset');
+    assert.equal(image.lazy, 'lazy');
+    assert.equal(image.pointerEvents, 'none', 'Artwork cannot intercept the current action');
+    assert.equal(image.interactive, false, 'Artwork introduces no additional action');
+  }
+  if (expectedScene) {
+    const expected = visible.filter(image => image.scene === expectedScene);
+    assert.equal(expected.length, 1, `One ${expectedScene} illustration is visible`);
+    assert.equal(expected[0].inSidebar, expectedScene === 'campus' && page.viewportSize().width > 900, 'Campus artwork follows the existing desktop/mobile layout');
+  }
+}
 async function noOverflow(page, label) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label);
 }
@@ -272,6 +317,7 @@ try {
     async function capture(page, name, mode, width) {
       await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0, 0); await new Promise(requestAnimationFrame); });
       await page.mouse.move(0, 0);
+      await checkArtwork(page, name === 'overview' ? 'campus' : name === 'documents' ? 'documents' : undefined);
       await noOverflow(page, `${name} ${mode} ${width}px`);
       await page.screenshot({ path: resolve(output, `${name}-${mode}-${width}.png`), fullPage: true });
       results.push({ name, mode, width, overflow: false, buttons: await page.locator('button').count() });
@@ -401,6 +447,7 @@ try {
     await checkNavigation(page, true);
     await noOverflow(page, `Plan ${label}`);
     await go(page, 'Документы');
+    await checkArtwork(page, 'documents');
     assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'missing'], 'Empty status filters are hidden');
     assert.equal(await page.locator('[data-document]').count(), 2);
     for (const filter of await page.locator('[data-document-filter]').all()) {
@@ -427,7 +474,7 @@ try {
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), [null, null]);
     }
-    results.push({ viewport, sharedSiteBrand: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
+    results.push({ viewport, sharedSiteBrand: true, decorativeArtwork: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
   for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual', 'last']) {

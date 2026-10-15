@@ -1,0 +1,53 @@
+{
+  "created": "2026-10-15",
+  "provider": "Higgsfield",
+  "model": "gpt_image_2_5",
+  "reference": "https://iitaly.netlify.app/illustrations/editorial/campus-arrival-480.webp",
+  "treatment": "Transparent watercolor images, resized without artwork edits to local responsive WebP at quality 82. Decorative only; no identified institution, official approval marks, or personal documents.",
+  "scenes": [
+    {
+      "scene": "campus",
+      "job": "fa95835d-b3b6-4842-8072-abc2876a776b",
+      "prompt": "Create a small decorative editorial watercolor vignette for an Italian university admissions website. Follow the reference image's delicate hand-painted watercolor technique, ochre architecture, natural greens, paper texture in painted strokes and restrained burgundy accents. New composition: one inviting Italian university courtyard arch with a terracotta roof fragment, one slim cypress, and a small burgundy satchel at the base. Imagined architecture, not an identifiable institution. Compact well-defined silhouette, very few objects, readable at 64 pixels and charming at 176 pixels. Natural saturated pigment in key details, do not make the whole illustration faint. Center the vignette and use most of the square with about 8% margin, soft irregular watercolor edges. TRUE TRANSPARENT BACKGROUND, no white rectangle, no surrounding ground or paper background, no shadow panel. No people, no words, no logo, no lettering, no border, no interface, no badges, no checkmarks. This is one standalone decorative artwork, not a screenshot.",
+      "sourceSha256": "c1f88855f3e233849173b636c70ff7f47df185edca7f95d29ceeb5dc5fd68a9b",
+      "variants": [
+        {
+          "file": "portal-campus-256.webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 25234,
+          "sha256": "131a2d5808952bfd543c63f0695489c01ed897dc3d9f21698237b5a43c6345cb"
+        },
+        {
+          "file": "portal-campus-512.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 83710,
+          "sha256": "2a3be3956e9da8e587073a00ac29008b31d9def7b9b15b14e5a5ff6bbb897269"
+        }
+      ]
+    },
+    {
+      "scene": "documents",
+      "job": "ed686883-48cf-4ba0-86bb-cd24ff9d1fc8",
+      "prompt": "Create a small decorative editorial watercolor vignette for the documents page of an Italian university admissions website. Match the reference image's fine hand-painted watercolor texture, elegant airy composition, natural pigment and restrained burgundy and muted green palette. New composition: a slightly open burgundy document folder holding a few blank ivory paper sheets, with one forest-green pen placed diagonally alongside. A tiny olive sprig as the only extra detail. All papers blank, no stamps, seals, official emblems, signatures, text or checkmarks. Compact single cluster, clear silhouette, readable at 64 pixels. Use natural rich pigment on the folder, softly washed paper edges, no excessive pale fog. Center the cluster and use most of the square with about 8% margin. TRUE TRANSPARENT BACKGROUND, no desk surface, no white rectangle, no surrounding paper background, no shadow panel, no border, no interface. One standalone decorative illustration, no guarantee or approval symbols.",
+      "sourceSha256": "cf04919233a2bc4f621118dde9dc39feaff63b32ecee5f7685fd93426ddaa285",
+      "variants": [
+        {
+          "file": "portal-documents-256.webp",
+          "width": 256,
+          "height": 256,
+          "bytes": 15338,
+          "sha256": "a3ad4ab5936abc4ea35e0a6692c773a1981d472acd2b32ca77d449c940cc2da3"
+        },
+        {
+          "file": "portal-documents-512.webp",
+          "width": 512,
+          "height": 512,
+          "bytes": 45090,
+          "sha256": "bbd108bcd3e7460df60fe163248668be3350af9b430753705d8ec698b35dc52f"
+        }
+      ]
+    }
+  ]
+}

@@ -5,7 +5,9 @@ import type { PortalData } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome, type DocumentOutcomeKind } from "@/lib/portalDocument";
 import { taskBlockedReason, taskDate } from "@/lib/portalNavigation";
+import { PortalArtwork } from "./PortalArtwork";
 import styles from "./portal-documents.module.css";
+import artwork from "./portal-artwork.module.css";
 
 const GROUPS: { kind: DocumentOutcomeKind; label: string }[] = [
   { kind: "approved", label: "Проверка пройдена" },
@@ -35,9 +37,12 @@ export function DocsSection({ data, onOpenDoc, currentTaskId }: {
   const visible = rows.filter(row => filter === "all" || row.outcome.kind === filter);
 
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
-    <header className={styles.heading}>
-      <h2 id="portal-documents-heading">Документы</h2>
-      <p>Выбери документ, чтобы увидеть разбор или подготовить файл.</p>
+    <header className={`${styles.heading} ${artwork.documentHeading}`}>
+      <div className={artwork.documentCopy}>
+        <h2 id="portal-documents-heading">Документы</h2>
+        <p>Выбери документ, чтобы увидеть разбор или подготовить файл.</p>
+      </div>
+      <PortalArtwork placement="documents" />
     </header>
     {rows.length > 0 && <fieldset className={styles.filters}>
       <legend className="sr-only">Статус проверки</legend>

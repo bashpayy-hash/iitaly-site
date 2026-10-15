@@ -12,8 +12,10 @@ import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
+import { PortalArtwork } from "./PortalArtwork";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
+import artwork from "./portal-artwork.module.css";
 import {
   createTelegramLink,
   deletePortalData,
@@ -547,13 +549,17 @@ export function PortalExplorer() {
               </a>
             ))}
           </nav>
+          <PortalArtwork placement="sidebar" />
         </aside>
 
         <div className={styles.main}>
           <div className={styles.topbar}>
-            <div className={navigation.topCopy}>
-              <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
-              <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
+            <div className={artwork.greetingHeading}>
+              <div className={navigation.topCopy}>
+                <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
+                <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
+              </div>
+              {section === "today" && <PortalArtwork placement="greeting" />}
             </div>
           </div>
 
