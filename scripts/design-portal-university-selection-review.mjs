@@ -167,6 +167,7 @@ try {
     await openPicker(page);
     await chooseMilan(page);
     assert.equal(await select(page, 'bocconi').isChecked(), true, 'Completed shortlist remains editable');
+    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-secondary'), 'true', 'Editing an earlier selection leaves Save as the only filled action, while the road still links to the current step');
     assert.equal(await save(page).isDisabled(), true, 'An unchanged completed list cannot trigger a redundant save');
     assert.equal(await select(page, 'polimi').isChecked(), false, 'Comparison is never promoted to selection');
     await select(page, 'polimi').check();
