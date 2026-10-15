@@ -9,6 +9,7 @@ import styles from "./portal-overview.module.css";
 export type RoadTravel = { fromDone: number; id: number };
 
 const ROAD_TRAVEL_MS = 1080;
+const COMPLETION_FEEDBACK_MS = 2200;
 
 function roadPosition(done: number, total: number) {
   return 8 + (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 84;
@@ -75,12 +76,14 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     transition: false,
     moving: false,
     entering: Boolean(travel),
+    arriving: false,
   }));
   const seenTravel = useRef<number | null>(null);
   const inFlight = useRef(false);
   const frames = useRef<number[]>([]);
   const timers = useRef<number[]>([]);
   const target = useRef(destination);
+  const [completion, setCompletion] = useState<number | null>(null);
 
   // This token is supplied only after a server-confirmed completion. No token
   // means an immediate position, including the first login and profile changes.
@@ -97,22 +100,30 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       const wasMoving = inFlight.current;
       clearPending();
       target.current = destination;
+      // Acknowledgement shares the count's existing space. It never blocks the
+      // next action and is also readable when motion is disabled.
+      setCompletion(travel.id);
+      timers.current.push(window.setTimeout(() => {
+        setCompletion(null);
+        setMotion(value => ({ ...value, arriving: false }));
+      }, COMPLETION_FEEDBACK_MS));
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         inFlight.current = false;
-        setMotion({ position: destination, transition: false, moving: false, entering: false });
+        setMotion({ position: destination, transition: false, moving: false, entering: false, arriving: false });
         onTravelStart?.();
         return;
       }
       inFlight.current = true;
       if (!wasMoving) {
-        setMotion({ position: roadPosition(travel.fromDone, total), transition: false, moving: false, entering: true });
+        setMotion({ position: roadPosition(travel.fromDone, total), transition: false, moving: false, entering: true, arriving: false });
       }
       const begin = () => {
-        setMotion({ position: destination, transition: true, moving: true, entering: true });
+        setMotion({ position: destination, transition: true, moving: true, entering: true, arriving: false });
         timers.current.push(window.setTimeout(() => setMotion(value => ({ ...value, entering: false })), 420));
         timers.current.push(window.setTimeout(() => {
+          if (!inFlight.current) return;
           inFlight.current = false;
-          setMotion(value => ({ ...value, moving: false }));
+          setMotion(value => ({ ...value, moving: false, arriving: true }));
         }, ROAD_TRAVEL_MS + 150));
       };
       // Two paints establish the previous position on a remounted Overview.
@@ -129,10 +140,24 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       clearPending();
       target.current = destination;
       inFlight.current = false;
-      setMotion({ position: destination, transition: false, moving: false, entering: false });
+      setCompletion(null);
+      setMotion({ position: destination, transition: false, moving: false, entering: false, arriving: false });
     }
   }, [travel, destination, total, onTravelStart]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const stopTravel = () => {
+      if (!preference.matches) return;
+      frames.current.forEach(cancelAnimationFrame);
+      frames.current = [];
+      inFlight.current = false;
+      setMotion({ position: target.current, transition: false, moving: false, entering: false, arriving: false });
+    };
+    preference.addEventListener("change", stopTravel);
+    return () => preference.removeEventListener("change", stopTravel);
+  }, []);
 
   useEffect(() => () => {
     frames.current.forEach(cancelAnimationFrame);
@@ -171,6 +196,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     data-traveling={motion.moving ? "true" : "false"}
     data-road-moving={motion.moving ? "true" : "false"}
     data-road-transition={motion.transition ? "true" : "false"}
+    data-road-feedback-active={completion !== null ? "true" : "false"}
+    data-road-arriving={motion.arriving ? "true" : "false"}
     aria-label={interactive ? `Дальше: ${title}. Открыть этот шаг.` : undefined}
     onClick={interactive && current ? event => {
       if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -180,7 +207,15 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     <span className={styles.roadRoute}>
       <span className={styles.roadHeader}>
         <span className={styles.stageTitle}>{stage?.title || "Маршрут"}</span>
-        {total > 0 && <span className={styles.count}>сделано {done} из {total}</span>}
+        {total > 0 && <span className={styles.count}>
+          <span className={styles.countTotal} data-road-count>сделано {done} из {total}</span>
+          <span className={styles.completionFeedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">
+            {completion !== null && <span key={completion} className={styles.completionMessage}>
+              <svg className={styles.completionCheck} width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              Шаг сделан
+            </span>}
+          </span>
+        </span>}
       </span>
 
       <span className={styles.roadVisual} aria-hidden="true">
@@ -212,10 +247,10 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
         <span className={styles.scooter} data-road-scooter style={{ transform: `translateX(${motion.position}%)` }} onTransitionEnd={event => {
           // The browser owns interpolation, including interrupted trips. Finish
           // when its transform settles instead of cutting off at a JS timer.
-          if (event.target !== event.currentTarget || event.propertyName !== "transform") return;
+          if (event.target !== event.currentTarget || event.propertyName !== "transform" || !inFlight.current) return;
           inFlight.current = false;
-          setMotion(value => ({ ...value, moving: false }));
-        }}><span className={styles.scooterAnchor}><Scooter position={motion.position} /></span></span>
+          setMotion(value => ({ ...value, moving: false, arriving: true }));
+        }}><span className={styles.scooterAnchor}><span className={styles.scooterArrival} data-road-arrival><Scooter position={motion.position} /></span></span></span>
       </span>
     </span>
     <span className={styles.roadCopy} aria-live="polite" aria-atomic="true" data-road-next>
