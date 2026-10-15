@@ -1,5 +1,5 @@
 import type { PortalData, PortalTask } from "./portalApi";
-import { DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
+import { ACT_PAGE, DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
 
 // Display the existing roadmap in its own order; do not add dependencies or dates.
 export function portalPosition(data: PortalData) {
@@ -93,6 +93,22 @@ export function taskExplanation(task: PortalTask): string {
   };
   const source = task.explain || TASK_META[task.id]?.why || "Открой шаг, чтобы узнать, что подготовить.";
   return explanations[task.id] || source.split(/(?<=[.!?])\s+(?=[А-ЯЁA-Z])/)[0];
+}
+
+// Describe the existing completion mechanism, never an admission outcome.
+// Keep this copy shared with the contextual assistant so help agrees with UI.
+export function taskActionHint(task: PortalTask): string {
+  if (task.id === "profile" || task.id === "path12") return "Сохрани ответы в профиле, чтобы обновить маршрут.";
+  if (DOC_TASKS[task.id]) return "После загрузки получишь разбор: итог, причина и следующий шаг.";
+  if (task.id === "shortlist") return "Сравни программы, затем вернись сюда и нажми «Готово».";
+  if (ACT_PAGE[task.id]) return "Выполни действие на открывшейся странице, затем вернись сюда и нажми «Готово».";
+  return "Нажми «Готово», когда выполнишь этот шаг. Это твоя отметка в маршруте.";
+}
+
+export function taskHelpDetails(task: PortalTask): string[] {
+  const explanation = taskExplanation(task).trim();
+  return [...new Set([task.explain?.trim(), task.note?.trim(), task.warn?.trim()]
+    .filter((text): text is string => Boolean(text) && text !== explanation))];
 }
 
 // Read-only detail is a presentation rule; the roadmap's availability is unchanged.

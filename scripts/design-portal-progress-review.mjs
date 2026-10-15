@@ -56,6 +56,14 @@ function fixture(mode = 'partial') {
     data.roadmap[1].tasks[1].daysLeft = -1; // Missing date must not become an invented deadline.
     data.roadmap[3].tasks[0].deadline = '2026-10-19'; data.roadmap[3].tasks[0].daysLeft = 6;
   }
+  if (mode === 'help') {
+    // Synthetic instructional copy exercises disclosure and deduplication,
+    // without introducing a program requirement or a claimed deadline.
+    const task = data.roadmap[0].tasks[1];
+    task.explain += ' Это пояснение тестового шага.';
+    task.note = 'Дополнительная памятка для тестового шага.';
+    task.warn = task.note;
+  }
   if (mode === 'parents') data.done.shortlist = true;
   if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
@@ -391,6 +399,12 @@ async function openStep(page, locator, id, screen = 'plan') {
   assert.equal(await assistant(page).getAttribute('data-step-id'), id, 'Header assistant receives the open step ID');
   const isCurrent = await road(page).getAttribute('data-current-step') === id;
   await checkPersistentRoad(page, { currentOpen: isCurrent });
+  const actionHint = detail(page).locator('[data-step-action-hint]');
+  assert.equal(await actionHint.count(), isCurrent ? 1 : 0, 'Only the current actionable step explains how its action works; future and done steps have no action hint');
+  if (isCurrent) {
+    assert.equal(await actionHint.isVisible(), true, 'The current completion guidance is visible without opening a disclosure');
+    assert((await detail(page).locator('[aria-describedby="portal-step-action-hint"]').count()) >= 1, 'The current action exposes its guidance to assistive technology');
+  }
   if (!isCurrent && await road(page).getAttribute('data-current-step')) {
     assert.equal(await road(page).evaluate(element => element.tagName), 'A', 'A future or completed step still points to the actual next action');
     assert.notEqual(new URL(await road(page).getAttribute('href'), origin).searchParams.get(screen === 'docs' ? 'doc' : 'task'), id, 'The persistent guide never calls a future or completed step current');
@@ -469,6 +483,16 @@ try {
     }));
     assert(hierarchy.action >= 18 && hierarchy.action >= hierarchy.greeting, `${label}: the compact current action is readable and at least as prominent as the identity line (${JSON.stringify(hierarchy)})`);
     assert(hierarchy.metadata >= 13, 'Current-step guidance is readable without zoom');
+    const pill = await page.locator('[data-road-step-title]').evaluate(element => {
+      const text = element.getBoundingClientRect(), action = element.parentElement.getBoundingClientRect();
+      const road = element.closest('[data-portal-road]').getBoundingClientRect();
+      return { width: action.width, height: action.height, textWidth: text.width, roadWidth: road.width,
+        unclipped: element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1 };
+    });
+    assert(pill.height >= 44, `${label}: the compact red target retains its minimum touch height`);
+    assert(pill.width <= pill.textWidth + 80, `${label}: the red target fits its title and arrow instead of filling a column (${JSON.stringify(pill)})`);
+    assert(pill.unclipped, `${label}: the current action title is not clipped`);
+    if (viewport.width >= 1024) assert(pill.width <= 400 && pill.width < pill.roadWidth * 0.55, 'The desktop action stays intrinsic-width instead of becoming a full-width red banner');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run({ include: [['[data-portal-chrome]'], ['[data-portal-overview]']] }, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
     assert.deepEqual(violations, [], `${label} overview accessibility`);
@@ -560,7 +584,7 @@ try {
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), [null, null]);
     }
-    results.push({ viewport, sharedSiteBrand: true, decorativeArtwork: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, compactGlobalGuideOnEveryView: true, currentDetailGuideIsStatic: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
+    results.push({ viewport, sharedSiteBrand: true, decorativeArtwork: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, compactGlobalGuideOnEveryView: true, currentDetailGuideIsStatic: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, currentHintAccessible: true, intrinsicWidthRoadAction: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
   for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual', 'last']) {
@@ -670,38 +694,101 @@ try {
     results.push({ motion: 'normal', initialAndReloadDoNotDrive: true, confirmedCompletionDrives: true, newStepImmediate: true, fillAndScooterTravelTogether: true, reducedMotionCovered: true });
     await context.close();
   }
-  if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {
-    const { context, page, chatCalls } = await openPortal({ width: 390, height: 844 }, 'partial', 'reduce', false);
+  for (const viewport of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    const { context, page, calls, chatCalls, profileCalls, fileCalls } = await openPortal(viewport, 'help', 'reduce', false);
     await openStep(page, page.locator('[data-current-step="shortlist"]'), 'shortlist');
+    const help = detail(page).locator('[data-step-help]');
+    assert.equal(await help.count(), 1, 'Existing detailed step guidance has one optional disclosure');
+    assert.equal(await help.evaluate(element => element.open), false, 'Detailed guidance starts collapsed');
+    const summary = help.getByText('Как выполнить этот шаг', { exact: true });
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await help.evaluate(element => element.open), true, 'Step guidance opens with the keyboard');
+    assert.deepEqual(await help.locator('p').allTextContents(), [
+      'Сравни программы и выбери подходящие. Это пояснение тестового шага.',
+      'Дополнительная памятка для тестового шага.',
+    ], 'The disclosure preserves existing detailed guidance and deduplicates repeated notes');
+    assert.equal(await help.locator('button, a, input').count(), 0, 'Reading help never adds another action');
+    await page.keyboard.press('Enter');
+    assert.equal(await help.evaluate(element => element.open), false);
+    assert.deepEqual({ tasks: calls.length, profiles: profileCalls.length, ...fileCalls }, { tasks: 0, profiles: 0, check: 0, save: 0 }, 'Opening and reading a hint never mutates progress, profile or documents');
+    await page.screenshot({ path: resolve(output, `portal-step-guidance-${viewport.width}.png`), fullPage: true });
     await assistant(page).click();
     const chat = page.getByRole('dialog', { name: 'ИИ-консультант', exact: true });
     await chat.waitFor();
     assert.equal(await chat.locator('button').count(), 1, 'The portal helper has only its send button');
+    // Measure settled targets, not the panel's opening scale transform.
+    await page.waitForFunction(() => {
+      const panel = document.querySelector('[role="dialog"][aria-label="ИИ-консультант"]');
+      return panel && getComputedStyle(panel).transform === 'none' && getComputedStyle(panel).opacity === '1';
+    });
+    const displayedContext = chat.locator('[data-chat-step-context]');
+    assert.equal(await displayedContext.getAttribute('data-chat-step-context'), 'shortlist');
+    assert.match(await displayedContext.innerText(), /Выбрать программы/, 'The visible assistant context names the open step');
+    const prompts = chat.locator('a[href="#chat-input"]');
+    assert.deepEqual(await prompts.allTextContents(), ['Как выбрать программы?', 'Что сравнить у программ?'], 'Two optional plain-text questions match the open step');
+    for (const prompt of await prompts.all()) {
+      const box = await prompt.boundingBox();
+      assert(box && box.height >= 44, 'Each suggested question keeps a 44px touch target');
+    }
     await page.waitForLoadState('networkidle');
     assert.equal(chatCalls.length, 0, 'Opening the assistant never spends a request without a question');
-    await chat.getByLabel('Вопрос ИИ-консультанту', { exact: true }).fill('С чего начать этот шаг?');
+    await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
+    const helperViolations = await page.evaluate(async () => (await window.axe.run({ include: [['[role="dialog"]']] }, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
+    assert.deepEqual(helperViolations, [], `${viewport.width}px contextual helper accessibility`);
+    await page.screenshot({ path: resolve(output, `portal-contextual-helper-${viewport.width}.png`), fullPage: false });
+    const input = chat.getByLabel('Вопрос ИИ-консультанту', { exact: true });
+    const draft = 'Мой вопрос, который я ещё пишу';
+    await input.fill(draft);
+    await prompts.last().click();
+    assert.equal(await input.inputValue(), draft, 'A suggested question never replaces the user’s typed draft');
+    assert.equal(await input.evaluate(element => element === document.activeElement), true, 'Selecting a prompt focuses the editable question');
+    await page.keyboard.press('Escape');
+    await chat.waitFor({ state: 'hidden' });
+    await assistant(page).click();
+    await chat.waitFor();
+    assert.equal(await input.inputValue(), draft, 'Closing and reopening help preserves the unsent draft');
+    await input.fill('');
+    await prompts.first().focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await input.inputValue(), 'Как выбрать программы?', 'Keyboard activation only prepares an editable question');
+    assert.equal(await input.evaluate(element => element === document.activeElement), true);
+    await page.waitForLoadState('networkidle');
+    assert.equal(chatCalls.length, 0, 'Opening, reopening and preparing a question never automatically sends it');
+    await input.fill('С чего начать этот шаг?');
     await chat.getByRole('button', { name: 'Отправить', exact: true }).click();
     await chat.getByText('Тестовый ответ 1.', { exact: true }).waitFor();
     assert.equal(chatCalls.length, 1);
     const scopedQuestion = chatCalls[0].messages.at(-1).content;
     assert.match(scopedQuestion, /Открытый шаг IITALY: shortlist/);
     assert.match(scopedQuestion, /название: Выбрать программы/);
+    assert.match(scopedQuestion, /Сравни программы, затем вернись сюда и нажми «Готово»/, 'The assistant receives the same completion guidance as the step');
     assert.match(scopedQuestion, /С чего начать этот шаг\?/);
+    await input.fill(draft);
     await go(page, 'Обзор');
     assert.equal(await assistant(page).getAttribute('data-step-id'), '', 'The list does not retain an old open-step ID');
     await chat.waitFor();
+    assert.equal(await displayedContext.getAttribute('data-chat-step-context'), '', 'The visible helper context reacts immediately when a step is closed');
+    assert.match(await displayedContext.innerText(), /Помощь по кабинету/);
+    assert.doesNotMatch(await displayedContext.innerText(), /Выбрать программы/, 'A list view never displays the previously open step as current context');
+    assert.equal(await input.inputValue(), draft, 'A context change preserves the user’s draft');
     assert.equal(chatCalls.length, 1, 'Changing views while the helper is open waits for a question');
-    await chat.getByLabel('Вопрос ИИ-консультанту', { exact: true }).fill('Что сейчас видно в кабинете?');
+    await input.fill('Что сейчас видно в кабинете?');
     await chat.getByRole('button', { name: 'Отправить', exact: true }).click();
     await chat.getByText('Тестовый ответ 2.', { exact: true }).waitFor();
     const unscopedQuestion = chatCalls[1].messages.at(-1).content;
     assert.match(unscopedQuestion, /шаг сейчас не открыт/);
     assert.doesNotMatch(unscopedQuestion, /Открытый шаг IITALY: shortlist/);
-    await chat.getByLabel('Вопрос ИИ-консультанту', { exact: true }).focus();
+    await input.focus();
     await page.keyboard.press('Escape');
     await chat.waitFor({ state: 'hidden' });
     await checkRoad(page, 'Старт', 1, ids.length);
-    results.push({ helper: 'one header entry', stepContextSentOnlyOnUserQuestion: true, oldContextClearedOnList: true });
+    const guideMetrics = await road(page).evaluate(element => ({
+      height: element.getBoundingClientRect().height,
+      actionWidth: element.querySelector('[data-road-step-title]').parentElement.getBoundingClientRect().width,
+      actionHeight: element.querySelector('[data-road-step-title]').parentElement.getBoundingClientRect().height,
+    }));
+    results.push({ viewport, helper: 'one header entry', optionalGuidanceKeyboardAccessible: true, guidanceDoesNotMutateData: true, twoContextualPrompts: true, promptOnlyPrefillsAndFocuses: true, unsentDraftPreserved: true, stepContextSentOnlyOnUserQuestion: true, oldContextClearedOnList: true, axe: 'pass', guideMetrics });
     await context.close();
   }
   if (!process.env.NAVIGATION_REVIEW_LATE_ONLY) {

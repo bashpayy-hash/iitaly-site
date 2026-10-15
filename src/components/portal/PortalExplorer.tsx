@@ -31,7 +31,7 @@ import {
 import { preparePayload } from "@/lib/docPayload";
 import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
-import { portalPosition, taskDate, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
 
 const KEY = "iitaly_portal_code";
@@ -471,22 +471,23 @@ export function PortalExplorer() {
   const currentTask = position?.task || position?.stage?.tasks.find(task => !data?.done[task.id]) || null;
   const activeTask = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === (openDocument || openTaskId)) || null;
   const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask) : "";
+  const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {
-      portal: true, taskId: activeTask?.id, taskTitle: activeTask?.t, taskOwner: activeTask?.owner,
-      taskContext: activeTask ? [activeTask.explain, readOnlyReason].filter(Boolean).join(" ") : undefined,
+      portal: true, taskId: activeTask?.id, taskTitle: activeTask ? taskTitle(activeTask) : undefined, taskOwner: activeTask?.owner,
+      taskContext: assistantContext,
     } }));
     return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
-  }, [activeTask, readOnlyReason]);
+  }, [activeTask, assistantContext]);
 
   function openAssistant() {
     window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: {
       source: "portal-header",
       taskId: activeTask?.id,
-      taskTitle: activeTask?.t,
+      taskTitle: activeTask ? taskTitle(activeTask) : undefined,
       taskOwner: activeTask?.owner,
-      taskContext: activeTask ? [activeTask.explain, readOnlyReason].filter(Boolean).join(" ") : undefined,
+      taskContext: assistantContext,
     } }));
   }
 
