@@ -23,10 +23,11 @@ function StatusMark({ kind }: { kind: DocumentOutcomeKind }) {
   </svg>;
 }
 
-export function DocsSection({ data, onOpenDoc, currentTaskId }: {
+export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }: {
   data: PortalData;
   onOpenDoc: (taskId: string) => void;
   currentTaskId?: string;
+  embedded?: boolean;
 }) {
   const [filter, setFilter] = useState<DocumentOutcomeKind | "all">("all");
   const rows = data.roadmap.flatMap(stage => stage.tasks.filter(task => DOC_TASKS[task.id]))
@@ -36,13 +37,14 @@ export function DocsSection({ data, onOpenDoc, currentTaskId }: {
   const visible = rows.filter(row => filter === "all" || row.outcome.kind === filter);
 
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
-    <header className={styles.heading}>
+    {!embedded && <header className={styles.heading}>
       <div className={styles.titleRow}>
         <h2 id="portal-documents-heading">Проверяй документы без лимита</h2>
         <PortalArtwork placement="documents" />
       </div>
       <p>Загружай исправленные версии — получай итог, причину и следующий шаг.</p>
-    </header>
+    </header>}
+    {embedded && <h3 id="portal-documents-heading" className={styles.embeddedTitle}>Документы твоего маршрута</h3>}
     {rows.length > 0 && <fieldset className={styles.filters}>
       <legend className="sr-only">Статус проверки</legend>
       {[{ kind: "all" as const, label: "Все", count: rows.length }, ...groups].map(group => <label key={group.kind} className={styles.filter} data-document-filter={group.kind} data-selected={filter === group.kind}>

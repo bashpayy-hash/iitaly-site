@@ -24,9 +24,3 @@
 .step :is(a,button,input,h2,summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 @media(max-width:900px) { .step { padding: 20px; } .step h2 { font-size: 28px; } }
 @media(max-width:480px) { .step h2 { margin-top: 10px; } .explain { margin: 14px 0; } }
-
-.primaryLink { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border-radius: 999px; background: var(--portal-accent); color: #fff; font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: -.015em; text-decoration: none; }
-.primaryLink:hover { background: var(--portal-accent-deep); }
-.secondaryDone { min-height: 48px; padding: 12px 24px; border: 1px solid var(--portal-border); border-radius: 999px; background: transparent; color: var(--portal-ink); font-size: 16px; font-weight: 500; }
-.secondaryDone:hover { border-color: var(--portal-muted); }
-.secondaryDone:disabled { opacity: .6; cursor: wait; }

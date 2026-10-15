@@ -1,5 +1,5 @@
 import type { PortalData, PortalTask } from "./portalApi";
-import { ACT_PAGE, DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
+import { DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
 
 // Display the existing roadmap in its own order; do not add dependencies or dates.
 export function portalPosition(data: PortalData) {
@@ -102,7 +102,9 @@ export function taskActionHint(task: PortalTask): string {
   if (task.id === "profile" || task.id === "path12") return "Сохрани ответы в профиле, чтобы обновить маршрут.";
   if (DOC_TASKS[task.id]) return "После загрузки получишь разбор: итог, причина и следующий шаг.";
   if (task.id === "shortlist") return "Сохрани выбранные вузы — кабинет покажет следующий шаг.";
-  if (ACT_PAGE[task.id]) return "Выполни действие на открывшейся странице, затем вернись сюда и нажми «Готово».";
+  if (task.id === "chances") return "Ответь на вопросы здесь и обсуди результат с родителями. Затем отметь шаг как готовый.";
+  if (task.id === "checkDocs") return "Открой документы ниже и сверь сохранённые разборы. Затем нажми «Готово».";
+  if (task.id === "kit") return "Заполни тренировочный бланк здесь. Нажми «Готово», когда подготовишь заявление.";
   return "Нажми «Готово», когда выполнишь этот шаг. Это твоя отметка в маршруте.";
 }
 

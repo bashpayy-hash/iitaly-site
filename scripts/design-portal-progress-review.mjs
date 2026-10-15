@@ -100,7 +100,7 @@ function upstreamProgress(data) {
 }
 async function siteBrand(page, contentSelector) {
   await page.evaluate(() => document.fonts.ready);
-  const logo = page.getByRole('link', { name: 'IITALY — главная', exact: true });
+  const logo = page.getByRole('link', { name: /^IITALY — (главная|личный кабинет)$/ });
   assert.equal(await logo.count(), 1, 'The shared site logo appears once, including after login');
   return logo.evaluate((element, selector) => {
     const style = getComputedStyle(element), dot = element.querySelector('span');
@@ -933,7 +933,12 @@ try {
     await go(page, 'План');
     // Expand the existing route disclosures through their real controls so
     // sticky checks scroll meaningful screen content, not an injected spacer.
-    for (const disclosure of await page.locator('#portal-panel details').all()) {
+    // Rules now contain lazy nested disclosures. This check expands the route
+    // itself; the contained-flow review covers the separate source reference.
+    await page.getByText('Весь маршрут', { exact: true }).click();
+    const routeDisclosures = await page.locator('#portal-panel details[id^="portal-stage-"]').all();
+    assert.equal(routeDisclosures.length, 7, 'Every real route stage is included in the sticky scroll check');
+    for (const disclosure of routeDisclosures) {
       if (await disclosure.isVisible() && !(await disclosure.evaluate(element => element.open))) await disclosure.locator(':scope > summary').click();
     }
     await checkStickyScroll(page, `plan-${label}`, { capture: true });

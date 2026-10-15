@@ -1,4 +1,4 @@
-// Портировано из старого сайта (index.html, TASK_META/DOC_TASKS/ACT_PAGE и
+// Портировано из старого сайта (index.html, TASK_META/DOC_TASKS и
 // форматтеры дедлайнов из IIFE «ЛИЧНЫЙ КАБИНЕТ»).
 
 import type { PortalTask } from "./portalApi";
@@ -15,13 +15,6 @@ export const TASK_META: Record<string, { min: string; why: string; act: string }
   iseeu: { min: "1–2 недели", why: "эта справка нужна для заявки на региональную стипендию", act: "Открыть инструкцию" },
   money: { min: "заранее", why: "финансовую гарантию лучше готовить не в последний момент", act: "Открыть шаг" },
   blsSlot: { min: "15 мин", why: "в высокий сезон свободные слоты быстро заканчиваются", act: "Открыть шаг" },
-};
-
-export const ACT_PAGE: Record<string, string> = {
-  checkDocs: "/plan",
-  shortlist: "/universities",
-  chances: "/plan",
-  profile: "/plan",
 };
 
 export const DOC_TASKS: Record<string, string> = {

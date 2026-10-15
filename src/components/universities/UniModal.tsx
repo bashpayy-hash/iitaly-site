@@ -1,9 +1,16 @@
 "use client";
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { CITIES, type University } from "@/data/italy";
 import { Modal } from "@/components/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import ui from "./university-ui.module.css";
+import rules from "@/components/portal/portal-rules.module.css";
+
+const PortalRules = dynamic(() => import("@/components/portal/PortalRules").then(module => module.PortalRules), {
+  loading: () => <p role="status" className={rules.loading}>Загружаю справку…</p>,
+});
 
 const ROWS: { key: keyof University; label: string }[] = [
   { key: "tp", label: "Тип и направление" },
@@ -48,7 +55,8 @@ export function UniModal({
               </div>
             ))}
           </dl>
-          <p className="mt-4 text-sm leading-relaxed">Стоимость и жизнь — ориентиры исходного каталога, не оферта на 2027/28. Тест, срок и стипендию сверяй с bando конкретной программы. <a href="/changes-2026-27" className="underline underline-offset-4">Актуальные правила и источники</a>.</p>
+          <p className="mt-4 text-sm leading-relaxed">Стоимость и жизнь — ориентиры исходного каталога, не оферта на 2027/28. Тест, срок и стипендию сверяй с bando конкретной программы.{!selection && <> <a href="/changes-2026-27" className="underline underline-offset-4">Актуальные правила и источники</a>.</>}</p>
+          {selection && <UniversityRules key={uni.id} />}
           <div className="mt-5 flex flex-wrap gap-3">
             {selection && <label className={ui.shortlistToggle}>
               <input type="checkbox" className={ui.checkbox} checked={selection.selected} onChange={selection.onToggle} aria-label={`В мой список: ${uni.name}`} />
@@ -70,4 +78,12 @@ export function UniModal({
       )}
     </Modal>
   );
+}
+
+function UniversityRules() {
+  const [open, setOpen] = useState(false);
+  return <details className={rules.disclosure} data-portal-rules-disclosure onToggle={event => setOpen(event.currentTarget.open)}>
+    <summary>Актуальные правила и источники</summary>
+    {open && <PortalRules />}
+  </details>;
 }

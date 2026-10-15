@@ -34,3 +34,4 @@
   .row { padding: 18px 0; }
   .rowFooter { flex-wrap: wrap; }
 }
+.embeddedTitle { margin: 24px 0 12px; font-size: 18px; font-weight: 600; line-height: 1.4; }
