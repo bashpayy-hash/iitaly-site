@@ -202,11 +202,13 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       <span key={current?.id || "complete"} className={styles.nextCopy} data-road-text data-entering={motion.entering ? "true" : "false"}>
         <span className={styles.nextLabel}>{current ? "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
         {current && <>
-          <span className={styles.stepTitle}>{title}</span>
+          <span className={styles.stepAction}>
+            <span className={styles.stepTitle} role="heading" aria-level={2} data-road-step-title>{title}</span>
+            <svg className={styles.arrow} width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
           <span className={styles.meta}>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", taskDate(current)].filter(Boolean).join(" · ")}</span>
         </>}
       </span>
-      {current && <svg className={styles.arrow} width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
     </span>
   </RoadFrame>;
 }

@@ -129,10 +129,10 @@
 
 .greeting {
   font-family: var(--portal-heading-font);
-  font-size: clamp(28px, 3vw, 36px);
-  line-height: 1.12;
-  letter-spacing: -.03em;
-  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.5;
+  letter-spacing: -.015em;
+  font-weight: 500;
 }
 
 .subline {
@@ -317,9 +317,11 @@
 .sectionHeading p {
   margin: 4px 0 0;
   color: var(--portal-muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.45;
 }
+
+.sectionHeading h2 { font-size: clamp(28px, 3vw, 32px); font-weight: 600; letter-spacing: -.03em; }
 
 .textLink {
   border: 0;
@@ -629,7 +631,7 @@
 .actionCardPrimary { border-color: rgba(183,42,58,.22); }
 .actionNum { display: none; }
 .actionTitle { color: var(--portal-ink); font-size: 14px; font-weight: 500; line-height: 1.4; }
-.actionBody { margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.45; }
+.actionBody { margin-top: 8px; color: var(--portal-muted); font-size: 15px; line-height: 1.6; }
 .actionFoot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
 .actionDeadline { color: var(--portal-ash); font-size: 13px; line-height: 1.35; }
 
@@ -710,8 +712,8 @@
 @media (max-width: 480px) {
   .shell { padding-left: 20px; padding-right: 20px; }
   .topbar { gap: 10px; }
-  .greeting { font-size: 28px; }
-  .subline { font-size: 13px; }
+  .greeting { font-size: 18px; }
+  .subline { font-size: 14px; }
   .intakeChip { display: none; }
   .hero::after,
   .docsHero::after { display: none; }
@@ -1177,8 +1179,8 @@
 .profileList { margin: 0; }
 .profileList > div { display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 16px; padding: 10px 0; border-top: 1px solid var(--portal-border); }
 .profileList > div:first-child { border-top: 0; padding-top: 0; }
-.profileList dt { color: var(--portal-muted); font-size: 13px; }
-.profileList dd { margin: 0; color: var(--portal-ink); font-size: 13px; font-weight: 500; }
+.profileList dt { color: var(--portal-muted); font-size: 14px; }
+.profileList dd { margin: 0; color: var(--portal-ink); font-size: 15px; font-weight: 500; }
 .profileCardTitle { margin: 2px 0 0; font-family: var(--font-apple-display); font-size: 20px; font-weight: 600; letter-spacing: -.025em; }
 .profileGrid .secondaryButton { margin-top: 14px; }
 .profileDanger {

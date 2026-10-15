@@ -170,6 +170,7 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
   await page.locator(mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]').waitFor();
+  assert.equal(await page.evaluate(() => window.scrollY), 0, 'The login form scroll position does not hide the new current step');
   await checkSharedBrand(page, loginBrand, mode === 'onboarding' ? '[data-portal-profile]' : '[data-portal-overview]');
   return { context, page, calls, chatCalls, profileCalls, fileCalls, loginBrand };
 }
@@ -327,6 +328,15 @@ try {
     const rowBox = await current.boundingBox();
     assert(rowBox && rowBox.y >= 0 && rowBox.y + rowBox.height <= viewport.height, `The current action verb is above the fold at ${label}`);
     assert.match(await current.innerText(), /Выбрать программы/);
+    // A matching logo alone did not satisfy the user's visual review. Keep
+    // the task, rather than the greeting, as the dominant readable element.
+    const hierarchy = await page.locator('[data-road-step-title]').evaluate(element => ({
+      action: parseFloat(getComputedStyle(element).fontSize),
+      greeting: parseFloat(getComputedStyle(document.querySelector('h1')).fontSize),
+      metadata: parseFloat(getComputedStyle(element.closest('[data-road-text]').lastElementChild).fontSize),
+    }));
+    assert(hierarchy.action >= 26 && hierarchy.action > hierarchy.greeting, 'The current action is visually stronger than the identity line');
+    assert(hierarchy.metadata >= 15, 'Current-step guidance is readable without zoom');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[data-portal-overview]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
     assert.deepEqual(violations, [], `${label} overview accessibility`);

@@ -143,6 +143,9 @@ export function PortalExplorer() {
       localStorage.setItem(KEY, c);
       localStorage.setItem(KEY_SN, sn);
     } catch {}
+    // A short phone scrolls the login form to its submit control. Do not carry
+    // that position into the route; settings deep links apply their own focus.
+    window.scrollTo({ top: 0, behavior: "instant" });
     track("portal_open");
   }
 

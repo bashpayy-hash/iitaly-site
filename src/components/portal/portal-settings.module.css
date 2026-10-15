@@ -5,7 +5,7 @@
   padding: 8px 0;
   color: var(--portal-ink);
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -18,7 +18,7 @@
 .message {
   margin: 16px 0 0;
   color: var(--portal-ink);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -26,7 +26,7 @@
   color: var(--portal-ink);
   border-top: 1px solid var(--portal-border);
   border-bottom: 1px solid var(--portal-border);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
 }
 
@@ -62,7 +62,7 @@
 .question legend {
   margin-bottom: 10px;
   padding: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -90,7 +90,7 @@
 .pathNote {
   margin: -2px 0 12px;
   color: var(--portal-muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -98,10 +98,10 @@
 .primaryAction:hover { background: var(--portal-accent-deep); }
 .primaryAction:disabled { opacity: .6; cursor: wait; }
 .primaryAction:focus-visible, .dangerAction:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
-.dangerAction[href] { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 48px; padding: 11px 16px; border: 1px solid var(--portal-muted); border-radius: 12px; color: var(--portal-ink); font-size: 14px; line-height: 1.5; font-weight: 500; text-decoration: none; }
+.dangerAction[href] { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 48px; padding: 11px 16px; border: 1px solid var(--portal-muted); border-radius: 12px; color: var(--portal-ink); font-size: 15px; line-height: 1.5; font-weight: 500; text-decoration: none; }
 .dangerAction:hover { background: var(--portal-surface-soft); }
 .dangerAction svg { stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.formHint { margin: 10px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
+.formHint { margin: 10px 0 0; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
 
 .reminders summary::-webkit-details-marker { display: none; }
 .reminders summary::after { content: "+"; color: var(--portal-muted); }

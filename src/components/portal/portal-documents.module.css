@@ -1,9 +1,9 @@
 .documents { min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); }
 .heading { margin-bottom: 20px; }
-.heading h2 { font-family: var(--font-apple-display); font-size: clamp(24px, 3.5vw, 30px); font-weight: 600; line-height: 1.2; letter-spacing: -.03em; }
-.heading p { margin-top: 8px; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
+.heading h2 { font-family: var(--font-apple-display); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
+.heading p { max-width: 65ch; margin-top: 10px; color: var(--portal-muted); font-size: 16px; line-height: 1.6; }
 .filters { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0 0 20px; margin: 0; }
-.filter { display: inline-flex; min-width: 44px; min-height: 44px; max-width: 100%; align-items: center; gap: 7px; padding: 9px 14px; border: 1px solid var(--portal-border); border-radius: 999px; background: var(--portal-surface); color: var(--portal-muted); font-size: 13px; line-height: 1.5; cursor: pointer; }
+.filter { display: inline-flex; min-width: 44px; min-height: 44px; max-width: 100%; align-items: center; gap: 7px; padding: 9px 14px; border: 1px solid var(--portal-border); border-radius: 999px; background: var(--portal-surface); color: var(--portal-muted); font-size: 14px; line-height: 1.5; cursor: pointer; }
 .filter input { appearance: none; width: 0; height: 0; margin: 0; position: absolute; opacity: 0; }
 .filter:hover { border-color: var(--portal-muted); background: var(--portal-surface-soft); }
 .filter[data-selected="true"] { border-color: var(--portal-ink); background: var(--portal-surface-soft); color: var(--portal-ink); font-weight: 500; }
@@ -14,14 +14,14 @@
 .row:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
 .file { min-width: 0; }
 .file h3 { font-size: 16px; line-height: 1.5; font-weight: 500; }
-.fileName { margin-top: 4px; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; color: var(--portal-muted); }
-.meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 13px; line-height: 1.55; }
-.empty { padding: 20px 0; }
+.fileName { margin-top: 4px; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; color: var(--portal-muted); }
+.meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
+.empty { padding: 20px 0; font-size: 16px; }
 .status { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 9px; padding: 3px 8px; border: 1px solid var(--portal-border); border-radius: 8px; color: var(--portal-ink); background: var(--portal-surface); font-size: 13px; line-height: 1.45; }
 .status svg, .rowAction svg { flex-shrink: 0; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .status[data-outcome="fix"] { color: var(--portal-danger); }
 .status[data-outcome="approved"] { color: var(--portal-green); }
-.rowAction { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; max-width: 120px; font-size: 13px; line-height: 1.5; text-align: right; }
+.rowAction { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; max-width: 120px; font-size: 14px; line-height: 1.5; text-align: right; }
 .row:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
-@media(max-width:900px) { .documents { padding: 20px; } }
+@media(max-width:900px) { .documents { padding: 20px; } .heading h2 { font-size: 28px; } }
 @media(max-width:540px) { .row { gap: 10px; } .rowAction { max-width: 85px; } }
