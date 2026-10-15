@@ -70,6 +70,29 @@ async function openReport(page, task) {
   await report(page).waitFor();
   assert.equal(new URL(page.url()).searchParams.get('doc'), task);
   assert.equal(await report(page).getByRole('heading', { level: 2 }).count(), 1);
+  await reportHeadingVisible(page, task);
+}
+async function reportHeadingVisible(page, label) {
+  // Opening a saved or newly checked report focuses and scrolls its heading.
+  // The persistent route chrome must not cover that target; do not manually
+  // scroll the page here, which would hide a broken automatic offset.
+  await page.waitForFunction(() => {
+    const heading = document.querySelector('[aria-label="Разбор документа"] h2');
+    return heading && document.activeElement === heading;
+  });
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+  });
+  const bounds = await report(page).getByRole('heading', { level: 2 }).evaluate(element => {
+    const box = element.getBoundingClientRect();
+    const chrome = document.querySelector('[data-portal-chrome]')?.getBoundingClientRect();
+    return { top: box.top, bottom: box.bottom, chromeBottom: chrome?.bottom, viewportHeight: innerHeight };
+  });
+  assert(Number.isFinite(bounds.chromeBottom), 'The report retains the shared progress chrome');
+  assert(bounds.top >= bounds.chromeBottom - 1, `${label} ${page.viewportSize().width}px: the auto-focused report heading must remain below the pinned progress guide (${JSON.stringify(bounds)})`);
+  assert(bounds.bottom <= bounds.viewportHeight, `${label} ${page.viewportSize().width}px: the complete report heading is visible after automatic scrolling`);
 }
 async function noOverflow(page, label) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label);
@@ -147,6 +170,7 @@ try {
     await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles({ name: 'test-bank-statement-' + 'long-filename-'.repeat(12) + '.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC DOCUMENT: bank balance is zero KZT on 31 December 2025. Test fixture without personal data.') });
     await report(page).waitFor();
+    await reportHeadingVisible(page, 'Uploaded clarification');
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements', 'The saved result opens automatically and has an address');
     assert.match(await report(page).innerText(), /Нужно уточнить/);
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
@@ -157,6 +181,7 @@ try {
     if (width === 390) await page.screenshot({ path: resolve(output, 'portal-document-clarify-390.png'), fullPage: true });
     await page.reload({ waitUntil: 'networkidle' });
     await report(page).waitFor();
+    await reportHeadingVisible(page, 'Reloaded clarification');
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
@@ -224,9 +249,10 @@ try {
     const statement = plan.locator('[data-portal-task=statements]');
     await (await statement.evaluate(element => element.tagName === 'A') ? statement : statement.getByRole('link')).click();
     await report(page).waitFor();
+    await reportHeadingVisible(page, 'Report opened from plan');
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
     assert.deepEqual(calls, { check: 1, save: 1 });
-    results.push({ width, fullReportAndReload: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, overflow: false, seriousAxe: violations });
+    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, overflow: false, seriousAxe: violations });
     await context.close();
   }
   assert.deepEqual(errors, []);

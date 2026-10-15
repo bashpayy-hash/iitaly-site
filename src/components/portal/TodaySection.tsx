@@ -1,11 +1,10 @@
 "use client";
 
 import type { MouseEvent } from "react";
-import type { PortalData, PortalTask } from "@/lib/portalApi";
+import type { PortalData } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, taskDate, taskTitle } from "@/lib/portalNavigation";
-import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import styles from "./portal-overview.module.css";
 
 function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
@@ -14,12 +13,9 @@ function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
   open();
 }
 
-export function TodaySection({ data, onOpenTask, onOpenDoc, travel, onTravelStart }: {
+export function TodaySection({ data, onOpenDoc }: {
   data: PortalData;
-  onOpenTask: (task: PortalTask) => void;
   onOpenDoc: (id: string) => void;
-  travel?: RoadTravel;
-  onTravelStart?: () => void;
 }) {
   const { task, stage } = portalPosition(data);
   const tasks = data.roadmap.flatMap(row => row.tasks);
@@ -42,8 +38,6 @@ export function TodaySection({ data, onOpenTask, onOpenDoc, travel, onTravelStar
 
   return (
     <div className={styles.overview} data-portal-overview>
-      <PortalRoad data={data} current={current} stage={stage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
-
       {next && <p className={styles.next} data-road-later>
         <span className={styles.label}>Потом</span>{" · "}{taskTitle(next)}. Это {nextOwner}, сейчас открывать не нужно.
       </p>}

@@ -54,13 +54,14 @@ function Scooter() {
   </svg>;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart }: {
+export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
   onOpenTask: (task: PortalTask) => void;
   travel?: RoadTravel;
   onTravelStart?: () => void;
+  currentOpen?: boolean;
 }) {
   const tasks = data.roadmap.flatMap(row => row.tasks);
   const total = tasks.length;
@@ -148,63 +149,66 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     };
   }).filter(row => row.total > 0);
   const title = current ? taskTitle(current) : "";
-  const RoadFrame = current ? "a" : "div";
+  const interactive = Boolean(current && !currentOpen);
+  const RoadFrame = interactive ? "a" : "div";
 
   return <RoadFrame
-    href={current ? portalTaskHref(data, current) : undefined}
+    href={interactive && current ? portalTaskHref(data, current) : undefined}
     className={styles.road}
     data-portal-road
-    data-road-static={!current ? "true" : undefined}
+    data-road-static={!interactive ? "true" : undefined}
     tabIndex={!current ? -1 : undefined}
+    data-road-current-open={currentOpen ? "true" : undefined}
     data-current-step={current?.id}
     data-road-done={done}
     data-road-total={total}
     data-traveling={motion.moving ? "true" : "false"}
     data-road-moving={motion.moving ? "true" : "false"}
     data-road-transition={motion.transition ? "true" : "false"}
-    aria-label={current ? `Дальше: ${title}. Открыть этот шаг.` : undefined}
-    onClick={current ? event => {
+    aria-label={interactive ? `Дальше: ${title}. Открыть этот шаг.` : undefined}
+    onClick={interactive && current ? event => {
       if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault(); onOpenTask(current);
     } : undefined}
   >
-    <span className={styles.roadHeader}>
-      <span className={styles.stageTitle}>{stage?.title || "Маршрут"}</span>
-      {total > 0 && <span className={styles.count}>сделано {done} из {total}</span>}
-    </span>
-
-    <span className={styles.roadVisual} aria-hidden="true">
-      <span className={styles.track}>
-        <span className={styles.fill} data-road-fill style={{ transform: `scaleX(${motion.position / 100})` }}>
-          <span className={styles.dashes} data-road-dashes />
-        </span>
+    <span className={styles.roadRoute}>
+      <span className={styles.roadHeader}>
+        <span className={styles.stageTitle}>{stage?.title || "Маршрут"}</span>
+        {total > 0 && <span className={styles.count}>сделано {done} из {total}</span>}
       </span>
-      {stages.map(point => <span
-        key={point.id}
-        className={styles.stagePoint}
-        data-road-stage={point.id}
-        data-road-stage-state={point.state}
-        style={{ left: `${point.position}%` }}
-      >
-        <span className={styles.point} />
-      </span>)}
-      {stages.map((point, index) => {
-        const previous = stages[index - 1];
-        const next = stages[index + 1];
-        const left = previous ? (previous.position + point.position) / 2 : 0;
-        const right = next ? (next.position + point.position) / 2 : 100;
-        return <span key={point.id} className={styles.stageLabel} data-road-stage-label={point.id} data-road-stage-state={point.state} style={{ left: `${left}%`, width: `${right - left}%` }}>{point.title}</span>;
-      })}
-      <span className={styles.scooter} data-road-scooter style={{ transform: `translateX(${motion.position}%)` }}><span className={styles.scooterAnchor}><Scooter /></span></span>
-    </span>
 
+      <span className={styles.roadVisual} aria-hidden="true">
+        <span className={styles.track}>
+          <span className={styles.fill} data-road-fill style={{ transform: `scaleX(${motion.position / 100})` }}>
+            <span className={styles.dashes} data-road-dashes />
+          </span>
+        </span>
+        {stages.map(point => <span
+          key={point.id}
+          className={styles.stagePoint}
+          data-road-stage={point.id}
+          data-road-stage-state={point.state}
+          style={{ left: `${point.position}%` }}
+        >
+          <span className={styles.point} />
+        </span>)}
+        {stages.map((point, index) => {
+          const previous = stages[index - 1];
+          const next = stages[index + 1];
+          const left = previous ? (previous.position + point.position) / 2 : 0;
+          const right = next ? (next.position + point.position) / 2 : 100;
+          return <span key={point.id} className={styles.stageLabel} data-road-stage-label={point.id} data-road-stage-state={point.state} style={{ left: `${left}%`, width: `${right - left}%` }}>{point.title}</span>;
+        })}
+        <span className={styles.scooter} data-road-scooter style={{ transform: `translateX(${motion.position}%)` }}><span className={styles.scooterAnchor}><Scooter /></span></span>
+      </span>
+    </span>
     <span className={styles.roadCopy} aria-live="polite" aria-atomic="true" data-road-next>
       <span key={current?.id || "complete"} className={styles.nextCopy} data-road-text data-entering={motion.entering ? "true" : "false"}>
-        <span className={styles.nextLabel}>{current ? "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
+        <span className={styles.nextLabel}>{current ? currentOpen ? "Сейчас" : "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
         {current && <>
           <span className={styles.stepAction}>
             <span className={styles.stepTitle} role="heading" aria-level={2} data-road-step-title>{title}</span>
-            <svg className={styles.arrow} width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {!currentOpen && <svg className={styles.arrow} width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
           </span>
           <span className={styles.meta}>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", taskDate(current)].filter(Boolean).join(" · ")}</span>
         </>}
