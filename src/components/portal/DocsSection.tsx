@@ -39,8 +39,9 @@ export function DocsSection({ data, onOpenDoc, currentTaskId }: {
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
     <header className={`${styles.heading} ${artwork.documentHeading}`}>
       <div className={artwork.documentCopy}>
-        <h2 id="portal-documents-heading">Документы</h2>
-        <p>Выбери документ, чтобы увидеть разбор или подготовить файл.</p>
+        <h2 id="portal-documents-heading">Проверяй документы без лимита</h2>
+        <p>Загружай исправленные версии — получай итог, причину и следующий шаг.</p>
+        <p className={styles.serviceNote} data-document-check-limits>До 12 файлов за 5 минут. В кабинете сохраняется последний разбор.</p>
       </div>
       <PortalArtwork placement="documents" />
     </header>

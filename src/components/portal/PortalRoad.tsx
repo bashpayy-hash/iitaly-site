@@ -54,7 +54,7 @@ function Scooter() {
   </svg>;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false }: {
+export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -62,6 +62,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   travel?: RoadTravel;
   onTravelStart?: () => void;
   currentOpen?: boolean;
+  secondaryAction?: boolean;
 }) {
   const tasks = data.roadmap.flatMap(row => row.tasks);
   const total = tasks.length;
@@ -159,6 +160,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     data-road-static={!interactive ? "true" : undefined}
     tabIndex={!current ? -1 : undefined}
     data-road-current-open={currentOpen ? "true" : undefined}
+    data-road-secondary={secondaryAction ? "true" : undefined}
     data-current-step={current?.id}
     data-road-done={done}
     data-road-total={total}

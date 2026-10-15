@@ -7,7 +7,7 @@
 .description { max-width: 620px; margin-top: 20px; font-size: 17px; line-height: 1.5; color: #51515a; }
 .selectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .selector { min-width: 0; }
-.selector > span { display: block; margin-bottom: 9px; color: #666670; font-size: 12px; }
+.selector > label > span { display: block; margin-bottom: 9px; color: #666670; font-size: 12px; }
 .selector select { display: block; width: 100%; min-width: 0; padding: 13px 32px 13px 12px; border: 1px solid #c9c9d0; border-radius: 12px; background: #fff; color: #1d1d1f; font-size: 16px; text-overflow: ellipsis; }
 .section :where(button,select,input):focus-visible, .comparison :where(select,input):focus-visible, .tableScroll:focus-visible { outline: 2px solid #b91134; outline-offset: 4px; }
 .selectionActions { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 16px 0 24px; font-size: 13px; color: #666670; }
@@ -61,3 +61,17 @@
   .modal { padding: 24px 16px; }
 }
 @media (forced-colors: active) { .table tbody tr[data-different="true"] > th { border-inline-start: 3px solid Highlight; } }
+
+/* Compact reuse inside the existing portal step, with every comparison control. */
+.embedded.section { padding: 28px 0 16px; background: transparent; }
+.embedded .selector > label > span, .embedded .eyebrow, .embedded .count, .embedded .scrollHint,
+.embedded .notes, .embedded .city, .embedded .table thead th:first-child,
+.embedded .table .groupRow th, .embedded .table small { font-size: 13px; }
+.embedded .selectionActions button { min-height: 44px; color: #51515a; }
+.embedded .empty { padding: 24px 16px; }
+.embedded .empty > span { display: none; }
+.embedded .empty p { margin-top: 0; font-size: 18px; }
+.embedded .selectors { gap: 12px; }
+.embedded .selector select { min-height: 44px; }
+.shortlistChoice { display: flex; gap: 9px; align-items: center; min-height: 44px; margin-top: 8px; color: #1d1d1f; font-size: 14px; cursor: pointer; }
+.shortlistChoice input { width: 16px; height: 16px; accent-color: #d7133f; }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
 import { PortalTaskDetail } from "./PortalTaskDetail";
+import { PortalUniversityStep } from "./PortalUniversityStep";
 import { TodaySection } from "./TodaySection";
 import { PlanSection } from "./PlanSection";
 import { DocsSection } from "./DocsSection";
@@ -33,6 +34,7 @@ import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewC
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
+import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist } from "@/lib/portalShortlist";
 
 const KEY = "iitaly_portal_code";
 const KEY_SN = "iitaly_portal_surname";
@@ -107,6 +109,8 @@ export function PortalExplorer() {
   const [openDocument, setOpenDocument] = useState<string | null>(null);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [roadTravel, setRoadTravel] = useState<{ fromDone: number; id: number }>();
+  const [shortlist, setShortlist] = useState<string[]>([]);
+  const shortlistKey = useRef<string | null>(null);
   const [reviewContext, setReviewContext] = useState<DocumentReviewContext>({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
   const documentReturnFocus = useRef<string | null>(null);
   const actionErrorRef = useRef<HTMLDivElement>(null);
@@ -143,6 +147,12 @@ export function PortalExplorer() {
     }
     setLoginError(null);
     sessionVersion.current += 1;
+    const version = sessionVersion.current;
+    let key: string | null = null;
+    try { key = await portalShortlistKey(c, res.data.client.surname || sn); } catch {}
+    if (version !== sessionVersion.current) return;
+    shortlistKey.current = key;
+    setShortlist(key ? readShortlist(key) : []);
     setActionError(null);
     setBusyTask(null);
     setRoadTravel(undefined);
@@ -255,6 +265,8 @@ export function PortalExplorer() {
     setRoadTravel(undefined);
     completionFocusPending.current = false;
     setReviewContext({ profile: "general", academicYear: "unspecified", applicantScope: "unspecified" });
+    shortlistKey.current = null;
+    setShortlist([]);
     focusSettingsTarget.current = null;
     try {
       localStorage.removeItem(KEY);
@@ -291,14 +303,15 @@ export function PortalExplorer() {
   }
 
   async function handleToggle(taskId: string, value: boolean) {
-    if (!code || !surname || !data || busyTask) return;
+    if (!code || !surname || !data || busyTask) return false;
     const version = sessionVersion.current;
-    const taskTitle = tasksWithStages(data).find(({ task }) => task.id === taskId)?.task.t || "Шаг маршрута";
+    const actionTask = tasksWithStages(data).find(({ task }) => task.id === taskId)?.task;
+    const actionTitle = actionTask ? taskTitle(actionTask) : "Шаг маршрута";
     setBusyTask(taskId);
     setActionError(null);
     try {
       const res = await toggleTask(code, surname, taskId, value);
-      if (version !== sessionVersion.current) return;
+      if (version !== sessionVersion.current) return false;
       if (!res?.ok) throw new Error(typeof res?.error === "string" ? res.error : "Отметка не сохранена. Попробуй ещё раз.");
       setData((prev) => prev ? { ...prev, done: res.done, progress: res.progress } : prev);
       if (value && !data.done[taskId] && res.done[taskId]) {
@@ -307,15 +320,37 @@ export function PortalExplorer() {
       } else setRoadTravel(undefined);
       changeSection("today");
       track("portal_task", { done: value });
+      return true;
     } catch (error) {
       if (version === sessionVersion.current) setActionError({
-        message: `${taskTitle}: ${error instanceof Error ? error.message : "Не удалось сохранить отметку."}`,
+        message: `${actionTitle}: ${error instanceof Error ? error.message : "Не удалось сохранить отметку."}`,
         retryLabel: "Сохранить отметку ещё раз",
         retry: () => { void handleToggle(taskId, value); },
       });
+      return false;
     } finally {
       if (version === sessionVersion.current) setBusyTask(null);
     }
+  }
+
+  async function handleSaveUniversities(ids: string[]): Promise<boolean> {
+    if (!data || busyTask) return false;
+    const task = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "shortlist");
+    if (!task || (!data.done.shortlist && taskReadOnlyReason(data, task))) return false;
+    try {
+      if (!shortlistKey.current) throw new Error("Browser storage unavailable");
+      const saved = writeShortlist(shortlistKey.current, ids);
+      setShortlist(saved);
+    } catch {
+      setActionError({ message: "Не удалось сохранить выбор в браузере. Разреши хранение данных сайта и нажми «Сохранить» ещё раз. Маршрут не изменён." });
+      return false;
+    }
+    if (data.done.shortlist) {
+      setActionError(null);
+      changeSection("today");
+      return true;
+    }
+    return handleToggle("shortlist", true);
   }
 
   async function handleSaveProfile(payload: {
@@ -462,6 +497,7 @@ export function PortalExplorer() {
     if (prompt("Для подтверждения введи слово УДАЛИТЬ") !== "УДАЛИТЬ") return;
     const res = await deletePortalData(code, surname);
     if (res && res.ok) {
+      try { if (shortlistKey.current) localStorage.removeItem(shortlistKey.current); } catch {}
       exit();
       alert("Данные удалены.");
     }
@@ -471,7 +507,11 @@ export function PortalExplorer() {
   const currentTask = position?.task || position?.stage?.tasks.find(task => !data?.done[task.id]) || null;
   const activeTask = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === (openDocument || openTaskId)) || null;
   const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask) : "";
-  const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
+  const shortlistEditable = Boolean(activeTask?.id === "shortlist" && (data?.done.shortlist || !readOnlyReason));
+  const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
+    && (data.done[activeTask.id] || activeTask.available !== false));
+  const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
+  const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {
@@ -555,6 +595,7 @@ export function PortalExplorer() {
     <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
+        secondaryAction={Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
     </section>
     </div>
@@ -616,8 +657,12 @@ export function PortalExplorer() {
                 {actionError.retry && <a href="#portal-panel" onClick={event => { event.preventDefault(); if (!busyTask) actionError.retry?.(); }} aria-disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</a>}
               </div>
             )}
-            {section === "today" && <TodaySection data={data} onOpenDoc={showDocument} />}
-            {section === "plan" && (activeTask && openTaskId ? <PortalTaskDetail
+            {section === "today" && <TodaySection data={data} onOpenDoc={showDocument} onOpenDocuments={() => changeSection("docs")} shortlist={shortlist} onOpenTask={openTask} />}
+            {section === "plan" && (activeTask && openTaskId ? shortlistEditable ? <PortalUniversityStep
+              key={activeTask.id} data={data} task={activeTask} selectedIds={shortlist} busy={busyTask !== null}
+              onBack={() => changeSection(stepReturnSection.current)} backHref={sectionUrl(stepReturnSection.current)} onSave={handleSaveUniversities}
+              onReopen={() => { void handleToggle("shortlist", false); }}
+            /> : <PortalTaskDetail
               key={activeTask.id + ":" + Boolean(data.done[activeTask.id])}
               data={data} task={activeTask} busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)}
               context={reviewContext} onContextChange={setReviewContext}
@@ -630,7 +675,7 @@ export function PortalExplorer() {
                 stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}
                 orientir={taskDate(activeTask)}
                 onBack={closeDocument} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
-                canUpload={!readOnlyReason && !actionError?.retry} readOnlyReason={readOnlyReason}
+                canUpload={(!readOnlyReason || canRecheckDocument) && !actionError?.retry} readOnlyReason={readOnlyReason}
                 context={reviewContext} onContextChange={setReviewContext} />
             ) : <PortalTaskDetail
               key={activeTask.id + ":file"} data={data} task={activeTask} busy={busyTask !== null}

@@ -9,10 +9,12 @@ export function CompareBar({
   compareIds,
   onRemove,
   onOpenCompare,
+  embedded = false,
 }: {
   compareIds: string[];
   onRemove: (id: string) => void;
   onOpenCompare: () => void;
+  embedded?: boolean;
 }) {
   if (compareIds.length === 0) return null;
   const unis = compareIds.map((id) => UNIS.find((u) => u.id === id)!).filter(Boolean);
@@ -24,7 +26,7 @@ export function CompareBar({
     // себе пересечения не даёт, но лаунчер садится на правый край полосы.
     <div
       data-fab-yield
-      className={ui.compareBar}
+      className={ui.compareBar + (embedded ? " " + ui.embeddedCompareBar : "")}
     >
       <div className={ui.compareBarInner}>
         <span className={ui.compareBarLabel}>
@@ -51,7 +53,7 @@ export function CompareBar({
         </div>
         <AppleButton
           type="button"
-          variant="filled" size="sm"
+          variant={embedded ? "outlined" : "filled"} size="sm"
           onClick={onOpenCompare}
           disabled={unis.length < 2}
           className="shrink-0"

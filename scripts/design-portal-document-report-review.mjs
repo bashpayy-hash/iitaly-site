@@ -50,7 +50,7 @@ const unreadable = { verdict: 'unreadable', docTitle: 'Семейная спра
 function record(result, fileName) { return { verdict: result.verdict, summary: result.summary, critical: result.problems?.filter(p => p.severity === 'critical').length || 0, checkedAt: '2026-10-13T12:00:00.000Z', fileName, result: structuredClone(result) }; }
 function fixture() {
   return { ok: true, client: { name: 'Тестовый профиль', surname: 'Testov', intakeYear: 2027, onboardingComplete: true, profile: { onboardingDone: true } },
-    roadmap: [{ id: 'documents', title: 'Документы', tasks: Object.entries(titles).map(([id, t]) => ({ id, t, available: true, owner: id === 'familyDocs' ? 'родители' : 'Ты' })) }],
+    roadmap: [{ id: 'documents', title: 'Документы', tasks: Object.entries(titles).map(([id, t]) => ({ id, t, available: ['statements', 'translate'].includes(id), owner: id === 'familyDocs' ? 'родители' : 'Ты' })) }],
     done: { translate: true }, progress: { done: 1, total: 6, pct: 17 },
     docs: { apostille: record(incorrect, 'income-test.pdf'), translate: record(approved, 'translation-test.pdf'), familyDocs: record(unreadable, 'family-blurred-test.png'), cimea: { verdict: 'warn', summary: 'Сохранена только краткая сводка старой проверки.', critical: 0, fileName: 'legacy-test.pdf', checkedAt: '2026-09-01T12:00:00.000Z' } },
   };
@@ -107,13 +107,14 @@ async function noListButtons(page, label) {
 async function reportActionLimit(page, label) {
   const buttons = page.locator('button');
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
-  if (await buttons.count()) assert.equal(await buttons.innerText(), 'Приложить файл', 'The only report action is file selection');
+  if (await buttons.count()) assert.equal(await buttons.innerText(), 'Проверить новую версию', 'The only saved-report action explicitly starts another file check');
   assert.doesNotMatch(await report(page).innerText(), /Спросить про этот шаг|Продолжить маршрут|Открыть разбор/);
 }
 
 try {
   for (const width of [1440, 390, 320]) {
     const data = fixture(), calls = { check: 0, save: 0 };
+    let nextCheckResult = clarify;
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: 'reduce', locale: 'ru-RU' });
     await context.route('**/*', route => {
       const request = route.request(), url = new URL(request.url());
@@ -127,15 +128,16 @@ try {
       if (url.pathname === '/api/check-document') {
         calls.check += 1;
         assert.deepEqual(request.postDataJSON().context, { profile: 'general', academicYear: 'unspecified', applicantScope: 'unspecified' }, 'Intake year does not silently choose document rules');
-        return json({ ok: true, result: clarify });
+        return json({ ok: true, result: nextCheckResult });
       }
       if (url.pathname === '/api/portal/TEST-01/doc') {
         calls.save += 1;
         const body = request.postDataJSON();
         assert.equal(body.surname, 'Testov');
-        assert.equal(body.task, 'statements');
-        assert.deepEqual(body.result, clarify, 'Save the full result, including findings, next steps and source context');
-        data.docs.statements = record(body.result, body.fileName);
+        assert(['statements', 'translate'].includes(body.task), 'Only the requested current or completed document is replaced');
+        assert.deepEqual(body.result, nextCheckResult, 'Save the full result, including findings, next steps and source context');
+        data.docs[body.task] = record(body.result, body.fileName);
+        if (body.task === 'translate') data.done.translate = body.result.verdict === 'ok';
         return json({ ok: true, docs: data.docs, done: data.done, progress: data.progress });
       }
       if (url.pathname.startsWith('/api/')) unexpectedApi.push(url.pathname);
@@ -149,6 +151,7 @@ try {
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
     await page.locator('[data-document-list]').waitFor();
+    assert.match(await page.locator('main').innerText(), /без лимита/i, 'The document screen makes repeat checking discoverable');
     assert.equal(await page.locator('[data-document]').count(), 6, 'All required documents are visible without opening status groups');
     assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'approved', 'fix', 'clarify', 'unreadable', 'missing']);
     assert.deepEqual(await page.locator('[data-document]').evaluateAll(elements => elements.map(element => element.dataset.document)), ['statements', 'apostille', 'cimea', 'familyDocs', 'insurance', 'translate'], 'Current file first, then documents needing action, then approved');
@@ -221,7 +224,7 @@ try {
       assert((await report(page).innerText()).includes(summary));
       if (task === 'translate') {
         assert.doesNotMatch(await report(page).innerText(), /Нужно исправить/);
-        assert.equal(await page.locator('button').count(), 0, 'Completed file has no upload action');
+        assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1, 'A completed document remains available for another check through its single file action');
       }
       if (task === 'familyDocs') {
         assert.match(await report(page).innerText(), /Загрузи чёткий скан всех страниц/);
@@ -252,7 +255,24 @@ try {
     await reportHeadingVisible(page, 'Report opened from plan');
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
     assert.deepEqual(calls, { check: 1, save: 1 });
-    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, overflow: false, seriousAxe: violations });
+    // Unlimited checks mean a user can replace and recheck an already approved
+    // file repeatedly. This must not require a self-report or reopen future steps.
+    for (let repeat = 1; repeat <= 2; repeat += 1) {
+      nextCheckResult = repeat === 1 ? clarify : approved;
+      await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
+      await openReport(page, 'translate');
+      await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).click();
+      const saved = page.waitForResponse(response => new URL(response.url()).pathname === '/api/portal/TEST-01/doc');
+      await page.locator('input[type=file]').setInputFiles({ name: `synthetic-approved-recheck-${repeat}.txt`, mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC TRANSLATION. No personal data.') });
+      await saved;
+      await page.waitForLoadState('networkidle');
+      assert.deepEqual(calls, { check: 1 + repeat, save: 1 + repeat }, 'Each explicit recheck calls check and save exactly once');
+      assert.equal(data.done.translate, repeat === 2, 'The saved document follows server-confirmed completion even after an unsuccessful replacement');
+      assert.equal(data.docs.translate.fileName, `synthetic-approved-recheck-${repeat}.txt`, 'The latest full report replaces the earlier saved version');
+      await page.reload({ waitUntil: 'networkidle' });
+      assert.deepEqual(calls, { check: 1 + repeat, save: 1 + repeat }, 'Reloading never spends another document check');
+    }
+    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, completedFileRecheckedTwice: true, unsuccessfulReplacementRemainsRecheckable: true, rechecksRequireExplicitUpload: true, overflow: false, seriousAxe: violations });
     await context.close();
   }
   assert.deepEqual(errors, []);

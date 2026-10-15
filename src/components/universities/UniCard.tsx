@@ -9,12 +9,14 @@ export function UniCard({
   inCompare,
   onToggleCompare,
   compareDisabled,
+  selection,
 }: {
   uni: University;
   onOpen: () => void;
   inCompare: boolean;
   onToggleCompare: () => void;
   compareDisabled: boolean;
+  selection?: { selected: boolean; onToggle: () => void };
 }) {
   return (
     <div className={ui.uniCard} data-uni-card={uni.id}>
@@ -41,6 +43,17 @@ export function UniCard({
         </div>
       </dl>
       <div className={ui.cardActions}>
+        {selection && <label className={ui.shortlistToggle}>
+          <input
+            type="checkbox"
+            checked={selection.selected}
+            onChange={selection.onToggle}
+            aria-label={`В мой список: ${uni.name}`}
+            data-university-select={uni.id}
+            className={ui.checkbox}
+          />
+          В мой список
+        </label>}
         <div className={ui.tags}>
           {uni.eng && (
             <span className={ui.tag}>

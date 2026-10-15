@@ -164,7 +164,11 @@ try {
     await page.locator('[data-overview-document]').click();
     await report.waitFor();
     await report.getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
-    assert.equal(await page.locator('button').count(), 0, 'A completed document has no upload button');
+    // The owner requested unlimited explicit rechecks, including approved files.
+    assert.equal(await page.locator('button').count(), 1, 'An approved document has one explicit new-version action');
+    assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1);
+    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-secondary'), 'true', 'Rechecking a previous file keeps the road secondary');
+    assert.equal(calls.check, 2, 'Opening the saved report never starts another check');
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
     await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
     await page.locator('[data-document-outcome=approved]').waitFor();

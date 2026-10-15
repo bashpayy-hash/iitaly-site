@@ -76,7 +76,8 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
     </div>}
 
     {canUpload ? <div className={styles.actions} data-fab-yield>
-      <button type="button" className={styles.fileArea} data-primary-action disabled={busy} onClick={onUpload}>Приложить файл</button>
+      <p id="portal-document-repeat-hint" className={styles.meta}>Повторная проверка без доплаты. Новый разбор заменит этот.</p>
+      <button type="button" className={styles.fileArea} aria-describedby="portal-document-repeat-hint" data-primary-action disabled={busy} onClick={onUpload}>Проверить новую версию</button>
       {busy && <p className={styles.meta} role="status">Проверяю…</p>}
     </div> : readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
 

@@ -17,8 +17,8 @@
 .checks p { margin-top: 4px; }
 .checkStatus { font-size: 13px; line-height: 1.5; color: var(--portal-muted); }
 .checkStatus[data-status="ok"] { color: var(--portal-green); }
-.actions { display: grid; gap: 10px; padding: 24px 0 12px; }
-.fileArea { width: 100%; min-height: 84px; padding: 20px; border: 1px solid var(--portal-accent); border-radius: 24px; background: var(--portal-accent); color: var(--portal-surface); font-size: 16px; font-weight: 500; cursor: pointer; }
+.actions { display: grid; justify-items: start; gap: 10px; padding: 24px 0 12px; }
+.fileArea { width: fit-content; max-width: 100%; min-height: 48px; padding: 12px 22px; border: 1px solid var(--portal-accent); border-radius: 999px; background: var(--portal-accent); color: var(--portal-surface); font-size: 16px; line-height: 1.4; font-weight: 500; cursor: pointer; }
 .fileArea:hover { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
 .fileArea:disabled { cursor: wait; opacity: .6; }
 .readOnly { max-width: 65ch; margin: 24px 0 12px; color: var(--portal-muted); font-size: 16px; line-height: 1.6; }
@@ -43,6 +43,5 @@
 @media (max-width: 540px) {
   .checks li { grid-template-columns: 1fr; gap: 4px; }
   .contextFields { grid-template-columns: 1fr; }
-  .actions { flex-direction: column; align-items: stretch; }
   .actions button { white-space: normal; }
 }

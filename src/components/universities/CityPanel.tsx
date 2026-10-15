@@ -10,12 +10,14 @@ export function CityPanel({
   onOpenUni,
   compareIds,
   onToggleCompare,
+  portalSelection,
 }: {
   cityId: CityId;
   unis: University[];
   onOpenUni: (id: string) => void;
   compareIds: string[];
   onToggleCompare: (id: string) => void;
+  portalSelection?: { selectedIds: string[]; onToggle: (id: string) => void };
 }) {
   const c = CITIES[cityId];
   const facts = REGION_FACTS[cityId];
@@ -61,6 +63,10 @@ export function CityPanel({
                 inCompare={compareIds.includes(u.id)}
                 compareDisabled={compareIds.length >= 3}
                 onToggleCompare={() => onToggleCompare(u.id)}
+                selection={portalSelection ? {
+                  selected: portalSelection.selectedIds.includes(u.id),
+                  onToggle: () => portalSelection.onToggle(u.id),
+                } : undefined}
               />
             ))}
           </div>
