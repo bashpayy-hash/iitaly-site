@@ -7,6 +7,8 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // User request 2026-10-15: embed the existing map/comparison in the portal.
+  'src/components/universities/ComparisonSection.tsx',
   'src/components/universities/ItalyMap.tsx',
   'src/components/PaperOverlayGate.tsx',
   'src/components/universities/UniversitiesExplorer.tsx',
@@ -27,6 +29,10 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-15: choose universities inside the portal, keep the API.
+  'src/components/portal/PortalUniversityStep.tsx',
+  'src/components/portal/portal-universities.module.css',
+  'src/lib/portalShortlist.ts',
   'src/components/portal/PortalExplorer.tsx',
   'src/components/portal/HelpSection.tsx',
   // Explicit user request: selected illustration and Claude reference on login only.

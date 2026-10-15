@@ -332,7 +332,9 @@ async function checkRoad(page, title, done, total) {
     assert.match(await current.getAttribute('aria-label'), /^Дальше: .+\. Открыть этот шаг\.$/);
   }
   const links = overview(page).locator('a:not([data-portal-road])');
-  assert((await links.count()) <= 1, 'Only the optional document clarification is a link below the road');
+  assert.equal(await overview(page).locator('a[data-unlimited-documents]').count(), 1, 'The requested unlimited document feature has one route into Documents');
+  assert.equal(await overview(page).locator('a[data-unlimited-documents]').getAttribute('href'), '/portal?view=docs');
+  assert.equal(await links.evaluateAll(elements => elements.filter(element => !element.matches('[data-unlimited-documents], [data-overview-document], [data-saved-universities]')).length), 0, 'Only document checking, a saved university choice and optional clarification add overview links');
   assert.equal(await overview(page).locator('a').filter({ hasText: 'Потом' }).count(), 0, 'The next step is plain text');
   await noOverflow(page, 'Overview does not overflow');
 }
@@ -403,7 +405,7 @@ async function openStep(page, locator, id, screen = 'plan') {
   assert.equal(await actionHint.count(), isCurrent ? 1 : 0, 'Only the current actionable step explains how its action works; future and done steps have no action hint');
   if (isCurrent) {
     assert.equal(await actionHint.isVisible(), true, 'The current completion guidance is visible without opening a disclosure');
-    assert((await detail(page).locator('[aria-describedby="portal-step-action-hint"]').count()) >= 1, 'The current action exposes its guidance to assistive technology');
+    assert((await detail(page).locator('[aria-describedby~="portal-step-action-hint"]').count()) >= 1, 'The current action exposes its guidance to assistive technology');
   }
   if (!isCurrent && await road(page).getAttribute('data-current-step')) {
     assert.equal(await road(page).evaluate(element => element.tagName), 'A', 'A future or completed step still points to the actual next action');
@@ -472,7 +474,7 @@ try {
     await page.evaluate(() => document.fonts.ready);
     const rowBox = await current.boundingBox();
     assert(rowBox && rowBox.y >= 0 && rowBox.y + rowBox.height <= viewport.height, `The current action verb is above the fold at ${label}`);
-    assert.match(await current.innerText(), /Выбрать программы/);
+    assert.match(await current.innerText(), /Выбрать университеты/);
     // The user now wants a compact guide that stays at the top on every
     // screen, replacing the oversized overview hero. Preserve readable type
     // without requiring a 26px title that makes the pinned chrome too tall.
@@ -498,8 +500,11 @@ try {
     assert.deepEqual(violations, [], `${label} overview accessibility`);
     await page.screenshot({ path: resolve(output, `portal-overview-${label}.png`), fullPage: true });
     await openStep(page, current, 'shortlist');
-    assert((await page.locator('button').count()) <= 1, 'Program choice obeys the page button limit');
-    assert.equal(await detail(page).locator('a[href="/universities"]').count(), 1, 'The existing program-selection destination has exactly one path');
+    // The requested embedded map and comparison keep their existing controls.
+    // Only Save commits the shortlist; the catalogue is no longer an external action.
+    assert.equal(await page.locator('[data-portal-universities]').count(), 1, 'Program selection stays inside the existing step');
+    assert.equal(await detail(page).locator('[data-shortlist-save]').count(), 1, 'Shortlist has one explicit save action');
+    assert.equal(await detail(page).locator('a[href="/universities"]').count(), 0, 'Selecting universities never redirects to the public catalogue');
     assert.equal(calls.length, 0, 'Opening a step cannot complete it');
     await page.reload({ waitUntil: 'networkidle' });
     await page.locator('[data-step-detail="shortlist"]').waitFor();
@@ -545,13 +550,13 @@ try {
     const blocked = page.locator('[data-portal-task="statements"]');
     await openStep(page, blocked, 'statements', 'docs');
     await noButtons(page, 'Future document step');
-    assert.match(await detail(page).innerText(), /Сначала:.*Выбрать программы/);
+    assert.match(await detail(page).innerText(), /Сначала:.*Выбрать университеты/);
     await page.goBack();
     if (!(await documents.evaluate(element => element.open))) await documents.locator('summary').click();
     await openStep(page, page.locator('[data-portal-task="familyDocs"]'), 'familyDocs', 'docs');
     await noButtons(page, 'Parent step');
     assert.match(await detail(page).innerText(), /родител/i);
-    assert.match(await detail(page).innerText(), /Сначала:.*Выбрать программы/);
+    assert.match(await detail(page).innerText(), /Сначала:.*Выбрать университеты/);
     await go(page, 'План');
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await checkNavigation(page, true);
@@ -584,7 +589,7 @@ try {
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), [null, null]);
     }
-    results.push({ viewport, sharedSiteBrand: true, decorativeArtwork: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, compactGlobalGuideOnEveryView: true, currentDetailGuideIsStatic: true, planListsHaveZeroButtons: true, overviewHasOnlyRoadLink: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, currentHintAccessible: true, intrinsicWidthRoadAction: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
+    results.push({ viewport, sharedSiteBrand: true, decorativeArtwork: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, compactGlobalGuideOnEveryView: true, currentDetailGuideIsStatic: true, planListsHaveZeroButtons: true, overviewHasOnlyRequestedDocumentAndSelectionLinks: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, currentHintAccessible: true, intrinsicWidthRoadAction: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });
     await context.close();
   }
   for (const mode of process.env.NAVIGATION_REVIEW_LATE_ONLY ? [] : ['zero', 'complete', 'blocked', 'empty', 'near', 'dates', 'parents', 'manual', 'last']) {
@@ -704,10 +709,9 @@ try {
     await summary.focus();
     await page.keyboard.press('Enter');
     assert.equal(await help.evaluate(element => element.open), true, 'Step guidance opens with the keyboard');
-    assert.deepEqual(await help.locator('p').allTextContents(), [
-      'Сравни программы и выбери подходящие. Это пояснение тестового шага.',
-      'Дополнительная памятка для тестового шага.',
-    ], 'The disclosure preserves existing detailed guidance and deduplicates repeated notes');
+    const guidanceParagraphs = await help.locator('p').allTextContents();
+    assert(guidanceParagraphs.includes('Сравни программы и выбери подходящие. Это пояснение тестового шага.'), 'Embedded selection preserves the route’s existing explanation');
+    assert.equal(guidanceParagraphs.filter(text => text === 'Дополнительная памятка для тестового шага.').length, 1, 'Existing detailed notes are preserved and deduplicated');
     assert.equal(await help.locator('button, a, input').count(), 0, 'Reading help never adds another action');
     await page.keyboard.press('Enter');
     assert.equal(await help.evaluate(element => element.open), false);
@@ -724,7 +728,7 @@ try {
     });
     const displayedContext = chat.locator('[data-chat-step-context]');
     assert.equal(await displayedContext.getAttribute('data-chat-step-context'), 'shortlist');
-    assert.match(await displayedContext.innerText(), /Выбрать программы/, 'The visible assistant context names the open step');
+    assert.match(await displayedContext.innerText(), /Выбрать университеты/, 'The visible assistant context names the open step');
     const prompts = chat.locator('a[href="#chat-input"]');
     assert.deepEqual(await prompts.allTextContents(), ['Как выбрать программы?', 'Что сравнить у программ?'], 'Two optional plain-text questions match the open step');
     for (const prompt of await prompts.all()) {
@@ -761,8 +765,8 @@ try {
     assert.equal(chatCalls.length, 1);
     const scopedQuestion = chatCalls[0].messages.at(-1).content;
     assert.match(scopedQuestion, /Открытый шаг IITALY: shortlist/);
-    assert.match(scopedQuestion, /название: Выбрать программы/);
-    assert.match(scopedQuestion, /Сравни программы, затем вернись сюда и нажми «Готово»/, 'The assistant receives the same completion guidance as the step');
+    assert.match(scopedQuestion, /название: Выбрать университеты/);
+    assert.match(scopedQuestion, /Сохрани выбранные вузы — кабинет покажет следующий шаг/, 'The assistant receives the same completion guidance as the step');
     assert.match(scopedQuestion, /С чего начать этот шаг\?/);
     await input.fill(draft);
     await go(page, 'Обзор');
@@ -770,7 +774,7 @@ try {
     await chat.waitFor();
     assert.equal(await displayedContext.getAttribute('data-chat-step-context'), '', 'The visible helper context reacts immediately when a step is closed');
     assert.match(await displayedContext.innerText(), /Помощь по кабинету/);
-    assert.doesNotMatch(await displayedContext.innerText(), /Выбрать программы/, 'A list view never displays the previously open step as current context');
+    assert.doesNotMatch(await displayedContext.innerText(), /Выбрать университеты/, 'A list view never displays the previously open step as current context');
     assert.equal(await input.inputValue(), draft, 'A context change preserves the user’s draft');
     assert.equal(chatCalls.length, 1, 'Changing views while the helper is open waits for a question');
     await input.fill('Что сейчас видно в кабинете?');
@@ -879,7 +883,8 @@ try {
     await checkStickyScroll(page, `future-step-${label}`, { requireScroll: false });
     await openStep(page, road(page), 'shortlist');
     await checkStickyScroll(page, `current-step-${label}`, { currentOpen: true, requireScroll: false });
-    assert.equal(await detail(page).locator('a[href="/universities"]').count(), 1, 'Only the step itself offers the program-selection action');
+    assert.equal(await page.locator('[data-portal-universities]').count(), 1, 'The current step embeds university selection without leaving the portal');
+    assert.equal(await detail(page).locator('a[href="/universities"]').count(), 0, 'The embedded step replaces the external catalogue action');
     await page.getByRole('link', { name: 'Назад', exact: true }).click();
     assert.equal(new URL(page.url()).searchParams.get('view'), 'docs', 'The persistent guide returns to the Documents screen it was opened from');
     await page.getByRole('link', { name: 'Настройки', exact: true }).click();

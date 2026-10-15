@@ -21,12 +21,14 @@ export function UniModal({
   inCompare,
   onToggleCompare,
   compareDisabled,
+  selection,
 }: {
   uni: University | null;
   onClose: () => void;
   inCompare: boolean;
   onToggleCompare: () => void;
   compareDisabled: boolean;
+  selection?: { selected: boolean; onToggle: () => void };
 }) {
   return (
     <Modal open={!!uni} onClose={onClose} labelledBy="uni-modal-title" className={ui.dialogPanel}>
@@ -48,6 +50,10 @@ export function UniModal({
           </dl>
           <p className="mt-4 text-sm leading-relaxed">Стоимость и жизнь — ориентиры исходного каталога, не оферта на 2027/28. Тест, срок и стипендию сверяй с bando конкретной программы. <a href="/changes-2026-27" className="underline underline-offset-4">Актуальные правила и источники</a>.</p>
           <div className="mt-5 flex flex-wrap gap-3">
+            {selection && <label className={ui.shortlistToggle}>
+              <input type="checkbox" className={ui.checkbox} checked={selection.selected} onChange={selection.onToggle} aria-label={`В мой список: ${uni.name}`} />
+              В мой список
+            </label>}
             <AppleButton
               type="button"
               variant="outlined"
@@ -56,7 +62,7 @@ export function UniModal({
             >
               {inCompare ? "Убрать из сравнения" : "Добавить к сравнению"}
             </AppleButton>
-            <AppleButton type="button" variant="filled" onClick={onClose}>
+            <AppleButton type="button" variant={selection ? "outlined" : "filled"} onClick={onClose}>
               Понятно
             </AppleButton>
           </div>

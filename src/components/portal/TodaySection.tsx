@@ -1,11 +1,12 @@
 "use client";
 
 import type { MouseEvent } from "react";
-import type { PortalData } from "@/lib/portalApi";
+import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, taskDate, taskTitle } from "@/lib/portalNavigation";
 import styles from "./portal-overview.module.css";
+import { shortlistNames } from "@/lib/portalShortlist";
 
 function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -13,12 +14,17 @@ function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
   open();
 }
 
-export function TodaySection({ data, onOpenDoc }: {
+export function TodaySection({ data, onOpenDoc, onOpenDocuments, shortlist, onOpenTask }: {
   data: PortalData;
   onOpenDoc: (id: string) => void;
+  onOpenDocuments: () => void;
+  shortlist: string[];
+  onOpenTask: (task: PortalTask) => void;
 }) {
   const { task, stage } = portalPosition(data);
   const tasks = data.roadmap.flatMap(row => row.tasks);
+  const universityStep = tasks.find(row => row.id === "shortlist");
+  const universityNames = shortlistNames(shortlist);
   const current = task || stage?.tasks.find(row => !data.done[row.id]) || null;
   const currentIndex = current ? tasks.findIndex(row => row.id === current.id) : -1;
   const next = currentIndex < 0 ? null : tasks.slice(currentIndex + 1).find(row => !data.done[row.id]);
@@ -38,6 +44,15 @@ export function TodaySection({ data, onOpenDoc }: {
 
   return (
     <div className={styles.overview} data-portal-overview>
+      <a href="/portal?view=docs" className={styles.documentFeature} data-unlimited-documents onClick={event => followRow(event, onOpenDocuments)}>
+        <span className={styles.featureEyebrow}>В твоём кабинете</span>
+        <h2>Проверяй документы без лимита</h2>
+        <p>Загружай исправленные версии. Получай итог, причину и следующий шаг.</p>
+        <span className={styles.featureLink}>Выбрать документ <span aria-hidden="true">→</span></span>
+      </a>
+      {universityStep && universityNames.length > 0 && <a className={styles.universityChoice} href="/portal?view=plan&task=shortlist" data-saved-universities onClick={event => followRow(event, () => onOpenTask(universityStep))}>
+        <span className={styles.label}>Твои вузы</span><span>{universityNames.join(" · ")}</span><span className={styles.choiceNote}>Выбраны в этом браузере · изменить</span>
+      </a>}
       {next && <p className={styles.next} data-road-later>
         <span className={styles.label}>Потом</span>{" · "}{taskTitle(next)}. Это {nextOwner}, сейчас открывать не нужно.
       </p>}

@@ -156,3 +156,53 @@
 .cityShortcut select:focus-visible { outline: 2px solid #b91134; outline-offset: 4px; }
 .cityResult { scroll-margin-top: 88px; }
 @media (max-width: 639px) { .cityShortcut { align-items: stretch; gap: 8px; } .cityShortcut label, .cityShortcut select { width: 100%; } }
+
+/* User-requested in-portal selection reuses the complete catalogue. Keep these
+   rules scoped: the public map, comparison and page presentation are unchanged. */
+.embedded {
+  --i-signal: #fc1c46;
+  --i-action: #d7133f;
+  --i-link: #b91134;
+  --u-ink: #1d1d1f;
+  --u-body: #51515a;
+  --u-meta: #666670;
+  --u-line: #e3e3e8;
+  min-width: 0;
+  color: var(--u-ink);
+  font-family: var(--font-apple-text);
+  line-height: 1.5;
+}
+.embedded :where(button, a, select, input):focus-visible { outline: 2px solid var(--i-link); outline-offset: 4px; }
+.embedded .explorer { padding: 24px 0 32px; background: transparent; }
+.embedded .mapGrid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.embedded .mapColumn { position: static; }
+.embedded .mapFrame { max-width: 440px; margin-inline: auto; }
+.embedded .cityResult { scroll-margin-top: calc(var(--portal-chrome-height, 64px) + 16px); }
+.embedded .emptyCity { min-height: 190px; padding: 28px 24px; }
+.embedded .emptyTitle { font-size: 22px; }
+.embedded .cityShortcut select { min-width: 0; }
+.embedded .cityShortcut { margin-top: 0; }
+.embedded .filterButton[aria-pressed="true"] { background: #f5f5f7; border-color: #1d1d1f; color: #1d1d1f; }
+.embedded .filterButton[aria-pressed="true"]:hover { background: #eeeef1; }
+.embedded .primaryButton { border-color: var(--u-line); background: #fff; color: var(--u-ink); }
+.embedded .primaryButton:hover { background: #f5f5f7; }
+.embedded .textButton { color: var(--u-body); }
+.embedded :is(.eyebrow, .mapCaption, .scholarship, .tag, .compareToggle, .compareBarLabel, .compareChip, .factNumber) { font-size: 13px; }
+.embedded .uniOpen { min-height: 44px; }
+.shortlistToggle { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 9px 12px; border: 1px solid var(--u-line); border-radius: 12px; background: #fff; color: var(--u-ink); font-size: 14px; font-weight: 500; cursor: pointer; }
+.shortlistToggle:has(:checked) { border-color: #1d1d1f; background: #f5f5f7; }
+.uniCard .shortlistToggle { width: 100%; }
+.embeddedCompareBar { position: static; margin-top: 16px; padding: 18px 0; border-bottom: 1px solid var(--u-line); background: transparent; backdrop-filter: none; }
+.embedded .matchPanel :where(button) { min-width: 44px; min-height: 44px; }
+.embedded .matchPanel :where(p, span) { font-size: max(13px, 1em); }
+@media (min-width: 1280px) {
+  .embedded .mapGrid { grid-template-columns: minmax(260px, .8fr) minmax(0, 1.2fr); }
+  .embedded .mapColumn { position: sticky; top: calc(var(--portal-chrome-height, 64px) + 16px); }
+  .embedded .cityFacts { grid-template-columns: 1fr; gap: 12px; }
+  .embedded .cityFact { display: flex; align-items: baseline; gap: 10px; }
+  .embedded .factNumber { margin: 0; }
+}
+@media (max-width: 900px) {
+  .embedded .matchPanel { bottom: calc(64px + env(safe-area-inset-bottom)); max-height: calc(100dvh - var(--portal-chrome-height, 64px) - 88px); }
+}
+@media (prefers-reduced-motion: reduce) { .embedded :where(button, a) { transition: none; } }

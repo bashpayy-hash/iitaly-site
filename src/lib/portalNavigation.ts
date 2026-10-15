@@ -26,6 +26,7 @@ export function taskTitle(task: PortalTask): string {
     return parentTitles[task.id] || `Попросить родителей ${task.t.charAt(0).toLowerCase()}${task.t.slice(1)}`;
   }
   const titles: Record<string, string> = {
+    shortlist: "Выбрать университеты",
     universitaly: "Подать предзапись на гос. портале (Universitaly)",
     cimea: "Уточнить подтверждение квалификации (DoV / CIMEA)",
     iseeu: "Подготовить справку о доходах (ISEEU)",
@@ -35,7 +36,7 @@ export function taskTitle(task: PortalTask): string {
 
 export function taskAction(task: PortalTask): string {
   const actions: Record<string, string> = {
-    shortlist: "Выбрать программы", profile: "Заполнить профиль", path12: "Выбрать путь",
+    shortlist: "Выбрать университеты", profile: "Заполнить профиль", path12: "Выбрать путь",
     chances: "Оценить шансы", checkDocs: "Проверить документы",
     apostille: "Подготовить апостиль", translate: "Подготовить перевод", notary: "Заверить перевод",
     cimea: "Уточнить подтверждение квалификации", universitaly: "Подготовить предзапись",
@@ -65,7 +66,7 @@ export function taskBlockedReason(task: PortalTask): string {
 export function taskExplanation(task: PortalTask): string {
   const explanations: Record<string, string> = {
     profile: "Укажи образование и цель, чтобы настроить маршрут.",
-    shortlist: "Сравни программы и выбери подходящие.",
+    shortlist: "Посмотри города на карте, сравни вузы и отметь подходящие в свой список.",
     chances: "Обсуди с родителями, подходит ли вашей семье региональная стипендия.",
     path12: "Выбери, как дополнить школьное образование для поступления.",
     enroll12: "Подготовь подтверждение дополнительного года обучения.",
@@ -100,7 +101,7 @@ export function taskExplanation(task: PortalTask): string {
 export function taskActionHint(task: PortalTask): string {
   if (task.id === "profile" || task.id === "path12") return "Сохрани ответы в профиле, чтобы обновить маршрут.";
   if (DOC_TASKS[task.id]) return "После загрузки получишь разбор: итог, причина и следующий шаг.";
-  if (task.id === "shortlist") return "Сравни программы, затем вернись сюда и нажми «Готово».";
+  if (task.id === "shortlist") return "Сохрани выбранные вузы — кабинет покажет следующий шаг.";
   if (ACT_PAGE[task.id]) return "Выполни действие на открывшейся странице, затем вернись сюда и нажми «Готово».";
   return "Нажми «Готово», когда выполнишь этот шаг. Это твоя отметка в маршруте.";
 }

@@ -25,7 +25,12 @@ function matchesFilters(u: University, type: TypeFilter, engOnly: boolean) {
   return true;
 }
 
-export function UniversitiesExplorer() {
+export type PortalUniversitySelection = {
+  selectedIds: string[];
+  onToggle: (id: string) => void;
+};
+
+export function UniversitiesExplorer({ portalSelection }: { portalSelection?: PortalUniversitySelection } = {}) {
   const [activeCity, setActiveCity] = useState<CityId | null>(null);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
@@ -90,9 +95,20 @@ export function UniversitiesExplorer() {
     });
   }
 
-  return (
+  const cityShortcut = (
+          <div className={ui.cityShortcut}>
+            <label htmlFor="city-shortcut">Сразу к городу</label>
+            <select id="city-shortcut" value={activeCity || ""} onChange={event => chooseCity((event.target.value || null) as CityId | null)}>
+              <option value="">Выбери из списка или на карте</option>
+              {Object.entries(CITIES).sort((a, b) => a[1].name.localeCompare(b[1].name, "ru")).map(([id, city]) => <option key={id} value={id}>{city.name}</option>)}
+            </select>
+            {filtersActive && <button type="button" className={ui.textButton} onClick={() => { setTypeFilter("all"); setEngOnly(false); }}>Сбросить фильтры</button>}
+          </div>
+  );
+
+  const content = (
     <>
-      <section className={ui.hero}>
+      {!portalSelection && <section className={ui.hero}>
         <div className={ui.heroInner}>
           <div className={ui.heroCopy}>
             <p className={ui.eyebrow}>43 университета · 30 городов</p>
@@ -104,10 +120,11 @@ export function UniversitiesExplorer() {
           </div>
           <UniversityArtwork variant="balcony" />
         </div>
-      </section>
+      </section>}
 
       <section className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
+          {portalSelection && cityShortcut}
           <Filters
             typeFilter={typeFilter}
             onTypeChange={setTypeFilter}
@@ -119,14 +136,7 @@ export function UniversitiesExplorer() {
             cities={filteredCities.size}
             filtered={filtersActive}
           />
-          <div className={ui.cityShortcut}>
-            <label htmlFor="city-shortcut">Сразу к городу</label>
-            <select id="city-shortcut" value={activeCity || ""} onChange={event => chooseCity((event.target.value || null) as CityId | null)}>
-              <option value="">Выбери из списка или на карте</option>
-              {Object.entries(CITIES).sort((a, b) => a[1].name.localeCompare(b[1].name, "ru")).map(([id, city]) => <option key={id} value={id}>{city.name}</option>)}
-            </select>
-            {filtersActive && <button type="button" className={ui.textButton} onClick={() => { setTypeFilter("all"); setEngOnly(false); }}>Сбросить фильтры</button>}
-          </div>
+          {!portalSelection && cityShortcut}
 
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
@@ -175,10 +185,11 @@ export function UniversitiesExplorer() {
                   onOpenUni={openUniModal}
                   compareIds={compareIds}
                   onToggleCompare={toggleCompare}
+                  portalSelection={portalSelection}
                 />
               ) : (
                 <div className={ui.emptyCity} data-city-empty>
-                  <UniversityArtwork variant="paperwork" />
+                  {!portalSelection && <UniversityArtwork variant="paperwork" />}
                   <p className={ui.emptyTitle}>Выберите город</p>
                   <p className={ui.emptyDescription}>
                     Нажмите на любую точку на карте, чтобы увидеть университеты,
@@ -199,6 +210,8 @@ export function UniversitiesExplorer() {
         compareIds={compareIds}
         onChange={setCompareIds}
         onOpen={() => setCompareOpen(true)}
+        embedded={Boolean(portalSelection)}
+        portalSelection={portalSelection}
       />
 
       <CityMatch
@@ -218,6 +231,7 @@ export function UniversitiesExplorer() {
         compareIds={compareIds}
         onRemove={toggleCompare}
         onOpenCompare={() => setCompareOpen(true)}
+        embedded={Boolean(portalSelection)}
       />
 
       <UniModal
@@ -226,13 +240,20 @@ export function UniversitiesExplorer() {
         inCompare={openUni ? compareIds.includes(openUni.id) : false}
         compareDisabled={compareIds.length >= 3}
         onToggleCompare={() => openUni && toggleCompare(openUni.id)}
+        selection={portalSelection && openUni ? {
+          selected: portalSelection.selectedIds.includes(openUni.id),
+          onToggle: () => portalSelection.onToggle(openUni.id),
+        } : undefined}
       />
 
       <CompareModal
         open={compareOpen}
         compareIds={compareIds}
         onClose={() => setCompareOpen(false)}
+        embedded={Boolean(portalSelection)}
       />
     </>
   );
+
+  return portalSelection ? <div className={ui.embedded} data-portal-university-picker>{content}</div> : content;
 }

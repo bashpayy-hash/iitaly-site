@@ -1,4 +1,15 @@
 .overview { min-width: 0; max-width: 65ch; }
+.documentFeature { display: block; padding: 24px !important; margin-bottom: 20px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); color: var(--portal-ink); text-decoration: none; }
+.featureEyebrow { display: block; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
+.documentFeature h2 { margin: 8px 0 12px; max-width: 24ch; font-family: var(--portal-heading-font); font-size: 28px; font-weight: 600; line-height: 1.15; letter-spacing: -.025em; }
+.documentFeature p { max-width: 45ch; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
+.featureLink { display: flex; gap: 16px; align-items: center; justify-content: space-between; min-height: 44px; margin-top: 12px; font-size: 15px; font-weight: 500; }
+.documentFeature:hover .featureLink { text-decoration: underline; text-underline-offset: 4px; }
+.documentFeature:focus-visible, .universityChoice:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+.universityChoice { display: grid; gap: 6px; padding: 0 0 20px; color: var(--portal-ink); font-size: 14px; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
+.choiceNote { color: var(--portal-muted); font-size: 13px; }
+.universityChoice:hover .choiceNote { text-decoration: underline; text-underline-offset: 4px; }
+@media(max-width:540px) { .documentFeature { padding: 20px !important; } .documentFeature h2 { font-size: 24px; } }
 .road { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, max-content); grid-template-areas: "header next" "visual visual"; align-items: start; column-gap: 24px; row-gap: 0; width: 100%; overflow: hidden; padding: 8px 0; border: 0; border-radius: 0; background: var(--portal-surface); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
 .road:hover:not([data-road-static="true"]) .stepAction { background: var(--portal-accent-deep); }
 .road:hover:not([data-road-static="true"]) .arrow { transform: translateX(3px); }

@@ -13,10 +13,12 @@ const serverSnapshot = () => false;
 
 const options = [...UNIS].sort((a, b) => CITIES[a.city].name.localeCompare(CITIES[b.city].name, "ru") || a.name.localeCompare(b.name));
 
-export function ComparisonSection({ compareIds, onChange, onOpen }: {
+export function ComparisonSection({ compareIds, onChange, onOpen, embedded = false, portalSelection }: {
   compareIds: string[];
   onChange: (ids: string[]) => void;
   onOpen: () => void;
+  embedded?: boolean;
+  portalSelection?: { selectedIds: string[]; onToggle: (id: string) => void };
 }) {
   const ready = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
   const universities = compareIds.map(id => UNIS.find(u => u.id === id)).filter((u): u is University => Boolean(u));
@@ -27,24 +29,30 @@ export function ComparisonSection({ compareIds, onChange, onOpen }: {
     onChange([...new Set(next.filter(Boolean))].slice(0, 3));
   }
   return (
-    <section className={styles.section} id="compare-universities" data-comparison-ready={ready} aria-labelledby="comparison-heading">
+    <section className={styles.section + (embedded ? " " + styles.embedded : "")} id="compare-universities" data-comparison-ready={ready} aria-labelledby={embedded ? undefined : "comparison-heading"} aria-label={embedded ? "Сравнение университетов" : undefined}>
       <div className={styles.inner}>
-        <div className={styles.intro}>
+        {!embedded && <div className={styles.intro}>
           <div>
             <p className={styles.eyebrow}>Выбирай по тому, что важно тебе</p>
             <h2 id="comparison-heading">Сравни не только название.</h2>
             <p className={styles.description}>Город, программы, экзамены, сроки, стоимость и поддержка — рядом, в одной таблице. Добавь два или три вуза здесь или через карточки на карте.</p>
           </div>
           <LemonPostcard />
-        </div>
+        </div>}
         <div className={styles.selectors}>
-          {[0, 1, 2].map(index => <label key={index} className={styles.selector}>
-            <span>Университет {index + 1}{index === 2 ? " · необязательно" : ""}</span>
-            <select disabled={!ready} aria-label={`Университет ${index + 1}`} value={compareIds[index] || ""} onChange={event => select(index, event.target.value)}>
-              <option value="">Выбрать университет</option>
-              {options.map(u => <option key={u.id} value={u.id} disabled={compareIds.includes(u.id) && compareIds[index] !== u.id}>{CITIES[u.city].name} — {u.name}</option>)}
-            </select>
-          </label>)}
+          {[0, 1, 2].map(index => <div key={index} className={styles.selector}>
+            <label>
+              <span>Университет {index + 1}{index === 2 ? " · необязательно" : ""}</span>
+              <select disabled={!ready} aria-label={`Университет ${index + 1}`} value={compareIds[index] || ""} onChange={event => select(index, event.target.value)}>
+                <option value="">Выбрать университет</option>
+                {options.map(u => <option key={u.id} value={u.id} disabled={compareIds.includes(u.id) && compareIds[index] !== u.id}>{CITIES[u.city].name} — {u.name}</option>)}
+              </select>
+            </label>
+            {portalSelection && compareIds[index] && <label className={styles.shortlistChoice}>
+              <input type="checkbox" checked={portalSelection.selectedIds.includes(compareIds[index])} onChange={() => portalSelection.onToggle(compareIds[index])} aria-label={`В мой список: ${UNIS.find(uni => uni.id === compareIds[index])?.name || compareIds[index]}`} />
+              В мой список
+            </label>}
+          </div>)}
         </div>
         <div className={styles.selectionActions}>
           <p role="status">Выбрано {universities.length} из 3</p>
