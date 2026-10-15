@@ -184,6 +184,11 @@ async function checkArtwork(page, expectedScene) {
   // Decode only the visible responsive variant; hidden desktop/mobile copies
   // stay lazy. A missing asset must fail the review rather than make a blank shot.
   const images = page.locator('[data-portal-art] img').filter({ visible: true });
+  // A newly mounted lazy image may not have selected its responsive source yet.
+  // Wait for that load before decode(), which otherwise races the srcSet change.
+  await page.waitForFunction(() => [...document.querySelectorAll('[data-portal-art] img')]
+    .filter(image => image.getBoundingClientRect().width > 0 && image.getBoundingClientRect().height > 0)
+    .every(image => image.complete && image.naturalWidth > 0 && image.currentSrc), { }, { timeout: 10000 });
   const visible = await images.evaluateAll(async elements => Promise.all(elements.map(async image => {
     await image.decode();
     const artwork = image.closest('[data-portal-art]');
