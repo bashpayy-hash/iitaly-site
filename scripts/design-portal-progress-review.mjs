@@ -547,6 +547,8 @@ try {
     await reviewRoadDesign();
   } else if (process.env.PORTAL_RELEASE_CAPTURE) {
     async function capture(page, name, mode, width) {
+      // Capture the actual embedded choice, not its transient lazy-load label.
+      if (name === 'step') await page.locator('[aria-label="Карта и каталог университетов"]').waitFor();
       await page.evaluate(async () => { await document.fonts.ready; window.scrollTo(0, 0); await new Promise(requestAnimationFrame); });
       await page.mouse.move(0, 0);
       await checkArtwork(page, { overview: 'study', plan: 'route', documents: 'documents' }[name]);
@@ -811,18 +813,19 @@ try {
       const scooter = element.querySelector('[data-road-scooter]');
       const fill = element.querySelector('[data-road-fill]');
       const text = element.querySelector('[data-road-text]');
-      const wheel = element.querySelector('[data-road-spokes]');
+      const art = element.querySelector('[data-vespi="ride"]');
       return { current: element.dataset.currentStep, done: element.dataset.roadDone,
         title: text.textContent, live: element.querySelector('[data-road-next]').getAttribute('aria-live'),
         transition: getComputedStyle(scooter).transitionDuration, easing: getComputedStyle(scooter).transitionTimingFunction,
-        synchronizedTransitions: [scooter, fill, ...element.querySelectorAll('[data-road-spokes]')].map(node => ({
+        synchronizedTransitions: [scooter, fill].map(node => ({
           property: getComputedStyle(node).transitionProperty,
           duration: getComputedStyle(node).transitionDuration,
           delay: getComputedStyle(node).transitionDelay,
           easing: getComputedStyle(node).transitionTimingFunction,
         })),
         left: new DOMMatrix(getComputedStyle(scooter).transform).m41, destination: scooter.parentElement.clientWidth * parseFloat(scooter.style.transform.match(/translateX\(([^%]+)/)[1]) / 100,
-        fillWidth: fill.getBoundingClientRect().width, wheelAnimation: getComputedStyle(wheel).animationName,
+        fillWidth: fill.getBoundingClientRect().width, mascotLoaded: art.complete && art.naturalWidth > 0,
+        mascotSource: new URL(art.currentSrc).pathname,
         copyAnimation: getComputedStyle(text).animationDuration,
       };
     });
@@ -835,22 +838,22 @@ try {
     assert.equal(traveling.easing, 'cubic-bezier(0.4, 0, 0.2, 1)');
     for (const transition of traveling.synchronizedTransitions) assert.deepEqual(transition, {
       property: 'transform', duration: traveling.transition, delay: '0s', easing: traveling.easing,
-    }, 'Fill, scooter and both wheels share one transform-only acceleration and deceleration');
+    }, 'Fill and approved mascot share one transform-only acceleration and deceleration');
     assert(traveling.left < traveling.destination, 'The scooter interpolates instead of snapping to the destination');
     assert(Math.abs(traveling.fillWidth - traveling.left) < 2, 'The fill travels with the scooter');
-    assert.equal(traveling.wheelAnimation, 'none', 'Wheels follow actual travel instead of an independent constant-speed animation');
+    assert(traveling.mascotLoaded, 'The approved character is decoded during the trip');
+    assert.match(traveling.mascotSource, /\/mascot\/vespi\/vespi-ride-(160|320|640)\.webp$/, 'Use the approved character instead of the old SVG approximation');
     assert.equal(traveling.copyAnimation, '0.42s');
     await checkCompletionFeedback(page, true);
     const frames = await road(page).evaluate(async element => {
       const scooter = element.querySelector('[data-road-scooter]'), fill = element.querySelector('[data-road-fill]');
-      const wheels = [...element.querySelectorAll('[data-road-spokes]')], frames = [];
+      const frames = [];
       const started = performance.now();
       await new Promise(resolve => {
         const record = now => {
           frames.push({ time: now - started,
             scooter: new DOMMatrix(getComputedStyle(scooter).transform).m41,
             fill: fill.getBoundingClientRect().width,
-            wheels: wheels.map(wheel => getComputedStyle(wheel).transform),
           });
           if (now - started >= 320 || element.dataset.traveling !== 'true') resolve();
           else requestAnimationFrame(record);
@@ -866,11 +869,12 @@ try {
       assert(Math.abs(frame.fill - frame.scooter) < 2, 'Fill and scooter stay aligned throughout the trip, not only at its ends');
       if (index) assert(frame.scooter >= frames[index - 1].scooter - 0.1, 'The scooter does not jump backwards during a forward completion');
     }
-    for (let index = 0; index < 2; index++) assert.notEqual(frames.at(-1).wheels[index], frames[0].wheels[index], 'Both wheels turn with the advancing scooter');
+    // The approved plush artwork is one raster layer. Its wheels are not redrawn
+    // or spun as separate elements; displacement and road marks convey travel.
     await page.waitForFunction(() => document.querySelector('[data-portal-road]')?.getAttribute('data-traveling') === 'false');
     const settled = await road(page).locator('[data-road-scooter]').evaluate(element => ({ actual: new DOMMatrix(getComputedStyle(element).transform).m41, expected: element.parentElement.clientWidth * parseFloat(element.style.transform.match(/translateX\(([^%]+)/)[1]) / 100 }));
     assert(Math.abs(settled.actual - settled.expected) < 1, 'The scooter reaches its real completion position');
-    assert.equal(await road(page).locator('[data-road-spokes]').first().evaluate(element => getComputedStyle(element).animationName), 'none');
+    assert.equal(await road(page).locator('[data-vespi="ride"]').evaluate(element => getComputedStyle(element).animationName), 'none', 'The bitmap itself stays static; wrappers own movement');
     await checkCompletionFeedback(page, true);
     await page.screenshot({ path: resolve(output, 'portal-completion-feedback-390.png'), fullPage: false });
     await page.waitForFunction(() => !document.querySelector('[data-road-feedback][data-visible="true"]'), {}, { timeout: 4000 });

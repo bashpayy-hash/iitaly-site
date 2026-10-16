@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { PortalData, PortalProfile, PortalResult } from "@/lib/portalApi";
 import styles from "./portal.module.css";
 import settings from "./portal-settings.module.css";
+import { Vespi } from "@/components/mascot/Vespi";
 
 const EDUCATION = [
   { value: "11 классов", title: "11 классов", note: "обычная школа" },
@@ -103,9 +104,14 @@ export function PortalOnboarding({
         </div>}
 
         <form className={styles.onboardingCard + " " + settings.profileForm} onSubmit={(event) => { event.preventDefault(); void saveProfile(); }}>
-          <h1 className={styles.onboardingTitle}>{editing ? "Измени профиль" : "Расскажи о себе"}</h1>
-          {!editing && !needs12 && <p className={settings.formHint}>3 вопроса · 30 секунд</p>}
-          <p className={styles.onboardingLead}>Ответы помогут выбрать шаги маршрута. Даты в нём — ориентиры.</p>
+          <div className={styles.onboardingGreeting}>
+            <div>
+              <h1 className={styles.onboardingTitle}>{editing ? "Измени профиль" : "Расскажи о себе"}</h1>
+              {!editing && !needs12 && <p className={settings.formHint}>3 вопроса · 30 секунд</p>}
+              <p className={styles.onboardingLead}>Ответы помогут выбрать шаги маршрута. Даты в нём — ориентиры.</p>
+            </div>
+            {!editing && <Vespi variant="avatar" className={styles.onboardingAvatar} sizes="64px" priority />}
+          </div>
 
           <fieldset className={settings.question} disabled={busy}>
             <legend>Что у тебя с образованием?</legend>

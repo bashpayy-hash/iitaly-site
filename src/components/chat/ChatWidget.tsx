@@ -21,6 +21,7 @@ import { Vespa } from "@/components/Vespa";
 import { VespaReveal } from "@/components/VespaReveal";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
+import { VESPI_NAME } from "@/components/mascot/Vespi";
 
 interface Msg {
   who: "user" | "ai";
@@ -87,7 +88,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<Msg[]>([
     {
       who: "ai",
-      text: "Ciao! Я Веспа, ИИ-консультант IITALY. Спроси про аттестат, документы, визу D или стипендию DSU.",
+      text: `Ciao! Я ${VESPI_NAME}, ИИ-консультант IITALY. Спроси про аттестат, документы, визу D или стипендию DSU.`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -318,16 +319,13 @@ export function ChatWidget() {
               ref={headRef}
               className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${portalMode ? "border-b border-[#e3e3e8] bg-white text-[#1d1d1f]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${portalMode ? "bg-[#fafafa]" : "bg-cream/10"}`}>
-                <Vespa pose="avatar" className="h-6 w-6" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
+                <Vespa pose="avatar" className="h-9 w-9 object-contain" priority />
               </span>
-              <b className="text-sm">Веспа</b>
-              {/* Было «база 2026»: непонятно, что за база и почему 2026.
-                 На остальных страницах это называется «правила приёма
-                 2026/27» — одна формулировка на весь продукт. */}
-              <span className={portalMode ? "text-[13px] text-[#68686d]" : "font-mono text-[10px] tracking-[0.08em] text-cream/55 uppercase"}>
-                правила 2026/27
-              </span>
+              <div className="min-w-0 flex-1">
+                <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
+                <span className={`block mt-1 text-[13px] leading-tight ${portalMode ? "text-[#68686d]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>
+              </div>
               {portalMode ? (
               <a
                 href="#main"

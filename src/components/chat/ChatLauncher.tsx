@@ -151,7 +151,7 @@ export function ChatLauncher({
         aria-haspopup="dialog"
         aria-controls={hidden ? "iitaly-chat" : undefined}
         aria-expanded={hidden}
-        title="Задать вопрос"
+        title="Веспи Баурысаков · Задать вопрос"
         // inert, пока кнопка уехала: иначе она остаётся в порядке обхода
         // с клавиатуры и ловит клики в пустом месте у края экрана
         tabIndex={away ? -1 : 0}
@@ -159,7 +159,7 @@ export function ChatLauncher({
         // Тень меняется css-переходом, а не motion: её значение — токен с
         // var() и четырьмя слоями, такое motion интерполировать не может и
         // просто подставил бы конечное значение скачком.
-        className={`${ANCHOR_POSITION} z-[90] flex items-center justify-center rounded-full border-2 border-ink bg-red text-cream shadow-float transition-shadow duration-[var(--duration-normal)] ease-[var(--ease-standard)] hover:shadow-float-lifted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
+        className={`${ANCHOR_POSITION} z-[90] flex items-center justify-center rounded-full border border-[#e3e3e8] bg-white text-[#1d1d1f] shadow-[0_4px_16px_rgba(29,29,31,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
         style={{ pointerEvents: away ? "none" : "auto" }}
         // initial={false} — при загрузке страницы кнопка просто есть, без
         // приветственного поп-ина: она не событие, а постоянный элемент.
@@ -173,7 +173,7 @@ export function ChatLauncher({
         whileHover={{ y: -3, transition: t(SPRING_HOVER) }}
         whileTap={{ scale: 0.94, y: 0, transition: t(SPRING_PRESS) }}
       >
-        <Vespa pose="avatar" className="h-7 w-7" />
+        <Vespa pose="avatar" className="h-10 w-10 object-contain" priority />
       </motion.button>
     </>
   );

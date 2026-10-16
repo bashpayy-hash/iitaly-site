@@ -1,136 +1,62 @@
-# IItaly — руководство по применению маскота «Веспа и Нить»
+# Веспи Баурысаков
 
-Связанные документы: `docs/brand-mascot-brief.md` (аудит), `docs/mascot-bible.md` (полная спецификация персонажа), `design/mascot/mascot.config.yaml` (машиночитаемый конфиг для регенерации поз).
+User-approved IITALY mascot, 17 October 2026. The slightly plush **Crema Soft**
+character replaces the former scooter character. The accepted image is the
+visual authority; do not redraw it as SVG or generate a different face.
 
-Статус: ассеты созданы и подключены через компонент `Vespa` (`src/components/Vespa.tsx`), который грузит `public/mascot/source/mascot-<поза>.svg`.
+## Identity and files
 
-## Формат по умолчанию
+- Ivory micro-velvet face and body, peach cheeks, black oval eyes and a smile.
+- Glossy red helmet and scooter, cream cape with olive edging, suede boots.
+- The name is **Веспи Баурысаков**, consistently in the helper title and greeting.
+- Master: `design/mascot/vespi/vespi-master.png`. Generated in Higgsfield, with
+  a transparent background prepared from the approved image. Not served to visitors.
+- Production: `public/mascot/vespi/`. Transparent WebP, served locally by static export.
+- Component: `src/components/mascot/Vespi.tsx`. The old `Vespa`/`VespaReveal`
+  exports remain compatibility wrappers for existing functional states.
 
-Продакшен-формат для этого проекта — **SVG** (`public/mascot/source/`), не WebP. Причины:
-1. Next.js static export отдаёт SVG напрямую, без раздельного шага оптимизации.
-2. Персонаж целиком состоит из плоских простых форм — растр не даёт здесь никакого выигрыша в качестве, только тяжелее по весу и не масштабируется чисто на ретине.
-3. Библия маскота прямо требует «пригоден для SVG», а растровая трассировка — нет.
-
-WebP-версии лежат в `design/mascot/web/` — на случай контекста, где SVG не подходит (соцсети, email-рассылки, сторонние виджеты без поддержки SVG). Самому сайту они не нужны, поэтому вынесены из `public/`: всё, что лежит в `public/`, попадает в деплой, даже если ни одна страница на это не ссылается. Там же `design/mascot/sheets/` (сборный character-sheet для ревью) и конфиг регенерации.
-
-## Назначение поз
-
-| Файл | Где уместен |
-|---|---|
-| `mascot-hero` | Первый экран главной — открывающая эмоция |
-| `mascot-avatar` | Аватар в шапке чата (плотный кроп на фару+руль) |
-| `mascot-wave` | Онбординг, приветствие в чате |
-| `mascot-compare` | Сравнение вузов |
-| `mascot-documents` | Проверка документов, состояние «сверяю» |
-| `mascot-deadline` | Напоминание о дедлайне |
-| `mascot-visa` | Блок про визу D |
-| `mascot-dsu` | Блок про стипендию DSU |
-| `mascot-plan` | «Мой план», следующий шаг |
-| `mascot-thinking` | Состояние ожидания/анализа |
-| `mascot-empty` | Пустые состояния («пока пусто») |
-| `mascot-success` | Подтверждение одного шага |
-| `mascot-warning` | Предупреждение без паники |
-| `mascot-error` | Дружелюбное сообщение об ошибке |
-| `mascot-404` | Страница 404 |
-| `mascot-celebrate` | Кабинет — все шаги пройдены |
-| `mascot-nastro` | НЕ персонаж — прогресс-бары, маршрутная линия на карте, breadcrumbs |
-| `front` / `back` / `profile-left` / `profile-right` | Только для документации/материалов о бренде, не для интерфейса продукта |
-
-## Минимальный размер
-
-32px — нижняя граница, где вся конструкция (два колеса, фара, лента) ещё различима. Для аватара чата (~28-32px по факту в текущей вёрстке) годится именно `mascot-avatar` — он уже плотно скадрирован под маленький размер, не пытайтесь ужимать `mascot-master` до такого масштаба, силуэт «поплывёт».
-
-## Анимация
-
-Часть поз двигается: лёгкое покачивание корпуса (`master`, `hero`), взмах ленты (все «позы в движении» — hero/wave/plan/thinking/documents/visa/dsu/celebrate), пульс искр (`celebrate`), и у отдельного мотива «Нить» — маленький блик, едущий вдоль пути. Полный список — `mascot-bible.md` → «Движение» и `mascot.config.yaml` → `animation`.
-
-Анимация встроена в сам SVG-файл (`<style>` внутри), а не в CSS сайта — это единственный способ анимировать содержимое, подключённое через `<img src>`. Работает без дополнительной настройки при использовании компонента `<Vespa/>`. Уважает `prefers-reduced-motion` самостоятельно — ничего дополнительно включать не нужно.
-
-`mascot-avatar`, `mascot-compare`, `mascot-deadline`, `mascot-empty`, `mascot-success`, `mascot-warning`, `mascot-error`, `mascot-404` — намеренно статичны. Не добавляйте им движение точечно в разметке (например, через обёртку с CSS-анимацией) — это разойдётся с остальными позами того же смыслового класса и потребует правки библии.
-
-## Безопасные отступы
-
-Минимум 8% от высоты ассета по каждому краю в карточках/бейджах — лента и руль выходят за пределы основного корпуса и им нужен воздух, иначе обрезается самая узнаваемая деталь (лента).
-
-## Фон
-
-Спроектирован только под `--color-cream` (`#faf5ec`) и `--color-paper` (`#fffdf8`) — светлый. Тёмной темы на сайте нет (см. бренд-бриф), поэтому вариант под тёмный фон не создавался. Если тёмная тема появится в будущем — потребуется отдельная проверка контраста паперной фары/ленты на тёмном фоне (вероятно, ок как есть, т.к. толстый ink-контур держит контраст, но не проверено).
-
-## Рядом с типографикой
-
-- Рядом с `Unbounded` (капслочные заголовки) — маскот не размещается на одной строке с крупным заголовком, только сбоку или под текстовым блоком; иначе спорит по вниманию.
-- Рядом с `Golos Text` (основной текст) — маскот может стоять inline перед короткой фразой (как аватар/иконка), это ок, толщина контура сопоставима с плотностью текста.
-
-## Когда маскот помогает
-
-Эмоционально нагруженные точки: первый контакт (hero, онбординг), подтверждение прогресса, мягкое предупреждение, пустое состояние, 404. Маскот отвечает на вопрос «что сейчас происходит и что мне делать» через позу — это и есть его работа.
-
-## Когда он перегружает страницу
-
-- Списки/таблицы данных (карточки вузов, сравнение) — здесь маскот не нужен вообще, там уже плотная фактура.
-- Не более одного экземпляра персонажа на экран одновременно — если на странице уже есть, например, `mascot-documents` в виджете проверки, не добавлять ещё `mascot-thinking` рядом в другом блоке.
-- Не использовать в местах с юридически значимым текстом (суммы, сроки визы, гарантии) — см. границы поведения в `mascot-bible.md`.
-
-## Запрет на юридически чувствительные обещания
-
-Маскот и подписи рядом с ним никогда не формулируют исход как гарантированный (см. «Запрещённые обещания» в библии). Если текст рядом с маскотом говорит о результате поступления/визы/стипендии — формулировка обязана остаться в уже принятом на сайте регистре («может», «система показывает шансы», не «получишь»).
-
-## Доступность
-
-- **`alt`**: decorative-инстансы (fool-bleed иллюстрация hero, фоновые сцены) — `alt=""` (или `aria-hidden="true"` для inline SVG, как уже сделано в `Logo.tsx` этого проекта). Информативные — там, где маскот единственный носитель смысла (например, самостоятельная иллюстрация 404 без подписи) — содержательный `alt`, например `alt="Веспа не нашла эту страницу"`.
-- Все текущие SVG уже несут `role="img" aria-hidden="true"` — при интеграции как decorative-элемент это верно; если элемент становится единственным носителем сообщения (без соседнего текста) — `aria-hidden` убрать и добавить `aria-label`.
-
-## Lazy loading
-
-- `mascot-hero` — **не** лениво (above the fold, часть LCP-зоны — см. ниже).
-- Остальные позы (documents/deadline/warning/error/success/celebrate/empty/404) — грузить лениво (`loading="lazy"` на `<img>` или динамический импорт компонента), они не над сгибом на momento первой отрисовки.
-
-## Размеры файлов
-
-SVG-исходники — 1–3 КБ каждый (чистая векторная геометрия, не растровая трассировка). WebP-экспорт — 10–45 КБ на файл (1024–2048px), не используется на самом сайте по умолчанию (см. «Формат по умолчанию» выше).
-
-## Next.js static export — ограничения, которые уже учтены
-
-- Никаких runtime API и серверных обработчиков: используемые сайтом позы статические, лежат в `public/mascot/source/` и попадают в `out/` автоматически при сборке. Всё, что сайту не нужно (WebP-экспорт, character-sheet, конфиг), вынесено в `design/mascot/` и не деплоится.
-- Нет зависимости от внешнего сервиса после сборки — генерация SVG не требует стороннего API ни на этапе сборки, ни в рантайме.
-- **LCP**: `mascot-hero.svg` — чистый вектор ~2-3 КБ, легче почти любого растрового изображения; при использовании как inline SVG-компонента (как уже сделано с `Logo.tsx`/старым `Aldo.tsx` в этом проекте) не создаёт отдельного сетевого запроса вообще — рендерится вместе с HTML. Не должен ухудшать LCP при таком подключении.
-- Декоративные изображения — пустой `alt`/`aria-hidden`, значимые — информативный `alt` (см. «Доступность» выше).
-
-## Рекомендации для мобильной версии
-
-- На узких экранах масштаб персонажа не должен превышать примерно ⅓ ширины видимой карточки — при полной ширине лента визуально «съедает» соседний текст.
-- В аватаре чата на мобильном (обычно 28-32px) — только `mascot-avatar`, никогда полнофигурные позы.
-- Тач-цели рядом с маскотом (если он кликабелен, например «расскажи подробнее») — маскот сам не должен становиться единственной тач-целью меньше 44×44px; при необходимости увеличивать хитбокс контейнера, не сам рисунок.
-
-## Движение: два слоя и одна проверенная неочевидность
-
-Движение маскота живёт на двух уровнях, и это разделение не стилистическое.
-
-**Внутри SVG** — всё, что не зависит от состояния приложения: покачивание
-корпуса (`idle-bob`), трепет ленты (`ribbon`), моргание фары (`lamp`) и
-акцент конкретной позы (`nudge` у предупреждения, `shake` у ошибки, `drift`
-у пустого состояния, `tick` у дедлайна, `lamp-look` у сравнения, `wander` у
-404, разовый `lamp-pop` у успеха). На один узел — ровно одна анимация:
-группа, фара и лента разведены, иначе два правила дерутся за `transform`
-одного элемента и побеждает объявленное позже.
-
-**В React** (`VespaReveal`) — то, чего файл про себя знать не может: момент
-появления. Документ проверен, план собран, лид записан — Веспа приезжает
-пружиной с лёгким перелётом. Замерено на живой странице: высота кадра
-24.1 → 28.1 → 28.7 → 28.4 → 28 px, то есть перелёт есть и гасится.
-
-**Неочевидность, проверенная в браузере.** CSS-анимация внутри SVG,
-подключённого через `<img>`, работает — и `@media (prefers-reduced-motion:
-no-preference)` внутри файла тоже работает: при настоящем системном
-предпочтении браузер её глушит. Но эмуляция через CDP
-(`Emulation.setEmulatedMedia`, то есть `reducedMotion` в Playwright) до
-документа картинки **не доходит**: страница видит `reduce`, а картинка
-продолжает двигаться. Поэтому проверять глушение автотестом через эмуляцию
-бессмысленно — нужен флаг самого браузера
-(`--force-prefers-reduced-motion`). A/B прогон:
-
-| режим | страница видит reduce | Веспа двигается |
+| Use | Crop | Actual display size |
 | --- | --- | --- |
-| контроль | нет | да |
-| флаг браузера | нет (флаг не трогает JS-запрос) | нет |
-| эмуляция CDP | да | да |
+| Portal road | Full rider | 48 × 60px desktop; 40 × 50px mobile |
+| Header helper | Face | 28px inside the existing 44px target |
+| Floating helper / chat header | Face | 40px / 36px |
+| Home campus foreground | Full rider | 192px wide desktop; 96px mobile |
+| Login campus foreground | Full rider | 148px wide desktop; 112px mobile |
+| First-run profile | Face | 64px desktop; 48px mobile |
+| Document processing | Full rider | 68px wide desktop; 58px mobile |
+| Confirmed results | Face or full rider | Existing layout, no new CTA |
+| 404 | Full rider | 160–192px high, with an explicit recovery action |
+
+## Placement
+
+Preserve the site's light surfaces, typography and red actions. Use one full
+character illustration per section. A small helper avatar is a navigation
+control, not a second decorative hero. Keep the accepted campus illustrations;
+the character sits in their foreground without overlapping copy.
+
+Do not add the mascot to university rows, comparison tables, document reports,
+payment, legal warnings or the MOD. 209 trainer. The portal's road already carries
+the character across its screens; another large figure would add noise.
+Do not turn the character into an additional button or interrupt the next step.
+
+## Motion and accessibility
+
+The bitmap is static. Existing wrappers animate only transform/opacity:
+server-confirmed road travel (1080ms), restrained arrival and quiet idle (2.8s).
+The next-step text updates immediately; no animation on first load. The old
+independent SVG wheel layers were removed to preserve the approved illustration.
+Road marks still convey travel. Waiting motion ends when processing ends.
+
+`prefers-reduced-motion` disables travel, bobbing, reveal and arrival. No new
+sounds, loops, fake progress or celebration claims. Decorative instances use an
+empty alt; the helper retains a text label and the existing keyboard/focus flow.
+
+## Delivery budget
+
+Ride widths: 160, 320, 640px. Face widths: 96, 192px. All five WebP variants
+together are under 100KB; the smallest road image is under 10KB. Responsive
+`srcSet`/`sizes`, intrinsic dimensions and same-origin URLs prevent unnecessary
+downloads, layout shifts and reliance on generation services at runtime.
+
+The previous `docs/mascot-bible.md` and vector source files remain historical
+references only. They no longer define the shipped character.

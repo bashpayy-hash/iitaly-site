@@ -32,3 +32,6 @@
   .settingsLink { width: 44px; padding: 8px; }
   .settingsLink span { display: none; }
 }
+
+/* User-approved mascot: a readable face, with the existing helper target. */
+.helperAvatar { display: block; width: 28px; height: 28px; flex: none; object-fit: contain; }
