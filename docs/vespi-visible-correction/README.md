@@ -44,5 +44,8 @@ no automatic AI requests. New assertions require the home action in the first
 viewport, no mascot/action overlap, and full-width mobile explanation text.
 Existing portal checks retain sticky-height, milestone-fit, completion-motion,
 keyboard and reduced-motion constraints. No existing invariant was removed.
+The helper keyboard check now waits for the existing reopen focus/animation
+before focusing a suggestion. This removes a CI frame race; draft preservation,
+editable text, keyboard activation and zero automatic requests remain asserted.
 
 Results: [shared checks](results.json), [final captures](final-assets-results.json).

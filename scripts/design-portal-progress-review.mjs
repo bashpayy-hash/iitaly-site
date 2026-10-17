@@ -969,10 +969,20 @@ try {
     await chat.waitFor({ state: 'hidden' });
     await assistant(page).click();
     await chat.waitFor();
+    // Reopening schedules the input's initial focus on the next frame. Wait
+    // for that real opening state before moving keyboard focus to a prompt;
+    // otherwise a slower CI frame can steal focus between focus() and Enter.
+    await page.waitForFunction(() => {
+      const panel = document.querySelector('[role="dialog"][aria-label="ИИ-консультант"]');
+      const question = panel?.querySelector('#chat-input');
+      return panel && getComputedStyle(panel).transform === 'none'
+        && getComputedStyle(panel).opacity === '1' && document.activeElement === question;
+    });
     assert.equal(await input.inputValue(), draft, 'Closing and reopening help preserves the unsent draft');
     await input.fill('');
     await prompts.first().focus();
     await page.keyboard.press('Enter');
+    await page.waitForFunction(() => document.querySelector('#chat-input')?.value === 'Как выбрать программы?');
     assert.equal(await input.inputValue(), 'Как выбрать программы?', 'Keyboard activation only prepares an editable question');
     assert.equal(await input.evaluate(element => element === document.activeElement), true);
     await page.waitForLoadState('networkidle');
