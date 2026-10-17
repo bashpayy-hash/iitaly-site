@@ -31,7 +31,9 @@ consistent in the full rider and the helper's face crop.
 | Document processing | Full rider | 68px wide desktop; 58px mobile |
 | Confirmed results | Face or full rider | Existing layout, no new CTA |
 | 404 | Full rider | 160–192px high, with an explicit recovery action |
-| Guides next action | Face | 56px desktop / 40px mobile |
+| Guides search | Face in CSS ring | 58px desktop / 48px mobile outer ring |
+| Guides insight | Face in CSS ring | 46px desktop / 40px mobile outer ring |
+| Guides sticky plan | Face in CSS ring | 46px desktop / 36px mobile outer ring; omitted at tablet width |
 
 ## Placement
 
@@ -45,17 +47,25 @@ payment, legal decisions or the MOD. 209 trainer. The portal's road already carr
 the character across its screens; another large figure would add noise.
 Do not turn the character into an additional button or interrupt the next step.
 
-The latest request supersedes the earlier dense guides placement. No character
-in the guides hero, search introduction, stage navigation, educational warnings
-or plan-continuation metadata. The terrace and reviewed warning copy stay.
-One character accompanies the selected topic's next action; the existing
-helper keeps its avatar as a recognizable control. No additional sticky widget.
+The latest explicit request authorizes a **`/guides`-only exception** to the
+placement and red-action rules above: the approved face crop appears in the
+search capsule, the selected topic's insight/next action, and a dismissible
+sticky plan capsule. This page uses its scoped blue/cyan/violet/amber visual
+language; it does not recolor the mascot or change other routes. The terrace
+and reviewed warning copy stay. There is no mascot in stage navigation or
+topic-card titles. The existing helper keeps its recognizable avatar.
+The sticky capsule must not overlap the helper or site badge; it yields to
+the visible contextual action and hides while the helper is open. See
+`vespi-meta-guides/README.md` for the implementation and pending review.
+
 The character never certifies eligibility or acceptance. No approval stamp,
-uniform or invented pose.
+uniform or invented expert pose is shipped. The three briefs in
+`vespi-meta-guides/higgsfield-prompts.md` are prompts only; no new images or
+video were generated or connected to the page in this pass.
 One chapter ends with one contextual action; sources stay visible and readable.
 The same helper receives the selected topic and prepares an editable question.
 Opening it never sends a question or spends the free allowance automatically.
-See `vespi-guides-2026-10-17/README.md` for the research and review evidence.
+The earlier `vespi-guides-2026-10-17/README.md` remains historical evidence.
 
 ## Motion and accessibility
 
@@ -68,8 +78,10 @@ Road marks still convey travel. Waiting motion ends when processing ends.
 `prefers-reduced-motion` disables travel, bobbing, reveal and arrival. No new
 sounds, loops, fake progress or celebration claims. Decorative instances use an
 empty alt; the helper retains a text label and the existing keyboard/focus flow.
-The guides underline follows the selected topic (420ms, transform); it is
-not a reading/completion tracker. Reduced motion makes the change immediate.
+On the current guides page, the active stage and expanded card identify the
+selected topic, not reading/completion progress. Article reveal (340ms) and
+card movement (240ms) are restrained transform/opacity effects. Reduced motion
+disables those effects. The mascot bitmap itself remains static.
 
 ## Delivery budget
 

@@ -55,30 +55,21 @@ try {
     await page.screenshot({path:resolve(output,`plan-${width}.png`),fullPage:true});
     for (const id of ['cimea','iseeu','visa']) {
       await visit('/guides#'+id);
-      const body = width >= 1024 ? page.locator('#guide-chapter-content') : page.locator('details#'+id);
+      const body = page.locator(`[data-guide-panel="${id}"]`);
       // Same-document goto resolves before hashchange + React + the next frame.
       // Wait for the visible chapter, not font loading or an arbitrary delay.
-      if (width < 1024) await page.waitForFunction(id => document.getElementById(id)?.open === true, id);
-      else {
-        const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
-        await page.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
-      }
-      if (width < 1024) assert(await body.evaluate(el=>el.open),'Mobile deep link opens '+id);
+      await body.waitFor({state:'visible'});
+      const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
+      await body.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
+      assert.equal(await page.locator(`[data-guide-select="${id}"]`).getAttribute('aria-expanded'),'true','Deep link selects '+id);
+      assert.equal(await page.locator('[data-guide-panel]').count(),1,'One selected topic is shared across viewports');
+      assert.equal(new URL(page.url()).hash,'#'+id);
       assert.match(await body.innerText(),/9 октября 2026/);
       assert(await body.locator('a[href^="https://"]').count()>0,'Official sources are accessible');
       if (id==='visa') {
-        if (width >= 1024) {
-          // A delayed toggle from the hidden mobile copy must not replace the
-          // currently selected desktop chapter or its address.
-          await page.evaluate(() => new Promise(resolve => {
-            const previous = document.getElementById('iseeu');
-            previous.addEventListener('toggle', () => requestAnimationFrame(resolve), {once:true});
-            previous.open = true;
-          }));
-          assert.equal(await page.locator('#active-guide-title').innerText(), 'Виза D', 'A hidden mobile toggle cannot change the desktop chapter');
-          assert.equal(new URL(page.url()).hash, '#visa');
-        }
-        await body.getByText('Годовой минимум и пересчёт в тенге',{exact:true}).click();
+        // User-requested card UI has one topic body, so there is no hidden
+        // mobile disclosure whose delayed toggle can overwrite the deep link.
+        await body.getByRole('button',{name:'Годовой минимум и пересчёт в тенге',exact:true}).click();
         const rate = body.getByLabel('Твой курс банка: тенге за €1');
         assert.equal(await rate.inputValue(),'');
         await rate.fill('550');

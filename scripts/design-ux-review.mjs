@@ -74,22 +74,33 @@ try {
     await visit('/guides');
     const search = page.getByLabel('Найти тему');
     await search.fill('cimea');
-    const results = width>=1024 ? page.getByRole('navigation',{name:'Главы справочника'}).getByRole('button') : page.locator('details[name="guide-chapter"] > summary');
+    const results = page.locator('[data-guide-select]');
     assert(await results.count()>0);
+    assert(await page.locator('[data-guide-select="cimea"]').isVisible(),'Search spans all three stages');
     await search.fill('несуществующая-тема-123');
     assert(await page.getByRole('heading',{name:'Такой темы не нашли'}).isVisible());
     await page.getByRole('button',{name:'Показать все темы'}).click();
-    assert.equal(await results.count(),13,'All reviewed chapters remain available');
-    if(width<1024){
-      await page.locator('#education > summary').click();
-      await page.locator('#cimea > summary').click();
-      assert.equal(await page.locator('#education').evaluate(el=>el.open),false);
-      await page.locator('#cimea').getByRole('button',{name:'К списку тем'}).click();
-      assert.equal(await search.evaluate(el=>document.activeElement===el),true);
-    } else {
-      await results.filter({hasText:'DoV, CIMEA и ARDI'}).click();
-      assert.equal(await page.locator('#active-guide-title').evaluate(el=>document.activeElement===el),true);
+    assert.equal(await results.count(),2,'Reset returns to the route stage');
+    // The requested bento interface replaces native mobile details with the
+    // same keyboard-operable cards and single panel at every viewport.
+    const chapterIds = new Set();
+    const stages = page.getByRole('navigation',{name:'Этапы справочника'});
+    for(const [name,count] of [['1. Выбрать маршрут',2],['2. Подготовиться к отъезду',8],['3. После приезда',3]]) {
+      await stages.getByRole('link',{name,exact:true}).click();
+      assert.equal(await results.count(),count);
+      for(const id of await results.evaluateAll(nodes=>nodes.map(node=>node.dataset.guideSelect))) chapterIds.add(id);
     }
+    assert.equal(chapterIds.size,13,'All reviewed chapters remain available across the stage filters');
+    await stages.getByRole('link',{name:'2. Подготовиться к отъезду',exact:true}).click();
+    await page.locator('[data-guide-select="cimea"]').click();
+    await page.waitForFunction(()=>document.activeElement?.id==='active-guide-title');
+    assert.equal(await page.locator('#active-guide-title').evaluate(el=>document.activeElement===el),true);
+    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),1,'Only one chapter is expanded');
+    assert.equal(await page.locator('[data-guide-select="cimea"]').getAttribute('aria-expanded'),'true');
+    await page.getByRole('button',{name:'К списку тем',exact:true}).click();
+    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0);
+    assert.equal(await search.evaluate(el=>document.activeElement===el),true);
+    await page.locator('[data-guide-select="cimea"]').click();
     await page.locator('#guide-topics').scrollIntoViewIfNeeded();
     await checkA11y('guides '+width);
     await page.screenshot({path:resolve(output,`guides-${width}.png`)});
@@ -170,7 +181,7 @@ try {
     await context.close();
   }
   assert.deepEqual(errors,[],'No runtime errors');
-  console.log('UX review passed: provider readiness blocks upload and recovers, guide search/recovery, one mobile chapter, preserved plan draft, optional contact, first action, file retry, city shortcut and axe checks at 1440/768/390/320px.');
+  console.log('UX review passed: provider readiness blocks upload and recovers, guide search/recovery, one expanded bento chapter, stage filters, preserved plan draft, optional contact, first action, file retry, city shortcut and axe checks at 1440/768/390/320px.');
 } finally {
   await browser.close();
   await new Promise(done=>server.close(done));

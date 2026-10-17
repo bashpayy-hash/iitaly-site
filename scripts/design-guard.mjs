@@ -7,6 +7,9 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // User request 2026-10-17: Lucide icons for the Meta-inspired /guides redesign.
+  // Only the lucide-react dependency is added; existing runtime versions stay fixed.
+  'package.json', 'package-lock.json',
   // User request 2026-10-15: embed the existing map/comparison in the portal.
   'src/components/universities/ComparisonSection.tsx',
   'src/components/universities/ItalyMap.tsx',

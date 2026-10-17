@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-17",
+  "command": "PLAYWRIGHT_BROWSERS_PATH=/tmp/iitaly-browsers REVIEW_TOOLS=/tmp/iitaly-browser/node_modules node scripts/design-ux-review.mjs",
+  "result": "passed",
+  "widths": [
+    1440,
+    768,
+    390,
+    320
+  ],
+  "checks": [
+    "Provider readiness and authorization failures block upload",
+    "Cross-stage guide search, empty-state recovery, one expanded topic and keyboard focus",
+    "Preserved plan draft and optional contact",
+    "File retention/retry and explicit scholarship context",
+    "City shortcut and Modulo 1 route",
+    "Axe WCAG 2/2.1 AA and no horizontal overflow"
+  ]
+}

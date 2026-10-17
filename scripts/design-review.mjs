@@ -147,7 +147,8 @@ try {
   assert.equal(await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).evaluate(el => document.activeElement === el), true, 'Closing restores focus to the purchase button');
   results.push({ test: 'Checkout retains typing focus, validates locally, and restores focus on Escape; no order submitted', passed: true });
   await visit(page, '/guides#visa');
-  assert.match(await page.locator('#guide-chapter-content').innerText(), /Виза/i);
+  await page.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });
+  assert.match(await page.locator('[data-guide-panel="visa"]').innerText(), /Виза/i);
   results.push({ test: 'Desktop visa deep link opens the relevant chapter', passed: true });
   await visit(page, '/payment/success');
   await page.waitForTimeout(50);
@@ -171,9 +172,10 @@ try {
   await mobile.locator('[data-journey-preview]').click({ position: { x: 8, y: 8 } });
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false, 'Outside tap closes mobile navigation');
   await visit(mobile, '/guides#visa');
-  assert.equal(await mobile.locator('details#visa').evaluate(el => el.open), true, 'Mobile visa deep link opens its disclosure');
+  await mobile.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });
+  assert.equal(await mobile.locator('[data-guide-select="visa"]').getAttribute('aria-expanded'), 'true', 'Mobile visa deep link selects and opens its topic');
   await shot(mobile, 'guide-visa-mobile');
-  results.push({ test: 'Mobile menu closes on Escape/outside tap; guide deep links open the correct disclosure', passed: true });
+  results.push({ test: 'Mobile menu closes on Escape/outside tap; guide deep links open the correct topic', passed: true });
   await mobile.context().close();
   const motionPage = await makePage(1440, 'no-preference');
   await visit(motionPage, '/');

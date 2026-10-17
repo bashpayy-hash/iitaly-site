@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Check, ChevronDown } from "lucide-react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
-import { SourceRefs } from "@/components/SourceRefs";
 import { ADMISSION_SOURCES } from "@/data/admissions";
-import { MascotCallout } from "./MascotCallout";
-import ui from "./guide-browser.module.css";
 import {
   VG_PER_YEAR,
   VISA_DOCS,
@@ -23,80 +21,93 @@ function VisaAccordion({
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const id = useId();
+  const [open, setOpen] = useState(defaultOpen);
+  const triggerId = `${id}-trigger`;
+  const panelId = `${id}-panel`;
+
   return (
-    <details open={defaultOpen} className="group border border-white/15">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 marker:content-none [&::-webkit-details-marker]:hidden">
+    <section className="rounded-[24px] border border-slate-200/80 bg-white/70 p-1.5">
+      <button
+        id={triggerId}
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((value) => !value)}
+        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-4 py-3 text-left text-[14px] leading-6 text-slate-950 hover:bg-slate-100/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0064E0]"
+      >
         {summary}
-        <svg
-          aria-hidden
-          viewBox="0 0 16 10"
-          className="h-2.5 w-4 shrink-0 text-cloud-meta transition-transform duration-200 group-open:-rotate-180"
-        >
-          <path d="M1 1.5 8 8.5 15 1.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </summary>
-      <div className="border-t border-white/10 px-4 pt-4 pb-4">{children}</div>
-    </details>
+        <ChevronDown
+          aria-hidden="true"
+          size={20}
+          className={`shrink-0 text-slate-500 transition-transform duration-200 motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <div
+        id={panelId}
+        role="region"
+        aria-labelledby={triggerId}
+        hidden={!open}
+        className="mx-2 border-t border-slate-200/80 px-2 pt-4 pb-4"
+      >
+        {children}
+      </div>
+    </section>
   );
 }
 
 export function VisaSection() {
   return (
     <div>
-      <p className="text-apple-body-sm text-cloud-white">
-        <span className="text-cloud-meta">Где подавать: </span>
-        <a href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Официальный VFS для Италии в Казахстане</a>
+      <p className="text-[14px] leading-6 text-slate-700">
+        <span className="text-slate-600">Где подавать: </span>
+        <a href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-11 max-w-full items-center rounded-full bg-slate-100 px-4 py-2 text-[14px] font-medium leading-5 text-slate-700 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0064E0]">Официальный VFS для Италии в Казахстане</a>
       </p>
-      <MascotCallout>
-        Университет, консульство и стипендиальный орган проверяют разные
-        условия. Начни с своего учебного года и официального чек-листа.
-      </MascotCallout>
 
       <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
         {VISA_KEY_FACTS.map((f) => (
-          <div key={f.label} className="border border-white/15 px-3 py-3 text-center">
-            <b className="block font-apple-display text-apple-subheading font-semibold text-cloud-white">{f.value}</b>
-            <span className="text-apple-caption text-cloud-meta">{f.label}</span>
+          <div key={f.label} className="rounded-[20px] border border-slate-200/80 bg-slate-50/80 px-3 py-4 text-center">
+            <b className="block font-apple-display text-[20px] leading-7 font-semibold tracking-tight text-slate-950">{f.value}</b>
+            <span className="text-[13px] leading-5 text-slate-600">{f.label}</span>
           </div>
         ))}
       </div>
 
       <div className="mt-4 space-y-2.5">
-        <VisaAccordion defaultOpen summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Таймлайн подачи: когда что делать</b>}>
+        <VisaAccordion defaultOpen summary={<b className="font-semibold">Таймлайн подачи: когда что делать</b>}>
           <div className="space-y-3">
             {VISA_TIMELINE.map((s, i) => (
               <div key={i} className="flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon font-apple-text text-apple-caption font-semibold text-white">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[13px] font-semibold text-[#0064E0]">
                   {i + 1}
                 </div>
                 <div>
-                  <b className="text-apple-body-sm text-cloud-white">{s.t}</b>
-                  <p className="mt-1 text-apple-body-sm text-cloud-body">{s.p}</p>
+                  <b className="text-[14px] leading-6 text-slate-950">{s.t}</b>
+                  <p className="mt-1 text-[14px] leading-6 text-slate-600">{s.p}</p>
                 </div>
               </div>
             ))}
           </div>
         </VisaAccordion>
 
-        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Годовой минимум и пересчёт в тенге</b>}>
+        <VisaAccordion summary={<b className="font-semibold">Годовой минимум и пересчёт в тенге</b>}>
           <GuaranteeCalculator />
         </VisaAccordion>
 
-        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Чек-лист документов</b>}>
+        <VisaAccordion summary={<b className="font-semibold">Чек-лист документов</b>}>
           <VisaChecklist />
         </VisaAccordion>
 
-        <VisaAccordion summary={<b className="text-apple-body-sm font-semibold text-cloud-white">Что проверить перед подачей</b>}>
+        <VisaAccordion summary={<b className="font-semibold">Что проверить перед подачей</b>}>
           <div className="space-y-2">
             {VISA_REJECT_REASONS.map((r, i) => (
-              <div key={i} className="border border-warn bg-warn/10 px-3 py-2.5 text-apple-body-sm text-cloud-white">
+              <div key={i} className="rounded-[18px] border border-amber-200/80 bg-amber-50/70 px-4 py-3 text-[14px] leading-6 text-slate-700">
                 {r}
               </div>
             ))}
           </div>
         </VisaAccordion>
       </div>
-      <div className={`${ui.sources} text-cloud-meta`}><SourceRefs ids={["visa", "procedure", "visaWhere", "visaFees", "visaTiming"]} /></div>
     </div>
   );
 }
@@ -108,14 +119,14 @@ function GuaranteeCalculator() {
   const tenge = validRate ? Math.ceil(VG_PER_YEAR * numericRate).toLocaleString("ru-RU") + " ₸" : "Укажи курс";
   return (
     <div>
-      <p className="font-apple-display text-apple-heading-sm font-semibold text-cloud-white">{VISA_GUARANTEE_LABEL}</p>
-      <p className="mt-2 text-apple-body-sm text-cloud-body">Годовой минимум для 2026/27–2027/28. Он не умножается автоматически на все годы программы при первой подаче. Консульство также оценивает устойчивость финансирования.</p>
-      <label className="mt-4 block text-apple-body-sm text-cloud-white">
+      <p className="font-apple-display text-[24px] leading-8 font-semibold tracking-tight text-slate-950">{VISA_GUARANTEE_LABEL}</p>
+      <p className="mt-2 text-[14px] leading-6 text-slate-600">Годовой минимум для 2026/27–2027/28. Он не умножается автоматически на все годы программы при первой подаче. Консульство также оценивает устойчивость финансирования.</p>
+      <label className="mt-4 block text-[14px] leading-6 text-slate-900">
         Твой курс банка: тенге за €1
-        <input inputMode="decimal" type="text" value={rate} onChange={(event) => setRate(event.target.value)} placeholder="Введи актуальный курс" className="mt-2 block min-h-11 w-full rounded-apple-card border border-white/20 bg-frost px-3 text-cloud-white" />
+        <input inputMode="decimal" type="text" value={rate} onChange={(event) => setRate(event.target.value)} placeholder="Введи актуальный курс" className="mt-2 block min-h-12 w-full rounded-full border border-slate-300 bg-white px-4 text-[16px] text-slate-950 placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0064E0]" />
       </label>
-      <p aria-live="polite" className="mt-3 text-apple-subheading font-semibold text-cloud-white">{tenge}</p>
-      <p className="mt-3 text-apple-caption text-cloud-meta">Пересчёт по введённому курсу, не банковская котировка. Обучение, жильё, депозит, поездка и оформление требуют отдельного бюджета. Выписки — с движением за шесть месяцев по чек-листу Астаны.</p>
+      <p aria-live="polite" className="mt-3 text-[20px] leading-7 font-semibold text-slate-950">{tenge}</p>
+      <p className="mt-3 text-[13px] leading-5 text-slate-600">Пересчёт по введённому курсу, не банковская котировка. Обучение, жильё, депозит, поездка и оформление требуют отдельного бюджета. Выписки — с движением за шесть месяцев по чек-листу Астаны.</p>
     </div>
   );
 }
@@ -134,18 +145,18 @@ function VisaChecklist() {
 
   return (
     <div>
-      <div className="flex items-center justify-between text-apple-caption font-semibold text-cloud-meta">
+      <div className="flex items-center justify-between text-[13px] leading-5 font-semibold text-slate-600">
         <span>
           {done.size} из {VISA_DOCS.length} собрано
         </span>
       </div>
-      <div className="mt-2 h-1 overflow-hidden rounded-apple-pill bg-white/10">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
         <div
-          className="h-full origin-left rounded-apple-pill bg-green transition-transform duration-300 ease-out motion-reduce:transition-none"
+          className="h-full origin-left rounded-full bg-[#0064E0] transition-transform duration-300 ease-out motion-reduce:transition-none"
           style={{ transform: `scaleX(${done.size / VISA_DOCS.length})` }}
         />
       </div>
-      <p className="mt-3 text-apple-caption text-cloud-meta">Отметки помогают собрать пакет и не являются решением о готовности к визе. Последний пункт применяется только к несовершеннолетним.</p>
+      <p className="mt-3 text-[13px] leading-5 text-slate-600">Отметки помогают собрать пакет и не являются решением о готовности к визе. Последний пункт применяется только к несовершеннолетним.</p>
       <div className="mt-3 space-y-2">
         {VISA_DOCS.map((d, i) => {
           const isDone = done.has(i);
@@ -155,21 +166,21 @@ function VisaChecklist() {
               type="button"
               onClick={() => toggle(i)}
               aria-pressed={isDone}
-              className={`flex w-full items-start gap-3 border px-3 py-2.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ${
-                isDone ? "border-green bg-green/5" : "border-white/15 "
+              className={`flex min-h-11 w-full items-start gap-3 rounded-full border px-5 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0064E0] ${
+                isDone ? "border-blue-200 bg-blue-50/80" : "border-slate-200 bg-white hover:bg-slate-50"
               }`}
             >
               <span
-                aria-hidden
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border text-xs font-bold ${
-                  isDone ? "border-green bg-green text-white" : "border-white/30"
+                aria-hidden="true"
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[13px] font-bold ${
+                  isDone ? "border-[#0064E0] bg-[#0064E0] text-white" : "border-slate-300"
                 }`}
               >
-                {isDone ? "✓" : ""}
+                {isDone ? <Check size={13} aria-hidden="true" /> : null}
               </span>
               <span>
-                <b className="block text-apple-body-sm text-cloud-white">{d.title}</b>
-                <span className="text-apple-caption text-cloud-meta">{d.desc}</span>
+                <b className="block text-[14px] leading-6 text-slate-950">{d.title}</b>
+                <span className="text-[13px] leading-5 text-slate-600">{d.desc}</span>
               </span>
             </button>
           );
