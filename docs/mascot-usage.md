@@ -26,6 +26,10 @@ visual authority; do not redraw it as SVG or generate a different face.
 | Document processing | Full rider | 68px wide desktop; 58px mobile |
 | Confirmed results | Face or full rider | Existing layout, no new CTA |
 | 404 | Full rider | 160–192px high, with an explicit recovery action |
+| Guides terrace foreground | Full rider | 172px wide desktop; 100px mobile |
+| Guides topic navigation | Face | 32px; marks the selected stage, not completion |
+| Guides educational note | Face | 36px desktop; 28px mobile |
+| Guides next action / plan continuation | Face | 48px desktop / 36px mobile |
 
 ## Placement
 
@@ -35,9 +39,18 @@ control, not a second decorative hero. Keep the accepted campus illustrations;
 the character sits in their foreground without overlapping copy.
 
 Do not add the mascot to university rows, comparison tables, document reports,
-payment, legal warnings or the MOD. 209 trainer. The portal's road already carries
+payment, legal decisions or the MOD. 209 trainer. The portal's road already carries
 the character across its screens; another large figure would add noise.
 Do not turn the character into an additional button or interrupt the next step.
+
+The user's 17 October guides request explicitly permits small avatars beside
+educational warnings in `/guides`. Preserve each reviewed warning verbatim:
+the character draws attention, never certifies eligibility or acceptance.
+Use the existing face crop, not an approval stamp, uniform or invented pose.
+One chapter ends with one contextual action; sources stay visible and readable.
+The same helper receives the selected topic and prepares an editable question.
+Opening it never sends a question or spends the free allowance automatically.
+See `vespi-guides-2026-10-17/README.md` for the research and review evidence.
 
 ## Motion and accessibility
 
@@ -50,6 +63,8 @@ Road marks still convey travel. Waiting motion ends when processing ends.
 `prefers-reduced-motion` disables travel, bobbing, reveal and arrival. No new
 sounds, loops, fake progress or celebration claims. Decorative instances use an
 empty alt; the helper retains a text label and the existing keyboard/focus flow.
+The guides stage marker follows the selected topic (420ms, transform); it is
+not a reading/completion tracker. Reduced motion makes the change immediate.
 
 ## Delivery budget
 

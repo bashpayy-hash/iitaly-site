@@ -1,6 +1,8 @@
 import { SourceRefs } from "@/components/SourceRefs";
 import type { GuideCard as GuideCardData } from "@/data/guides";
 import { AppleBody } from "@/components/apple/Typography";
+import { MascotCallout } from "./MascotCallout";
+import ui from "./guide-browser.module.css";
 
 /**
  * Содержимое одной главы справочника — без своей рамки/эмодзи/заголовка:
@@ -24,9 +26,9 @@ export function GuideDetail({ guide }: { guide: GuideCardData }) {
         ))}
       </dl>
       {guide.warn && (
-        <div className="mt-4 border border-warn bg-warn/10 px-4 py-3 text-apple-body-sm text-cloud-white">{guide.warn}</div>
+        <MascotCallout>{guide.warn}</MascotCallout>
       )}
-      <div className="text-cloud-meta"><SourceRefs ids={guide.sources} /></div>
+      <div className={`${ui.sources} text-cloud-meta`}><SourceRefs ids={guide.sources} /></div>
     </div>
   );
 }

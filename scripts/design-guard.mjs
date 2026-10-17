@@ -80,6 +80,8 @@ const approvedReminderUiPaths = new Set([
   'src/components/portal/ProfileSection.tsx',
   'src/components/portal/portal.module.css',
   'src/lib/portalMeta.ts',
+  // User request 2026-10-17: guide-aware Vespi in the existing helper.
+  // Only topic context in the existing message field; no API/quota change.
   'src/components/chat/ChatWidget.tsx',
   'src/components/Footer.tsx',
   'src/data/pricing.ts',
