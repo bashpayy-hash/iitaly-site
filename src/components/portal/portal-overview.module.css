@@ -125,12 +125,12 @@
   .scooterAnchor { width: 56px; height: 68px; }
 }
 @media (max-width: 900px) {
-  .road, .road[data-road-dense="true"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "next" "route"; gap: 6px; padding: 8px 14px 4px; border-radius: 14px; }
+  .road, .road[data-road-dense="true"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "next" "route"; gap: 2px; padding: 4px 14px; border-radius: 14px; }
   .roadRoute, .road[data-road-dense="true"] .roadRoute { display: block; min-width: 0; }
   .roadHeader, .road[data-road-dense="true"] .roadHeader { grid-area: auto; justify-content: space-between; }
   .roadCopy { padding: 0; border: 0; }
   .copilotHint { display: none; }
-  .nextCopy { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label action" "title action" "meta meta"; gap: 0 12px; }
+  .nextCopy, .road[data-road-dense="true"] .nextCopy { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "label action" "title action" "meta meta"; gap: 0 12px; }
   .road[data-road-static="true"] .nextCopy { grid-template-areas: "label" "title" "meta"; }
   .stepCopy { display: contents; }
   .nextLabel { grid-area: label; margin-bottom: 2px; }
