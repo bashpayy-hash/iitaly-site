@@ -33,5 +33,7 @@
   .settingsLink span { display: none; }
 }
 
-/* User-approved mascot: a readable face, with the existing helper target. */
-.helperAvatar { display: block; width: 28px; height: 28px; flex: none; object-fit: contain; }
+/* The page's guide owns the portrait; the helper remains one quiet entry. */
+.helperSignal { align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
+.helperSignal [data-vespi-label] { margin: 0; font: inherit; }
+.helperSignal [data-vespi-indicator] { width: 24px; height: 24px; font-size: 13px; }

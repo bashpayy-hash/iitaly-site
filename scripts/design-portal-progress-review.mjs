@@ -114,10 +114,12 @@ async function siteBrand(page, contentSelector) {
   const logo = page.getByRole('link', { name: /^IITALY — (главная|личный кабинет)$/ });
   assert.equal(await logo.count(), 1, 'The shared site logo appears once, including after login');
   return logo.evaluate((element, selector) => {
-    const style = getComputedStyle(element), dot = element.querySelector('span');
+    const style = getComputedStyle(element), mark = element.querySelector('[data-brand-mark]');
+    const word = element.querySelector('[data-brand-word]');
     return {
       logo: { fontFamily: style.fontFamily, fontSize: style.fontSize, fontWeight: style.fontWeight, letterSpacing: style.letterSpacing, color: style.color },
-      dot: { text: dot?.textContent, color: dot && getComputedStyle(dot).color },
+      mark: { text: mark?.textContent, color: mark && getComputedStyle(mark).color, background: mark && getComputedStyle(mark).backgroundColor },
+      word: { text: word?.textContent, font: word && getComputedStyle(word).fontFamily, weight: word && getComputedStyle(word).fontWeight },
       headerHeight: element.closest('header').getBoundingClientRect().height,
       bodyFont: getComputedStyle(document.querySelector(selector)).fontFamily,
     };
@@ -184,7 +186,9 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${origin}/portal`, { waitUntil: 'networkidle' });
   const loginBrand = await siteBrand(page, '[data-portal-login]');
-  assert.equal(loginBrand.dot.text, '.', 'The site wordmark retains its literal red dot');
+  // Explicit user follow-up: i + Italy replaces the all-caps wordmark and end dot.
+  assert.equal(loginBrand.mark.text, 'i', 'The brand starts with its distinct lowercase i');
+  assert.equal(loginBrand.word.text, 'Italy', 'The wordmark reads Italy without an end dot');
   await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
   await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();

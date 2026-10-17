@@ -1481,5 +1481,6 @@
 /* First use: a small friendly face beside, never above, the three questions. */
 .onboardingGreeting { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .onboardingGreeting > div { min-width: 0; }
+.onboardingPortrait { display: block; flex: none; }
 .onboardingAvatar { display: block; width: 64px; height: 64px; flex: none; object-fit: contain; }
 @media (max-width: 480px) { .onboardingAvatar { width: 48px; height: 48px; } .onboardingGreeting { gap: 12px; } }

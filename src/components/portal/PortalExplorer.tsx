@@ -14,7 +14,8 @@ import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
-import { Vespi, VESPI_NAME } from "@/components/mascot/Vespi";
+import { VESPI_NAME } from "@/components/mascot/Vespi";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import { PortalArtwork } from "./PortalArtwork";
 import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
@@ -547,6 +548,9 @@ export function PortalExplorer() {
   const shortlistEditable = Boolean(activeTask?.id === "shortlist" && (data?.done.shortlist || !readOnlyReason));
   const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
     && (data.done[activeTask.id] || activeTask.available !== false));
+  // The persistent road and open conversation share one mascot. University
+  // selection keeps the road's guide; task/report panels own their portrait.
+  const detailOwnsMascot = Boolean(activeTask && (section === "docs" || (section === "plan" && openTaskId && !shortlistEditable)));
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
   const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
@@ -629,7 +633,7 @@ export function PortalExplorer() {
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
     <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
       <div className={navigation.headerLinks}>
-        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><Vespi variant="avatar" className={navigation.helperAvatar} sizes="28px" priority /><span>Помощник</span></a>
+        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiAssistant as="div" variant="copilot" layout="inline-pill" appearance="indicator" label="Помощник" className={navigation.helperSignal} /></a>
         <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); openSettings();
@@ -638,6 +642,7 @@ export function PortalExplorer() {
     } />
     <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
+        showMascot={!detailOwnsMascot}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
         secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />

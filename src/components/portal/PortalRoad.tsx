@@ -16,15 +16,16 @@ function roadPosition(done: number, total: number) {
   return 8 + (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 84;
 }
 
-function Scooter() {
+function Scooter({ showMascot, complete }: { showMascot: boolean; complete: boolean }) {
+  if (!showMascot) return <span className={styles.locationMarker} data-road-location aria-hidden="true"><span /></span>;
   return <span className={styles.scooterArt} data-road-art="vespi-baursakov">
     <span className={styles.scooterBody} data-road-body>
-      <Vespi priority sizes="64px" />
+      <Vespi variant={complete ? "celebrate" : "copilot"} presentation="figure" priority sizes="64px" />
     </span>
   </span>;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false }: {
+export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, showMascot = true }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -33,6 +34,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   onTravelStart?: () => void;
   currentOpen?: boolean;
   secondaryAction?: boolean;
+  showMascot?: boolean;
 }) {
   const tasks = data.roadmap.flatMap(row => row.tasks);
   const total = tasks.length;
@@ -152,6 +154,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     className={styles.road}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
     data-portal-road
+    data-vespi-presence={showMascot ? !current && total > 0 ? "celebrate" : "copilot" : undefined}
+    data-road-mascot={showMascot ? "visible" : "in-content"}
     data-road-dense={stages.length > 6 ? "true" : undefined}
     data-road-static={!interactive ? "true" : undefined}
     tabIndex={!current ? -1 : undefined}
@@ -217,7 +221,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           if (event.target !== event.currentTarget || event.propertyName !== "transform" || !inFlight.current) return;
           inFlight.current = false;
           setMotion(value => ({ ...value, moving: false, arriving: true }));
-        }}><span className={styles.scooterAnchor}><span className={styles.scooterArrival} data-road-arrival><Scooter /></span></span></span>
+        }}><span className={styles.scooterAnchor}><span className={styles.scooterArrival} data-road-arrival><Scooter showMascot={showMascot} complete={!current && total > 0} /></span></span></span>
       </span>
     </span>
     <span className={styles.roadCopy} aria-live="polite" aria-atomic="true" data-road-next>

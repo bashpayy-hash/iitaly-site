@@ -1,0 +1,38 @@
+[
+  {
+    "width": 1440,
+    "palettePreserved": true,
+    "navigationPreservesDraft": true,
+    "futureStepReadOnly": true,
+    "currentFileOneAction": true,
+    "noAutomaticAI": true,
+    "a11y": true
+  },
+  {
+    "width": 768,
+    "palettePreserved": true,
+    "navigationPreservesDraft": true,
+    "futureStepReadOnly": true,
+    "currentFileOneAction": true,
+    "noAutomaticAI": true,
+    "a11y": true
+  },
+  {
+    "width": 390,
+    "palettePreserved": true,
+    "navigationPreservesDraft": true,
+    "futureStepReadOnly": true,
+    "currentFileOneAction": true,
+    "noAutomaticAI": true,
+    "a11y": true
+  },
+  {
+    "width": 320,
+    "palettePreserved": true,
+    "navigationPreservesDraft": true,
+    "futureStepReadOnly": true,
+    "currentFileOneAction": true,
+    "noAutomaticAI": true,
+    "a11y": true
+  }
+]

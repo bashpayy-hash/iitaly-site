@@ -6,7 +6,23 @@ import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
 import { AppleButton } from "@/components/apple/Button";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import type { PlanDraft } from "@/lib/usePlanDraft";
+
+/** UI explanations only: the questions, answer values and plan builder stay
+ * unchanged. Grades describe the profile; they are not an admissions score. */
+const QUESTION_CONTEXT: Record<string, string> = {
+  intake: "Так я не смешаю правила разных наборов.",
+  education: "Допуск всё равно подтвердит выбранный вуз.",
+  grades: "Это ориентир для твоего профиля, не прогноз поступления.",
+  goal: "У бакалавриата и магистратуры разные требования к диплому. Начнём с нужного уровня.",
+  budget: "Стипендию и средства на визу нужно проверять отдельно.",
+  field: "От направления зависят тесты и условия конкурса. Точные требования проверим у программы.",
+  lang: "От ответа зависит, что делать дальше: подтвердить язык или подготовиться к тесту.",
+  age: "Если тебе ещё нет 18, в маршрут нужны отдельные шаги для родителей, жилья и документов.",
+  residence: "Используем процедуру для твоего места проживания.",
+  dsuRegion: "Требования к справкам проверяем по конкретному конкурсу.",
+};
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -208,8 +224,16 @@ function WizStep({
 }) {
   return (
     <>
-      <h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>
-      {question.hint && <p className="mt-1.5 text-apple-body-sm text-cloud-body">{question.hint}</p>}
+      <VespiAssistant
+        variant="copilot"
+        layout="portal-copilot"
+        appearance="portrait"
+        label="Веспи · соберём твой маршрут"
+        as="div"
+        data-plan-question={question.id}
+        title={<h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>}
+        message={<span data-vespi-question-reason>{question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}</span>}
+      />
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
         {question.opts.map((o) => (
           <button

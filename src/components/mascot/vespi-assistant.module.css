@@ -1,0 +1,39 @@
+/* Layout primitives only. Palette, fonts and page surfaces remain unchanged. */
+.assistant { position: relative; min-width: 0; color: inherit; font-family: inherit; }
+.assistant[hidden] { display: none; }
+.content { min-width: 0; }
+.assistant .label { margin: 0 0 7px; color: inherit; font-size: 13px; line-height: 1.45; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.title { font-size: 20px; font-weight: 600; line-height: 1.3; letter-spacing: -.02em; }
+.message { max-width: 68ch; font-size: 15px; line-height: 1.6; }
+.title + .message { margin-top: 8px; }
+.visual { display: block; flex-shrink: 0; pointer-events: none; user-select: none; }
+.visual img { display: block; width: 100%; height: auto; object-fit: contain; }
+.indicator { display: inline-grid; place-items: center; flex: 0 0 auto; width: 38px; height: 38px; border: 1px solid currentColor; border-radius: var(--radius-pill); color: var(--portal-accent, var(--i-link, currentColor)); font-size: 13px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+.inline-pill { display: flex; align-items: flex-start; gap: 12px; }
+.inline-pill .visual { padding-top: 1px; }
+.inline-pill[data-vespi-appearance="portrait"] .visual { width: 72px; }
+.inline-pill[data-vespi-appearance="figure"] .visual { width: 72px; }
+.editorial-callout { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: start; gap: 24px; padding: 28px; border: 1px solid var(--portal-border, var(--i-line, var(--color-line))); border-radius: var(--radius-xl); background: var(--portal-surface-soft, var(--color-frost)); overflow: visible; }
+.editorial-callout .visual { width: 96px; margin-top: -42px; }
+.editorial-callout .content { align-self: center; }
+.portal-copilot { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 20px; }
+.portal-copilot .visual { width: 96px; }
+.floating-bar { display: flex; align-items: center; gap: 16px; }
+.floating-bar .visual { width: 64px; margin-block: -18px; }
+.floating-bar .content { display: flex; flex: 1; align-items: center; gap: 16px; }
+.floating-bar .label { margin: 0; }
+.assistant[data-vespi-appearance="none"] { display: block; }
+.assistant[data-vespi-appearance="indicator"] .visual { width: auto; margin: 0; }
+.editorial-callout[data-vespi-appearance="indicator"], .portal-copilot[data-vespi-appearance="indicator"] { grid-template-columns: 38px minmax(0, 1fr); }
+@media (max-width: 600px) {
+  .editorial-callout { grid-template-columns: 72px minmax(0, 1fr); gap: 16px; padding: 20px; }
+  .editorial-callout .visual { width: 72px; margin-top: -32px; }
+  .portal-copilot { grid-template-columns: 72px minmax(0, 1fr); gap: 14px; }
+  .portal-copilot .visual { width: 72px; }
+  .message { font-size: 14px; line-height: 1.6; }
+  .title { font-size: 18px; }
+  .floating-bar { gap: 12px; }
+  .floating-bar .visual { width: 64px; }
+  .floating-bar .content { gap: 10px; }
+}
+@media (forced-colors: active) { .indicator { color: ButtonText; } }

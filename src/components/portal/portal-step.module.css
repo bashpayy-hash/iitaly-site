@@ -2,7 +2,11 @@
 .step h2 { margin: 16px 0 10px; font-family: var(--portal-heading-font); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; overflow-wrap: anywhere; }
 .back, .link { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; color: var(--portal-ink); font-size: 15px; text-decoration: underline; text-underline-offset: 4px; }
 .meta { color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
-.explain { max-width: 65ch; margin: 18px 0; font-size: 16px; line-height: 1.6; }
+.assistant[data-vespi-assistant] { display: flow-root; margin: 18px 0; }
+.assistant [data-vespi-presence] { float: right; width: 96px; margin: -8px 0 10px 20px; }
+.assistant [data-vespi-content] { display: contents; }
+.assistant [data-vespi-message] { font-size: 16px; line-height: 1.6; }
+.assistant .actionHint, .assistant .reason { margin: 10px 0 0; padding: 0; border: 0; }
 .date { margin: 14px 0; color: var(--portal-muted); font-size: 15px; line-height: 1.6; }
 .actionHint { max-width: 60ch; margin: 16px 0 12px; color: var(--portal-muted); font-size: 14px; line-height: 1.5; }
 .notes { margin: 20px 0 0; border-top: 1px solid var(--portal-border); font-size: 15px; }
@@ -23,4 +27,5 @@
 .selfReport button { margin-top: 12px; }
 .step :is(a,button,input,h2,summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 @media(max-width:900px) { .step { padding: 20px; } .step h2 { font-size: 28px; } }
-@media(max-width:480px) { .step h2 { margin-top: 10px; } .explain { margin: 14px 0; } }
+@media(max-width:600px) { .assistant [data-vespi-presence] { width: 72px; margin-left: 14px; } }
+@media(max-width:480px) { .step h2 { margin-top: 10px; } .assistant[data-vespi-assistant] { margin: 14px 0; } }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 /**
  * Apple footer: плоский, тёмный, типографический — без бумаги, без купола,
@@ -10,7 +11,7 @@ export function Footer() {
     <footer className="mt-auto bg-carbon [--color-ash:#b9b9c2] [--color-cloud-meta:#b9b9c2] px-5 pt-10 pb-6 text-ash">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-start justify-between gap-6 border-b border-smoke pb-8">
         <div>
-          <b className="font-apple-text text-[14px] font-semibold text-frost">IITALY</b>
+          <span role="img" aria-label="IITALY" className="inline-flex font-apple-text text-frost"><BrandLogo /></span>
           <p className="mt-1 max-w-xs text-[13px] leading-relaxed text-ash">
             ИИ-сервис поступления в университеты Италии · Казахстан
           </p>

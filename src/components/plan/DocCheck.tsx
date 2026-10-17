@@ -6,8 +6,7 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
-import { VespaRide } from "./VespaRide";
-import { VespaReveal } from "@/components/VespaReveal";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
@@ -21,7 +20,7 @@ const LABEL: Record<string, string> = {
    не бесплатное: FileReader плюс перерисовка фото в canvas до 1600px по
    длинной стороне занимают на телефоне заметные секунды, и всё это время
    раньше не происходило ровно ничего — человек нажал «выбрать документ» и
-   смотрел в неподвижный экран. Веспа едет и здесь тоже. */
+   смотрел в неподвижный экран. Статус Веспи отражает этот реальный этап. */
 type State =
   | { step: "idle" }
   | { step: "reading" }
@@ -30,6 +29,17 @@ type State =
   | { step: "done"; file: File; payload: DocPayload; result: DocCheckResult }
   | { step: "retry"; file: File; payload: DocPayload; message: string }
   | { step: "error"; message: string };
+
+function inspectorMessage(step: State["step"], availabilityPending: boolean, unavailable: boolean) {
+  if (availabilityPending) return "Сначала проверю, доступна ли ИИ-сверка.";
+  if (unavailable) return "Проверка временно недоступна. Это не замечание к твоему документу.";
+  if (step === "reading") return "Читаю выбранный файл. Проверка начнётся после твоего подтверждения.";
+  if (step === "checking") return "Проверяю содержание и применимые требования. Покажу итог, замечания и что делать дальше.";
+  if (step === "ready") return "Файл выбран. Уточни заявку и нажми «Проверить документ» — до этого файл не отправляется на ИИ-анализ.";
+  if (step === "retry") return "Проверка не завершилась. Файл остался выбран; причину покажу ниже.";
+  if (step === "error") return "Не удалось подготовить файл. Причина ниже — выбери документ ещё раз после исправления.";
+  return "Загрузи справку о доходах, состав семьи, банковскую выписку или перевод. Для проверки требований укажи программу и учебный год.";
+}
 
 export function DocCheck() {
   const router = useRouter();
@@ -136,10 +146,16 @@ export function DocCheck() {
       <h2 className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-cloud-white">
         Проверь документ перед подачей
       </h2>
-      <p className="mt-2 text-apple-body-sm text-cloud-body">
-        Загрузи справку о доходах, состав семьи, банковскую выписку или перевод.
-        Для проверки требований укажи программу и учебный год.
-      </p>
+      {state.step !== "done" && <VespiAssistant
+        variant="inspector"
+        layout="portal-copilot"
+        appearance="portrait"
+        label="Веспи · проверка документа"
+        className="mt-4"
+        as="div"
+        data-document-assistant={state.step}
+        message={inspectorMessage(state.step, availabilityPending, unavailable)}
+      />}
 
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
         <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
@@ -278,13 +294,14 @@ export function DocCheck() {
           </div>
         )}
         {(state.step === "checking" || state.step === "reading") && (
-          <VespaRide
-            text={
+          <div role="status" className="flex items-start gap-3 text-apple-body-sm text-cloud-body" data-document-review-pending>
+            <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-crimson motion-safe:animate-pulse" />
+            <p>{
               state.step === "reading"
-                ? "Читаю файл — сжимаю фото, чтобы оно доехало"
-                : "Проверяю содержание и применимые требования — это может занять около минуты"
-            }
-          />
+                ? "Готовлю файл к проверке…"
+                : "Проверка идёт. Результат появится здесь."
+            }</p>
+          </div>
         )}
         {state.step === "done" && (
           <DocResult result={state.result} onCta={() => router.push("/prices")} />
@@ -307,8 +324,14 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
   useEffect(() => { resultRef.current?.focus({ preventScroll: true }); }, []);
   return (
     <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
-      <div className="flex flex-wrap items-center gap-2.5">
-        {v === "ok" && <VespaReveal pose="success" className="h-9 w-auto shrink-0" />}
+      <VespiAssistant
+        variant="inspector"
+        layout="portal-copilot"
+        appearance="portrait"
+        label="Веспи · разбор документа"
+        as="div"
+        data-document-assistant="done"
+        title={<div className="flex flex-wrap items-center gap-2.5">
         <span
           className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold text-white uppercase ${
             v === "ok"
@@ -323,9 +346,9 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
           {LABEL[v] || "Результат"}
         </span>
         <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
-      </div>
-
-      {result.summary && <p className="mt-3 text-apple-body-sm text-cloud-body">{result.summary}</p>}
+        </div>}
+        message={result.summary || undefined}
+      />
 
       {result.review && <div className="mt-4 border-b border-white/15 pb-4 text-apple-body-sm text-cloud-body">
         <p className="font-semibold text-cloud-white">

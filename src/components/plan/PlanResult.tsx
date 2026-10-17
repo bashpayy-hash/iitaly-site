@@ -4,7 +4,7 @@ import { SourceRefs } from "@/components/SourceRefs";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
 import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
-import { VespaReveal } from "@/components/VespaReveal";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./plan-journey.module.css";
 
 export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void }) {
@@ -12,18 +12,17 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
 
   return (
     <div>
-      <div className="flex items-start gap-3 border border-white/15 p-4">
-        <VespaReveal pose="celebrate" className="h-12 w-auto shrink-0" />
-        <div>
-          <p className="text-apple-caption font-semibold text-crimson uppercase">
-            Персональный план готов
-          </p>
-          <p className="mt-1 text-apple-body-sm text-cloud-body">
+      <VespiAssistant
+        variant="celebrate"
+        layout="editorial-callout"
+        appearance="figure"
+        label="Веспи · твой маршрут"
+        title={<p className="text-apple-caption font-semibold text-crimson uppercase">Персональный план готов</p>}
+        message={<>
             План собран по твоим ответам. Набор: {plan.intake}.
             Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
-          </p>
-        </div>
-      </div>
+        </>}
+      />
 
       <div className={styles.routeHeading}>
         <h2>С чего начать</h2>

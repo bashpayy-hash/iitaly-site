@@ -7,6 +7,7 @@ import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./portal-plan.module.css";
 import rules from "./portal-rules.module.css";
 
@@ -19,6 +20,7 @@ type PlanActions = { onOpenTask: (task: PortalTask) => void };
 export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalData }) {
   const [rulesOpen, setRulesOpen] = useState(false);
   const position = portalPosition(data);
+  const hasTasks = data.roadmap.some(stage => stage.tasks.length > 0);
   const assessmentTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "chances");
   const nextStage = position.stageIndex >= 0 ? data.roadmap[position.stageIndex + 1] : undefined;
   const remainingStages = data.roadmap.filter(stage => stage.id !== position.stage?.id && stage.id !== nextStage?.id);
@@ -53,7 +55,9 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
           </p>}
         </details>
       </div>
-      {!position.stage && <p className={styles.complete}>Все шаги маршрута отмечены.</p>}
+      {!position.stage && <VespiAssistant as="div" variant={hasTasks ? "celebrate" : "copilot"} layout="inline-pill" appearance="indicator" className={styles.complete}
+        label={hasTasks ? "Веспи · маршрут пройден" : "Веспи · маршрут"}
+        message={hasTasks ? "Все шаги маршрута отмечены." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."} />}
       {position.stage && renderStage(position.stage)}
       {nextStage && renderStage(nextStage)}
       {remainingStages.length > 0 && <details className={styles.fullRoute} key={position.stage?.id || "complete"}>

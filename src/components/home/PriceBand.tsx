@@ -5,6 +5,7 @@ import { AppleButtonLink } from "@/components/apple/Button";
 import { AppleCaption, AppleBody } from "@/components/apple/Typography";
 import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 /** Existing pricing and refund terms, with one clear conversion action. */
 export function PriceBand() {
@@ -22,6 +23,14 @@ export function PriceBand() {
             документы, дедлайны, DSU, Universitaly и визу D. Без подписки и
             обязательных доплат за отдельные этапы.
           </AppleBody>
+          <VespiAssistant
+            variant="inspector"
+            layout="inline-pill"
+            appearance="none"
+            label="Веспи · проверка без лимита"
+            className="mt-5 max-w-md"
+            message="Исправил перевод? Пришли новую версию на AI-сверку. Повторные проверки в кабинете входят в этот платёж."
+          />
           <AppleButtonLink href="/prices" variant="filled" className="mt-7">
             Смотреть, что входит
           </AppleButtonLink>

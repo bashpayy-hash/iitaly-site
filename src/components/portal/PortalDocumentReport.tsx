@@ -5,6 +5,7 @@ import type { PortalDoc } from "@/lib/portalApi";
 import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalDocumentContext } from "./PortalDocumentContext";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import portal from "./portal.module.css";
 import styles from "./portal-document.module.css";
 
@@ -61,9 +62,11 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
       {orientir && <p className={styles.meta}>{orientir} — это не срок конкретного вуза.</p>}
     </header>
     <div className={styles.decision} data-outcome={outcome.kind}>
-      <h3>{outcome.label}</h3>
-      <p>{reasons[outcome.kind]}</p>
-      {(result?.summary || doc.summary) && <p>{result?.summary || doc.summary}</p>}
+      <VespiAssistant as="div" variant="inspector" layout="portal-copilot" appearance="portrait" label="Веспи · разбор документа" className={styles.inspector} data-portal-document-inspector>
+        <h3>{outcome.label}</h3>
+        <p>{reasons[outcome.kind]}</p>
+        {(result?.summary || doc.summary) && <p>{result?.summary || doc.summary}</p>}
+      </VespiAssistant>
     </div>
 
     {!result ? <div className={styles.block}>
@@ -78,7 +81,7 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
     {canUpload ? <div className={styles.actions} data-fab-yield>
       <p id="portal-document-repeat-hint" className={styles.meta}>Повторная проверка без доплаты. Новый разбор заменит этот.</p>
       <button type="button" className={styles.fileArea} aria-describedby="portal-document-repeat-hint" data-primary-action disabled={busy} onClick={onUpload}>Проверить новую версию</button>
-      {busy && <p className={styles.meta} role="status">Проверяю…</p>}
+      {busy && <p className={styles.meta} role="status">Веспи проверяет и сохраняет новую версию…</p>}
     </div> : readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
 
     {result && <>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowDown, ArrowRight, ArrowUpLeft, ArrowUpRight, BookOpen, Check, ChevronDown, Search, X } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
-import { Vespi } from "@/components/mascot/Vespi";
+import { VespiAssistant, VespiIndicator } from "@/components/mascot/VespiAssistant";
 import { VisaSection } from "@/components/guides/VisaSection";
 import { GUIDE_HELP, guideAction, isGuideId, openGuideHelper, type GuideId } from "@/components/guides/guideJourney";
 import { GUIDES, type GuideCard } from "@/data/guides";
@@ -56,12 +56,6 @@ function focusTopic(id: GuideId, scroll = true, instant = false) {
   })));
 }
 
-/** Approved face crop; new Higgsfield poses are a separate, supplied prompt brief. */
-function Avatar({ small = false, priority = false }: { small?: boolean; priority?: boolean }) {
-  return <span className={`${ui.avatarRing} ${small ? ui.avatarSmall : ""}`} aria-hidden="true">
-    <Vespi variant="avatar" sizes={small ? "40px" : "52px"} priority={priority} />
-  </span>;
-}
 function OfficialSources({ ids }: { ids: readonly SourceId[] }) {
   return <footer className={ui.sources} aria-label="Официальные источники">
     <p className={ui.verified}><Check size={14} aria-hidden="true" />Проверено <time dateTime={REVIEWED_AT}>{REVIEWED_LABEL}</time></p>
@@ -77,19 +71,20 @@ function OfficialSources({ ids }: { ids: readonly SourceId[] }) {
 function Insight({ guide }: { guide: GuideCard }) {
   if (!isGuideId(guide.id)) return null;
   const id = guide.id, help = GUIDE_HELP[id], action = guideAction(id);
-  return <aside className={ui.insight} data-vespi-tip data-guide-next={id} aria-label="Совет Веспи и следующее действие">
-    <Avatar small />
+  const note = guide.warn || (id === "tests" ? TESTS_TIP : "");
+  const variant = help.action === "document" || ["cimea", "con", "visa"].includes(id) ? "inspector" : ["education", "tests"].includes(id) ? "route" : "copilot";
+  return <VespiAssistant variant={variant} layout="editorial-callout" label="Веспи · помогу разобраться"
+    className={ui.insight} data-vespi-tip data-guide-next={id} aria-label="Совет Веспи">
     <div className={ui.insightCopy}>
-      <p className={ui.insightLabel}>Веспи · помогу разобраться</p>
-      <p>{guide.warn || (id === "tests" ? TESTS_TIP : help.next)}</p>
-      {guide.warn && <p className={ui.insightNext}>{help.next}</p>}
+      <p className={ui.insightNext}>{help.next}</p>
+      {note && <p>{note}</p>}
       <Link href={action.href} className={ui.primary} data-guide-inline-action data-fab-yield
         onClick={() => track("guide_next_action", { topic: id, action: help.action })}>
         {ACTION_LABELS[id] || action.label}<ArrowUpRight size={18} aria-hidden="true" />
       </Link>
       <small>{action.note}</small>
     </div>
-  </aside>;
+  </VespiAssistant>;
 }
 function TopicBody({ guide }: { guide: GuideCard }) {
   return <>
@@ -112,30 +107,30 @@ function StickyPlan({ topic }: { topic?: GuideId }) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   useEffect(() => {
-    const command = document.getElementById("guide-command");
-    if (!command) return;
-    let passed = false, actionVisible = false, articleVisible = false;
-    const update = () => setVisible(passed && articleVisible && !actionVisible);
-    const commandObserver = new IntersectionObserver(([entry]) => {
+    const hero = document.querySelector('[data-section="guides-header"]');
+    if (!hero) return;
+    let passed = false, articleVisible = false;
+    const inlineVisibility = new Map<Element, boolean>();
+    const update = () => setVisible(passed && articleVisible && ![...inlineVisibility.values()].some(Boolean));
+    const heroObserver = new IntersectionObserver(([entry]) => {
       passed = !entry.isIntersecting && entry.boundingClientRect.bottom < 0; update();
     });
-    const actionObserver = new IntersectionObserver(entries => {
-      actionVisible = entries.some(entry => entry.isIntersecting); update();
+    const insightObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => inlineVisibility.set(entry.target, entry.isIntersecting)); update();
     }, { rootMargin: "0px 0px 140px 0px" });
     const articleObserver = new IntersectionObserver(([entry]) => { articleVisible = entry.isIntersecting; update(); });
     const article = document.querySelector("[data-guide-panel]");
     if (article) articleObserver.observe(article);
-    commandObserver.observe(command);
-    document.querySelectorAll("[data-guide-inline-action]").forEach(node => actionObserver.observe(node));
-    return () => { commandObserver.disconnect(); actionObserver.disconnect(); articleObserver.disconnect(); };
+    heroObserver.observe(hero);
+    document.querySelectorAll("[data-vespi-tip], [data-vespi-tip] [data-vespi-presence]").forEach(node => insightObserver.observe(node));
+    return () => { heroObserver.disconnect(); insightObserver.disconnect(); articleObserver.disconnect(); };
   }, [topic]);
   const href = topic && GUIDE_HELP[topic].action === "plan" ? guideAction(topic).href : "/plan#questionnaire";
-  return <aside data-guide-sticky data-fab-yield className={ui.sticky} hidden={!visible || dismissed} aria-label="Персональный план IITALY">
-    <Avatar small />
+  return <VespiAssistant variant="copilot" layout="floating-bar" label="" data-guide-sticky data-fab-yield className={ui.sticky} hidden={!visible || dismissed} aria-label="Персональный план IITALY">
     <div className={ui.stickyCopy}><strong>Запутался в правилах?</strong><p>Маршрут и проверка документов без лимита — в кабинете за {priceLabel(PRICE_MAIN)}.</p></div>
     <Link className={ui.primary} href={href} onClick={() => track("guide_sticky_action", { topic: topic || "" })}>Составить план<ArrowUpRight size={17} aria-hidden="true" /></Link>
     <button type="button" className={ui.iconButton} aria-label="Скрыть предложение плана" onClick={() => setDismissed(true)}><X size={17} aria-hidden="true" /></button>
-  </aside>;
+  </VespiAssistant>;
 }
 
 export default function GuidesPage() {
@@ -191,7 +186,7 @@ export default function GuidesPage() {
           <div id="guide-command" className={ui.command} data-fab-yield>
             <label htmlFor="guide-search" className="sr-only">Найти тему</label>
             <div className={ui.commandBar}>
-              <Avatar priority />
+              <VespiIndicator className={ui.commandIndicator} />
               <div className={ui.commandField}><span aria-hidden="true">Веспи поможет найти ответ</span>
                 <input ref={searchRef} id="guide-search" type="search" value={query} autoComplete="off" spellCheck={false} placeholder="Найди свою тему: аттестат, виза, DSU…" onChange={event => { setQuery(event.target.value); setActiveId(null); }} />
               </div>

@@ -6,6 +6,7 @@ import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { isManualTask, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { PortalDocumentContext } from "./PortalDocumentContext";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import portal from "./portal.module.css";
 import styles from "./portal-step.module.css";
 
@@ -40,11 +41,14 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
     }}>Назад</a>
     <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
     <p className={styles.meta}>{meta}</p>
-    <p className={styles.explain}>{taskExplanation(task)}</p>
     {date && <p className={styles.date}>{date} — это не срок конкретного вуза.</p>}
-    {!readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
+    <VespiAssistant as="div" variant={done ? "celebrate" : needDoc ? "inspector" : "copilot"} layout="portal-copilot" appearance="portrait"
+      label={done ? "Веспи · шаг сохранён" : readOnly ? "Веспи · заглянем вперёд" : needDoc ? "Веспи · проверим документ" : "Веспи · пройдём этот шаг"}
+      message={taskExplanation(task)} className={styles.assistant} data-portal-step-guide>
+      {readOnly && <p className={styles.reason}>{readOnly}</p>}
+      {!readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
+    </VespiAssistant>
     {readOnly ? <>
-      <p className={styles.reason}>{readOnly}</p>
       {done && manual && !hasRetry && <a className={styles.link} href="#portal-step-heading" aria-disabled={busy} onClick={event => {
         event.preventDefault(); if (!busy) onToggle(false);
       }}>Снять отметку</a>}

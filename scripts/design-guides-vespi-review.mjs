@@ -78,9 +78,11 @@ try {
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');
     await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
-    // The explicit Meta-style redesign now uses an avatar in the command bar
-    // and one contextual insight, replacing PR 98's rare-mascot invariant.
-    assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 1, 'The command bar has one Vespi avatar');
+    // The shared assistant now reserves a real portrait for contextual advice.
+    // Search uses a semantic AI indicator instead of repeating the same face.
+    assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 0, 'The command bar does not duplicate a portrait');
+    assert.equal(await page.locator('#guide-command [data-vespi-indicator]').count(), 1, 'The command bar keeps a compact AI indicator');
+    assert.equal(await page.locator('[data-guide-sticky]').isVisible(), false, 'The conversion bar yields while the hero is visible');
     assert.equal(await page.locator('[data-guide-current] [data-vespi]').count(), 0, 'Stage navigation remains text-only');
     assert(await page.locator('#guide-search').evaluate(input => input.getBoundingClientRect().height >= 44), 'The search field has a 44px touch target');
     await screenshot('guides-top');
@@ -97,6 +99,10 @@ try {
     assert.equal((await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').innerText()).replace(/\s+/g, ' ').trim(), '1. Выбрать маршрут');
     assert.match(await page.locator('[data-vespi-tip]').filter({ visible: true }).innerText(), /Foundation не заменяет выпускной аттестат/);
     assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('[data-vespi]').count(), 1, 'The selected insight has one Vespi avatar');
+    assert(await page.locator('[data-vespi-tip] [data-vespi-presence]').filter({ visible: true }).evaluate(element => {
+      const rect = element.getBoundingClientRect();
+      return rect.width >= 72 && rect.width <= 96;
+    }), 'The contextual portrait is 72–96px rather than a stamped search icon');
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
     assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
     assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());
@@ -119,6 +125,18 @@ try {
     for (const ref of await refs.all()) assert.match(await ref.getAttribute('rel'), /noopener/);
     await audit('guide chapter ' + width);
     await screenshot('guides-apostille');
+    const inlineAdvice = page.locator('[data-vespi-tip]').filter({ visible: true });
+    await inlineAdvice.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
+    // The sticky and launcher have independent IntersectionObservers. Wait
+    // for the launcher to publish the new viewport before counting portraits.
+    await page.locator('#chat-launcher[data-vespi-launcher-mode="indicator"]').waitFor({ state: 'attached' });
+    assert.equal(await inlineAdvice.getAttribute('data-vespi-variant'), 'inspector', 'Document advice uses the inspector role');
+    assert(await page.locator('img[data-vespi]').evaluateAll(images => images.filter(image => {
+      const rect = image.getBoundingClientRect();
+      return image.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+        && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
+    }).length <= 1), 'Visible contextual advice does not compete with another Vespi portrait');
     const documentAction = currentNext('apostille').locator('[data-guide-inline-action]');
     await documentAction.evaluate(action => action.scrollIntoView({ block: 'center', behavior: 'instant' }));
     await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
@@ -221,9 +239,19 @@ try {
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 0, 'Back closes the selected topic');
     assert.equal(await search.evaluate(el => document.activeElement === el), true, 'Back returns focus to the command bar');
     if (width === 1440 || width === 390) {
-      // This long chapter leaves both the command bar and inline CTA outside
+      // This long chapter leaves both the hero and the whole inline insight outside
       // the viewport, which is the intended moment for the conversion pill.
       await visit('/guides#visa');
+      await page.locator('[data-guide-panel="visa"]').waitFor();
+      await page.waitForFunction(() => document.activeElement?.id === 'active-guide-title'
+        && document.activeElement.closest('[data-guide-panel]')?.getAttribute('data-guide-panel') === 'visa');
+      // The whole advice panel now suppresses the sticky offer, including its
+      // portrait overhang. Expand real reading content so the test actually
+      // leaves that panel outside the viewport and its early-yield margin.
+      const checklist = page.getByRole('button', { name: 'Чек-лист документов', exact: true });
+      if (await checklist.getAttribute('aria-expanded') === 'false') await checklist.click();
+      await page.waitForFunction(() => [...document.querySelectorAll('[data-guide-panel="visa"] button')]
+        .some(button => button.textContent === 'Чек-лист документов' && button.getAttribute('aria-expanded') === 'true'));
       // goto can be a same-document hash change after Back focused search.
       // Match a card selection: keyboard focus leaves the command input.
       await page.locator('#active-guide-title').focus();
