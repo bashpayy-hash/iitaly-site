@@ -91,7 +91,11 @@
 /* Картинка лежит абсолютно и не участвует в расчёте высоты: высоту героя
    задаёт текст. Иначе на широких экранах собственные пропорции рисунка
    растягивали весь первый экран. */
-.campusArtwork img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 66% center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 34%); mask-image: linear-gradient(90deg, transparent, #000 34%); }
+.campusArtwork > picture > img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 66% center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 34%); mask-image: linear-gradient(90deg, transparent, #000 34%); }
+.campusCompanion { position: absolute; bottom: 24px; left: 18%; width: 192px; }
+.campusCompanion img { display: block; width: 100%; height: auto; }
+@media (min-width: 768px) and (max-width: 1100px) { .campusCompanion { width: 144px; bottom: 40px; left: 8%; } }
+@media (max-width: 767px) { .campusCompanion { width: 96px; bottom: 0; left: 14%; } }
 .heroCopy .actions { justify-content: flex-start; gap: 12px 16px; }
 .eyebrow { color: #666670; font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
 .signal { display: inline-block; width: 7px; height: 7px; margin-right: 9px; border-radius: 50%; background: var(--i-signal); vertical-align: 1px; }
@@ -199,7 +203,7 @@
   .heroCopy { text-align: center; padding: 0; }
   .heroCopy .actions { justify-content: center; }
   .campusArtwork { width: 100%; max-width: 480px; min-height: 0; margin: 0 auto; height: 210px; overflow: hidden; }
-  .campusArtwork img { min-height: 0; height: 100%; object-fit: cover; object-position: 70% 64%; -webkit-mask-image: none; mask-image: none; }
+  .campusArtwork > picture > img { min-height: 0; height: 100%; object-fit: cover; object-position: 70% 64%; -webkit-mask-image: none; mask-image: none; }
   .heroNote { margin-inline: auto; }
   .heroTitle { margin: 16px auto 0; font-size: clamp(32px, 8.5vw, 54px); letter-spacing: -.03em; }
   .heroDescription { font-size: 17px; max-width: 430px; margin: 20px auto 0; }

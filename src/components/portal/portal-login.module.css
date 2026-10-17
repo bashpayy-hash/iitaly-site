@@ -91,6 +91,9 @@
   object-fit: cover;
   object-position: 72% 62%;
 }
+.companion { position: absolute; z-index: 1; left: 44px; bottom: 88px; width: 148px; height: auto; pointer-events: none; }
+@media (max-width: 1000px) and (min-width: 761px) { .companion { left: 26px; width: 120px; } }
+@media (max-width: 760px) { .companion { left: 24px; bottom: 8px; width: 112px; } }
 .route {
   position: relative;
   z-index: 1;

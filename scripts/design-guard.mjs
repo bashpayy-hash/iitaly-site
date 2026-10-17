@@ -29,6 +29,8 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-17: replace the scooter with Веспи Баурысаков.
+  // Existing helper/onboarding/progress presentation only; no API/data change.
   // User request 2026-10-16: keep assessment, rules and the unchanged trainer
   // inside the personal cabinet, with existing data and completion endpoints.
   'src/components/portal/PortalAssessment.tsx',

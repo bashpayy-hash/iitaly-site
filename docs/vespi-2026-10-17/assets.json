@@ -1,0 +1,59 @@
+{
+  "name": "Веспи Баурысаков",
+  "approvedGeneration": "6d279aa7-1c13-40b0-9f55-914bab980525",
+  "master": "design/mascot/vespi/vespi-master.png",
+  "rideCrop": {
+    "left": 135,
+    "top": 41,
+    "width": 746,
+    "height": 926
+  },
+  "avatarCrop": {
+    "left": 302,
+    "top": 46,
+    "width": 360,
+    "height": 360
+  },
+  "variants": [
+    {
+      "file": "vespi-avatar-192.webp",
+      "bytes": 8826,
+      "width": 192,
+      "height": 192,
+      "alpha": true,
+      "sha256": "d13cd8291ad739f3417201d121b6a183e7c0d5006507e53f226af9ccc768fba7"
+    },
+    {
+      "file": "vespi-avatar-96.webp",
+      "bytes": 3970,
+      "width": 96,
+      "height": 96,
+      "alpha": true,
+      "sha256": "2511c542b49a133a3abcc32b8823431e5df98f605bff081bff7ef154714eff92"
+    },
+    {
+      "file": "vespi-ride-160.webp",
+      "bytes": 9532,
+      "width": 160,
+      "height": 199,
+      "alpha": true,
+      "sha256": "c5c4926af5207d3144ddb86ac3340af44b6441cdd94874e3dc12cd90fcea1023"
+    },
+    {
+      "file": "vespi-ride-320.webp",
+      "bytes": 22528,
+      "width": 320,
+      "height": 397,
+      "alpha": true,
+      "sha256": "9ebdcb3ac145d0b172d1474e75fd9bb9c778658d9ef78ede856e143545ba39d3"
+    },
+    {
+      "file": "vespi-ride-640.webp",
+      "bytes": 54140,
+      "width": 640,
+      "height": 794,
+      "alpha": true,
+      "sha256": "710132e21207581e5df296e624b3e3aa880684f0ae71f2d57e018889adfb0abf"
+    }
+  ]
+}

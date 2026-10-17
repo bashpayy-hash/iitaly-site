@@ -14,6 +14,7 @@ import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
+import { Vespi, VESPI_NAME } from "@/components/mascot/Vespi";
 import { PortalArtwork } from "./PortalArtwork";
 import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
@@ -628,7 +629,7 @@ export function PortalExplorer() {
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
     <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
       <div className={navigation.headerLinks}>
-        <a href="#iitaly-chat" data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-4 3v-11a9 9 0 0 1 19 0Z" /><path d="M7 10h8M7 14h5" /></svg><span>Помощник</span></a>
+        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><Vespi variant="avatar" className={navigation.helperAvatar} sizes="28px" priority /><span>Помощник</span></a>
         <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); openSettings();

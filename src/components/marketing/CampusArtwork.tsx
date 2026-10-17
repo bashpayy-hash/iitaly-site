@@ -1,9 +1,11 @@
 import styles from "./marketing.module.css";
+import { Vespi } from "@/components/mascot/Vespi";
 
 /** An imagined campus, never presented as a specific university or student result. */
 export function CampusArtwork() {
   return (
-    <picture className={styles.campusArtwork}>
+    <div className={styles.campusArtwork} aria-hidden="true">
+    <picture>
       <img
         src="/illustrations/editorial/campus-arrival-960.webp"
         srcSet="/illustrations/editorial/campus-arrival-480.webp 480w, /illustrations/editorial/campus-arrival-960.webp 960w, /illustrations/editorial/campus-arrival-1168.webp 1168w"
@@ -17,5 +19,7 @@ export function CampusArtwork() {
         draggable={false}
       />
     </picture>
+    <span className={styles.campusCompanion}><Vespi priority sizes="(max-width: 767px) 96px, (max-width: 1100px) 144px, 192px" /></span>
+    </div>
   );
 }

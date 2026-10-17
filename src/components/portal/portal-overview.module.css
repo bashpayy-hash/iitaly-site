@@ -31,23 +31,24 @@
 .road[data-road-feedback-active="true"] .countTotal { opacity: 0; transform: translateY(-4px); }
 .completionFeedback[data-visible="true"] { opacity: 1; transform: none; }
 .completionFeedback[data-visible="true"] .completionCheck { animation: completionCheck 360ms cubic-bezier(.22, 1, .36, 1) both; }
-.roadVisual { display: block; position: relative; height: 96px; margin-top: 4px; }
-.track { position: absolute; top: 40px; left: 0; right: 0; height: 8px; overflow: hidden; border-radius: 10px; background: var(--portal-border); }
+.roadVisual { display: block; position: relative; height: 106px; margin-top: 4px; }
+.track { position: absolute; top: 54px; left: 0; right: 0; height: 8px; overflow: hidden; border-radius: 10px; background: var(--portal-border); }
 .fill { display: block; position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: inherit; background: var(--portal-accent); transform-origin: left center; }
 .dashes { display: block; position: absolute; inset: 3px -13px auto; height: 2px; opacity: 0; background: repeating-linear-gradient(90deg, var(--portal-surface) 0 5px, transparent 5px 13px); }
-.stagePoint { position: absolute; top: 44px; transform: translate(-50%, -50%); }
+.stagePoint { position: absolute; top: 58px; transform: translate(-50%, -50%); }
 .point { display: block; width: 9px; height: 9px; border: 1px solid var(--portal-muted); border-radius: 50%; background: var(--portal-surface); }
 .stagePoint[data-road-stage-state="done"] .point { border-color: var(--portal-accent); background: var(--portal-accent); }
 .stagePoint[data-road-stage-state="current"] .point { width: 13px; height: 13px; border: 2px solid var(--portal-accent); background: var(--portal-surface); }
-.stageLabel { position: absolute; top: 57px; display: block; padding: 0 4px; color: var(--portal-muted); font-size: 13px; line-height: 1.25; text-align: center; overflow-wrap: normal; text-wrap: balance; }
+.stageLabel { position: absolute; top: 71px; display: block; padding: 0 4px; color: var(--portal-muted); font-size: 13px; line-height: 1.25; text-align: center; overflow-wrap: normal; text-wrap: balance; }
 .stageLabel[data-road-stage-state="current"] { color: var(--portal-ink); font-weight: 600; }
-.scooter { display: block; position: absolute; top: 3px; left: 0; z-index: 1; width: 100%; height: 45px; pointer-events: none; }
-.scooterAnchor { display: block; width: 64px; height: 45px; transform: translateX(-50%); }
+.scooter { display: block; position: absolute; top: 0; left: 0; z-index: 1; width: 100%; height: 60px; pointer-events: none; }
+.scooterAnchor { display: block; width: 48px; height: 60px; transform: translateX(-50%); }
 .scooterArrival { display: block; width: 100%; height: 100%; transform-origin: center 90%; }
 .road[data-road-arriving="true"] .scooterArrival { animation: scooterArrive 360ms cubic-bezier(.22, 1, .36, 1) both; }
 .scooterArt { display: block; width: 100%; height: 100%; overflow: visible; }
-.scooterBody { animation: idleRide 2.8s ease-in-out infinite; }
-.road[data-road-transition="true"] .fill, .road[data-road-transition="true"] .scooter, .road[data-road-transition="true"] .wheel { transition: transform var(--road-travel-duration) cubic-bezier(.4, 0, .2, 1); }
+.scooterArt img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.scooterBody { display: block; width: 100%; height: 100%; animation: idleRide 2.8s ease-in-out infinite; }
+.road[data-road-transition="true"] .fill, .road[data-road-transition="true"] .scooter { transition: transform var(--road-travel-duration) cubic-bezier(.4, 0, .2, 1); }
 .road[data-road-moving="true"] .fill, .road[data-road-moving="true"] .scooter { will-change: transform; }
 .road[data-road-moving="true"] .scooterBody { animation-play-state: paused; }
 .road[data-road-moving="true"] .dashes { opacity: .7; animation: roadDash 520ms linear infinite; }
@@ -64,11 +65,12 @@
 .road[data-road-secondary="true"] .stepAction { background: transparent; color: var(--portal-ink); border-color: var(--portal-border); }
 .arrow { flex: 0 0 auto; align-self: center; color: inherit; transition: transform 160ms ease-out; }
 /* A conditional education stage needs the complete width for its label. */
-.road[data-road-dense="true"] { grid-template-columns: minmax(140px, .35fr) minmax(0, 1fr); grid-template-areas: "header next" "visual visual"; gap: 0 24px; padding: 12px 20px; }
+.road[data-road-dense="true"] { grid-template-columns: minmax(140px, .35fr) minmax(0, 1fr); grid-template-areas: "header next" "visual visual"; gap: 0 24px; padding: 6px 20px; }
 .road[data-road-dense="true"] .roadCopy { padding: 0; border: 0; }
 .road[data-road-dense="true"] .roadRoute { display: contents; }
 .road[data-road-dense="true"] .roadHeader { grid-area: header; justify-content: flex-start; }
-.road[data-road-dense="true"] .roadVisual { grid-area: visual; height: 86px; margin-top: 0; }
+.road[data-road-dense="true"] .roadVisual { grid-area: visual; height: 100px; margin-top: 0; }
+.road[data-road-dense="true"] .stepTitle { max-width: none; }
 .next, .document { display: block; margin: 0; padding: 16px 0; color: var(--portal-muted); font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
 .next { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; }
 .overview > .document { margin-bottom: 12px; padding-top: 0; }
@@ -89,10 +91,11 @@
   .roadCopy { padding: 0; border: 0; }
   .roadRoute { display: contents; }
   .roadHeader { grid-area: header; justify-content: flex-start; }
-  .roadVisual { grid-area: visual; margin-top: 0; height: 84px; }
+  .roadVisual { grid-area: visual; margin-top: 0; height: 98px; }
+  .stepTitle { max-width: none; }
 }
 @media (max-width: 900px) {
-  .road, .road[data-road-dense="true"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "route" "next"; gap: 4px; padding: 8px 14px; border-radius: 14px; }
+  .road, .road[data-road-dense="true"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "route" "next"; gap: 2px; padding: 4px 14px; border-radius: 14px; }
   .roadRoute, .road[data-road-dense="true"] .roadRoute { display: block; min-width: 0; }
   .roadHeader, .road[data-road-dense="true"] .roadHeader { grid-area: auto; justify-content: space-between; }
   .roadCopy { padding: 0; border: 0; }
@@ -100,16 +103,16 @@
   .road[data-road-static="true"] .nextCopy { grid-template-areas: "label" "title" "meta"; }
   .stepCopy { display: contents; }
   .nextLabel { grid-area: label; margin-bottom: 2px; }
-  .roadVisual, .road[data-road-dense="true"] .roadVisual { height: 42px; margin-top: 1px; }
-  .track { top: 33px; height: 6px; }
+  .roadVisual, .road[data-road-dense="true"] .roadVisual { height: 52px; margin-top: 1px; }
+  .track { top: 43px; height: 6px; }
   .dashes { top: 2px; }
-  .stagePoint { top: 36px; }
+  .stagePoint { top: 46px; }
   .stageLabel { display: none; }
   .stageTitle { font-size: 13px; }
   .stepTitle { grid-area: title; max-width: none; font-size: 18px; line-height: 1.25; text-wrap: pretty; }
   .arrow { width: 16px; height: 16px; }
-  .scooter { height: 39px; top: 0; }
-  .scooterAnchor { width: 56px; height: 39px; }
+  .scooter { height: 50px; top: 0; }
+  .scooterAnchor { width: 40px; height: 50px; }
   .meta { margin-top: 4px; }
   .next, .document { padding-bottom: 16px; }
   /* The task is already open: keep its context on one line where possible,
@@ -118,9 +121,9 @@
   .road[data-road-current-open="true"] .nextLabel { margin-bottom: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .road .fill, .road .scooter, .road .scooterBody, .road .wheel, .road .dashes, .road .nextCopy, .road .arrow, .road .countTotal, .road .completionFeedback, .road .stepAction { transition: none !important; }
+  .road .fill, .road .scooter, .road .scooterBody, .road .dashes, .road .nextCopy, .road .arrow, .road .countTotal, .road .completionFeedback, .road .stepAction { transition: none !important; }
   .road:hover:not([data-road-static="true"]) .arrow { transform: none; }
-  .scooterBody, .wheel, .dashes, .nextCopy[data-entering="true"], .road .scooterArrival, .road .completionCheck { animation: none !important; }
+  .scooterBody, .dashes, .nextCopy[data-entering="true"], .road .scooterArrival, .road .completionCheck { animation: none !important; }
   .road:active:not([data-road-static="true"]) .stepAction { transform: none; }
   .road[data-road-moving="true"] .dashes { opacity: 0; }
 }

@@ -5,6 +5,7 @@ import { useId, useRef, useState, type FormEvent } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import marketing from "@/components/marketing/marketing.module.css";
 import styles from "./portal-login.module.css";
+import { Vespi } from "@/components/mascot/Vespi";
 
 /* Экран входа — в общем стиле сайта: шапка сайта, те же шрифты и цвета,
    акварель кампуса, что и на главной и в самом кабинете. Раньше он жил в
@@ -90,6 +91,8 @@ export function PortalLogin({
               />
             </picture>
           </div>
+
+          <Vespi className={styles.companion} sizes="(max-width: 760px) 112px, 148px" priority />
 
           <div className={styles.route} aria-hidden="true">
             <span>Профиль</span><i />

@@ -58,8 +58,8 @@
   position: absolute;
   left: 50%;
   bottom: 7px;
-  width: 96px;
-  margin-left: -48px;
+  width: 68px;
+  margin-left: -34px;
   animation: vespa-drift 5.6s ease-in-out infinite alternate;
   will-change: transform;
 }
@@ -91,34 +91,14 @@
   background: rgba(33, 26, 20, .12);
 }
 
-/* Три облачка выхлопа у заднего колеса: расходятся назад и гаснут. */
-.puff {
-  position: absolute;
-  left: 6px;
-  bottom: 10px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #d9d4cc;
-  opacity: 0;
-  animation: vespa-puff 1.2s ease-out infinite;
-}
-.puff:nth-of-type(3) { animation-delay: .4s; }
-.puff:nth-of-type(4) { animation-delay: .8s; }
-@keyframes vespa-puff {
-  from { opacity: .85; transform: translate(0, 0) scale(.5); }
-  to { opacity: 0; transform: translate(-30px, -7px) scale(1.7); }
-}
-
 @media (max-width: 480px) {
   .lane { height: 80px; }
-  .rider { width: 82px; margin-left: -41px; }
+  .rider { width: 58px; margin-left: -29px; }
 }
 
 /* Без движения сцена остаётся, но стоит: веспа на дороге, без выхлопа. */
 @media (prefers-reduced-motion: reduce) {
   .scenery, .dashes, .rider, .body { animation: none; }
-  .puff { display: none; }
 }
 @media (forced-colors: active) {
   .lane { display: none; }
