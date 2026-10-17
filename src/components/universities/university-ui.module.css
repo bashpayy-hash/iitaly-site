@@ -194,11 +194,6 @@
 .embedded :where(button, a, select, input):focus-visible { outline: 2px solid var(--i-link); outline-offset: 4px; }
 .embedded .explorer { padding: 24px 0 32px; background: transparent; }
 .embedded .filterWorkspace { padding: 0; border: 0; border-radius: 0; background: transparent; }
-.embedded .navigator { display: flex; align-items: flex-start; gap: 12px; padding-bottom: 18px; margin-bottom: 18px; }
-.embedded .navigator [data-vespi-content] { display: block; }
-.embedded .navigator [data-vespi-title] { font-size: 20px; }
-.embedded .navigator [data-vespi-message] { margin-top: 8px; }
-.embedded .navigator [data-vespi-indicator] { width: 32px; height: 32px; }
 .embedded .mapGrid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .embedded .mapColumn { position: static; }
 .embedded .mapFrame { max-width: 440px; margin-inline: auto; }

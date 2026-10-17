@@ -81,9 +81,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
     : "Выбери город, затем университет";
   const navigatorMessage = activeCity && cityUnis.length === 0
     ? "В этом городе нет вузов под выбранные фильтры. Измени фильтр или выбери другой город."
-    : portalSelection && portalSelection.selectedIds.length > 0
-      ? `В твоём списке: ${portalSelection.selectedIds.length}. Открывай другие вузы и сравнивай варианты здесь — выбор сохранится после нажатия «Сохранить».`
-      : compareIds.length > 0
+    : compareIds.length > 0
         ? compareIds.length === 3
           ? "В сравнении: 3 из 3. Открой сравнение под картой, чтобы сопоставить выбранные вузы."
           : `В сравнении: ${compareIds.length} из 3. Добавь ещё вуз или открой сравнение под картой.`
@@ -141,17 +139,17 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       <section className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
-            <VespiAssistant
+            {!portalSelection && <VespiAssistant
               variant="route"
               layout="inline-pill"
-              appearance={portalSelection ? "indicator" : "portrait"}
+              appearance="portrait"
               as="div"
               label="Веспи · штурман"
               title={<h2>{navigatorTitle}</h2>}
               className={ui.navigator}
               data-university-navigator
               message={navigatorMessage}
-            />
+            />}
             {portalSelection && cityShortcut}
             <Filters
               typeFilter={typeFilter}

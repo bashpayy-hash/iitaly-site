@@ -8,8 +8,9 @@ unchanged. This correction responds to the user's production review directly.
   includes Vespi and its actual questionnaire link; repeat document checking is
   visible beside the existing price.
 - Universities: the navigator belongs to the working filters. Its guidance uses
-  the selected city, available results, comparison or saved selection. Embedded
-  portal selection keeps its indicator and never links out to the public plan.
+  the selected city, available results or comparison. The embedded portal
+  picker relies on its existing pinned guide: city choice comes first, without
+  a duplicate navigator or a link out to the public plan.
 - Portal: the existing pinned surface leads with the current action and real
   task explanation/date, followed by the road. Six or more stages receive the
   full rail width so their labels fit. No second welcome banner or action.
