@@ -89,6 +89,8 @@ jobs:
         run: node scripts/admissions-browser-review.mjs
       - name: Review student journey, error recovery and accessibility
         run: node scripts/design-ux-review.mjs
+      - name: Review Vespi guide context, quiz continuity and explicit AI requests
+        run: node scripts/design-guides-vespi-review.mjs
       - name: Review launch document retry, long filenames and modal focus
         run: node scripts/launch-document-review.mjs
       - name: Review launch chat, contact recovery and free-plan access

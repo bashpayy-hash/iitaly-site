@@ -4,6 +4,8 @@ import { useState } from "react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
 import { SourceRefs } from "@/components/SourceRefs";
 import { ADMISSION_SOURCES } from "@/data/admissions";
+import { MascotCallout } from "./MascotCallout";
+import ui from "./guide-browser.module.css";
 import {
   VG_PER_YEAR,
   VISA_DOCS,
@@ -45,10 +47,10 @@ export function VisaSection() {
         <span className="text-cloud-meta">Где подавать: </span>
         <a href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Официальный VFS для Италии в Казахстане</a>
       </p>
-      <p className="mt-2 text-apple-body-sm text-cloud-body">
+      <MascotCallout>
         Университет, консульство и стипендиальный орган проверяют разные
         условия. Начни с своего учебного года и официального чек-листа.
-      </p>
+      </MascotCallout>
 
       <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
         {VISA_KEY_FACTS.map((f) => (
@@ -94,7 +96,7 @@ export function VisaSection() {
           </div>
         </VisaAccordion>
       </div>
-      <div className="text-cloud-meta"><SourceRefs ids={["visa", "procedure", "visaWhere", "visaFees", "visaTiming"]} /></div>
+      <div className={`${ui.sources} text-cloud-meta`}><SourceRefs ids={["visa", "procedure", "visaWhere", "visaFees", "visaTiming"]} /></div>
     </div>
   );
 }

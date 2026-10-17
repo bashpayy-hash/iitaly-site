@@ -11,6 +11,7 @@ import { HeadingPin } from "@/components/motion/HeadingPin";
 import { StudyAtmosphere } from "@/components/marketing/EditorialArtwork";
 import art from "@/components/marketing/editorial-art.module.css";
 import styles from "@/components/marketing/marketing.module.css";
+import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 
 export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
@@ -52,6 +53,7 @@ export function PlanExplorer() {
       <section className="px-5 py-7 sm:py-10">
         <div className={`${styles.planWorkspace} mx-auto max-w-[760px] space-y-10`}>
           <div id="questionnaire" tabIndex={-1} className={styles.anchorTarget}>
+            <GuidePlanContext target="plan" />
             <div className={styles.toolHeading}>
               <p>Твой план поступления</p>
               <span>{WIZ.length} вопросов · бесплатно</span>
@@ -67,6 +69,7 @@ export function PlanExplorer() {
             </div>
           </div>
           <div id="document-check" className={styles.anchorTarget}>
+            <GuidePlanContext target="document" />
             <DocCheck />
           </div>
         </div>

@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { GUIDES } from "@/data/guides";
 import { GuideDetail } from "./GuideDetail";
 import { VisaSection } from "./VisaSection";
-import { AppleButton } from "@/components/apple/Button";
+import { Vespi, VESPI_NAME } from "@/components/mascot/Vespi";
+import { track } from "@/lib/track";
+import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { GuideNextStep } from "./GuideNextStep";
+import { isGuideId, openGuideHelper } from "./guideJourney";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
 import art from "@/components/marketing/editorial-art.module.css";
 import Link from "next/link";
@@ -29,13 +32,12 @@ const CHAPTERS: Chapter[] = [
 ];
 
 function ChapterBody({ chapter }: { chapter: Chapter }) {
-  if (chapter.kind === "visa") return <VisaSection />;
-  const guide = GUIDES[chapter.index];
+  const guide = chapter.kind === "guide" ? GUIDES[chapter.index] : null;
 
   return (
     <>
-      <GuideDetail guide={guide} />
-      {guide.title === "Permesso di soggiorno" && (
+      {guide ? <GuideDetail guide={guide} /> : <VisaSection />}
+      {guide?.id === "permesso" && (
         <>
           <div className="mt-4 border border-white/15 bg-white px-4 py-3 text-apple-body-sm text-cloud-white">
             <b className="block">Актуальная ремарка к тренажёру</b>
@@ -44,15 +46,13 @@ function ChapterBody({ chapter }: { chapter: Chapter }) {
             </span>
           </div>
           <div className="mt-5">
-            <Link href="/guides/permesso-modulo-1" className={styles.button + " " + styles.filled}>
-              Открыть тренажёр Modulo 1
-            </Link>
             <p className="mt-2 text-apple-caption text-cloud-meta">
               Rilascio и rinnovo · учебное заполнение · сохранение черновика только по твоему действию в браузере.
             </p>
           </div>
         </>
       )}
+      {isGuideId(chapter.id) && <GuideNextStep id={chapter.id} />}
     </>
   );
 }
@@ -62,6 +62,11 @@ const GROUPS = [
   { title: "Подготовиться к отъезду", ids: ["apostille", "translation", "cimea", "con", "iseeu", "visa", "minors", "military"] },
   { title: "После приезда", ids: ["permesso", "codice", "health-travel"] },
 ];
+const STARTERS = [
+  { id: "education", question: "У меня 11 классов. С чего начать?" },
+  { id: "tests", question: "Как разобраться с тестами?" },
+  { id: "translation", question: "Что проверить в переводе?" },
+] as const;
 function searchable(chapter: Chapter) {
   const guide = chapter.kind === "guide" ? GUIDES[chapter.index] : null;
   return [chapter.title, chapter.teaser, guide?.lead, guide?.warn,
@@ -71,7 +76,6 @@ function searchable(chapter: Chapter) {
 }
 
 export function GuidesExplorer() {
-  const router = useRouter();
   const [activeId, setActiveId] = useState(CHAPTERS[0].id);
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -79,6 +83,30 @@ export function GuidesExplorer() {
   const visible = CHAPTERS.filter(chapter => terms.every(term => searchable(chapter).includes(term)));
   const active = visible.find(chapter => chapter.id === activeId) || visible[0];
   const groups = GROUPS.map(group => ({ ...group, chapters: visible.filter(chapter => group.ids.includes(chapter.id)) })).filter(group => group.chapters.length);
+  const stage = GROUPS.findIndex(group => group.ids.includes(active?.id || activeId));
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("iitaly:guide-context", { detail: { guideId: active?.id } }));
+    return () => { window.dispatchEvent(new CustomEvent("iitaly:guide-context", { detail: {} })); };
+  }, [active?.id]);
+
+  function selectChapter(id: string, source: "question" | "stage" | "index") {
+    setQuery("");
+    setActiveId(id);
+    window.history.replaceState(null, "", `#${id}`);
+    track(source === "question" ? "guide_prompt_selected" : "guide_topic_opened", { topic: id, source });
+    requestAnimationFrame(() => {
+      if (window.location.hash.slice(1) !== id) return;
+      const mobile = document.getElementById(id);
+      if (mobile instanceof HTMLDetailsElement) mobile.open = true;
+      const desktop = window.matchMedia("(min-width: 1024px)").matches;
+      const target = desktop ? document.getElementById("active-guide-title") : mobile?.querySelector("summary");
+      if (target instanceof HTMLElement) {
+        target.focus({ preventScroll: true });
+        target.scrollIntoView({ block: "start", behavior: "instant" });
+      }
+    });
+  }
 
   useEffect(() => {
     function openLinkedChapter() {
@@ -131,12 +159,20 @@ export function GuidesExplorer() {
             <a href="#guide-topics" className={`${styles.button} ${styles.outlined} mt-6`}>Открыть справочник</a>
           </div>
         </div>
-        <div className={`${art.guidePanel} ${styles.guideHeroArt} order-2`}>
+        <div className={`${art.guidePanel} ${styles.guideHeroArt} ${ui.heroArt} order-2`}>
           <EditorialArtwork scene="terrace" priority />
+          <Vespi className={ui.heroVespi} sizes="(max-width: 600px) 100px, (max-width: 1023px) 128px, 172px" priority />
         </div>
       </section>
       <section id="guide-topics" className="px-5 py-8 sm:py-10">
-        <div className={ui.searchArea}>
+        <div className={ui.searchArea} data-fab-yield>
+          <div className={ui.searchGuide}>
+            <Vespi variant="avatar" className={ui.tipAvatar} sizes="36px" />
+            <p><strong>{VESPI_NAME}</strong><span>Выбери свой вопрос. Разберём по шагам.</span></p>
+          </div>
+          <div className={ui.starters} aria-label="С чего начать в справочнике">
+            {STARTERS.map(starter => <a key={starter.id} href={`#${starter.id}`} onClick={event => { event.preventDefault(); selectChapter(starter.id, "question"); }}>{starter.question}</a>)}
+          </div>
           <label htmlFor="guide-search">Найти тему</label>
           <div className={ui.searchRow}>
             <input ref={searchRef} id="guide-search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Например, апостиль, DSU или виза" />
@@ -148,18 +184,34 @@ export function GuidesExplorer() {
           <h2>Такой темы не нашли</h2>
           <p>Попробуй другое слово, например «перевод» или «стипендия».</p>
           <button type="button" onClick={() => { setQuery(""); searchRef.current?.focus(); }}>Показать все темы</button>
+          <button type="button" onClick={() => openGuideHelper(undefined, query)}>Спросить Веспи</button>
         </div>}
+        {active && <nav className={ui.route} data-guide-current={active.id} aria-label="Этапы справочника" style={{ "--guide-stage": Math.max(stage, 0) } as CSSProperties}>
+          <div className={ui.routeLine} aria-hidden="true" />
+          <div className={ui.routeRider} aria-hidden="true"><Vespi variant="avatar" sizes="32px" /></div>
+          {GROUPS.map((group, index) => <a key={group.title} href={`#${group.ids[0]}`} aria-current={stage === index ? "step" : undefined}
+            onClick={event => { event.preventDefault(); selectChapter(group.ids[0], "stage"); }}>
+            <span className={ui.routePoint} aria-hidden="true" />{group.title}
+          </a>)}
+        </nav>}
         {active && <div className={ui.desktop}>
-          <nav aria-label="Главы справочника" className={ui.index}>
+          <aside className={ui.index}>
+            <nav aria-label="Главы справочника">
             {groups.map(group => <div key={group.title} className={ui.topicGroup}>
               <h2>{group.title}</h2>
               {group.chapters.map(chapter => <button key={chapter.id} type="button"
                 aria-controls="guide-chapter-content" aria-current={active.id === chapter.id ? "true" : undefined}
-                onClick={() => { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); requestAnimationFrame(() => { const heading = document.getElementById("active-guide-title"); heading?.focus({ preventScroll: true }); heading?.scrollIntoView({ block: "start", behavior: "instant" }); }); }}>
+                onClick={() => selectChapter(chapter.id, "index")}>
                 {chapter.title}
               </button>)}
             </div>)}
-          </nav>
+            </nav>
+            <div className={ui.helper}>
+              <p>Читаешь: <strong>{active.title}</strong></p>
+              <button type="button" onClick={() => { if (isGuideId(active.id)) { track("guide_helper_opened", { topic: active.id }); openGuideHelper(active.id); } }}>Разобрать тему с Веспи</button>
+              <span>Вопрос можно уточнить перед отправкой.</span>
+            </div>
+          </aside>
           <div id="guide-chapter-content" className={ui.content} role="region" aria-labelledby="active-guide-title">
             <h2 id="active-guide-title" tabIndex={-1}>{active.title}</h2>
             <p className="mt-3 text-apple-body-sm text-cloud-body">{active.teaser}</p>
@@ -169,7 +221,7 @@ export function GuidesExplorer() {
         <div className={ui.mobile}>
           {groups.map(group => <div key={group.title} className={ui.topicGroup}>
             <h2>{group.title}</h2>
-            {group.chapters.map(chapter => <details key={chapter.id} id={chapter.id} name="guide-chapter" onToggle={event => { if (event.currentTarget.open && !window.matchMedia("(min-width: 1024px)").matches) { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); } }} className={`${styles.anchorTarget} ${ui.chapter}`}>
+            {group.chapters.map(chapter => <details key={chapter.id} id={chapter.id} name="guide-chapter" onToggle={event => { if (event.currentTarget.open && !window.matchMedia("(min-width: 1024px)").matches) { setActiveId(chapter.id); window.history.replaceState(null, "", `#${chapter.id}`); track("guide_topic_opened", { topic: chapter.id, source: "disclosure" }); } }} className={`${styles.anchorTarget} ${ui.chapter}`}>
               <summary><span>{chapter.title}</span></summary>
               <div className={ui.chapterBody}>
                 <p className="mb-5 text-apple-body-sm text-cloud-body">{chapter.teaser}</p>
@@ -179,17 +231,12 @@ export function GuidesExplorer() {
             </details>)}
           </div>)}
         </div>
-        <div className="mx-auto mt-10 flex max-w-[900px] flex-col items-start justify-between gap-4 border border-white/15 p-5 text-cloud-white sm:flex-row sm:items-center lg:max-w-[1100px]">
+        <div className={ui.cabinetLink}>
           <div>
-            <b className="block">Запутался в порядке шагов?</b>
-            <span className="text-apple-body-sm text-cloud-meta">
-              Ответь на вопросы — получишь маршрут по своей ситуации и
-              сможешь отдельно проверить документы.
-            </span>
+            <h2>Проверяй документы без лимита</h2>
+            <p>В кабинете сохраняются маршрут и разборы файлов. Можно исправлять документы и проверять снова.</p>
           </div>
-          <AppleButton type="button" variant="filled" onClick={() => router.push("/plan")} className="shrink-0">
-            Составить план
-          </AppleButton>
+          <Link href="/prices" onClick={() => track("guide_cabinet_viewed", { topic: active?.id || "" })}>Что входит за {priceLabel(PRICE_MAIN)}</Link>
         </div>
       </section>
       <HeadingPin section="guides-header" />
