@@ -76,6 +76,20 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   );
 
   const openUni = openUniId ? UNIS.find((u) => u.id === openUniId) ?? null : null;
+  const navigatorTitle = activeCity
+    ? `Изучи вузы: ${CITIES[activeCity].name}`
+    : "Выбери город, затем университет";
+  const navigatorMessage = activeCity && cityUnis.length === 0
+    ? "В этом городе нет вузов под выбранные фильтры. Измени фильтр или выбери другой город."
+    : portalSelection && portalSelection.selectedIds.length > 0
+      ? `В твоём списке: ${portalSelection.selectedIds.length}. Открывай другие вузы и сравнивай варианты здесь — выбор сохранится после нажатия «Сохранить».`
+      : compareIds.length > 0
+        ? compareIds.length === 3
+          ? "В сравнении: 3 из 3. Открой сравнение под картой, чтобы сопоставить выбранные вузы."
+          : `В сравнении: ${compareIds.length} из 3. Добавь ещё вуз или открой сравнение под картой.`
+        : activeCity
+          ? `Вузов в этом городе под выбранные фильтры: ${cityUnis.length}. Открой карточку, чтобы изучить условия и добавить вуз в сравнение.`
+          : "Начни с типа вуза и языка обучения. Затем выбери город на карте или в списке — покажу университеты и условия.";
 
   function chooseCity(id: CityId | null) {
     setActiveCity(id);
@@ -126,33 +140,35 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
 
       <section className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
-          {portalSelection && cityShortcut}
-          {!portalSelection && (
+          <div className={ui.filterWorkspace} data-university-filter-workspace>
             <VespiAssistant
               variant="route"
-              layout="editorial-callout"
-              appearance="portrait"
+              layout="inline-pill"
+              appearance={portalSelection ? "indicator" : "portrait"}
+              as="div"
               label="Веспи · штурман"
-              title="Сузим выбор под тебя"
-              className="mb-6"
+              title={<h2>{navigatorTitle}</h2>}
+              className={ui.navigator}
               data-university-navigator
-              message={<>Университетов в каталоге: {UNIS.length}. Начнём с твоего образования, языка и бюджета. Условия стипендии проверим отдельно — по региону.</>}
-            >
-              <Link href="/plan" className={ui.textButton}>Перейти к подбору <span aria-hidden="true">↗</span></Link>
-            </VespiAssistant>
-          )}
-          <Filters
-            typeFilter={typeFilter}
-            onTypeChange={setTypeFilter}
-            engOnly={engOnly}
-            onEngChange={setEngOnly}
-          />
-          <ResultSummary
-            unis={filteredUnis.length}
-            cities={filteredCities.size}
-            filtered={filtersActive}
-          />
-          {!portalSelection && cityShortcut}
+              message={navigatorMessage}
+            />
+            {portalSelection && cityShortcut}
+            <Filters
+              typeFilter={typeFilter}
+              onTypeChange={setTypeFilter}
+              engOnly={engOnly}
+              onEngChange={setEngOnly}
+            />
+            <div className={ui.filterSummary}>
+              <ResultSummary
+                unis={filteredUnis.length}
+                cities={filteredCities.size}
+                filtered={filtersActive}
+              />
+              {!portalSelection && <Link href="/plan" className={ui.navigatorLink}>Подобрать по моей ситуации <span aria-hidden="true">↗</span></Link>}
+            </div>
+            {!portalSelection && cityShortcut}
+          </div>
 
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>

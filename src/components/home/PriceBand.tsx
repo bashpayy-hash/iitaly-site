@@ -6,6 +6,7 @@ import { AppleCaption, AppleBody } from "@/components/apple/Typography";
 import { FEATURES, PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import assistant from "./home-assistant.module.css";
 
 /** Existing pricing and refund terms, with one clear conversion action. */
 export function PriceBand() {
@@ -27,8 +28,9 @@ export function PriceBand() {
             variant="inspector"
             layout="inline-pill"
             appearance="none"
-            label="Веспи · проверка без лимита"
-            className="mt-5 max-w-md"
+            label="Веспи · перед каждой подачей"
+            title={<h3>Проверка документов без лимита</h3>}
+            className={assistant.priceInsight}
             message="Исправил перевод? Пришли новую версию на AI-сверку. Повторные проверки в кабинете входят в этот платёж."
           />
           <AppleButtonLink href="/prices" variant="filled" className="mt-7">

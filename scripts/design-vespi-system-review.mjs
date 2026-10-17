@@ -176,6 +176,15 @@ try {
       await visit(path);
       brands[`${name}-${width}`] = await brand(page);
       if (!baseline && beforeBrands[`${name}-${width}`]) assert.deepEqual(preservedBrand(brands[`${name}-${width}`]), preservedBrand(beforeBrands[`${name}-${width}`]), `${name} ${width}: preserve body, typography, and shared palette`);
+      if (!baseline && name === 'home') {
+        const entry = page.getByRole('complementary', { name: 'Начать с Веспи', exact: true });
+        const action = entry.getByRole('link', { name: 'Составить план бесплатно', exact: true });
+        const box = await action.boundingBox();
+        assert(box && box.y + box.height <= (width < 600 ? 844 : 1000), 'The real starting action stays in the first viewport');
+        const mascot = await entry.locator('[data-vespi]').boundingBox();
+        assert(mascot && !(mascot.x < box.x + box.width && mascot.x + mascot.width > box.x && mascot.y < box.y + box.height && mascot.y + mascot.height > box.y), 'Vespi never obscures the starting action');
+        await noDuplicatePortraits(page, `home entry ${width}`);
+      }
       if (!sectionsOnly) await capture(name);
       // Capture the changed sections, not just their unchanged page heroes.
       // Baseline anchors are real containers that also existed before Vespi.
@@ -201,6 +210,11 @@ try {
                 && Number(getComputedStyle(launcher).opacity) >= 0.99 && rect.top < innerHeight && rect.bottom > 0;
             });
             await noDuplicatePortraits(page, `prices insight ${width}`);
+            if (width < 600) {
+              const card = await target.boundingBox();
+              const explanation = await target.locator('[data-vespi-message]').boundingBox();
+              assert(explanation && card && explanation.width >= card.width - 50, 'The mobile explanation uses the card width instead of a narrow column beside the portrait');
+            }
           }
           await capture('prices-insight');
         } else if (name === 'universities') {
