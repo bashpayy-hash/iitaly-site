@@ -1,0 +1,468 @@
+{
+  "results": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "fixture": "screenshot-parent",
+      "realDone": 4,
+      "realTotal": 26,
+      "stageCount": 6,
+      "longParentTitleUnclipped": true,
+      "compactAction": {
+        "width": 113,
+        "height": 44,
+        "label": "Открыть",
+        "actionAboveFold": true,
+        "titleAboveFold": true,
+        "titleUnclipped": true,
+        "overlap": false
+      },
+      "stageLabelsDoNotOverlap": true,
+      "stickyAfterRealScroll": true,
+      "futureStepReadOnly": true,
+      "currentGuideStatic": true,
+      "reducedMotion": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1200,
+        "height": 800
+      },
+      "fixture": "screenshot-parent",
+      "realDone": 4,
+      "realTotal": 26,
+      "stageCount": 6,
+      "longParentTitleUnclipped": true,
+      "compactAction": {
+        "width": 113,
+        "height": 44,
+        "label": "Открыть",
+        "actionAboveFold": true,
+        "titleAboveFold": true,
+        "titleUnclipped": true,
+        "overlap": false
+      },
+      "stageLabelsDoNotOverlap": true,
+      "stickyAfterRealScroll": true,
+      "futureStepReadOnly": true,
+      "currentGuideStatic": true,
+      "reducedMotion": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "fixture": "screenshot-parent",
+      "realDone": 4,
+      "realTotal": 26,
+      "stageCount": 6,
+      "longParentTitleUnclipped": true,
+      "compactAction": {
+        "width": 113,
+        "height": 44,
+        "label": "Открыть",
+        "actionAboveFold": true,
+        "titleAboveFold": true,
+        "titleUnclipped": true,
+        "overlap": false
+      },
+      "stageLabelsDoNotOverlap": true,
+      "stickyAfterRealScroll": true,
+      "futureStepReadOnly": true,
+      "currentGuideStatic": true,
+      "reducedMotion": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "fixture": "screenshot-parent",
+      "realDone": 4,
+      "realTotal": 26,
+      "stageCount": 6,
+      "longParentTitleUnclipped": true,
+      "compactAction": {
+        "width": 113,
+        "height": 44,
+        "label": "Открыть",
+        "actionAboveFold": true,
+        "titleAboveFold": true,
+        "titleUnclipped": true,
+        "overlap": false
+      },
+      "stageLabelsDoNotOverlap": true,
+      "stickyAfterRealScroll": true,
+      "futureStepReadOnly": true,
+      "currentGuideStatic": true,
+      "reducedMotion": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 667
+      },
+      "fixture": "screenshot-parent",
+      "realDone": 4,
+      "realTotal": 26,
+      "stageCount": 6,
+      "longParentTitleUnclipped": true,
+      "compactAction": {
+        "width": 113,
+        "height": 44,
+        "label": "Открыть",
+        "actionAboveFold": true,
+        "titleAboveFold": true,
+        "titleUnclipped": true,
+        "overlap": false
+      },
+      "stageLabelsDoNotOverlap": true,
+      "stickyAfterRealScroll": true,
+      "futureStepReadOnly": true,
+      "currentGuideStatic": true,
+      "reducedMotion": true,
+      "overflow": false
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "sharedSiteBrand": true,
+      "decorativeArtwork": true,
+      "realRouteCountIgnoresStaleKeys": true,
+      "currentVerbAboveFold": true,
+      "compactGlobalGuideOnEveryView": true,
+      "currentDetailGuideIsStatic": true,
+      "planListsHaveZeroButtons": true,
+      "overviewHasOnlyRequestedDocumentAndSelectionLinks": true,
+      "rowIsOnlyNavigationPath": true,
+      "helperHasStepContext": true,
+      "futureAndParentHaveZeroButtons": true,
+      "currentHintAccessible": true,
+      "intrinsicWidthRoadAction": true,
+      "navigation": "3 bottom links on mobile + settings and helper links",
+      "historyAndReload": "pass",
+      "overflow": false,
+      "axe": "pass"
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "sharedSiteBrand": true,
+      "decorativeArtwork": true,
+      "realRouteCountIgnoresStaleKeys": true,
+      "currentVerbAboveFold": true,
+      "compactGlobalGuideOnEveryView": true,
+      "currentDetailGuideIsStatic": true,
+      "planListsHaveZeroButtons": true,
+      "overviewHasOnlyRequestedDocumentAndSelectionLinks": true,
+      "rowIsOnlyNavigationPath": true,
+      "helperHasStepContext": true,
+      "futureAndParentHaveZeroButtons": true,
+      "currentHintAccessible": true,
+      "intrinsicWidthRoadAction": true,
+      "navigation": "3 bottom links on mobile + settings and helper links",
+      "historyAndReload": "pass",
+      "overflow": false,
+      "axe": "pass"
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "sharedSiteBrand": true,
+      "decorativeArtwork": true,
+      "realRouteCountIgnoresStaleKeys": true,
+      "currentVerbAboveFold": true,
+      "compactGlobalGuideOnEveryView": true,
+      "currentDetailGuideIsStatic": true,
+      "planListsHaveZeroButtons": true,
+      "overviewHasOnlyRequestedDocumentAndSelectionLinks": true,
+      "rowIsOnlyNavigationPath": true,
+      "helperHasStepContext": true,
+      "futureAndParentHaveZeroButtons": true,
+      "currentHintAccessible": true,
+      "intrinsicWidthRoadAction": true,
+      "navigation": "3 bottom links on mobile + settings and helper links",
+      "historyAndReload": "pass",
+      "overflow": false,
+      "axe": "pass"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "sharedSiteBrand": true,
+      "decorativeArtwork": true,
+      "realRouteCountIgnoresStaleKeys": true,
+      "currentVerbAboveFold": true,
+      "compactGlobalGuideOnEveryView": true,
+      "currentDetailGuideIsStatic": true,
+      "planListsHaveZeroButtons": true,
+      "overviewHasOnlyRequestedDocumentAndSelectionLinks": true,
+      "rowIsOnlyNavigationPath": true,
+      "helperHasStepContext": true,
+      "futureAndParentHaveZeroButtons": true,
+      "currentHintAccessible": true,
+      "intrinsicWidthRoadAction": true,
+      "navigation": "3 bottom links on mobile + settings and helper links",
+      "historyAndReload": "pass",
+      "overflow": false,
+      "axe": "pass"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 667
+      },
+      "sharedSiteBrand": true,
+      "decorativeArtwork": true,
+      "realRouteCountIgnoresStaleKeys": true,
+      "currentVerbAboveFold": true,
+      "compactGlobalGuideOnEveryView": true,
+      "currentDetailGuideIsStatic": true,
+      "planListsHaveZeroButtons": true,
+      "overviewHasOnlyRequestedDocumentAndSelectionLinks": true,
+      "rowIsOnlyNavigationPath": true,
+      "helperHasStepContext": true,
+      "futureAndParentHaveZeroButtons": true,
+      "currentHintAccessible": true,
+      "intrinsicWidthRoadAction": true,
+      "navigation": "3 bottom links on mobile + settings and helper links",
+      "historyAndReload": "pass",
+      "overflow": false,
+      "axe": "pass"
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 740
+      },
+      "sharedSiteBrand": true,
+      "decorativeArtwork": true,
+      "realRouteCountIgnoresStaleKeys": true,
+      "currentVerbAboveFold": true,
+      "compactGlobalGuideOnEveryView": true,
+      "currentDetailGuideIsStatic": true,
+      "planListsHaveZeroButtons": true,
+      "overviewHasOnlyRequestedDocumentAndSelectionLinks": true,
+      "rowIsOnlyNavigationPath": true,
+      "helperHasStepContext": true,
+      "futureAndParentHaveZeroButtons": true,
+      "currentHintAccessible": true,
+      "intrinsicWidthRoadAction": true,
+      "navigation": "3 bottom links on mobile + settings and helper links",
+      "historyAndReload": "pass",
+      "overflow": false,
+      "axe": "pass"
+    },
+    {
+      "state": "zero",
+      "passed": true
+    },
+    {
+      "state": "complete",
+      "passed": true
+    },
+    {
+      "state": "blocked",
+      "passed": true
+    },
+    {
+      "state": "empty",
+      "passed": true
+    },
+    {
+      "state": "near",
+      "passed": true
+    },
+    {
+      "state": "dates",
+      "passed": true
+    },
+    {
+      "state": "parents",
+      "passed": true
+    },
+    {
+      "state": "manual",
+      "passed": true
+    },
+    {
+      "state": "last",
+      "passed": true
+    },
+    {
+      "motion": "normal",
+      "initialAndReloadDoNotDrive": true,
+      "confirmedCompletionDrives": true,
+      "pendingSaveDoesNotCelebrate": true,
+      "oneTemporaryAcknowledgement": true,
+      "acknowledgementReturnsToRealCount": true,
+      "newStepImmediate": true,
+      "fillAndScooterTravelTogether": true,
+      "sampledTravelFrames": 20,
+      "synchronizedWheelEasing": true,
+      "reducedMotionCovered": true,
+      "midrideReducedMotionSettlesImmediately": true
+    },
+    {
+      "failedCompletion": "no acknowledgement, movement or progress mutation",
+      "retryRemainsAvailable": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "helper": "one header entry",
+      "optionalGuidanceKeyboardAccessible": true,
+      "guidanceDoesNotMutateData": true,
+      "twoContextualPrompts": true,
+      "promptOnlyPrefillsAndFocuses": true,
+      "unsentDraftPreserved": true,
+      "stepContextSentOnlyOnUserQuestion": true,
+      "oldContextClearedOnList": true,
+      "axe": "pass",
+      "guideMetrics": {
+        "height": 165.5,
+        "actionWidth": 113,
+        "actionHeight": 44
+      }
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "helper": "one header entry",
+      "optionalGuidanceKeyboardAccessible": true,
+      "guidanceDoesNotMutateData": true,
+      "twoContextualPrompts": true,
+      "promptOnlyPrefillsAndFocuses": true,
+      "unsentDraftPreserved": true,
+      "stepContextSentOnlyOnUserQuestion": true,
+      "oldContextClearedOnList": true,
+      "axe": "pass",
+      "guideMetrics": {
+        "height": 151.34375,
+        "actionWidth": 113,
+        "actionHeight": 44
+      }
+    },
+    {
+      "profile": "native fields with one Save",
+      "storedEnums": true,
+      "requiredPathValidated": true,
+      "cancelDoesNotSave": true,
+      "existingApiPayload": true
+    },
+    {
+      "parentDocument": "one canonical document screen",
+      "parentCurrentFileHasOneAction": true,
+      "uploadClosesTaskAndReturnsAutomatically": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "realSevenStageRoute": true,
+      "realTotal": 28,
+      "labelsDoNotOverlap": true,
+      "guidePinsAfterRealScroll": [
+        "plan",
+        "documents",
+        "settings"
+      ],
+      "currentDetailGuideIsStatic": true,
+      "guideOpensCurrentStepFromOtherScreens": true
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "realSevenStageRoute": true,
+      "realTotal": 28,
+      "labelsDoNotOverlap": true,
+      "guidePinsAfterRealScroll": [
+        "plan",
+        "documents",
+        "settings"
+      ],
+      "currentDetailGuideIsStatic": true,
+      "guideOpensCurrentStepFromOtherScreens": true
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "realSevenStageRoute": true,
+      "realTotal": 28,
+      "labelsDoNotOverlap": true,
+      "guidePinsAfterRealScroll": [
+        "plan",
+        "documents",
+        "settings"
+      ],
+      "currentDetailGuideIsStatic": true,
+      "guideOpensCurrentStepFromOtherScreens": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 667
+      },
+      "realSevenStageRoute": true,
+      "realTotal": 28,
+      "labelsDoNotOverlap": true,
+      "guidePinsAfterRealScroll": [
+        "plan",
+        "documents",
+        "settings"
+      ],
+      "currentDetailGuideIsStatic": true,
+      "guideOpensCurrentStepFromOtherScreens": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 667
+      },
+      "lateCurrentActionAboveFold": true,
+      "documentStepHasOnlyFileAction": true
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "lateCurrentActionAboveFold": true,
+      "documentStepHasOnlyFileAction": true
+    },
+    {
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "lateCurrentActionAboveFold": true,
+      "documentStepHasOnlyFileAction": true
+    }
+  ],
+  "errors": [],
+  "unexpectedApi": []
+}

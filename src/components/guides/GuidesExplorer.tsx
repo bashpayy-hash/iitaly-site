@@ -4,13 +4,11 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { GUIDES } from "@/data/guides";
 import { GuideDetail } from "./GuideDetail";
 import { VisaSection } from "./VisaSection";
-import { Vespi, VESPI_NAME } from "@/components/mascot/Vespi";
 import { track } from "@/lib/track";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { GuideNextStep } from "./GuideNextStep";
 import { isGuideId, openGuideHelper } from "./guideJourney";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
-import art from "@/components/marketing/editorial-art.module.css";
 import Link from "next/link";
 import { HeadingPin } from "@/components/motion/HeadingPin";
 import styles from "@/components/marketing/marketing.module.css";
@@ -137,11 +135,11 @@ export function GuidesExplorer() {
 
   return (
     <>
-      <section data-section="guides-header" className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="order-1 flex flex-col justify-center px-5 py-9 sm:py-12 lg:px-16">
-          <div data-role="heading" className="mx-auto max-w-md lg:mx-0">
+      <section data-section="guides-header" className={ui.hero}>
+        <div className={ui.heroCopy}>
+          <div data-role="heading">
             <p className="text-apple-caption text-cloud-meta">Справочник · бесплатно</p>
-            <h1 className="mt-2 font-apple-display text-[32px] font-semibold uppercase text-cloud-white sm:text-[44px]">
+            <h1 className="mt-2 font-apple-display font-semibold text-cloud-white">
               Как пройти бюрократию
             </h1>
             <p className="mt-5 text-apple-body text-cloud-body">
@@ -159,24 +157,19 @@ export function GuidesExplorer() {
             <a href="#guide-topics" className={`${styles.button} ${styles.outlined} mt-6`}>Открыть справочник</a>
           </div>
         </div>
-        <div className={`${art.guidePanel} ${styles.guideHeroArt} ${ui.heroArt} order-2`}>
+        <div className={ui.heroArt}>
           <EditorialArtwork scene="terrace" priority />
-          <Vespi className={ui.heroVespi} sizes="(max-width: 600px) 100px, (max-width: 1023px) 128px, 172px" priority />
         </div>
       </section>
-      <section id="guide-topics" className="px-5 py-8 sm:py-10">
+      <section id="guide-topics" className={ui.topics}>
         <div className={ui.searchArea} data-fab-yield>
-          <div className={ui.searchGuide}>
-            <Vespi variant="avatar" className={ui.tipAvatar} sizes="36px" />
-            <p><strong>{VESPI_NAME}</strong><span>Выбери свой вопрос. Разберём по шагам.</span></p>
-          </div>
-          <div className={ui.starters} aria-label="С чего начать в справочнике">
-            {STARTERS.map(starter => <a key={starter.id} href={`#${starter.id}`} onClick={event => { event.preventDefault(); selectChapter(starter.id, "question"); }}>{starter.question}</a>)}
-          </div>
           <label htmlFor="guide-search">Найти тему</label>
           <div className={ui.searchRow}>
             <input ref={searchRef} id="guide-search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Например, апостиль, DSU или виза" />
             {query && <button type="button" onClick={() => { setQuery(""); searchRef.current?.focus(); }}>Сбросить</button>}
+          </div>
+          <div className={ui.starters} aria-label="С чего начать в справочнике">
+            {STARTERS.map(starter => <a key={starter.id} href={`#${starter.id}`} onClick={event => { event.preventDefault(); selectChapter(starter.id, "question"); }}>{starter.question}</a>)}
           </div>
           <p role="status">{query ? `Найдено тем: ${visible.length}` : "Выбери тему или введи слово из своего вопроса."}</p>
         </div>
@@ -187,11 +180,10 @@ export function GuidesExplorer() {
           <button type="button" onClick={() => openGuideHelper(undefined, query)}>Спросить Веспи</button>
         </div>}
         {active && <nav className={ui.route} data-guide-current={active.id} aria-label="Этапы справочника" style={{ "--guide-stage": Math.max(stage, 0) } as CSSProperties}>
-          <div className={ui.routeLine} aria-hidden="true" />
-          <div className={ui.routeRider} aria-hidden="true"><Vespi variant="avatar" sizes="32px" /></div>
+          <span className={ui.routeMarker} data-guide-stage-marker aria-hidden="true" />
           {GROUPS.map((group, index) => <a key={group.title} href={`#${group.ids[0]}`} aria-current={stage === index ? "step" : undefined}
             onClick={event => { event.preventDefault(); selectChapter(group.ids[0], "stage"); }}>
-            <span className={ui.routePoint} aria-hidden="true" />{group.title}
+            {group.title}
           </a>)}
         </nav>}
         {active && <div className={ui.desktop}>

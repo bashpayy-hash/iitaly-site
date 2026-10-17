@@ -10,7 +10,7 @@ import ui from "./guide-browser.module.css";
 export function GuideNextStep({ id }: { id: GuideId }) {
   const help = GUIDE_HELP[id], action = guideAction(id);
   return <section className={ui.nextStep} data-guide-next={id} aria-label="Следующее действие по теме">
-    <Vespi variant="avatar" className={ui.nextAvatar} sizes="48px" />
+    <Vespi variant="avatar" className={ui.nextAvatar} sizes="(max-width: 600px) 40px, 56px" />
     <div>
       <h3>Применить к моей ситуации</h3>
       <p>{help.next}</p>
