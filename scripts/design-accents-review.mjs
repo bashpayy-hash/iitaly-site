@@ -241,17 +241,14 @@ try {
       }
       if ([1440,390].includes(width)) {
         await page.screenshot({path:resolve(output, `${route.slice(1)}-${width}.png`), animations:'disabled'});
-        await page.locator('main > section').first().screenshot({path:resolve(output, `${route.slice(1)}-header-${width}.png`), animations:'disabled'});
+        await page.locator(route === '/guides' ? '[data-section="guides-header"]' : 'main > section').first().screenshot({path:resolve(output, `${route.slice(1)}-header-${width}.png`), animations:'disabled'});
       }
       if (route === '/guides') {
-        if (width >= 1024) {
-          await page.getByRole('navigation', {name:'Главы справочника'}).getByRole('button', {name:/CIMEA/}).click();
-          await page.locator('#guide-chapter-content').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
-        } else {
-          const detail = page.locator('main details').filter({has:page.locator('summary').filter({hasText:'CIMEA'})}).first();
-          await detail.locator('summary').click();
-          assert(await detail.evaluate(el => el.open));
-        }
+        // The requested Bento UI shares selectable topic cards on all widths.
+        await page.getByRole('navigation', {name:'Этапы справочника'}).getByRole('link', {name:'2. Подготовиться к отъезду', exact:true}).click();
+        await page.locator('[data-guide-select="cimea"]').click();
+        await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
+        assert.equal(await page.locator('[data-guide-select="cimea"]').getAttribute('aria-expanded'),'true');
       }
       results.push({test:`${route} ${width}px: reviewed copy, loaded art, no overlap/overflow`,passed:true});
     }

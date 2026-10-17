@@ -50,6 +50,15 @@ try {
       assert.deepEqual(violations, [], `${where}: accessibility`);
     }
     function currentNext(id) { return page.locator(`[data-guide-next="${id}"]`).filter({ visible: true }); }
+    async function addProviderBadge() {
+      await page.evaluate(() => {
+        const badge = document.createElement('iframe');
+        badge.id = 'nl-badge-frame'; badge.title = 'Hosting badge fixture';
+        badge.style.cssText = 'position:fixed;right:16px;bottom:16px;width:185px;height:44px;border:0;z-index:2147483647';
+        badge.srcdoc = '<body style="margin:0;background:#122a30;color:white;font:13px sans-serif;display:grid;place-items:center;height:44px;border-radius:24px">Hosting badge fixture</body>';
+        document.body.append(badge);
+      });
+    }
     async function openHelper() {
       if (width >= 1024) await page.getByRole('button', { name: 'Разобрать тему с Веспи', exact: true }).click();
       else if (await page.locator('header summary').isVisible()) {
@@ -69,31 +78,58 @@ try {
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');
     await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
-    assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 0, 'The guide hero leaves the character for personal help');
-    assert.equal(await page.locator('[data-guide-current] [data-vespi], [data-vespi-tip] [data-vespi]').count(), 0, 'Navigation and reviewed warnings do not repeat the mascot');
+    // The explicit Meta-style redesign now uses an avatar in the command bar
+    // and one contextual insight, replacing PR 98's rare-mascot invariant.
+    assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 1, 'The command bar has one Vespi avatar');
+    assert.equal(await page.locator('[data-guide-current] [data-vespi]').count(), 0, 'Stage navigation remains text-only');
+    assert(await page.locator('#guide-search').evaluate(input => input.getBoundingClientRect().height >= 44), 'The search field has a 44px touch target');
     await screenshot('guides-top');
-    await page.getByRole('link', { name: 'У меня 11 классов. С чего начать?', exact: true }).click();
+    assert(await page.locator('#guide-command a').evaluateAll(links => links.every(link => {
+      const rect = link.getBoundingClientRect(), y = rect.y + rect.height / 2;
+      if (y <= 0 || y >= innerHeight) return true;
+      return [0.2, 0.5, 0.85].every(fraction => {
+        const x = rect.x + rect.width * fraction;
+        return x <= 0 || x >= innerWidth || link.contains(document.elementFromPoint(x, y));
+      });
+    })), 'Visible prompt chips are not covered by the floating helper');
+    await page.getByRole('link', { name: 'У меня 11 классов — что делать?', exact: true }).click();
     assert.equal(new URL(page.url()).hash, '#education');
-    assert.equal(await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').innerText(), 'Выбрать маршрут');
+    assert.equal((await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').innerText()).replace(/\s+/g, ' ').trim(), '1. Выбрать маршрут');
     assert.match(await page.locator('[data-vespi-tip]').filter({ visible: true }).innerText(), /Foundation не заменяет выпускной аттестат/);
-    assert.equal(await page.locator('main [data-vespi]').filter({ visible: true }).count(), 1, 'One character at the selected chapter’s next action');
-    assert.match(await currentNext('education').locator('[data-vespi]').getAttribute('src'), /vespi-avatar-route-/);
-    assert(await currentNext('education').getByRole('link', { name: 'Составить план', exact: true }).isVisible());
-    await currentNext('education').getByRole('link', { name: 'Составить план', exact: true }).click();
+    assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('[data-vespi]').count(), 1, 'The selected insight has one Vespi avatar');
+    assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
+    assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
+    assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());
+    await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).click();
     await page.locator('[data-guide-origin="education"]').waitFor();
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Guide context cannot rewrite quiz answers');
     await screenshot('plan-continuation');
 
     await visit('/guides#apostille');
+    await page.locator('[data-guide-panel="apostille"]').waitFor();
+    await page.waitForFunction(() => {
+      const heading = document.querySelector('[data-guide-panel="apostille"] #active-guide-title');
+      if (!heading) return false;
+      const rect = heading.getBoundingClientRect();
+      return rect.top >= 0 && rect.bottom <= innerHeight;
+    });
     const refs = page.locator('a[target="_blank"]').filter({ visible: true });
     assert(await refs.count() > 1, 'Official sources remain immediately available');
     for (const ref of await refs.all()) assert.match(await ref.getAttribute('rel'), /noopener/);
     await audit('guide chapter ' + width);
     await screenshot('guides-apostille');
-    await currentNext('apostille').scrollIntoViewIfNeeded();
+    const documentAction = currentNext('apostille').locator('[data-guide-inline-action]');
+    await documentAction.evaluate(action => action.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
+    assert(await documentAction.evaluate(action => {
+      const rect = action.getBoundingClientRect();
+      return rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight
+        && rect.width >= 44 && rect.height >= 44
+        && action.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
+    }), 'The inline document action is fully visible, reachable, and replaces the sticky offer');
     await screenshot('guides-next-action');
-    await currentNext('apostille').getByRole('link', { name: 'Проверить документ', exact: true }).click();
+    await documentAction.click();
     await page.locator('[data-guide-origin="apostille"]').waitFor();
     assert.equal(await page.getByRole('combobox', { name: 'Программа', exact: true }).inputValue(), 'general');
     assert.equal(await page.getByRole('combobox', { name: 'Учебный год заявки', exact: true }).inputValue(), 'unspecified');
@@ -102,6 +138,7 @@ try {
 
     await visit('/guides#translation');
     await openHelper();
+    assert.equal(await page.locator('[data-guide-sticky]').isVisible(), false, 'The conversion bar yields to the open helper');
     const question = page.getByRole('textbox', { name: 'Вопрос ИИ-консультанту' });
     assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'), 'translation');
     await page.getByRole('link', { name: 'Что проверить в переводе для вуза и для визы?', exact: true }).click();
@@ -110,13 +147,7 @@ try {
     await audit('contextual helper ' + width);
     await screenshot('guides-helper');
     // The hosting badge exists only on production; reproduce its observed frame.
-    await page.evaluate(() => {
-      const badge = document.createElement('iframe');
-      badge.id = 'nl-badge-frame'; badge.title = 'Hosting badge fixture';
-      badge.style.cssText = 'position:fixed;right:16px;bottom:16px;width:185px;height:44px;border:0;z-index:2147483647';
-      badge.srcdoc = '<body style="margin:0;background:#122a30;color:white;font:13px sans-serif;display:grid;place-items:center;height:44px;border-radius:24px">Hosting badge fixture</body>';
-      document.body.append(badge);
-    });
+    await addProviderBadge();
     assert(await page.getByRole('button', { name: 'Отправить', exact: true }).evaluate(button => {
       const rect = button.getBoundingClientRect();
       return button.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
@@ -141,16 +172,20 @@ try {
     assert(await launcher.evaluate(button => button.getBoundingClientRect().bottom < document.getElementById('nl-badge-frame').getBoundingClientRect().top), 'The launcher also stays above the badge');
     await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
     // A topic change updates helper context but preserves the user's draft.
-    await page.getByRole('navigation', { name: 'Этапы справочника' }).getByRole('link', { name: 'После приезда', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Этапы справочника' }).getByRole('link', { name: '3. После приезда', exact: true }).click();
     await openHelper();
     assert.equal(await question.inputValue(), 'Мой незаконченный вопрос');
     assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'), 'permesso');
     await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({ state: 'hidden' });
     assert.equal(await currentNext('permesso').getByRole('link', { name: 'Открыть тренажёр Modulo 1', exact: true }).getAttribute('href'), '/guides/permesso-modulo-1');
-    if (width < 1024) assert.equal(await page.locator('details[name="guide-chapter"][open]').count(), 1, 'Only one chapter is open on mobile');
-    assert.equal(await page.locator('[data-guide-stage-marker]').evaluate(marker => getComputedStyle(marker).transitionDuration), '0s', 'Reduced motion removes topic-indicator travel');
-    assert.equal(await page.locator('[data-guide-current]').getAttribute('data-guide-current'), 'permesso', 'The quiet indicator still tracks the selected topic');
+    assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'One expanded topic at every viewport');
+    assert.equal(await page.locator('[data-guide-select][aria-expanded="true"]').count(), 1);
+    assert(await page.locator('[data-guide-select], [data-guide-panel], [data-guide-sticky]').evaluateAll(elements => elements.every(element => {
+      const style = getComputedStyle(element);
+      return [style.transitionDuration, style.animationDuration].every(value => value.split(',').every(duration => parseFloat(duration) <= 0.01));
+    })), 'Reduced motion removes card and conversion-bar movement');
+    assert.equal(await page.locator('[data-guide-current]').getAttribute('data-guide-current'), 'permesso', 'The chapter indicator tracks the selected topic');
 
     const search = page.getByRole('searchbox', { name: 'Найти тему' });
     await search.fill('вопрос-без-совпадения-123');
@@ -163,13 +198,60 @@ try {
     await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({ state: 'hidden' });
     await page.getByRole('button', { name: 'Показать все темы', exact: true }).click();
-    const chapters = width >= 1024 ? page.getByRole('navigation', { name: 'Главы справочника' }).locator('button[aria-controls]') : page.locator('details[name="guide-chapter"] > summary');
-    assert.equal(await chapters.count(), 13, 'All reviewed topics remain available');
+    // Stage tabs intentionally filter 2 / 8 / 3 cards instead of listing all
+    // thirteen native disclosures at once. Search still spans every stage.
+    const stageNavigation = page.getByRole('navigation', { name: 'Этапы справочника' });
+    assert.equal(await page.locator('[data-guide-select]').count(), 2, 'Reset returns to the first stage');
+    const chapterIds = new Set();
+    for (const [stageLabel, expected] of [['1. Выбрать маршрут', 2], ['2. Подготовиться к отъезду', 8], ['3. После приезда', 3]]) {
+      await stageNavigation.getByRole('link', { name: stageLabel, exact: true }).click();
+      const cards = page.locator('[data-guide-select]');
+      assert.equal(await cards.count(), expected, stageLabel + ': correct chapter count');
+      for (const id of await cards.evaluateAll(nodes => nodes.map(node => node.dataset.guideSelect))) chapterIds.add(id);
+      assert.equal((await stageNavigation.locator('[aria-current="step"]').innerText()).replace(/\s+/g, ' ').trim(), stageLabel);
+    }
+    assert.equal(chapterIds.size, 13, 'All reviewed topics remain available across the three stages');
+    assert(chapterIds.has('visa') && chapterIds.has('permesso'), 'Visa and the original trainer entry remain available');
+    await search.fill('CIMEA');
+    assert(await page.locator('[data-guide-select="cimea"]').isVisible(), 'Search finds topics outside the selected stage');
+    await page.locator('[data-guide-select="cimea"]').click();
+    await page.waitForFunction(() => document.activeElement?.id === 'active-guide-title');
+    assert.equal(await page.locator('#active-guide-title').evaluate(el => document.activeElement === el), true, 'Selecting a topic moves keyboard focus to its heading');
+    await page.getByRole('button', { name: 'К списку тем', exact: true }).click();
+    assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 0, 'Back closes the selected topic');
+    assert.equal(await search.evaluate(el => document.activeElement === el), true, 'Back returns focus to the command bar');
+    if (width === 1440 || width === 390) {
+      // This long chapter leaves both the command bar and inline CTA outside
+      // the viewport, which is the intended moment for the conversion pill.
+      await visit('/guides#visa');
+      // goto can be a same-document hash change after Back focused search.
+      // Match a card selection: keyboard focus leaves the command input.
+      await page.locator('#active-guide-title').focus();
+      await page.locator('#active-guide-title').evaluate(heading => heading.scrollIntoView({ block: 'start' }));
+      const sticky = page.locator('[data-guide-sticky]');
+      await sticky.waitFor({ state: 'visible' });
+      await addProviderBadge();
+      assert(await sticky.evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        const badge = document.getElementById('nl-badge-frame').getBoundingClientRect();
+        return rect.left >= 0 && rect.right <= innerWidth && rect.bottom <= badge.top;
+      }), 'The conversion pill stays in the viewport above the provider badge');
+      for (const control of await sticky.locator('a, button').all()) {
+        assert(await control.evaluate(element => {
+          const rect = element.getBoundingClientRect();
+          return rect.width >= 44 && rect.height >= 44 && element.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
+        }), 'Sticky controls have reachable 44px touch targets');
+      }
+      await screenshot('guides-sticky-with-provider');
+      await sticky.getByRole('button', { name: 'Скрыть предложение плана', exact: true }).click();
+      await sticky.waitFor({ state: 'hidden' });
+      await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
+    }
     assert(events.some(e => e.event === 'guide_next_action' && e.props.topic === 'apostille'));
     assert(!events.some(e => JSON.stringify(e).includes('вопрос-без-совпадения')), 'Search text is not sent to analytics');
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpected, []);
-    results.push({ width, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, a11y:true, overflow:false });
+    results.push({ width, stageFiltering:true, visiblePromptChipsReachable:true, oneExpandedCard:true, contextualInsight:true, inlineActionVisibleAndReachable:true, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, stickyDismissible:width === 1440 || width === 390 ? true : null, a11y:true, overflow:false });
     await context.close();
   }
   await writeFile(resolve(output, 'results.json'), JSON.stringify(results, null, 2));
