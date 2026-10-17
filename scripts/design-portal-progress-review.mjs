@@ -842,7 +842,7 @@ try {
     assert(traveling.left < traveling.destination, 'The scooter interpolates instead of snapping to the destination');
     assert(Math.abs(traveling.fillWidth - traveling.left) < 2, 'The fill travels with the scooter');
     assert(traveling.mascotLoaded, 'The approved character is decoded during the trip');
-    assert.match(traveling.mascotSource, /\/mascot\/vespi\/vespi-ride-(160|320|640)\.webp$/, 'Use the approved character instead of the old SVG approximation');
+    assert.match(traveling.mascotSource, /\/mascot\/vespi\/vespi-ride-route-(160|320|640)\.webp$/, 'Use the same plush character with the user-requested helmet detail');
     assert.equal(traveling.copyAnimation, '0.42s');
     await checkCompletionFeedback(page, true);
     const frames = await road(page).evaluate(async element => {

@@ -59,6 +59,7 @@ try {
         await page.getByRole('button', { name: 'Задать вопрос ИИ-консультанту', exact: true }).click();
       }
       await page.getByRole('dialog', { name: 'ИИ-консультант' }).waitFor();
+      await page.waitForFunction(() => document.activeElement === document.getElementById('chat-input'));
     }
 
     // A real partial local quiz draft must survive a reading detour.
@@ -67,12 +68,16 @@ try {
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');
-    await page.locator('[data-section="guides-header"] [data-vespi="ride"]').evaluate(img => img.decode());
+    await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
+    assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 0, 'The guide hero leaves the character for personal help');
+    assert.equal(await page.locator('[data-guide-current] [data-vespi], [data-vespi-tip] [data-vespi]').count(), 0, 'Navigation and reviewed warnings do not repeat the mascot');
     await screenshot('guides-top');
     await page.getByRole('link', { name: 'У меня 11 классов. С чего начать?', exact: true }).click();
     assert.equal(new URL(page.url()).hash, '#education');
     assert.equal(await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').innerText(), 'Выбрать маршрут');
     assert.match(await page.locator('[data-vespi-tip]').filter({ visible: true }).innerText(), /Foundation не заменяет выпускной аттестат/);
+    assert.equal(await page.locator('main [data-vespi]').filter({ visible: true }).count(), 1, 'One character at the selected chapter’s next action');
+    assert.match(await currentNext('education').locator('[data-vespi]').getAttribute('src'), /vespi-avatar-route-/);
     assert(await currentNext('education').getByRole('link', { name: 'Составить план', exact: true }).isVisible());
     await currentNext('education').getByRole('link', { name: 'Составить план', exact: true }).click();
     await page.locator('[data-guide-origin="education"]').waitFor();
@@ -144,14 +149,19 @@ try {
     await page.getByRole('dialog').waitFor({ state: 'hidden' });
     assert.equal(await currentNext('permesso').getByRole('link', { name: 'Открыть тренажёр Modulo 1', exact: true }).getAttribute('href'), '/guides/permesso-modulo-1');
     if (width < 1024) assert.equal(await page.locator('details[name="guide-chapter"][open]').count(), 1, 'Only one chapter is open on mobile');
-    assert.equal(await page.locator('[data-guide-current] [data-vespi]').evaluate(img => getComputedStyle(img.parentElement).transitionDuration), '0s', 'Reduced motion removes route travel');
+    assert.equal(await page.locator('[data-guide-stage-marker]').evaluate(marker => getComputedStyle(marker).transitionDuration), '0s', 'Reduced motion removes topic-indicator travel');
+    assert.equal(await page.locator('[data-guide-current]').getAttribute('data-guide-current'), 'permesso', 'The quiet indicator still tracks the selected topic');
 
     const search = page.getByRole('searchbox', { name: 'Найти тему' });
     await search.fill('вопрос-без-совпадения-123');
     await page.getByRole('button', { name: 'Спросить Веспи', exact: true }).click();
+    // Opening focuses the field in rAF. A preserved value can be read earlier;
+    // wait for the real keyboard target before testing Escape.
+    await page.waitForFunction(() => document.activeElement === document.getElementById('chat-input'));
     assert.equal(chats.length, 1, 'Empty-search help does not consume a question');
     assert.equal(await question.inputValue(), 'Мой незаконченный вопрос', 'An empty search cannot replace an existing chat draft');
     await page.keyboard.press('Escape');
+    await page.getByRole('dialog').waitFor({ state: 'hidden' });
     await page.getByRole('button', { name: 'Показать все темы', exact: true }).click();
     const chapters = width >= 1024 ? page.getByRole('navigation', { name: 'Главы справочника' }).locator('button[aria-controls]') : page.locator('details[name="guide-chapter"] > summary');
     assert.equal(await chapters.count(), 13, 'All reviewed topics remain available');

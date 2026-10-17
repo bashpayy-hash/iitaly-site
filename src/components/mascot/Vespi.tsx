@@ -2,8 +2,8 @@
 
 export const VESPI_NAME = "Веспи Баурысаков";
 
-/** The approved plush character, not a redrawn approximation. Small controls
- * use a face crop; full illustrations share the same transparent master. */
+/** The approved plush identity with its user-requested helmet route detail.
+ * Versioned assets avoid stale cached images after the visual refinement. */
 export function Vespi({ variant = "ride", className = "", alt = "", priority = false, sizes }: {
   variant?: "ride" | "avatar";
   className?: string;
@@ -14,10 +14,10 @@ export function Vespi({ variant = "ride", className = "", alt = "", priority = f
   const avatar = variant === "avatar";
   return <img
     data-vespi={variant}
-    src={`/mascot/vespi/vespi-${variant}-${avatar ? 96 : 320}.webp`}
+    src={`/mascot/vespi/vespi-${variant}-route-${avatar ? 96 : 320}.webp`}
     srcSet={avatar
-      ? "/mascot/vespi/vespi-avatar-96.webp 96w, /mascot/vespi/vespi-avatar-192.webp 192w"
-      : "/mascot/vespi/vespi-ride-160.webp 160w, /mascot/vespi/vespi-ride-320.webp 320w, /mascot/vespi/vespi-ride-640.webp 640w"}
+      ? "/mascot/vespi/vespi-avatar-route-96.webp 96w, /mascot/vespi/vespi-avatar-route-192.webp 192w"
+      : "/mascot/vespi/vespi-ride-route-160.webp 160w, /mascot/vespi/vespi-ride-route-320.webp 320w, /mascot/vespi/vespi-ride-route-640.webp 640w"}
     sizes={sizes || (avatar ? "48px" : "(max-width: 600px) 120px, 240px")}
     width={avatar ? 192 : 320}
     height={avatar ? 192 : 397}
