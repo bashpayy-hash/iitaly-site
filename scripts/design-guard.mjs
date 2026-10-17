@@ -7,6 +7,9 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // User correction 2026-10-17: make Vespi visible in the existing home entry,
+  // actual catalogue filters and persistent portal priority, without new tokens.
+  'src/components/home/home-assistant.module.css',
   // User follow-up 2026-10-17: shared iItaly wordmark and matching app icons.
   // Existing palette/fonts stay unchanged outside the logo's requested weight.
   'src/components/brand/BrandLogo.tsx',

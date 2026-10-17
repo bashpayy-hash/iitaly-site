@@ -8,6 +8,7 @@
 .title + .message { margin-top: 8px; }
 .visual { display: block; flex-shrink: 0; pointer-events: none; user-select: none; }
 .visual img { display: block; width: 100%; height: auto; object-fit: contain; }
+.assistant[data-vespi-appearance="portrait"] .visual img { mask-image: linear-gradient(black 82%, transparent 100%); }
 .indicator { display: inline-grid; place-items: center; flex: 0 0 auto; width: 38px; height: 38px; border: 1px solid currentColor; border-radius: var(--radius-pill); color: var(--portal-accent, var(--i-link, currentColor)); font-size: 13px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
 .inline-pill { display: flex; align-items: flex-start; gap: 12px; }
 .inline-pill .visual { padding-top: 1px; }
@@ -16,6 +17,11 @@
 .editorial-callout { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: start; gap: 24px; padding: 28px; border: 1px solid var(--portal-border, var(--i-line, var(--color-line))); border-radius: var(--radius-xl); background: var(--portal-surface-soft, var(--color-frost)); overflow: visible; }
 .editorial-callout .visual { width: 96px; margin-top: -42px; }
 .editorial-callout .content { align-self: center; }
+/* The expert reads beside the document; navigation stays beside the action.
+   Different compositions use the same approved identity, without fake poses. */
+.editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="portrait"] { grid-template-columns: minmax(0, 1fr) 96px; }
+.editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="portrait"] > .visual { grid-column: 2; grid-row: 1; }
+.editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="portrait"] > .content { grid-column: 1; grid-row: 1; }
 .portal-copilot { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 20px; }
 .portal-copilot .visual { width: 96px; }
 .floating-bar { display: flex; align-items: center; gap: 16px; }
@@ -28,8 +34,23 @@
 @media (max-width: 600px) {
   .editorial-callout { grid-template-columns: 72px minmax(0, 1fr); gap: 16px; padding: 20px; }
   .editorial-callout .visual { width: 72px; margin-top: -32px; }
+  /* Only the introduction shares space with the portrait. Long explanations
+     and actions regain the full card width on a phone. */
+  .editorial-callout[data-vespi-appearance="portrait"],
+  .editorial-callout[data-vespi-appearance="figure"] { display: flow-root; }
+  .editorial-callout[data-vespi-appearance="portrait"] > .visual,
+  .editorial-callout[data-vespi-appearance="figure"] > .visual { float: right; margin: -28px -4px 10px 16px; }
+  .editorial-callout[data-vespi-appearance="portrait"] > .content,
+  .editorial-callout[data-vespi-appearance="figure"] > .content { display: contents; }
+  .editorial-callout .title { padding-bottom: 8px; }
+  .editorial-callout .message,
+  .editorial-callout .content > :not(.label):not(.title) { clear: both; }
   .portal-copilot { grid-template-columns: 72px minmax(0, 1fr); gap: 14px; }
   .portal-copilot .visual { width: 72px; }
+  .portal-copilot[data-vespi-appearance="portrait"] { display: flow-root; }
+  .portal-copilot[data-vespi-appearance="portrait"] > .visual { float: right; margin: 0 0 12px 16px; }
+  .portal-copilot[data-vespi-appearance="portrait"] > .content { display: contents; }
+  .portal-copilot[data-vespi-appearance="portrait"] .message { clear: both; padding-top: 12px; }
   .message { font-size: 14px; line-height: 1.6; }
   .title { font-size: 18px; }
   .floating-bar { gap: 12px; }

@@ -3,7 +3,7 @@
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { TASK_META } from "@/lib/portalMeta";
-import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalTaskHref, taskDate, taskExplanation, taskTitle } from "@/lib/portalNavigation";
 import styles from "./portal-overview.module.css";
 import { Vespi } from "@/components/mascot/Vespi";
 
@@ -20,7 +20,7 @@ function Scooter({ showMascot, complete }: { showMascot: boolean; complete: bool
   if (!showMascot) return <span className={styles.locationMarker} data-road-location aria-hidden="true"><span /></span>;
   return <span className={styles.scooterArt} data-road-art="vespi-baursakov">
     <span className={styles.scooterBody} data-road-body>
-      <Vespi variant={complete ? "celebrate" : "copilot"} presentation="figure" priority sizes="64px" />
+      <Vespi variant={complete ? "celebrate" : "copilot"} presentation="figure" priority sizes="(max-width: 900px) 48px, 72px" />
     </span>
   </span>;
 }
@@ -146,6 +146,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     };
   }).filter(row => row.total > 0);
   const title = current ? taskTitle(current) : "";
+  const orientir = current ? taskDate(current) : "";
   const interactive = Boolean(current && !currentOpen);
   const RoadFrame = interactive ? "a" : "div";
 
@@ -154,9 +155,11 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     className={styles.road}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
     data-portal-road
+    data-road-copilot={showMascot ? "true" : undefined}
+    data-road-long-title={title.length > 42 ? "true" : undefined}
     data-vespi-presence={showMascot ? !current && total > 0 ? "celebrate" : "copilot" : undefined}
     data-road-mascot={showMascot ? "visible" : "in-content"}
-    data-road-dense={stages.length > 6 ? "true" : undefined}
+    data-road-dense={stages.length >= 6 ? "true" : undefined}
     data-road-static={!interactive ? "true" : undefined}
     tabIndex={!current ? -1 : undefined}
     data-road-current-open={currentOpen ? "true" : undefined}
@@ -227,14 +230,18 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     <span className={styles.roadCopy} aria-live="polite" aria-atomic="true" data-road-next>
       <span key={current?.id || "complete"} className={styles.nextCopy} data-road-text data-entering={motion.entering || Boolean(travel) ? "true" : "false"}>
         <span className={styles.stepCopy}>
-          <span className={styles.nextLabel}>{current ? currentOpen ? "Сейчас" : "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
+          <span className={styles.nextLabel}>{showMascot && <span className={styles.copilotName}>Веспи · </span>}{current ? currentOpen ? "Сейчас" : "Дальше" : total > 0 ? "Готово" : "Маршрут пока не появился"}</span>
           {current && <span className={styles.stepTitle} role="heading" aria-level={2} data-road-step-title>{title}</span>}
         </span>
         {interactive && <span className={styles.stepAction} data-road-action aria-hidden="true">
           Открыть
           <svg className={styles.arrow} width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>}
-        {current && <span className={styles.meta} data-road-meta>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", taskDate(current)].filter(Boolean).join(" · ")}</span>}
+        {current && showMascot && !currentOpen && <span className={styles.copilotHint} data-road-guidance>{taskExplanation(current)}</span>}
+        {current && <span className={styles.meta} data-road-meta>
+          <span>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты"].filter(Boolean).join(" · ")}</span>
+          {orientir && <><span className={styles.metaSeparator} aria-hidden="true"> · </span><span className={styles.orientir}>{orientir}</span></>}
+        </span>}
       </span>
     </span>
   </RoadFrame>;

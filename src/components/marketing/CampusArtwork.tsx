@@ -1,5 +1,4 @@
 import styles from "./marketing.module.css";
-import { Vespi } from "@/components/mascot/Vespi";
 
 /** An imagined campus, never presented as a specific university or student result. */
 export function CampusArtwork() {
@@ -19,7 +18,6 @@ export function CampusArtwork() {
         draggable={false}
       />
     </picture>
-    <span className={styles.campusCompanion}><Vespi priority sizes="(max-width: 767px) 96px, (max-width: 1100px) 144px, 192px" /></span>
     </div>
   );
 }
