@@ -128,6 +128,9 @@ try {
     const inlineAdvice = page.locator('[data-vespi-tip]').filter({ visible: true });
     await inlineAdvice.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
     await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
+    // The sticky and launcher have independent IntersectionObservers. Wait
+    // for the launcher to publish the new viewport before counting portraits.
+    await page.locator('#chat-launcher[data-vespi-launcher-mode="indicator"]').waitFor({ state: 'attached' });
     assert.equal(await inlineAdvice.getAttribute('data-vespi-variant'), 'inspector', 'Document advice uses the inspector role');
     assert(await page.locator('img[data-vespi]').evaluateAll(images => images.filter(image => {
       const rect = image.getBoundingClientRect();

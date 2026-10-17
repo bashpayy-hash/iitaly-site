@@ -98,6 +98,17 @@ async function brand(page) {
 }
 
 async function noDuplicatePortraits(page, where) {
+  const contentVisible = await page.locator('img[data-vespi]').evaluateAll(images => images.some(image => {
+    if (image.closest('#chat-launcher, #iitaly-chat')) return false;
+    const rect = image.getBoundingClientRect();
+    return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth
+      && image.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true });
+  }));
+  if (contentVisible && await page.locator('#chat-launcher').count()) {
+    // Content and the launcher update through separate observers; their real
+    // rendered state must settle before the invariant is sampled on CI.
+    await page.locator('#chat-launcher[data-vespi-launcher-mode="indicator"]').waitFor({ state: 'attached' });
+  }
   const visible = await page.locator('img[data-vespi]').evaluateAll(elements => elements.filter(element => {
     const rect = element.getBoundingClientRect();
     return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth
