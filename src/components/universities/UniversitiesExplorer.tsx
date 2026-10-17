@@ -14,6 +14,8 @@ import { CityMatch } from "./CityMatch";
 import { track } from "@/lib/track";
 import { UniversityArtwork } from "./UniversityArtwork";
 import ui from "./university-ui.module.css";
+import Link from "next/link";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
 // ItalyMap новую ссылку и заставляла карту сравнивать точки заново.
@@ -125,6 +127,20 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       <section className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
           {portalSelection && cityShortcut}
+          {!portalSelection && (
+            <VespiAssistant
+              variant="route"
+              layout="editorial-callout"
+              appearance="portrait"
+              label="Веспи · штурман"
+              title="Сузим выбор под тебя"
+              className="mb-6"
+              data-university-navigator
+              message={<>Университетов в каталоге: {UNIS.length}. Начнём с твоего образования, языка и бюджета. Условия стипендии проверим отдельно — по региону.</>}
+            >
+              <Link href="/plan" className={ui.textButton}>Перейти к подбору <span aria-hidden="true">↗</span></Link>
+            </VespiAssistant>
+          )}
           <Filters
             typeFilter={typeFilter}
             onTypeChange={setTypeFilter}

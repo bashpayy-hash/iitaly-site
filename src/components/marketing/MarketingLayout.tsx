@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MarketingHeader } from "./MarketingHeader";
 import styles from "./marketing.module.css";
 import { OFFICIAL_SOURCES } from "@/data/sources";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 /** Opt-in shell. Never wrap /universities or the legacy portal in this component. */
 export function MarketingLayout({ children, home = false }: { children: ReactNode; home?: boolean }) {
@@ -13,7 +14,7 @@ export function MarketingLayout({ children, home = false }: { children: ReactNod
       <footer className={styles.footer}>
         <div className={styles.footerTop}>
           <div>
-            <Link href="/" className={styles.wordmark} aria-label="IITALY — главная">IITALY<span aria-hidden>.</span></Link>
+            <Link href="/" className={styles.wordmark} aria-label="IITALY — главная"><BrandLogo /></Link>
             <p className={styles.footerTagline}>Италия ближе, чем кажется.</p>
             <p>ИИ-сервис поступления в университеты Италии · Казахстан</p>
           </div>

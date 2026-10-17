@@ -23,6 +23,10 @@ on:
       - "src/components/prices/**"
       - "src/components/payment/**"
       - "src/components/chat/**"
+      - "src/components/mascot/**"
+      - "src/components/brand/**"
+      - "src/app/icon.svg"
+      - "src/app/apple-icon.png"
       - "src/components/Modal.tsx"
       - "src/lib/lead.ts"
       - "src/lib/phone.ts"
@@ -51,7 +55,7 @@ concurrency:
 jobs:
   visual-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       NEXT_PUBLIC_BACKEND_URL: https://example.invalid
       NEXT_PUBLIC_STRIPE_ENABLED: "true"
@@ -91,6 +95,8 @@ jobs:
         run: node scripts/design-ux-review.mjs
       - name: Review Vespi guide context, quiz continuity and explicit AI requests
         run: node scripts/design-guides-vespi-review.mjs
+      - name: Review shared Vespi roles, palette preservation and single visible mascot
+        run: node scripts/design-vespi-system-review.mjs
       - name: Review launch document retry, long filenames and modal focus
         run: node scripts/launch-document-review.mjs
       - name: Review launch chat, contact recovery and free-plan access

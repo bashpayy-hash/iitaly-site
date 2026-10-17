@@ -20,8 +20,9 @@ export function socialImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", fontSize: 34, fontWeight: 800, letterSpacing: -1 }}>
-            IITALY<span style={{ color: "#fc1c46" }}>.</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 34, fontWeight: 600, letterSpacing: -0.85 }}>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 36, borderRadius: 14, background: "#fc1c46", color: "#fff", fontSize: 29, letterSpacing: 0 }}>i</span>
+            <span>Italy</span>
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#686868" }}>Казахстан → Италия</div>
         </div>

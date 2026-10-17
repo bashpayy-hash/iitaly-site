@@ -110,7 +110,7 @@ export function PortalOnboarding({
               {!editing && !needs12 && <p className={settings.formHint}>3 вопроса · 30 секунд</p>}
               <p className={styles.onboardingLead}>Ответы помогут выбрать шаги маршрута. Даты в нём — ориентиры.</p>
             </div>
-            {!editing && <Vespi variant="avatar" className={styles.onboardingAvatar} sizes="64px" priority />}
+            {!editing && <span className={styles.onboardingPortrait} data-vespi-presence="copilot"><Vespi variant="copilot" presentation="portrait" className={styles.onboardingAvatar} sizes="64px" priority /></span>}
           </div>
 
           <fieldset className={settings.question} disabled={busy}>

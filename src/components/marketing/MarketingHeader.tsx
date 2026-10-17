@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./marketing.module.css";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const links = [
   { href: "/universities", label: "Университеты" },
@@ -33,7 +34,7 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
           onClick={event => {
             if (!onHome || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault(); onHome();
-          }}>IITALY<span aria-hidden>.</span></Link>
+          }}><BrandLogo /></Link>
         {variant === "portal" ? actions : <>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           {links.map(({ href, label }) => (

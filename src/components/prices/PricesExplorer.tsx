@@ -13,6 +13,7 @@ import { PricesLandscape } from "./PricesLandscape";
 import heroArt from "./prices-landscape.module.css";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import styles from "@/components/marketing/marketing.module.css";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -146,6 +147,15 @@ export function PricesExplorer() {
                 </li>
               ))}
             </ul>
+            <VespiAssistant
+              variant="inspector"
+              layout="editorial-callout"
+              appearance="portrait"
+              label="Веспи · сверим до подачи"
+              className="mt-6"
+              title="Можно исправить и проверить снова"
+              message="AI-сверка без лимита помогает найти замечания до подачи. Загрузи исправленную версию — повторная проверка входит в цену. Решение о приёме документа остаётся за вузом или консульством."
+            />
             <p className="mt-5 text-apple-caption text-cloud-meta uppercase">
               Доступ на весь цикл поступления, без ограничения по времени
             </p>

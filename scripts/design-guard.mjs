@@ -7,6 +7,11 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // User follow-up 2026-10-17: shared iItaly wordmark and matching app icons.
+  // Existing palette/fonts stay unchanged outside the logo's requested weight.
+  'src/components/brand/BrandLogo.tsx',
+  'src/components/brand/brand-logo.module.css',
+  'src/app/icon.svg', 'src/app/apple-icon.png',
   // User request 2026-10-17: Lucide icons for the Meta-inspired /guides redesign.
   // Only the lucide-react dependency is added; existing runtime versions stay fixed.
   'package.json', 'package-lock.json',
@@ -32,6 +37,12 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-17: shared contextual Vespi across public pages and
+  // portal, preserving each surface's existing palette and product contracts.
+  'src/components/mascot/Vespi.tsx',
+  'src/components/mascot/VespiAssistant.tsx',
+  'src/components/mascot/vespi-assistant.module.css',
+  'src/components/mascot/useVespiPresence.ts',
   // User request 2026-10-17: replace the scooter with Веспи Баурысаков.
   // Existing helper/onboarding/progress presentation only; no API/data change.
   // User request 2026-10-16: keep assessment, rules and the unchanged trainer
@@ -99,7 +110,7 @@ const approvedReminderUiPaths = new Set([
   'src/lib/paymentMode.ts',
   'src/lib/socialImage.tsx',
 ]);
-const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
+const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$|icon\.svg$|apple-icon\.png$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|mascot\/|brand\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
 // Explicit user request: implement the researched Kazakhstan admissions update.
 // These paths carry copy, eligibility rules and context in existing API fields.
 const approvedAdmissionsPaths = new Set([

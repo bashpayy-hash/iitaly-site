@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Vespa } from "@/components/Vespa";
+import { VespiIndicator } from "@/components/mascot/VespiAssistant";
+import { useVespiPresence } from "@/components/mascot/useVespiPresence";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import placement from "./chat-placement.module.css";
 
@@ -63,6 +65,7 @@ export function ChatLauncher({
   onOpen: () => void;
 }) {
   const reducedMotion = useReducedMotion();
+  const mascotInContent = useVespiPresence();
   const anchorRef = useRef<HTMLDivElement>(null);
   const [blocked, setBlocked] = useState(false);
   const [scrollingDown, setScrollingDown] = useState(false);
@@ -146,6 +149,7 @@ export function ChatLauncher({
 
       <motion.button
         id="chat-launcher"
+        data-vespi-launcher-mode={mascotInContent ? "indicator" : "portrait"}
         type="button"
         onClick={onOpen}
         aria-label="Задать вопрос ИИ-консультанту"
@@ -174,7 +178,7 @@ export function ChatLauncher({
         whileHover={{ y: -3, transition: t(SPRING_HOVER) }}
         whileTap={{ scale: 0.94, y: 0, transition: t(SPRING_PRESS) }}
       >
-        <Vespa pose="avatar" className="h-10 w-10 object-contain" priority />
+        {mascotInContent ? <VespiIndicator className={placement.assistantSignal} /> : <Vespa pose="avatar" className="h-10 w-10 object-contain" priority />}
       </motion.button>
     </>
   );

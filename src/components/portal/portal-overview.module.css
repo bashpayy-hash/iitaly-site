@@ -42,12 +42,16 @@
 .stageLabel { position: absolute; top: 71px; display: block; padding: 0 4px; color: var(--portal-muted); font-size: 13px; line-height: 1.25; text-align: center; overflow-wrap: normal; text-wrap: balance; }
 .stageLabel[data-road-stage-state="current"] { color: var(--portal-ink); font-weight: 600; }
 .scooter { display: block; position: absolute; top: 0; left: 0; z-index: 1; width: 100%; height: 60px; pointer-events: none; }
-.scooterAnchor { display: block; width: 48px; height: 60px; transform: translateX(-50%); }
+.scooterAnchor { display: block; position: relative; width: 48px; height: 60px; transform: translateX(-50%); }
 .scooterArrival { display: block; width: 100%; height: 100%; transform-origin: center 90%; }
 .road[data-road-arriving="true"] .scooterArrival { animation: scooterArrive 360ms cubic-bezier(.22, 1, .36, 1) both; }
 .scooterArt { display: block; width: 100%; height: 100%; overflow: visible; }
 .scooterArt img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .scooterBody { display: block; width: 100%; height: 100%; animation: idleRide 2.8s ease-in-out infinite; }
+/* A document or step owns the portrait while open. The pinned route keeps its
+   exact position without repeating the same face above the conversation. */
+.locationMarker { display: grid; place-items: center; position: absolute; bottom: -7px; left: 50%; width: 18px; height: 18px; transform: translateX(-50%); border: 2px solid var(--portal-accent); border-radius: 50%; background: var(--portal-surface); }
+.locationMarker > span { width: 6px; height: 6px; border-radius: 50%; background: var(--portal-accent); }
 .road[data-road-transition="true"] .fill, .road[data-road-transition="true"] .scooter { transition: transform var(--road-travel-duration) cubic-bezier(.4, 0, .2, 1); }
 .road[data-road-moving="true"] .fill, .road[data-road-moving="true"] .scooter { will-change: transform; }
 .road[data-road-moving="true"] .scooterBody { animation-play-state: paused; }
@@ -113,6 +117,7 @@
   .arrow { width: 16px; height: 16px; }
   .scooter { height: 50px; top: 0; }
   .scooterAnchor { width: 40px; height: 50px; }
+  .locationMarker { bottom: -5px; }
   .meta { margin-top: 4px; }
   .next, .document { padding-bottom: 16px; }
   /* The task is already open: keep its context on one line where possible,

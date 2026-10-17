@@ -3,9 +3,22 @@
 User-approved IITALY mascot, 17 October 2026. The slightly plush **Crema Soft**
 character replaces the former scooter character. The accepted image is the
 visual authority; do not redraw it as SVG or generate a different face.
-The user's later 17 October request authorizes a small distinctive refinement:
-one cream route stripe and olive waypoint on the red helmet. Keep this detail
-consistent in the full rider and the helper's face crop.
+The approved small identity refinement is one cream route stripe and an olive
+waypoint on the red helmet. Keep it consistent in the rider and face crop.
+
+## Current direction: shared behavior, unchanged palette
+
+The latest user request extends Vespi across `/`, `/guides`, `/universities`,
+`/plan`, `/prices` and `/portal`. It replaces the earlier guides-only placement
+restriction but **does not authorize a palette, token, font or background change**.
+Keep each route's published surfaces and actions, including the existing blue
+language of `/guides`, the site's red actions and the editorial illustrations.
+A common assistant means consistent roles, hierarchy and presence, not recoloring
+all routes or adding the same small circle to every block.
+
+Current architecture and evidence status: `vespi-assistant-system/README.md`.
+The earlier `vespi-meta-guides/`, `vespi-refinement-2026-10-17/` and
+`vespi-guides-2026-10-17/` documents remain historical evidence.
 
 ## Identity and files
 
@@ -16,81 +29,123 @@ consistent in the full rider and the helper's face crop.
 - Refined master: `design/mascot/vespi/vespi-route-master.webp`, edited with
   built-in Imagegen using the approved rider as the identity reference.
   Neither master is served to visitors. Original assets remain available.
-- Production: `public/mascot/vespi/`. Transparent WebP, served locally by static export.
-- Component: `src/components/mascot/Vespi.tsx`. The old `Vespa`/`VespaReveal`
-  exports remain compatibility wrappers for existing functional states.
+- Production: `public/mascot/vespi/`. Transparent WebP served locally by static export.
+- Image component: `src/components/mascot/Vespi.tsx`. The old `Vespa` /
+  `VespaReveal` exports remain compatibility wrappers for existing states.
+- Assistant component: `src/components/mascot/VespiAssistant.tsx`, supported by
+  `vespi-assistant.module.css` and `useVespiPresence.ts` in the same directory.
 
-| Use | Crop | Actual display size |
+## Roles, layouts and fallback
+
+`variant` defines the content's role; `layout` defines composition. Neither is
+an admission verdict, an AI request, a paid feature or an automatic action.
+
+| Role | Intended use | Current image |
 | --- | --- | --- |
-| Portal road | Full rider | 48 × 60px desktop; 40 × 50px mobile |
-| Header helper | Face | 28px inside the existing 44px target |
-| Floating helper / chat header | Face | 40px / 36px |
-| Home campus foreground | Full rider | 192px wide desktop; 96px mobile |
-| Login campus foreground | Full rider | 148px wide desktop; 112px mobile |
-| First-run profile | Face | 64px desktop; 48px mobile |
-| Document processing | Full rider | 68px wide desktop; 58px mobile |
-| Confirmed results | Face or full rider | Existing layout, no new CTA |
-| 404 | Full rider | 160–192px high, with an explicit recovery action |
-| Guides search | Face in CSS ring | 58px desktop / 48px mobile outer ring |
-| Guides insight | Face in CSS ring | 46px desktop / 40px mobile outer ring |
-| Guides sticky plan | Face in CSS ring | 46px desktop / 36px mobile outer ring; omitted at tablet width |
+| `route` | Education choices, catalog and map navigation | Approved face / full rider |
+| `inspector` | Document preparation, upload and actual review | Approved original fallback |
+| `copilot` | Questions, current / future step explanation, next action | Approved original fallback |
+| `celebrate` | A received result or completed step | Approved original fallback |
 
-## Placement
+No new glasses, document pose or animation was generated in this refactor.
+`VESPI_ROLE_ASSETS` has approved assets for `route` and empty entries for the
+other roles. Missing role art resolves to the existing portrait or figure,
+marked `data-vespi-fallback="approved-original"`; never use a missing file URL.
+Add new role assets only after a likeness, small-size, transparency and file-size
+review. The three Higgsfield prompts remain in
+`vespi-meta-guides/higgsfield-prompts.md`; they are not shipped images or video.
 
-Preserve the site's light surfaces, typography and red actions. Use one full
-character illustration per section. A small helper avatar is a navigation
-control, not a second decorative hero. Keep the accepted campus illustrations;
-the character sits in their foreground without overlapping copy.
+| Layout | Visual behavior |
+| --- | --- |
+| `inline-pill` | Short explanation; indicator by default, or text only |
+| `editorial-callout` | 96px portrait on desktop / 72px on mobile, subtly outside the edge |
+| `portal-copilot` | 96px / 72px portrait next to a question or real task state |
+| `floating-bar` | 64px portrait in a route-owned floating composition |
 
-Do not add the mascot to university rows, comparison tables, document reports,
-payment, legal decisions or the MOD. 209 trainer. The portal's road already carries
-the character across its screens; another large figure would add noise.
-Do not turn the character into an additional button or interrupt the next step.
+`appearance` can be `portrait`, `figure`, `indicator` or `none`. The content
+owns its heading, copy and action through props / children. New layouts inherit
+the route's current palette and font. They do not add decorative rings around
+every face, automatic messaging, an extra CTA or another navigation destination.
 
-The latest explicit request authorizes a **`/guides`-only exception** to the
-placement and red-action rules above: the approved face crop appears in the
-search capsule, the selected topic's insight/next action, and a dismissible
-sticky plan capsule. This page uses its scoped blue/cyan/violet/amber visual
-language; it does not recolor the mascot or change other routes. The terrace
-and reviewed warning copy stay. There is no mascot in stage navigation or
-topic-card titles. The existing helper keeps its recognizable avatar.
-The sticky capsule must not overlap the helper or site badge; it yields to
-the visible contextual action and hides while the helper is open. See
-`vespi-meta-guides/README.md` for the implementation and pending review.
+## Placement and presence
 
-The character never certifies eligibility or acceptance. No approval stamp,
-uniform or invented expert pose is shipped. The three briefs in
-`vespi-meta-guides/higgsfield-prompts.md` are prompts only; no new images or
-video were generated or connected to the page in this pass.
-One chapter ends with one contextual action; sources stay visible and readable.
-The same helper receives the selected topic and prepares an editable question.
-Opening it never sends a question or spends the free allowance automatically.
-The earlier `vespi-guides-2026-10-17/README.md` remains historical evidence.
+Use one meaningful character composition at a time. The existing campus hero,
+login foreground and onboarding remain recognizably the same character. Keep
+accepted `terrace.webp`, `campus-arrival.webp` and `balcony-scene.webp`.
+
+| Surface | Placement |
+| --- | --- |
+| Home hero | Existing full rider in the campus foreground |
+| Home process / price | Short indicator / text-only comments, not extra portraits |
+| Prices | One inspector callout within the existing paid offer |
+| University catalog | Route portrait before filtering; omitted in the portal's embedded picker |
+| Guides search | Compact «ИИ» indicator, no repeated face crop |
+| Guides article | One larger portrait with role-aware advice and the existing contextual action |
+| Guides sticky plan | Shown only after Hero and outside the entire visible article insight |
+| Plan questionnaire | Copilot explaining why each of the existing 10 questions is asked |
+| Plan document check | Inspector reflects actual reading / checking / result state |
+| Portal overview | Existing road and current action; no duplicate welcome CTA |
+| Portal task / document detail | Contextual portrait; road uses a location marker instead of another character |
+| Portal empty states | Helpful explanation with an indicator when the road owns the character |
+| Shared helper launcher | Face when no content mascot is visible, otherwise the same action with an «ИИ» indicator |
+
+`useVespiPresence` observes content images outside `#chat-launcher` and
+`#iitaly-chat`. Its event-driven visibility state changes the launcher's visual,
+not its behavior or accessible name. Images loaded after navigation are included
+through a mutation observer. There is no scroll polling.
+
+The guides sticky capsule observes the complete Hero and complete inline insight,
+including its protruding portrait. A 140px early-clearance area prevents the
+floating and inline characters from meeting. It also keeps its existing hide
+rules for open chat, focused form fields, open mobile navigation and short
+viewports, its dismiss action, and its clearance above the site badge.
+
+Do not add Vespi to university rows, comparison tables, payment decisions or
+the MOD. 209 trainer. Do not place a portrait next to every document finding.
+The inspector belongs to the report's overall result; original findings and
+source details remain legible, factual content.
+
+## Meaning and actions
+
+The character never certifies eligibility, a visa or acceptance. No official
+approval seal or invented expert pose is shipped. Deadline text comes from the
+existing task / source; absence of requirements is not a defective file.
+The five document statuses and their meanings are unchanged.
+
+The portal road remains the single next-action entry. A future or parent-owned
+step still explains who acts and what must happen first; the mascot does not
+unlock upload or self-report. Existing task completion, document recheck,
+authentication, Stripe and API contracts are outside this visual refactor.
+
+A guide keeps one contextual next action and readable official sources. The
+same helper receives the selected guide / task; opening it never sends a question
+or consumes an allowance automatically. The free plan's questionnaire keeps its
+questions, answer values and saved draft. Its new short explanations describe
+why the answer matters without predicting admissions results.
 
 ## Motion and accessibility
 
-The bitmap is static. Existing wrappers animate only transform/opacity:
+The bitmap remains static. Existing wrappers animate only transform / opacity:
 server-confirmed road travel (1080ms), restrained arrival and quiet idle (2.8s).
-The next-step text updates immediately; no animation on first load. The old
-independent SVG wheel layers were removed to preserve the approved illustration.
-Road marks still convey travel. Waiting motion ends when processing ends.
+The next-step text updates immediately; no travel animation on first load.
+Waiting feedback ends when the underlying processing state ends.
 
 `prefers-reduced-motion` disables travel, bobbing, reveal and arrival. No new
-sounds, loops, fake progress or celebration claims. Decorative instances use an
-empty alt; the helper retains a text label and the existing keyboard/focus flow.
-On the current guides page, the active stage and expanded card identify the
-selected topic, not reading/completion progress. Article reveal (340ms) and
-card movement (240ms) are restrained transform/opacity effects. Reduced motion
-disables those effects. The mascot bitmap itself remains static.
+sounds, loops, fake percentages, streaks or celebration claims. `celebrate` is a
+semantic role for completed work, not permission for visual noise.
+Decorative portraits have empty alt text and no focus target. The helper keeps
+its text label and existing keyboard flow. Controls remain outside the decorative
+image; the larger figure cannot cover the action or compress mobile text.
+Guides reading stages identify an open topic, not completion progress.
 
 ## Delivery budget
 
 Ride widths: 160, 320, 640px. Face widths: 96, 192px. Versioned filenames
 `vespi-{ride|avatar}-route-{width}.webp` prevent cached original imagery.
-All five new WebP variants together are under 100KB; the smallest road image
-is under 10KB. Responsive
-`srcSet`/`sizes`, intrinsic dimensions and same-origin URLs prevent unnecessary
-downloads, layout shifts and reliance on generation services at runtime.
+The five refined WebP variants together are under 100KB; the smallest road image
+is under 10KB. Responsive `srcSet` / `sizes`, intrinsic dimensions and same-origin
+URLs avoid layout shifts, unnecessary downloads and runtime generation services.
 
-The previous `docs/mascot-bible.md` and vector source files remain historical
-references only. They no longer define the shipped character.
+No new asset files are added by the assistant-system refactor. Review future
+poses before expanding this budget. The old `docs/mascot-bible.md` and vector
+sources remain historical references; they no longer define the shipped face.

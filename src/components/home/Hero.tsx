@@ -3,6 +3,7 @@ import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import styles from "@/components/marketing/marketing.module.css";
 import { CampusArtwork } from "@/components/marketing/CampusArtwork";
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 /** An honest service diagram, not a fabricated screenshot or applicant result. */
 export function Hero() {
@@ -26,7 +27,7 @@ export function Hero() {
         <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗</span> Италия</span></div>
         <div className={styles.journey} data-journey-preview>
           <div className={styles.journeyHeader}>
-            <div><span className={styles.journeyLogo}>Твой маршрут с IITALY</span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
+            <div><span className={styles.journeyLogo}>Твой маршрут с <span role="img" aria-label="IITALY"><BrandLogo compact /></span></span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
             <span className={styles.journeyBadge}>От идеи до Италии</span>
           </div>
           <div className={styles.journeyBody}>
