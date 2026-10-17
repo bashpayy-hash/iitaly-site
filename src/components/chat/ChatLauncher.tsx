@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Vespa } from "@/components/Vespa";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
+import placement from "./chat-placement.module.css";
 
 /**
  * Плавающий вход в ИИ-консультанта.
@@ -140,7 +141,7 @@ export function ChatLauncher({
       <div
         ref={anchorRef}
         aria-hidden
-        className={`pointer-events-none ${ANCHOR_POSITION}`}
+        className={`pointer-events-none ${ANCHOR_POSITION} ${placement.aboveBadge}`}
       />
 
       <motion.button
@@ -159,7 +160,7 @@ export function ChatLauncher({
         // Тень меняется css-переходом, а не motion: её значение — токен с
         // var() и четырьмя слоями, такое motion интерполировать не может и
         // просто подставил бы конечное значение скачком.
-        className={`${ANCHOR_POSITION} z-[90] flex items-center justify-center rounded-full border border-[#e3e3e8] bg-white text-[#1d1d1f] shadow-[0_4px_16px_rgba(29,29,31,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
+        className={`${ANCHOR_POSITION} ${placement.aboveBadge} z-[90] flex items-center justify-center rounded-full border border-[#e3e3e8] bg-white text-[#1d1d1f] shadow-[0_4px_16px_rgba(29,29,31,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
         style={{ pointerEvents: away ? "none" : "auto" }}
         // initial={false} — при загрузке страницы кнопка просто есть, без
         // приветственного поп-ина: она не событие, а постоянный элемент.

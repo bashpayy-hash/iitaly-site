@@ -104,6 +104,27 @@ try {
     assert.equal(await question.inputValue(), 'Что проверить в переводе для вуза и для визы?');
     await audit('contextual helper ' + width);
     await screenshot('guides-helper');
+    // The hosting badge exists only on production; reproduce its observed frame.
+    await page.evaluate(() => {
+      const badge = document.createElement('iframe');
+      badge.id = 'nl-badge-frame'; badge.title = 'Hosting badge fixture';
+      badge.style.cssText = 'position:fixed;right:16px;bottom:16px;width:185px;height:44px;border:0;z-index:2147483647';
+      badge.srcdoc = '<body style="margin:0;background:#122a30;color:white;font:13px sans-serif;display:grid;place-items:center;height:44px;border-radius:24px">Hosting badge fixture</body>';
+      document.body.append(badge);
+    });
+    assert(await page.getByRole('button', { name: 'Отправить', exact: true }).evaluate(button => {
+      const rect = button.getBoundingClientRect();
+      return button.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
+    }), 'The provider badge cannot intercept Send');
+    await screenshot('guides-helper-with-provider');
+    if (width === 390) {
+      await page.setViewportSize({ width, height:390 });
+      assert(await page.getByRole('button', { name:'Отправить', exact:true }).evaluate(button => {
+        const rect=button.getBoundingClientRect();
+        return rect.top >= 0 && rect.bottom <= innerHeight && button.contains(document.elementFromPoint(rect.x+rect.width/2, rect.y+rect.height/2));
+      }), 'Send remains reachable in a short viewport');
+      await page.setViewportSize({ width, height:844 });
+    }
     await page.getByRole('button', { name: 'Отправить', exact: true }).click();
     await page.getByText('Синтетический ответ 1.', { exact: true }).waitFor();
     assert.match(chats[0].messages.at(-1).content, /Открытая тема справочника IITALY: translation/);
@@ -111,6 +132,9 @@ try {
     await question.fill('Мой незаконченный вопрос');
     await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    const launcher = page.locator('#chat-launcher');
+    assert(await launcher.evaluate(button => button.getBoundingClientRect().bottom < document.getElementById('nl-badge-frame').getBoundingClientRect().top), 'The launcher also stays above the badge');
+    await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
     // A topic change updates helper context but preserves the user's draft.
     await page.getByRole('navigation', { name: 'Этапы справочника' }).getByRole('link', { name: 'После приезда', exact: true }).click();
     await openHelper();
@@ -135,7 +159,7 @@ try {
     assert(!events.some(e => JSON.stringify(e).includes('вопрос-без-совпадения')), 'Search text is not sent to analytics');
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpected, []);
-    results.push({ width, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, a11y:true, overflow:false });
+    results.push({ width, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, a11y:true, overflow:false });
     await context.close();
   }
   await writeFile(resolve(output, 'results.json'), JSON.stringify(results, null, 2));

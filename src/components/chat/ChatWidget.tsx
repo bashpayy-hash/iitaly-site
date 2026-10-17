@@ -23,6 +23,7 @@ import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { VESPI_NAME } from "@/components/mascot/Vespi";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
+import placement from "./chat-placement.module.css";
 
 interface Msg {
   who: "user" | "ai";
@@ -338,7 +339,7 @@ export function ChatWidget() {
                 setOpen(false);
               }
             }}
-            className={`fixed right-4 ${calmMode ? `${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} rounded-[24px] border border-[#e3e3e8] bg-white font-[family-name:var(--font-apple-text)] text-[#1d1d1f] shadow-[0_12px_36px_rgba(29,29,31,0.12)]` : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper shadow-float"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
+            className={`fixed right-4 ${placement.aboveBadge} ${placement.panel} ${calmMode ? `${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} rounded-[24px] border border-[#e3e3e8] bg-white font-[family-name:var(--font-apple-text)] text-[#1d1d1f] shadow-[0_12px_36px_rgba(29,29,31,0.12)]` : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper shadow-float"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 4, transition: reducedMotion ? { duration: 0 } : PANEL_EXIT }}
