@@ -83,6 +83,9 @@ const approvedReminderUiPaths = new Set([
   // User request 2026-10-17: guide-aware Vespi in the existing helper.
   // Only topic context in the existing message field; no API/quota change.
   'src/components/chat/ChatWidget.tsx',
+  // User request 2026-10-17: make Vespi usable; production provider badge
+  // must not cover the existing helper's launcher or send control.
+  'src/components/chat/chat-placement.module.css',
   'src/components/Footer.tsx',
   'src/data/pricing.ts',
   'src/lib/portalApi.ts',

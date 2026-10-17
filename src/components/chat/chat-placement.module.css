@@ -1,0 +1,14 @@
+/* Netlify injects this frame on production only. Keep its branding visible
+   while moving our controls above it, including the launcher's measuring anchor. */
+.aboveBadge {
+  /* Motion owns transform/opacity. Never tween the safety inset with global CSS. */
+  transition-property: none;
+}
+
+:global(body:has(#nl-badge-frame)) .aboveBadge {
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+}
+
+:global(body:has(#nl-badge-frame)) .panel {
+  max-height: calc(100dvh - 96px - env(safe-area-inset-bottom, 0px));
+}

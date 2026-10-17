@@ -8,6 +8,7 @@
     "thirteenTopics": true,
     "officialSourcesVisible": true,
     "reducedMotion": true,
+    "providerBadgeSafe": true,
     "a11y": true,
     "overflow": false
   },
@@ -20,6 +21,7 @@
     "thirteenTopics": true,
     "officialSourcesVisible": true,
     "reducedMotion": true,
+    "providerBadgeSafe": true,
     "a11y": true,
     "overflow": false
   },
@@ -32,6 +34,7 @@
     "thirteenTopics": true,
     "officialSourcesVisible": true,
     "reducedMotion": true,
+    "providerBadgeSafe": true,
     "a11y": true,
     "overflow": false
   },
@@ -44,6 +47,7 @@
     "thirteenTopics": true,
     "officialSourcesVisible": true,
     "reducedMotion": true,
+    "providerBadgeSafe": true,
     "a11y": true,
     "overflow": false
   }
