@@ -5,6 +5,7 @@ import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import assistant from "./home-assistant.module.css";
 
 const STAGES = [
   {
@@ -43,14 +44,7 @@ export function HowItWorks() {
         <div className={styles.howHeading}>
           <AppleCaption>Как проходит работа с нами</AppleCaption>
           <AppleHeading>От вопроса до посадки в самолёт.</AppleHeading>
-          <VespiAssistant
-            variant="copilot"
-            layout="inline-pill"
-            appearance="indicator"
-            label="Веспи · по одному шагу"
-            className="mt-5"
-            message="Не нужно разбираться во всём сразу. У каждого этапа — свой понятный следующий шаг."
-          />
+          <p>Не нужно разбираться во всём сразу. У каждого этапа — свой понятный следующий шаг.</p>
           <AppleButtonLink href="/guides" variant="ghost" className="mt-5">Смотреть гайды по визе <span aria-hidden>↗</span></AppleButtonLink>
           <ItalianAccent kind="moka" />
         </div>
@@ -58,7 +52,21 @@ export function HowItWorks() {
           {STAGES.map((s) => (
             <li key={s.n} className={styles.step}>
               <span className={styles.stepNumber}>0{s.n}</span>
-              <div><h3>{s.title}</h3><p>{s.body}</p><small>{s.time}</small></div>
+              {s.n === "1" ? <VespiAssistant
+                variant="copilot"
+                layout="portal-copilot"
+                appearance="portrait"
+                label="Веспи · начнём с тебя"
+                title={<h3>{s.title}</h3>}
+                className={assistant.firstStep}
+                aria-label="Первый шаг с Веспи"
+              >
+                <div className={assistant.stepBody}>
+                  <p>{s.body}</p>
+                  <small>{s.time}</small>
+                  <AppleButtonLink href="/plan" variant="ghost">Начать с моей ситуации <span aria-hidden>↗</span></AppleButtonLink>
+                </div>
+              </VespiAssistant> : <div><h3>{s.title}</h3><p>{s.body}</p><small>{s.time}</small></div>}
             </li>
           ))}
         </ol>
