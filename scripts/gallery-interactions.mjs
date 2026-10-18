@@ -47,7 +47,7 @@ try {
     const topic=topics[index];seen.add(topic);const article=page.locator(`[data-guide-panel="${topic}"]`);await article.waitFor();
     assert.equal(await page.locator('[data-guide-panel]').count(),1);assert.equal(new URL(page.url()).hash,'#'+topic);
     assert(await article.locator('a[target="_blank"]').count()>0,'Every article retains official sources');
-    assert.equal(await article.locator('h2').first().evaluate(e=>document.activeElement===e),true,'Selected step receives keyboard focus');
+    await page.waitForFunction(id=>document.querySelector(`[data-guide-panel="${id}"] h2`)===document.activeElement,topic,{timeout:5000}); // Focus is intentionally assigned on the next animation frame.
     await noOverflow();
     if(index===0){await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});const issues=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));assert.deepEqual(issues,[],`${id} guide accessible`);}
     if(index<topics.length-1)await article.getByRole('button',{name:/^Далее:/}).click();
