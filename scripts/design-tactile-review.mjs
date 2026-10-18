@@ -10,8 +10,9 @@ const sharp = require('sharp');
 const baseline = process.env.TACTILE_BASELINE_OUT;
 const output = resolve('design-review/tactile');
 await mkdir(output, { recursive: true });
-const paletteBefore = execFileSync('git', ['show', `${process.env.TACTILE_BASE_REF || 'aa9520a'}:src/app/globals.css`], { encoding: 'utf8' });
-assert.equal(await readFile('src/app/globals.css', 'utf8'), paletteBefore, 'All global color and font tokens are byte-for-byte unchanged');
+// The later global editorial brief authorizes shared palette and font tokens.
+execFileSync(process.execPath, ['scripts/check-warm-palette.mjs']);
+assert.match(await readFile('src/app/globals.css', 'utf8'), /--font-sans:\s*var\(--font-inter-tight\)/, 'The guides font is shared across surfaces');
 const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.woff2':'font/woff2', '.txt':'text/plain' };
 let root = resolve('out');
 const server = createServer(async (req, res) => {
