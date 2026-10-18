@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
-import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { extname, resolve, sep } from 'node:path';
 
@@ -16,7 +15,6 @@ const finalCapture = process.env.VESPI_CAPTURE_FINAL_ONLY === '1';
 const captureOnly = sectionsOnly || reportOnly || finalCapture;
 const root = resolve(baseline ? process.env.BASELINE_OUT : 'out');
 const output = resolve(process.env.VESPI_REVIEW_OUTPUT || 'design-review/vespi-system');
-const baseRef = process.env.VESPI_BASE_REF || process.env.BASE_SHA || 'b106963';
 await mkdir(output, { recursive: true });
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.woff2': 'font/woff2', '.ico': 'image/x-icon' };
 const server = createServer(async (request, response) => {
@@ -177,10 +175,11 @@ async function roleAssetBudget() {
 
 // The user's follow-up explicitly replaces the heavy IITALY. wordmark with
 // iItaly. Preserve its inherited palette and font, while allowing new weight.
-function preservedBrand(value) {
-  // Explicit 18 October brief replaces the palette; typography is still frozen.
-  const typography = node => node && Object.fromEntries(Object.entries(node).filter(([key]) => /^font/.test(key)));
-  return { body: typography(value.body), heading: typography(value.heading), logo: typography(value.logo), fonts: Object.fromEntries(Object.entries(value.tokens).filter(([key]) => /^--font/.test(key))) };
+function assertUnifiedBrand(value) {
+  // The global editorial brief now unifies all pages with the guides font.
+  const families = [value.body, value.heading, value.logo].filter(Boolean).map(node => node.fontFamily);
+  for (const family of families) assert.match(family, /inter.?tight/i, 'Every surface uses the shared editorial font');
+  assert.equal(new Set(families).size, 1, 'Body, heading and wordmark share one font family');
 }
 
 async function checkWordmark(page) {
@@ -195,10 +194,9 @@ async function checkWordmark(page) {
 try {
   if (!baseline) {
     await roleAssetBudget();
-    // The user explicitly replaces all cold colors; retain the font contract.
-    const fonts = source => source.match(/--font-[^;]+;/g);
-    const before = execFileSync('git', ['show', `${baseRef}:src/app/globals.css`], { encoding: 'utf8' });
-    assert.deepEqual(fonts(await readFile('src/app/globals.css', 'utf8')), fonts(before), 'Typography tokens remain unchanged');
+    const globals = await readFile('src/app/globals.css', 'utf8');
+    assert.match(globals, /--font-sans:\s*var\(--font-inter-tight\)/, 'The guides font is the global family');
+    for (const role of ['display', 'apple-text', 'apple-display']) assert.match(globals, new RegExp(`--font-${role}:\\s*var\\(--font-sans\\)`), 'Every display role uses the same font');
     assert.doesNotMatch(await readFile('src/components/mascot/vespi-assistant.module.css', 'utf8'), /#[\da-f]{3,8}\b|(?:rgb|hsl|oklch)a?\(/i, 'The shared assistant consumes existing tokens instead of introducing a new palette');
   }
   const beforeBrands = baseline ? {} : JSON.parse(await readFile(resolve(output, 'before-brands.json'), 'utf8').catch(() => '{}'));
@@ -235,7 +233,7 @@ try {
       if (sectionsOnly && !['home', 'prices', 'universities'].includes(name)) continue;
       await visit(path);
       brands[`${name}-${width}`] = await brand(page);
-      if (!baseline && beforeBrands[`${name}-${width}`]) assert.deepEqual(preservedBrand(brands[`${name}-${width}`]), preservedBrand(beforeBrands[`${name}-${width}`]), `${name} ${width}: preserve typography while applying the authorized warm palette`);
+      if (!baseline && beforeBrands[`${name}-${width}`]) assertUnifiedBrand(brands[`${name}-${width}`]);
       if (!baseline && name === 'home') {
         const entry = page.getByRole('complementary', { name: 'Начать с Веспи', exact: true });
         const action = entry.getByRole('link', { name: 'Составить план бесплатно', exact: true });
@@ -382,7 +380,7 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    if (!baseline && beforeBrands[`portal-${width}`]) assert.deepEqual(preservedBrand(brands[`portal-${width}`]), preservedBrand(beforeBrands[`portal-${width}`]), `portal ${width}: preserve typography while applying the authorized warm palette`);
+    if (!baseline && beforeBrands[`portal-${width}`]) assertUnifiedBrand(brands[`portal-${width}`]);
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);

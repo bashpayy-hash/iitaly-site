@@ -34,7 +34,7 @@ export function TrustFAQ() {
       <div className="mx-auto max-w-[760px]">
         <AppleCaption as="p" className="text-center">Прежде чем платить</AppleCaption>
         <AppleHeading as="h2" className="mt-3 text-center">
-          Можно ли нам доверять
+          Можно ли нам <span className="editorial-accent">доверять</span>
         </AppleHeading>
 
         <div className="mt-10 divide-y divide-white/15">

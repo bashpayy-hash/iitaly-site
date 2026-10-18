@@ -37,7 +37,7 @@ import { Reveal } from "@/components/motion/Reveal";
 const STATUS_TONE: Record<StatusKind, string> = {
   closed: "border-line bg-cream text-sec-deep",
   ahead: "border-warn/40 bg-warn/5 text-warn-deep",
-  deadline: "border-red/30 bg-red/5 text-red-deep",
+  deadline: "border-red/30 bg-red/5 text-primary",
 };
 
 export function ChangesExplorer() {
@@ -120,7 +120,7 @@ export function ChangesExplorer() {
             {CHANGES.map((c) => (
               <Reveal as="li" key={c.n} variant="fade">
                 <h3 className="flex items-baseline gap-3 font-display text-lg font-semibold">
-                  <span className="font-mono text-xs text-red tabular-nums">
+                  <span className="font-mono text-xs text-primary tabular-nums">
                     {String(c.n).padStart(2, "0")}
                   </span>
                   {c.title}

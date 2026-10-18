@@ -76,6 +76,8 @@ jobs:
       - name: Protect the map and product contracts
         run: node scripts/design-guard.mjs "$BASE_SHA"
       - run: npm ci
+      - name: Enforce the complete canonical UI palette
+        run: npm run check:palette
       - run: npm run build
       - name: Build the exact base for visual comparison
         run: |

@@ -11,14 +11,14 @@ import type { ElementType, ComponentPropsWithoutRef, ReactNode } from "react";
 type Role = "display" | "headingLg" | "heading" | "headingSm" | "subheading" | "body" | "bodySm" | "caption";
 
 const roleClass: Record<Role, string> = {
-  display: "font-apple-display text-arch-h1 font-semibold uppercase text-cloud-white",
-  headingLg: "font-apple-display text-arch-h2 font-semibold uppercase text-cloud-white",
-  heading: "font-apple-display text-[44px] font-semibold uppercase text-cloud-white sm:text-[56px]",
-  headingSm: "font-apple-display text-apple-heading-sm font-semibold uppercase text-cloud-white",
+  display: "font-apple-display text-arch-h1 editorial-heading text-cloud-white",
+  headingLg: "font-apple-display text-arch-h2 editorial-heading text-cloud-white",
+  heading: "font-apple-display text-[44px] editorial-heading text-cloud-white sm:text-[56px]",
+  headingSm: "font-apple-display text-apple-heading-sm editorial-heading text-cloud-white",
   subheading: "font-apple-text text-apple-subheading font-light text-cloud-body",
   body: "font-apple-text text-apple-body font-normal text-cloud-body",
   bodySm: "font-apple-text text-apple-body-sm font-normal text-cloud-body/80",
-  caption: "font-apple-text text-apple-caption font-semibold uppercase tracking-[0.08em] text-cloud-meta",
+  caption: "editorial-badge",
 };
 
 const roleDefaultTag: Record<Role, ElementType> = {

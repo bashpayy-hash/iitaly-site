@@ -14,7 +14,7 @@ export function Hero() {
       <div className={`${styles.heroIntro} ${assistant.heroIntro}`}>
         <div className={`${styles.heroCopy} ${assistant.heroCopy}`}>
           <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
-          <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
+          <h1 className={styles.heroTitle}>Твоё будущее.<br />Теперь в <span className="editorial-accent">Италии.</span></h1>
           <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <VespiAssistant
             variant="route"
@@ -40,7 +40,7 @@ export function Hero() {
         <CampusArtwork />
       </div>
       <div className={styles.stage}>
-        <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗</span> Италия</span></div>
+        <div className={styles.stageLabel}><span>Большой путь. По одному шагу.</span><span>Казахстан <span aria-hidden>↗</span> Италия</span></div>
         <div className={styles.journey} data-journey-preview>
           <div className={styles.journeyHeader}>
             <div><span className={styles.journeyLogo}>Твой маршрут с <span role="img" aria-label="IITALY"><BrandLogo compact /></span></span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
@@ -49,7 +49,7 @@ export function Hero() {
           <div className={styles.journeyBody}>
             <div>
               <span className={styles.eyebrow}>Начнём с главного</span>
-              <h2>Найти место,<br />где хочется учиться.</h2>
+              <h2>Найти место,<br />где хочется <span className="editorial-accent">учиться.</span></h2>
               <p>43 университета в 30 городах. Программы, требования и дедлайны — в одной базе.</p>
             </div>
             <div>

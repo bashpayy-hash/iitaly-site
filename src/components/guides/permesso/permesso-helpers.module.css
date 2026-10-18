@@ -4,14 +4,14 @@
    на телефоне это не читалось. Здесь вторичный текст не меньше 12px,
    поля ввода на телефоне 16px, чтобы iOS не увеличивал страницу. */
 .helpers {
-  --ink: #242321;
-  --muted: #66635d;
-  --line: #ddd9d1;
-  --line-strong: #cfc9bf;
-  --accent: #8b2939;
-  --focus: #574331;
+  --ink: var(--text-primary);
+  --muted: var(--text-secondary);
+  --line: var(--border-subtle);
+  --line-strong: var(--bg-subtle);
+  --accent: var(--accent-primary);
+  --focus: var(--accent-primary);
   padding: 0 24px 80px;
-  background: #f8f8f6;
+  background: var(--bg-base);
   color: var(--ink);
   font-family: var(--font-onest), system-ui, sans-serif;
 }
@@ -35,16 +35,16 @@
 .tool > p.note { margin: 12px 0 0; font-size: 12px; }
 .tool select, .tool > input, .copyList input, .module2Pages input {
   width: 100%; min-height: 44px; padding: 9px 11px;
-  border: 1px solid #d7d3ca; border-radius: 8px; background: #fffdf9;
+  border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--glow-cream);
   color: var(--ink); font: inherit; font-size: 14px;
 }
 .smallLabel { display: block; margin: 14px 0 6px; color: var(--muted); font-size: 12px; }
 
 .copyList { border-top: 1px solid var(--line); }
 .copyList label, .module2Pages { display: grid; grid-template-columns: minmax(0, 1fr) 72px; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
-.copyList span, .module2Pages span { color: #45413b; font-size: 13px; line-height: 1.4; }
+.copyList span, .module2Pages span { color: var(--text-secondary); font-size: 13px; line-height: 1.4; }
 .copyList input, .module2Pages input { width: 72px; text-align: right; }
-.workerToggle { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 8px; color: #45413b; font-size: 13px; line-height: 1.4; }
+.workerToggle { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 8px; color: var(--text-secondary); font-size: 13px; line-height: 1.4; }
 .workerToggle input { width: 17px; height: 17px; flex: none; accent-color: var(--accent); }
 .total { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--line-strong); }
 .total span { color: var(--muted); font-size: 12px; }
@@ -53,9 +53,9 @@
 .lookupList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; border-top: 1px solid var(--line); }
 .lookupList button { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px; align-items: baseline; min-height: 44px; padding: 11px 6px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .lookupList button:nth-child(odd) { border-right: 1px solid var(--line); }
-.lookupList button:hover { background: #efeeeb; }
+.lookupList button:hover { background: var(--bg-base); }
 .lookupList b { color: var(--accent); font-size: 12px; font-weight: 700; }
-.lookupList span { color: #45413b; font-size: 13px; }
+.lookupList span { color: var(--text-secondary); font-size: 13px; }
 
 .checklistGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--line-strong); }
 .checklist { min-width: 0; padding: 22px 24px 24px; }
@@ -63,7 +63,7 @@
 .checklist + .checklist { border-left: 1px solid var(--line); }
 .checklist h3 { margin: 0; font-size: 15px; font-weight: 600; }
 .checklist ul { margin: 12px 0 0; padding: 0; list-style: none; }
-.checklist li { position: relative; padding: 8px 0 8px 14px; border-top: 1px solid var(--line); color: #45413b; font-size: 13px; line-height: 1.45; }
+.checklist li { position: relative; padding: 8px 0 8px 14px; border-top: 1px solid var(--line); color: var(--text-secondary); font-size: 13px; line-height: 1.45; }
 .checklist li:first-child { border-top: 0; }
 .checklist li::before { content: ""; position: absolute; left: 0; top: 15px; width: 4px; height: 4px; border-radius: 1px; background: var(--accent); }
 
@@ -74,7 +74,7 @@
 
 .cheatSheet { margin-top: 8px; border-top: 1px solid var(--line-strong); }
 .cheatSheet summary { display: flex; align-items: center; min-height: 48px; font-size: 14px; cursor: pointer; }
-.cheatSheet p { margin: 4px 0 0; color: #45413b; font-size: 13px; line-height: 1.55; }
+.cheatSheet p { margin: 4px 0 0; color: var(--text-secondary); font-size: 13px; line-height: 1.55; }
 .cheatSheet small { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
 
 @media (max-width: 900px) {

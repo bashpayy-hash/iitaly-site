@@ -15,10 +15,10 @@ base_prompt: >
   simple handlebar with two round mirrors, one thin ribbon tied to the left
   mirror flowing backward. Rounded geometric body, wide "wasp-waist" between
   front shield and rear fender, proportions approx. 1.6:1 width:height. Bold
-  uniform ink outline (#211a14), rounded line joins, flat solid fills only —
+  uniform ink outline (#141413), rounded line joins, flat solid fills only —
   no gradients, no gloss, no drop shadow baked into the image. Color palette
-  strictly limited to: body #b4262b, body shadow panel #8f1d21, outline
-  #211a14, headlight and ribbon #fffdf8, ribbon tip accent #b25000.
+  strictly limited to: body #E63946, body shadow panel #E63946, outline
+  #141413, headlight and ribbon #FAF8F5, ribbon tip accent #E63946.
   Background: transparent. Clean silhouette readable as flat black shape.
   No text, no logos, no license plates, no additional characters, no
   scenery, no cast shadow on ground.
@@ -32,16 +32,16 @@ negative_prompt: >
   linework, asymmetric mirrors, missing ribbon
 
 palette:
-  body: "#b4262b"        # --color-red
-  body_shadow: "#8f1d21" # --color-red-deep
-  outline: "#211a14"     # --color-ink
-  headlight_ribbon: "#fffdf8" # --color-paper
-  accent: "#b25000"       # --color-warn
-  background_default: "#faf5ec" # --color-cream
-  success_indicator: "#3f6b4f"  # --color-green
+  body: "#E63946"        # --color-red
+  body_shadow: "#E63946" # --color-red-deep
+  outline: "#141413"     # --color-ink
+  headlight_ribbon: "#FAF8F5" # --color-paper
+  accent: "#E63946"       # --color-warn
+  background_default: "#FAF8F5" # --color-cream
+  success_indicator: "#57534E"  # --color-green
   reserve_unused:
-    - "#913a00" # --color-warn-deep
-    - "#c97339" # --color-warn-light
+    - "#E63946" # --color-warn-deep
+    - "#E63946" # --color-warn-light
 
 proportions:
   body_width_to_height: "1.6:1"
@@ -53,7 +53,7 @@ immutable_traits:
   - "одна фара = единственный 'взгляд', рта нет"
   - "два зеркала, симметричны"
   - "лента у левого зеркала — обязательна в каждой позе"
-  - "контур: ink #211a14, 3-4px в 1024px, round join"
+  - "контур: ink #141413, 3-4px в 1024px, round join"
   - "заливки только плоские, без градиентов и глянца"
   - "ракурс ¾ по умолчанию, если поза не требует иного"
 
@@ -156,8 +156,8 @@ motif_nastro:
   description: "Отдельный переиспользуемый UI-мотив — лента без персонажа. Не масштаб персонажа, самостоятельный SVG."
   prompt: >
     Flat 2D vector ribbon/thread shape, single continuous curved band with
-    rounded ends, no character, no face. Bold ink outline (#211a14), fill
-    #fffdf8, one end accented with #b25000. No gradients, no shadow, no
+    rounded ends, no character, no face. Bold ink outline (#141413), fill
+    #FAF8F5, one end accented with #E63946. No gradients, no shadow, no
     background, no text. Clean silhouette suitable as a reusable UI motif
     (progress bar fill, route line, breadcrumb).
   file: public/mascot/source/mascot-nastro.svg

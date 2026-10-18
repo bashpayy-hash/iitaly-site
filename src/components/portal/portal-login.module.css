@@ -9,17 +9,17 @@
    сайт и без навигации назад. Маска у картинки — для читаемости текста над
    ней, а не декоративный градиент. */
 .page {
-  --login-ink: #141413;
-  --login-body: #56524c;
-  --login-muted: #6b6761;
-  --login-line: #e7e4df;
-  --login-action: #141413;
-  --login-action-deep: #141413;
+  --login-ink: var(--text-primary);
+  --login-body: var(--text-secondary);
+  --login-muted: var(--text-secondary);
+
+  --login-action: var(--text-primary);
+
   min-height: calc(100svh - 64px);
   padding: 48px 24px 72px;
-  background: #faf8f5;
+
   color: var(--login-ink);
-}
+ background: transparent; --login-line: var(--border-subtle); --login-action-deep: var(--text-primary); }
 
 .page *,
 .page *::before,
@@ -45,9 +45,9 @@
   overflow: hidden;
   padding: 36px;
   border: 1px solid var(--login-line);
-  border-radius: 24px;
-  background: #fff;
-}
+
+  background: var(--bg-surface);
+ border-radius: 28px 90px 28px 28px; box-shadow: var(--shadow-art); }
 
 .copy { position: relative; z-index: 1; }
 .eyebrow {
@@ -57,17 +57,17 @@
   font-weight: 500;
   letter-spacing: .025em;
   line-height: 1.5;
-}
+ display: inline-flex; padding: 5px 13px; border: 1px solid var(--border-subtle); border-radius: 9999px; background: var(--bg-surface); }
 .title {
   max-width: 460px;
   margin: 0;
   font-family: var(--font-apple-display);
   font-size: 40px;
-  font-weight: 600;
+
   line-height: 1.08;
-  letter-spacing: -.035em;
+
   text-wrap: balance;
-}
+ font-weight: 800; letter-spacing: -.03em; }
 .lead {
   max-width: 470px;
   margin: 16px 0 0;
@@ -80,8 +80,8 @@
   z-index: 0;
   inset: 190px 0 52px;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 24%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, var(--text-primary) 24%, var(--text-primary) 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, var(--text-primary) 24%, var(--text-primary) 88%, transparent 100%);
 }
 .art picture { display: block; width: 100%; height: 100%; }
 .artImage {
@@ -107,15 +107,15 @@
   line-height: 1.5;
 }
 .route span { flex-shrink: 0; }
-.route i { height: 1px; flex: 1; background: #ddd9d3; }
+.route i { height: 1px; flex: 1; background: var(--bg-subtle); }
 
 .card {
   min-width: 0;
   margin: 0;
   padding: 36px;
   border: 1px solid var(--login-line);
-  border-radius: 24px;
-  background: #fff;
+  border-radius: 28px;
+  background: var(--bg-surface);
 }
 .cardTitle {
   margin: 0;
@@ -139,9 +139,9 @@
   width: 100%;
   min-width: 0;
   min-height: 52px;
-  border: 1px solid #cecac4;
-  border-radius: 12px;
-  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9999px;
+  background: var(--bg-surface);
   padding: 13px 14px;
   color: var(--login-ink);
   font: inherit;
@@ -149,12 +149,12 @@
   line-height: 1.4;
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
-.field input::placeholder { color: #8f8b85; opacity: 1; }
-.field input:hover { border-color: #aeaaa4; }
+.field input::placeholder { color: var(--text-muted); opacity: 1; }
+.field input:hover { border-color: var(--border-subtle); }
 .field input:focus {
   outline: none;
   border-color: var(--login-action);
-  box-shadow: 0 0 0 3px #d7133f26;
+  box-shadow: var(--shadow-soft);
 }
 .field input[aria-invalid="true"] { border-color: var(--login-action-deep); }
 .error {
@@ -176,7 +176,7 @@
   border-radius: 999px;
   background: var(--login-action);
   padding: 12px 22px;
-  color: #fff;
+  color: var(--bg-surface);
   font: inherit;
   font-size: 16px;
   font-weight: 600;
@@ -209,22 +209,22 @@
 @media (max-width: 760px) {
   .page { min-height: 0; padding: 24px 16px 40px; }
   .shell { grid-template-columns: minmax(0, 1fr); max-width: 520px; gap: 16px; }
-  .intro { min-height: 0; padding: 24px; border-radius: 20px; }
+  .intro { min-height: 0; padding: 24px; border-radius: 28px; }
   .title { max-width: 360px; font-size: clamp(28px, 7.4vw, 34px); }
   .lead { margin-top: 12px; font-size: 15px; line-height: 1.5; }
-  /* In normal flow on phones: translated copy or larger text cannot overlap the art. */
+
   .art {
     position: relative;
     inset: auto;
     height: 168px;
     flex: 0 0 168px;
     margin: 8px -24px -24px;
-    mask-image: linear-gradient(to bottom, transparent, #000 24%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 24%);
+    mask-image: linear-gradient(to bottom, transparent, var(--text-primary) 24%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, var(--text-primary) 24%);
   }
   .artImage { object-position: 70% 60%; }
   .route { display: none; }
-  .card { padding: 24px; border-radius: 20px; }
+  .card { padding: 24px; border-radius: 28px; }
   .cardTitle { font-size: 24px; }
   .fields { margin-top: 24px; gap: 16px; }
 }
