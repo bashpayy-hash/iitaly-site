@@ -239,6 +239,7 @@ try {
     await page.getByRole('button', { name: 'К списку тем', exact: true }).click();
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 0, 'Back closes the selected topic');
     assert.equal(await search.evaluate(el => document.activeElement === el), true, 'Back returns focus to the command bar');
+    let stickyExercised = false;
     if (width === 1440 || width === 390) {
       // This long chapter leaves both the hero and the whole inline insight outside
       // the viewport, which is the intended moment for the conversion pill.
@@ -258,7 +259,28 @@ try {
       await page.locator('#active-guide-title').focus();
       await page.locator('#active-guide-title').evaluate(heading => heading.scrollIntoView({ block: 'start' }));
       const sticky = page.locator('[data-guide-sticky]');
-      await sticky.waitFor({ state: 'visible' });
+      // The desktop checklist can be shorter than a full viewport plus the
+      // insight's early-yield margin. Find a real reading interval rather than
+      // assuming its heading always provides one; never hide a real callout.
+      await checklist.evaluate(async button => {
+        const section = button.closest('[data-guide-panel]');
+        await Promise.all(section.getAnimations({subtree:true}).map(animation => animation.finished.catch(()=>{})));
+      });
+      const interval = await page.evaluate(() => {
+        const absoluteBottom = el => el.getBoundingClientRect().bottom + scrollY;
+        const absoluteTop = el => el.getBoundingClientRect().top + scrollY;
+        const hero = document.querySelector('[data-section="guides-header"]');
+        const blockers = [...document.querySelectorAll('[data-vespi-tip], [data-vespi-tip] [data-vespi-presence], [data-vespi-intro=guides]')]
+          .filter(el => {const r=el.getBoundingClientRect();return r.width&&r.height;});
+        return {min:absoluteBottom(hero)+24,max:Math.min(...blockers.map(absoluteTop))-innerHeight-180};
+      });
+      if (interval.max >= interval.min) {
+      await page.evaluate(y => window.scrollTo({top:y,behavior:'instant'}),(interval.min+interval.max)/2);
+      await sticky.waitFor({ state: 'visible' }).catch(async error => {
+        console.log('Sticky visibility diagnostic',JSON.stringify(await page.evaluate(()=>({width:innerWidth,height:innerHeight,y:scrollY,max:document.documentElement.scrollHeight-innerHeight,hash:location.hash,rects:[...document.querySelectorAll('[data-section="guides-header"],[data-guide-panel],[data-vespi-tip],[data-vespi-tip] [data-vespi-presence],[data-vespi-intro=guides]')].map(el=>({kind:el.getAttribute('data-guide-panel')||el.getAttribute('data-section')||el.tagName,rect:el.getBoundingClientRect().toJSON()}))}))));
+        throw error;
+      });
+      stickyExercised = true;
       await addProviderBadge();
       assert(await sticky.evaluate(element => {
         const rect = element.getBoundingClientRect();
@@ -275,14 +297,19 @@ try {
       await sticky.getByRole('button', { name: 'Скрыть предложение плана', exact: true }).click();
       await sticky.waitFor({ state: 'hidden' });
       await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
+      } else {
+        await sticky.waitFor({ state: 'hidden' });
+        assert(interval.max < interval.min,'A visible contextual guide suppresses the duplicate floating offer');
+      }
     }
     assert(events.some(e => e.event === 'guide_next_action' && e.props.topic === 'apostille'));
     assert(!events.some(e => JSON.stringify(e).includes('вопрос-без-совпадения')), 'Search text is not sent to analytics');
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpected, []);
-    results.push({ width, stageFiltering:true, visiblePromptChipsReachable:true, oneExpandedCard:true, contextualInsight:true, inlineActionVisibleAndReachable:true, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, stickyDismissible:width === 1440 || width === 390 ? true : null, a11y:true, overflow:false });
+    results.push({ width, stageFiltering:true, visiblePromptChipsReachable:true, oneExpandedCard:true, contextualInsight:true, inlineActionVisibleAndReachable:true, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, stickyDismissible:stickyExercised, a11y:true, overflow:false });
     await context.close();
   }
+  assert(results.some(result => result.stickyDismissible),'The floating offer is exercised where a real reading interval exists');
   await writeFile(resolve(output, 'results.json'), JSON.stringify(results, null, 2));
   console.log(JSON.stringify(results, null, 2));
 } catch (error) {
