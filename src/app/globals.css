@@ -1,95 +1,124 @@
 @import "tailwindcss";
 
-/* IItaly — дизайн-токены
-   Тот же фирменный язык, что и на текущем сайте (кремовый фон, чернильные
-   обводки, жёсткие офсетные тени, капслок в заголовках), переведённый в
-   OKLCH и в Tailwind v4 @theme — значения --color, --radius и --shadow
-   становятся утилитами (bg-ink, rounded-lg, shadow-md) автоматически. */
+:root {
+  color-scheme: light;
+  --bg-base: #FAF8F5;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F3EFEA;
+  --text-primary: #141413;
+  --text-secondary: #57534E;
+  --text-muted: #8C857B;
+  --accent-primary: #E63946;
+  --accent-soft: #FFF0F0;
+  --glow-cream: #FFFDF9;
+  --glow-peach: #FDEEE4;
+  --glow-lemon: #FEF6E6;
+  --accent-start: #E12D39;
+  --accent-end: #F06543;
+  --accent-terracotta: #D9534F;
+  --accent-amber: #F4A261;
+  --accent-gradient: linear-gradient(135deg, #E12D39 0%, #F06543 100%);
+  --accent-editorial-gradient: linear-gradient(135deg, #E63946 0%, #D9534F 50%, #F4A261 100%);
+  --border-subtle: rgba(20, 20, 19, 0.08);
+  --shadow-soft: 0 12px 32px -8px rgba(28, 25, 23, 0.06), 0 2px 6px -1px rgba(28, 25, 23, 0.04);
+  --shadow-art: 0 24px 56px -20px rgba(28, 25, 23, 0.16);
+  --i-signal: var(--accent-primary);
+  --i-action: var(--text-primary);
+  --i-link: var(--text-primary);
+  --i-line: var(--border-subtle);
+  --brand-gradient: var(--accent-gradient);
+  --shadow-warm-card: var(--shadow-soft);
+}
+
+/* One palette. Reset Tailwind's default color namespace so unused presets cannot leak into the build. */
 @theme {
-  --color-cream: #faf8f5;
-  --color-paper: #ffffff;
-  --color-ink: #141413;
-  --color-coral: #e63946;
-  --color-coral-soft: #fff2f2;
-  --color-alabaster: #faf8f5;
-  --color-warm-white: #fffdf9;
-  --color-warm-stone: #efece6;
-  --color-warm-line: rgba(20, 20, 19, .08);
-  --color-ink-soft: oklch(37.92% 0.0192 60.85);
-  --color-sec: oklch(50.92% 0.0269 75.6);
-  --color-sec-deep: oklch(44.81% 0.0244 74.34);
-  --color-red: oklch(50.45% 0.1777 24.86);
-  --color-red-deep: oklch(42.69% 0.1492 24.73);
-  --color-green: oklch(48.73% 0.0668 155.13);
-  --color-warn: oklch(54.74% 0.1471 48.89);
-  --color-warn-deep: oklch(46% 0.135 48.89);
-  --color-warn-light: oklch(64% 0.13 52);
-  --color-line: oklch(90.73% 0.0241 79.74);
-
-  /* Атмосферная пара для EditorialBackground — пыльно-голубой и
-     приглушённый персик/терракота, низкая насыщенность. Не для текста/
-     обводок (для этого есть sec/warn/ink) — только для мягких mesh-пятен
-     фона, где фирменный красный остаётся редким акцентом, а не основой. */
-  --color-warm-sand: oklch(72% 0.035 65);
-  --color-warm-sand-deep: oklch(52% 0.045 65);
-  --color-warm-sand-light: oklch(84% 0.025 65);
-  --color-peach: oklch(80% 0.05 52);
-
-  /* Одна гарнитура (Onest) на весь продукт — display и sans указывают на
-     один и тот же variable-файл. Роли различаются весом/размером в
-     Typography.tsx, не разными шрифтами (см. layout.tsx). */
-  --font-display: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
-  --font-sans: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-space-mono), "SF Mono", "Courier New", monospace;
-
-  --radius-pill: 999px;
-  --radius-xl: 28px;
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 6px;
-
-  /* Тени-стикеры: жёсткий офсет (силуэт бренда) + мягкая рассеянная
-     подложка снизу для настоящей глубины — тот же приём, что уже
-     обкатан и проверен на текущем сайте. */
-  --shadow-color-sticker: oklch(22.41% 0.0158 62.49);
-  --shadow-sm: 2px 2px 0 oklch(22.41% 0.0158 62.49), 0 2px 6px -2px oklch(22.41% 0.0158 62.49 / 0.14);
-  --shadow-md: 4px 4px 0 oklch(22.41% 0.0158 62.49), 0 6px 14px -4px oklch(22.41% 0.0158 62.49 / 0.2);
-  --shadow-lg: 6px 6px 0 oklch(22.41% 0.0158 62.49), 0 10px 24px -6px oklch(22.41% 0.0158 62.49 / 0.24);
-  --shadow-xl: 10px 10px 0 oklch(22.41% 0.0158 62.49), 0 18px 42px -8px oklch(22.41% 0.0158 62.49 / 0.3);
-  --shadow-red: 6px 6px 0 oklch(50.45% 0.1777 24.86), 0 16px 36px -8px oklch(50.45% 0.1777 24.86 / 0.28);
-  --shadow-green: 6px 6px 0 oklch(48.73% 0.0668 155.13), 0 16px 36px -8px oklch(48.73% 0.0668 155.13 / 0.24);
-
+  --color-*: initial;
+  --color-coral: var(--accent-primary);
+  --color-coral-soft: var(--accent-soft);
+  --color-alabaster: var(--bg-base);
+  --color-warm-white: var(--glow-cream);
+  --color-warm-stone: var(--bg-subtle);
+  --color-warm-line: var(--border-subtle);
+  --color-warm-sand: var(--glow-peach);
+  --color-warm-sand-deep: var(--text-muted);
+  --color-warm-sand-light: var(--glow-lemon);
+  --color-action-ink: var(--text-primary);
+  --color-link-ink: var(--text-primary);
+  --color-signal-coral: var(--accent-primary);
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-subtle: var(--bg-subtle);
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent-primary);
+  --color-accent-soft: var(--accent-soft);
+  --color-glow-cream: var(--glow-cream);
+  --color-glow-peach: var(--glow-peach);
+  --color-glow-lemon: var(--glow-lemon);
+  --color-cream: var(--bg-base);
+  --color-paper: var(--bg-surface);
+  --color-ink: var(--text-primary);
+  --color-ink-soft: var(--text-secondary);
+  --color-sec: var(--text-secondary);
+  --color-sec-deep: var(--text-secondary);
+  --color-red: var(--accent-primary);
+  --color-red-deep: var(--accent-primary);
+  --color-rosso: var(--accent-primary);
+  --color-green: var(--text-secondary);
+  --color-warn: var(--text-secondary);
+  --color-warn-deep: var(--text-primary);
+  --color-warn-light: var(--accent-amber);
+  --color-line: var(--border-subtle);
+  --color-sand: var(--glow-peach);
+  --color-sand-deep: var(--text-muted);
+  --color-sand-light: var(--glow-lemon);
+  --color-peach: var(--glow-peach);
+  --color-action: var(--accent-primary);
+  --color-link: var(--accent-primary);
+  --color-signal: var(--accent-primary);
+  --color-carbon: var(--text-primary);
+  --color-frost: var(--bg-base);
+  --color-ice: var(--bg-subtle);
+  --color-smoke: var(--text-secondary);
+  --color-graphite: var(--text-secondary);
+  --color-ash: var(--text-secondary);
+  --color-mist: var(--text-muted);
+  --color-onyx: var(--text-primary);
+  --color-pebble: var(--bg-subtle);
+  --color-crimson: var(--accent-primary);
+  --color-cloud-white: var(--text-primary);
+  --color-cloud-body: var(--text-secondary);
+  --color-cloud-meta: var(--text-secondary);
+  --color-white: var(--bg-surface);
+  --color-black: var(--text-primary);
+  --font-sans: var(--font-inter-tight), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-apple-text: var(--font-sans);
+  --font-apple-display: var(--font-sans);
+  --font-mono: var(--font-space-mono), "Courier New", monospace;
+  --radius-pill: 9999px;
+  --radius-xl: 32px;
+  --radius-lg: 24px;
+  --radius-md: 20px;
+  --radius-sm: 12px;
+  --radius-apple-pill: 9999px;
+  --radius-apple-card: 28px;
+  --shadow-sm: var(--shadow-soft);
+  --shadow-md: var(--shadow-soft);
+  --shadow-lg: var(--shadow-soft);
+  --shadow-xl: var(--shadow-soft);
+  --shadow-red: var(--shadow-soft);
+  --shadow-green: var(--shadow-soft);
+  --shadow-soft-sm: var(--shadow-soft);
+  --shadow-soft-md: var(--shadow-soft);
+  --shadow-soft-lg: var(--shadow-art);
+  --shadow-float: var(--shadow-art);
+  --shadow-float-lifted: var(--shadow-art);
+  --shadow-apple-image: var(--shadow-art);
   --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
   --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
-
-  /* Мягкая (blur-only, без офсета) шкала возвышения — дефолт для карточек и
-     навигации. Жёсткие "тени-стикеры" выше (--shadow-md/lg/xl/red/green)
-     остаются, но теперь это осознанный акцент на 1-2 элементах, а не фон
-     для каждой рамки на странице. */
-  --shadow-soft-sm: 0 1px 2px oklch(22.41% 0.0158 62.49 / 0.06), 0 1px 1px oklch(22.41% 0.0158 62.49 / 0.04);
-  --shadow-soft-md: 0 8px 24px -8px oklch(22.41% 0.0158 62.49 / 0.14), 0 2px 8px -2px oklch(22.41% 0.0158 62.49 / 0.06);
-  --shadow-soft-lg: 0 20px 48px -12px oklch(22.41% 0.0158 62.49 / 0.18), 0 6px 16px -4px oklch(22.41% 0.0158 62.49 / 0.08);
-
-  /* Плавающий над страницей объект — на сайте он один, лаунчер чата.
-     Не одна плоская тень, а четыре слоя с растущим радиусом и
-     отрицательным spread: контактная 1.5px (объект стоит на поверхности),
-     ближняя 8px, средняя 24px и дальняя 48px (рассеянный свет помещения).
-     Именно набор слоёв, а не один blur, читается как предмет НАД листом;
-     одиночная тень всегда выглядит наклейкой. */
-  --shadow-float:
-    0 1px 1.5px oklch(22.41% 0.0158 62.49 / 0.18), 0 4px 8px -2px oklch(22.41% 0.0158 62.49 / 0.16),
-    0 12px 24px -6px oklch(22.41% 0.0158 62.49 / 0.18),
-    0 24px 48px -12px oklch(22.41% 0.0158 62.49 / 0.14);
-  --shadow-float-lifted:
-    0 1px 1.5px oklch(22.41% 0.0158 62.49 / 0.16), 0 6px 12px -2px oklch(22.41% 0.0158 62.49 / 0.18),
-    0 18px 36px -8px oklch(22.41% 0.0158 62.49 / 0.2),
-    0 36px 64px -16px oklch(22.41% 0.0158 62.49 / 0.16);
-
-  /* Motion-токены: fast — состояния контролов, normal — появление мелких
-     элементов, slow — крупные композиционные переходы. Стандартная кривая —
-     симметричная, спокойная; expressive — для hero/reveal, где нужен
-     уверенный, но не "прыгающий" акцент. */
   --duration-fast: 160ms;
   --duration-normal: 320ms;
   --duration-slow: 560ms;
@@ -98,146 +127,57 @@
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
-  /* Наводка резкости — зеркало EASE.focus из motion/tokens.ts. Долгое
-     удержание у нуля, потом решительный доводчик. Только для крупных
-     композиционных движений (приводка кадра); на коротких состояниях
-     контролов половина времени уходит в неподвижность и нажатие
-     кажется подвисшим. */
   --ease-focus: cubic-bezier(0.52, 0.01, 0, 1);
-
-  /* Типографическая система: именованные роли вместо произвольных text-*
-     размеров на местах. Fluid clamp() между ~390px и ~1440px — Dynamic-Type
-     дух HIG, переведённый в CSS. Ориентиры по диапазонам, не точные px. */
   --text-display: clamp(2.75rem, 1.9rem + 4.4vw, 7rem);
-  --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.02em;
-
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.03em;
   --text-title: clamp(2.25rem, 1.7rem + 2.4vw, 4.5rem);
-  --text-title--line-height: 1.03;
-  --text-title--letter-spacing: -0.015em;
-
+  --text-title--line-height: 1.08;
+  --text-title--letter-spacing: -0.03em;
   --text-heading: clamp(1.375rem, 1.2rem + 0.8vw, 2rem);
   --text-heading--line-height: 1.2;
-  --text-heading--letter-spacing: -0.005em;
-
+  --text-heading--letter-spacing: -0.03em;
   --text-body-lg: clamp(1.25rem, 1.15rem + 0.5vw, 1.75rem);
   --text-body-lg--line-height: 1.45;
-
   --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.1875rem);
   --text-body--line-height: 1.55;
-
   --text-caption: clamp(0.75rem, 0.72rem + 0.15vw, 0.875rem);
   --text-caption--line-height: 1.4;
-
   --text-button: 0.9375rem;
   --text-button--line-height: 1;
-
-  /* ── Apple design system (Refero: "white room with a single blue switch") ──
-     Новый параллельный набор токенов для всего сайта, КРОМЕ /universities.
-     Имена намеренно не пересекаются с токенами выше (cream/ink/red/...,
-     text-display/heading/body/caption): старые токены остаются как есть и
-     продолжают управлять /universities и sketchbook — эти файлы не
-     трогаются, поэтому их значения не могут измениться. Новые apple-*
-     токены добавляются рядом и используются только в новых компонентах
-     (Header, Footer, Home, /plan, /prices, /guides, apple/*). См. DESIGN.md. */
-  --color-action-ink: #141413;
-  --color-link-ink: #141413;
-  --color-signal-coral: #e63946;
-  --color-carbon: #141413;
-  --color-frost: #faf8f5;
-  --color-ice: #fffdf9;
-  --color-smoke: #333333;
-  --color-graphite: #474747;
-  --color-ash: #707070;
-  --color-mist: #858585;
-  --color-onyx: #000000;
-  --color-pebble: #e6e2dc;
-
-  /* SF Pro первым — авторендер на реальных Apple-устройствах бесплатно.
-     Inter Tight — самохостится через next/font/google (см. layout.tsx),
-     это практический рендер для большинства посетителей сайта (Android/
-     Windows, см. HANDOFF.md): у system-ui/-apple-system там свой облик
-     (Segoe UI/Roboto), а не SF Pro, и Inter Tight ближе по духу и трекингу. */
-  --font-apple-display: "SF Pro Display", var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-apple-text: "SF Pro Text", var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-
-  /* Именованная шкала из DESIGN(Apple).md — фиксированные px, не clamp():
-     "закон" даёт точные размеры, а не диапазон. На узких экранах крупные
-     display/heading-lg дополнительно уменьшены на уровне компонентов
-     (Tailwind sm:/lg: перед классом text-apple-*), чтобы не переполнять
-     390px — сама именованная ступень от этого не отличается от закона. */
   --text-apple-caption: 12px;
   --text-apple-caption--line-height: 1.33;
-  --text-apple-caption--letter-spacing: -0.264px;
-
+  --text-apple-caption--letter-spacing: -0.03em;
   --text-apple-body-sm: 14px;
   --text-apple-body-sm--line-height: 1.29;
-  --text-apple-body-sm--letter-spacing: -0.224px;
-
+  --text-apple-body-sm--letter-spacing: -0.03em;
   --text-apple-body: 17px;
   --text-apple-body--line-height: 1.47;
-  --text-apple-body--letter-spacing: -0.272px;
-
+  --text-apple-body--letter-spacing: -0.03em;
   --text-apple-subheading: 21px;
   --text-apple-subheading--line-height: 1.24;
-  --text-apple-subheading--letter-spacing: -0.105px;
-
+  --text-apple-subheading--letter-spacing: -0.03em;
   --text-apple-heading-sm: 28px;
   --text-apple-heading-sm--line-height: 1.18;
-  --text-apple-heading-sm--letter-spacing: 0.196px;
-
+  --text-apple-heading-sm--letter-spacing: -0.03em;
   --text-apple-heading: 40px;
   --text-apple-heading--line-height: 1.14;
-  --text-apple-heading--letter-spacing: 0.44px;
-
+  --text-apple-heading--letter-spacing: -0.03em;
   --text-apple-heading-lg: 44px;
   --text-apple-heading-lg--line-height: 1.18;
-  --text-apple-heading-lg--letter-spacing: -0.44px;
-
+  --text-apple-heading-lg--letter-spacing: -0.03em;
   --text-apple-display: 56px;
-  --text-apple-display--line-height: 1.07;
-  --text-apple-display--letter-spacing: 0.616px;
-
-  /* Радиусы закона — 980px (пилюля) и 8px (карточки/картинки/инпуты).
-     Отдельные имена: --radius-lg/xl и т.п. в проекте уже переопределены
-     под старую систему (16/20px), брать их для Apple-компонентов было бы
-     ошибкой на пиксель. */
-  --radius-apple-pill: 980px;
-  --radius-apple-card: 28px;
-
-  /* ── ThoughtLab × Air phase — заменяет Apple-акцент, не токены выше ──
-     Второй проход поверх Apple-хрома: холст маркетинговых страниц (везде,
-     кроме /universities) становится full-bleed фото неба (SkyBackground),
-     секции — прозрачные, единственный акцент — Crimson Signal. Старые
-     action-ink/link-ink/signal-coral/frost/carbon больше не используются
-     новыми компонентами (но не удалены — вдруг где-то зацепится старый
-     класс, лучше молча не сработать, чем сломать сборку), а apple-body/
-     caption/radius-apple-pill/шрифты остаются в деле. */
-  --color-crimson: #e63946;
-  --color-cloud-white: #ffffff;
-  --color-cloud-body: #cccccc;
-  --color-cloud-meta: #4c4c4c;
-
-  /* Архитектурная шкала заголовков: H1 героя — единственное место, где
-     разрешён 198px потолок, через clamp к 12–15vw. Заголовки секций —
-     72–91px, тоже clamp, а не фиксированные px (390px иначе ловит перелив). */
-  --text-arch-h1: clamp(2.75rem, 13vw, 12.375rem);
-  --text-arch-h1--line-height: 0.92;
-  --text-arch-h2: clamp(2.5rem, 6vw, 5.6875rem);
-  --text-arch-h2--line-height: 0.96;
-
-  /* Единственная тень системы — под продуктовым/фото-кадром на холсте,
-     не под кнопками/карточками/навигацией (см. DESIGN.md → Elevation). */
-  --shadow-apple-image: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
+  --text-apple-display--line-height: 1.08;
+  --text-apple-display--letter-spacing: -0.03em;
+  --text-arch-h1: clamp(2.75rem, 5.3vw, 4.75rem);
+  --text-arch-h1--line-height: 1.08;
+  --text-arch-h2: clamp(2rem, 4vw, 3.25rem);
+  --text-arch-h2--line-height: 1.08;
 }
+
 
 :root {
   color-scheme: light;
-  --brand-gradient: linear-gradient(135deg, #d92b38 0%, #e63946 45%, #f4845f 100%);
-  --shadow-warm-card: 0 12px 32px -8px rgba(28, 25, 23, .06);
-  --i-signal: var(--color-coral);
-  --i-action: var(--color-ink);
-  --i-link: var(--color-ink);
 }
 
 * {
@@ -258,16 +198,7 @@ body {
 :focus {
   outline: none;
 }
-/* Кольцо фокуса — тот же rosso, что у кнопок и ссылок: красная нитка
-   должна быть одна, включая клавиатурную навигацию.
 
-   Правило глобальное, то есть действует и на /universities, которую этот
-   проход не трогает. Перекраска там незаметна и это проверено, а не
-   предположено: прежний --color-red в sRGB это #b4262b, новый rosso —
-   #b42318. Красный канал совпадает до единицы, расходятся зелёный на 3 и
-   синий на 19 — старое кольцо чуть холоднее, новое чуть теплее. На 2.5px
-   обводке разницу не увидеть, зато на сайте не остаётся двух почти
-   одинаковых красных, живущих по разным правилам. */
 :focus-visible {
   outline: 2.5px solid var(--color-rosso);
   outline-offset: 2px;
@@ -344,10 +275,10 @@ body {
    перестают читаться, когда человек просит больше контраста. */
 @media (prefers-contrast: more) {
   :root {
-    --color-line: oklch(70% 0.02 75);
-    --color-sec: oklch(42% 0.028 75);
-    --color-sec-deep: oklch(36% 0.026 74);
-    --color-ink-soft: oklch(30% 0.019 61);
+    --color-line: rgb(140 133 123);
+    --color-sec: rgb(87 83 78);
+    --color-sec-deep: rgb(87 83 78);
+    --color-ink-soft: rgb(20 20 19);
   }
   .surface-translucent,
   .surface-translucent-paper {
@@ -463,44 +394,6 @@ body {
   }
 }
 
-/* ── Небо первого экрана ─────────────────────────────────────────────────
-   Атмосфера Origin, переведённая в тёплый рассвет: светлый верх, на
-   котором читается тёмный текст, и обсидиановый низ, который стыкуется с
-   тёмной полосой воронки без шва. Синего dusk и серого Apple Frost здесь
-   нет намеренно — сайт про Италию, а не про финтех.
-
-   Градиент живёт одним определением здесь, а не инлайном в компоненте:
-   его край в край повторяет полоса воронки, и две копии одних и тех же
-   пяти стопов разъехались бы при первой же правке. */
-.warm-dawn {
-  background-image: linear-gradient(
-    180deg,
-    #f7ece6 0%,
-    #f0d3c8 28%,
-    #e8b4a8 55%,
-    #d4786a 82%,
-    #14100a 100%
-  );
-}
-
-/* Облачная дымка поверх неба: два очень мягких радиальных пятна, сдвинутых
-   от центра. Смысл в том, чтобы небо не выглядело печатью градиента —
-   у настоящей атмосферы плотность неровная. Никакого стокового «заката
-   Тосканы»: это чистый CSS, ноль килобайт картинок на медленном канале. */
-.warm-haze {
-  background-image:
-    radial-gradient(60% 42% at 22% 18%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 100%),
-    radial-gradient(48% 34% at 78% 40%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 100%);
-}
-
-/* Зерно. Тот же приём, что у бумажной плёнки старой системы, но слабее
-   втрое: на небе оно должно только снимать банды градиента на дешёвых
-   8-битных матрицах, а не читаться как фактура. */
-.warm-grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  opacity: 0.05;
-}
-
 /* ── Полоса ожидания на /plan: веспа едет, пока идёт проверка ──────────
    Разметка и обоснование слоёв — в components/plan/VespaRide.tsx. */
 
@@ -512,14 +405,10 @@ body {
   inset-inline: 0;
   bottom: 3px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.14);
+  background: color-mix(in srgb, var(--bg-surface) 14%, transparent);
 }
 
-/* Проезд. Проценты у translateX считаются от ширины САМОГО элемента, и
-   именно поэтому едет дорожка во всю ширину полосы, а не веспа: сдвиг на
-   100% дорожки равен ширине полосы, сдвиг на 100% веспы — сорока
-   пикселям. Начинаем чуть левее края и заканчиваем чуть правее, чтобы
-   въезд и выезд были за кадром, а не появлением из ниоткуда. */
+
 .vespa-lane-track {
   animation: vespa-ride 4.6s ease-in-out infinite;
 }
@@ -555,7 +444,7 @@ body {
   width: 3px;
   height: 3px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.5);
+  background: color-mix(in srgb, var(--bg-surface) 50%, transparent);
   animation: vespa-dust 0.9s linear infinite;
 }
 .vespa-dust:nth-child(2) {
@@ -604,7 +493,19 @@ body {
   }
 }
 
-/* User-requested shared warm identity, 18 October 2026. */
-.warm-highlight { color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.warm-badge { display: inline-flex; align-items: center; width: fit-content; min-height: 32px; padding: 5px 13px; border: 1px solid var(--color-warm-line); border-radius: 999px; background: #fff; color: #57514b; font-size: 13px; font-weight: 500; line-height: 1.5; letter-spacing: 0; text-transform: none; }
-@media (forced-colors: active) { .warm-highlight { background: none; -webkit-text-fill-color: CanvasText; } }
+/* Shared editorial primitives. All routes inherit these same materials. */
+body { position: relative; isolation: isolate; background: var(--bg-base); color: var(--text-primary); }
+body::before { content: ""; position: fixed; z-index: -1; inset: -15%; pointer-events: none; filter: blur(90px); background: radial-gradient(ellipse at 15% 18%, var(--glow-peach), transparent 48%), radial-gradient(ellipse at 85% 28%, var(--glow-lemon), transparent 48%), radial-gradient(ellipse at 50% 72%, var(--glow-cream), transparent 64%); }
+::selection { color: var(--text-primary); background: var(--accent-soft); }
+:where(input, textarea, select) { color: var(--text-primary); accent-color: var(--accent-primary); caret-color: var(--accent-primary); }
+::placeholder { color: var(--text-muted); opacity: 1; }
+:where(a) { text-underline-offset: 4px; }
+:where(h1, h2) { font-family: var(--font-sans); font-weight: 800; line-height: 1.08; letter-spacing: -.03em; text-wrap: balance; }
+:where(button, a, input, textarea, select, summary):focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 4px; }
+* { scrollbar-color: var(--text-muted) var(--bg-subtle); }
+.editorial-accent, .warm-highlight { color: var(--accent-primary); background-image: var(--accent-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding-bottom: .05em; }
+.editorial-badge, .warm-badge { display: inline-flex; align-items: center; gap: 8px; width: fit-content; min-height: 32px; padding: 5px 13px; border: 1px solid var(--border-subtle); border-radius: 9999px; background: var(--bg-surface); color: var(--text-secondary); font-size: 13px; line-height: 1.5; font-weight: 500; letter-spacing: 0; text-transform: none; }
+.editorial-heading { font-weight: 800; line-height: 1.08; letter-spacing: -.03em; text-transform: none; }
+@media (prefers-reduced-transparency: reduce) { body::before { display: none; } }
+@media (forced-colors: active) { .editorial-accent, .warm-highlight { background: none; color: CanvasText; -webkit-text-fill-color: CanvasText; } body::before { display: none; } }
+@media print { body::before { display: none; } }

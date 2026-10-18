@@ -100,11 +100,11 @@
 }
 .gutter.left {
   right: 0;
-  background: linear-gradient(90deg, transparent, oklch(22.41% 0.0158 62.49 / 0.16));
+  background: linear-gradient(90deg, transparent, rgb(20 20 19 / 0.16));
 }
 .gutter.right {
   left: 0;
-  background: linear-gradient(270deg, transparent, oklch(22.41% 0.0158 62.49 / 0.16));
+  background: linear-gradient(270deg, transparent, rgb(20 20 19 / 0.16));
 }
 
 /* --- изогнутый лист ------------------------------------------------ */
@@ -189,21 +189,21 @@
 .curl.prev .face.back .sh {
   background: linear-gradient(
     90deg,
-    oklch(22.41% 0.0158 62.49 / var(--a1, 0)),
-    oklch(22.41% 0.0158 62.49 / var(--a2, 0))
+    rgb(20 20 19 / var(--a1, 0)),
+    rgb(20 20 19 / var(--a2, 0))
   );
 }
 .curl.next .face.back .sh,
 .curl.prev .face.front .sh {
   background: linear-gradient(
     90deg,
-    oklch(22.41% 0.0158 62.49 / var(--a2, 0)),
-    oklch(22.41% 0.0158 62.49 / var(--a1, 0))
+    rgb(20 20 19 / var(--a2, 0)),
+    rgb(20 20 19 / var(--a1, 0))
   );
 }
 /* блик по самой освещённой полосе */
 .gl {
-  background: linear-gradient(90deg, transparent, oklch(100% 0 0 / calc(var(--lit, 0) * 0.16)));
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / calc(var(--lit, 0) * 0.16)));
 }
 
 /* Внешняя кромка листа — единственная полоса, у которой видно толщину
@@ -211,8 +211,8 @@
    выглядел обрубленным. */
 .strip.edge .sh,
 .strip.edge .gl {
-  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, var(--text-primary) 9%, var(--text-primary) 91%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, var(--text-primary) 9%, var(--text-primary) 91%, transparent 100%);
 }
 
 /* Зоны нажатия для листания — половины книги. Прозрачные, но это
@@ -287,8 +287,8 @@
   /* Блик слабый и узкий: на 0.42 стекло превращалось в белый диск и
      закрывало то, ради чего лупу и тащат. */
   background:
-    radial-gradient(circle at 30% 26%, oklch(100% 0 0 / 0.2), transparent 30%),
-    radial-gradient(circle at 50% 50%, transparent 66%, oklch(22.41% 0.0158 62.49 / 0.12) 100%);
+    radial-gradient(circle at 30% 26%, rgb(255 255 255 / 0.2), transparent 30%),
+    radial-gradient(circle at 50% 50%, transparent 66%, rgb(20 20 19 / 0.12) 100%);
 }
 
 /* --- панель управления --------------------------------------------- */
@@ -311,7 +311,7 @@
   color: var(--color-cream);
 }
 .plate[aria-current="true"] .plateNum {
-  color: oklch(97.16% 0.0131 82.4 / 0.6);
+  color: rgb(250 248 245 / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {

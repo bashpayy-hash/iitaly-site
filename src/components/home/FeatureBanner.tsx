@@ -12,7 +12,7 @@ export function FeatureBanner() {
         <div className="mx-auto max-w-md lg:mx-0">
           <AppleCaption as="p">После прилёта</AppleCaption>
           <AppleHeading as="h2" className="mt-3">
-            Кабинет ведёт и после визы
+            Кабинет ведёт и после <span className="editorial-accent">визы</span>
           </AppleHeading>
           <AppleBody as="p" className="mt-4">
             Виза — не финал. Кабинет держит порядок первых недель в новом

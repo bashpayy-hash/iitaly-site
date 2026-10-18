@@ -1,34 +1,46 @@
-# iItaly — единая тёплая система
+# iItaly — Warm Modern Italian Editorial SaaS
 
-Актуальный запрос пользователя, 18 октября 2026, отменяет прежний запрет
-на смену палитры и локальную синюю тему `/guides`.
+The user explicitly authorized a global design-system unification on 18 October 2026.
+This replaces all earlier page-specific palettes and the earlier prohibition on
+changing colors outside /guides. The supplied /guides screenshot is the composition
+reference: airy spacing, rounded pills, confident headings and Italian artwork.
 
-- Холст всех маршрутов: `#FAF8F5`. Поверхности: белый и `#FFFDF9`.
-- Текст и действия: `#141413`. Сигнал бренда: `#E63946`.
-- Акцент заголовка: `135deg, #D92B38 0%, #E63946 45%, #F4845F 100%`.
-- Подложки: `#EFECE6`, персик `rgba(253,238,228,.7)`, лимон `rgba(254,246,230,.6)`.
-- Карточки: 24–32px, тёплая обводка, `--shadow-warm-card`. Контролы — капсулы.
-- Шрифты и реальные редакционные изображения сохранены. Веспи сохраняет
-  утверждённую идентичность и контекстные роли, без повторов на одном экране.
-- Белые подписи мелких кнопок используют угольную заливку для контраста.
-  Коралловый — сигнал, крупный знак, подчёркивание и градиент заголовка.
+## Canonical source
 
-Публичные страницы сохраняют воздушный Hero с иллюстрацией. Кабинет остаётся
-компактным рабочим пространством с одной следующей задачей; большой рекламный
-Hero не вытесняет действие с телефона. Навигация: Обзор / План / Документы.
+`src/app/globals.css` owns the complete palette in :root and the Tailwind v4 theme.
+`design/warm-tokens.json` is its portable color manifest. Do not add another palette.
+Main colors: base #FAF8F5, surface #FFFFFF, subtle #F3EFEA, primary text #141413,
+secondary text #57534E, muted #8C857B, accent #E63946. Supporting colors are the
+user-specified cream, peach, lemon and coral-gradient stops in the manifest.
 
-Не меняются маршруты, Stripe, авторизация, пользовательские данные, API,
-статусы документов, факты, цены, сроки, геометрия карты и MOD. 209.
-Не добавляются обещания приёма документов, поступления, визы и стипендии.
+Use the same fonts, spacing rhythm, pills, soft warm shadows and 24–32px content
+cards on home, universities, plan, prices, guides, portal and utility routes.
+Inter Tight is the shared UI face from the accepted guides page. Main headings
+use weight 800, tracking -0.03em and line height 1.08. One meaningful phrase or
+word receives the shared editorial accent. Small captions remain readable.
 
-Проверка цветов: `node scripts/design-warm-palette-review.mjs --source-only`.
-Полный визуальный и функциональный контроль сохраняется в CI.
+The fixed ambient layer and the guides hero use cream, peach and lemon washes
+blurred by 90px. Content cards are white. Active tabs are white or pale coral,
+with graphite/coral type, warm borders and soft shadows. Controls have a visible
+coral focus ring, 44px targets where applicable and reduced-motion support.
 
+The university map uses the same light palette. Its geometry, selection,
+keyboard controls and labels are unchanged. Status text and icons retain their
+meaning without relying on a separate color palette. Existing approved Italian
+paintings and Vespi raster assets are retained as artwork; interface color rules
+apply to CSS, Tailwind, inline styles, SVG and generated social cards.
 
-## Plan and local workspace · 18 October 2026
+## Validation
 
-Operate surfaces share the validated questionnaire draft in localStorage. The public wizard has one Vespi portrait and ten warm progress segments. The document workbench has a distinct split geometry and vector utility icons, with no repeated portrait. Examples are labelled demonstrations and never AI results.
+`npm run check:palette` scans all application source, styles, vector assets and
+the token manifest. It rejects out-of-palette color literals and obsolete color
+utilities. Build the static export with `npm run build`; inspect every route and
+interactive state at desktop and mobile sizes. Check actual computed colors as
+well as source literals so inherited browser defaults cannot escape inspection.
 
-The portal opens a local workspace when no authenticated session exists. Cloud access remains code + surname; guest progress grants no cloud or paid privileges and is not silently imported into an account. Completion rings count route tasks, not admission probability. Manual collection flags never create a review verdict. The only additional success colors approved in this brief are sage #1F7A68 and #E6F4F1.
+Product facts, API contracts, payments, authentication and saved plans are outside
+the visual change. Do not invent admissions requirements, prices or outcomes.
 
-The shared logo is an SVG citrus-petal i emblem with an 800-weight iItaly wordmark. Its warm gradient and hover respect reduced motion.
+## Current product structure
+
+Preserve the shared local questionnaire and guest workspace, isolated cloud sign-in, one actual-stage portal navigator, face-free utility icons, the shared Vespi introduction and citrus-petal logo. The pricing botanical scene, terrace, tomato artwork and responsive geometry remain intact. Route progress is task completion, not admission probability; local completion does not create AI review verdicts or paid privileges. These surfaces use the canonical tokens above.

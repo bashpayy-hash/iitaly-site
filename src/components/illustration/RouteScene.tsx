@@ -22,7 +22,7 @@ import { DURATION, EASE } from "@/components/motion/tokens";
  * почти-чёрный фон со светящимися тёплыми акцентами, здесь — тёплая
  * бумага IITALY. Тёмный фон референса сломал бы светлую редакционную
  * систему всего сайта. Смысловая нагрузка градиента маршрута: холодный
- * dusty blue у начала (неопределённость) → тёплый red/peach у арки
+ * кремовый у начала → коралловый у арки
  * (Италия), то есть движение читается цветом, а не только формой.
  *
  * Весь SVG декоративный: aria-hidden + pointer-events:none. Никакого
@@ -148,7 +148,7 @@ export function RouteScene({
     >
       <defs>
         <linearGradient id={ID.route} gradientUnits="userSpaceOnUse" x1="140" y1="700" x2="392" y2="250">
-          <stop offset="0" stopColor="var(--color-warm-sand)" />
+          <stop offset="0" stopColor="var(--color-sand)" />
           <stop offset="0.5" stopColor="var(--color-peach)" />
           <stop offset="1" stopColor="var(--color-warn)" />
         </linearGradient>

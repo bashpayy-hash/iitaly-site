@@ -38,10 +38,10 @@ import type { IllustrationAsset } from "@/data/illustrations";
 function maskFor(side: "right" | "left"): CSSProperties {
   const horizontal =
     side === "right"
-      ? "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 42%, #000 72%)"
-      : "linear-gradient(to left, transparent 0%, rgba(0,0,0,0.1) 42%, #000 72%)";
+      ? "linear-gradient(to right, transparent 0%, rgba(20,20,19,0.1) 42%, #141413 72%)"
+      : "linear-gradient(to left, transparent 0%, rgba(20,20,19,0.1) 42%, #141413 72%)";
   const vertical =
-    "linear-gradient(to bottom, transparent 0%, #000 20%, #000 78%, transparent 100%)";
+    "linear-gradient(to bottom, transparent 0%, #141413 20%, #141413 78%, transparent 100%)";
   const mask = `${horizontal}, ${vertical}`;
   return {
     maskImage: mask,

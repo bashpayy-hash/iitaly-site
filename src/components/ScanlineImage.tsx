@@ -38,13 +38,13 @@ export interface ScanlineImageProps {
 
 const DEFAULTS = {
   lineVar: "--color-warn",
-  lineHex: "#b25000",
+  lineHex: "#E63946",
   lineDeepVar: "--color-warn-deep",
-  lineDeepHex: "#7a3600",
+  lineDeepHex: "#E63946",
   lineLightVar: "--color-warn-light",
-  lineLightHex: "#c97a2e",
+  lineLightHex: "#E63946",
   bgVar: "--color-cream",
-  bgHex: "#faf5ec",
+  bgHex: "#FAF8F5",
   columnSpacing: 3,
   rowStep: 3,
   revealMs: 2100,

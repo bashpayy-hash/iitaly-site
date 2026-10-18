@@ -20,7 +20,7 @@ import { useReducedMotion } from "@/components/motion/MotionProvider";
  * сочетаний одной and той же палитры под конкретные секции. atlas/journey/
  * ledger/coast/quiet — более ранний, уже применённый на нескольких секциях
  * набор (красный/тёплый акцент). data/arrival/pricing/guides/portal —
- * вариант на пыльно-голубом и персиковом (see globals.css --color-warm-sand
+ * вариант на пыльно-голубом и персиковом (see globals.css --color-sand
  * /--color-peach), ближе к атмосфере референса: фирменный красный в них
  * почти не участвует, только персик/голубой на тёплой бумаге.
  *
@@ -68,25 +68,25 @@ const MESH: Record<EditorialBackgroundVariant, string> = {
   // градиент не даёт ни при какой прозрачности. Насыщенность по-прежнему
   // низкая (это color-mix с transparent), но плотность — заметная.
   data:
-    "radial-gradient(72% 78% at 2% 0%, color-mix(in oklch, var(--color-warm-sand) 46%, transparent) 0%, transparent 66%), " +
+    "radial-gradient(72% 78% at 2% 0%, color-mix(in oklch, var(--color-sand) 46%, transparent) 0%, transparent 66%), " +
     "radial-gradient(60% 64% at 100% 100%, color-mix(in oklch, var(--color-peach) 44%, transparent) 0%, transparent 62%), " +
     "radial-gradient(48% 52% at 62% 18%, color-mix(in oklch, var(--color-peach) 22%, transparent) 0%, transparent 58%), " +
-    "radial-gradient(40% 44% at 30% 92%, color-mix(in oklch, var(--color-warm-sand) 26%, transparent) 0%, transparent 56%)",
+    "radial-gradient(40% 44% at 30% 92%, color-mix(in oklch, var(--color-sand) 26%, transparent) 0%, transparent 56%)",
   arrival:
     "radial-gradient(66% 70% at 0% 100%, color-mix(in oklch, var(--color-peach) 42%, transparent) 0%, transparent 64%), " +
-    "radial-gradient(54% 56% at 100% 2%, color-mix(in oklch, var(--color-warm-sand) 34%, transparent) 0%, transparent 60%), " +
+    "radial-gradient(54% 56% at 100% 2%, color-mix(in oklch, var(--color-sand) 34%, transparent) 0%, transparent 60%), " +
     "radial-gradient(44% 48% at 46% 40%, color-mix(in oklch, var(--color-peach) 18%, transparent) 0%, transparent 58%)",
   pricing:
     "radial-gradient(70% 62% at 96% -4%, color-mix(in oklch, var(--color-peach) 44%, transparent) 0%, transparent 62%), " +
-    "radial-gradient(62% 58% at 0% 104%, color-mix(in oklch, var(--color-warm-sand) 36%, transparent) 0%, transparent 60%), " +
+    "radial-gradient(62% 58% at 0% 104%, color-mix(in oklch, var(--color-sand) 36%, transparent) 0%, transparent 60%), " +
     "radial-gradient(46% 50% at 34% 30%, color-mix(in oklch, var(--color-peach) 20%, transparent) 0%, transparent 56%)",
   guides:
-    "radial-gradient(64% 52% at 14% -12%, color-mix(in oklch, var(--color-warm-sand) 40%, transparent) 0%, transparent 58%), " +
+    "radial-gradient(64% 52% at 14% -12%, color-mix(in oklch, var(--color-sand) 40%, transparent) 0%, transparent 58%), " +
     "radial-gradient(50% 42% at 88% -6%, color-mix(in oklch, var(--color-peach) 28%, transparent) 0%, transparent 55%)",
   portal:
-    "radial-gradient(78% 72% at 100% 0%, color-mix(in oklch, var(--color-warm-sand) 42%, transparent) 0%, transparent 64%), " +
+    "radial-gradient(78% 72% at 100% 0%, color-mix(in oklch, var(--color-sand) 42%, transparent) 0%, transparent 64%), " +
     "radial-gradient(68% 66% at 0% 100%, color-mix(in oklch, var(--color-peach) 34%, transparent) 0%, transparent 62%), " +
-    "radial-gradient(46% 48% at 52% 44%, color-mix(in oklch, var(--color-warm-sand) 20%, transparent) 0%, transparent 58%)",
+    "radial-gradient(46% 48% at 52% 44%, color-mix(in oklch, var(--color-sand) 20%, transparent) 0%, transparent 58%)",
 };
 
 /** Тёплая бумажная подложка под mesh — чтобы панель не читалась как белый лист. */

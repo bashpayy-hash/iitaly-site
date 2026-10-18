@@ -161,7 +161,7 @@ export function CitySketchbook({ jumpTo }: { jumpTo?: { plate: number; token: nu
     wrap.style.opacity = (loupeOnRef.current ? k : 0).toFixed(3);
     if (k <= 0.002) return;
     const r = (R - bez).toFixed(1);
-    const mask = `radial-gradient(circle ${r}px at ${p.x.toFixed(1)}px ${p.y.toFixed(1)}px,#000 calc(100% - 1px),transparent 100%)`;
+    const mask = `radial-gradient(circle ${r}px at ${p.x.toFixed(1)}px ${p.y.toFixed(1)}px,#141413 calc(100% - 1px),transparent 100%)`;
     wrap.style.webkitMaskImage = mask;
     wrap.style.maskImage = mask;
     /* точка бумаги под стеклом, увеличенная вокруг неё же — стекло

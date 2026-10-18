@@ -43,7 +43,7 @@ export function HowItWorks() {
       <div className={styles.howInner}>
         <div className={styles.howHeading}>
           <AppleCaption>Как проходит работа с нами</AppleCaption>
-          <AppleHeading>От вопроса до посадки в самолёт.</AppleHeading>
+          <AppleHeading>От вопроса до посадки в <span className="editorial-accent">самолёт.</span></AppleHeading>
           <p>Не нужно разбираться во всём сразу. У каждого этапа — свой понятный следующий шаг.</p>
           <AppleButtonLink href="/guides" variant="ghost" className="mt-5">Смотреть гайды по визе <span aria-hidden>↗</span></AppleButtonLink>
           <ItalianAccent kind="moka" />

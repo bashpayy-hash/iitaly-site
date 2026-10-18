@@ -19,7 +19,7 @@ export function Accordion({
 
   return (
     <div className={quiet
-      ? "overflow-hidden rounded-2xl border border-[#d1d1cd] bg-[#fdfbfa]"
+      ? "overflow-hidden rounded-2xl border border-[#F3EFEA] bg-[#FFFFFF]"
       : "overflow-hidden rounded-lg border-2 border-ink bg-paper"}
     >
       <button
@@ -28,7 +28,7 @@ export function Accordion({
         aria-expanded={open}
         aria-controls={id}
         className={quiet
-          ? "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58544e] sm:px-5"
+          ? "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E63946] sm:px-5"
           : "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red sm:px-5"}
       >
         <div className="min-w-0 flex-1">{summary}</div>
@@ -36,7 +36,7 @@ export function Accordion({
           aria-hidden
           viewBox="0 0 16 10"
           className={"mt-1.5 h-2.5 w-4 shrink-0 transition-transform duration-300 " +
-            (quiet ? "text-[#72706b] " : "text-ink-soft ") +
+            (quiet ? "text-[#57534E] " : "text-ink-soft ") +
             (open ? "-rotate-180" : "")}
         >
           <path
@@ -56,7 +56,7 @@ export function Accordion({
       >
         <div className="overflow-hidden">
           <div className={quiet
-            ? "border-t border-[#e6e5e1] px-4 pt-2 pb-4 sm:px-5"
+            ? "border-t border-[#F3EFEA] px-4 pt-2 pb-4 sm:px-5"
             : "border-t-2 border-line px-4 pt-4 pb-5 sm:px-5"}
           >
             {children}

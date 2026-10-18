@@ -295,7 +295,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
 
       <div aria-live="polite" className="mt-5">
         {(state.step === "error" || state.step === "retry") && !unavailable && (
-          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
+          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-primary">
             {state.message}
             {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}
           </div>
@@ -335,7 +335,7 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
           <ShieldCheck size={22} aria-hidden="true" />
-          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
+          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-primary" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
           <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
         </div>
         {result.summary && <p>{result.summary}</p>}
@@ -370,7 +370,7 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
                   c.status === "ok"
                     ? "bg-green/15 text-green"
                     : c.status === "error"
-                      ? "bg-red/15 text-red"
+                      ? "bg-red/15 text-primary"
                       : c.status === "warn"
                         ? "bg-warn/15 text-warn"
                         : "bg-white/10 text-cloud-meta"

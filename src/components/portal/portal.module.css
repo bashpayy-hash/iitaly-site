@@ -1,14 +1,14 @@
 .portal {
-  --i-signal: #e63946;
-  --portal-canvas: #faf8f5;
-  --portal-surface: #fff;
-  --portal-surface-soft: #faf8f5;
-  --portal-border: rgba(20,20,19,.08);
-  --portal-muted: #615d57;
-  --portal-ash: #615d57;
-  --portal-ink: #141413;
-  --portal-accent: #141413;
-  --portal-accent-deep: #141413;
+  --i-signal: var(--accent-primary);
+
+
+
+
+
+
+
+
+
   --portal-heading-font: var(--font-apple-display);
   --portal-serif: var(--portal-heading-font);
   --portal-green: var(--color-green);
@@ -16,13 +16,13 @@
   --portal-danger: var(--color-red-deep);
   min-height: 100vh;
   min-height: 100svh;
-  background: var(--portal-canvas);
+
   color: var(--portal-ink);
   font-family: var(--font-apple-text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-}
-.portal ::selection { color: var(--portal-ink); background: #f8d6de; }
+ --portal-canvas: var(--bg-base); --portal-surface: var(--bg-surface); --portal-surface-soft: var(--bg-subtle); --portal-border: var(--border-subtle); --portal-muted: var(--text-secondary); --portal-ash: var(--text-secondary); --portal-ink: var(--text-primary); --portal-accent: var(--text-primary); --portal-accent-deep: var(--text-primary); background: transparent; }
+.portal ::selection { color: var(--portal-ink); background: var(--accent-soft); }
 .portal :where(input, textarea) { caret-color: var(--portal-accent); }
 .portal :is([id], [tabindex], a, button, input, textarea, select, summary) { scroll-margin-top: calc(var(--portal-chrome-height, 64px) + 16px); scroll-margin-bottom: 76px; }
 
@@ -73,7 +73,7 @@
 }
 
 .navItem:hover { color: var(--portal-ink); background: var(--portal-surface-soft); }
-.navItemActive { color: var(--portal-ink); background: var(--portal-surface); border-color: var(--portal-border); font-weight: 600; }
+.navItemActive {  background: var(--portal-surface); border-color: var(--portal-border); font-weight: 600;  color: var(--text-primary); box-shadow: var(--shadow-soft); }
 .navItemActive::before { display: none; }
 
 .navDot {
@@ -130,10 +130,10 @@
 .greeting {
   font-family: var(--portal-heading-font);
   font-size: 20px;
-  line-height: 1.2;
-  letter-spacing: -.025em;
-  font-weight: 600;
-}
+
+
+
+ font-weight: 800; line-height: 1.08; letter-spacing: -.03em; }
 
 .subline {
   margin-top: 6px;
@@ -169,8 +169,8 @@
 
 .ghostButton:hover {
   color: var(--portal-ink);
-  border-color: #bdb5ab;
-  background: rgba(36,33,29,.025);
+  border-color: var(--border-subtle);
+  background: color-mix(in srgb, var(--text-primary) 2.5%, transparent);
 }
 
 .mobileNav { display: none; }
@@ -187,7 +187,7 @@
   overflow: hidden;
   padding: 24px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
 }
 
@@ -197,7 +197,7 @@
   position: absolute;
   inset: 0 0 0 52%;
   background-image:
-    linear-gradient(90deg, var(--portal-surface) 0%, rgba(255,253,249,.78) 20%, transparent 56%),
+    linear-gradient(90deg, var(--portal-surface) 0%, color-mix(in srgb, var(--glow-cream) 78%, transparent) 20%, transparent 56%),
     url("/illustrations/editorial/travel-paperwork-640.webp");
   background-size: cover;
   background-position: 68% center;
@@ -259,7 +259,7 @@
   margin-top: 9px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e9e3da;
+  background: var(--bg-subtle);
 }
 
 .progressFill {
@@ -275,8 +275,8 @@
   min-height: 28px;
   padding: 5px 9px;
   border-radius: 999px;
-  border: 1px solid rgba(73,104,82,.18);
-  background: rgba(73,104,82,.055);
+  border: 1px solid color-mix(in srgb, var(--text-secondary) 18%, transparent);
+  background: color-mix(in srgb, var(--text-secondary) 5.5%, transparent);
   color: var(--portal-green);
   font-size: 13px;
   font-weight: 500;
@@ -284,8 +284,8 @@
 }
 
 .statusBadge[data-state="attention"] {
-  border-color: rgba(183,42,58,.18);
-  background: rgba(183,42,58,.05);
+  border-color: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 5%, transparent);
   color: var(--portal-danger);
 }
 
@@ -344,7 +344,7 @@
   align-items: end;
   padding: 22px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
 }
 
@@ -396,8 +396,8 @@
   gap: 0;
   margin-top: 10px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
-  background: rgba(255,253,249,.62);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--glow-cream) 62%, transparent);
   overflow: hidden;
 }
 
@@ -415,7 +415,7 @@
 }
 
 .secondaryStep:first-child { border-top: 0; }
-.secondaryStep:hover { background: rgba(36,33,29,.022); }
+.secondaryStep:hover { background: color-mix(in srgb, var(--text-primary) 2.2%, transparent); }
 .secondaryStepIndex { color: var(--portal-ash); font-size: 13px; }
 .secondaryStepCopy { display: grid; gap: 2px; min-width: 0; }
 .secondaryStepCopy strong { font-size: 13px; font-weight: 500; color: var(--portal-ink); }
@@ -437,7 +437,7 @@
 .primaryButton {
   border: 1px solid var(--portal-accent);
   background: var(--portal-accent);
-  color: #fff;
+  color: var(--bg-surface);
 }
 
 .primaryButton:hover { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
@@ -452,7 +452,7 @@
   text-underline-offset: 4px;
 }
 
-.secondaryButton:hover { color: var(--portal-ink); border-color: #bdb5ab; }
+.secondaryButton:hover { color: var(--portal-ink); border-color: var(--border-subtle); }
 
 .overviewGrid {
   display: grid;
@@ -463,10 +463,10 @@
 .card {
   composes: paper from "../marketing/surface-depth.module.css";
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
   padding: 16px;
-  box-shadow: 0 1px 2px rgba(36,33,29,.035);
+  box-shadow: var(--shadow-soft);
 }
 
 .summaryStack { display: grid; gap: 12px; }
@@ -477,7 +477,7 @@
   text-align: left;
 }
 
-.summaryCardButton:hover { border-color: #c9c1b6; }
+.summaryCardButton:hover { border-color: var(--border-subtle); }
 
 .summaryHeader {
   display: flex;
@@ -549,7 +549,7 @@
 .stageRow:hover .stageName { color: var(--portal-accent-deep); }
 .stageMeta,
 .docMeta { color: var(--portal-ash); font-size: 13px; }
-.miniTrack { width: 84px; height: 4px; overflow: hidden; border-radius: 999px; background: #e9e3da; }
+.miniTrack { width: 84px; height: 4px; overflow: hidden; border-radius: 999px; background: var(--bg-subtle); }
 .miniFill { height: 100%; border-radius: inherit; background: var(--portal-accent); }
 
 .docsHeroContent { max-width: 65%; }
@@ -576,16 +576,16 @@
 }
 
 .statusChip[data-state="ok"] {
-  border-color: rgba(73,104,82,.22);
+  border-color: color-mix(in srgb, var(--text-secondary) 22%, transparent);
   color: var(--portal-green);
-  background: rgba(73,104,82,.055);
+  background: color-mix(in srgb, var(--text-secondary) 5.5%, transparent);
 }
 
 .statusChip[data-state="warn"],
 .statusChip[data-state="error"] {
-  border-color: rgba(183,42,58,.2);
+  border-color: color-mix(in srgb, var(--accent-primary) 20%, transparent);
   color: var(--portal-danger);
-  background: rgba(183,42,58,.05);
+  background: color-mix(in srgb, var(--accent-primary) 5%, transparent);
 }
 
 .taskRow {
@@ -608,7 +608,7 @@
   margin-top: 1px;
   border: 1px solid var(--portal-border);
   border-radius: 6px;
-  color: #fff;
+  color: var(--bg-surface);
   font-size: 13px;
 }
 
@@ -620,7 +620,7 @@
 .taskChips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
 .taskChip {
   border-radius: 999px;
-  background: #f0ebe5;
+  background: var(--bg-base);
   padding: 3px 7px;
   color: var(--portal-muted);
   font-size: 13px;
@@ -628,8 +628,8 @@
 }
 
 .actionGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.actionCard { padding: 16px; border: 1px solid var(--portal-border); border-radius: 16px; background: var(--portal-surface); }
-.actionCardPrimary { border-color: rgba(183,42,58,.22); }
+.actionCard { padding: 16px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); }
+.actionCardPrimary { border-color: color-mix(in srgb, var(--accent-primary) 22%, transparent); }
 .actionNum { display: none; }
 .actionTitle { color: var(--portal-ink); font-size: 14px; font-weight: 500; line-height: 1.4; }
 .actionBody { margin-top: 8px; color: var(--portal-muted); font-size: 15px; line-height: 1.6; }
@@ -673,7 +673,7 @@
     border-radius: 999px;
     white-space: nowrap;
   }
-  .navItemActive { border-color: var(--portal-border); background: rgba(31,26,23,.045); }
+  .navItemActive { border-color: var(--portal-border); background: color-mix(in srgb, var(--text-primary) 4.5%, transparent); }
   .navItemActive::before { display: none; }
 }
 
@@ -724,12 +724,12 @@
 
 
 .loginPage {
-  --portal-canvas: #f8f5ef;
-  --portal-surface: #fffdf9;
-  --portal-border: #ded8cf;
-  --portal-muted: #5f5a54;
-  --portal-ash: #5f5a54;
-  --portal-ink: #24211d;
+  --portal-canvas: var(--bg-base);
+  --portal-surface: var(--glow-cream);
+  --portal-border: var(--border-subtle);
+  --portal-muted: var(--text-secondary);
+  --portal-ash: var(--text-secondary);
+  --portal-ink: var(--text-primary);
   --portal-accent: var(--color-red);
   --portal-accent-deep: var(--color-red-deep);
   --portal-danger: var(--color-red-deep);
@@ -752,7 +752,7 @@
 .loginIntro,
 .loginCard {
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
 }
 
@@ -872,8 +872,8 @@
 }
 
 .loginField input:focus {
-  border-color: rgba(183,42,58,.42);
-  box-shadow: 0 0 0 3px rgba(183,42,58,.07);
+  border-color: color-mix(in srgb, var(--accent-primary) 42%, transparent);
+  box-shadow: var(--shadow-soft);
 }
 
 .loginError {
@@ -892,7 +892,7 @@
   border: 1px solid var(--portal-accent);
   border-radius: 8px;
   background: var(--portal-accent);
-  color: #fff;
+  color: var(--bg-surface);
   font-size: 13px;
   font-weight: 500;
 }
@@ -957,8 +957,8 @@
   align-items: end;
   margin-bottom: 26px;
   padding: 20px 22px;
-  border: 1px solid rgba(183,42,58,.22);
-  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 22%, transparent);
+  border-radius: 28px;
   background: var(--portal-surface);
 }
 
@@ -1019,8 +1019,8 @@
   min-height: 150px;
   padding: 15px 16px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
-  background: rgba(255,253,249,.72);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--glow-cream) 72%, transparent);
 }
 
 .guidanceCard h3 {
@@ -1086,7 +1086,7 @@
   display: grid;
   align-content: start;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
   overflow: hidden;
 }
@@ -1107,7 +1107,7 @@
 }
 
 .statusRailItem:first-child { border-top: 0; }
-.statusRailItem:hover { background: rgba(36,33,29,.02); }
+.statusRailItem:hover { background: color-mix(in srgb, var(--text-primary) 2%, transparent); }
 .statusRailItem > span:first-child,
 .statusRailItemStatic > span:first-child { display: grid; gap: 3px; }
 .statusRailItem small,
@@ -1124,14 +1124,14 @@
 .taskActions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
 .taskTapHint { color: var(--portal-ash); font-size: 13px; }
 .taskRow[data-blocked] { opacity: .7; }
-.taskCheck[data-system="true"]:not([data-done="true"]) { color: var(--portal-ash); background: #f0ebe5; }
+.taskCheck[data-system="true"]:not([data-done="true"]) { color: var(--portal-ash); background: var(--bg-base); }
 
 .docGroup { margin-top: 26px; }
 .docGroup:first-of-type { margin-top: 0; }
 .docGroupHeading { margin-bottom: 8px; }
 .docGroupHeading h3 { margin: 0; font-family: var(--font-apple-display); font-size: 17px; font-weight: 500; }
 .docGroupHeading p { margin: 3px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.45; }
-.docGroup .docList { border: 1px solid var(--portal-border); border-radius: 16px; background: var(--portal-surface); padding: 4px 15px; }
+.docGroup .docList { border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); padding: 4px 15px; }
 .docRow[data-blocked] { opacity: .68; }
 .docsSummaryStrip {
   display: flex;
@@ -1152,7 +1152,7 @@
   align-items: center;
   padding: 20px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
 }
 .reminderState { display: flex; align-items: flex-start; gap: 12px; }
@@ -1168,8 +1168,8 @@
   gap: 0;
   margin-top: 10px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
-  background: rgba(255,253,249,.55);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--glow-cream) 55%, transparent);
 }
 .reminderExplainer > div { display: grid; gap: 3px; padding: 13px 15px; border-left: 1px solid var(--portal-border); }
 .reminderExplainer > div:first-child { border-left: 0; }
@@ -1198,14 +1198,14 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
-  --portal-canvas: #faf8f5;
-  --portal-surface: #fff;
-  --portal-border: rgba(20,20,19,.08);
-  --portal-muted: #615d57;
-  --portal-ash: #615d57;
-  --portal-ink: #141413;
-  --portal-accent: #141413;
-  --portal-accent-deep: #141413;
+  --portal-canvas: var(--bg-surface);
+  --portal-surface: var(--bg-surface);
+  --portal-border: var(--border-subtle);
+  --portal-muted: var(--text-secondary);
+  --portal-ash: var(--text-secondary);
+  --portal-ink: var(--text-primary);
+  --portal-accent: var(--text-primary);
+  --portal-accent-deep: var(--accent-primary);
   --portal-green: var(--color-green);
   --portal-danger: var(--portal-ink);
   min-height: calc(100svh - 64px);
@@ -1218,9 +1218,9 @@
 .onboardingShell { max-width: 760px; margin: 0 auto; }
 .onboardingTop { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 44px; color: var(--portal-muted); font-size: 13px; }
 .onboardingTop .portalBrand { margin: 0; }
-.onboardingProgress { height: 3px; margin: 10px 0 26px; overflow: hidden; border-radius: 999px; background: #e1dacf; }
+.onboardingProgress { height: 3px; margin: 10px 0 26px; overflow: hidden; border-radius: 999px; background: var(--bg-subtle); }
 .onboardingProgress span { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transition: width 240ms ease; }
-.onboardingCard { padding: 24px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); }
+.onboardingCard { padding: 24px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); }
 .onboardingTitle { max-width: 650px; margin: 4px 0 0; font-family: var(--font-apple-display); font-size: clamp(28px,4vw,36px); font-weight: 600; line-height: 1.08; letter-spacing: -.03em; }
 .onboardingLead { max-width: 620px; margin: 10px 0 0; color: var(--portal-muted); font-size: 16px; line-height: 1.5; }
 .questionBlock { margin-top: 25px; }
@@ -1231,13 +1231,13 @@
   min-height: 58px;
   padding: 11px 12px;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
+  border-radius: 28px;
   background: var(--portal-surface);
   color: inherit;
   text-align: left;
 }
-.optionCard:hover { border-color: #bebab4; }
-.optionCard[data-selected="true"] { border-color: #e8b7c3; background: #fff5f7; }
+.optionCard:hover { border-color: var(--border-subtle); }
+.optionCard[data-selected="true"] { border-color: var(--border-subtle); background: var(--bg-base); }
 .optionCard strong { display: block; font-size: 14px; font-weight: 500; }
 .optionCard span { display: block; margin-top: 2px; color: var(--portal-muted); font-size: 13px; line-height: 1.35; }
 .onboardingPrimary,
@@ -1249,7 +1249,7 @@
   font-size: 13px;
   font-weight: 500;
 }
-.onboardingPrimary { width: 100%; margin-top: 24px; border: 1px solid var(--portal-accent); background: var(--portal-accent); color: #fff; }
+.onboardingPrimary { width: 100%; margin-top: 24px; border: 1px solid var(--portal-accent); background: var(--portal-accent); color: var(--bg-surface); }
 .onboardingPrimary:hover:not(:disabled),
 .onboardingPrimarySmall:hover:not(:disabled) { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
 .onboardingPrimary:disabled,
@@ -1259,17 +1259,17 @@
 .onboardingError { margin: 16px 0 0; border-left: 2px solid var(--portal-danger); padding-left: 10px; color: var(--portal-danger); font-size: 13px; line-height: 1.45; }
 .pathChoices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
 .pathChoice { min-height: 190px; padding: 17px; border: 1px solid var(--portal-border); border-radius: 14px; background: transparent; color: inherit; text-align: left; }
-.pathChoice:hover { border-color: rgba(183,42,58,.32); background: rgba(183,42,58,.035); }
+.pathChoice:hover { border-color: color-mix(in srgb, var(--accent-primary) 32%, transparent); background: color-mix(in srgb, var(--accent-primary) 3.5%, transparent); }
 .pathChoiceEyebrow { display: block; margin-bottom: 15px; color: var(--portal-accent-deep); font-size: 13px; font-weight: 500; }
 .pathChoice strong { display: block; font-family: var(--font-apple-display); font-size: 18px; font-weight: 500; }
 .pathChoice p { margin: 8px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
 .pathChoice small { display: block; margin-top: 15px; color: var(--portal-ash); font-size: 13px; line-height: 1.4; }
 .telegramOnboarding { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 24px; padding: 16px; border: 1px solid var(--portal-border); border-radius: 14px; background: var(--portal-canvas); }
-.telegramOnboarding[data-linked="true"] { border-color: rgba(73,104,82,.24); background: rgba(73,104,82,.045); }
+.telegramOnboarding[data-linked="true"] { border-color: color-mix(in srgb, var(--text-secondary) 24%, transparent); background: color-mix(in srgb, var(--text-secondary) 4.5%, transparent); }
 .telegramOnboarding strong { font-size: 13px; font-weight: 500; }
 .telegramOnboarding p { margin: 3px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.4; }
 .telegramOnboardingActions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
-.onboardingPrimarySmall { border: 1px solid var(--portal-accent); background: var(--portal-accent); color: #fff; padding: 8px 11px; }
+.onboardingPrimarySmall { border: 1px solid var(--portal-accent); background: var(--portal-accent); color: var(--bg-surface); padding: 8px 11px; }
 .onboardingSecondarySmall { border: 1px solid var(--portal-border); background: transparent; color: var(--portal-muted); padding: 8px 11px; }
 
 /* Touch targets and contrast: portal is expected to be opened from Telegram on phones. */
@@ -1334,8 +1334,8 @@
 .weekBoard {
   overflow: hidden;
   border: 1px solid var(--portal-border);
-  border-radius: 16px;
-  background: rgba(255,253,249,.74);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--glow-cream) 74%, transparent);
 }
 
 .weekBoardHeader {
@@ -1426,12 +1426,12 @@
   padding: 11px 16px;
   border: 0;
   border-top: 1px solid var(--portal-border);
-  background: rgba(183,42,58,.028);
+  background: color-mix(in srgb, var(--accent-primary) 2.8%, transparent);
   color: inherit;
   text-align: left;
 }
 
-.parallelStrip:hover { background: rgba(183,42,58,.045); }
+.parallelStrip:hover { background: color-mix(in srgb, var(--accent-primary) 4.5%, transparent); }
 .parallelStrip > span:first-child { display: grid; gap: 2px; }
 .parallelStrip small { color: var(--portal-accent-deep); font-size: 13px; font-weight: 500; }
 .parallelStrip strong { color: var(--portal-ink); font-size: 13px; font-weight: 500; }
@@ -1476,7 +1476,7 @@
 /* The portal continues the established marketing palette and touch scale. */
 .portalBrand::after, .mobileBrand::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 3px; border-radius: 50%; background: var(--portal-accent); }
 .primaryButton, .onboardingPrimary { min-height: 48px; padding: 12px 24px; border-radius: 999px; font-size: 16px; line-height: 1.35; letter-spacing: -.015em; }
-.card { border-radius: 24px; }
+.card { border-radius: 28px; }
 .portal :is(a, button, input, select, summary):focus-visible { outline-color: var(--portal-ink); }
 
 /* First use: a small friendly face beside, never above, the three questions. */

@@ -15,8 +15,8 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main>
-        <section className="border-b-2 border-ink bg-cream px-5 py-20 sm:py-28">
+      <main id="main">
+        <section className="bg-transparent px-5 py-20 sm:py-28">
           <div className="mx-auto flex max-w-[640px] flex-col items-center text-center">
             <Vespa pose="404" className="h-40 w-auto sm:h-48" />
             <Caption as="p" className="mt-8">

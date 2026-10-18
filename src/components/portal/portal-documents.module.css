@@ -46,5 +46,5 @@
 .row { display:flex; flex-direction:column; justify-content:space-between; min-height:180px; padding:22px; border:1px solid var(--portal-border); border-radius:24px; background:white; }
 .row:hover { background:var(--color-warm-white); }
 .rowFooter { margin-top:20px; flex-wrap:wrap; }
-.status[data-outcome=approved] { color:#1F7A68; background:#E6F4F1; padding:5px 9px; border-radius:999px; }
+.status[data-outcome=approved] { color:var(--text-secondary); background:var(--bg-base); padding:5px 9px; border-radius:999px; }
 @media(max-width:600px) { .list { grid-template-columns:1fr; } .row { padding:20px; min-height:160px; } }

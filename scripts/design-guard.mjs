@@ -7,6 +7,10 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // Global warm-system brief: recolor the existing city artwork and rename its
+  // presentation-only wash property. No catalogue facts or interaction change.
+  'src/components/sketchbook/CitySketchbook.tsx',
+  'src/components/sketchbook/CitySketchbook.module.css',
   // User request 2026-10-18: one watercolor pricing scene and a labelled
   // Vespi launcher on /prices. Existing tokens, logo, type and cards stay fixed.
   'src/components/marketing/BotanicalCanvas.tsx',
@@ -164,7 +168,7 @@ assert.equal((wizard.match(/    id: /g) || []).length, 10, 'The quiz includes in
 const baseItaly = execFileSync('git', ['show', `${base}:src/data/italy.ts`], {encoding:'utf8'});
 const headItaly = readFileSync('src/data/italy.ts', 'utf8');
 assert.equal(headItaly.match(/export const ITALY_PATH = .*;/)?.[0], baseItaly.match(/export const ITALY_PATH = .*;/)?.[0], 'Map geometry is unchanged.');
-const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/region: "[^"]*", /g, '').replace(/sky: "[^"]*"/g, 'sky: "presentation"');
+const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/(?:sky|wash): "[^"]*"/g, 'wash: "presentation"');
 assert.equal(cityGeometry(headItaly), cityGeometry(baseItaly), 'City identities, coordinates and styles are unchanged.');
 const baseMap = execFileSync('git', ['show', `${base}:src/components/universities/ItalyMap.tsx`], {encoding:'utf8'});
 // The new brief explicitly recolors inline SVG gradients. Erase only color

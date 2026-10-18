@@ -164,7 +164,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   className={styles.formInput} />
               </label>
 
-              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-red">{error}</p>}
+              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-primary">{error}</p>}
 
               <AppleButton type="submit" variant="filled" className="mt-5 w-full">
                 {STRIPE_ENABLED ? "Перейти к оплате" : "Оформить заказ"}

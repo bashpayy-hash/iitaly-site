@@ -126,7 +126,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         <div className={ui.heroInner}>
           <div className={ui.heroCopy}>
             <p className={ui.eyebrow}>43 университета · 30 городов</p>
-            <h1 className={ui.heroTitle}>Университеты<br /><span>Италии</span></h1>
+            <h1 className={ui.heroTitle}>Университеты<br /><span className="editorial-accent">Италии</span></h1>
             <p className={ui.heroDescription}>
               Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
               жизни там. Можно сравнить до трёх университетов.

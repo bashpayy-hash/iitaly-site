@@ -689,7 +689,7 @@ export function PortalExplorer() {
           {section === "today" ? <div className={styles.topbar + " " + artwork.overviewIntro}>
             <div className={artwork.greetingHeading}>
               <div className={navigation.topCopy}>
-                <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
+                <h1 className={styles.greeting}>Привет, <span className="editorial-accent">{data.client.name}</span></h1>
                 <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
               </div>
             </div>

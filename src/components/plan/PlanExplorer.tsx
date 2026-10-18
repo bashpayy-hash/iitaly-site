@@ -37,7 +37,7 @@ export function PlanExplorer() {
         <div data-role="heading">
           <AppleCaption as="p" className="warm-badge">Персональный маршрут</AppleCaption>
           <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
-            Опиши свою <span className="warm-highlight">ситуацию</span>
+            Опиши свою <span className="editorial-accent">ситуацию</span>
           </AppleHeading>
         </div>
         <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">
