@@ -66,7 +66,7 @@ export function PortalLogin({
         <div className={styles.intro}>
           <div className={styles.copy}>
             <p className={styles.eyebrow}>Личный кабинет IITALY</p>
-            <h1 className={styles.title}>Тебе не нужно помнить весь путь.</h1>
+            <h1 className={styles.title}>Тебе не нужно помнить <span className="warm-highlight">весь путь.</span></h1>
             <p className={styles.lead}>
               После входа система покажет один следующий шаг, ближайшие дедлайны и документы, которые требуют внимания.
             </p>

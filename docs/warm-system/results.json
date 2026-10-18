@@ -1,0 +1,102 @@
+{
+  "sourceFiles": 225,
+  "coldSource": 0,
+  "results": [
+    {
+      "route": "/guides",
+      "width": 1440,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/universities",
+      "width": 1440,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/plan",
+      "width": 1440,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/prices",
+      "width": 1440,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/portal",
+      "width": 1440,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/guides",
+      "width": 390,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/universities",
+      "width": 390,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/plan",
+      "width": 390,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/prices",
+      "width": 390,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/portal",
+      "width": 390,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "body": "rgb(250, 248, 245)",
+      "coldComputed": 0,
+      "overflow": false,
+      "axe": true
+    }
+  ]
+}

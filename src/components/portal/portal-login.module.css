@@ -9,15 +9,15 @@
    сайт и без навигации назад. Маска у картинки — для читаемости текста над
    ней, а не декоративный градиент. */
 .page {
-  --login-ink: #1d1d1f;
-  --login-body: #51515a;
-  --login-muted: #666670;
-  --login-line: #e3e3e8;
-  --login-action: #d7133f;
-  --login-action-deep: #b91134;
+  --login-ink: #141413;
+  --login-body: #56524c;
+  --login-muted: #6b6761;
+  --login-line: #e7e4df;
+  --login-action: #141413;
+  --login-action-deep: #141413;
   min-height: calc(100svh - 64px);
   padding: 48px 24px 72px;
-  background: #fafafa;
+  background: #faf8f5;
   color: var(--login-ink);
 }
 
@@ -107,7 +107,7 @@
   line-height: 1.5;
 }
 .route span { flex-shrink: 0; }
-.route i { height: 1px; flex: 1; background: #d9d9de; }
+.route i { height: 1px; flex: 1; background: #ddd9d3; }
 
 .card {
   min-width: 0;
@@ -139,7 +139,7 @@
   width: 100%;
   min-width: 0;
   min-height: 52px;
-  border: 1px solid #c9c9d0;
+  border: 1px solid #cecac4;
   border-radius: 12px;
   background: #fff;
   padding: 13px 14px;
@@ -149,8 +149,8 @@
   line-height: 1.4;
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
-.field input::placeholder { color: #8a8a93; opacity: 1; }
-.field input:hover { border-color: #a9a9b2; }
+.field input::placeholder { color: #8f8b85; opacity: 1; }
+.field input:hover { border-color: #aeaaa4; }
 .field input:focus {
   outline: none;
   border-color: var(--login-action);

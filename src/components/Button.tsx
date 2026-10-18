@@ -41,8 +41,8 @@ const sizeClass: Record<Size, string> = {
 
 const variantClass: Record<Variant, string> = {
   primary:
-    "rounded-pill border-2 border-red bg-red text-cream shadow-soft-md " +
-    "hover:-translate-y-px hover:bg-red-deep hover:border-red-deep hover:shadow-soft-lg " +
+    "rounded-pill border-2 border-ink bg-ink text-white shadow-soft-md " +
+    "hover:-translate-y-px hover:bg-ink hover:border-ink hover:shadow-soft-lg " +
     "active:translate-y-0 active:scale-[0.98] active:shadow-soft-sm",
   secondary:
     "rounded-pill border-2 border-ink bg-transparent text-ink " +
@@ -57,7 +57,7 @@ const variantClass: Record<Variant, string> = {
   // их работающими на новой системе состояний/motion, не трогая эти файлы.
   dark:
     "rounded-pill border-2 border-ink bg-ink text-cream shadow-soft-md " +
-    "hover:-translate-y-px hover:bg-red hover:border-red hover:shadow-soft-lg " +
+    "hover:-translate-y-px hover:bg-ink hover:border-ink hover:shadow-soft-lg " +
     "active:translate-y-0 active:scale-[0.98] active:shadow-soft-sm",
   ghost:
     "rounded-pill border-2 border-ink bg-transparent text-ink " +

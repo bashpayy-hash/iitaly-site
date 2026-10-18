@@ -3,7 +3,7 @@
    поток, поэтому движение не встаёт, пока сжимается фото. */
 .card {
   overflow: hidden;
-  border: 1px solid #e6e6ea;
+  border: 1px solid #eae6e0;
   background: #fcfcfb;
   padding: 16px 20px 0;
 }

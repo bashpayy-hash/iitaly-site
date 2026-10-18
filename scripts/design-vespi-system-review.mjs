@@ -178,7 +178,9 @@ async function roleAssetBudget() {
 // The user's follow-up explicitly replaces the heavy IITALY. wordmark with
 // iItaly. Preserve its inherited palette and font, while allowing new weight.
 function preservedBrand(value) {
-  return { ...value, logo: value.logo && { color: value.logo.color, fontFamily: value.logo.fontFamily, backgroundColor: value.logo.backgroundColor } };
+  // Explicit 18 October brief replaces the palette; typography is still frozen.
+  const typography = node => node && Object.fromEntries(Object.entries(node).filter(([key]) => /^font/.test(key)));
+  return { body: typography(value.body), heading: typography(value.heading), logo: typography(value.logo), fonts: Object.fromEntries(Object.entries(value.tokens).filter(([key]) => /^--font/.test(key))) };
 }
 
 async function checkWordmark(page) {
@@ -187,17 +189,16 @@ async function checkWordmark(page) {
   assert.equal(await wordmark.locator('[data-brand-initial]').innerText(), 'i');
   assert.equal(await wordmark.locator('[data-brand-word]').innerText(), 'Italy');
   assert.equal((await wordmark.innerText()).replace(/\s+/g, ''), 'iItaly', 'The shared wordmark has no trailing dot');
-  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(252, 28, 70)', 'The initial uses the existing site signal color on every surface');
+  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(230, 57, 70)', 'The initial uses the shared coral signal on every surface');
 }
 
 try {
   if (!baseline) {
     await roleAssetBudget();
-    // Palette and font declarations are deliberately outside this refactor.
-    for (const file of ['src/app/globals.css', 'src/components/marketing/marketing.module.css', 'src/components/marketing/editorial-art.module.css']) {
-      const before = execFileSync('git', ['show', `${baseRef}:${file}`], { encoding: 'utf8' });
-      assert.equal(await readFile(file, 'utf8'), before, `${file}: preserve the existing visual tokens and surfaces`);
-    }
+    // The user explicitly replaces all cold colors; retain the font contract.
+    const fonts = source => source.match(/--font-[^;]+;/g);
+    const before = execFileSync('git', ['show', `${baseRef}:src/app/globals.css`], { encoding: 'utf8' });
+    assert.deepEqual(fonts(await readFile('src/app/globals.css', 'utf8')), fonts(before), 'Typography tokens remain unchanged');
     assert.doesNotMatch(await readFile('src/components/mascot/vespi-assistant.module.css', 'utf8'), /#[\da-f]{3,8}\b|(?:rgb|hsl|oklch)a?\(/i, 'The shared assistant consumes existing tokens instead of introducing a new palette');
   }
   const beforeBrands = baseline ? {} : JSON.parse(await readFile(resolve(output, 'before-brands.json'), 'utf8').catch(() => '{}'));
@@ -234,7 +235,7 @@ try {
       if (sectionsOnly && !['home', 'prices', 'universities'].includes(name)) continue;
       await visit(path);
       brands[`${name}-${width}`] = await brand(page);
-      if (!baseline && beforeBrands[`${name}-${width}`]) assert.deepEqual(preservedBrand(brands[`${name}-${width}`]), preservedBrand(beforeBrands[`${name}-${width}`]), `${name} ${width}: preserve body, typography, and shared palette`);
+      if (!baseline && beforeBrands[`${name}-${width}`]) assert.deepEqual(preservedBrand(brands[`${name}-${width}`]), preservedBrand(beforeBrands[`${name}-${width}`]), `${name} ${width}: preserve typography while applying the authorized warm palette`);
       if (!baseline && name === 'home') {
         const entry = page.getByRole('complementary', { name: 'Начать с Веспи', exact: true });
         const action = entry.getByRole('link', { name: 'Составить план бесплатно', exact: true });
@@ -374,7 +375,7 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    if (!baseline && beforeBrands[`portal-${width}`]) assert.deepEqual(preservedBrand(brands[`portal-${width}`]), preservedBrand(beforeBrands[`portal-${width}`]), `portal ${width}: preserve shared palette and typography`);
+    if (!baseline && beforeBrands[`portal-${width}`]) assert.deepEqual(preservedBrand(brands[`portal-${width}`]), preservedBrand(beforeBrands[`portal-${width}`]), `portal ${width}: preserve typography while applying the authorized warm palette`);
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
@@ -429,7 +430,7 @@ try {
     assert.deepEqual(errors, [], `Runtime errors at ${width}`);
     assert.deepEqual(unexpected, [], 'Review navigation cannot upload, mutate a user, or pay');
     assert.deepEqual(assistantCalls, [], 'Assistant messages never auto-send a paid AI request');
-    results.push({ width, palettePreserved: true, navigationPreservesDraft: true, futureStepReadOnly: true, currentFileOneAction: true, noAutomaticAI: true, a11y: !baseline && !finalCapture, finalAssetCapture: finalCapture });
+    results.push({ width, warmPalette: true, navigationPreservesDraft: true, futureStepReadOnly: true, currentFileOneAction: true, noAutomaticAI: true, a11y: !baseline && !finalCapture, finalAssetCapture: finalCapture });
     await context.close();
   }
   if (!captureOnly) {

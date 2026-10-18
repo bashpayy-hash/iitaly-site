@@ -81,8 +81,12 @@ async function mapShot(page, name) {
   }));
 }
 function compareImages(base, actual, name) {
-  assert.deepEqual(actual, base, name + ': SVG data, structure and computed presentation unchanged');
-  results.push({ test: name, passed: true, comparison: 'SVG DOM and computed presentation; surrounding chrome intentionally updated' });
+  // User request 18 October explicitly recolors the SVG sea, land and pins.
+  // Compare all geometry, structure, labels and typography, allowing colors only.
+  const withoutColors = value => value.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
+  const geometry = value => ({ ...value, markup: withoutColors(value.markup), presentation: value.presentation.map(row => row.map((item, index) => [4, 5].includes(index) && item !== 'none' && !item.startsWith('url(') ? 'COLOR' : item)) });
+  assert.deepEqual(geometry(actual), geometry(base), name + ': SVG geometry, structure, typography and opacity unchanged');
+  results.push({ test: name, passed: true, comparison: 'SVG geometry and interaction structure unchanged; colors explicitly updated by the user' });
 }
 try {
   for (const width of [1440, 390]) {

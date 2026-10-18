@@ -6,9 +6,15 @@
    OKLCH и в Tailwind v4 @theme — значения --color, --radius и --shadow
    становятся утилитами (bg-ink, rounded-lg, shadow-md) автоматически. */
 @theme {
-  --color-cream: oklch(97.16% 0.0131 82.4);
-  --color-paper: oklch(99.42% 0.0069 88.64);
-  --color-ink: oklch(22.41% 0.0158 62.49);
+  --color-cream: #faf8f5;
+  --color-paper: #ffffff;
+  --color-ink: #141413;
+  --color-coral: #e63946;
+  --color-coral-soft: #fff2f2;
+  --color-alabaster: #faf8f5;
+  --color-warm-white: #fffdf9;
+  --color-warm-stone: #efece6;
+  --color-warm-line: rgba(20, 20, 19, .08);
   --color-ink-soft: oklch(37.92% 0.0192 60.85);
   --color-sec: oklch(50.92% 0.0269 75.6);
   --color-sec-deep: oklch(44.81% 0.0244 74.34);
@@ -24,9 +30,9 @@
      приглушённый персик/терракота, низкая насыщенность. Не для текста/
      обводок (для этого есть sec/warn/ink) — только для мягких mesh-пятен
      фона, где фирменный красный остаётся редким акцентом, а не основой. */
-  --color-dusty-blue: oklch(72% 0.035 238);
-  --color-dusty-blue-deep: oklch(52% 0.045 238);
-  --color-dusty-blue-light: oklch(84% 0.025 238);
+  --color-warm-sand: oklch(72% 0.035 65);
+  --color-warm-sand-deep: oklch(52% 0.045 65);
+  --color-warm-sand-light: oklch(84% 0.025 65);
   --color-peach: oklch(80% 0.05 52);
 
   /* Одна гарнитура (Onest) на весь продукт — display и sans указывают на
@@ -37,7 +43,7 @@
   --font-mono: var(--font-space-mono), "SF Mono", "Courier New", monospace;
 
   --radius-pill: 999px;
-  --radius-xl: 20px;
+  --radius-xl: 28px;
   --radius-lg: 16px;
   --radius-md: 12px;
   --radius-sm: 6px;
@@ -134,18 +140,18 @@
      трогаются, поэтому их значения не могут измениться. Новые apple-*
      токены добавляются рядом и используются только в новых компонентах
      (Header, Footer, Home, /plan, /prices, /guides, apple/*). См. DESIGN.md. */
-  --color-apple-blue: #0071e3;
-  --color-link-blue: #0066cc;
-  --color-signal-blue: #2997ff;
-  --color-carbon: #1d1d1f;
-  --color-frost: #f5f5f7;
-  --color-ice: #f4f8fb;
+  --color-action-ink: #141413;
+  --color-link-ink: #141413;
+  --color-signal-coral: #e63946;
+  --color-carbon: #141413;
+  --color-frost: #faf8f5;
+  --color-ice: #fffdf9;
   --color-smoke: #333333;
   --color-graphite: #474747;
   --color-ash: #707070;
   --color-mist: #858585;
   --color-onyx: #000000;
-  --color-pebble: #e2e2e5;
+  --color-pebble: #e6e2dc;
 
   /* SF Pro первым — авторендер на реальных Apple-устройствах бесплатно.
      Inter Tight — самохостится через next/font/google (см. layout.tsx),
@@ -197,17 +203,17 @@
      под старую систему (16/20px), брать их для Apple-компонентов было бы
      ошибкой на пиксель. */
   --radius-apple-pill: 980px;
-  --radius-apple-card: 8px;
+  --radius-apple-card: 28px;
 
   /* ── ThoughtLab × Air phase — заменяет Apple-акцент, не токены выше ──
      Второй проход поверх Apple-хрома: холст маркетинговых страниц (везде,
      кроме /universities) становится full-bleed фото неба (SkyBackground),
      секции — прозрачные, единственный акцент — Crimson Signal. Старые
-     apple-blue/link-blue/signal-blue/frost/carbon больше не используются
+     action-ink/link-ink/signal-coral/frost/carbon больше не используются
      новыми компонентами (но не удалены — вдруг где-то зацепится старый
      класс, лучше молча не сработать, чем сломать сборку), а apple-body/
      caption/radius-apple-pill/шрифты остаются в деле. */
-  --color-crimson: #fc1c46;
+  --color-crimson: #e63946;
   --color-cloud-white: #ffffff;
   --color-cloud-body: #cccccc;
   --color-cloud-meta: #4c4c4c;
@@ -227,6 +233,11 @@
 
 :root {
   color-scheme: light;
+  --brand-gradient: linear-gradient(135deg, #d92b38 0%, #e63946 45%, #f4845f 100%);
+  --shadow-warm-card: 0 12px 32px -8px rgba(28, 25, 23, .06);
+  --i-signal: var(--color-coral);
+  --i-action: var(--color-ink);
+  --i-link: var(--color-ink);
 }
 
 * {
@@ -461,14 +472,14 @@ body {
    Градиент живёт одним определением здесь, а не инлайном в компоненте:
    его край в край повторяет полоса воронки, и две копии одних и тех же
    пяти стопов разъехались бы при первой же правке. */
-.sky-dawn {
+.warm-dawn {
   background-image: linear-gradient(
     180deg,
     #f7ece6 0%,
     #f0d3c8 28%,
     #e8b4a8 55%,
     #d4786a 82%,
-    #0f1011 100%
+    #14100a 100%
   );
 }
 
@@ -476,7 +487,7 @@ body {
    от центра. Смысл в том, чтобы небо не выглядело печатью градиента —
    у настоящей атмосферы плотность неровная. Никакого стокового «заката
    Тосканы»: это чистый CSS, ноль килобайт картинок на медленном канале. */
-.sky-haze {
+.warm-haze {
   background-image:
     radial-gradient(60% 42% at 22% 18%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 100%),
     radial-gradient(48% 34% at 78% 40%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 100%);
@@ -485,7 +496,7 @@ body {
 /* Зерно. Тот же приём, что у бумажной плёнки старой системы, но слабее
    втрое: на небе оно должно только снимать банды градиента на дешёвых
    8-битных матрицах, а не читаться как фактура. */
-.sky-grain {
+.warm-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   opacity: 0.05;
 }
@@ -592,3 +603,8 @@ body {
     animation: none;
   }
 }
+
+/* User-requested shared warm identity, 18 October 2026. */
+.warm-highlight { color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.warm-badge { display: inline-flex; align-items: center; width: fit-content; min-height: 32px; padding: 5px 13px; border: 1px solid var(--color-warm-line); border-radius: 999px; background: #fff; color: #57514b; font-size: 13px; font-weight: 500; line-height: 1.5; letter-spacing: 0; text-transform: none; }
+@media (forced-colors: active) { .warm-highlight { background: none; -webkit-text-fill-color: CanvasText; } }

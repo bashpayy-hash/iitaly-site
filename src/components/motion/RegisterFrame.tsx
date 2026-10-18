@@ -57,7 +57,7 @@ export function RegisterFrame({
     <div className={`relative ${className}`}>
       <motion.div
         aria-hidden
-        className={`pointer-events-none absolute inset-0 border-2 border-dusty-blue-deep/70 bg-dusty-blue/20 ${radiusClassName}`}
+        className={`pointer-events-none absolute inset-0 border-2 border-warm-sand-deep/70 bg-warm-sand/20 ${radiusClassName}`}
         {...settle({ x: -11, y: 8 })}
       />
       <motion.div

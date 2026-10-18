@@ -1,6 +1,6 @@
 .transfer { max-width: 1000px; color: #242321; }
 .transfer *, .transfer *::before, .transfer *::after { box-sizing: border-box; }
-.transfer :is(button,a,input,summary):focus-visible { outline: 3px solid #234d78; outline-offset: 3px; }
+.transfer :is(button,a,input,summary):focus-visible { outline: 3px solid #574331; outline-offset: 3px; }
 .transfer button { font: inherit; font-size: 14px; cursor: pointer; min-height: 44px; }
 .transfer button:disabled { opacity: .45; cursor: default; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 20px; border-bottom: 1px solid #ddd9d1; }
@@ -36,7 +36,7 @@
 .explanation > div { padding: 14px 0; border-top: 1px solid #ddd9d1; }
 .explanation dt { color: #66635d; font-size: 12px; }
 .explanation dd { margin: 6px 0 0; color: #373734; font-size: 14px; line-height: 1.6; }
-.lineValue { padding: 18px; color: #193b66; background: #fff; border: 1px solid #d7d5ce; border-radius: 8px; font-size: 24px; line-height: 1.4; overflow-wrap: anywhere; }
+.lineValue { padding: 18px; color: #41352b; background: #fff; border: 1px solid #d7d5ce; border-radius: 8px; font-size: 24px; line-height: 1.4; overflow-wrap: anywhere; }
 .values { display: grid; gap: 18px; padding: 20px; background: #fff; border: 1px solid #ddd9d1; border-radius: 12px; }
 .values[data-date="true"] { display: flex; flex-wrap: wrap; align-items: start; gap: 14px; }
 .valueRow { display: grid; gap: 8px; min-width: 0; }
@@ -44,13 +44,13 @@
 .chunk { display: grid; gap: 6px; }
 .chunk > small { color: #66635d; font-size: 11px; }
 .cells { display: flex; gap: 3px; }
-.cells > span { display: grid; place-items: center; flex: 0 0 26px; width: 26px; height: 34px; border: 1px solid #be7d85; color: #193b66; background: #fff; font: 500 19px/1 "Courier New", monospace; }
+.cells > span { display: grid; place-items: center; flex: 0 0 26px; width: 26px; height: 34px; border: 1px solid #be7d85; color: #41352b; background: #fff; font: 500 19px/1 "Courier New", monospace; }
 .cellNote, .emptyRow { color: #66635d; font-size: 12px; line-height: 1.55; margin: 0; }
 .cellNote { border-top: 1px solid #e7e6e1; padding-top: 12px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .checkValue { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding: 20px; border: 1px solid #ddd9d1; background: #fff; border-radius: 12px; }
 .checkValue > div { display: flex; align-items: center; gap: 10px; }
-.checkValue span { display: grid; place-items: center; width: 38px; height: 40px; border: 1px solid #be7d85; color: #193b66; font: 24px "Courier New", monospace; }
+.checkValue span { display: grid; place-items: center; width: 38px; height: 40px; border: 1px solid #be7d85; color: #41352b; font: 24px "Courier New", monospace; }
 .checkValue p, .checkValue b { font-size: 14px; font-weight: 400; }
 .actions { display: grid; grid-template-columns: auto minmax(180px,1fr) auto; gap: 12px; margin: 28px 0 12px 182px; }
 .actions button { padding: 12px 14px; border: 1px solid #cbc7bf; border-radius: 8px; background: #fff; color: #373734; }

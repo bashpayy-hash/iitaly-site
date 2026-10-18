@@ -28,7 +28,7 @@ export function Accordion({
         aria-expanded={open}
         aria-controls={id}
         className={quiet
-          ? "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#016a71] sm:px-5"
+          ? "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58544e] sm:px-5"
           : "flex w-full items-start gap-3 px-4 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red sm:px-5"}
       >
         <div className="min-w-0 flex-1">{summary}</div>

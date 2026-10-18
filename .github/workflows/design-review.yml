@@ -95,7 +95,9 @@ jobs:
         run: node scripts/design-ux-review.mjs
       - name: Review Vespi guide context, quiz continuity and explicit AI requests
         run: node scripts/design-guides-vespi-review.mjs
-      - name: Review shared Vespi roles, palette preservation and single visible mascot
+      - name: Verify warm source palette and rendered public routes
+        run: node scripts/design-warm-palette-review.mjs
+      - name: Review shared Vespi roles, typography and single visible mascot
         run: node scripts/design-vespi-system-review.mjs
       - name: Review launch document retry, long filenames and modal focus
         run: node scripts/launch-document-review.mjs

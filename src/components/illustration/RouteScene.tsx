@@ -148,7 +148,7 @@ export function RouteScene({
     >
       <defs>
         <linearGradient id={ID.route} gradientUnits="userSpaceOnUse" x1="140" y1="700" x2="392" y2="250">
-          <stop offset="0" stopColor="var(--color-dusty-blue)" />
+          <stop offset="0" stopColor="var(--color-warm-sand)" />
           <stop offset="0.5" stopColor="var(--color-peach)" />
           <stop offset="1" stopColor="var(--color-warn)" />
         </linearGradient>

@@ -15,13 +15,13 @@ export function socialImage() {
           justifyContent: "space-between",
           padding: "64px 72px",
           background: "#f5f0e8",
-          color: "#181925",
+          color: "#1e1a14",
           fontFamily: "Arial, sans-serif",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 34, fontWeight: 600, letterSpacing: -0.85 }}>
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 36, borderRadius: 14, background: "#fc1c46", color: "#fff", fontSize: 29, letterSpacing: 0 }}>i</span>
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 36, borderRadius: 14, background: "#e63946", color: "#fff", fontSize: 29, letterSpacing: 0 }}>i</span>
             <span>Italy</span>
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#686868" }}>Казахстан → Италия</div>
@@ -30,10 +30,10 @@ export function socialImage() {
           <div style={{ display: "flex", fontSize: 76, lineHeight: 0.98, fontWeight: 800, letterSpacing: -3 }}>
             Поступление в Италию.
           </div>
-          <div style={{ display: "flex", marginTop: 16, fontSize: 76, lineHeight: 0.98, fontWeight: 800, letterSpacing: -3, color: "#fc1c46" }}>
+          <div style={{ display: "flex", marginTop: 16, fontSize: 76, lineHeight: 0.98, fontWeight: 800, letterSpacing: -3, color: "#e63946" }}>
             По понятному плану.
           </div>
-          <div style={{ display: "flex", marginTop: 28, fontSize: 27, lineHeight: 1.35, color: "#4f4f56" }}>
+          <div style={{ display: "flex", marginTop: 28, fontSize: 27, lineHeight: 1.35, color: "#54504a" }}>
             Вузы · документы · DSU · Universitaly · виза D · Telegram-дедлайны
           </div>
         </div>
