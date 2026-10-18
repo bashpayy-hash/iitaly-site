@@ -189,7 +189,10 @@ try {
     await page.getByRole('link', { name: 'Сохранить отметку ещё раз', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor({ state: 'hidden' });
     await page.locator('[data-portal-overview]').waitFor();
-    assert.match(await page.locator('[data-portal-road]').innerText(), /Готово/);
+    const completedRoad = page.locator('[data-portal-road]');
+    assert.match(await completedRoad.innerText(), /Все шаги отмечены/);
+    assert.equal(await completedRoad.getAttribute('data-road-done'), await completedRoad.getAttribute('data-road-total'), 'The terminal label requires every real route task to be completed');
+    assert.equal(await completedRoad.locator('[data-road-open]').count(), 0, 'A completed route has no next-action link');
     assert.equal(await page.locator('button').count(), 0, 'The completed route has no action to click');
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
     await page.locator('[data-portal-task="test-task"][data-done=true]').waitFor({ state: 'attached' });
