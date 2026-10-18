@@ -30,12 +30,14 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
   currentTaskId?: string;
   embedded?: boolean;
 }) {
+  const [purpose, setPurpose] = useState("all");
+  const purposeOf = (id: string) => ["familyDocs", "iseeu"].includes(id) ? "dsu" : ["statements", "insurance", "housing", "universitaly"].includes(id) ? "visa" : "uni";
   const [filter, setFilter] = useState<DocumentOutcomeKind | "all">("all");
   const rows = data.roadmap.flatMap(stage => stage.tasks.filter(task => DOC_TASKS[task.id]))
     .map(task => ({ ...task, title: DOC_TASKS[task.id], doc: data.docs?.[task.id], outcome: documentOutcome(data.docs?.[task.id]) }))
     .sort((a, b) => Number(b.id === currentTaskId) - Number(a.id === currentTaskId) || ORDER[a.outcome.kind] - ORDER[b.outcome.kind]);
   const groups = GROUPS.map(group => ({ ...group, count: rows.filter(row => row.outcome.kind === group.kind).length })).filter(group => group.count > 0);
-  const visible = rows.filter(row => filter === "all" || row.outcome.kind === filter);
+  const visible = rows.filter(row => (filter === "all" || row.outcome.kind === filter) && (purpose === "all" || purposeOf(row.id) === purpose));
 
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
     {!embedded && <header className={styles.heading}>
@@ -46,6 +48,10 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
       <p>Загружай исправленные версии — получай итог, причину и следующий шаг.</p>
     </header>}
     {embedded && <h3 id="portal-documents-heading" className={styles.embeddedTitle}>Документы твоего маршрута</h3>}
+    {rows.length > 0 && <fieldset className={styles.purposes}>
+      <legend className="sr-only">Назначение документа</legend>
+      {[{ id: "all", label: "Все" }, { id: "uni", label: "Для вуза" }, { id: "dsu", label: "Для DSU" }, { id: "visa", label: "Для визы D" }].map(item => <label key={item.id} data-selected={purpose === item.id}><input type="radio" name="document-purpose" value={item.id} checked={purpose === item.id} onChange={() => setPurpose(item.id)} />{item.label}</label>)}
+    </fieldset>}
     {rows.length > 0 && <fieldset className={styles.filters}>
       <legend className="sr-only">Статус проверки</legend>
       {[{ kind: "all" as const, label: "Все", count: rows.length }, ...groups].map(group => <label key={group.kind} className={styles.filter} data-document-filter={group.kind} data-selected={filter === group.kind}>

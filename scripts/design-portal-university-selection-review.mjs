@@ -85,8 +85,10 @@ async function setup(width, { failSave = false, blockedStorage = false, height =
   return { page, context, calls, data, lookups };
 }
 async function login(page, code) {
-  await page.goto(`${origin}/portal`, { waitUntil: 'networkidle' });
-  await page.getByLabel('Фамилия', { exact: true }).fill(accounts[code]);
+  await page.goto(`${origin}/portal?auth=login`, { waitUntil: 'networkidle' });
+  // Guest workspace is the default; explicitly connect the cloud fixture.
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗', exact: true }).click();
+    await page.getByLabel('Фамилия', { exact: true }).fill(accounts[code]);
   await page.getByLabel('Код доступа', { exact: true }).fill(code);
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
   await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
@@ -111,7 +113,7 @@ async function assertNoOverflow(page, label) {
 async function logout(page) {
   await nav(page, 'Настройки').click();
   await nav(page, 'Выйти').click();
-  await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
+  await page.locator('[data-local-workspace]').waitFor();
 }
 
 try {

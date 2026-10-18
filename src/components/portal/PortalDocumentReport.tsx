@@ -31,8 +31,21 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-    heading.current?.focus({ preventScroll: true });
-    heading.current?.scrollIntoView({ block: "start", behavior: "instant" });
+    let cancelled = false;
+    let frame = 0;
+    // Font loading can change the persistent chrome after the child's effect.
+    // Focus once its measured height has settled, not under the old header.
+    void document.fonts.ready.then(() => {
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
+        if (cancelled) return;
+        const chrome = document.querySelector("[data-portal-chrome]");
+        if (heading.current && chrome) heading.current.style.scrollMarginTop = `${chrome.getBoundingClientRect().height + 24}px`;
+        heading.current?.focus({ preventScroll: true });
+        heading.current?.scrollIntoView({ block: "start", behavior: "instant" });
+      });
+    });
+    return () => { cancelled = true; cancelAnimationFrame(frame); };
   }, [doc]);
   const outcome = documentOutcome(doc);
   const result = doc.result;

@@ -187,9 +187,9 @@ async function checkWordmark(page) {
   const wordmark = page.locator('header [data-brand-logo]');
   assert.equal(await wordmark.count(), 1, 'The header has one shared wordmark');
   assert.equal(await wordmark.locator('[data-brand-initial]').innerText(), 'i');
-  assert.equal(await wordmark.locator('[data-brand-word]').innerText(), 'Italy');
+  assert.equal(await wordmark.locator('[data-brand-word]').innerText(), 'iItaly');
   assert.equal((await wordmark.innerText()).replace(/\s+/g, ''), 'iItaly', 'The shared wordmark has no trailing dot');
-  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(230, 57, 70)', 'The initial uses the shared coral signal on every surface');
+  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), 'rgb(230, 57, 70)', 'The initial uses the shared coral signal on every surface');
 }
 
 try {
@@ -310,8 +310,10 @@ try {
     if (sectionsOnly) { results.push({ width, targetedSectionCaptures: true }); await context.close(); continue; }
     if (reportOnly) {
       data = fixture(true); savedReport(data);
-      await visit('/portal');
-      await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
+      await visit('/portal?auth=login');
+      // Guest workspace is the default; explicitly connect the cloud fixture.
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗', exact: true }).click();
+    await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
       await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
       await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
@@ -348,7 +350,7 @@ try {
     await visit('/plan');
     if (!baseline) {
       assert(await page.locator('[data-vespi-variant="copilot"]').count() > 0, 'Questionnaire uses a copilot');
-      assert(await page.locator('#document-check [data-vespi-variant="inspector"]').count() > 0, 'Document check uses inspector context');
+      assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'The document workbench uses a utility icon, preserving the single mascot anchor');
     }
     await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
     if (!baseline) {
@@ -365,10 +367,12 @@ try {
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Assistant context preserves the quiz draft');
     await page.locator('#document-check').scrollIntoViewIfNeeded();
-    if (!baseline) await actualRoleArtwork(page.locator('#document-check [data-document-assistant]'), 'inspector', 'portrait', `plan document ${width}`);
+    if (!baseline) assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'No repeated portrait in the document workbench or report');
     await capture('plan-document');
 
-    await visit('/portal');
+    await visit('/portal?auth=login');
+    // Guest workspace is the default; explicitly connect the cloud fixture.
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗', exact: true }).click();
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();

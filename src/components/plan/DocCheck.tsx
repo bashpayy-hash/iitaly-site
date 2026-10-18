@@ -6,7 +6,8 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { ScanLine, ShieldCheck, Files, Check } from "lucide-react";
+import styles from "./plan-workspace.module.css";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
@@ -41,11 +42,11 @@ function inspectorMessage(step: State["step"], availabilityPending: boolean, una
   return "Загрузи справку о доходах, состав семьи, банковскую выписку или перевод. Для проверки требований укажи программу и учебный год.";
 }
 
-export function DocCheck() {
+export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: DocCheckResult) => void; academicYear?: DocumentReviewContext["academicYear"] } = {}) {
   const router = useRouter();
   const [state, setState] = useState<State>({ step: "idle" });
   const [context, setContext] = useState<DocumentReviewContext>({
-    profile: "general", academicYear: "unspecified", applicantScope: "unspecified",
+    profile: "general", academicYear: academicYear || "unspecified", applicantScope: "unspecified",
   });
   function updateContext(value: Partial<DocumentReviewContext>) {
     setContext(current => ({ ...current, ...value }));
@@ -54,6 +55,7 @@ export function DocCheck() {
   }
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [showExample, setShowExample] = useState(false);
   const [availability, setAvailability] = useState<DocumentAvailability | null>(null);
   const [availabilityPending, setAvailabilityPending] = useState(true);
   const unavailable = availability?.ok === false;
@@ -81,6 +83,7 @@ export function DocCheck() {
 
   async function accept(file: File | null | undefined) {
     if (!file || unavailable || availabilityPending) return;
+    setShowExample(false);
     setState({ step: "reading" });
     const res = await preparePayload(file);
     if ("error" in res) {
@@ -106,6 +109,7 @@ export function DocCheck() {
       const result = await checkDocument(payload, undefined, context);
       setState({ step: "done", file, payload, result });
       track("doc_check_done", { verdict: result.verdict });
+      onComplete?.(result);
     } catch (e) {
       /* Текст ошибки готовит checkDocument — там же, где известно, что
          именно случилось. Раньше он собирался здесь по e.message, и
@@ -139,24 +143,11 @@ export function DocCheck() {
         : null;
 
   return (
-    <div className="rounded-apple-card border border-white/15 bg-white p-5 sm:p-7">
-      <p className="text-apple-caption text-cloud-meta uppercase">
-        Проверка документов · бесплатно
-      </p>
-      <h2 className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-cloud-white">
-        Проверь документ перед подачей
-      </h2>
-      {state.step !== "done" && <VespiAssistant
-        variant="inspector"
-        layout="portal-copilot"
-        appearance="portrait"
-        label="Веспи · проверка документа"
-        className="mt-4"
-        as="div"
-        data-document-assistant={state.step}
-        message={inspectorMessage(state.step, availabilityPending, unavailable)}
-      />}
-
+    <div className={styles.workbench} data-document-workbench>
+      <div className={styles.auditContext}>
+        <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>
+        <h2>Проверь документ перед подачей</h2>
+        <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
         <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -200,6 +191,15 @@ export function DocCheck() {
         </p>
       </fieldset>
 
+        <ul className={styles.auditScope} aria-label="Что проверяем в файле">
+          <li><Check aria-hidden="true" /><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
+          <li><Check aria-hidden="true" /><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
+          <li><Check aria-hidden="true" /><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
+          <li><Check aria-hidden="true" /><span>Выписка: владелец, период и читаемость данных.</span></li>
+        </ul>
+      </div>
+      <div className={styles.auditTool}>
+
       {(availabilityPending || unavailable) && <div role="status" className="mt-5 border border-white/15 p-4 text-apple-body-sm text-cloud-body">
         <b className="block text-cloud-white">{availabilityPending ? "Проверяем доступность ИИ…" : "Проверка документов пока недоступна"}</b>
         {unavailable && <>
@@ -211,9 +211,8 @@ export function DocCheck() {
 
       {state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
-          className={`relative mt-5 flex min-h-[140px] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-apple-card border border-dashed px-6 py-8 text-center transition-colors focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-crimson ${
-            dragOver ? "border-crimson bg-crimson/5" : "border-white/20 hover:bg-white/5"
-          }`}
+          className={styles.dropzone}
+          data-drag={dragOver}
           onDragOver={(e) => {
             e.preventDefault();
             setDragOver(true);
@@ -234,12 +233,9 @@ export function DocCheck() {
             disabled={state.step === "reading" || unavailable || availabilityPending}
             onChange={(e) => accept(e.target.files?.[0])}
           />
-          <svg aria-hidden="true" width="28" height="32" viewBox="0 0 28 32" fill="none" className="mb-1 text-crimson">
-            <path d="M16 2H5a2 2 0 0 0-2 2v24a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V11L16 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-            <path d="M16 2v9h9M8 17h12M8 22h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <b className="text-cloud-white">Выбрать документ</b>
-          <span className="text-apple-body-sm text-cloud-body">или перетащи сюда · фото, PDF, Word до 5 МБ</span>
+          <Files aria-hidden="true" />
+          <b className={styles.fileAction}>Выбрать документ</b>
+          <small>или перетащи сюда<br />Фото, PDF, Word до 5 МБ</small>
         </label>
       ) : (
         <div className="mt-5 flex items-start gap-3 rounded-apple-input border border-white/15 p-4 sm:items-center sm:gap-4">
@@ -281,6 +277,15 @@ export function DocCheck() {
         </div>
       )}
 
+      {state.step !== "checking" && state.step !== "reading" && state.step !== "done" && <button type="button" className={styles.example} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}>Проверить пример справки</button>}
+      {showExample && <section className={styles.exampleResult} data-document-example aria-label="Пример разбора, не проверка твоего файла">
+        <h3><ScanLine size={19} aria-hidden="true" className="mr-2 inline" />Пример разбора справки</h3>
+        <p>Демонстрация интерфейса. Это вымышленный пример, файл не отправлялся на ИИ-анализ.</p>
+        <p><b>Нужно уточнить.</b> В примере не указан конкурс. Нельзя определить нужный год доходов.</p>
+        <ul><li><b>Читаемость:</b> текст различим.</li><li><b>Комплект:</b> данные владельца и подпись видны.</li><li><b>Даты:</b> сверь год и период с bando своей программы.</li></ul>
+        <p><b>Следующее действие:</b> выбери программу и учебный год, затем приложи свой документ.</p>
+      </section>}
+
       <p className="mt-3 text-apple-caption text-cloud-meta">
         После нажатия «Проверить документ» файл передаётся в Anthropic для ИИ-анализа.{" "}
         <a href="/privacy" className="font-semibold text-crimson underline underline-offset-2">Как обрабатываются данные</a>
@@ -304,7 +309,7 @@ export function DocCheck() {
           </div>
         )}
         {state.step === "done" && (
-          <DocResult result={state.result} onCta={() => router.push("/prices")} />
+          <DocResult result={state.result} onCta={onComplete ? undefined : () => router.push("/prices")} />
         )}
       </div>
 
@@ -313,42 +318,26 @@ export function DocCheck() {
         подлинность документа и не гарантирует его принятие: решение принимает
         университет, CAF или стипендиальный орган.
       </p>
+      </div>
     </div>
   );
 }
 
-function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => void }) {
+export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: () => void }) {
   const v = result.verdict || "warn";
   const headingId = useId();
   const resultRef = useRef<HTMLDivElement>(null);
   useEffect(() => { resultRef.current?.focus({ preventScroll: true }); }, []);
   return (
     <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
-      <VespiAssistant
-        variant="inspector"
-        layout="portal-copilot"
-        appearance="portrait"
-        label="Веспи · разбор документа"
-        as="div"
-        data-document-assistant="done"
-        title={<div className="flex flex-wrap items-center gap-2.5">
-        <span
-          className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold text-white uppercase ${
-            v === "ok"
-              ? "bg-green"
-              : v === "error"
-                ? "bg-red"
-                : v === "unreadable"
-                  ? "bg-cloud-meta"
-                  : "bg-warn"
-          }`}
-        >
-          {LABEL[v] || "Результат"}
-        </span>
-        <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
-        </div>}
-        message={result.summary || undefined}
-      />
+      <header className={styles.resultHead} data-document-assistant="done">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <ShieldCheck size={22} aria-hidden="true" />
+          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
+          <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
+        </div>
+        {result.summary && <p>{result.summary}</p>}
+      </header>
 
       {result.review && <div className="mt-4 border-b border-white/15 pb-4 text-apple-body-sm text-cloud-body">
         <p className="font-semibold text-cloud-white">
@@ -423,14 +412,14 @@ function DocResult({ result, onCta }: { result: DocCheckResult; onCta: () => voi
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/15 pt-4">
+      {onCta && <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/15 pt-4">
         <AppleButton type="button" variant="filled" size="sm" onClick={onCta}>
           Собрать весь пакет с IItaly
         </AppleButton>
         <span className="text-apple-caption text-cloud-meta">
           Проверка одного документа бесплатна. Полный комплект ведёт система в тарифе.
         </span>
-      </div>
+      </div>}
     </div>
   );
 }

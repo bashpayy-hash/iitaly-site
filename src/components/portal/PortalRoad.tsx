@@ -5,6 +5,7 @@ import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { TASK_META } from "@/lib/portalMeta";
 import { portalTaskHref, taskDate, taskExplanation, taskTitle } from "@/lib/portalNavigation";
 import styles from "./portal-overview.module.css";
+import { RouteRing } from "./WorkspaceCoach";
 import { Vespi } from "@/components/mascot/Vespi";
 
 export type RoadTravel = { fromDone: number; id: number };
@@ -180,6 +181,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   >
     <span className={styles.roadRoute}>
       <span className={styles.roadHeader}>
+        <RouteRing data={data} />
         <span className={styles.stageTitle}>{stage?.title || "Маршрут"}</span>
         {total > 0 && <span className={styles.count}>
           <span className={styles.countTotal} data-road-count>сделано {done} из {total}</span>

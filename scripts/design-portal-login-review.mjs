@@ -58,7 +58,7 @@ try {
     const page = await context.newPage();
     activePage = page;
     page.on('pageerror', (error) => errors.push(error.message));
-    assert.equal((await page.goto('http://127.0.0.1:4178/portal', { waitUntil: 'networkidle' })).status(), 200);
+    assert.equal((await page.goto('http://127.0.0.1:4178/portal?view=login', { waitUntil: 'networkidle' })).status(), 200);
     await page.evaluate(() => document.fonts.ready);
     await page.locator('[data-portal-login-art]').evaluate((image) => image.decode());
     // With w-descriptors naturalWidth is density-corrected, so check the chosen file instead.

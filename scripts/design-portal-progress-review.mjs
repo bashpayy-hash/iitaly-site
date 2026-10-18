@@ -114,7 +114,7 @@ async function siteBrand(page, contentSelector) {
   const logo = page.getByRole('link', { name: /^IITALY — (главная|личный кабинет)$/ });
   assert.equal(await logo.count(), 1, 'The shared site logo appears once, including after login');
   return logo.evaluate((element, selector) => {
-    const style = getComputedStyle(element), mark = element.querySelector('[data-brand-mark]');
+    const style = getComputedStyle(element), mark = element.querySelector('[data-brand-initial]');
     const word = element.querySelector('[data-brand-word]');
     return {
       logo: { fontFamily: style.fontFamily, fontSize: style.fontSize, fontWeight: style.fontWeight, letterSpacing: style.letterSpacing, color: style.color },
@@ -184,12 +184,14 @@ async function openPortal(viewport, mode = 'partial', reducedMotion = 'reduce', 
   activePage = page;
   if (captureAssistantEvent) await page.addInitScript(() => { window.addEventListener('iitaly:open-chat', event => { window.__portalAssistantEvent = event.detail; event.stopImmediatePropagation(); }, true); });
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto(`${origin}/portal`, { waitUntil: 'networkidle' });
+  await page.goto(`${origin}/portal?auth=login`, { waitUntil: 'networkidle' });
   const loginBrand = await siteBrand(page, '[data-portal-login]');
   // Explicit user follow-up: i + Italy replaces the all-caps wordmark and end dot.
   assert.equal(loginBrand.mark.text, 'i', 'The brand starts with its distinct lowercase i');
-  assert.equal(loginBrand.word.text, 'Italy', 'The wordmark reads Italy without an end dot');
-  await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
+  assert.equal(loginBrand.word.text, 'iItaly', 'The wordmark reads Italy without an end dot');
+  // Guest workspace is the default; explicitly connect the cloud fixture.
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗', exact: true }).click();
+    await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
   await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
   if (mode === 'onboarding') await page.locator('[data-portal-profile]').waitFor();
@@ -717,7 +719,7 @@ try {
       }
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), ['TEST-01', 'Testov']);
       await page.getByRole('link', { name: 'Выйти', exact: true }).click();
-      await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).waitFor();
+      await page.locator('[data-local-workspace]').waitFor();
       assert.deepEqual(await page.evaluate(() => [localStorage.getItem('iitaly_portal_code'), localStorage.getItem('iitaly_portal_surname')]), [null, null]);
     }
     results.push({ viewport, sharedSiteBrand: true, decorativeArtwork: true, realRouteCountIgnoresStaleKeys: true, currentVerbAboveFold: true, compactGlobalGuideOnEveryView: true, currentDetailGuideIsStatic: true, planListsHaveZeroButtons: true, overviewHasOnlyRequestedDocumentAndSelectionLinks: true, rowIsOnlyNavigationPath: true, helperHasStepContext: true, futureAndParentHaveZeroButtons: true, currentHintAccessible: true, intrinsicWidthRoadAction: true, navigation: '3 bottom links on mobile + settings and helper links', historyAndReload: 'pass', overflow: false, axe: 'pass' });

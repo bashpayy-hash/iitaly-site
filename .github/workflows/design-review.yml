@@ -13,6 +13,8 @@ on:
       - "src/components/guides/**"
       - "src/components/plan/**"
       - "src/lib/usePlanDraft.ts"
+      - "src/lib/localWorkspace.ts"
+      - "src/components/portal/**"
       - "src/lib/checkDocument.ts"
       - "src/components/Header.tsx"
       - "src/components/Footer.tsx"
@@ -91,6 +93,8 @@ jobs:
         run: node scripts/design-permesso-transfer-review.mjs
       - name: Review admissions quiz, source links and annual visa calculator
         run: node scripts/admissions-browser-review.mjs
+      - name: Review shared questionnaire, local workspace and existing cloud boundary
+        run: node scripts/design-workspace-review.mjs
       - name: Review student journey, error recovery and accessibility
         run: node scripts/design-ux-review.mjs
       - name: Review Vespi guide context, quiz continuity and explicit AI requests

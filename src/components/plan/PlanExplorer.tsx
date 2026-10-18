@@ -7,11 +7,11 @@ import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
-import { HeadingPin } from "@/components/motion/HeadingPin";
 import { StudyAtmosphere } from "@/components/marketing/EditorialArtwork";
 import art from "@/components/marketing/editorial-art.module.css";
 import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
+import workspace from "./plan-workspace.module.css";
 
 export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
@@ -50,31 +50,30 @@ export function PlanExplorer() {
         </nav>
       </section>
 
-      <section className="px-5 py-7 sm:py-10">
-        <div className={`${styles.planWorkspace} mx-auto max-w-[760px] space-y-10`}>
-          <div id="questionnaire" tabIndex={-1} className={styles.anchorTarget}>
+      <section className={workspace.tools}>
+        <div className={styles.planWorkspace}>
+          <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />
-            <div className={styles.toolHeading}>
-              <p>Твой план поступления</p>
-              <span>{WIZ.length} вопросов · бесплатно</span>
+            <div className={workspace.heading}>
+              <h2>Твой план поступления</h2>
+              <span className={workspace.badge}>~2 минуты · Персональный трек</span>
             </div>
             {plan ? (
               <PlanResult plan={plan} onReset={() => { updateDraft({ ...draft, complete: false, step: 0 }); focusPlan(); }} />
             ) : (
               <Wizard draft={draft} onDraftChange={updateDraft} onDone={handleDone} />
             )}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-x-5 text-apple-caption text-cloud-meta">
-              <p>Ответы сохраняются в этой вкладке. Телефон и файлы в черновик не записываются.</p>
+            <div className={workspace.footer}>
+              <p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p>
               {Object.keys(draft.answers).length > 0 && <button type="button" className="min-h-11 underline underline-offset-4" onClick={() => { updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }}>Начать заново</button>}
             </div>
           </div>
-          <div id="document-check" className={styles.anchorTarget}>
+          <div id="document-check" className={workspace.document}>
             <GuidePlanContext target="document" />
             <DocCheck />
           </div>
         </div>
       </section>
-      <HeadingPin section="plan-header" />
     </>
   );
 }
