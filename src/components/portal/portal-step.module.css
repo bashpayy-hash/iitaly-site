@@ -1,6 +1,6 @@
 .step {
-  composes: paper from "../marketing/surface-depth.module.css"; min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); }
-.step h2 { margin: 16px 0 10px; font-family: var(--portal-heading-font); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; overflow-wrap: anywhere; }
+  composes: paper from "../marketing/surface-depth.module.css"; min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: var(--radius-cards); background: var(--portal-surface); }
+.step h2 { margin: 16px 0 10px; font-family: var(--font-helvetica-now); font-size: 32px; font-weight: 500; line-height: 1.15; letter-spacing: -.03em; overflow-wrap: anywhere; }
 .back, .link { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; color: var(--portal-ink); font-size: 15px; text-decoration: underline; text-underline-offset: 4px; }
 .meta { color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
 .assistant[data-vespi-assistant] { display: flow-root; margin: 18px 0; }
@@ -17,7 +17,7 @@
 .notes[open] summary::after { content: "−"; }
 .note, .reason { max-width: 65ch; margin: 12px 0; color: var(--portal-muted); font-size: 16px; line-height: 1.6; }
 .reason { padding-top: 16px; border-top: 1px solid var(--portal-border); }
-.fileArea { display: grid; gap: 7px; justify-items: start; min-height: 92px; width: 100%; margin-top: 24px; padding: 20px; border: 1px solid var(--portal-accent); border-radius: 28px; background: var(--portal-accent); color: var(--portal-surface); text-align: left; }
+.fileArea { display: grid; gap: 7px; justify-items: start; min-height: 92px; width: 100%; margin-top: 24px; padding: 20px; border: 1px solid var(--portal-accent); border-radius: var(--radius-cards); background: var(--portal-accent); color: var(--portal-surface); text-align: left; }
 .fileArea > span { font-size: 16px; font-weight: 500; }
 .fileArea small { font-size: 13px; color: inherit; line-height: 1.5; }
 .fileArea:hover { background: var(--portal-accent-deep); }
@@ -30,3 +30,5 @@
 @media(max-width:900px) { .step { padding: 20px; } .step h2 { font-size: 28px; } }
 @media(max-width:600px) { .assistant [data-vespi-presence] { width: 72px; margin-left: 14px; } }
 @media(max-width:480px) { .step h2 { margin-top: 10px; } .assistant[data-vespi-assistant] { margin: 14px 0; } }
+.step {padding:24px}
+.step h2 {font:400 34px/1.1 var(--font-davinci);letter-spacing:-.2px}

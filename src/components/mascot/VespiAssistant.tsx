@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
-import { Vespi, type VespiVariant } from "./Vespi";
+import { type VespiVariant } from "./Vespi";
 import styles from "./vespi-assistant.module.css";
 
 export type VespiLayout = "inline-pill" | "editorial-callout" | "portal-copilot" | "floating-bar";
@@ -30,21 +30,11 @@ export function VespiAssistant({
   as: Element = "aside", label = "Веспи · рядом на каждом шаге",
   title, message, children, priority = false, className = "", ...props
 }: VespiAssistantProps) {
-  const visual = appearance || (layout === "inline-pill" ? "indicator" : "portrait");
-  const hasPortrait = visual === "portrait" || visual === "figure";
-  const imageSizes = layout === "floating-bar" ? "64px"
-    : layout === "editorial-callout" && visual === "figure" && variant === "inspector"
-      ? "(max-width: 600px) 96px, 128px"
-      : "(max-width: 600px) 72px, 96px";
-  return <Element {...props}
-    className={`${styles.assistant} ${styles[layout]} ${className}`}
-    data-vespi-assistant={layout} data-vespi-variant={variant} data-vespi-appearance={visual}>
-    {visual !== "none" && <span className={styles.visual} data-vespi-presence={hasPortrait ? "" : undefined} aria-hidden="true">
-      {visual === "indicator" ? <VespiIndicator /> : <Vespi variant={variant} presentation={visual} priority={priority}
-        sizes={imageSizes} />}
-    </span>}
+  void appearance; void priority;
+  const cleanLabel = label.startsWith("Веспи") ? "" : label;
+  return <Element {...props} className={`${styles.assistant} ${className}`} data-vespi-assistant={layout} data-vespi-variant={variant} data-vespi-appearance="none">
     <div className={styles.content} data-vespi-content>
-      {label && <p className={styles.label} data-vespi-label>{label}</p>}
+      {cleanLabel && <p className={styles.label}>{cleanLabel}</p>}
       {title && <div className={styles.title} data-vespi-title>{title}</div>}
       {message && <div className={styles.message} data-vespi-message>{message}</div>}
       {children}

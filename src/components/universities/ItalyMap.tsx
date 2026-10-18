@@ -4,10 +4,7 @@ import { useMemo } from "react";
 import { CITIES, CITY_ICONS, ITALY_PATH, MAP_H_PX, MAP_W_PX, type CityId } from "@/data/italy";
 import { placeAllLabels } from "@/lib/mapLabels";
 
-// Внешний вид — как на старом сайте: тёмная карта-ночь, тонкие линии,
-// градиент моря и суши, лёгкое свечение у активного пина. Не перегружать
-// толстыми чёрными обводками, как в остальном брутализме сайта — карта
-// нарочно другая по фактуре (см. .map-card/.it-shape в старом index.html).
+// Gallery palette; original city coordinates and keyboard interactions remain intact.
 export function ItalyMap({
   activeCity,
   onSelectCity,
@@ -35,37 +32,14 @@ export function ItalyMap({
       className="h-auto w-full select-none"
     >
       <defs>
-        <radialGradient id="mapSea" cx="50%" cy="34%" r="78%">
-          <stop offset="0" stopColor="#FFFDF9" />
-          <stop offset="0.55" stopColor="#FEF6E6" />
-          <stop offset="1" stopColor="#FDEEE4" />
-        </radialGradient>
-        <linearGradient id="mapLand" x1="0" y1="0" x2="0.3" y2="1">
-          <stop offset="0" stopColor="#FFFFFF" />
-          <stop offset="1" stopColor="#F3EFEA" />
-        </linearGradient>
-        <linearGradient id="mapEdge" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#8C857B" stopOpacity="0.95" />
-          <stop offset="1" stopColor="#8C857B" stopOpacity="0.55" />
-        </linearGradient>
-        <filter id="mapPinGlow" x="-120%" y="-120%" width="340%" height="340%">
-          <feGaussianBlur stdDeviation="4" result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="mapLandShadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="6" />
-        </filter>
         <clipPath id="mapLandClip">
           <path d={ITALY_PATH} />
         </clipPath>
       </defs>
 
-      <rect width={MAP_W_PX} height={MAP_H_PX} fill="url(#mapSea)" />
+      <rect width={MAP_W_PX} height={MAP_H_PX} fill="#c4c3b6" />
 
-      <g stroke="#57534E" strokeWidth={0.4} opacity={0.1}>
+      <g stroke="#595855" strokeWidth={0.4} opacity={0.1}>
         <line x1="0" y1="130" x2="420" y2="130" />
         <line x1="0" y1="260" x2="420" y2="260" />
         <line x1="0" y1="390" x2="420" y2="390" />
@@ -78,42 +52,35 @@ export function ItalyMap({
         <path
           d="M-40 486 q20 -7 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"
           fill="none"
-          stroke="#8C857B"
+          stroke="#595855"
           strokeWidth={1.2}
         />
         <path
           d="M-40 502 q20 -6 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"
           fill="none"
-          stroke="#8C857B"
+          stroke="#595855"
           strokeWidth={1.2}
         />
       </g>
 
       <g transform="translate(382,40)" opacity={0.55}>
-        <circle r={15} fill="none" stroke="#57534E" strokeWidth={1} />
-        <circle r={1.6} fill="#57534E" />
-        <path d="M0 -10.5 L3 2 L0 0 L-3 2 Z" fill="#E63946" />
-        <text y={-19} textAnchor="middle" fontSize={8.5} fontWeight={700} fill="#57534E" letterSpacing={1}>
+        <circle r={15} fill="none" stroke="#595855" strokeWidth={1} />
+        <circle r={1.6} fill="#595855" />
+        <path d="M0 -10.5 L3 2 L0 0 L-3 2 Z" fill="#000000" />
+        <text y={-19} textAnchor="middle" fontSize={8.5} fontWeight={500} fill="#595855" letterSpacing={1}>
           N
         </text>
       </g>
 
       <path
         d={ITALY_PATH}
-        fill="#57534E"
-        opacity={0.55}
-        transform="translate(1,7)"
-        filter="url(#mapLandShadow)"
-      />
-      <path
-        d={ITALY_PATH}
-        fill="url(#mapLand)"
-        stroke="url(#mapEdge)"
+        fill="#e7e5e4"
+        stroke="#595855"
         strokeWidth={0.9}
         strokeLinejoin="round"
       />
       <g clipPath="url(#mapLandClip)">
-        <ellipse cx={120} cy={80} rx={150} ry={120} fill="#FFFFFF" opacity={0.05} />
+        <ellipse cx={120} cy={80} rx={150} ry={120} fill="#ffffff" opacity={0.05} />
       </g>
 
       {cityIds.map((id) => {
@@ -143,26 +110,26 @@ export function ItalyMap({
               dimmed ? "opacity-30" : "opacity-100"
             }`}
           >
-            {active && <circle cx={c.x} cy={c.y} r={r + 6} fill="#E63946" opacity={0.22} />}
-            <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#141413" opacity={0.3} />
+            {active && <circle cx={c.x} cy={c.y} r={r + 6} fill="#000000" opacity={0.22} />}
+            <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#000000" opacity={0.3} />
             <circle
               cx={c.x}
               cy={c.y}
               r={r}
-              fill={active ? "#E63946" : "#FFFFFF"}
-              stroke={active ? "#E63946" : "#57534E"}
+              fill={active ? "#000000" : "#ffffff"}
+              stroke={active ? "#000000" : "#595855"}
               strokeWidth={active ? 1.4 : 1.1}
-              filter={active ? "url(#mapPinGlow)" : undefined}
+
               className="transition-colors"
             />
             {big ? (
               <g
                 transform={`translate(${c.x - gs / 2},${c.y - gs / 2}) scale(${(gs / 22).toFixed(3)})`}
-                fill={active ? "#FFFFFF" : "#57534E"}
+                fill={active ? "#ffffff" : "#595855"}
                 dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
               />
             ) : (
-              <circle cx={c.x} cy={c.y} r={2.6} fill="#57534E" />
+              <circle cx={c.x} cy={c.y} r={2.6} fill="#595855" />
             )}
             {label && (
               <text
@@ -172,8 +139,8 @@ export function ItalyMap({
                 fontSize={c.tier === 1 ? 11.5 : 11}
                 fontWeight={active ? 700 : 600}
                 letterSpacing={0.2}
-                fill={active ? "#E63946" : c.tier === 1 ? "#141413" : "#57534E"}
-                stroke="#FFFDF9"
+                fill={active ? "#000000" : c.tier === 1 ? "#000000" : "#595855"}
+                stroke="#e7e5e4"
                 strokeWidth={3}
                 strokeLinejoin="round"
                 paintOrder="stroke"

@@ -86,7 +86,7 @@ export function AppleModal({
         aria-modal="true"
         aria-labelledby={labelledBy}
         tabIndex={-1}
-        className={`max-h-[calc(100dvh-24px)] w-full overflow-y-auto overscroll-contain rounded-apple-card border border-ink/10 bg-white shadow-[var(--shadow-warm-card)] ${className || "max-w-md"}`}
+        className={`max-h-[calc(100dvh-24px)] w-full overflow-y-auto overscroll-contain rounded-apple-card border border-ink/10 bg-bone shadow-[var(--shadow-warm-card)] ${className || "max-w-md"}`}
       >
         <div className="flex justify-end px-4 pt-2">
           <button type="button" onClick={() => onCloseRef.current()} className="min-h-11 rounded-apple-card px-3 text-apple-body-sm font-medium text-cloud-body hover:text-cloud-white" aria-label="Закрыть окно">Закрыть</button>

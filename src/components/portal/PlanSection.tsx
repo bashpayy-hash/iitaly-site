@@ -147,7 +147,7 @@ function TaskRow({ task, href, done, doc, current, onOpenTask }: PlanActions & {
           {date && <span className={styles.meta}>{date}</span>}
           {outcome && <span className={styles.documentStatus} data-outcome={outcome.kind}>{outcome.label}</span>}
         </span>
-        <span className={styles.phase}>{done ? "Сделано" : current ? "Сейчас" : task.owner || "Ты"}</span>
+        <span className={styles.phase}>{done ? "Сделано" : current ? "Сейчас" : "Позже"}</span>
       </a>
     </li>
   );

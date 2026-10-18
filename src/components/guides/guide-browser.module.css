@@ -1,6 +1,5 @@
-/* Shared topic-context note on /plan; /guides owns its scoped visual system. */
 .planContext { padding: 0 0 20px; margin-bottom: 24px; border-bottom: 1px solid var(--i-line); }
 .planContext p { color: var(--color-cloud-body); font-size: 14px; line-height: 1.5; }
 .planContext p + p { margin-top: 6px; }
-.planContext strong { color: var(--color-cloud-white); font-weight: 600; }
+.planContext strong { color: var(--color-cloud-white); font-weight: 500; }
 .planContext a { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-cloud-body); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }

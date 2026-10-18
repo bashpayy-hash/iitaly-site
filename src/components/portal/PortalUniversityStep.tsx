@@ -41,7 +41,7 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
         event.preventDefault(); onBack();
       }}>Назад</a>
       <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
-      <p className={styles.meta}>{[stage?.title, task.time || "15 мин", task.owner || "Ты"].filter(Boolean).join(" · ")}</p>
+      <p className={styles.meta}>{[stage?.title, task.time || "15 мин"].filter(Boolean).join(" · ")}</p>
       {date && <p className={styles.meta}>{date} — это не срок конкретного вуза.</p>}
       <p id="portal-step-action-hint" className={styles.hint} data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
       <p id="portal-shortlist-storage" className={styles.meta}>Список сохраняется только в этом браузере.</p>

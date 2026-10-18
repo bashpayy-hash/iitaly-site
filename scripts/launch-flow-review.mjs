@@ -87,7 +87,7 @@ try {
   for (const width of [390, 1440]) {
     const { context, page, calls } = await makePage(width);
     await page.goto(`${origin}/prices`, { waitUntil: 'networkidle' });
-    await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
+    await page.getByRole('button', { name: 'Оформить доступ · 667 ₸', exact: true }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Имя', { exact: true }).fill('Demo');
     await dialog.getByLabel('Фамилия', { exact: true }).fill('Testov');
@@ -137,10 +137,10 @@ try {
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
     await page.locator('[data-document=statements]').waitFor();
     const input = page.locator('input[type=file]');
-    assert.equal(await page.locator('button').count(), 0, 'Document list has no buttons');
+    assert.equal(await page.locator('main button').count(), 0, 'Document list has no buttons');
     await page.locator('[data-document=statements]').click();
     await page.locator('[data-step-detail=statements]').waitFor();
-    assert.equal(await page.locator('button').count(), 1);
+    assert.equal(await page.locator('main button').count(), 1);
     await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
     await input.setInputFiles({ name: 'unsupported.exe', mimeType: 'application/octet-stream', buffer: Buffer.from('synthetic fixture') });
     await page.getByRole('link', { name: 'Выбрать другой файл', exact: true }).waitFor();
@@ -156,8 +156,8 @@ try {
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
     });
-    assert.equal(await page.locator('#chat-launcher').count(), 0, 'Portal helper lives only in its header');
-    assert((await page.locator('button').count()) <= 1, 'Recovery does not add a second button');
+    assert.equal(await page.locator('#chat-launcher').count(), 1, 'Portal keeps one functional minimal helper entry');
+    assert((await page.locator('main button').count()) <= 1, 'Recovery does not add a second button');
     await page.screenshot({ path: resolve(output, 'portal-save-recovery-390.png'), fullPage: true });
     await page.getByRole('link', { name: 'Сохранить результат', exact: true }).click();
     const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
@@ -167,9 +167,9 @@ try {
     await report.waitFor();
     await report.getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
     // The owner requested unlimited explicit rechecks, including approved files.
-    assert.equal(await page.locator('button').count(), 1, 'An approved document has one explicit new-version action');
+    assert.equal(await page.locator('main button').count(), 1, 'An approved document has one explicit new-version action');
     assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1);
-    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-secondary'), 'true', 'Rechecking a previous file keeps the road secondary');
+    assert.equal(await page.locator('[data-portal-road] a, [data-portal-road] button').count(), 0, 'Progress does not duplicate route navigation');
     assert.equal(calls.check, 2, 'Opening the saved report never starts another check');
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
     await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
@@ -177,24 +177,24 @@ try {
     assert.match(await page.locator('[data-document=statements]').innerText(), /Проверка пройдена/);
     assert.equal(calls.check, 2, 'Retrying storage must not run another AI check');
     assert.equal(calls.save, 2);
-    await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
+    await page.getByRole('link', { name: 'Весь маршрут', exact: true }).filter({ visible: true }).first().click();
     assert.equal(calls.task, 0, 'File check and upload close the document step without a separate self-report');
-    assert.equal(await page.locator('button').count(), 0);
+    assert.equal(await page.locator('main button').count(), 0);
     await page.locator('[data-portal-task="test-task"]').click();
     const detail = page.locator('[data-step-detail="test-task"]');
     await detail.waitFor();
-    assert.equal(await page.locator('button').count(), 1);
+    assert.equal(await page.locator('main button').count(), 1);
     await detail.getByRole('button', { name: 'Готово', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor();
     await page.getByRole('link', { name: 'Сохранить отметку ещё раз', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor({ state: 'hidden' });
     await page.locator('[data-portal-overview]').waitFor();
     const completedRoad = page.locator('[data-portal-road]');
-    assert.match(await completedRoad.innerText(), /Все шаги отмечены/);
+    assert.match(await completedRoad.innerText(), /2 из 2 шагов/);
     assert.equal(await completedRoad.getAttribute('data-road-done'), await completedRoad.getAttribute('data-road-total'), 'The terminal label requires every real route task to be completed');
     assert.equal(await completedRoad.locator('[data-road-open]').count(), 0, 'A completed route has no next-action link');
-    assert.equal(await page.locator('button').count(), 0, 'The completed route has no action to click');
-    await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
+    assert.equal(await page.locator('main button').count(), 0, 'The completed route has no action to click');
+    await page.getByRole('link', { name: 'Весь маршрут', exact: true }).filter({ visible: true }).first().click();
     await page.locator('[data-portal-task="test-task"][data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);
     results.push({ test: 'Portal exposes file, check, storage and task errors with precise recovery; saved result retry does not recheck', passed: true });

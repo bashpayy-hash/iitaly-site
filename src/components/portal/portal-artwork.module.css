@@ -71,3 +71,5 @@
   .overviewIntro { margin-bottom: 24px; }
   .overview { width: 88px; }
 }
+.overviewLayout {display:block;grid-template-columns:none}
+.overviewIntro,.overviewContent {grid-area:auto;max-width:none}

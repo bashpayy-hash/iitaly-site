@@ -15,7 +15,6 @@ import { track } from "@/lib/track";
 import { UniversityArtwork } from "./UniversityArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
 // ItalyMap новую ссылку и заставляла карту сравнивать точки заново.
@@ -139,17 +138,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       <section className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
-            {!portalSelection && <VespiAssistant
-              variant="route"
-              layout="inline-pill"
-              appearance="portrait"
-              as="div"
-              label="Веспи · штурман"
-              title={<h2>{navigatorTitle}</h2>}
-              className={ui.navigator}
-              data-university-navigator
-              message={navigatorMessage}
-            />}
+            {!portalSelection && <div className={ui.navigator} data-university-navigator><h2>{navigatorTitle}</h2><p>{navigatorMessage}</p></div>}
             {portalSelection && cityShortcut}
             <Filters
               typeFilter={typeFilter}

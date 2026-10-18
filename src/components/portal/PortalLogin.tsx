@@ -5,7 +5,7 @@ import { useId, useRef, useState, type FormEvent } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import marketing from "@/components/marketing/marketing.module.css";
 import styles from "./portal-login.module.css";
-import { Vespi } from "@/components/mascot/Vespi";
+import { Painting } from "@/components/gallery/GalleryPrimitives";
 
 /* Экран входа — в общем стиле сайта: шапка сайта, те же шрифты и цвета,
    акварель кампуса, что и на главной и в самом кабинете. Раньше он жил в
@@ -73,26 +73,10 @@ export function PortalLogin({
           </div>
 
           <div className={styles.art} aria-hidden="true">
-            <picture>
-              <source media="(max-width: 760px)" srcSet="/illustrations/editorial/campus-arrival-480.webp" />
-              <img
-                src="/illustrations/editorial/campus-arrival-960.webp"
-                srcSet="/illustrations/editorial/campus-arrival-960.webp 960w, /illustrations/editorial/campus-arrival-1168.webp 1168w"
-                sizes="(max-width: 1000px) 60vw, 700px"
-                alt=""
-                width={1168}
-                height={880}
-                className={styles.artImage}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                draggable={false}
-                data-portal-login-art
-              />
-            </picture>
+            <Painting scene="square" eager className={styles.artImage}/>
           </div>
 
-          <Vespi className={styles.companion} sizes="(max-width: 760px) 112px, 148px" priority />
+
 
           <div className={styles.route} aria-hidden="true">
             <span>Профиль</span><i />

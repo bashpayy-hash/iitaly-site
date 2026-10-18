@@ -59,9 +59,9 @@ try {
       // Same-document goto resolves before hashchange + React + the next frame.
       // Wait for the visible chapter, not font loading or an arbitrary delay.
       await body.waitFor({state:'visible'});
-      const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
+      const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Universitaly и виза D'};
       await body.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
-      assert.equal(await page.locator(`[data-guide-select="${id}"]`).getAttribute('aria-expanded'),'true','Deep link selects '+id);
+      assert.equal(await page.locator('ol[aria-label="Порядок чтения"] [aria-current="step"]').count(),1,'Deep link selects one reading step');
       assert.equal(await page.locator('[data-guide-panel]').count(),1,'One selected topic is shared across viewports');
       assert.equal(new URL(page.url()).hash,'#'+id);
       // User request 2026-10-18: one shared rules date in the guide header,

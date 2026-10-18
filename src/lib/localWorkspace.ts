@@ -67,19 +67,19 @@ function stepPhase(title: string): number {
 export function buildLocalWorkspace(draft: PlanDraft, local: LocalWorkspace, reports: Record<string, PortalDoc>): PortalData {
   const plan = buildPlan(draft.answers);
   const tasks: PortalTask[] = [];
-  if (!draft.complete) tasks.push({ id: "profile", t: "Заполнить анкету", time: "2 мин", owner: "Ты", explain: "Ответь на 10 вопросов. Используем те же ответы, что и на странице «Мой план»." });
-  tasks.push({ id: "shortlist", t: "Выбрать университеты", time: "15 мин", owner: "Ты", explain: "Сравни вузы на карте и сохрани свой список. Условия и сроки зависят от конкретной программы." });
+  if (!draft.complete) tasks.push({ id: "profile", t: "Заполнить анкету", time: "2 мин", explain: "Ответь на 10 вопросов. Используем те же ответы, что и на странице «Мой план»." });
+  tasks.push({ id: "shortlist", t: "Выбрать университеты", time: "15 мин", explain: "Сравни вузы на карте и сохрани свой список. Условия и сроки зависят от конкретной программы." });
   if (draft.complete) {
     plan.steps.forEach(step => {
       const phase = stepPhase(step.t);
-      tasks.push({ id: `local-p${phase}-${stableId(step.t)}`, t: step.t, explain: step.p, owner: /финанс|запас до выплаты/.test(step.t) ? "Родители" : "Ты", time: "По ситуации" });
+      tasks.push({ id: `local-p${phase}-${stableId(step.t)}`, t: step.t, explain: step.p, time: "По ситуации" });
     });
-    tasks.push({ id: "apostille", t: "Проверить аттестат или диплом с апостилем", explain: plan.docs[0].d, owner: "Ты", time: "5 мин" });
-    tasks.push({ id: "translate", t: "Проверить перевод комплекта", explain: "Приложи перевод документа, приложения и апостиля, если они нужны получателю. Формат уточни у вуза и консульства отдельно.", owner: "Ты", time: "5 мин" });
-    if (draft.answers.dsuRegion !== "none") tasks.push({ id: "familyDocs", t: "Попросить родителей собрать семейные справки", explain: plan.docs.find(doc => doc.n === "Семья, доходы и имущество")?.d, owner: "Родители", time: "По ситуации" });
-    tasks.push({ id: "statements", t: "Попросить родителей подготовить банковские выписки", explain: plan.docs[2].d, owner: "Родители", time: "По ситуации" });
-    tasks.push({ id: "housing", t: "Подготовить подтверждение жилья", explain: plan.docs[3].d, owner: "Ты", time: "По ситуации" });
-    tasks.push({ id: "kit", t: "Подготовить заявление на вид на жительство (permesso)", explain: "После въезда по визе D подготовь заявление. Тренажёр помогает заполнить MOD. 209; это не подача заявления.", owner: "Ты", time: "30 мин" });
+    tasks.push({ id: "apostille", t: "Проверить аттестат или диплом с апостилем", explain: plan.docs[0].d, time: "5 мин" });
+    tasks.push({ id: "translate", t: "Проверить перевод комплекта", explain: "Приложи перевод документа, приложения и апостиля, если они нужны получателю. Формат уточни у вуза и консульства отдельно.", time: "5 мин" });
+    if (draft.answers.dsuRegion !== "none") tasks.push({ id: "familyDocs", t: "Собрать справки о составе и доходах семьи для DSU", explain: plan.docs.find(doc => doc.n === "Семья, доходы и имущество")?.d, time: "По ситуации" });
+    tasks.push({ id: "statements", t: "Подготовить банковские выписки", explain: plan.docs[2].d, time: "По ситуации" });
+    tasks.push({ id: "housing", t: "Подготовить подтверждение жилья", explain: plan.docs[3].d, time: "По ситуации" });
+    tasks.push({ id: "kit", t: "Подготовить заявление на вид на жительство (permesso)", explain: "После въезда по визе D подготовь заявление. Тренажёр помогает заполнить MOD. 209; это не подача заявления.", time: "30 мин" });
   }
   const roadmap = WORKSPACE_PHASES.map((title, index) => ({ id: `workspace-phase-${index}`, title, tasks: tasks.filter(task => workspacePhase(task) === index) }));
   const done = Object.fromEntries(tasks.map(task => [task.id, task.id === "profile" ? draft.complete : task.id === "shortlist" ? Boolean(local.done.shortlist && local.selectedIds.length) : Boolean(local.done[task.id])]));
