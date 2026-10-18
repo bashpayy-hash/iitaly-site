@@ -1,6 +1,6 @@
 # One route, one current task, fewer faces
 
-The portal now renders one clickable navigator from the user's actual `roadmap`. The separate five-phase tab row and progress ring are removed. In Plan, Documents, Settings and an open task, the pinned rail contains no repeated task title or 3D portrait. Plan writes the current task once in its list; the current stage heading reads “Текущие шаги” because the selected stage is already named in the navigator. The overview keeps one next-action link and one contextual copilot.
+The portal now renders one clickable navigator from the user's actual `roadmap`. The separate five-phase tab row and progress ring are removed. In Plan, Documents, Settings and an open task, the pinned rail contains no repeated task title or 3D portrait. Plan rows only open steps; self-report is completed with “Готово” on the eligible step screen. Plan writes the current task once in its list; the current stage heading reads “Текущие шаги” because the selected stage is already named in the navigator. The overview keeps one next-action link and one contextual copilot.
 
 Each stage link opens that stage's first unclosed task using the existing URL and eligibility rules. Future and parent tasks remain readable; unavailable file steps have no uploader. The rail counts actual known tasks, ignores obsolete completion IDs, starts without animation, and animates only after confirmed completion. Reduced motion changes the position immediately. The local workspace uses the same rail and keeps its existing storage and cloud boundary.
 

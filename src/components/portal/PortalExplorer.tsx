@@ -738,7 +738,7 @@ export function PortalExplorer() {
                 busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)} onComplete={() => { void handleToggle(activeTask.id, true); }} />}
               {activeTask.id === "checkDocs" && <DocsSection data={data} currentTaskId={position?.task?.id} onOpenDoc={showDocument} embedded />}
               {activeTask.id === "kit" && <PortalPermessoStep />}
-            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} busy={Boolean(busyTask)} onCompleteTask={task => { if (task.id === currentTask?.id && task.available !== false) void handleToggle(task.id, true); }} />)}
+            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
               <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}

@@ -100,7 +100,7 @@ try{
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-overview-${viewport.width}`);
     await go(page,'План');await page.locator('[data-portal-task="shortlist"]').waitFor();await railContract(page,data,true);
     assert.equal(await page.locator('[data-portal-task="shortlist"]').count(),1,'Current task written once');
-    assert.equal(await page.locator('main img[data-vespi]').count(),0,'No 3D heads in stage headings');assert.equal(await page.locator('button').count(),0,'Plan has no buttons');
+    assert.equal(await page.locator('main img[data-vespi]').count(),0,'No 3D heads in stage headings');assert.equal(await page.locator('button').count(),0,'Plan has no buttons');assert.equal(await page.getByRole('checkbox').count(),0,'Plan rows cannot complete a step');
     assert.equal(await page.locator('#portal-stage-start').getAttribute('open'),'','Current stage opens');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-plan-${viewport.width}`);
     await sticky(page);await axe(page,'Plan '+viewport.width);

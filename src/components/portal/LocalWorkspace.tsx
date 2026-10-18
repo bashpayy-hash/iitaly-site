@@ -133,7 +133,7 @@ export function LocalWorkspace() {
             <section className={styles.docFeature}><ShieldCheck size={26} aria-hidden="true"/><div><h2>Проверяй документы до подачи</h2><p>Здесь доступна бесплатная проверка одного файла. Безлимитная проверка комплекта и сохранённые разборы — в подключённом кабинете за 667 ₸.</p><a href="/prices">Что входит в кабинет ↗</a></div></section>
             {local.selectedIds.length > 0 && <div className={styles.paper}><h2>Твои университеты</h2><p>{shortlistNames(local.selectedIds).join(" · ")}</p><a className={styles.textLink} href="/portal?view=plan&task=shortlist" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "shortlist"); if (task) openTask(task); }}>Открыть карту и сравнение</a></div>}
           </>}
-          {location.view === "plan" && !showDetail && <><PlanSection data={data} onOpenTask={openTask} onCompleteTask={complete}/></>}
+          {location.view === "plan" && !showDetail && <><PlanSection data={data} onOpenTask={openTask}/></>}
           {showDetail && <>
             {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => link(event, { view: location.doc ? "docs" : "plan", task: null, doc: null })}>← Назад</a>}
             {active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1><Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { updateDraft({ answers, step: 10, complete: true }); navigate({ view: "today", task: null, doc: null }); }}/></>
