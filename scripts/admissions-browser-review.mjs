@@ -64,7 +64,13 @@ try {
       assert.equal(await page.locator(`[data-guide-select="${id}"]`).getAttribute('aria-expanded'),'true','Deep link selects '+id);
       assert.equal(await page.locator('[data-guide-panel]').count(),1,'One selected topic is shared across viewports');
       assert.equal(new URL(page.url()).hash,'#'+id);
-      assert.match(await body.innerText(),/9 октября 2026/);
+      // User request 2026-10-18: one shared rules date in the guide header,
+      // rather than a duplicate inside every selected article. Each article
+      // must still expose its own real official sources below.
+      const verified = page.locator('main time');
+      assert.equal(await verified.count(),1,'Guides expose one shared verification date');
+      assert.equal(await verified.getAttribute('datetime'),'2026-10-09');
+      assert.match(await verified.innerText(),/9 октября 2026/);
       assert(await body.locator('a[href^="https://"]').count()>0,'Official sources are accessible');
       if (id==='visa') {
         // User-requested card UI has one topic body, so there is no hidden
