@@ -1,0 +1,36 @@
+"use client";
+
+import { useState } from "react";
+import { Upload } from "lucide-react";
+import styles from "./portal-upload.module.css";
+
+/** One keyboard/touch action and one drop target, using the existing check path. */
+export function PortalUploadZone({ busy, onChoose, onFileDrop, label = "Приложить файл", hint, describedBy }: {
+  busy: boolean;
+  onChoose: () => void;
+  onFileDrop?: (file: File) => void;
+  label?: string;
+  hint: string;
+  describedBy?: string;
+}) {
+  const [dragging, setDragging] = useState(false);
+  return <button type="button" className={styles.zone} disabled={busy}
+    aria-label={label} aria-describedby={describedBy} data-primary-action data-portal-upload-zone data-drag={dragging || undefined}
+    aria-busy={busy} onClick={onChoose}
+    onDragOver={event => {
+      if (!onFileDrop || !event.dataTransfer.types.includes("Files")) return;
+      event.preventDefault(); event.dataTransfer.dropEffect = busy ? "none" : "copy";
+      if (!busy) setDragging(true);
+    }}
+    onDragLeave={event => { if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setDragging(false); }}
+    onDrop={event => {
+      if (!onFileDrop) return;
+      event.preventDefault(); setDragging(false);
+      const file = event.dataTransfer.files[0];
+      if (!busy && file) onFileDrop(file);
+    }}>
+    <Upload aria-hidden="true" />
+    <span><strong>{busy ? "Проверяю и сохраняю…" : label}</strong><small>{hint}</small></span>
+    <span className={styles.arrow} aria-hidden="true">↗</span>
+  </button>;
+}

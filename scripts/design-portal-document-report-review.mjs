@@ -107,7 +107,9 @@ async function noListButtons(page, label) {
 async function reportActionLimit(page, label) {
   const buttons = page.locator('button');
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
-  if (await buttons.count()) assert.equal(await buttons.innerText(), 'Проверить новую версию', 'The only saved-report action explicitly starts another file check');
+  // User-requested drop zone adds a visible hint and decorative arrow. Its
+  // accessible action name and the one-action limit remain unchanged.
+  if (await buttons.count()) assert.equal(await buttons.getAttribute('aria-label'), 'Проверить новую версию', 'The only saved-report action explicitly starts another file check');
   assert.doesNotMatch(await report(page).innerText(), /Спросить про этот шаг|Продолжить маршрут|Открыть разбор/);
 }
 

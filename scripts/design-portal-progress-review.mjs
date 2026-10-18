@@ -668,7 +668,9 @@ try {
       assert(activeTab.width >= 2 && activeTab.style === 'solid' && activeTab.color !== 'rgba(0, 0, 0, 0)', 'The active tab stays marked when forced colors remove shadows');
       const toggles = page.locator('#portal-panel details > summary').filter({ visible: true });
       const marks = await toggles.evaluateAll(elements => elements.map(element => {
-        const mark = element.querySelector('[aria-hidden=true]') || element;
+        // The current stage now contains a decorative copilot image. Inspect
+        // the disclosure's own mark, not an image nested inside its portrait.
+        const mark = element.querySelector(':scope > [aria-hidden=true]') || element;
         const style = getComputedStyle(mark, '::before');
         return { width: parseFloat(style.borderTopWidth), style: style.borderTopStyle, color: style.borderTopColor };
       }));

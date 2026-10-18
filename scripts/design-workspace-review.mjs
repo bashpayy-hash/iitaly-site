@@ -156,6 +156,10 @@ try {
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],true,'Only an applicable passed review closes the file task');
     assert.equal(storedState.reviews[currentDoc],'approved');
+    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await page.locator(`[data-document="${currentDoc}"]`).click();
+    assert.equal(await page.locator('[data-portal-inspector]').count(),1,'The saved file keeps its inspector when reopened for a new version');
+    assert.equal(await page.locator('section[aria-label="Твой следующий шаг"] [data-vespi]').count(),0,'The route yields its portrait while the saved file owns the inspector');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await page.getByRole('link',{name:'Изменить ответы анкеты',exact:true}).click();

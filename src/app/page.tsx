@@ -2,6 +2,7 @@ import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialMotion } from "@/components/marketing/EditorialMotion";
 import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
+import { VespiEditorialBreak } from "@/components/home/VespiEditorialBreak";
 import { FeatureBanner } from "@/components/home/FeatureBanner";
 import { Split } from "@/components/home/Split";
 import { Stats } from "@/components/home/Stats";
@@ -18,6 +19,7 @@ export default function Home() {
         <Stats />
         <HowItWorks />
         <Split />
+        <VespiEditorialBreak />
         <FeatureBanner />
         <PriceBand />
         <TrustFAQ />

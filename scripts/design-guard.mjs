@@ -43,6 +43,10 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-18: tactile shared chrome and one accessible upload/drop
+  // action using the existing review pipeline; no API, status or palette changes.
+  "src/components/portal/PortalUploadZone.tsx",
+  "src/components/portal/portal-upload.module.css",
   // User request 2026-10-18: shared local profile, honest guest workspace,
   // five display phases and completion ring; no authentication/API changes.
   "src/lib/localWorkspace.ts",

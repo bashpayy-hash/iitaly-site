@@ -562,7 +562,7 @@ export function PortalExplorer() {
     && (data.done[activeTask.id] || activeTask.available !== false));
   // The persistent road and open conversation share one mascot. University
   // selection keeps the road's guide; task/report panels own their portrait.
-  const detailOwnsMascot = Boolean(activeTask && (section === "docs" || (section === "plan" && openTaskId && !shortlistEditable)));
+  const detailOwnsMascot = Boolean((section === "plan" && !openTaskId && position?.stage) || (activeTask && (section === "docs" || (section === "plan" && openTaskId && !shortlistEditable))));
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
   const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
@@ -729,7 +729,7 @@ export function PortalExplorer() {
               key={activeTask.id + ":" + Boolean(data.done[activeTask.id])}
               data={data} task={activeTask} busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)}
               context={reviewContext} onContextChange={setReviewContext}
-              onBack={() => changeSection(stepReturnSection.current)} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(activeTask.id)}
+              onBack={() => changeSection(stepReturnSection.current)} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(activeTask.id)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, activeTask.id); }}
               onToggle={value => { void handleToggle(activeTask.id, value); }}
               onEditProfile={() => { profileFromTask.current = true; setEditingProfile(true); }}
               managesCompletion={activeTask.id === "chances"}
@@ -743,13 +743,13 @@ export function PortalExplorer() {
               <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}
                 orientir={taskDate(activeTask)}
-                onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(openDocument)} busy={busyTask !== null}
+                onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(openDocument)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, openDocument); }} busy={busyTask !== null}
                 canUpload={(!readOnlyReason || canRecheckDocument) && !actionError?.retry} readOnlyReason={readOnlyReason}
                 context={reviewContext} onContextChange={setReviewContext} />
             ) : <PortalTaskDetail
               key={activeTask.id + ":file"} data={data} task={activeTask} busy={busyTask !== null}
               hasRetry={Boolean(actionError?.retry)} context={reviewContext} onContextChange={setReviewContext}
-              onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(activeTask.id)}
+              onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(activeTask.id)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, activeTask.id); }}
               onToggle={value => { void handleToggle(activeTask.id, value); }}
               onEditProfile={() => { profileFromTask.current = true; setEditingProfile(true); }}
             /> : <DocsSection currentTaskId={position?.task?.id} data={data} onOpenDoc={showDocument} />)}
