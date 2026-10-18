@@ -94,11 +94,11 @@
   line-height: 1.5;
 }
 
-.primaryAction { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border: 0; border-radius: var(--radius-buttons); background: var(--portal-accent); color: var(--bg-surface); font: inherit; font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: -.015em; cursor: pointer; }
+.primaryAction { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border: 0; border-radius: 999px; background: var(--portal-accent); color: var(--bg-surface); font: inherit; font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: -.015em; cursor: pointer; }
 .primaryAction:hover { background: var(--portal-accent-deep); }
 .primaryAction:disabled { opacity: .6; cursor: wait; }
 .primaryAction:focus-visible, .dangerAction:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
-.dangerAction[href] { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 48px; padding: 11px 16px; border: 1px solid var(--portal-muted); border-radius: var(--radius-buttons); color: var(--portal-ink); font-size: 15px; line-height: 1.5; font-weight: 500; text-decoration: none; }
+.dangerAction[href] { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 48px; padding: 11px 16px; border: 1px solid var(--portal-muted); border-radius: 12px; color: var(--portal-ink); font-size: 15px; line-height: 1.5; font-weight: 500; text-decoration: none; }
 .dangerAction:hover { background: var(--portal-surface-soft); }
 .dangerAction svg { stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .formHint { margin: 10px 0 0; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
@@ -106,6 +106,8 @@
 .reminders summary::-webkit-details-marker { display: none; }
 .reminders summary::after { content: "+"; color: var(--portal-muted); }
 .reminders[open] summary::after { content: "−"; }
+
+/* One settings column: profile first, secondary details on request. */
 .page { max-width: 880px; }
 .profile { margin-top: 24px; padding-bottom: 24px; }
 .profileHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0 12px; margin-bottom: 12px; }

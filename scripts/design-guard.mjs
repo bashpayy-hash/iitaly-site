@@ -7,8 +7,7 @@ const base = process.argv[2];
 assert(base, 'Pass the reviewed base commit SHA.');
 const read = path => readFileSync(path, 'utf8');
 const before = path => execFileSync('git', ['show', `${base}:${path}`], {encoding:'utf8'});
-// The owner explicitly replaced the complete visual system. Preserve product
-// contracts, not the discarded palette, page composition or mascot placements.
+// Restore the warm UI while preserving the requested product and content changes.
 for (const path of [
   'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts',
   'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts',
@@ -36,12 +35,9 @@ function inspect(directory) {
     if(!/\.(tsx?|jsx?|css|html|json|svg)$/.test(path))continue;
     const source = read(path);
     assert(!forbiddenCopy.test(source), `${path}: obsolete role wording`);
-    assert(!/["'`(]\/(?:mascot|illustrations)\//.test(source), `${path}: discarded artwork URL`);
-    for(const match of source.matchAll(/box-shadow\s*:\s*([^;}]+)/gi)) assert(/^none(?:\s*!important)?$/.test(match[1].trim()), `${path}: elevation reintroduced`);
-    assert(!/\b(?:linear|radial|conic)-gradient\s*\(/i.test(source), `${path}: gradient reintroduced`);
+    assert(!/["'`(]\/mascot\//.test(source), `${path}: repeated mascot artwork`);
+    assert(!/gallery-|font-davinci|font-playfair|color-putty|canaletto/i.test(source), `${path}: discarded gallery design`);
   }
 }
 inspect('src');inspect('tools');
-const art = JSON.parse(read('public/art/sources.json'));
-assert(art, 'Classical art provenance must ship with local assets');
-console.log('Gallery contracts passed: exact admissions/prices/payment/API/dependencies/map/Permesso geometry, face-free artwork and student-directed copy.');
+console.log('Warm UX contracts passed: exact admissions/prices/payment/API/dependencies/map/Permesso geometry, minimal assistant and student-directed copy.');

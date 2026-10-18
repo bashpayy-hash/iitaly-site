@@ -1,1 +1,91 @@
-.headerHost { position:relative; background:var(--color-putty); }
+/* Local artwork treatments only. Never import into the map, root or global CSS. */
+.picture {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+.picture img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.guidePanel { width: 100%; position: relative; aspect-ratio: 4 / 3; background: var(--bg-base); }
+.arrivalPanel { width: 100%; position: relative; aspect-ratio: 1; background: var(--bg-base); }
+/* Feather the picture into the existing white copy column, not over its text. */
+.arrivalPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--bg-surface) 0%, color-mix(in srgb, var(--bg-surface) 50.2%, transparent) 8%, transparent 32%);
+}
+.headerHost { position: relative; isolation: isolate; }
+.headerHost > :not(.atmosphere):not(.tomato) { position: relative; z-index: 1; }
+.atmosphere {
+  display: none;
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(26vw, 390px);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  mask-image: linear-gradient(90deg, transparent, var(--text-primary) 58%);
+  background: radial-gradient(ellipse at 95% 70%, color-mix(in srgb, var(--bg-base) 50.2%, transparent), transparent 75%);
+}
+.atmosphere img {
+  position: absolute;
+  width: 420px;
+  max-width: none;
+  height: 315px;
+  right: -68px;
+  bottom: -48px;
+  opacity: .24;
+  filter: blur(3px) saturate(.72);
+}
+/* The local paper grain stays below copy and is not a page-wide overlay. */
+.atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='137' height='137'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%2357534E' filter='url(%23n)' opacity='.5' d='M0 0h137v137H0z'/%3E%3C/svg%3E");
+}
+/* Правая половина пары с террасой в шапке цен. Отступ и ширина приходят
+   переменными из .frame (prices/prices-landscape.module.css): расстояние
+   от центра то же, что у террасы, ширина — 0,66 её ширины (см. там). */
+/* Миска у правого края окна, боком и чуть за экраном. Геометрия и
+   объяснение — в prices-landscape.module.css (.frame задаёт --edge). */
+.tomato {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: calc(-1 * var(--edge, 20px));
+  width: calc(var(--pair-width, 300px) * .66);
+  transform: translate(18%, -50%) rotate(-14deg);
+  pointer-events: none;
+  user-select: none;
+}
+.tomato img { display: block; width: 100%; height: auto; }
+@media (min-width: 1280px) { .atmosphere, .tomato { display: block; } }
+@media (min-width: 1024px) {
+  .guidePanel { min-height: 460px; max-height: 620px; }
+  .arrivalPanel { min-height: 480px; max-height: 660px; }
+}
+@media (max-width: 1023px) {
+  .guidePanel { max-height: 420px; }
+  .arrivalPanel { max-height: 440px; }
+  .arrivalPanel::after { background: linear-gradient(0deg, var(--bg-surface), transparent 25%); }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .atmosphere { display: none; }
+  .arrivalPanel::after { display: none; }
+}
+@media (forced-colors: active), print {
+  .picture, .atmosphere, .tomato, .guidePanel, .arrivalPanel { display: none; }
+}
+
+/* A quiet local wash under the selected postcard; the table stays on solid white. */
+.lemonPostcard { position: relative; display: block; width: 156px; pointer-events: none; user-select: none; isolation: isolate; }
+.lemonPostcard::before { content: ""; position: absolute; inset: 10% -10%; z-index: -1; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, var(--bg-subtle) 63.92%, transparent), color-mix(in srgb, var(--bg-subtle) 31.37%, transparent) 50%, transparent 72%); filter: blur(8px); }
+.lemonPostcard img { display: block; width: 100%; height: auto; }
+@media (max-width: 767px), (forced-colors: active), print { .lemonPostcard { display: none; } }

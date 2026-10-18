@@ -118,7 +118,7 @@ export function LocalWorkspace() {
   const clarify = documents.find(task => data.docs[task.id] && documentOutcome(data.docs[task.id], applicationYear).kind !== "missing");
 
   return <div className={`${portal.portal} ${styles.workspace}`} data-local-workspace data-portal-design="shared-site">
-    <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<Link href="/" className="gallery-link">На сайт ↗</Link>} />{!wizardOpen && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
+    <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<Link href="/" className="journey-link">На сайт ↗</Link>} />{!wizardOpen && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
     <main id="main" className={styles.frame}>
       {location.view === "today" && <h1 className="sr-only">Личный кабинет</h1>}
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>

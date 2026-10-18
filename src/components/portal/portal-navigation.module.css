@@ -6,7 +6,7 @@
 .progressShell { max-width: 1280px; margin: 0 auto; padding: 8px 32px 12px; }
 .chrome:has(.progressShell) { border-bottom: 0; }
 .topCopy h1 { overflow-wrap: anywhere; }
-.settingsButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--portal-border); border-radius: var(--radius-buttons); background: var(--portal-surface); color: var(--portal-ink); font-size: 14px; font-weight: 500; text-decoration: none; }
+.settingsButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; min-height: 44px; padding: 8px 12px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); color: var(--portal-ink); font-size: 14px; font-weight: 500; text-decoration: none; }
 .settingsButton svg { flex-shrink: 0; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .settingsButton:hover, .settingsButton[aria-current="page"] { background: var(--portal-surface-soft); border-color: var(--portal-muted); }
 .settingsLink { border-color: transparent; background: transparent; }
@@ -34,9 +34,8 @@
   .settingsLink { width: 44px; padding: 8px; }
   .settingsLink span { display: none; }
 }
+
+/* The page's guide owns the portrait; the helper remains one quiet entry. */
 .helperSignal { align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
 .helperSignal [data-vespi-label] { margin: 0; font: inherit; }
 .helperSignal [data-vespi-indicator] { width: 24px; height: 24px; font-size: 13px; }
-.chrome {position:relative;background:var(--color-putty)}
-.progressShell {max-width:1100px;padding:0 32px}
-@media(max-width:700px){.progressShell{padding:0 24px}}

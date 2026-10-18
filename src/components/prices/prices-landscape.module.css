@@ -1,0 +1,13 @@
+.hero { position:relative; isolation:isolate; z-index:1; padding:96px 20px 20px; text-align:center; }
+.copy { position:relative; z-index:1; isolation:isolate; width:min(100%,760px); margin-inline:auto; }
+.copy::before {
+  content:""; position:absolute; z-index:-1; inset:-34px -20px -20px; pointer-events:none;
+  background:radial-gradient(ellipse at center,var(--color-cream) 28%,color-mix(in srgb,var(--color-cream) 97%,transparent) 59%,color-mix(in srgb,var(--color-cream) 78%,transparent) 72%,transparent 90%);
+}
+.landscape { display:block; pointer-events:none; user-select:none; }
+.landscape img { display:block; width:100%; height:auto; }
+.packages { position:relative; padding-top:20px; }
+@media (min-width:960px) { .copy::before { inset-inline:-72px; } }
+@media (max-width:767px) { .hero { padding:48px 20px 20px; } .copy::before { inset:-20px -20px -14px; } }
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more) { .copy::before { background:var(--color-cream); } }
+@media print { .hero { padding-block:24px; } .copy::before { display:none; } }

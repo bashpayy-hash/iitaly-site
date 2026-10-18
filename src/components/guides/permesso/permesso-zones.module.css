@@ -12,27 +12,27 @@
 .outlineProbe { display:block; position:absolute; inset:0; pointer-events:none; }
 .focusLayer { display:block; position:absolute; inset:0; width:100%; height:100%; z-index:5; pointer-events:none; }
 .onboarding { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; color:var(--text-secondary); font-size:12px; line-height:1.4; }
-.onboarding button { width:44px; height:44px; flex:0 0 44px; border:0; background:transparent; border-radius:var(--radius-buttons); font:inherit; font-size:22px; color:var(--text-secondary); cursor:pointer; }
+.onboarding button { width:44px; height:44px; flex:0 0 44px; border:0; background:transparent; border-radius:8px; font:inherit; font-size:22px; color:var(--text-secondary); cursor:pointer; }
 .onboarding button:hover { background:var(--bg-base); }
-.quickInspector { margin-top:16px; padding:16px; border:1px solid var(--border-subtle); border-radius:var(--radius-cards); background:var(--glow-cream); }
+.quickInspector { margin-top:16px; padding:16px; border:1px solid var(--border-subtle); border-radius:12px; background:var(--glow-cream); }
 .legend { display:flex; flex-wrap:wrap; gap:8px 16px; margin:0 0 10px; color:var(--text-secondary); font-size:11px; }
 .legend span { display:inline-flex; align-items:center; gap:5px; }
-.legend i { width:9px; height:9px; border:1px solid var(--accent-primary); border-radius:var(--radius-cards); }
+.legend i { width:9px; height:9px; border:1px solid var(--accent-primary); border-radius:2px; }
 .legend span[data-state="empty"] i { border-style:dashed; border-color:var(--text-muted); }
 .legend span[data-state="verify"] i,.legend span[data-state="post"] i { border-color:var(--accent-primary); background:var(--bg-subtle); }
 .legend span[data-state="ifExists"] i { border-style:dotted; }
 .scopeNote { margin:0 0 12px; border-left:2px solid var(--accent-primary); padding:8px 12px; color:var(--text-secondary); font-size:12px; line-height:1.5; }
 .choiceSelect { display:grid; gap:6px; }
-.choiceSelect label { display:flex; align-items:center; gap:10px; min-height:44px; padding:8px; border:1px solid var(--border-subtle); border-radius:var(--radius-cards); font-size:14px; cursor:pointer; }
+.choiceSelect label { display:flex; align-items:center; gap:10px; min-height:44px; padding:8px; border:1px solid var(--border-subtle); border-radius:8px; font-size:14px; cursor:pointer; }
 .choiceSelect input { width:18px; height:18px; accent-color:var(--accent-primary); }
 .exampleControl { display:flex; gap:6px; flex-wrap:wrap; }
-.exampleControl button { min-height:44px; border:1px solid var(--border-subtle); border-radius:var(--radius-buttons); background:var(--glow-cream); padding:8px 12px; color:var(--text-secondary); font:inherit; font-size:12px; }
+.exampleControl button { min-height:44px; border:1px solid var(--border-subtle); border-radius:8px; background:var(--glow-cream); padding:8px 12px; color:var(--text-secondary); font:inherit; font-size:12px; }
 .exampleControl button[aria-pressed="true"] { color:var(--text-primary); background:var(--bg-base); border-color:var(--border-subtle); }
 .secondaryPages { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:8px; font-size:11px; color:var(--text-secondary); }
-.secondaryPages button { min-height:44px; min-width:44px; border:1px solid var(--border-subtle); border-radius:var(--radius-buttons); background:var(--glow-cream); padding:8px; color:inherit; }
+.secondaryPages button { min-height:44px; min-width:44px; border:1px solid var(--border-subtle); border-radius:8px; background:var(--glow-cream); padding:8px; color:inherit; }
 .secondaryPages button[aria-current="page"] { border-color:var(--accent-primary); color:var(--text-primary); }
 .previewCells { display:flex; gap:3px; flex-wrap:wrap; margin:8px 0 0; }
-.previewCells span { display:grid; place-items:center; width:24px; height:30px; border:1px solid var(--border-subtle); color:var(--text-secondary); font-family:var(--font-helvetica-now); font-size:16px; }
+.previewCells span { display:grid; place-items:center; width:24px; height:30px; border:1px solid var(--border-subtle); color:var(--text-secondary); font-family:monospace; font-size:16px; }
 @media (any-pointer:coarse) {
  .zoneButton, .group[data-pinned="true"] .zoneButton { pointer-events:auto; min-height:44px; min-width:44px; top:50%; left:50%; bottom:auto; right:auto; transform:translate(-50%,-50%); }
  .part { pointer-events:none!important; }

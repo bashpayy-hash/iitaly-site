@@ -1,7 +1,7 @@
 .step { min-width: 0; }
 .header { padding: 0; }
 .back { display: inline-flex; align-items: center; min-height: 44px; color: var(--portal-muted); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
-.header h2 { margin: 8px 0; font-family: var(--font-helvetica-now); font-size: 32px; font-weight: 500; line-height: 1.15; letter-spacing: -.03em; }
+.header h2 { margin: 8px 0; font-family: var(--portal-heading-font); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
 .explain { max-width: 60ch; margin: 16px 0; font-size: 16px; line-height: 1.5; }
 .meta { margin: 8px 0; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
 .hint { margin: 12px 0 8px; font-size: 14px; line-height: 1.5; }
@@ -12,13 +12,13 @@
 .help[open] summary::after { content: "−"; }
 .help p { margin: 8px 0; max-width: 65ch; color: var(--portal-muted); }
 .loading { padding: 32px 0; color: var(--portal-muted); }
-.saveBar { position: relative; bottom: 16px; z-index: 15; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 12px 16px; border: 1px solid var(--portal-border); border-radius: var(--radius-cards); background: var(--portal-surface); }
+.saveBar { position: relative; bottom: 16px; z-index: 15; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 12px 16px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); }
 .saveBar[data-has-selection="true"] { position: sticky; }
 .saveBar:not([data-has-selection="true"]) { bottom: auto; }
 .selection { min-width: 0; font-size: 14px; line-height: 1.4; }
-.selection > span { font-weight: 500; }
+.selection > span { font-weight: 600; }
 .selection p { max-height: 2.8em; overflow: auto; margin-top: 4px; color: var(--portal-muted); font-size: 13px; overflow-wrap: anywhere; }
 .saveBar button { flex: none; min-height: 44px; transition: none; }
 .saveBar button:disabled { background: var(--portal-surface-soft); color: var(--portal-muted); cursor: default; }
 .step :is(a, button, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
-@media (max-width: 900px) { .saveBar { bottom: calc(70px + env(safe-area-inset-bottom, 0px)); gap: 12px; padding: 12px; border-radius: var(--radius-cards); } .header h2 { font-size: 28px; } }
+@media (max-width: 900px) { .saveBar { bottom: calc(70px + env(safe-area-inset-bottom, 0px)); gap: 12px; padding: 12px; border-radius: 28px; } .header h2 { font-size: 28px; } }

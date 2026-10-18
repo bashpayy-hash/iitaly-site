@@ -87,7 +87,7 @@ try {
   for (const width of [390, 1440]) {
     const { context, page, calls } = await makePage(width);
     await page.goto(`${origin}/prices`, { waitUntil: 'networkidle' });
-    await page.getByRole('button', { name: 'Оформить доступ · 667 ₸', exact: true }).click();
+    await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Имя', { exact: true }).fill('Demo');
     await dialog.getByLabel('Фамилия', { exact: true }).fill('Testov');

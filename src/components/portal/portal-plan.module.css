@@ -2,7 +2,7 @@
 .intro { margin-bottom: 12px; }
 .titleRow { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
 .titleRow > [data-portal-art] { width: 72px; height: 54px; }
-.heading { margin: 0; font-family: var(--font-helvetica-now); font-size: 30px; font-weight: 500; line-height: 1.15; letter-spacing: -.03em; }
+.heading { margin: 0; font-family: var(--font-apple-display); font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
 .rules { margin: 0; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
 .rules summary { position: relative; min-height: 44px; padding: 12px 30px 12px 0; cursor: pointer; list-style: none; }
 .rules summary::-webkit-details-marker { display: none; }
@@ -19,7 +19,7 @@
 .stageHeading { display: flex; align-items: center; gap: 14px; min-height: 60px; margin: 0; padding: 16px 0; color: var(--portal-ink); list-style: none; cursor: pointer; }
 .stageHeading::-webkit-details-marker { display: none; }
 .stageIcon { flex:0 0 auto; color:var(--portal-muted); }
-.stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 500; }
+.stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 600; }
 .nextLabel { color: var(--portal-muted); font-weight: 400; }
 .stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .chevron { position: relative; flex-shrink: 0; width: 16px; height: 16px; color: var(--portal-muted); }
@@ -36,7 +36,7 @@
 .phase { max-width: 9ch; padding-top: 3px; color: var(--portal-muted); font-size: 13px; font-weight: 400; line-height: 1.5; text-align: right; overflow-wrap: anywhere; }
 .taskLink[data-current-task] .phase { color: var(--portal-ink); }
 .taskTitle { display: block; font-size: 16px; font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
-.taskLink[data-current-task] .taskTitle { font-weight: 500; }
+.taskLink[data-current-task] .taskTitle { font-weight: 600; }
 .taskLink[data-done] .taskTitle { color: var(--portal-muted); text-decoration: none; }
 .taskLink:hover .taskTitle { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .meta { display: block; margin-top: 5px; color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
@@ -44,7 +44,7 @@
 .documentStatus[data-outcome="fix"] { color: var(--portal-danger); }
 .documentStatus[data-outcome="approved"] { color: var(--portal-green); }
 .complete { margin: 16px 0; color: var(--portal-muted); font-size: 16px; line-height: 1.5; }
-.plan summary:focus-visible, .plan a:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: var(--radius-cards); }
+.plan summary:focus-visible, .plan a:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
 @media (max-width: 900px) {
   .heading { font-size: 28px; }
 }
@@ -58,3 +58,6 @@
   .taskLink { gap: 10px; padding: 16px 0; }
   .phase { max-width: 10ch; padding-top: 3px; overflow-wrap: normal; }
 }
+
+/* The latest brief explicitly allows checking the eligible current self-report
+   in place. Future steps and file steps never get this control. */

@@ -1,14 +1,19 @@
+/* Portal shell only. The original paper, field positions, cell typography,
+   SVG overlays, zoom and hit areas remain entirely owned by the trainer. */
 .embedded { min-width: 0; max-width: 100%; margin-top: 24px; container-type: inline-size; }
 .loading { padding: 28px 0; color: var(--portal-muted); font-size: 14px; }
 .embedded [data-permesso-editor] { padding: 0; background: transparent; }
 .embedded [data-permesso-editor] > header { grid-template-columns: 1fr; gap: 12px; }
 .embedded [data-permesso-editor] > header > aside { padding-left: 0; border-left: 0; }
-.embedded [data-permesso-editor] > header h1 { font-family: var(--font-helvetica-now); font-size: 26px; font-weight: 500; color: var(--portal-ink); }
-.embedded [data-permesso-editor] h2 { font-family: var(--font-helvetica-now); font-size: 24px; font-weight: 500; }
+.embedded [data-permesso-editor] > header h1 { font-family: var(--portal-heading-font); font-size: 26px; font-weight: 600; color: var(--portal-ink); }
+.embedded [data-permesso-editor] h2 { font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; }
 .embedded [data-workbench-bar] { top: var(--portal-chrome-height, 64px); background: var(--portal-surface); }
 .embedded [data-permesso-inspector] { top: calc(var(--portal-chrome-height, 64px) + 92px); }
 .embedded > div:has(> :global(#helpers)) { padding: 0; background: transparent; }
-.embedded :is(:global(#helpers), :global(#before-poste)) h2 { font-family: var(--font-helvetica-now); font-size: 24px; font-weight: 500; }
+.embedded :is(:global(#helpers), :global(#before-poste)) h2 { font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; }
+
+/* The portal has a sidebar; available content width is smaller than the
+   viewport. Adapt only the surrounding controls to that available width. */
 @container (max-width: 900px) {
   .embedded [data-workbench-bar] { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; }
   .embedded [data-workbench-bar] > nav { grid-row: 2; grid-column: 1 / -1; justify-content: flex-start; }

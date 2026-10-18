@@ -114,17 +114,17 @@ export function PaymentSuccess() {
 
   return (
     <section className="px-5 py-16 sm:py-24">
-      <div className="mx-auto max-w-[620px] rounded-2xl border border-white/15 bg-bone p-6 text-center sm:p-9" aria-busy={view.kind === "checking"}>
+      <div className="mx-auto max-w-[620px] rounded-2xl border border-white/15 bg-white p-6 text-center sm:p-9" aria-busy={view.kind === "checking"}>
         {view.kind === "activated" ? (
           <>
-            <p className="text-apple-caption font-medium text-green uppercase">Оплата подтверждена</p>
-            <h1 className="gallery-title mt-3">
+            <p className="text-apple-caption font-semibold text-green uppercase">Оплата подтверждена</p>
+            <h1 className="mt-3 font-apple-display text-apple-heading font-semibold text-cloud-white">
               Кабинет уже готов
             </h1>
             <p className="mt-3 text-apple-body-sm text-cloud-body">
               Stripe подтвердил платёж, а IITALY автоматически создал твой маршрут.
             </p>
-            <div className="mt-6 rounded-xl border border-subtle bg-surface p-6 text-left ">
+            <div className="mt-6 rounded-xl border border-subtle bg-surface p-6 text-left shadow-soft-md">
               <p className="text-apple-caption text-cloud-meta">Фамилия</p>
               <b className="text-cloud-white">{view.surname}</b>
               <p className="mt-4 text-apple-caption text-cloud-meta">Код кабинета</p>
@@ -141,23 +141,23 @@ export function PaymentSuccess() {
             </div>
             <Link
               href="/portal"
-              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-pill bg-crimson px-5 py-2 text-sm font-medium text-paper"
+              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-pill bg-crimson px-5 py-2 text-sm font-semibold text-white"
             >
               Открыть кабинет
             </Link>
           </>
         ) : view.kind === "paid" ? (
           <>
-            <p className="text-apple-caption font-medium text-green uppercase">Оплата подтверждена</p>
-            <h1 className="gallery-title mt-3">Готово</h1>
+            <p className="text-apple-caption font-semibold text-green uppercase">Оплата подтверждена</p>
+            <h1 className="mt-3 font-apple-display text-apple-heading font-semibold text-cloud-white">Готово</h1>
             <p className="mt-3 text-apple-body-sm text-cloud-body">{view.text}</p>
-            <Link href="/" className="mt-6 inline-flex rounded-pill bg-crimson px-5 py-3 text-sm font-medium text-paper">
+            <Link href="/" className="mt-6 inline-flex rounded-pill bg-crimson px-5 py-3 text-sm font-semibold text-white">
               На главную
             </Link>
           </>
         ) : (
           <>
-            <h1 className="gallery-title mt-3">
+            <h1 className="mt-3 font-apple-display text-apple-heading font-semibold text-cloud-white">
               {view.kind === "checking" ? "Подтверждаем оплату" : "Статус оплаты"}
             </h1>
             <p role="status" className="mt-4 text-apple-body-sm text-cloud-body">{view.text}</p>
@@ -168,14 +168,14 @@ export function PaymentSuccess() {
               <button
                 type="button"
                 onClick={retry}
-                className="mt-6 rounded-pill bg-crimson px-5 py-3 text-sm font-medium text-paper"
+                className="mt-6 rounded-pill bg-crimson px-5 py-3 text-sm font-semibold text-white"
               >
                 Проверить ещё раз
               </button>
             )}
             {view.kind === "expired" && (
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <Link href="/prices" className="rounded-pill bg-crimson px-5 py-3 text-sm font-medium text-paper">
+                <Link href="/prices" className="rounded-pill bg-crimson px-5 py-3 text-sm font-semibold text-white">
                   Вернуться к оплате
                 </Link>
                 <Link href="/portal" className="rounded-pill border border-white/20 px-5 py-3 text-sm text-cloud-white">
@@ -190,7 +190,7 @@ export function PaymentSuccess() {
                 </p>
                 <div className="mt-4 flex flex-wrap justify-center gap-3">
                   <a href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center rounded-pill border border-crimson px-5 py-3 text-sm font-medium text-crimson">
+                    className="inline-flex min-h-11 items-center justify-center rounded-pill border border-crimson px-5 py-3 text-sm font-semibold text-crimson">
                     Написать в поддержку
                   </a>
                   <Link href="/portal" className="inline-flex min-h-11 items-center justify-center rounded-pill border border-white/20 px-5 py-3 text-sm text-cloud-white">

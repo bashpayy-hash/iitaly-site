@@ -150,13 +150,13 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
-        <legend className="text-apple-body-sm font-medium text-cloud-white">Для какой заявки?</legend>
+        <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="min-w-0 text-apple-caption text-cloud-body">
             Программа
             <select value={context.profile}
               onChange={e => updateContext({ profile: e.target.value as DocumentReviewContext["profile"] })}
-              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-bone px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
               <option value="general">Не знаю / другая программа</option>
               <option value="bocconi">Bocconi · ISU / ISEEU</option>
               <option value="piemonte">EDISU Piemonte</option>
@@ -168,7 +168,7 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
             Учебный год заявки
             <select value={context.academicYear}
               onChange={e => updateContext({ academicYear: e.target.value as DocumentReviewContext["academicYear"] })}
-              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-bone px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
               <option value="unspecified">Ещё не определился</option>
               <option value="2026/27">2026/27</option>
               <option value="2027/28">2027/28</option>
@@ -248,12 +248,12 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
               className="h-14 w-14 shrink-0 rounded-md border border-white/15 object-cover sm:h-20 sm:w-20"
             />
           ) : (
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-white/15 text-apple-caption font-medium text-cloud-meta sm:h-20 sm:w-20">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-white/15 text-apple-caption font-semibold text-cloud-meta sm:h-20 sm:w-20">
               {fileIcon}
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="break-words text-apple-body-sm font-medium text-cloud-white [overflow-wrap:anywhere]">{state.file.name}</p>
+            <p className="break-words text-apple-body-sm font-semibold text-cloud-white [overflow-wrap:anywhere]">{state.file.name}</p>
             <div className="mt-3 flex flex-wrap gap-2 [&>button]:w-full sm:[&>button]:w-auto">
               <AppleButton
                 type="button"
@@ -289,12 +289,12 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
 
       <p className="mt-3 text-apple-caption text-cloud-meta">
         После нажатия «Проверить документ» файл передаётся в Anthropic для ИИ-анализа.{" "}
-        <a href="/privacy" className="font-medium text-crimson underline underline-offset-2">Как обрабатываются данные</a>
+        <a href="/privacy" className="font-semibold text-crimson underline underline-offset-2">Как обрабатываются данные</a>
       </p>
 
       <div aria-live="polite" className="mt-5">
         {(state.step === "error" || state.step === "retry") && !unavailable && (
-          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-medium text-primary">
+          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-primary">
             {state.message}
             {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}
           </div>
@@ -334,20 +334,20 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
           <ShieldCheck size={22} aria-hidden="true" />
-          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-medium ${v === "error" ? "bg-red/10 text-primary" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
-          <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-medium text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
+          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-primary" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
+          <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
         </div>
         {result.summary && <p>{result.summary}</p>}
       </header>
 
       {result.review && <div className="mt-4 border-b border-white/15 pb-4 text-apple-body-sm text-cloud-body">
-        <p className="font-medium text-cloud-white">
+        <p className="font-semibold text-cloud-white">
           {result.review.profileLabel}{result.review.academicYear !== "unspecified" ? ` · ${result.review.academicYear}` : ""}
         </p>
         <p className="mt-1">{result.review.notice}</p>
         {result.review.referenceYear !== null && <p className="mt-1">Год доходов: {result.review.referenceYear}. Имущество — на 31 декабря {result.review.referenceYear}; допустимые альтернативы зависят от программы.</p>}
         <details className="mt-3 text-apple-caption">
-          <summary className="min-h-11 cursor-pointer py-3 font-medium text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+          <summary className="min-h-11 cursor-pointer py-3 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
             Официальные источники · сверены {result.review.verifiedOn.split("-").reverse().join(".")}
           </summary>
           <p className="mt-2 text-cloud-meta">Это дата сверки базы. Сайты учреждений не просматриваются заново при каждой проверке.</p>
@@ -372,7 +372,7 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
                       ? "bg-red/15 text-primary"
                       : c.status === "warn"
                         ? "bg-warn/15 text-warn"
-                        : "bg-bone/10 text-cloud-meta"
+                        : "bg-white/10 text-cloud-meta"
                 }`}
               >
                 {MARK[c.status || "unknown"] || "?"}

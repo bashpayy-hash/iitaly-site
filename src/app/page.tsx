@@ -1,45 +1,64 @@
 import Link from "next/link";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { StructuredData } from "@/components/marketing/StructuredData";
-import { GalleryTitle, Hexagon, Painting } from "@/components/gallery/GalleryPrimitives";
-import { RoutePreview } from "@/components/gallery/RoutePreview";
+import { JourneyTitle } from "@/components/journey/JourneyUI";
+import { RoutePreview } from "@/components/journey/RoutePreview";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { UNIS, CITIES } from "@/data/italy";
+import styles from "@/components/marketing/marketing.module.css";
 
-const JOURNEY = [
-  { title: "Подбор и стратегия", text: "Сопоставь образование, язык и бюджет с требованиями программ. Выбери университеты и свой путь поступления.", scene: "square" as const },
-  { title: "Документы и подача", text: "Подготовь аттестат, уточни CIMEA или DoV, затем подай заявки по календарю выбранных программ.", scene: "canal" as const },
-  { title: "Стипендия и переезд", text: "Пройди конкурс DSU, предзапись Universitaly и визовый этап. После приезда — оформление в Италии.", scene: "lagoon" as const },
+const STAGES = [
+  { title: "Подбор и стратегия", text: "Сопоставь образование, язык и бюджет с требованиями программ. Выбери университеты и свой путь поступления.", result: "Результат: список программ и календарь подачи" },
+  { title: "Документы и подача", text: "Подготовь аттестат, уточни требования к CIMEA или DoV и отправь заявки в выбранные университеты.", result: "Результат: учебный комплект и поданные заявки" },
+  { title: "Стипендия и переезд", text: "Подготовь заявку на DSU, пройди предзапись Universitaly и собери досье на визу D. После приезда — оформление в Италии.", result: "Результат: готовность к отъезду и первым неделям учёбы" },
 ];
 const FEATURES = ["Персональный чек-лист на весь цикл поступления", "AI-проверка каждого документа до подачи", "Сохранённые разборы и отметки выполнения", "Напоминания о важных сроках"];
+
 export default function Home() {
-  return <MarketingLayout home><StructuredData/><div className="gallery-home">
-    <section className="gallery-hero" data-gallery-room="putty">
-      <div className="gallery-hero-grid"><div className="gallery-hero-copy">
-        <p className="gallery-eyebrow">Из Казахстана — в Италию</p>
-        <GalleryTitle as="h1">Твоё будущее.<br/><em>В Италии.</em></GalleryTitle>
-        <p className="gallery-deck">Поступление становится понятнее, когда знаешь свой следующий шаг. Собери личный маршрут — от первого решения до начала учёбы.</p>
-        <div className="gallery-actions"><Link href="/plan#questionnaire" className="gallery-button" data-fab-yield><span>Составить план бесплатно</span></Link><Link href="/universities" className="gallery-link">Выбрать университет <span aria-hidden>↗</span></Link></div>
-        <div className="gallery-stats"><span>ВУЗОВ: {UNIS.length}</span><span>ГОРОДОВ: {Object.keys(CITIES).length}</span></div>
-      </div><RoutePreview/></div>
-      <div className="gallery-wordmark" aria-hidden="true" data-gallery-reveal><span>ITALIA</span></div>
+  return <MarketingLayout home>
+    <StructuredData />
+    <section className="journey-hero" data-section="hero">
+      <div className="journey-hero-grid">
+        <div>
+          <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
+          <h1 className={styles.heroTitle}>Твоё будущее.<br />Теперь в <span className="editorial-accent">Италии.</span></h1>
+          <p className={styles.heroDescription}>Поступление становится понятнее, когда знаешь свой следующий шаг. Собери личный маршрут — от первого решения до начала учёбы.</p>
+          <div className="journey-actions">
+            <Link href="/plan#questionnaire" className="journey-button" data-fab-yield>Составить план бесплатно <span aria-hidden>↗</span></Link>
+            <Link href="/universities" className="journey-link">Выбрать университет <span aria-hidden>↗</span></Link>
+          </div>
+          <p className={styles.heroNote}>Короткий опрос · Без регистрации</p>
+          <div className="journey-stats"><span><strong>{UNIS.length}</strong> университета</span><span><strong>{Object.keys(CITIES).length}</strong> городов</span></div>
+        </div>
+        <RoutePreview />
+      </div>
     </section>
-    <section className="gallery-room gallery-journey" data-gallery-room="ink" aria-label="Три этапа поступления">
-      <GalleryTitle>От решения<br/>до <em>отъезда.</em></GalleryTitle><p className="gallery-room-intro">Три последовательных этапа. На каждом — понятный результат.</p>
-      <ol className="gallery-stages">{JOURNEY.map((item,index)=><li key={item.title}><div className="gallery-stage-label">Этап {index+1}</div><h3>{item.title}</h3><div className="gallery-vignette"><Painting scene={item.scene}/></div><Hexagon/><p>{item.text}</p></li>)}</ol>
+    <section className={styles.how} data-section="how" aria-label="Три этапа поступления">
+      <div className={styles.howInner}>
+        <div className={styles.howHeading}>
+          <p className={styles.eyebrow}>Твой путь</p>
+          <JourneyTitle>От вопроса до посадки в <em>самолёт.</em></JourneyTitle>
+          <p>Три последовательных этапа. На каждом — понятный результат.</p>
+        </div>
+        <ol className={styles.steps}>{STAGES.map((stage, index) => <li className={styles.step} key={stage.title}>
+          <span className={styles.stepNumber}>0{index + 1}</span><div><h3>{stage.title}</h3><p>{stage.text}</p><small>{stage.result}</small></div>
+        </li>)}</ol>
+      </div>
     </section>
-    <section className="gallery-painting-panel" data-gallery-parallax aria-label="Твой кабинет в Италии">
-      <Painting eager/>
-      <div className="gallery-notched-card"><span className="gallery-eyebrow">Личный кабинет iItaly</span><h2>Весь путь.<br/><em>Перед глазами.</em></h2><p>Открой текущий шаг, прочитай инструкцию и приложи нужный файл. Всё остаётся в одном месте.</p><Link href="/portal" className="gallery-link">Посмотреть кабинет <span aria-hidden>↗</span></Link><span className="gallery-micro">IL TUO PERCORSO / ТВОЙ МАРШРУТ</span></div>
-      <a className="gallery-art-credit" href="https://www.metmuseum.org/art/collection/search/438100" target="_blank" rel="noreferrer">Каналетто · Большой канал, Венеция · The Met ↗</a>
+    <section className="journey-price-section" aria-labelledby="home-price-title">
+      <div className="journey-price-card">
+        <p className="journey-eyebrow">Доступ на весь цикл поступления</p>
+        <h2 id="home-price-title" className="journey-title">Одна цена. <em>Весь маршрут.</em></h2>
+        <div className="journey-price-line"><strong>{priceLabel(PRICE_MAIN)}</strong><span>один платёж · без подписки</span></div>
+        <ul>{FEATURES.map(text => <li key={text}><span aria-hidden>✓</span>{text}</li>)}</ul>
+        <Link href="/prices#main-package" className="journey-button" data-fab-yield>Что входит в доступ <span aria-hidden>↗</span></Link>
+        <p className="journey-small">Решения о поступлении, стипендии и визе принимают соответствующие учреждения.</p>
+      </div>
     </section>
-    <section className="gallery-price-section" data-gallery-room="putty"><div className="gallery-price-copy"><GalleryTitle>Одна цена.<br/><em>Весь маршрут.</em></GalleryTitle><p>Без подписки. Доступ к цифровому кабинету на весь цикл поступления.</p></div>
-      <div className="gallery-price-details"><div className="gallery-price-line"><span>{priceLabel(PRICE_MAIN)}</span><span>ОДИН ПЛАТЁЖ</span></div><ul>{FEATURES.map(text=><li key={text}><Hexagon/>{text}</li>)}</ul><Link href="/prices#main-package" className="gallery-button" data-fab-yield><span>Что входит в доступ</span></Link><p className="gallery-small">Решения о поступлении, стипендии и визе принимают соответствующие учреждения.</p></div>
-    </section>
-    <section className="gallery-faq" data-gallery-room="ink"><GalleryTitle>Перед первым<br/><em>шагом.</em></GalleryTitle><div>
+    <section className="journey-faq"><JourneyTitle>Перед первым <em>шагом.</em></JourneyTitle><div>
       <details><summary>Можно начать без регистрации?</summary><p>Да. Анкета и локальный маршрут доступны бесплатно. Ответы сохраняются на твоём устройстве.</p></details>
       <details><summary>Что делать, если пока не выбран вуз?</summary><p>Начни с каталога: посмотри города, фильтруй программы и сравни до трёх университетов.</p></details>
-      <details><summary>С чего начать разбираться в документах?</summary><p>В гайдах выбери свою ситуацию. Проводник покажет материалы в нужном порядке и ссылки на официальные источники.</p><Link href="/guides" className="gallery-link">Открыть проводник ↗</Link></details>
+      <details><summary>С чего начать разбираться в документах?</summary><p>В гайдах выбери свою ситуацию. Проводник покажет материалы в нужном порядке и ссылки на официальные источники.</p><Link href="/guides" className="journey-link">Открыть проводник ↗</Link></details>
     </div></section>
-  </div></MarketingLayout>;
+  </MarketingLayout>;
 }

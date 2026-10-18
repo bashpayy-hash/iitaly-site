@@ -3,7 +3,7 @@
 .routeHeading button { min-height: 44px; color: var(--i-link); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 .steps { margin-top: 20px; border-top: 1px solid var(--i-line); }
 .step { border-bottom: 1px solid var(--i-line); }
-.step > summary { display: flex; align-items: center; gap: 14px; min-height: 66px; padding: 14px 8px; list-style: none; font-size: 16px; font-weight: 500; line-height: 1.45; }
+.step > summary { display: flex; align-items: center; gap: 14px; min-height: 66px; padding: 14px 8px; list-style: none; font-size: 16px; font-weight: 600; line-height: 1.45; }
 .step > summary::-webkit-details-marker { display: none; }
 .step > summary::after { content: ''; margin-left: auto; flex-shrink: 0; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
 .step[open] > summary::after { transform: rotate(225deg); }

@@ -71,5 +71,7 @@
   .overviewIntro { margin-bottom: 24px; }
   .overview { width: 88px; }
 }
-.overviewLayout {display:block;grid-template-columns:none}
-.overviewIntro,.overviewContent {grid-area:auto;max-width:none}
+/* The consolidated navigation occupies its own row above the greeting. */
+.overviewLayout > nav {grid-column:1 / -1;grid-row:1}
+.overviewIntro,.overview {grid-row:2}
+.overviewContent {grid-row:3}

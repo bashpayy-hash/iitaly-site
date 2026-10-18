@@ -27,7 +27,7 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
     return () => document.removeEventListener("pointerdown", closeOutside);
   }, []);
   return (
-    <header data-gallery-header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
+    <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
       <div className={styles.navInner}>
         <Link href={variant === "portal" ? "/portal" : "/"} className={styles.wordmark}
           aria-label={variant === "portal" ? "IITALY — личный кабинет" : "IITALY — главная"}
@@ -36,6 +36,12 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
             event.preventDefault(); onHome();
           }}><BrandLogo /></Link>
         {variant === "portal" ? actions : <>
+        <nav className={styles.desktopNav} aria-label="Основная навигация">
+          {links.map(({ href, label }) => (
+            <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
+          ))}
+        </nav>
+        <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>
         <details ref={menuRef} key={pathname} className={styles.mobileMenu} onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.currentTarget.open = false;
@@ -43,7 +49,7 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
           }
         }}>
           <summary aria-label="Открыть меню">Меню <span aria-hidden>+</span></summary>
-          <nav aria-label="Основная навигация" onClick={(event) => {
+          <nav aria-label="Мобильная навигация" onClick={(event) => {
             if ((event.target as HTMLElement).closest("a,button")) {
               const details = event.currentTarget.closest("details");
               if (details) details.open = false;
