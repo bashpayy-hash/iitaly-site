@@ -16,10 +16,6 @@ import {
   VERIFIED_AT_HUMAN,
   type StatusKind,
 } from "@/data/changes2026";
-import { EditorialBackground } from "@/components/EditorialBackground";
-import { IllustrationBackdrop } from "@/components/illustration/IllustrationBackdrop";
-import { TUSCANY_HILLS } from "@/data/illustrations";
-import { RouteRibbon } from "@/components/RouteRibbon";
 import { Reveal } from "@/components/motion/Reveal";
 
 /**
@@ -44,18 +40,11 @@ export function ChangesExplorer() {
   return (
     <>
       <section className="relative overflow-hidden border-b-2 border-ink bg-cream px-5 pt-10 pb-8 sm:pt-14">
-        <EditorialBackground variant="guides" grain />
-        <IllustrationBackdrop
-          asset={TUSCANY_HILLS}
-          side="left"
-          className="-bottom-6 left-0 w-[72%] opacity-[0.18] sm:w-[min(520px,42%)] sm:opacity-[0.2]"
-        />
-        <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
-          <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">
+          <p className="text-xs font-medium tracking-[0.14em] text-sec uppercase">
             Казахстан → Италия · 2026/27 и 2027/28
           </p>
-          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
+          <h1 className="gallery-title gallery-legal-title mt-2">
             Поступление в Италию: актуальные правила
           </h1>
 
@@ -69,7 +58,7 @@ export function ChangesExplorer() {
             </time>
           </p>
 
-          <p className="mt-4 max-w-2xl text-base text-ink-soft sm:text-lg">
+          <p className="mt-4 max-w-2xl text-base text-primary sm:text-lg">
             Аттестат, документы, DSU, виза и первые недели в Италии.
             Здесь собраны проверенные изменения для Казахстана и уже
             опубликованные условия 2027/28. У каждого правила — источник
@@ -92,7 +81,7 @@ export function ChangesExplorer() {
       {/* --- статусы --- */}
       <section className="px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="gallery-title gallery-legal-title">
             Главные статусы на {VERIFIED_AT_HUMAN}
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -101,32 +90,32 @@ export function ChangesExplorer() {
                 <div className={`h-full rounded-lg border-2 px-4 py-3.5 ${STATUS_TONE[s.kind]}`}>
                   <p className="font-mono text-[10px] tracking-[0.1em] uppercase">{s.status}</p>
                   <b className="mt-1 block text-sm text-ink">{s.title}</b>
-                  <p className="mt-1.5 text-sm text-ink-soft">{s.body}</p>
+                  <p className="mt-1.5 text-sm text-primary">{s.body}</p>
                 </div>
               </Reveal>
             ))}
           </ul>
-          <p className="mt-4 text-sm text-ink-soft">{STATUSES_NOTE}</p>
+          <p className="mt-4 text-sm text-primary">{STATUSES_NOTE}</p>
         </div>
       </section>
 
       {/* --- восемь изменений --- */}
       <section className="border-t-2 border-ink bg-paper px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="gallery-title gallery-legal-title">
             Что учитывать при подаче
           </h2>
           <ol className="mt-8 flex flex-col gap-10">
             {CHANGES.map((c) => (
               <Reveal as="li" key={c.n} variant="fade">
-                <h3 className="flex items-baseline gap-3 font-display text-lg font-semibold">
+                <h3 className="flex items-baseline gap-3 font-display text-lg font-medium">
                   <span className="font-mono text-xs text-primary tabular-nums">
                     {String(c.n).padStart(2, "0")}
                   </span>
                   {c.title}
                 </h3>
                 {c.body.map((p, i) => (
-                  <p key={i} className="mt-3 text-sm text-ink-soft">
+                  <p key={i} className="mt-3 text-sm text-primary">
                     {p}
                   </p>
                 ))}
@@ -139,7 +128,7 @@ export function ChangesExplorer() {
                 {/* Расхождение с локальными чек-листами стоит рядом с суммой,
                    а не в общем подвале: читать его имеет смысл ровно здесь. */}
                 {c.n === 1 && (
-                  <p className="mt-3 rounded-md border border-line bg-cream px-3 py-2 text-xs text-ink-soft">
+                  <p className="mt-3 rounded-md border border-line bg-cream px-3 py-2 text-xs text-primary">
                     {CONSULATE_DISCREPANCY}
                   </p>
                 )}
@@ -152,19 +141,19 @@ export function ChangesExplorer() {
                       {MED_ROUTES.map((m) => (
                         <div
                           key={m.title}
-                          className="rounded-lg border-2 border-ink bg-cream px-4 py-4 shadow-soft-sm"
+                          className="rounded-lg border-2 border-ink bg-cream px-4 py-4 "
                         >
                           <p className="font-mono text-[10px] tracking-[0.1em] text-sec-deep uppercase">
                             {m.lang}
                           </p>
                           <b className="mt-1 block font-display text-base">{m.title}</b>
                           {m.body.map((p, i) => (
-                            <p key={i} className="mt-2.5 text-sm text-ink-soft">
+                            <p key={i} className="mt-2.5 text-sm text-primary">
                               {p}
                             </p>
                           ))}
                           {m.note && (
-                            <p className="mt-3 border-l-2 border-line pl-3 text-xs text-ink-soft">
+                            <p className="mt-3 border-l-2 border-line pl-3 text-xs text-primary">
                               {m.note}
                             </p>
                           )}
@@ -172,7 +161,7 @@ export function ChangesExplorer() {
                       ))}
                     </div>
                     <p className="mt-4 text-sm font-medium text-ink">{MED_PRIVATE_NOTE}</p>
-                    <p className="mt-3 rounded-md border border-line bg-cream px-3 py-2 text-xs text-ink-soft">
+                    <p className="mt-3 rounded-md border border-line bg-cream px-3 py-2 text-xs text-primary">
                       {MED_EDITORIAL_NOTE}
                     </p>
                   </>
@@ -187,7 +176,7 @@ export function ChangesExplorer() {
       {/* --- маршруты --- */}
       <section className="border-t-2 border-ink px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="gallery-title gallery-legal-title">
             Маршруты поступления
           </h2>
 
@@ -201,19 +190,19 @@ export function ChangesExplorer() {
                 <dl className="mt-3 space-y-2 text-sm">
                   <div>
                     <dt className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">Отбор</dt>
-                    <dd className="text-ink-soft">{r.selection}</dd>
+                    <dd className="text-primary">{r.selection}</dd>
                   </div>
                   <div>
                     <dt className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                       Universitaly и виза для non-EU abroad
                     </dt>
-                    <dd className="text-ink-soft">{r.visa}</dd>
+                    <dd className="text-primary">{r.visa}</dd>
                   </div>
                   <div>
                     <dt className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
                       Предостережение
                     </dt>
-                    <dd className="text-ink-soft">{r.warning}</dd>
+                    <dd className="text-primary">{r.warning}</dd>
                   </div>
                 </dl>
               </div>
@@ -241,12 +230,12 @@ export function ChangesExplorer() {
               <tbody>
                 {ADMISSION_ROUTES.map((r) => (
                   <tr key={r.route} className="border-b border-line align-top">
-                    <th scope="row" className="py-4 pr-4 font-semibold">
+                    <th scope="row" className="py-4 pr-4 font-medium">
                       {r.route}
                     </th>
-                    <td className="py-4 pr-4 text-ink-soft">{r.selection}</td>
-                    <td className="py-4 pr-4 text-ink-soft">{r.visa}</td>
-                    <td className="py-4 text-ink-soft">{r.warning}</td>
+                    <td className="py-4 pr-4 text-primary">{r.selection}</td>
+                    <td className="py-4 pr-4 text-primary">{r.visa}</td>
+                    <td className="py-4 text-primary">{r.warning}</td>
                   </tr>
                 ))}
               </tbody>
@@ -258,14 +247,14 @@ export function ChangesExplorer() {
       {/* --- FAQ --- */}
       <section className="border-t-2 border-ink bg-paper px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="gallery-title gallery-legal-title">
             Частые вопросы
           </h2>
           <dl className="mt-6 divide-y divide-line border-y border-line">
             {FAQ.map((f) => (
               <div key={f.q} className="py-4">
-                <dt className="text-sm font-bold">{f.q}</dt>
-                <dd className="mt-1.5 text-sm text-ink-soft">{f.a}</dd>
+                <dt className="text-sm font-medium">{f.q}</dt>
+                <dd className="mt-1.5 text-sm text-primary">{f.a}</dd>
               </div>
             ))}
           </dl>
@@ -275,7 +264,7 @@ export function ChangesExplorer() {
       {/* --- источники и дисклеймер --- */}
       <section className="border-t-2 border-ink px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="gallery-title gallery-legal-title">
             Первичные источники
           </h2>
           <ol className="mt-6 space-y-2 text-sm">
@@ -296,21 +285,21 @@ export function ChangesExplorer() {
             ))}
           </ol>
 
-          <p className="mt-8 rounded-md border-2 border-ink bg-cream px-4 py-3.5 text-sm text-ink-soft">
+          <p className="mt-8 rounded-md border-2 border-ink bg-cream px-4 py-3.5 text-sm text-primary">
             {DISCLAIMER}
           </p>
 
-          <p className="mt-6 text-sm text-ink-soft">
+          <p className="mt-6 text-sm text-primary">
             Что делать дальше:{" "}
-            <Link href="/guides" className="font-semibold text-ink underline underline-offset-4">
+            <Link href="/guides" className="font-medium text-ink underline underline-offset-4">
               справочник по документам и визе
             </Link>
             ,{" "}
-            <Link href="/universities" className="font-semibold text-ink underline underline-offset-4">
+            <Link href="/universities" className="font-medium text-ink underline underline-offset-4">
               карта университетов
             </Link>{" "}
             или{" "}
-            <Link href="/plan" className="font-semibold text-ink underline underline-offset-4">
+            <Link href="/plan" className="font-medium text-ink underline underline-offset-4">
               бесплатный разбор ситуации
             </Link>
             .

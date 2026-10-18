@@ -1,6 +1,6 @@
 .overview { min-width: 0; max-width: 880px; }
 .documentFeature { display: block; padding: 0 0 16px; color: var(--portal-ink); text-decoration: none; }
-.documentFeature h2 { margin: 0 0 8px; max-width: 32ch; font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+.documentFeature h2 { margin: 0 0 8px; max-width: 32ch; font-family: var(--font-helvetica-now); font-size: 24px; font-weight: 500; line-height: 1.25; letter-spacing: -.025em; }
 .documentFeature p { max-width: 60ch; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
 .featureLink { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; margin-top: 4px; font-size: 15px; font-weight: 500; }
 .documentFeature:hover .featureLink { text-decoration: underline; text-underline-offset: 4px; }
@@ -20,7 +20,7 @@
 .document { color: var(--portal-ink); text-decoration: none; }
 .documentReason { display: block; margin-top: 4px; color: var(--portal-muted); }
 .document:hover .fileName { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-.document:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
+.document:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: var(--radius-cards); }
 .status { color: var(--portal-ink); }
 .status[data-outcome="fix"] { color: var(--portal-danger); }
 .orientirs { margin-top: 0; padding: 16px 0; }

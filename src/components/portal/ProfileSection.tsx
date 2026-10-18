@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import type { PortalData } from "@/lib/portalApi";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
@@ -21,36 +21,7 @@ export function ProfileSection({
   onLogout: () => void;
   notifications: ReactNode;
 }) {
-  const [copied, setCopied] = useState(false);
   const profile = data.client.profile || {};
-  const parentTasks = useMemo(() => {
-    const rows: string[] = [];
-    for (const stage of data.roadmap) {
-      for (const task of stage.tasks) {
-        if (!task.owner?.toLowerCase().includes("родител") || data.done[task.id]) continue;
-        rows.push("• " + task.t + (task.timingLabel ? " — " + task.timingLabel : task.deadline ? " — Ориентир: " + task.deadline : ""));
-      }
-    }
-    return rows;
-  }, [data]);
-
-  async function copyParents() {
-    const text = [
-      "IITALY — что понадобится от родителей",
-      "",
-      ...parentTasks,
-      "",
-      "Откройте кабинет вместе со студентом, чтобы увидеть пояснения по каждому шагу.",
-    ].join("\n");
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
-  }
-
   const pathLabel = profile.educationPath === "foundation"
     ? "Foundation year"
     : profile.educationPath === "university_kz"
@@ -81,17 +52,6 @@ export function ProfileSection({
           </dl>
         </section>
 
-        <details id="parents" className={settings.disclosure}>
-          <summary>Что понадобится от семьи</summary>
-          <p>
-            Мы не создаём отдельный родительский логин без твоего согласия. Вместо этого можно скопировать только список задач, где нужна помощь семьи.
-          </p>
-          {parentTasks.length ? (
-            <a href="/portal?view=settings#parents" className={settings.textAction} onClick={(event) => { event.preventDefault(); void copyParents(); }}>
-              {copied ? "Скопировано" : "Скопировать список для родителей"}
-            </a>
-          ) : <p className={styles.taskNote}>Пока задач нет</p>}
-        </details>
 
       <div id="portal-notification-settings" tabIndex={-1} className={`${navigation.notifications} ${navigation.focusTarget}`}>
         {notifications}

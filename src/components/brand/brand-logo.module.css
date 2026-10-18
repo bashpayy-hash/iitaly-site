@@ -1,10 +1,4 @@
-/* User-requested warm editorial emblem. Shared by every brand placement. */
-.brand.brand { display:inline-flex; align-items:center; gap:9px; flex-shrink:0; color:var(--color-ink); font-family:var(--font-apple-display); font-size:25px; font-weight:800; line-height:1; letter-spacing:-.035em; text-transform:none; white-space:nowrap; vertical-align:middle; }
-.brand .emblem { display:block; flex-shrink:0; width:36px; height:36px; filter:drop-shadow(0 3px 4px color-mix(in srgb, var(--accent-primary) 12%, transparent)); transition:transform 200ms ease-out; }
-a:hover .brand .emblem { transform:rotate(-4deg) scale(1.04); }
-.brand .word { color:var(--color-ink); }
-.brand .initial { color:var(--i-signal,var(--color-crimson)); font-style:italic; margin-right:1px; }
-.brand.compact { font-size:18px; gap:6px; }
-.brand.compact .emblem { width:28px; height:28px; }
-@media(prefers-reduced-motion:reduce) { .brand .emblem { transition:none; } a:hover .brand .emblem { transform:none; } }
-@media(forced-colors:active) { .brand .emblem { border:1px solid currentColor; border-radius:11px; } }
+.brand {display:inline-flex;align-items:center;gap:12px;color:inherit}
+.emblem {display:block;width:32px;height:32px;flex-shrink:0;color:inherit}
+.word {font:500 16px/1 var(--font-helvetica-now);letter-spacing:-.3px;color:inherit}
+.compact .word {display:none}

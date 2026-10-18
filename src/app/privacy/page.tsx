@@ -97,8 +97,7 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
     body: (
       <p>
         IITALY рассчитан в том числе на школьников 16–18 лет. Если тебе нет 18, оплату и решения,
-        связанные с передачей документов и персональных данных, лучше оформлять вместе с родителем
-        или законным представителем.
+        связанные с передачей документов и персональных данных, лучше оформлять с законным представителем.
       </p>
     ),
   },
@@ -111,23 +110,23 @@ export default function PrivacyPage() {
       <main id="main">
         <section className="px-5 py-10 sm:py-14">
           <div className="mx-auto max-w-[720px]">
-            <h1 className="font-display text-3xl font-extrabold tracking-[-0.03em] [overflow-wrap:anywhere] sm:text-4xl">
+            <h1 className="gallery-title gallery-legal-title">
               Политика конфиденциальности
             </h1>
-            <p className="mt-1.5 text-xs text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
+            <p className="mt-1.5 text-xs text-primary">IITALY · обновлено 19 сентября 2026</p>
 
             <div className="mt-8 space-y-6">
               {SECTIONS.map((s) => (
                 <div key={s.title}>
-                  <h2 className="font-display text-lg font-bold">{s.title}</h2>
-                  <div className="mt-1.5 text-sm text-ink-soft [&_a]:font-bold [&_a]:text-primary [&_b]:text-ink">
+                  <h2 className="font-display text-lg font-medium">{s.title}</h2>
+                  <div className="mt-1.5 text-sm text-primary [&_a]:font-medium [&_a]:text-primary [&_b]:text-ink">
                     {s.body}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 flex flex-wrap gap-5 text-sm font-bold">
+            <div className="mt-10 flex flex-wrap gap-5 text-sm font-medium">
               <Link href="/terms" className="text-ink underline underline-offset-4">Условия сервиса</Link>
               <Link href="/" className="text-ink underline underline-offset-4">← Вернуться на сайт</Link>
             </div>

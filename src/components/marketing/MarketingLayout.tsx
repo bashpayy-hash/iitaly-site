@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { MarketingHeader } from "./MarketingHeader";
 import styles from "./marketing.module.css";
 
-/** Shared warm editorial shell. */
+/** Shared Renaissance gallery shell. */
 export function MarketingLayout({ children, home = false }: { children: ReactNode; home?: boolean }) {
   return (
     <div className={`${styles.surface} ${home ? "" : styles.contentPage}`} data-marketing-surface>

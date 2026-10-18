@@ -1,4 +1,5 @@
 "use client";
+import { MessageCircle } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -17,8 +18,6 @@ import { demoReply } from "@/data/chatDemo";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
-import { Vespa } from "@/components/Vespa";
-import { VespaReveal } from "@/components/VespaReveal";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { VESPI_NAME } from "@/components/mascot/Vespi";
@@ -45,18 +44,8 @@ function visibleGuideContext(): PortalChatContext {
   return isGuideId(id) ? { guideId: id } : {};
 }
 
-/**
- * Вход панели — пружиной из угла, где стоял лаунчер (origin bottom right):
- * панель растёт из точки, по которой щёлкнули, поэтому причина и следствие
- * связаны. Выход — короткий tween без пружины: решение закрыть уже
- * принято, перелёт на выходе читается задержкой, а не характером.
- */
-const PANEL_SPRING = {
-  type: "spring",
-  stiffness: 340,
-  damping: 30,
-  mass: 0.9,
-} as const;
+/** A restrained panel transition, with reduced-motion support. */
+const PANEL_SPRING = { duration: .3, ease: [.16, 1, .3, 1] } as const;
 const PANEL_EXIT = { duration: 0.14, ease: [0.4, 0, 0.2, 1] } as const;
 
 function CloseIcon() {
@@ -122,16 +111,12 @@ export function ChatWidget() {
     : displayContext.taskId === "shortlist"
     ? ["Как выбрать программы?", "Что сравнить у программ?"]
     : displayContext.taskId
-      ? /родител/i.test(displayContext.taskOwner || "")
-        ? ["Что попросить у родителей?", "Что подготовить вместе?"]
-        : ["С чего начать этот шаг?", "Что нужно подготовить?"]
+      ? ["С чего начать этот шаг?", "Что нужно подготовить?"]
       : ["С чего начать поступление?", "Как пользоваться маршрутом?"];
   const portalHint = displayContext.taskId === "shortlist"
     ? "Помогу разобраться, что сравнить при выборе программ."
     : displayContext.taskId
-      ? /родител/i.test(displayContext.taskOwner || "")
-        ? "Разберём, что подготовить вместе с родителями."
-        : "Разберём, с чего начать и что подготовить для этого шага."
+      ? "Разберём, с чего начать и что подготовить для этого шага."
       : "Открой шаг, чтобы обсудить его детали. Или спроси про поступление здесь.";
   const helperHint = guidesMode ? "Выбери вопрос или напиши свой. Отправлю его только по твоему нажатию." : portalHint;
 
@@ -219,7 +204,7 @@ export function ChatWidget() {
   }
 
   function openChat() {
-    const context = visibleGuideContext();
+    const context = portalMode ? { ...stepContext.current, portal: true } : visibleGuideContext();
     stepContext.current = context;
     setDisplayContext(context);
     rememberTrigger();
@@ -323,7 +308,7 @@ export function ChatWidget() {
          пришлось бы гонять его через AnimatePresence, а он рендерит
          фрагмент (якорь + кнопка) — у фрагмента нет узла, за выход
          которого AnimatePresence могла бы отвечать. */}
-      {!portalMode && <ChatLauncher hidden={open} onOpen={openChat} />}
+      <ChatLauncher hidden={open} onOpen={openChat} />
 
       <AnimatePresence>
         {open && (
@@ -340,7 +325,7 @@ export function ChatWidget() {
                 setOpen(false);
               }
             }}
-            className={`fixed right-4 ${placement.aboveBadge} ${placement.panel} ${calmMode ? `${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} rounded-[24px] border border-[#F3EFEA] bg-white font-[family-name:var(--font-apple-text)] text-[#141413] shadow-[0_12px_36px_rgba(20,20,19,0.12)]` : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper shadow-float"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
+            className={`fixed right-4 ${placement.aboveBadge} ${placement.panel} ${calmMode ? `${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} rounded-[9px] border border-[#e7e5e4] bg-bone font-[family-name:var(--font-apple-text)] text-[#000000]` : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper "} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 4, transition: reducedMotion ? { duration: 0 } : PANEL_EXIT }}
@@ -348,21 +333,19 @@ export function ChatWidget() {
           >
             <div
               ref={headRef}
-              className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#F3EFEA] bg-white text-[#141413]" : "border-b-2 border-ink bg-ink text-cream"}`}
+              className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#e7e5e4] bg-bone text-[#000000]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
-                <Vespa pose="avatar" className="h-9 w-9 object-contain" priority />
-              </span>
+              <MessageCircle size={20} aria-hidden="true"/>
               <div className="min-w-0 flex-1">
                 <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
-                <span className={`block mt-1 text-[13px] leading-tight ${calmMode ? "text-[#57534E]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>
+                <span className={`block mt-1 text-[13px] leading-tight ${calmMode ? "text-[#595855]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>
               </div>
               {portalMode ? (
               <a
                 href="#main"
                 aria-label="Закрыть чат"
                 onClick={event => { event.preventDefault(); setOpen(false); }}
-                className="chp-close ml-auto -mr-2 flex size-11 shrink-0 items-center justify-center rounded-pill text-[#57534E] hover:text-[#141413] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413]"
+                className="chp-close ml-auto -mr-2 flex size-11 shrink-0 items-center justify-center rounded-pill text-[#595855] hover:text-[#000000] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#000000]"
               >
                 <CloseIcon />
               </a>
@@ -371,7 +354,7 @@ export function ChatWidget() {
                 type="button"
                 aria-label="Закрыть чат"
                 onClick={() => setOpen(false)}
-                className={`chp-close ml-auto -mr-2 flex size-11 items-center justify-center rounded-pill transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 ${guidesMode ? "text-[#57534E] hover:text-[#141413] focus-visible:outline-[#141413]" : "text-cream/70 hover:text-cream focus-visible:outline-cream"}`}
+                className={`chp-close ml-auto -mr-2 flex size-11 items-center justify-center rounded-pill transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 ${guidesMode ? "text-[#595855] hover:text-[#000000] focus-visible:outline-[#000000]" : "text-cream/70 hover:text-cream focus-visible:outline-cream"}`}
               >
                 <CloseIcon />
               </button>
@@ -383,15 +366,15 @@ export function ChatWidget() {
                 data-chat-step-context={displayContext.taskId || ""}
                 data-chat-guide-context={displayContext.guideId || ""}
                 aria-live="polite"
-                className="shrink-0 border-b border-[#F3EFEA] bg-[#FFFFFF] px-4 py-3"
+                className="shrink-0 border-b border-[#e7e5e4] bg-[#ffffff] px-4 py-3"
               >
-                <p className="text-[13px] leading-5 text-[#57534E]">
+                <p className="text-[13px] leading-5 text-[#595855]">
                   {guidesMode ? "Тема справочника" : displayContext.taskId ? "Открыт шаг" : "Помощь по кабинету"}
                 </p>
                 {displayContext.taskId && displayContext.taskTitle && (
-                  <p className="mt-1 text-sm leading-5 font-semibold [overflow-wrap:anywhere]">{displayContext.taskTitle}</p>
+                  <p className="mt-1 text-sm leading-5 font-medium [overflow-wrap:anywhere]">{displayContext.taskTitle}</p>
                 )}
-                {guidesMode && guide && <p className="mt-1 text-sm leading-5 font-semibold">{guide.title}</p>}
+                {guidesMode && guide && <p className="mt-1 text-sm leading-5 font-medium">{guide.title}</p>}
               </div>
             )}
 
@@ -409,7 +392,7 @@ export function ChatWidget() {
                         key={question}
                         href="#chat-input"
                         onClick={event => { event.preventDefault(); prepareQuestion(question); }}
-                        className="flex min-h-11 items-center py-2 text-[#141413] underline decoration-[#8C857B] underline-offset-4 hover:decoration-current focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413]"
+                        className="flex min-h-11 items-center py-2 text-[#000000] underline decoration-[#595855] underline-offset-4 hover:decoration-current focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#000000]"
                       >
                         {question}
                       </a>
@@ -422,7 +405,7 @@ export function ChatWidget() {
                   key={i}
                   className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
                     calmMode
-                      ? m.who === "user" ? "ml-auto bg-[#FAF8F5] text-[#141413]" : "bg-[#FFFFFF] text-[#141413]"
+                      ? m.who === "user" ? "ml-auto bg-[#c4c3b6] text-[#000000]" : "bg-[#ffffff] text-[#000000]"
                       : m.who === "user"
                       ? "ml-auto bg-ink text-cream"
                       : "bg-cream text-ink"
@@ -432,8 +415,8 @@ export function ChatWidget() {
                 </div>
               ))}
               {typing && (
-                <div className={`flex w-fit items-center gap-2 rounded-lg px-3 py-2 ${calmMode ? "bg-[#FFFFFF]" : "bg-cream"}`}>
-                  <VespaReveal pose="thinking" className="h-7 w-auto shrink-0" />
+                <div className={`flex w-fit items-center gap-2 rounded-lg px-3 py-2 ${calmMode ? "bg-[#ffffff]" : "bg-cream"}`}>
+
                   <span className="flex items-center gap-1.5">
                     <span
                       className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft"
@@ -453,7 +436,7 @@ export function ChatWidget() {
               {showLead && <LeadForm onDone={() => setShowLead(false)} />}
             </div>
 
-            <div className={`flex shrink-0 gap-2 p-3 ${calmMode ? "border-t border-[#F3EFEA]" : "border-t-2 border-ink"}`}>
+            <div className={`flex shrink-0 gap-2 p-3 ${calmMode ? "border-t border-[#e7e5e4]" : "border-t-2 border-ink"}`}>
               <label className="sr-only" htmlFor="chat-input">
                 Вопрос ИИ-консультанту
               </label>
@@ -466,14 +449,14 @@ export function ChatWidget() {
                   if (e.key === "Enter") send();
                 }}
                 placeholder={guidesMode ? "Спроси про эту тему…" : portalMode && displayContext.taskId ? "Спроси про этот шаг…" : "Спроси про поступление…"}
-                className={`h-11 min-w-0 flex-1 px-3 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${calmMode ? "rounded-xl border border-[#F3EFEA] bg-white focus-visible:outline-[#141413]" : "rounded-md border-2 border-ink bg-cream focus-visible:outline-red"}`}
+                className={`h-11 min-w-0 flex-1 px-3 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${calmMode ? "rounded-xl border border-[#e7e5e4] bg-bone focus-visible:outline-[#000000]" : "rounded-md border-2 border-ink bg-cream focus-visible:outline-red"}`}
               />
               <button
                 type="button"
                 onClick={() => send()}
                 disabled={busy || !input.trim()}
                 aria-label={busy ? "Ожидаем ответ" : "Отправить"}
-                className={`flex size-11 shrink-0 items-center justify-center ${calmMode ? "rounded-full border border-[#F3EFEA] bg-transparent text-[#141413] hover:bg-[#FFFFFF]" : "rounded-md border-2 border-ink bg-red text-cream hover:bg-red-deep hover:border-red-deep"} transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50`}
+                className={`flex size-11 shrink-0 items-center justify-center ${calmMode ? "rounded-full border border-[#e7e5e4] bg-transparent text-[#000000] hover:bg-[#ffffff]" : "rounded-md border-2 border-ink bg-red text-cream hover:bg-red-deep hover:border-red-deep"} transition-colors duration-[var(--duration-fast)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50`}
               >
                 <SendIcon />
               </button>
@@ -514,10 +497,10 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   if (done) {
     return (
       <div className="flex items-start gap-2.5 rounded-lg border-2 border-green bg-green/10 p-4 text-sm">
-        <VespaReveal pose="success" className="h-10 w-auto shrink-0" />
+
         <div>
           <b className="block">Записали</b>
-          <p className="mt-1 text-ink-soft">
+          <p className="mt-1 text-primary">
             Свяжемся по WhatsApp на {phone}. Напоминания о дедлайнах подключаются
             отдельно в Telegram из личного кабинета.
           </p>
@@ -529,7 +512,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   return (
     <div className="rounded-lg border-2 border-ink bg-cream p-4 text-sm">
       <b className="block">Бесплатные вопросы закончились</b>
-      <p className="mt-1 text-ink-soft">
+      <p className="mt-1 text-primary">
         Оставь номер — свяжемся по твоему поступлению и ответим на оставшиеся
         вопросы. Напоминания о дедлайнах включаются отдельно в Telegram. Без спама.
       </p>
@@ -550,7 +533,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
         className="mt-3 min-h-11 w-full rounded-md border-2 border-ink bg-paper px-3 py-2.5 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
       />
       {error && (
-        <p id="chat-phone-error" role="alert" className="mt-1.5 text-xs font-bold text-primary">
+        <p id="chat-phone-error" role="alert" className="mt-1.5 text-xs font-medium text-primary">
           {error}
         </p>
       )}
@@ -558,7 +541,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
         type="button"
         onClick={submit}
         disabled={sending}
-        className="mt-2.5 min-h-11 w-full rounded-pill border-2 border-ink bg-ink px-4 py-2.5 text-xs font-extrabold text-cream uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-2.5 min-h-11 w-full rounded-pill border-2 border-ink bg-ink px-4 py-2.5 text-xs font-medium text-cream uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
       >
         {sending ? "Отправляю…" : "Отправить номер"}
       </button>

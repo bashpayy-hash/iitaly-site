@@ -35,7 +35,6 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, shortlist, onOp
   const outcome = doc ? documentOutcome(doc) : null;
   const summary = (doc?.result?.summary || doc?.summary || "").replace(/\s+/g, " ").trim();
   const shortSummary = summary.length > 160 ? `${summary.slice(0, 160).replace(/\s+\S*$/, "")}…` : summary;
-  const nextOwner = /родител/i.test(next?.owner || "") ? "родители" : (next?.owner || "ты").toLocaleLowerCase("ru");
   // Surface existing dates across stages, without turning a planning date into
   // a university deadline or promoting a future task to the current action.
   const orientirs = tasks.filter(row => row.id !== current?.id && !data.done[row.id]
@@ -70,12 +69,12 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, shortlist, onOp
         <h2>Ближайшие сроки</h2>
         {orientirs.map(row => <p key={row.id} data-orientir-task={row.id}>
           <span>{taskTitle(row)}</span>
-          <span>{taskDate(row)} · {row.owner || "Ты"}</span>
+          <span>{taskDate(row)}</span>
         </p>)}
       </section>}
       {next && <p className={styles.next} data-road-later>
         <span className={styles.label}>Потом</span>
-        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>Это {nextOwner}, сейчас открывать не нужно.</span></span>
+        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>Откроется после текущего шага.</span></span>
       </p>}
       </div>
     </div>

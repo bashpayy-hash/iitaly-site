@@ -1,8 +1,3 @@
-/* Справочник под черновиком — в той же светлой палитре, что и бланк над
-   ним (permesso-light.module.css): тот же фон, засечный заголовок, винный
-   акцент. В режиме «Оригинал» он был в другой гамме и с текстом 10px —
-   на телефоне это не читалось. Здесь вторичный текст не меньше 12px,
-   поля ввода на телефоне 16px, чтобы iOS не увеличивал страницу. */
 .helpers {
   --ink: var(--text-primary);
   --muted: var(--text-secondary);
@@ -13,7 +8,7 @@
   padding: 0 24px 80px;
   background: var(--bg-base);
   color: var(--ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-helvetica-now);
 }
 .helpers *, .helpers *::before, .helpers *::after { box-sizing: border-box; }
 .helpers :is(a, button, input, select, summary):focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
@@ -22,7 +17,7 @@
 .section + .section { padding-top: 56px; }
 
 .header { max-width: 680px; margin-bottom: 20px; }
-.header h2 { margin: 0; font: 800 28px/1.08 var(--font-sans); }
+.header h2 { margin: 0; font: 500 28px/1.08 var(--font-sans); }
 .header p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 .toolsGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid var(--line-strong); }
@@ -30,12 +25,12 @@
 .tool:nth-child(odd) { padding-left: 0; border-right: 1px solid var(--line); }
 .tool:nth-child(n + 3) { border-top: 1px solid var(--line); }
 .tool:nth-child(even) { padding-right: 0; }
-.tool h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.tool h3 { margin: 0; font-size: 15px; font-weight: 500; }
 .tool > p { margin: 6px 0 14px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .tool > p.note { margin: 12px 0 0; font-size: 12px; }
 .tool select, .tool > input, .copyList input, .module2Pages input {
   width: 100%; min-height: 44px; padding: 9px 11px;
-  border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--glow-cream);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-cards); background: var(--glow-cream);
   color: var(--ink); font: inherit; font-size: 14px;
 }
 .smallLabel { display: block; margin: 14px 0 6px; color: var(--muted); font-size: 12px; }
@@ -48,24 +43,24 @@
 .workerToggle input { width: 17px; height: 17px; flex: none; accent-color: var(--accent); }
 .total { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--line-strong); }
 .total span { color: var(--muted); font-size: 12px; }
-.total strong { font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.total strong { font-size: 28px; font-weight: 500; font-variant-numeric: tabular-nums; }
 
 .lookupList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; border-top: 1px solid var(--line); }
 .lookupList button { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px; align-items: baseline; min-height: 44px; padding: 11px 6px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .lookupList button:nth-child(odd) { border-right: 1px solid var(--line); }
 .lookupList button:hover { background: var(--bg-base); }
-.lookupList b { color: var(--accent); font-size: 12px; font-weight: 700; }
+.lookupList b { color: var(--accent); font-size: 12px; font-weight: 500; }
 .lookupList span { color: var(--text-secondary); font-size: 13px; }
 
 .checklistGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--line-strong); }
 .checklist { min-width: 0; padding: 22px 24px 24px; }
 .checklist:first-child { padding-left: 0; }
 .checklist + .checklist { border-left: 1px solid var(--line); }
-.checklist h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.checklist h3 { margin: 0; font-size: 15px; font-weight: 500; }
 .checklist ul { margin: 12px 0 0; padding: 0; list-style: none; }
 .checklist li { position: relative; padding: 8px 0 8px 14px; border-top: 1px solid var(--line); color: var(--text-secondary); font-size: 13px; line-height: 1.45; }
 .checklist li:first-child { border-top: 0; }
-.checklist li::before { content: ""; position: absolute; left: 0; top: 15px; width: 4px; height: 4px; border-radius: 1px; background: var(--accent); }
+.checklist li::before { content: ""; position: absolute; left: 0; top: 15px; width: 4px; height: 4px; border-radius: var(--radius-cards); background: var(--accent); }
 
 .sources { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; margin-top: 16px; font-size: 13px; }
 .sources b { color: var(--muted); font-weight: 500; }

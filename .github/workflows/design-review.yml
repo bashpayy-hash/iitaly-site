@@ -4,52 +4,16 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "src/components/marketing/**"
-      - "src/components/home/**"
-      - "src/components/universities/**"
-      - "src/app/universities/**"
-      - "src/components/PaperOverlayGate.tsx"
-      - "src/components/apple/**"
-      - "src/components/guides/**"
-      - "src/components/plan/**"
-      - "src/lib/usePlanDraft.ts"
-      - "src/lib/localWorkspace.ts"
-      - "src/components/portal/**"
-      - "src/lib/checkDocument.ts"
-      - "src/components/Header.tsx"
-      - "src/components/Footer.tsx"
-      - "src/components/portal/PortalExplorer.tsx"
-      - "src/components/portal/HelpSection.tsx"
-      - "src/components/portal/PortalLogin.tsx"
-      - "src/components/portal/portal-login.module.css"
-      - "src/components/prices/**"
-      - "src/components/payment/**"
-      - "src/components/chat/**"
-      - "src/components/mascot/**"
-      - "src/components/brand/**"
-      - "src/app/icon.svg"
-      - "src/app/apple-icon.png"
-      - "src/components/Modal.tsx"
-      - "src/lib/lead.ts"
-      - "src/lib/phone.ts"
-      - "src/lib/chat.ts"
-      - "src/lib/payment.ts"
-      - "scripts/launch-*.mjs"
-      - "public/illustrations/editorial/**"
-      - "public/permesso/**"
-      - "docs/editorial-art-assets.json"
-      - "docs/selected-accents-assets.json"
-      - "src/components/motion/HeadingPin.tsx"
-      - "src/app/page.tsx"
-      - "src/app/plan/**"
-      - "src/app/prices/**"
-      - "src/app/guides/**"
-      - "scripts/design-*.mjs"
+      - "src/**"
+      - "public/**"
+      - "design/**"
+      - "scripts/**"
+      - "package*.json"
+      - "DESIGN.md"
       - ".github/workflows/design-review.yml"
 
 permissions:
   contents: read
-
 concurrency:
   group: design-review-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -63,7 +27,6 @@ jobs:
       NEXT_PUBLIC_STRIPE_ENABLED: "true"
       BASE_SHA: ${{ github.event.pull_request.base.sha }}
       REVIEW_TOOLS: /tmp/iitaly-browser/node_modules
-      BASELINE_OUT: /tmp/iitaly-base/out
     steps:
       - uses: actions/checkout@v4
         with:
@@ -73,78 +36,37 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-      - name: Protect the map and product contracts
+      - name: Protect catalogue, payment, API and printed form contracts
         run: node scripts/design-guard.mjs "$BASE_SHA"
       - run: npm ci
-      - name: Enforce the complete canonical UI palette
+      - name: Enforce the eight gallery colors without shadows or gradients
         run: npm run check:palette
       - run: npm run build
-      - name: Build the exact base for visual comparison
-        run: |
-          mkdir -p /tmp/iitaly-base
-          git archive "$BASE_SHA" | tar -x -C /tmp/iitaly-base
-          cp -al node_modules /tmp/iitaly-base/node_modules
-          cd /tmp/iitaly-base
-          npm run build
-      - name: Install isolated browser tools (no lockfile changes)
-        id: browser-tools
+      - name: Install isolated browser tools
         run: |
           npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0 axe-core@4.10.3
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
-      - name: Review paper transfer, explicit acknowledgements and date boundaries
-        run: node scripts/design-permesso-transfer-review.mjs
-      - name: Review admissions quiz, source links and annual visa calculator
+      - name: Review all public and workspace surfaces on desktop and mobile
+        run: node scripts/gallery-review.mjs
+      - name: Review guided reading, history, keyboard, assistant context and gallery motion
+        run: node scripts/gallery-interactions.mjs
+      - name: Review admissions questionnaire and annual visa calculator
         run: node scripts/admissions-browser-review.mjs
-      - name: Review shared questionnaire, local workspace and existing cloud boundary
+      - name: Review shared draft, shortlist, comparison and document completion boundaries
         run: node scripts/design-workspace-review.mjs
-      - name: Review student journey, error recovery and accessibility
-        run: node scripts/design-ux-review.mjs
-      - name: Review Vespi guide context, quiz continuity and explicit AI requests
-        run: node scripts/design-guides-vespi-review.mjs
-      - name: Verify warm source palette and rendered public routes
-        run: node scripts/design-warm-palette-review.mjs
-      - name: Review shared Vespi roles, typography and single visible mascot
-        run: node scripts/design-vespi-system-review.mjs
-      - name: Review launch document retry, long filenames and modal focus
+      - name: Review document retry, long filenames and modal focus
         run: node scripts/launch-document-review.mjs
-      - name: Review launch chat, contact recovery and free-plan access
+      - name: Review chat retry, timeout, contact recovery and free access
         run: node scripts/launch-chat-review.mjs
-      - name: Review launch checkout and portal failure recovery
+      - name: Review checkout timeout and authenticated portal failure recovery
         run: node scripts/launch-flow-review.mjs
-      - name: Review portal progress, keyboard navigation and responsive states
-        run: node scripts/design-portal-progress-review.mjs
-      - name: Review in-portal university selection, persistence and comparison
-        run: node scripts/design-portal-university-selection-review.mjs
-      - name: Review contained portal assessment, rules, documents and navigation
-        run: node scripts/design-portal-contained-flow-review.mjs
-      - name: Review saved document reports, outcome clarity and mobile accessibility
-        run: node scripts/design-portal-document-report-review.mjs
-      - name: Review readable Permesso hover, keyboard focus and touch help
-        run: node scripts/design-permesso-hover-review.mjs
-      - name: Review single-mode Permesso, local verified pages, exact geometry and local draft
+      - name: Review printed form transfer and date boundaries
+        run: node scripts/design-permesso-transfer-review.mjs
+      - name: Review exact form geometry, keyboard entry and local draft
         run: node scripts/design-permesso-editor-review.mjs
-      - name: Review approved login artwork and isolated authentication flow
-        run: node scripts/design-portal-login-review.mjs
-      - name: Review desktop, mobile, quiz, checkout and protected route
-        run: node scripts/design-review.mjs
-      - name: Review local illustrations, approved admissions copy and hero
-        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
-        run: node scripts/design-accents-review.mjs
-      - name: Review expanded comparisons and selected artwork
-        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
-        run: node scripts/design-comparison-review.mjs
-      - name: Review university artwork, controls and unchanged map behavior
-        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
-        run: node scripts/design-university-review.mjs
-      - name: Review approved landscape in pricing margin
-        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
-        run: node scripts/design-prices-landscape-review.mjs
-      - name: Review plan copy and Telegram opt-in with isolated API fixtures
-        if: ${{ !cancelled() && steps.browser-tools.outcome == 'success' }}
-        run: node scripts/design-reminders-review.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: iitaly-design-review
+          name: iitaly-gallery-review
           path: design-review/
           retention-days: 7

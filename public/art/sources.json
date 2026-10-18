@@ -1,0 +1,29 @@
+[
+  {
+    "file": "canaletto-grand-canal.jpg",
+    "title": "The Grand Canal, Venice, Looking South toward the Rialto Bridge",
+    "artist": "Canaletto",
+    "source": "https://www.metmuseum.org/art/collection/search/438100",
+    "image": "https://images.metmuseum.org/CRDImages/ep/web-large/Wrightsman16.jpg",
+    "license": "Public domain / The Met Open Access",
+    "date": "18th century"
+  },
+  {
+    "file": "canaletto-lagoon.jpg",
+    "title": "A Lock, a Column, and a Church beside a Lagoon",
+    "artist": "Canaletto",
+    "source": "https://www.metmuseum.org/art/collection/search/438105",
+    "image": "https://images.metmuseum.org/CRDImages/ep/web-large/Wrightsman20.jpg",
+    "license": "Public domain / The Met Open Access",
+    "date": "18th century"
+  },
+  {
+    "file": "canaletto-san-marco.jpg",
+    "title": "Piazza San Marco",
+    "artist": "Canaletto",
+    "source": "https://www.metmuseum.org/art/collection/search/435839",
+    "image": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14286-009.jpg",
+    "license": "Public domain / The Met Open Access",
+    "date": "18th century"
+  }
+]

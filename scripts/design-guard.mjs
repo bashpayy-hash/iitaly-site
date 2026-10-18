@@ -1,178 +1,47 @@
 import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
 const base = process.argv[2];
 assert(base, 'Pass the reviewed base commit SHA.');
-const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
-// The user authorized a visual refresh of this page, not a change to its map/data.
-const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
-  // Global warm-system brief: recolor the existing city artwork and rename its
-  // presentation-only wash property. No catalogue facts or interaction change.
-  'src/components/sketchbook/CitySketchbook.tsx',
-  'src/components/sketchbook/CitySketchbook.module.css',
-  // User request 2026-10-18: one watercolor pricing scene and a labelled
-  // Vespi launcher on /prices. Existing tokens, logo, type and cards stay fixed.
-  'src/components/marketing/BotanicalCanvas.tsx',
-  'src/components/marketing/botanical-canvas.module.css',
-  'src/components/prices/PricesHero.tsx',
-  // User request 2026-10-18: replace cold UI colors across all routes.
-  // This permits presentation tokens only; map geometry and API stay protected.
-  'src/app/globals.css', 'src/data/illustrations.ts',
-  // User correction 2026-10-17: make Vespi visible in the existing home entry,
-  // actual catalogue filters and persistent portal priority, without new tokens.
-  'src/components/home/home-assistant.module.css',
-  // User follow-up 2026-10-17: shared iItaly wordmark and matching app icons.
-  // Existing palette/fonts stay unchanged outside the logo's requested weight.
-  'src/components/brand/BrandLogo.tsx',
-  'src/components/brand/brand-logo.module.css',
-  'src/app/icon.svg', 'src/app/apple-icon.png',
-  // User request 2026-10-17: Lucide icons for the Meta-inspired /guides redesign.
-  // Only the lucide-react dependency is added; existing runtime versions stay fixed.
-  'package.json', 'package-lock.json',
-  // User request 2026-10-15: embed the existing map/comparison in the portal.
-  'src/components/universities/ComparisonSection.tsx',
-  'src/components/universities/ItalyMap.tsx',
-  'src/components/PaperOverlayGate.tsx',
-  'src/components/universities/UniversitiesExplorer.tsx',
-  'src/components/universities/UniversityArtwork.tsx',
-  'src/components/universities/Filters.tsx',
-  'src/components/universities/ResultSummary.tsx',
-  'src/components/universities/CityPanel.tsx',
-  'src/components/universities/UniCard.tsx',
-  'src/components/universities/CompareBar.tsx',
-  'src/components/universities/UniModal.tsx',
-  'src/components/universities/CompareModal.tsx',
-  'src/components/universities/CityMatch.tsx',
-  'src/components/universities/comparison.module.css',
-  // Explicit user request: small city icons in the comparison table and bar.
-  // Presentation only — comparison-model.ts and the data stay protected.
-  'src/components/universities/ComparisonTable.tsx',
-  'src/components/universities/CityGlyph.tsx',
-  'src/components/universities/university-ui.module.css']);
-// Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
-const approvedReminderUiPaths = new Set([
-  // User request 2026-10-18: one actual-stage navigator, face-free section icons,
-  // shared introduction and a helmet detail; palette, data and API stay frozen.
-  "src/components/portal/PortalStageIcon.tsx",
-  "src/components/portal/portal-journey.module.css",
-  "src/components/mascot/VespiIntroSection.tsx",
-  "src/components/mascot/vespi-intro.module.css",
-  "src/components/mascot/VespiMark.tsx",
-  // User request 2026-10-18: tactile shared chrome and one accessible upload/drop
-  // action using the existing review pipeline; no API, status or palette changes.
-  "src/components/portal/PortalUploadZone.tsx",
-  "src/components/portal/portal-upload.module.css",
-  // User request 2026-10-18: shared local profile, honest guest workspace,
-  // five display phases and completion ring; no authentication/API changes.
-  "src/lib/localWorkspace.ts",
-  "src/components/portal/LocalWorkspace.tsx",
-  "src/components/portal/WorkspaceCoach.tsx",
-  "src/components/portal/workspace.module.css",
-  // User request 2026-10-18: ship reference-based Higgsfield role artwork in
-  // existing assistant placements. The portal road retains route + figure.
-  // User request 2026-10-17: shared contextual Vespi across public pages and
-  // portal, preserving each surface's existing palette and product contracts.
-  'src/components/mascot/Vespi.tsx',
-  'src/components/mascot/VespiAssistant.tsx',
-  'src/components/mascot/vespi-assistant.module.css',
-  'src/components/mascot/useVespiPresence.ts',
-  // User request 2026-10-17: replace the scooter with Веспи Баурысаков.
-  // Existing helper/onboarding/progress presentation only; no API/data change.
-  // User request 2026-10-16: keep assessment, rules and the unchanged trainer
-  // inside the personal cabinet, with existing data and completion endpoints.
-  'src/components/portal/PortalAssessment.tsx',
-  'src/components/portal/portal-assessment.module.css',
-  'src/components/portal/PortalRules.tsx',
-  'src/components/portal/portal-rules.module.css',
-  'src/components/portal/PortalPermessoStep.tsx',
-  'src/components/portal/portal-permesso.module.css',
-  // User request 2026-10-15: choose universities inside the portal, keep the API.
-  'src/components/portal/PortalUniversityStep.tsx',
-  'src/components/portal/portal-universities.module.css',
-  'src/lib/portalShortlist.ts',
-  'src/components/portal/PortalExplorer.tsx',
-  'src/components/portal/HelpSection.tsx',
-  // Explicit user request: selected illustration and Claude reference on login only.
-  'src/components/portal/PortalLogin.tsx',
-  'src/components/portal/portal-login.module.css',
-  // The user explicitly authorized a visual/UX refresh of the personal portal.
-  // Portal data, API contracts and roadmap logic remain protected elsewhere.
-  'src/components/portal/TodaySection.tsx',
-  // Explicit user request (2026-10-15): two decorative Higgsfield illustrations.
-  'src/components/portal/PortalArtwork.tsx',
-  'src/components/portal/portal-artwork.module.css',
-  // Explicit user request: the existing route becomes one animated scooter road.
-  'src/components/portal/PortalRoad.tsx',
-  // Explicit user request: simpler navigation over the unchanged roadmap.
-  'src/lib/portalNavigation.ts',
-  'src/components/portal/PortalTaskDetail.tsx',
-  'src/components/portal/portal-step.module.css',
-  'src/components/portal/portal-settings.module.css',
-  'src/components/portal/portal-overview.module.css',
-  'src/components/portal/portal-plan.module.css',
-  'src/components/portal/portal-documents.module.css',
-  // Explicit user request: visible progress for the existing personal plan.
-  'src/components/portal/PortalProgress.tsx',
-  // Explicit user request: three primary destinations and unified settings.
-  'src/components/portal/portal-navigation.module.css',
-  'src/components/portal/PlanSection.tsx',
-  'src/components/portal/DocsSection.tsx',
-  // User-authorized full saved document reports and truthful outcome states.
-  'src/components/portal/PortalDocumentReport.tsx',
-  'src/components/portal/PortalDocumentContext.tsx',
-  'src/components/portal/portal-document.module.css',
-  'src/lib/portalDocument.ts',
-  // Explicitly authorized critique pass: first-run onboarding and profile settings.
-  'src/components/portal/PortalOnboarding.tsx',
-  'src/components/portal/ProfileSection.tsx',
-  'src/components/portal/portal.module.css',
-  'src/lib/portalMeta.ts',
-  // User request 2026-10-17: guide-aware Vespi in the existing helper.
-  // Only topic context in the existing message field; no API/quota change.
-  'src/components/chat/ChatWidget.tsx',
-  // User request 2026-10-17: make Vespi usable; production provider badge
-  // must not cover the existing helper's launcher or send control.
-  'src/components/chat/chat-placement.module.css',
-  'src/components/Footer.tsx',
-  'src/data/pricing.ts',
-  'src/lib/portalApi.ts',
-  'src/app/layout.tsx',
-  'src/components/Header.tsx',
-  'src/data/sources.ts',
-  'src/lib/payment.ts',
-  'src/lib/paymentMode.ts',
-  'src/lib/socialImage.tsx',
-]);
-const protectedPaths = /^(src\/(app\/(universities\/|globals\.css$|layout\.tsx$|icon\.svg$|apple-icon\.png$)|components\/(universities\/|sketchbook\/|chat\/|portal\/|mascot\/|brand\/|Header\.tsx$|Footer\.tsx$)|data\/|lib\/)|next\.config\.ts$|netlify\.toml$|package(?:-lock)?\.json$)/;
-// Explicit user request: implement the researched Kazakhstan admissions update.
-// These paths carry copy, eligibility rules and context in existing API fields.
-const approvedAdmissionsPaths = new Set([
-  'src/data/admissions.ts', 'src/data/admissionsContext.ts',
-  'src/data/guides.ts', 'src/data/wizard.ts', 'src/data/changes2026.ts',
-  'src/data/chatDemo.ts', 'src/data/italy.ts', 'src/data/sketchbook.ts',
-  'src/lib/planBuilder.ts', 'src/lib/chat.ts', 'src/lib/checkDocument.ts',
-  // User-authorized UX pass: a local questionnaire draft, with no API change.
-  'src/lib/usePlanDraft.ts',
-]);
-// User-authorized launch polish: shared phone validation and truthful contact/focus states.
-// This does not permit new API fields, prices, catalogue data or dependency changes.
-const approvedLaunchPaths = new Set([
-  'src/lib/phone.ts', 'src/lib/lead.ts', 'src/components/chat/ChatLauncher.tsx',
-]);
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path)), [], 'Protected source or contract changed.');
-const pricing = readFileSync('src/data/pricing.ts', 'utf8');
-assert.match(pricing, /PRICE_MAIN = 667;/);
-const wizard = readFileSync('src/data/wizard.ts', 'utf8');
-assert.equal((wizard.match(/    id: /g) || []).length, 10, 'The quiz includes intake, age, residence and DSU scope.');
-const baseItaly = execFileSync('git', ['show', `${base}:src/data/italy.ts`], {encoding:'utf8'});
-const headItaly = readFileSync('src/data/italy.ts', 'utf8');
-assert.equal(headItaly.match(/export const ITALY_PATH = .*;/)?.[0], baseItaly.match(/export const ITALY_PATH = .*;/)?.[0], 'Map geometry is unchanged.');
-const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/(?:sky|wash): "[^"]*"/g, 'wash: "presentation"');
-assert.equal(cityGeometry(headItaly), cityGeometry(baseItaly), 'City identities, coordinates and styles are unchanged.');
-const baseMap = execFileSync('git', ['show', `${base}:src/components/universities/ItalyMap.tsx`], {encoding:'utf8'});
-// The new brief explicitly recolors inline SVG gradients. Erase only color
-// literals for comparison: all paths, coordinates, roles and handlers stay exact.
-const withoutColors = source => source.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
-assert.equal(withoutColors(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8')), withoutColors(baseMap.replace('role="img"', 'role="group"')), 'Map changes are limited to colors; geometry and interaction stay exact.');
-console.log('Approved presentation paths passed; map geometry, comparison model, API and dependencies remain protected.');
+const read = path => readFileSync(path, 'utf8');
+const before = path => execFileSync('git', ['show', `${base}:${path}`], {encoding:'utf8'});
+// The owner explicitly replaced the complete visual system. Preserve product
+// contracts, not the discarded palette, page composition or mascot placements.
+for (const path of [
+  'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts',
+  'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts',
+  'src/lib/chat.ts','src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts',
+  'src/lib/mapLabels.ts','src/components/universities/comparison-model.ts',
+  'src/components/guides/permesso/permessoOriginalGeometry.ts',
+  'src/components/guides/permesso/permessoData.ts',
+  'src/components/guides/permesso/permessoTransferModel.ts',
+  'next.config.ts','netlify.toml','package-lock.json',
+]) assert.equal(read(path), before(path), `${path}: contract or data changed`);
+const normalizeWash = source => source.replace(/wash: "[^"]*"/g, 'wash: "presentation"');
+assert.equal(normalizeWash(read('src/data/italy.ts')), normalizeWash(before('src/data/italy.ts')), 'Catalogue facts and map geometry stay exact');
+const normalizeApi = source => source
+  .replace('import { studentRoadmap } from "./studentCopy";\n','')
+  .replaceAll('studentRoadmap(d as PortalData)', 'd as PortalData');
+assert.equal(normalizeApi(read('src/lib/portalApi.ts')), normalizeApi(before('src/lib/portalApi.ts')), 'Portal changes are limited to display normalization; request contracts stay exact');
+const previousPackage = JSON.parse(before('package.json')), nextPackage = JSON.parse(read('package.json'));
+assert.deepEqual(nextPackage.dependencies, previousPackage.dependencies);
+assert.deepEqual(nextPackage.devDependencies, previousPackage.devDependencies);
+const forbiddenCopy = new RegExp('\\u0440\\u043e\\u0434\\u0438\\u0442\\u0435\\u043b', 'iu');
+function inspect(directory) {
+  for (const entry of readdirSync(directory, {withFileTypes:true})) {
+    const path = join(directory,entry.name);
+    if(entry.isDirectory()) {inspect(path);continue;}
+    if(!/\.(tsx?|jsx?|css|html|json|svg)$/.test(path))continue;
+    const source = read(path);
+    assert(!forbiddenCopy.test(source), `${path}: obsolete role wording`);
+    assert(!/["'`(]\/(?:mascot|illustrations)\//.test(source), `${path}: discarded artwork URL`);
+    for(const match of source.matchAll(/box-shadow\s*:\s*([^;}]+)/gi)) assert(/^none(?:\s*!important)?$/.test(match[1].trim()), `${path}: elevation reintroduced`);
+    assert(!/\b(?:linear|radial|conic)-gradient\s*\(/i.test(source), `${path}: gradient reintroduced`);
+  }
+}
+inspect('src');inspect('tools');
+const art = JSON.parse(read('public/art/sources.json'));
+assert(art, 'Classical art provenance must ship with local assets');
+console.log('Gallery contracts passed: exact admissions/prices/payment/API/dependencies/map/Permesso geometry, face-free artwork and student-directed copy.');

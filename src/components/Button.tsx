@@ -10,7 +10,7 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
  *  - glass     — только для контролов НАД фото/видео (плавающая навигация)
  *
  * Радиус вложенной кнопки — та же капсула (радиус = половина высоты), это
- * само по себе всегда "концентрично" любому родителю с достаточным
+ * само по себе всегда "концентрично" любому контейнеру с достаточным
  * скруглением, поэтому отдельный radius-проп не нужен на этой странице.
  *
  * Главное действие (primary) дополнительно помечается data-fab-yield:
@@ -28,25 +28,25 @@ type Variant = "primary" | "secondary" | "tertiary" | "icon" | "glass" | "dark" 
 type Size = "md" | "sm";
 
 const base =
-  "relative inline-flex items-center justify-center gap-2 font-sans font-bold text-button " +
+  "relative inline-flex items-center justify-center gap-2 font-sans font-normal text-[12px] " +
   "whitespace-nowrap select-none transition-[background-color,color,border-color,box-shadow,transform] " +
   "duration-[var(--duration-fast)] ease-[var(--ease-standard)] " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red " +
   "disabled:pointer-events-none disabled:opacity-40 disabled:shadow-none";
 
 const sizeClass: Record<Size, string> = {
-  md: "h-12 px-6",
-  sm: "h-11 px-5",
+  md: "min-h-9 px-[17px] py-[9px]",
+  sm: "min-h-9 px-[17px] py-[9px]",
 };
 
 const variantClass: Record<Variant, string> = {
   primary:
-    "rounded-pill border border-ink bg-ink text-white shadow-soft-md " +
-    "hover:-translate-y-px hover:bg-ink hover:border-ink hover:shadow-soft-lg " +
-    "active:translate-y-0 active:scale-[0.98] active:shadow-soft-sm",
+    "rounded-pill border border-ink bg-ink text-paper  " +
+    "hover:-translate-y-px hover:bg-ink hover:border-ink  " +
+    "active:translate-y-0 active:scale-[0.98] ",
   secondary:
     "rounded-pill border border-subtle bg-transparent text-ink " +
-    "hover:-translate-y-px hover:bg-ink hover:text-cream hover:shadow-soft-md " +
+    "hover:-translate-y-px hover:bg-ink hover:text-cream  " +
     "active:translate-y-0 active:scale-[0.98]",
   tertiary:
     "h-auto min-h-11 gap-1.5 px-1 text-ink underline-offset-4 " +
@@ -56,15 +56,15 @@ const variantClass: Record<Variant, string> = {
   // рамок этого прохода вызывают Button с variant="dark"/"ghost" — держим
   // их работающими на новой системе состояний/motion, не трогая эти файлы.
   dark:
-    "rounded-pill border border-subtle bg-ink text-cream shadow-soft-md " +
-    "hover:-translate-y-px hover:bg-ink hover:border-ink hover:shadow-soft-lg " +
-    "active:translate-y-0 active:scale-[0.98] active:shadow-soft-sm",
+    "rounded-pill border border-subtle bg-ink text-cream  " +
+    "hover:-translate-y-px hover:bg-ink hover:border-ink  " +
+    "active:translate-y-0 active:scale-[0.98] ",
   ghost:
     "rounded-pill border border-subtle bg-transparent text-ink " +
-    "hover:-translate-y-px hover:bg-ink hover:text-cream hover:shadow-soft-md " +
+    "hover:-translate-y-px hover:bg-ink hover:text-cream  " +
     "active:translate-y-0 active:scale-[0.98]",
   glass:
-    "rounded-pill border border-cream/25 bg-ink/55 text-cream shadow-soft-sm backdrop-blur-md " +
+    "rounded-pill border border-cream/25 bg-ink/55 text-cream   " +
     "hover:-translate-y-px hover:bg-ink/70 active:translate-y-0 active:scale-[0.98]",
 };
 

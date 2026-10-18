@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-18T23:30:57.426254Z",
+  "title": "Design System: iItaly — Renaissance Gallery",
+  "extensions": {
+    "colorMeta": {
+      "putty": {
+        "role": "primary",
+        "displayName": "Putty",
+        "canonical": "#c4c3b6"
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Ink",
+        "canonical": "#000000"
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "#e7e5e4"
+      },
+      "chalk": {
+        "role": "neutral",
+        "displayName": "Chalk",
+        "canonical": "#ebebeb"
+      },
+      "vellum": {
+        "role": "neutral",
+        "displayName": "Vellum",
+        "canonical": "#dfdcd5"
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#595855"
+      },
+      "ash": {
+        "role": "neutral",
+        "displayName": "Ash",
+        "canonical": "#808080"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Monumental wordmark",
+        "purpose": "The decorative ITALIA composition; preserve source measurements and crop within its frame."
+      },
+      "headline": {
+        "displayName": "Gallery headline",
+        "purpose": "Editorial page and room titles with Cyrillic-capable serif type."
+      },
+      "heading-lg": {
+        "displayName": "Editorial heading",
+        "purpose": "The smaller gallery heading and notched showcase title."
+      },
+      "title": {
+        "displayName": "Small editorial title",
+        "purpose": "The minimum serif title scale; smaller functional headings use Inter. Legal and admissions-changes titles use a local 34–52px clamp with wrapping for long Russian words."
+      },
+      "heading": {
+        "displayName": "Numeric exception",
+        "purpose": "Inherited numeric emphasis; not a general sans-serif display role. The current price line uses local leading."
+      },
+      "heading-sm": {
+        "displayName": "Utility heading",
+        "purpose": "Compact section headings in working surfaces."
+      },
+      "subheading": {
+        "displayName": "Utility subheading",
+        "purpose": "Workspace and form headings."
+      },
+      "body-sm": {
+        "displayName": "Body",
+        "purpose": "Readable instructions and ordinary supporting prose."
+      },
+      "field": {
+        "displayName": "Field",
+        "purpose": "Inputs and selected introductory copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Actions, captions, and small navigation labels."
+      },
+      "micro": {
+        "displayName": "Inscription",
+        "purpose": "Approved notched-card inscription only; never essential task instructions."
+      }
+    },
+    "shadows": [
+      {
+        "name": "flat",
+        "value": "none",
+        "purpose": "All surfaces and text remain without shadows. Focus is an outline."
+      }
+    ],
+    "motion": [
+      {
+        "name": "gallery-reveal",
+        "value": "transform 1.1s cubic-bezier(.16,1,.3,1)",
+        "purpose": "Progressive heading entrances; immediate content under reduced motion."
+      },
+      {
+        "name": "action-state",
+        "value": "background .25s ease",
+        "purpose": "Compact filled action hover."
+      },
+      {
+        "name": "text-link",
+        "value": "transform .3s ease",
+        "purpose": "Thin underline reveal."
+      },
+      {
+        "name": "gallery-art",
+        "value": "transform .6s ease",
+        "purpose": "Subtle circular painting movement and hexagon rotation."
+      },
+      {
+        "name": "room-header",
+        "value": "background-color .35s ease, color .35s ease",
+        "purpose": "Header reversal on entry into ink rooms."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "gallery-mobile",
+        "value": "640px"
+      },
+      {
+        "name": "pricing-and-helper",
+        "value": "700px"
+      },
+      {
+        "name": "gallery-medium",
+        "value": "900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary pill action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Canonical filled action on a light gallery surface.",
+      "html": "<button class=\"ds-primary\"><span>Составить план</span></button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:9px 17px;border:0;border-radius:var(--radius-buttons,28.8px);background:var(--color-ink,#000000);color:var(--color-paper,#ffffff);font:400 12px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);cursor:pointer;transition:background .25s ease}.ds-primary span{transition:transform .25s ease}.ds-primary:hover{background:var(--color-graphite,#595855)}.ds-primary:hover span{transform:translateX(2px)}.ds-primary:focus-visible{outline:2px solid currentColor;outline-offset:4px}.ds-primary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-primary,.ds-primary span{transition:none}.ds-primary:hover span{transform:none}}"
+    },
+    {
+      "name": "Reversed pill action",
+      "kind": "button",
+      "refersTo": "button-reversed",
+      "description": "A paper action inside an ink room.",
+      "html": "<div class=\"ds-ink-room\"><button class=\"ds-reversed\"><span>Продолжить маршрут</span></button></div>",
+      "css": ".ds-ink-room{padding:24px;background:var(--color-ink,#000000);color:var(--color-paper,#ffffff)}.ds-reversed{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:9px 17px;border:0;border-radius:var(--radius-buttons,28.8px);background:var(--color-paper,#ffffff);color:var(--color-ink,#000000);font:400 12px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);cursor:pointer;transition:background .25s ease}.ds-reversed:hover{background:var(--color-vellum,#dfdcd5)}.ds-reversed:focus-visible{outline:2px solid var(--color-paper,#ffffff);outline-offset:4px}.ds-reversed:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-reversed{transition:none}}"
+    },
+    {
+      "name": "Ghost text link",
+      "kind": "button",
+      "refersTo": "link-ghost",
+      "description": "A supporting action whose underline appears on hover.",
+      "html": "<a class=\"ds-ghost\" href=\"#design-preview\">Выбрать университет <span aria-hidden=\"true\">↗</span></a>",
+      "css": ".ds-ghost{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:36px;width:fit-content;padding:0;border:0;border-radius:var(--radius-links,2px);background:none;color:var(--color-ink,#000000);font:400 13px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);text-decoration:none}.ds-ghost::after{content:\"\";position:absolute;left:0;right:0;bottom:5px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .3s ease}.ds-ghost:hover::after{transform:scaleX(1)}.ds-ghost:focus-visible{outline:2px solid currentColor;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-ghost::after{transition:none}}"
+    },
+    {
+      "name": "Labeled bone field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Readable input on a bone surface with an ink boundary and visible focus.",
+      "html": "<label class=\"ds-field-label\" for=\"ds-search\">Поиск по справочнику</label><input class=\"ds-field\" id=\"ds-search\" type=\"search\" placeholder=\"Например, перевод или permesso\"/>",
+      "css": ".ds-field-label{display:block;margin-bottom:7px;color:var(--color-ink,#000000);font:500 14px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif)}.ds-field{box-sizing:border-box;display:block;width:100%;min-height:48px;padding:12px 14px;border:1px solid var(--color-ink,#000000);border-radius:var(--radius-cards,9px);background:var(--color-bone,#e7e5e4);color:var(--color-ink,#000000);font:400 16px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);caret-color:var(--color-ink,#000000)}.ds-field::placeholder{color:var(--color-graphite,#595855);opacity:1}.ds-field:hover{border-color:var(--color-graphite,#595855)}.ds-field:focus-visible{outline:2px solid currentColor;outline-offset:4px}.ds-field:disabled{opacity:.5;cursor:not-allowed}"
+    },
+    {
+      "name": "Portal navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "One local row with an underlined current destination.",
+      "html": "<nav class=\"ds-navigation\" aria-label=\"Навигация кабинета\"><a href=\"#ds-today\" aria-current=\"page\">Сейчас</a><a href=\"#ds-route\">Весь маршрут</a><a href=\"#ds-documents\">Документы</a><a href=\"#ds-settings\">Настройки</a></nav>",
+      "css": ".ds-navigation{display:flex;align-items:center;flex-wrap:wrap;gap:24px;padding:16px 0;border-bottom:1px solid var(--color-ink,#000000);background:var(--color-putty,#c4c3b6);color:var(--color-ink,#000000)}.ds-navigation a{display:flex;align-items:center;min-height:36px;color:inherit;font:400 14px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);text-decoration:none}.ds-navigation a:last-child{margin-left:auto}.ds-navigation a:hover,.ds-navigation a[aria-current=page]{text-decoration:underline;text-underline-offset:8px}.ds-navigation a:focus-visible{outline:2px solid currentColor;outline-offset:4px}@media(max-width:640px){.ds-navigation{gap:8px 20px;padding:12px 0}.ds-navigation a{font-size:12px}.ds-navigation a:last-child{margin-left:0}}"
+    },
+    {
+      "name": "University filter",
+      "kind": "chip",
+      "refersTo": "filter",
+      "description": "Nearly square-cornered filter tabs; selection is explicit and monochrome.",
+      "html": "<div class=\"ds-filter-group\" role=\"group\" aria-label=\"Тип университета\"><button class=\"ds-filter\" aria-pressed=\"true\">Все вузы</button><button class=\"ds-filter\" aria-pressed=\"false\">Государственные</button></div>",
+      "css": ".ds-filter-group{display:flex;flex-wrap:wrap;gap:8px;padding:24px;background:var(--color-bone,#e7e5e4);border-radius:var(--radius-cards,9px)}.ds-filter{min-height:44px;padding:9px 12px;border:1px solid var(--color-vellum,#dfdcd5);border-radius:var(--radius-links,2px);background:none;color:var(--color-ink,#000000);font:500 12px/1.4 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);cursor:pointer;transition:color .15s,background-color .15s,border-color .15s}.ds-filter:hover{background:var(--color-putty,#c4c3b6)}.ds-filter[aria-pressed=true]{background:var(--color-ink,#000000);color:var(--color-paper,#ffffff)}.ds-filter[aria-pressed=true]:hover{border-color:var(--color-ink,#000000)}.ds-filter:focus-visible{outline:2px solid var(--color-ink,#000000);outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-filter{transition:none}}"
+    },
+    {
+      "name": "Bone working card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat, softly cornered task information with a contextual supporting label.",
+      "html": "<article class=\"ds-card\"><p class=\"ds-card-label\">Пример маршрута</p><h3>Твой следующий шаг</h3><p>Проверь требования выбранной программы и подготовь список документов.</p><a href=\"#ds-task\">Открыть задачу <span aria-hidden=\"true\">↗</span></a></article>",
+      "css": ".ds-card{padding:var(--card-padding,24px);border:1px solid var(--color-vellum,#dfdcd5);border-radius:var(--radius-cards,9px);background:var(--color-bone,#e7e5e4);color:var(--color-ink,#000000);font:400 15px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif)}.ds-card .ds-card-label{margin:0 0 16px;color:var(--color-graphite,#595855);font-size:12px}.ds-card h3{margin:0 0 16px;font:500 22px/1.33 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif)}.ds-card p{margin:0 0 20px}.ds-card a{display:inline-flex;align-items:center;gap:8px;min-height:36px;color:inherit;font-size:13px;text-decoration:none}.ds-card a:hover{text-decoration:underline;text-underline-offset:4px}.ds-card a:focus-visible{outline:2px solid currentColor;outline-offset:4px}"
+    },
+    {
+      "name": "Notched showcase",
+      "kind": "custom",
+      "refersTo": "notched-card",
+      "description": "The geometric ink exhibit; its micro inscription is a localized exception.",
+      "html": "<article class=\"ds-notched\"><span class=\"ds-notched-label\">Личный кабинет iItaly</span><h2>Весь путь.<br/><em>Перед глазами.</em></h2><p>Текущий шаг, инструкция и нужный файл — в одном месте.</p><a href=\"#ds-portal\">Посмотреть кабинет ↗</a><span class=\"ds-notched-micro\">IL TUO PERCORSO / ТВОЙ МАРШРУТ</span></article>",
+      "css": ".ds-notched{box-sizing:border-box;width:min(400px,calc(100% - 48px));min-height:400px;padding:40px;background:var(--color-ink,#000000);color:var(--color-paper,#ffffff);clip-path:polygon(24px 0,calc(100% - 24px) 0,100% 24px,100% calc(100% - 24px),calc(100% - 24px) 100%,24px 100%,0 calc(100% - 24px),0 24px);font:400 15px/1.6 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif)}.ds-notched-label{font:400 12px/1.5 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif);letter-spacing:.04em}.ds-notched h2{margin:32px 0 24px;font:400 52px/1 var(--font-davinci, \"Playfair Display\", Georgia, serif);letter-spacing:-.47px}.ds-notched p{color:var(--color-vellum,#dfdcd5)}.ds-notched a{display:inline-flex;align-items:center;min-height:36px;margin-top:20px;color:inherit;font-size:13px;text-decoration:none}.ds-notched a:hover{text-decoration:underline;text-underline-offset:4px}.ds-notched a:focus-visible{outline:2px solid currentColor;outline-offset:4px}.ds-notched-micro{display:block;margin-top:32px;font:400 9px/1.25 var(--font-helvetica-now, Inter, \"Helvetica Neue\", Arial, sans-serif)}@media(max-width:640px){.ds-notched{padding:32px}.ds-notched h2{font-size:44px}}"
+    },
+    {
+      "name": "Monumental wordmark",
+      "kind": "custom",
+      "refersTo": "hero-wordmark",
+      "description": "The intentionally cropped decorative ITALIA form.",
+      "html": "<div class=\"ds-wordmark\" aria-hidden=\"true\"><span>ITALIA</span></div>",
+      "css": ".ds-wordmark{height:350px;position:relative;width:100%;overflow:hidden;background:var(--color-putty,#c4c3b6);color:var(--color-ink,#000000);font:500 374px/.84 var(--font-davinci, \"Playfair Display\", Georgia, serif);letter-spacing:-3.37px}.ds-wordmark span{display:block;position:relative;width:max-content;left:50%;transform:translateX(-50%)}"
+    },
+    {
+      "name": "Hexagonal progress indicator",
+      "kind": "custom",
+      "refersTo": "hexagon",
+      "description": "A small outline or filled hexagon denotes an ordered step.",
+      "html": "<button class=\"ds-progress\" aria-label=\"Первый этап\" aria-pressed=\"true\"><svg width=\"12\" height=\"14\" viewBox=\"0 0 12 14\" aria-hidden=\"true\"><path d=\"M6 1 11 4v6l-5 3-5-3V4Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/></svg></button><button class=\"ds-progress\" aria-label=\"Второй этап\" aria-pressed=\"false\"><svg width=\"12\" height=\"14\" viewBox=\"0 0 12 14\" aria-hidden=\"true\"><path d=\"M6 1 11 4v6l-5 3-5-3V4Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"/></svg></button>",
+      "css": ".ds-progress{display:inline-grid;place-items:center;min-width:36px;min-height:36px;border:0;border-radius:var(--radius-links,2px);background:none;color:var(--color-ink,#000000);cursor:pointer}.ds-progress svg{transition:transform .6s ease}.ds-progress:hover svg,.ds-progress[aria-pressed=true] svg{transform:rotate(60deg)}.ds-progress:hover path,.ds-progress[aria-pressed=true] path{fill:currentColor}.ds-progress:focus-visible{outline:2px solid currentColor;outline-offset:4px}@media(prefers-reduced-motion:reduce){.ds-progress svg{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Renaissance Gallery on Putty Paper",
+    "overview": "iItaly presents the journey to studying in Italy as a sequence of calm gallery rooms. Putty walls, ink-black rooms, classical paintings, and monumental serif type create the atmosphere. Compact, readable utility type gives applicants a practical place to choose, understand, and complete their next step.\n\nThe system is restrained and flat. Art and typography carry its character; surfaces use tonal contrast, hairline boundaries, and deliberate space. Russian and Cyrillic support are essential. The previous warm SaaS identity, saturated accents, decorative assistant portraits, shadows, and gradients have been replaced.",
+    "keyCharacteristics": [
+      "A fixed eight-color neutral palette with hard transitions between light and dark rooms.",
+      "Playfair Display for editorial moments; Inter for reading, controls, and data.",
+      "Public-domain Italian paintings in full-bleed panels and circular vignettes.",
+      "Compact pill actions, flat bone cards, notched showcases, and hexagonal indicators.",
+      "Motion that clarifies entrances and state while preserving reduced-motion access."
+    ],
+    "rules": [
+      {
+        "name": "The Contextual Contrast Rule",
+        "body": "Use ink for small secondary text on putty. Graphite is suitable on bone; vellum and paper are the corresponding text roles in ink rooms. The default `--text-secondary` and `--text-muted` aliases therefore resolve to ink on putty; graphite remains an explicit bone-surface choice. Do not assume a muted token is readable on every surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The Eight Colors Rule",
+        "body": "New UI colors must resolve to the eight frontmatter primitives. Legacy names such as cream, crimson, cloud, warm, accent, and apple are compatibility aliases, not permission to restore old colors. Do not generate tonal ramps or introduce derived palette colors, including in documentation previews.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Playfair Display handles editorial headings at 34px and above. Inter handles utility text in the 9–26px range, with the inherited 43px numeric exception. Both families use only weights 400 and 500.",
+        "section": "typography"
+      },
+      {
+        "name": "The Legible Detail Rule",
+        "body": "Essential body and control text begins at 12px. The 9px inscription and small artwork credit are deliberate, localized exceptions; do not spread them to task instructions.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Gallery Rule",
+        "body": "Express hierarchy through tone, type, spacing, and geometry. Do not introduce shadow or gradient tokens, including through legacy utilities.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** use the exact eight-color palette and choose secondary text by its surface.",
+      "**Do** pair Cyrillic-capable Playfair Display headings with Inter utility text at weights 400 and 500.",
+      "**Do** preserve the monumental wordmark, restrained pills, flat bone cards, and geometric showcase.",
+      "**Do** use locally served classical paintings with the source manifest and credits intact.",
+      "**Do** preserve visible keyboard focus, current-state semantics, readable task details, and reduced-motion behavior.",
+      "**Do** distinguish a labeled product example from an applicant's real plan or result."
+    ],
+    "donts": [
+      "**Don't** reintroduce saturated interface accents, shadows, gradients, glass, or the former warm SaaS styling.",
+      "**Don't** use small serif copy, ornamental display type for controls, or unapproved display weights.",
+      "**Don't** apply the micro inscription size to essential instructions, controls, or legal copy.",
+      "**Don't** turn compatibility names or reference-brand examples into new visual requirements.",
+      "**Don't** use modern stock photography, generated assistant portraits, or 3D character decoration in gallery surfaces.",
+      "**Don't** duplicate navigation or let floating controls cover the primary task action."
+    ]
+  }
+}

@@ -21,7 +21,7 @@ const QUESTION_CONTEXT: Record<string, string> = {
   budget: "Стипендию и средства на визу нужно проверять отдельно.",
   field: "От направления зависят тесты и условия конкурса. Точные требования проверим у программы.",
   lang: "От ответа зависит, что делать дальше: подтвердить язык или подготовиться к тесту.",
-  age: "Если тебе ещё нет 18, в маршрут нужны отдельные шаги для родителей, жилья и документов.",
+  age: "Если тебе ещё нет 18, в маршрут нужны требования к согласию законного представителя, жилью и документам.",
   residence: "Используем процедуру для твоего места проживания.",
   dsuRegion: "Требования к справкам проверяем по конкретному конкурсу.",
 };
@@ -121,10 +121,10 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           <>
             {preview && (
               <div className="mb-6 rounded-apple-card border border-white/15 bg-frost p-4">
-                <p className="text-apple-caption font-semibold text-crimson uppercase">
+                <p className="text-apple-caption font-medium text-crimson uppercase">
                   Уже готово по твоим ответам
                 </p>
-                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0]?.t}</p>
+                <p className="mt-2 text-apple-body-sm font-medium text-cloud-white">{preview.steps[0]?.t}</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.p}</p>
                 <p className="mt-2 text-apple-caption text-cloud-meta">
                   {(() => {
@@ -181,10 +181,10 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
               Оставляя номер, ты соглашаешься, что мы напишем по поводу
               поступления. Рассылок и передачи третьим лицам не будет,
               отписаться можно в любой момент.{" "}
-              <a href="/privacy" className="font-semibold text-crimson">
+              <a href="/privacy" className="font-medium text-crimson">
                 Как мы работаем с данными
               </a>
-              . Если тебе меньше 18, заполняй вместе с родителем.
+              . Если тебе меньше 18, проверь согласие законного представителя.
             </p>
             </details>
           </>
@@ -229,7 +229,7 @@ function WizStep({
         label="Веспи · соберём твой маршрут"
         as="div"
         data-plan-question={question.id}
-        title={<h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>}
+        title={<h2 className="font-apple-text text-apple-subheading font-medium text-cloud-white">{question.q}</h2>}
         message={<span data-vespi-question-reason>{question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}</span>}
       />
       <div className={styles.options}>
