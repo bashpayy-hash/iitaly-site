@@ -1,0 +1,33 @@
+.journey { composes: paper from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); align-items:center; gap:28px; width:100%; padding:20px 24px; border:1px solid var(--portal-border); border-radius:24px; background:var(--portal-surface); color:var(--portal-ink); }
+.compact { display:block; padding:10px 16px 12px; border-radius:20px; }
+.focus { min-width:0; }
+.focus [data-vespi-assistant] { grid-template-columns:64px minmax(0,1fr); gap:14px; }
+.focus [data-vespi-presence] { width:64px !important; }
+.focus [data-vespi-label] { font-weight:400; color:var(--portal-muted); margin-bottom:4px; }
+.focus h2 { font:600 22px/1.2 var(--portal-heading-font); letter-spacing:-.025em; margin:0; overflow-wrap:anywhere; }
+.meta { margin-top:8px; color:var(--portal-muted); font-size:13px; line-height:1.5; }
+.action { display:inline-flex; align-items:center; justify-content:center; gap:14px; min-height:44px; margin-top:12px; padding:10px 20px; border-radius:999px; background:var(--portal-ink); color:var(--portal-surface); font-size:14px; line-height:1.4; font-weight:500; text-decoration:none; }
+.route { min-width:0; overflow:hidden; padding:0 5px 4px; }
+.summary { display:flex; justify-content:space-between; gap:12px; min-height:20px; color:var(--portal-muted); font-size:13px; line-height:1.5; font-variant-numeric:tabular-nums; }
+.summary > span:first-child { color:var(--portal-ink); font-weight:500; }
+.count { position:relative; display:grid; text-align:right; }
+.count > span { grid-area:1/1; }
+.feedback { background:var(--portal-surface); color:var(--portal-ink); }
+.feedback:empty { display:none; }
+.nav { display:flex; gap:4px; overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:thin; scrollbar-color:var(--portal-border) transparent; scroll-padding-inline:8px; padding:5px 0; }
+.nav a { display:flex; align-items:center; justify-content:center; flex:1 0 auto; gap:7px; min-height:44px; padding:8px 12px; border:1px solid transparent; border-radius:999px; color:var(--portal-muted); font-size:13px; font-weight:400; line-height:1.35; text-decoration:none; white-space:nowrap; }
+.nav a:hover { background:var(--portal-surface-soft); color:var(--portal-ink); }
+.nav a[aria-current=step] { color:var(--portal-ink); background:var(--portal-surface-soft); border-color:var(--portal-border); font-weight:600; }
+.nav a svg { width:17px; height:17px; flex-shrink:0; }
+.nav a[data-road-stage-state=done] svg { opacity:.6; }
+.track { position:relative; height:4px; margin-top:2px; border-radius:999px; background:var(--portal-border); }
+.fill { display:block; width:100%; height:100%; background:var(--portal-ink); border-radius:inherit; transform-origin:left center; }
+.marker { display:block; position:absolute; inset:-3px auto auto 0; width:100%; height:10px; pointer-events:none; }
+.marker > span { display:block; width:10px; height:10px; border:2px solid var(--portal-ink); border-radius:50%; background:var(--portal-surface); transform:translateX(-50%); }
+.fill,.marker { transition-property:none; }
+.journey[data-road-transition=true] .fill,.journey[data-road-transition=true] .marker { transition:transform 920ms cubic-bezier(.22,1,.36,1); }
+.journey a:focus-visible { outline:2px solid var(--portal-ink); outline-offset:2px; }
+@media(max-width:1000px) { .journey { grid-template-columns:minmax(0,1fr); gap:14px; } .compact { padding:8px 12px 10px; } .focus [data-vespi-assistant] { display:grid !important; } .focus [data-vespi-content] { display:block !important; } .focus [data-vespi-presence] { float:none !important; margin:0 !important; } }
+@media(max-width:480px) { .journey { padding:14px; border-radius:20px; } .compact { padding:8px 10px 10px; } .focus h2 { font-size:19px; } .focus [data-vespi-assistant] { grid-template-columns:48px minmax(0,1fr); gap:10px; } .focus [data-vespi-presence] { width:48px !important; } .nav a { padding:8px 10px; } }
+@media(prefers-reduced-motion:reduce) { .journey .fill,.journey .marker { transition:none !important; } }
+@media(forced-colors:active) { .nav a[aria-current=step] { outline:2px solid Highlight; } .track { border-bottom:1px solid CanvasText; } .fill { border-bottom:3px solid CanvasText; } }

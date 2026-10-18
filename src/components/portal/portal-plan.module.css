@@ -18,8 +18,7 @@
 .routeHeading::-webkit-details-marker { display: none; }
 .stageHeading { display: flex; align-items: center; gap: 14px; min-height: 60px; margin: 0; padding: 16px 0; color: var(--portal-ink); list-style: none; cursor: pointer; }
 .stageHeading::-webkit-details-marker { display: none; }
-.stageCopilot { flex: 0 0 auto; width: 72px; margin: -6px 0 -6px -6px; }
-.stageCopilot img { display: block; width: 100%; height: auto; }
+.stageIcon { flex:0 0 auto; color:var(--portal-muted); }
 .stageTitle { flex: 1; min-width: 0; font-size: 16px; line-height: 1.45; font-weight: 600; }
 .nextLabel { color: var(--portal-muted); font-weight: 400; }
 .stageCount { flex-shrink: 0; color: var(--portal-muted); font-size: 13px; font-weight: 400; font-variant-numeric: tabular-nums; }
@@ -50,7 +49,6 @@
   .heading { font-size: 28px; }
 }
 @media (max-width: 480px) {
-  .stageCopilot { width: 56px; margin-left: -4px; }
   .intro { margin-bottom: 8px; }
   .titleRow { min-height: 48px; gap: 12px; }
   .titleRow > [data-portal-art] { width: 52px; height: 39px; }

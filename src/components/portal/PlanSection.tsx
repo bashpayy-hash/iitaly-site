@@ -7,11 +7,10 @@ import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { isManualTask, portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
-import { Vespi } from "@/components/mascot/Vespi";
+import { PortalStageIcon } from "./PortalStageIcon";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./portal-plan.module.css";
 import rules from "./portal-rules.module.css";
-import { WorkspacePhases } from "./WorkspaceCoach";
 
 const PortalRules = dynamic(() => import("./PortalRules").then(module => module.PortalRules), {
   loading: () => <p role="status" className={rules.loading}>Загружаю справку…</p>,
@@ -57,7 +56,6 @@ export function PlanSection({ data, onOpenTask, onCompleteTask, busy }: PlanActi
           </p>}
         </details>
       </div>
-      <WorkspacePhases data={data} onOpenTask={onOpenTask} />
       {!position.stage && <VespiAssistant as="div" variant={hasTasks ? "celebrate" : "copilot"} layout="inline-pill" appearance="indicator" className={styles.complete}
         label={hasTasks ? "Веспи · маршрут пройден" : "Веспи · маршрут"}
         message={hasTasks ? "Все шаги маршрута отмечены." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."} />}
@@ -93,8 +91,8 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask, onComp
       onToggle={event => setOpen(event.currentTarget.open)}
     >
       <summary className={styles.stageHeading} id={`portal-stage-heading-${stage.id}`}>
-        {current && <span className={styles.stageCopilot}><Vespi variant={currentTask && DOC_TASKS[currentTask] ? "inspector" : "copilot"} presentation="portrait" sizes="(max-width: 600px) 56px, 72px" /></span>}
-        <span className={styles.stageTitle}>{!current && <span className={styles.nextLabel}>{completed === stage.tasks.length ? "Пройдено · " : next ? "Потом · " : "Позже · "}</span>}{stage.title}</span>
+        <PortalStageIcon id={stage.id} className={styles.stageIcon} />
+        <span className={styles.stageTitle}>{!current && <span className={styles.nextLabel}>{completed === stage.tasks.length ? "Пройдено · " : next ? "Потом · " : "Позже · "}</span>}{current ? "Текущие шаги" : stage.title}</span>
         <span className={styles.stageCount}>{completed} из {stage.tasks.length}</span>
         <span className={styles.chevron} aria-hidden="true" />
       </summary>

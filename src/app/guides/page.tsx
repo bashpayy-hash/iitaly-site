@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUpLeft, ArrowUpRight, BookOpen, Check, ChevronDown, Search, X } from "lucide-react";
+import { ArrowDown, ArrowUpLeft, ArrowUpRight, BookOpen, Check, ChevronDown, Search, X } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
+import { VespiIntroSection } from "@/components/mascot/VespiIntroSection";
+import { VespiMark } from "@/components/mascot/VespiMark";
 import { VespiAssistant, VespiIndicator } from "@/components/mascot/VespiAssistant";
 import { VisaSection } from "@/components/guides/VisaSection";
 import { GUIDE_HELP, guideAction, isGuideId, openGuideHelper, type GuideId } from "@/components/guides/guideJourney";
@@ -58,7 +60,6 @@ function focusTopic(id: GuideId, scroll = true, instant = false) {
 
 function OfficialSources({ ids }: { ids: readonly SourceId[] }) {
   return <footer className={ui.sources} aria-label="Официальные источники">
-    <p className={ui.verified}><Check size={14} aria-hidden="true" />Проверено <time dateTime={REVIEWED_AT}>{REVIEWED_LABEL}</time></p>
     <ul>{ids.map(id => {
       const source = ADMISSION_SOURCES[id];
       return <li key={id}>
@@ -73,16 +74,17 @@ function Insight({ guide }: { guide: GuideCard }) {
   const id = guide.id, help = GUIDE_HELP[id], action = guideAction(id);
   const note = guide.warn || (id === "tests" ? TESTS_TIP : "");
   const variant = help.action === "document" || ["cimea", "con", "visa"].includes(id) ? "inspector" : ["education", "tests"].includes(id) ? "route" : "copilot";
-  return <VespiAssistant variant={variant} layout="editorial-callout" appearance={variant === "inspector" ? "figure" : "portrait"} label="Веспи · помогу разобраться"
+  return <VespiAssistant variant={variant} layout="editorial-callout" appearance="none" label="Подсказка Веспи"
     className={ui.insight} data-vespi-tip data-guide-next={id} aria-label="Совет Веспи">
     <div className={ui.insightCopy}>
-      <p className={ui.insightNext}>{help.next}</p>
+      <VespiMark className={ui.vespiMark} />
+      {!note && <p className={ui.insightNext}>{help.next}</p>}
       {note && <p>{note}</p>}
       <Link href={action.href} className={ui.primary} data-guide-inline-action data-fab-yield
         onClick={() => track("guide_next_action", { topic: id, action: help.action })}>
         {ACTION_LABELS[id] || action.label}<ArrowUpRight size={18} aria-hidden="true" />
       </Link>
-      <small>{action.note}</small>
+      {action.note.replace(/^Бесплатно, без регистрации\.\s*/, "").trim() && <small>{action.note.replace(/^Бесплатно, без регистрации\.\s*/, "")}</small>}
     </div>
   </VespiAssistant>;
 }
@@ -122,7 +124,7 @@ function StickyPlan({ topic }: { topic?: GuideId }) {
     const article = document.querySelector("[data-guide-panel]");
     if (article) articleObserver.observe(article);
     heroObserver.observe(hero);
-    document.querySelectorAll("[data-vespi-tip], [data-vespi-tip] [data-vespi-presence]").forEach(node => insightObserver.observe(node));
+    document.querySelectorAll("[data-vespi-tip], [data-vespi-tip] [data-vespi-presence], [data-vespi-intro=guides]").forEach(node => insightObserver.observe(node));
     return () => { heroObserver.disconnect(); insightObserver.disconnect(); articleObserver.disconnect(); };
   }, [topic]);
   const href = topic && GUIDE_HELP[topic].action === "plan" ? guideAction(topic).href : "/plan#questionnaire";
@@ -178,9 +180,10 @@ export default function GuidesPage() {
         <section className={ui.hero} data-section="guides-header">
           <div className={ui.heroCopy}>
             <span className={ui.badge}><BookOpen size={15} aria-hidden="true" />Справочник · бесплатно</span>
+            <span className={ui.reviewBadge}><Check size={14} aria-hidden="true" />Правила сверены <time dateTime={REVIEWED_AT}>{REVIEWED_LABEL}</time></span>
             <h1>Как пройти<br /><span>бюрократию</span></h1>
-            <p className={ui.subtitle}>Темы, в которых чаще всего теряют месяцы, плюс отдельный разбор визы D. Где делать в Казахстане, сколько стоит и в каком порядке. Всё бесплатно.</p>
-            <Link href="/changes-2026-27" className={ui.alert}>Правила 2026/27 изменились — что именно и с какими датами<ArrowUpRight size={17} aria-hidden="true" /></Link>
+            <p className={ui.subtitle}>Документы и виза D: где оформить в Казахстане, сколько стоит и с чего начать.</p>
+            <Link href="/changes-2026-27" className={ui.alert}>Что изменилось в правилах 2026/27<ArrowUpRight size={17} aria-hidden="true" /></Link>
           </div>
           <div className={ui.heroArt}><EditorialArtwork scene="terrace" priority /></div>
           <div id="guide-command" className={ui.command} data-fab-yield>
@@ -193,7 +196,7 @@ export default function GuidesPage() {
               {query ? <button type="button" className={ui.iconButton} aria-label="Сбросить поиск" onClick={resetSearch}><X size={20} aria-hidden="true" /></button> : <Search className={ui.searchIcon} size={22} aria-hidden="true" />}
             </div>
             <div className={ui.prompts} aria-label="С чего начать в справочнике">{PROMPTS.map(prompt => <a key={prompt.id} href={`#${prompt.id}`} onClick={event => { event.preventDefault(); selectTopic(prompt.id, "question"); }}>{prompt.label}<ArrowUpRight size={14} aria-hidden="true" /></a>)}</div>
-            <p className={ui.searchStatus} role="status" aria-live="polite">{terms.length ? `Найдено тем: ${filtered.length} · поиск по всему справочнику` : "Выбери тему или введи слово из своего вопроса."}</p>
+            <p className={ui.searchStatus} role="status" aria-live="polite">{terms.length ? `Найдено тем: ${filtered.length} · поиск по всему справочнику` : "Найди тему или выбери вопрос."}</p>
           </div>
         </section>
         <section id="guide-topics" className={ui.topics} aria-label="Справочник по этапам">
@@ -209,14 +212,14 @@ export default function GuidesPage() {
             </button>)}</div>
             {TOPICS.map(guide => <div key={guide.id} id={`guide-panel-${guide.id}`} hidden={active?.id !== guide.id}>
               {active?.id === guide.id && <article className={ui.article} data-guide-panel={guide.id} aria-labelledby="active-guide-title">
-                <header className={ui.articleHeader}><div><p>{STAGES[currentStage].title}</p><h2 id="active-guide-title" tabIndex={-1}>{guide.title}</h2><p className={ui.articleTeaser}>{guide.teaser}</p></div><button className={ui.iconButton} type="button" aria-label="Свернуть тему" onClick={closeTopic}><X size={20} aria-hidden="true" /></button></header>
+                <header className={ui.articleHeader}><div><p>{STAGES[currentStage].title}</p><h2 id="active-guide-title" tabIndex={-1}>{guide.title}</h2></div><button className={ui.iconButton} type="button" aria-label="Свернуть тему" onClick={closeTopic}><X size={20} aria-hidden="true" /></button></header>
                 <TopicBody guide={guide} />
                 <div className={ui.articleEnd}><button type="button" className={ui.secondary} onClick={closeTopic}><ArrowUpLeft size={16} aria-hidden="true" />К списку тем</button><button type="button" className={ui.secondary} onClick={() => { if (isGuideId(guide.id)) { track("guide_helper_opened", { topic: guide.id }); openGuideHelper(guide.id); } }}>Разобрать тему с Веспи<ArrowUpRight size={16} aria-hidden="true" /></button></div>
               </article>}
             </div>)}
           </>}
         </section>
-        <section className={ui.cabinet} aria-label="Проверка документов в кабинете"><div><h2>Проверяй документы без лимита</h2><p>В кабинете сохраняются маршрут и разборы файлов. Можно исправлять документы и проверять снова.</p></div><Link href="/prices" className={ui.secondary} onClick={() => track("guide_cabinet_viewed", { topic: currentId || "" })}>Что входит за {priceLabel(PRICE_MAIN)}<ArrowRight size={17} aria-hidden="true" /></Link></section>
+        <VespiIntroSection placement="guides" href="/prices" action={`Проверка без лимита · ${priceLabel(PRICE_MAIN)}`} onAction={() => track("guide_cabinet_viewed", { topic: currentId || "" })} />
       </div>
       <StickyPlan topic={currentId} />
     </div>

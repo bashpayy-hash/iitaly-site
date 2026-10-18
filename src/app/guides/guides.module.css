@@ -10,6 +10,7 @@
 .hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: center; column-gap: 60px; padding: 64px 0 0; }
 .heroCopy { min-width: 0; }
 .badge { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 5px 13px; border-radius: 999px; border: 1px solid #dad6d0; background: #ffffffa6; color: #57514b; font-size: 13px; }
+.reviewBadge { display:flex; align-items:center; gap:6px; width:fit-content; min-height:32px; margin-top:8px; color:var(--color-cloud-body); font-size:13px; line-height:1.4; }
 .shell .hero h1 { font: 700 clamp(46px, 5.3vw, 76px)/1.02 var(--font-apple-display); letter-spacing: -.04em; margin: 22px 0 24px; color: #141413; }
 .hero h1 > span { color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .subtitle { max-width: 55ch; font-size: 17px; line-height: 1.65; color: #57514b; }
@@ -64,6 +65,8 @@
   composes: paper from "../../components/marketing/surface-depth.module.css"; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 24px; margin-top: 46px; padding: 28px; border-radius: 26px; background: #fff6ee; border: 1px solid #ece8e2; overflow: visible; }
 .insight > [data-vespi-content] > [data-vespi-label] { margin-bottom: 12px; color: var(--i-link); }
 .insightCopy { min-width: 0; }
+.insight[data-vespi-appearance=none] { display:block; }
+.vespiMark { float:right; width:72px; height:65px; margin:-24px -4px 10px 18px; }
 .insightCopy > p { max-width: 70ch; color: #3f3933; font-size: 15px; line-height: 1.65; }
 .insightCopy .insightLabel { margin-bottom: 8px; color: #141413; font-size: 13px; font-weight: 600; }
 .insightCopy .insightNext { margin-bottom: 10px; color: #57514b; }

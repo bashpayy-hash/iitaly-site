@@ -330,7 +330,10 @@ try {
     if (!baseline) {
       await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
       assert.equal(await advice.getAttribute('data-vespi-variant'), 'inspector', 'Apostille advice uses inspector context');
-      await actualRoleArtwork(advice, 'inspector', 'figure', `guide insight ${width}`);
+      // The latest brief reserves 3D for the intro/active assistant. Reading
+      // advice now uses a face-free editorial helmet detail.
+      assert.equal(await advice.locator('svg[data-vespi="editorial-mark"]').count(), 1);
+      assert.equal(await advice.locator('img[data-vespi]').count(), 0);
       await noDuplicatePortraits(page, `guide insight ${width}`);
       await audit(`guide insight ${width}`);
     }
@@ -387,7 +390,7 @@ try {
       assert.equal(await page.locator('[data-portal-overview] button').count(), 0, 'Overview adds no competing action buttons');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
-      await actualRoleArtwork(page.locator('[data-portal-road]'), 'route', 'figure', `portal road ${width}`);
+      await actualRoleArtwork(page.locator('[data-portal-road]'), 'copilot', 'portrait', `portal focus ${width}`);
       await noDuplicatePortraits(page, `portal overview ${width}`);
       await audit(`portal overview ${width}`);
     }

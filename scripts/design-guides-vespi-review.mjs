@@ -82,6 +82,7 @@ try {
     // Search uses a semantic AI indicator instead of repeating the same face.
     assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 0, 'The command bar does not duplicate a portrait');
     assert.equal(await page.locator('#guide-command [data-vespi-indicator]').count(), 1, 'The command bar keeps a compact AI indicator');
+    assert.equal(await page.locator('main time').count(),1,'The common rule-verification date appears once');
     assert.equal(await page.locator('[data-guide-sticky]').isVisible(), false, 'The conversion bar yields while the hero is visible');
     assert.equal(await page.locator('[data-guide-current] [data-vespi]').count(), 0, 'Stage navigation remains text-only');
     assert(await page.locator('#guide-search').evaluate(input => input.getBoundingClientRect().height >= 44), 'The search field has a 44px touch target');
@@ -98,11 +99,11 @@ try {
     assert.equal(new URL(page.url()).hash, '#education');
     assert.equal((await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').innerText()).replace(/\s+/g, ' ').trim(), '1. Выбрать маршрут');
     assert.match(await page.locator('[data-vespi-tip]').filter({ visible: true }).innerText(), /Foundation не заменяет выпускной аттестат/);
-    assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('[data-vespi]').count(), 1, 'The selected insight has one Vespi avatar');
+    assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('[data-vespi]').count(), 1, 'The selected insight has one face-free Vespi detail');
     assert(await page.locator('[data-vespi-tip] [data-vespi-presence]').filter({ visible: true }).evaluate(element => {
       const rect = element.getBoundingClientRect();
       return rect.width >= 72 && rect.width <= 96;
-    }), 'The contextual portrait is 72–96px rather than a stamped search icon');
+    }), 'The editorial detail is 72–96px, without a repeated 3D face');
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
     assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
     assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());

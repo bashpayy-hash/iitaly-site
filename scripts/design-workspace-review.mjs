@@ -104,7 +104,8 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
     await page.getByRole('link',{name:'План',exact:true}).click();
-    assert.equal(await page.locator('[aria-label="Пять этапов маршрута"] a').count(),5);
+    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
+    assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert.equal(await checks.count(),1,'Only current eligible self-report can be checked');
     await checks.click();

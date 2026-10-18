@@ -212,7 +212,7 @@ try {
     }
     {
       const { page, context, calls, profileCalls, data, contained } = await setup(width, 'chances');
-      await page.locator('[data-portal-road]').click();
+      await page.locator('[data-portal-road] [data-road-open]').click();
       const assessment = page.locator('[data-portal-assessment]');
       await assessment.waitFor();
       assert.equal(await assessment.locator('input[type="tel"], a[href="/plan"], a[href="/prices"]').count(), 0, 'The inline assessment has no lead gate or sales detour');
@@ -245,7 +245,7 @@ try {
     }
     {
       const { page, context, calls, contained } = await setup(width, 'checkDocs');
-      await page.locator('[data-portal-road]').click();
+      await page.locator('[data-portal-road] [data-road-open]').click();
       await page.locator('[data-step-detail="checkDocs"] [data-document-list]').waitFor();
       await checkAndCapture(page, 'check-documents', width);
       await detail(page).locator('[data-document="apostille"]').click();
@@ -269,7 +269,7 @@ try {
     }
     {
       const { page, context, calls, contained } = await setup(width, 'kit');
-      await page.locator('[data-portal-road]').click();
+      await page.locator('[data-portal-road] [data-road-open]').click();
       const trainer = page.locator('[data-portal-permesso] [data-permesso-editor]');
       await trainer.waitFor();
       await trainer.getByRole('button', { name: 'Продление Rinnovo · карточка уже есть', exact: true }).click();
