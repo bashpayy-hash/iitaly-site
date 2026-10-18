@@ -10,7 +10,16 @@ const EVENT = "iitaly:plan-draft";
 let memory = "";
 
 function snapshot() {
-  try { return window.sessionStorage.getItem(KEY) || memory; } catch { return memory; }
+  try {
+    const saved = window.localStorage.getItem(KEY);
+    if (saved) return saved;
+    const legacy = window.sessionStorage.getItem(KEY);
+    if (legacy) {
+      window.localStorage.setItem(KEY, legacy);
+      return legacy;
+    }
+  } catch { /* Some private browsers block persistent storage. */ }
+  return memory;
 }
 function subscribe(listener: () => void) {
   window.addEventListener(EVENT, listener);
@@ -34,7 +43,9 @@ function decode(raw: string): PlanDraft {
 function update(draft: PlanDraft) {
   // Only enumerated questionnaire answers. Never store a phone number or file.
   memory = JSON.stringify(draft);
-  try { window.sessionStorage.setItem(KEY, memory); } catch { /* In-memory fallback for restricted browsers. */ }
+  try { window.localStorage.setItem(KEY, memory); } catch { /* In-memory fallback. */ }
+  // Compatibility for an already-open tab; localStorage is the shared source.
+  try { window.sessionStorage.setItem(KEY, memory); } catch {}
   window.dispatchEvent(new Event(EVENT));
 }
 

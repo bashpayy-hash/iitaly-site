@@ -8,6 +8,8 @@ import { buildPlan } from "@/lib/planBuilder";
 import { AppleButton } from "@/components/apple/Button";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import type { PlanDraft } from "@/lib/usePlanDraft";
+import { CalendarDays, Timer, Compass, GraduationCap, BookOpen, Wallet, Languages, MapPin, Users, FileCheck2, type LucideIcon } from "lucide-react";
+import styles from "./plan-workspace.module.css";
 
 /** UI explanations only: the questions, answer values and plan builder stay
  * unchanged. Grades describe the profile; they are not an admissions score. */
@@ -44,7 +46,6 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   const stepChanged = useRef(false);
 
   const finished = step >= WIZ.length;
-  const progress = finished ? 1 : step / WIZ.length;
 
   useEffect(() => {
     if (!stepChanged.current) return;
@@ -105,13 +106,10 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   }
 
   return (
-    <div className="rounded-apple-card border border-white/15 bg-white p-5 sm:p-7" data-plan-wizard>
-      <div className="flex items-center gap-3">
-        <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="h-1 flex-1 overflow-hidden rounded-apple-pill bg-pebble">
-          <div
-            className="h-full origin-left rounded-apple-pill bg-crimson transition-transform duration-300 ease-out motion-reduce:transition-none"
-            style={{ transform: `scaleX(${progress})` }}
-          />
+    <div className={styles.wizard} data-plan-wizard>
+      <div className={styles.progress}>
+        <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className={styles.segments}>
+          {WIZ.map((q, i) => <span key={q.id} className={styles.segment} data-complete={i < step} data-active={i === step} aria-hidden="true"><span /></span>)}
         </div>
         <span className="shrink-0 text-apple-caption text-cloud-meta">
           {finished ? "Готово" : `${Math.min(step + 1, WIZ.length)} из ${WIZ.length}`}
@@ -223,7 +221,7 @@ function WizStep({
   onChoose: (v: string) => void;
 }) {
   return (
-    <>
+    <div className={styles.question}>
       <VespiAssistant
         variant="copilot"
         layout="portal-copilot"
@@ -234,24 +232,29 @@ function WizStep({
         title={<h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>}
         message={<span data-vespi-question-reason>{question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}</span>}
       />
-      <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-        {question.opts.map((o) => (
+      <div className={styles.options}>
+        {question.opts.map((o, index) => {
+          const icons: Record<string, LucideIcon[]> = {
+            intake: [CalendarDays, Timer, Compass], education: [BookOpen, GraduationCap],
+            goal: [GraduationCap], budget: [Wallet], lang: [Languages], age: [Users],
+            residence: [MapPin], dsuRegion: [FileCheck2],
+          };
+          const choices = icons[question.id] || [Compass];
+          const Icon = choices[index % choices.length];
+          return (
           <button
             key={o.v}
             type="button"
             onClick={() => onChoose(o.v)}
             aria-pressed={value === o.v}
-            className={`rounded-apple-card border px-4 py-3.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson ${
-              value === o.v ? "border-crimson bg-crimson text-white" : "border-white/15 bg-frost hover:bg-pebble/40"
-            }`}
+            className={styles.option}
           >
-            <b className="block text-apple-body-sm font-semibold">{o.t}</b>
-            {o.s && (
-              <span className={`text-apple-caption ${value === o.v ? "text-white/75" : "text-cloud-meta"}`}>{o.s}</span>
-            )}
+            <Icon aria-hidden="true" />
+            <span><b>{o.t}</b>{o.s && <small>{o.s}</small>}</span>
+            <span className={styles.radio} aria-hidden="true" />
           </button>
-        ))}
+        ); })}
       </div>
-    </>
+    </div>
   );
 }

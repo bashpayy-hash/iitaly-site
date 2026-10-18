@@ -169,3 +169,11 @@
 @media (max-width: 480px) {
   .next { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
 }
+
+/* Route completion, not an admission score. New coach brief 2026-10-18. */
+.roadHeader { align-items:center; }
+.roadHeader > [data-workspace-ring] { width:28px; height:28px; margin-right:0; }
+.roadHeader > [data-workspace-ring] > span { display:none; }
+@media(max-width:900px) { .roadHeader > [data-workspace-ring] { width:18px; height:18px; } }
+.roadHeader > [data-workspace-ring] b { font-size:16px; }
+.roadHeader > [data-workspace-ring] em { display:none; }

@@ -8,6 +8,8 @@ import { pathToFileURL } from 'node:url';
 // User request 18 October: fail on cold literals, utility classes and inline SVG
 // gradients across production source. Raster editorial artwork is unchanged.
 function coldRgb(r, g, b) {
+  // The 18 October workspace brief explicitly adds these two sage success tokens.
+  if (["31,122,104", "230,244,241"].includes([r,g,b].map(Math.round).join(","))) return false;
   const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min;
   if (d <= 1) return false;
   let h = max === r ? ((g-b)/d)%6 : max === g ? (b-r)/d+2 : (r-g)/d+4;

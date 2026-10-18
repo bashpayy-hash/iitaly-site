@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "sharedDraft": true,
+      "guestWithoutAuth": true,
+      "persistentSelection": true,
+      "existingMapAndComparison": true,
+      "noFutureUpload": true,
+      "exampleHonest": true,
+      "singleMascot": true
+    },
+    {
+      "width": 390,
+      "sharedDraft": true,
+      "guestWithoutAuth": true,
+      "persistentSelection": true,
+      "existingMapAndComparison": true,
+      "noFutureUpload": true,
+      "exampleHonest": true,
+      "singleMascot": true
+    }
+  ],
+  "errors": []
+}

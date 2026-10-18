@@ -40,6 +40,7 @@ import { track } from "@/lib/track";
 import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist } from "@/lib/portalShortlist";
 import { WIZ } from "@/data/wizard";
 import { EMPTY_PLAN_DRAFT, type PlanDraft } from "@/lib/usePlanDraft";
+import { LocalWorkspace } from "./LocalWorkspace";
 
 const PortalAssessment = dynamic(() => import("./PortalAssessment").then(module => module.PortalAssessment), {
   loading: () => <p role="status">Загружаю вопросы…</p>,
@@ -114,6 +115,8 @@ export function PortalExplorer() {
   const [surname, setSurname] = useState<string | null>(null);
   const [data, setData] = useState<PortalData | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [restoringSession, setRestoringSession] = useState(true);
+  const [loginRequested, setLoginRequested] = useState(false);
   const [section, setSection] = useState<Section>("today");
   const [busyTask, setBusyTask] = useState<string | null>(null);
   const [actionError, setActionError] = useState<ActionError | null>(null);
@@ -182,6 +185,12 @@ export function PortalExplorer() {
     setCode(c);
     setSurname(sn);
     setData(res.data);
+    const loginUrl = new URL(window.location.href);
+    if (loginUrl.searchParams.has("auth") || loginUrl.searchParams.get("view") === "login") {
+      loginUrl.searchParams.delete("auth");
+      if (loginUrl.searchParams.get("view") === "login") loginUrl.searchParams.delete("view");
+      window.history.replaceState(window.history.state, "", loginUrl.pathname + loginUrl.search + loginUrl.hash);
+    }
     const nextSection = sectionFromLocation();
     stepReturnSection.current = nextSection === "docs" ? "docs" : "plan";
     if (nextSection === "settings") focusSettingsTarget.current = settingsTargetFromLocation();
@@ -204,11 +213,14 @@ export function PortalExplorer() {
     if (triedAutoLogin.current) return;
     triedAutoLogin.current = true;
     /* eslint-disable react-hooks/set-state-in-effect */
+    setLoginRequested(new URLSearchParams(window.location.search).get("view") === "login" || new URLSearchParams(window.location.search).get("auth") === "login");
     try {
       const savedCode = localStorage.getItem(KEY);
       const savedSn = localStorage.getItem(KEY_SN);
-      if (savedCode && savedSn) login(savedSn, savedCode, true);
-    } catch {}
+      if (savedCode && savedSn) {
+        void login(savedSn, savedCode, true).finally(() => setRestoringSession(false));
+      } else setRestoringSession(false);
+    } catch { setRestoringSession(false); }
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
@@ -587,7 +599,9 @@ export function PortalExplorer() {
   }
 
   if (!code || !surname || !data) {
-    return <PortalLogin onSubmit={(sn, c) => login(sn, c)} error={loginError} />;
+    if (restoringSession) return <div className={styles.portal}><MarketingHeader variant="portal"/><main id="main" className={styles.shell}><p role="status">Открываю твой маршрут…</p></main></div>;
+    if (loginRequested) return <><PortalLogin onSubmit={(sn, c) => login(sn, c)} error={loginError} /><a className={styles.guestReturn} href="/portal">Продолжить в локальном профиле</a></>;
+    return <LocalWorkspace />;
   }
 
   if (!data.client.onboardingComplete || editingProfile) {
@@ -724,7 +738,7 @@ export function PortalExplorer() {
                 busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)} onComplete={() => { void handleToggle(activeTask.id, true); }} />}
               {activeTask.id === "checkDocs" && <DocsSection data={data} currentTaskId={position?.task?.id} onOpenDoc={showDocument} embedded />}
               {activeTask.id === "kit" && <PortalPermessoStep />}
-            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
+            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} busy={Boolean(busyTask)} onCompleteTask={task => { if (task.id === currentTask?.id && task.available !== false) void handleToggle(task.id, true); }} />)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
               <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}

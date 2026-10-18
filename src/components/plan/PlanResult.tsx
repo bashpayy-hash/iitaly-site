@@ -24,6 +24,8 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         </>}
       />
 
+      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете ↗</AppleButtonLink><p className="mt-2 text-apple-caption text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
+
       <div className={styles.routeHeading}>
         <h2>С чего начать</h2>
         <button type="button" onClick={onReset}>Изменить ответы</button>

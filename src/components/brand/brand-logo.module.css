@@ -1,41 +1,10 @@
-/* User-requested wordmark refinement. Keep the site's current font and brand
-   red; the guides' blue action token must never recolor this identity. */
-.brand.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: .16em;
-  flex-shrink: 0;
-  color: inherit;
-  font-family: inherit;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -.025em;
-  text-transform: none;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-
-/* Higher specificity than the legacy .wordmark span accent selector. */
-.brand .initial {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: .94em;
-  height: 1.2em;
-  padding-bottom: .04em;
-  border-radius: .48em;
-  background: var(--i-signal, var(--color-crimson));
-  color: var(--color-white, #fff);
-  font-size: .86em;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.brand .word { color: inherit; }
-.brand.compact { font-size: 16px; }
-
-@media (forced-colors: active) {
-  .brand .initial { border: 1px solid currentColor; }
-}
+/* User-requested warm editorial emblem. Shared by every brand placement. */
+.brand.brand { display:inline-flex; align-items:center; gap:9px; flex-shrink:0; color:var(--color-ink); font-family:var(--font-apple-display); font-size:25px; font-weight:800; line-height:1; letter-spacing:-.035em; text-transform:none; white-space:nowrap; vertical-align:middle; }
+.brand .emblem { display:block; flex-shrink:0; width:36px; height:36px; filter:drop-shadow(0 3px 4px rgba(200,29,37,.12)); transition:transform 200ms ease-out; }
+a:hover .brand .emblem { transform:rotate(-4deg) scale(1.04); }
+.brand .word { color:var(--color-ink); }
+.brand .initial { color:var(--i-signal,var(--color-crimson)); font-style:italic; margin-right:1px; }
+.brand.compact { font-size:18px; gap:6px; }
+.brand.compact .emblem { width:28px; height:28px; }
+@media(prefers-reduced-motion:reduce) { .brand .emblem { transition:none; } a:hover .brand .emblem { transform:none; } }
+@media(forced-colors:active) { .brand .emblem { border:1px solid currentColor; border-radius:11px; } }
