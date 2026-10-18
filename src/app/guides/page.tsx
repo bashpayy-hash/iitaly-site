@@ -111,21 +111,24 @@ function StickyPlan({ topic }: { topic?: GuideId }) {
   useEffect(() => {
     const hero = document.querySelector('[data-section="guides-header"]');
     if (!hero) return;
-    let passed = false, articleVisible = false;
-    const inlineVisibility = new Map<Element, boolean>();
-    const update = () => setVisible(passed && articleVisible && ![...inlineVisibility.values()].some(Boolean));
-    const heroObserver = new IntersectionObserver(([entry]) => {
-      passed = !entry.isIntersecting && entry.boundingClientRect.bottom < 0; update();
-    });
-    const insightObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => inlineVisibility.set(entry.target, entry.isIntersecting)); update();
-    }, { rootMargin: "0px 0px 140px 0px" });
-    const articleObserver = new IntersectionObserver(([entry]) => { articleVisible = entry.isIntersecting; update(); });
-    const article = document.querySelector("[data-guide-panel]");
-    if (article) articleObserver.observe(article);
-    heroObserver.observe(hero);
-    document.querySelectorAll("[data-vespi-tip], [data-vespi-tip] [data-vespi-presence], [data-vespi-intro=guides]").forEach(node => insightObserver.observe(node));
-    return () => { heroObserver.disconnect(); insightObserver.disconnect(); articleObserver.disconnect(); };
+    const article = topic ? document.querySelector(`[data-guide-panel="${topic}"]`) : null;
+    const insights = [...document.querySelectorAll('[data-vespi-tip], [data-vespi-tip] [data-vespi-presence], [data-vespi-intro=guides]')];
+    const inView = (node: Element, extra = 0) => {
+      const rect = node.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight + extra
+        && rect.right > 0 && rect.left < window.innerWidth;
+    };
+    // Intersection callbacks are signals, not cached truth: hash jumps and an
+    // expanding checklist can move several boundaries in one render. Read the
+    // current geometry together so an old entry cannot keep the offer hidden.
+    const update = () => setVisible(hero.getBoundingClientRect().bottom < 0
+      && Boolean(article && inView(article)) && !insights.some(node => inView(node, 140)));
+    const nodes = [hero, ...(article ? [article] : []), ...insights];
+    const intersection = new IntersectionObserver(update, { rootMargin: "0px 0px 140px 0px" });
+    const resize = new ResizeObserver(update);
+    nodes.forEach(node => { intersection.observe(node); resize.observe(node); });
+    const frame = requestAnimationFrame(update);
+    return () => { cancelAnimationFrame(frame); intersection.disconnect(); resize.disconnect(); };
   }, [topic]);
   const href = topic && GUIDE_HELP[topic].action === "plan" ? guideAction(topic).href : "/plan#questionnaire";
   return <VespiAssistant variant="copilot" layout="floating-bar" label="" data-guide-sticky data-fab-yield className={ui.sticky} hidden={!visible || dismissed} aria-label="Персональный план IITALY">

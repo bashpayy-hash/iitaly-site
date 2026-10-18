@@ -139,7 +139,7 @@ try {
     ]) {
       await visit(page,route);
       const accent = page.locator(selector);
-      assert.equal(await accent.isVisible(),width>=1280);
+      assert.equal(await accent.isVisible(),width >= (route === '/prices' ? 768 : 1280), 'The pricing canvas also supports tablet margins; the plan wash retains its desktop breakpoint');
       assert((await accent.locator('img').getAttribute('src')).endsWith(assetName));
       assert.equal(await page.locator('h1').evaluate(el=>getComputedStyle(el).filter),'none');
       await noOverflow(page, `${route} ${width}`);

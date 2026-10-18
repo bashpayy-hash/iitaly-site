@@ -191,6 +191,25 @@ try {
         assert(image.loaded, 'Local illustration loaded');
         assert(image.src.startsWith('/illustrations/editorial/'));
         if (width <= 390 && await art.getAttribute('data-editorial-art')) assert(image.src.includes('-480.webp'), 'Phone selects the smaller source');
+        if (await art.evaluate(el => Boolean(el.closest('[data-botanical-canvas]')))) {
+          // User request 2026-10-18: paint may enter headline bounds under a
+          // protected cream copy layer. An unmasked foreground still must not.
+          const guard = await art.evaluate(el => {
+            const canvas = el.closest('[data-botanical-canvas]');
+            const copy = canvas.parentElement.querySelector('[data-protected-typography]');
+            return { canvasLayer: Number(getComputedStyle(canvas).zIndex), copyLayer: Number(getComputedStyle(copy).zIndex),
+              matte: getComputedStyle(copy, '::before').backgroundImage,
+              outerMask: getComputedStyle(el.parentElement).maskImage,
+              bottomMask: getComputedStyle(el).maskImage,
+              reachable: [...copy.querySelectorAll('a')].every(link => { const r=link.getBoundingClientRect(); return link.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)); }) };
+          });
+          assert(guard.copyLayer > guard.canvasLayer, 'Live text remains above the full botanical field');
+          assert.match(guard.matte, /radial-gradient/);
+          assert.notEqual(guard.outerMask, 'none'); assert.notEqual(guard.bottomMask, 'none');
+          assert(guard.reachable, 'Layered art cannot intercept any pricing anchor');
+          assert.equal(await art.evaluate(el => getComputedStyle(el).pointerEvents), 'none');
+          continue;
+        }
         // Controls keep their full boxes. A text block (h1–h3, p) counts as
         // covered only when the art enters its box AND comes within 24px of a
         // rendered line: content-page h1s are 900px balanced boxes that are

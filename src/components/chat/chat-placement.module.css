@@ -5,6 +5,9 @@
   transition-property: none;
 }
 .assistantSignal { width: 32px; height: 32px; border: 0; color: inherit; }
+.labelledLauncher { width:184px; height:48px; gap:8px; padding:4px 14px 4px 6px; }
+.launcherLabel { color:inherit; font-family:var(--font-apple-text); font-size:14px; line-height:1.2; white-space:nowrap; }
+@media (max-width:480px) { .labelledLauncher { width:168px; } .launcherLabel { font-size:13px; } }
 
 :global(body:has(#nl-badge-frame)) .aboveBadge {
   bottom: calc(76px + env(safe-area-inset-bottom, 0px));

@@ -23,8 +23,10 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
   const position = portalPosition(data);
   const hasTasks = data.roadmap.some(stage => stage.tasks.length > 0);
   const assessmentTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "chances");
-  const nextStage = position.stageIndex >= 0 ? data.roadmap[position.stageIndex + 1] : undefined;
-  const remainingStages = data.roadmap.filter(stage => stage.id !== position.stage?.id && stage.id !== nextStage?.id);
+  const stages = data.roadmap.filter(stage => stage.tasks.length > 0);
+  const stageIndex = stages.findIndex(stage => stage.id === position.stage?.id);
+  const nextStage = stageIndex >= 0 ? stages[stageIndex + 1] : undefined;
+  const remainingStages = stages.filter(stage => stage.id !== position.stage?.id && stage.id !== nextStage?.id);
 
   function renderStage(stage: PortalStage) {
     return <StageView

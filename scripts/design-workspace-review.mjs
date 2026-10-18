@@ -50,6 +50,10 @@ try {
       const issues=await page.evaluate(async()=> (await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
       assert.deepEqual(issues,[],`${name}: accessibility`);
     }
+    await visit('/portal?view=plan');
+    await page.locator('[data-portal-task=profile]').waitFor();
+    assert.equal(await page.getByRole('checkbox').count(),0,'An empty guest plan only opens tasks');
+    assert((await page.locator('main details summary').allTextContents()).every(text=>!/0\s*из\s*0/.test(text)),'Unconfigured stages are never labelled completed');
     for(const path of ['/plan','/guides','/universities','/portal']) {
       await visit(path); if(path==='/portal')await page.locator('[data-local-workspace]').waitFor();
       const logo=page.locator('header [data-brand-logo]');

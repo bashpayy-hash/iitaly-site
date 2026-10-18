@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { Vespa } from "@/components/Vespa";
 import { VespiIndicator } from "@/components/mascot/VespiAssistant";
@@ -65,6 +66,8 @@ export function ChatLauncher({
   onOpen: () => void;
 }) {
   const reducedMotion = useReducedMotion();
+  const labelled = usePathname() === "/prices";
+  const position = labelled ? ANCHOR_POSITION.replace("size-12", placement.labelledLauncher) : ANCHOR_POSITION;
   const mascotInContent = useVespiPresence();
   const anchorRef = useRef<HTMLDivElement>(null);
   const [blocked, setBlocked] = useState(false);
@@ -144,15 +147,16 @@ export function ChatLauncher({
       <div
         ref={anchorRef}
         aria-hidden
-        className={`pointer-events-none ${ANCHOR_POSITION} ${placement.aboveBadge}`}
+        className={`pointer-events-none ${position} ${placement.aboveBadge}`}
       />
 
       <motion.button
         id="chat-launcher"
+        data-launcher-labelled={labelled || undefined}
         data-vespi-launcher-mode={mascotInContent ? "indicator" : "portrait"}
         type="button"
         onClick={onOpen}
-        aria-label="Задать вопрос ИИ-консультанту"
+        aria-label={labelled ? "Спросить Веспи — задать вопрос ИИ-консультанту" : "Задать вопрос ИИ-консультанту"}
         aria-haspopup="dialog"
         aria-controls={hidden ? "iitaly-chat" : undefined}
         aria-expanded={hidden}
@@ -164,13 +168,13 @@ export function ChatLauncher({
         // Тень меняется css-переходом, а не motion: её значение — токен с
         // var() и четырьмя слоями, такое motion интерполировать не может и
         // просто подставил бы конечное значение скачком.
-        className={`${ANCHOR_POSITION} ${placement.aboveBadge} z-[90] flex items-center justify-center rounded-full border border-[#e7e4df] bg-white text-[#141413] shadow-[0_4px_16px_rgba(33, 29, 23,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
+        className={`${position} ${placement.aboveBadge} z-[90] flex items-center justify-center rounded-full border border-[#e7e4df] bg-white text-[#141413] shadow-[0_4px_16px_rgba(33, 29, 23,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
         style={{ pointerEvents: away ? "none" : "auto" }}
         // initial={false} — при загрузке страницы кнопка просто есть, без
         // приветственного поп-ина: она не событие, а постоянный элемент.
         initial={false}
         animate={{
-          x: away ? 76 : 0,
+          x: away ? (labelled ? 224 : 76) : 0,
           opacity: away ? 0 : 1,
           scale: away ? 0.9 : 1,
         }}
@@ -179,6 +183,7 @@ export function ChatLauncher({
         whileTap={{ scale: 0.94, y: 0, transition: t(SPRING_PRESS) }}
       >
         {mascotInContent ? <VespiIndicator className={placement.assistantSignal} /> : <Vespa pose="avatar" className="h-10 w-10 object-contain" priority />}
+        {labelled && <span className={placement.launcherLabel}>Спросить Веспи</span>}
       </motion.button>
     </>
   );

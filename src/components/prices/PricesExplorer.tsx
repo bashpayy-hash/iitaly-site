@@ -7,9 +7,7 @@ import { BuyModal, type BuyProduct } from "./BuyModal";
 import { track } from "@/lib/track";
 import { FEATURES, PRICE_EXPRESS_CHECK, PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { HeadingPin } from "@/components/motion/HeadingPin";
-import { TomatoAccent } from "@/components/marketing/EditorialArtwork";
-import art from "@/components/marketing/editorial-art.module.css";
-import { PricesLandscape } from "./PricesLandscape";
+import { PricesHero } from "./PricesHero";
 import heroArt from "./prices-landscape.module.css";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import styles from "@/components/marketing/marketing.module.css";
@@ -54,34 +52,11 @@ export function PricesExplorer() {
 
   return (
     <>
-      <section data-section="prices-header" className={`${art.headerHost} ${heroArt.bleed} px-5 pt-16 pb-10 text-center sm:pt-24`}>
-        {/* Рамка вокруг всего текстового блока: от неё обе картинки берут
-            центр по вертикали и общую геометрию пары. */}
-        <div className={heroArt.frame}>
-          <PricesLandscape />
-          <TomatoAccent />
-          <div data-role="heading">
-            <p className="warm-badge">Цена</p>
-            <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">
-              <span className="warm-highlight">{priceLabel(PRICE_MAIN)}</span> — и система ведёт тебя до конца
-            </h1>
-          </div>
-          <p className="mx-auto mt-5 max-w-2xl text-apple-body text-cloud-body">
-            Один платёж за всё поступление. Не подписка, не тарифы, без доплат
-            за этапы. Работу выполняет система — поэтому это стоит столько, а
-            не как в агентстве.
-          </p>
-          <nav className={styles.taskLinks} aria-label="На странице цен">
-            <a href="#main-package">Состав пакета</a>
-            <a href="#terms-and-refund">Условия и возврат</a>
-            <a href="#expert-review">Проверка экспертом</a>
-          </nav>
-        </div>
-      </section>
+      <PricesHero />
 
-      <section className="px-5 py-10">
+      <section className={`${heroArt.packages} px-5 py-10`}>
         <div className="mx-auto max-w-[900px]">
-          <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
+          <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
             <div className={`${styles.summaryCard} flex-1 p-5`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
@@ -99,7 +74,7 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center`}>
+          <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center`}>
             <div>
               <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы — это бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">

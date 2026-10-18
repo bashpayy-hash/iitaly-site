@@ -7,6 +7,11 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // User request 2026-10-18: one watercolor pricing scene and a labelled
+  // Vespi launcher on /prices. Existing tokens, logo, type and cards stay fixed.
+  'src/components/marketing/BotanicalCanvas.tsx',
+  'src/components/marketing/botanical-canvas.module.css',
+  'src/components/prices/PricesHero.tsx',
   // User request 2026-10-18: replace cold UI colors across all routes.
   // This permits presentation tokens only; map geometry and API stay protected.
   'src/app/globals.css', 'src/data/illustrations.ts',
