@@ -11,6 +11,10 @@ const { chromium } = await import(pathToFileURL(resolve(process.env.REVIEW_TOOLS
 const output = resolve('design-review/prices-landscape');
 await mkdir(output, { recursive: true });
 const results = [], errors = [];
+const { default: axe } = await import(pathToFileURL(resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.js')).href);
+const overlays = JSON.parse(await readFile('docs/botanical-prices/assets.json', 'utf8'));
+assert(overlays.assets.reduce((sum,a)=>sum+a.bytes,0)<280000,'All new responsive overlays stay below 280 KB combined');
+for(const a of overlays.assets){const bytes=await readFile(resolve('out',a.path.replace(/^public\//,'')));assert.equal(bytes.length,a.bytes);assert.equal(createHash('sha256').update(bytes).digest('hex'),a.sha256);}
 const manifest = JSON.parse(await readFile('docs/prices-landscape-asset.json', 'utf8'));
 assert.equal(manifest.sourceSha256, '023c232b561e78c3087d9b13d53d899cc954dbec7f39ce6128eca51022aa6b6c');
 for (const asset of manifest.assets) {
@@ -56,7 +60,8 @@ async function layout(page) {
 try {
   for (const width of [320,390,768,1024,1279,1280,1366,1440,1551,1552,1600,1920]) {
     const context = await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce',deviceScaleFactor:1,locale:'ru-RU'});
-    await context.route('**/*', route => ['127.0.0.1','localhost'].includes(new URL(route.request().url()).hostname) || route.request().url().startsWith('data:') ? route.continue() : route.abort());
+    let chatCalls=0;
+    await context.route('**/*', route => { const url=new URL(route.request().url()); if(url.pathname==='/api/chat'){chatCalls++;return route.fulfill({status:503,json:{ok:false,error:'Synthetic test only'}});} if(url.pathname==='/health/ai')return route.fulfill({json:{ok:true,code:'AI_READY'}}); return ['127.0.0.1','localhost'].includes(url.hostname)||url.protocol==='data:'?route.continue():route.abort(); });
     const head = await context.newPage(), base = await context.newPage(); activePage = head;
     for (const page of [head,base]) page.on('pageerror', error => errors.push(error.message));
     await visit(head, 4187); await visit(base, 4188);
@@ -64,76 +69,64 @@ try {
     await writeFile(resolve(output, `layout-${width}.json`), JSON.stringify({before: await layout(base), after: await layout(head)}, null, 2));
     assert.equal(await head.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     const art = head.locator('[data-prices-landscape]');
-    assert.equal(await art.count(), 1);
-    assert.equal(await art.isVisible(), width >= 1280);
-    assert.equal(await art.getAttribute('aria-hidden'), 'true');
-    assert.equal(await art.locator('img').getAttribute('alt'), '');
-    let artWidth = 0;
-    if (width >= 1280) {
-      const details = await art.evaluate(el => {
-        const r = el.getBoundingClientRect(), host = el.closest('section'), img = el.querySelector('img');
-        // h1 is a 900px centered block: its blank outer margins are not text.
-        // Protect real text line rectangles with an additional 24px clear zone.
-        // Controls and the right artwork keep their full hit/layout rectangles.
-        const boxes = [];
-        for (const node of host.querySelectorAll('h1,p')) {
-          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
-          while (walker.nextNode()) {
-            if (!walker.currentNode.textContent.trim()) continue;
-            const range = document.createRange(); range.selectNodeContents(walker.currentNode);
-            for (const b of range.getClientRects()) boxes.push({left:b.left-24,right:b.right+24,top:b.top-24,bottom:b.bottom+24,label:node.textContent});
-          }
-        }
-        for (const node of host.querySelectorAll('button,a,[data-editorial-spot]')) {
-          const b = node.getBoundingClientRect();
-          if (b.width && b.height) boxes.push({left:b.left,right:b.right,top:b.top,bottom:b.bottom,label:node.textContent});
-        }
-        const overlaps = boxes.filter(b => r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top).map(b => b.label);
-        return { overlaps, x: r.x, width: r.width, src: new URL(img.currentSrc).pathname, loaded: img.complete && img.naturalWidth > 0, pointerEvents: getComputedStyle(el).pointerEvents, filter: getComputedStyle(img).filter };
-      });
-      assert.deepEqual(details.overlaps.filter(label => !String(label).includes('667 ₸ — и система ведёт тебя до конца')), []);
-      assert(details.loaded);
-      assert(details.x + details.width < width / 2);
-      // Терраса и миска стоят у краёв окна, боком и чуть за экраном (см.
-      // prices-landscape.module.css). Ширины — от поля у текста; повёрнутую
-      // картинку меряем по offsetWidth, а не по её описанному прямоугольнику.
-      const pair = await art.evaluate(el => {
-        const frame = el.parentElement.getBoundingClientRect(), a = el.getBoundingClientRect();
-        const bowl = el.parentElement.querySelector('[data-editorial-spot="tomatoes"]'), b = bowl.getBoundingClientRect();
-        const angle = node => { const m = new DOMMatrix(getComputedStyle(node).transform); return Math.atan2(m.b, m.a) * 180 / Math.PI; };
-        return { frameWidth: frame.width, terraceWidth: el.offsetWidth, bowlWidth: bowl.offsetWidth, terraceLeft: a.left, bowlRight: b.right,
-          viewport: document.documentElement.clientWidth, centerA: a.top + a.height / 2, centerB: b.top + b.height / 2, terraceAngle: angle(el), bowlAngle: angle(bowl) };
-      });
-      const expected = Math.min(520, (pair.frameWidth / 2 - 368) / .78);
-      assert(Math.abs(pair.terraceWidth - expected) < 1, 'Terrace width follows the gutter beside the heading');
-      assert(pair.terraceLeft < 0 && pair.terraceLeft > -pair.terraceWidth * .3, 'Terrace runs slightly past the left edge');
-      assert(pair.bowlRight > pair.viewport && pair.bowlRight < pair.viewport + pair.bowlWidth * .45, 'Bowl runs slightly past the right edge');
-      assert(Math.abs(pair.bowlWidth / pair.terraceWidth - .66) < .01, 'The landscape is the larger one: the bowl is 0.66 of it');
-      assert(Math.abs(pair.terraceAngle + 3) < .5 && Math.abs(pair.bowlAngle + 14) < .5, 'Both lie at an angle');
-      assert(Math.abs(pair.centerA - pair.centerB) < 2, 'Both share one vertical center');
-      artWidth = details.width;
-      assert.equal(details.pointerEvents, 'none'); assert.equal(details.filter, 'none');
-      assert.match(details.src, /^\/illustrations\/editorial\/coastal-terrace-/);
-      const alpha = await art.locator('img').evaluate(img => {
-        const canvas = document.createElement('canvas'); canvas.width=img.naturalWidth; canvas.height=img.naturalHeight;
-        const ctx=canvas.getContext('2d'); ctx.drawImage(img,0,0);
-        const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-        let clear=0, painted=0; for(let i=3;i<data.length;i+=4) { if(data[i]===0)clear++; if(data[i]>240)painted++; }
-        return {clear,painted};
-      });
-      assert(alpha.clear > 100 && alpha.painted > 100);
+    assert.equal(await art.count(),1);
+    assert.equal(await art.isVisible(),width>=768);
+    assert.equal(await art.getAttribute('aria-hidden'),'true');
+    assert.equal(await art.locator('img').getAttribute('alt'),'');
+    const canvas=head.locator('[data-botanical-canvas]');
+    assert.equal(await canvas.count(),1,'One continuous decorative canvas');
+    assert.equal(await canvas.getAttribute('aria-hidden'),'true');
+    assert.equal(await canvas.locator('button,a,input').count(),0,'Decorations do not contain controls');
+    assert.equal(await canvas.evaluate(el=>getComputedStyle(el).pointerEvents),'none');
+    const ambient=canvas.locator('[data-botanical-layer=ambient]');
+    assert.equal(await ambient.evaluate(el=>getComputedStyle(el).opacity),'0.14');
+    assert.equal(await ambient.evaluate(el=>getComputedStyle(el).mixBlendMode),'multiply');
+    for(const layer of ['canopy','left','right']) {
+      const mask=await canvas.locator('[data-botanical-layer='+layer+']').evaluate(el=>getComputedStyle(el).maskImage);
+      assert.notEqual(mask,'none','Side and canopy edges dissolve without hard rectangles');
     }
-    if ([390,1280,1366,1440,1600,1920].includes(width)) {
+    for(const image of await canvas.locator('img').all()) assert(await image.evaluate(i=>i.complete&&i.naturalWidth>0),'All scene images decode locally');
+    const protectedCopy=head.locator('[data-protected-typography]');
+    assert.match(await protectedCopy.evaluate(el=>getComputedStyle(el,'::before').backgroundImage),/radial-gradient/,'Text has a cream matte above the paint');
+    const type=page=>page.locator('[data-section=prices-header] h1').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','color'].map(k=>s[k]);});
+    assert.deepEqual(await type(head),await type(base),'Heading type and color are preserved');
+    const packageStyle=page=>page.locator('#main-package').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','color','backgroundColor','borderRadius','boxShadow','borderColor','padding'].map(k=>s[k]);});
+    assert.deepEqual(await packageStyle(head),await packageStyle(base),'Pricing card design is preserved');
+    const gap=page=>page.evaluate(()=>document.querySelector('[data-price-comparison],main [data-section=prices-header] + section > div > div').getBoundingClientRect().top-document.querySelector('[aria-label="На странице цен"]').getBoundingClientRect().bottom);
+    const spacing=await gap(head),oldSpacing=await gap(base);
+    assert(spacing>=20&&spacing<=64,'The first comparison cards follow the links without a large void');
+    assert(spacing<=oldSpacing-16,'The redundant header-to-card gap is reduced');
+    const card=await head.locator('[data-price-comparison]').boundingBox(),field=await canvas.boundingBox();
+    assert(Math.abs(field.y+field.height-card.y-12)<2,'The scene overlaps only the upper 12px of the comparison cards');
+    for(const link of await head.locator('[aria-label="На странице цен"] a').all()) assert((await link.boundingBox()).height>=44,'Anchor links remain touch targets');
+    if(width===390) assert.match(await canvas.locator('[data-botanical-layer=canopy]').evaluate(i=>i.currentSrc),/canopy-640\.webp$/,'Phone receives the small overlay');
+    if(width===1440||width===390||width===768){
+      await head.addScriptTag({content:axe.source});
+      const violations=await head.evaluate(async()=> (await window.axe.run(document.querySelector('[data-section=prices-header]'),{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,impact:v.impact})));
+      assert.deepEqual(violations,[],'Hero accessibility');
+    }
+    const artWidth=width>=768?(await art.boundingBox()).width:0;
+    if ([390,768,1440,1920].includes(width)) {
       await head.screenshot({path:resolve(output, `prices-${width}.png`),animations:'disabled'});
       await head.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-${width}.png`),animations:'disabled'});
       await base.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-before-${width}.png`),animations:'disabled'});
     }
+    const launcher=head.locator('#chat-launcher');
+    assert.equal(await launcher.getAttribute('data-launcher-labelled'),'true','Pricing has a named assistant capsule');
+    assert.match(await launcher.innerText(),/Спросить Веспи/);
+    assert.match(await launcher.getAttribute('aria-label'),/Спросить Веспи/,'Visible action is included in its accessible name');
+    if(width===1440){
+      assert((await launcher.boundingBox()).height>=44);
+      await launcher.click();await head.getByRole('dialog').waitFor();
+      assert.equal(chatCalls,0,'Opening the assistant never sends an AI request');
+      await head.keyboard.press('Escape');await head.getByRole('dialog').waitFor({state:'hidden'});
+    }
     await head.getByRole('button',{name:'Оформить и оплатить',exact:true}).click();
     assert(await head.getByRole('dialog').isVisible());
     await head.keyboard.press('Escape'); assert.equal(await head.getByRole('dialog').count(),0);
-    await head.emulateMedia({forcedColors:'active'}); assert.equal(await art.isVisible(),false);
-    await head.emulateMedia({forcedColors:'none',media:'print'}); assert.equal(await art.isVisible(),false);
-    results.push({test:`${width}px: preserved pricing content, responsive local art, 24px text clearance, no overflow, checkout/Escape, print/forced-colors`,artWidth,passed:true});
+    await head.emulateMedia({forcedColors:'active'}); assert.equal(await canvas.isVisible(),false);
+    await head.emulateMedia({forcedColors:'none',media:'print'}); assert.equal(await canvas.isVisible(),false);
+    results.push({test:`${width}px: preserved pricing content, layered local art, protected type, preserved cards, 12px bridge, no overflow, checkout/Escape, print/forced-colors`,artWidth,passed:true});
     await context.close();
   }
   assert.deepEqual(errors, []);

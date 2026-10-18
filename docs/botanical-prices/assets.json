@@ -1,0 +1,27 @@
+{
+  "provider": "built-in imagegen",
+  "use": "prices hero decorative overlays",
+  "assets": [
+    {
+      "path": "public/illustrations/editorial/botanical-canopy-640.webp",
+      "width": 640,
+      "height": 215,
+      "bytes": 53550,
+      "sha256": "489e45b198e21cd0e20931bd0f89f39c3584736b2e06e801147c1ececa52ef46"
+    },
+    {
+      "path": "public/illustrations/editorial/botanical-canopy-1280.webp",
+      "width": 1280,
+      "height": 430,
+      "bytes": 164324,
+      "sha256": "a5e0059aa542c601803516f72030029605cc31fce5fc9df05048287bfca277eb"
+    },
+    {
+      "path": "public/illustrations/editorial/pergola-wash-640.webp",
+      "width": 640,
+      "height": 213,
+      "bytes": 57468,
+      "sha256": "2593d93b49d1f9ca2bec2944cbe1efbe2e779a22e8b44a83833f7eea9de82a7a"
+    }
+  ]
+}
