@@ -118,7 +118,7 @@ function PageLocator({ step }: { step: TransferStep }) {
   if (failed) return <p className={styles.mapFallback}>Мини-карта не загрузилась. Ориентир: страница {step.page}, поля {step.fields.map(f => f.id).join(", ")}.</p>;
   return <svg viewBox={`0 0 ${PAPER.width} ${PAPER.height}`} role="img" aria-label={`Страница ${step.page}, выделены поля ${step.fields.map(f => f.id).join(", ")}`} data-transfer-minimap>
     <image href={ORIGINAL_PAGES[step.page - 1].url} x="0" y="0" width={PAPER.width} height={PAPER.height} onError={() => setFailed(true)} />
-    {step.fields.flatMap(f => f.runs.map((r, i) => <rect key={f.id + ":" + i} x={r.x - 3} y={r.y - 3} width={fieldWidth(r) + 6} height={r.height + 6} rx="2" fill="#000000" fillOpacity=".18" stroke="#000000" strokeWidth="3" />))}
+    {step.fields.flatMap(f => f.runs.map((r, i) => <rect key={f.id + ":" + i} x={r.x - 3} y={r.y - 3} width={fieldWidth(r) + 6} height={r.height + 6} rx="2" fill="#E63946" fillOpacity=".18" stroke="#E63946" strokeWidth="3" />))}
   </svg>;
 }
 

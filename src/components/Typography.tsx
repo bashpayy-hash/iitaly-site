@@ -10,11 +10,11 @@ import type { ElementType, ComponentPropsWithoutRef, ReactNode } from "react";
 type Role = "display" | "title" | "heading" | "bodyLarge" | "body" | "caption";
 
 const roleClass: Record<Role, string> = {
-  display: "editorial-heading font-display text-display font-medium tracking-[-0.03em] text-balance",
-  title: "font-display text-title font-medium tracking-[-0.03em] text-balance",
-  heading: "font-display text-heading font-medium tracking-[-0.03em]",
-  bodyLarge: "font-sans text-body-lg text-primary text-pretty",
-  body: "font-sans text-body text-primary text-pretty",
+  display: "font-display text-display font-extrabold tracking-[-0.03em] text-balance",
+  title: "font-display text-title font-extrabold tracking-[-0.03em] text-balance",
+  heading: "font-display text-heading font-bold tracking-[-0.03em]",
+  bodyLarge: "font-sans text-body-lg text-ink-soft text-pretty",
+  body: "font-sans text-body text-ink-soft text-pretty",
   caption: "editorial-badge",
 };
 

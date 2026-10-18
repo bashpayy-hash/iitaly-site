@@ -12,10 +12,10 @@ export function TaskInstructions({task}:{task:PortalTask}) {
  const doc=DOC_TASKS[task.id];
  const actions=ACTIONS[task.id]||(doc?[taskExplanation(task),"Сверь имена, даты, комплектность и читаемость файла.","Приложи документ и проверь рекомендации до подачи."]:[taskExplanation(task),"Сверь требования и сроки своего вуза или учреждения.","Выполни действие и отметь результат в маршруте."]);
  const details=taskHelpDetails(task);
- return <div className="gallery-task-checklist" data-step-help>
-  <p className="gallery-task-date"><strong>Срок:</strong> {taskDate(task)||"Не задан — уточни в календаре своей программы или официальном чек-листе."}</p>
+ return <div className="journey-task-checklist" data-step-help>
+  <p className="journey-task-date"><strong>Срок:</strong> {taskDate(task)||"Не задан — уточни в календаре своей программы или официальном чек-листе."}</p>
   <h3>Что сделать</h3><ol>{actions.map(text=><li key={text}>{text}</li>)}</ol>
   <h3>Нужные файлы</h3><p>{doc||"Для отметки этого шага файл загружать не требуется."}</p>
-  {details.length>0&&<div className="gallery-task-notes">{details.map(text=><p key={text}>{text}</p>)}</div>}
+  {details.length>0&&<div className="journey-task-notes">{details.map(text=><p key={text}>{text}</p>)}</div>}
  </div>;
 }

@@ -17,7 +17,7 @@ export default function NotFound() {
       <main id="main">
         <section className="bg-transparent px-5 py-20 sm:py-28">
           <div className="mx-auto flex max-w-[640px] flex-col items-center text-center">
-
+            <span aria-hidden="true" className="text-6xl">↗</span>
             <Caption as="p" className="mt-8">
               Ошибка 404
             </Caption>

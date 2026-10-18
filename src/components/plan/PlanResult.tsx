@@ -17,7 +17,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         layout="editorial-callout"
         appearance="figure"
         label="Веспи · твой маршрут"
-        title={<p className="text-apple-caption font-medium text-crimson uppercase">Персональный план готов</p>}
+        title={<p className="text-apple-caption font-semibold text-crimson uppercase">Персональный план готов</p>}
         message={<>
             План собран по твоим ответам. Набор: {plan.intake}.
             Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
@@ -62,7 +62,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       </p>
 
       <section aria-labelledby="plan-reminders-heading" className="mt-6 rounded-apple-card border border-white/15 p-5">
-        <h2 id="plan-reminders-heading" className="text-apple-body font-medium text-cloud-white">
+        <h2 id="plan-reminders-heading" className="text-apple-body font-semibold text-cloud-white">
           Напоминания на телефоне
         </h2>
         <p className="mt-2 text-apple-body-sm text-cloud-body">

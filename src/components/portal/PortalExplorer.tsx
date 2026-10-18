@@ -637,7 +637,7 @@ export function PortalExplorer() {
   return (
     <div className={styles.portal} data-portal-navigation data-portal-design="shared-site">
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
-    <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={<Link href="/" className="gallery-link">На сайт ↗</Link>}/>
+    <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={<Link href="/" className="journey-link">На сайт ↗</Link>}/>
     <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
         navigationOnly

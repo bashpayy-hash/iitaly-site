@@ -121,10 +121,10 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
         <div className="px-6 pt-1 pb-6">
           {step === "form" && (
             <form noValidate onSubmit={(event) => { event.preventDefault(); void submit(); }}>
-              <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-medium text-cloud-white">
+              <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {product.name}
               </h3>
-              <p className="mt-1 font-apple-display text-apple-heading-sm font-medium text-crimson">
+              <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-crimson">
                 {fmt(product.price)} ₸
               </p>
 
@@ -164,7 +164,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   className={styles.formInput} />
               </label>
 
-              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-medium text-primary">{error}</p>}
+              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-primary">{error}</p>}
 
               <AppleButton type="submit" variant="filled" className="mt-5 w-full">
                 {STRIPE_ENABLED ? "Перейти к оплате" : "Оформить заказ"}
@@ -185,7 +185,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           {step === "sending" && (
             <div role="status" aria-live="polite" className="flex flex-col items-center gap-3 py-10 text-center">
               <span aria-hidden className="h-7 w-7 animate-spin rounded-full border-2 border-white/15 border-t-crimson motion-reduce:animate-none" />
-              <p id="buy-modal-title" className="font-apple-display text-apple-subheading font-medium text-cloud-white">
+              <p id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {STRIPE_ENABLED ? "Открываю Stripe…" : "Оформляю заказ…"}
               </p>
               <p className="text-apple-body-sm text-cloud-body">Это может занять несколько секунд. Твои данные останутся в форме, если связь прервётся.</p>
@@ -196,20 +196,20 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
             <div>
               <div className="text-center">
                 <div aria-hidden className="text-4xl">✅</div>
-                <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-medium text-cloud-white">Заказ принят</p>
+                <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">
                   Переведи сумму и пришли чек — после подтверждения мы активируем доступ или начнём выполнение услуги.
                 </p>
               </div>
 
               <div className="mt-5 flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon text-apple-caption font-medium text-paper">1</div>
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon text-apple-caption font-semibold text-white">1</div>
                 <div className="min-w-0 flex-1">
                   <b className="text-apple-body-sm text-cloud-white">Переведи {fmt(product.price)} ₸</b>
                   <div className="mt-2 flex items-center justify-between gap-2 border border-white/15 px-3 py-2.5">
-                    <span className="font-apple-display text-apple-subheading font-medium text-cloud-white">{PAY_PHONE}</span>
+                    <span className="font-apple-display text-apple-subheading font-semibold text-cloud-white">{PAY_PHONE}</span>
                     <button type="button" onClick={copyPhone}
-                      className="shrink-0 rounded-apple-pill border border-white/20 px-3 py-1.5 text-apple-caption font-medium text-cloud-white">
+                      className="shrink-0 rounded-apple-pill border border-white/20 px-3 py-1.5 text-apple-caption font-semibold text-cloud-white">
                       {copied ? "Скопировано" : "Копировать"}
                     </button>
                   </div>
@@ -220,11 +220,11 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               </div>
 
               <div className="mt-4 flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon text-apple-caption font-medium text-paper">2</div>
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon text-apple-caption font-semibold text-white">2</div>
                 <div className="min-w-0 flex-1">
                   <b className="text-apple-body-sm text-cloud-white">Пришли чек в WhatsApp</b>
                   <a href={whatsappLink(product.name, product.price)} target="_blank" rel="noopener noreferrer"
-                    className="mt-2.5 block rounded-apple-pill bg-crimson px-4 py-3 text-center text-apple-body-sm font-medium text-paper">
+                    className="mt-2.5 block rounded-apple-pill bg-crimson px-4 py-3 text-center text-apple-body-sm font-semibold text-white">
                     Открыть WhatsApp
                   </a>
                 </div>

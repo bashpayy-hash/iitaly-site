@@ -80,7 +80,7 @@ export function CityMatch({
           type="button"
           onClick={onClose}
           aria-label="Закрыть подбор"
-          className="-mr-1 grid h-9 w-9 place-items-center rounded-full text-primary transition-colors hover:bg-cream hover:text-ink"
+          className="-mr-1 grid h-9 w-9 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream hover:text-ink"
         >
           <svg viewBox="0 0 14 14" className="h-3.5 w-3.5" fill="none" aria-hidden>
             <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -90,7 +90,7 @@ export function CityMatch({
 
       {result ? (
         <div className="px-5 py-5">
-          <p className="text-sm text-primary">
+          <p className="text-sm text-ink-soft">
             Из тех же 30 городов на карте. Первые два — по ответам, третий для
             контраста.
           </p>
@@ -99,7 +99,7 @@ export function CityMatch({
               <li key={m.city}>
                 <div className={ui.matchCard}>
                   <div className="flex items-baseline justify-between gap-3">
-                    <b className="font-display text-lg font-medium">{m.name}</b>
+                    <b className="font-display text-lg font-semibold">{m.name}</b>
                     {m.wildcard && (
                       <span className="shrink-0 font-mono text-[10px] tracking-[0.1em] text-sec-deep uppercase">
                         контраст
@@ -116,13 +116,13 @@ export function CityMatch({
                   <p className="mt-0.5 font-mono text-[10px] tracking-[0.06em] text-sec-deep uppercase">
                     {m.region}
                   </p>
-                  <p className="mt-2 text-sm text-primary">{m.why}</p>
+                  <p className="mt-2 text-sm text-ink-soft">{m.why}</p>
                   {m.unis.length > 0 && (
                     <ul className="mt-3 space-y-1 border-t border-line pt-3">
                       {m.unis.map((u) => (
                         <li key={u.name} className="text-sm">
-                          <b className="font-medium">{u.name}</b>
-                          <span className="block text-xs text-primary">{u.dsu}</span>
+                          <b className="font-semibold">{u.name}</b>
+                          <span className="block text-xs text-ink-soft">{u.dsu}</span>
                         </li>
                       ))}
                     </ul>
@@ -141,14 +141,14 @@ export function CityMatch({
           <button
             type="button"
             onClick={restart}
-            className="mt-4 w-full py-2 text-sm text-primary underline underline-offset-4 hover:text-ink"
+            className="mt-4 w-full py-2 text-sm text-ink-soft underline underline-offset-4 hover:text-ink"
           >
             Пройти заново
           </button>
         </div>
       ) : (
         <div className="px-5 py-5">
-          <p className="font-display text-lg font-medium">{q.title}</p>
+          <p className="font-display text-lg font-semibold">{q.title}</p>
           <ul className="mt-4 space-y-2.5">
             {q.options.map((o) => (
               <li key={o.id}>
@@ -157,8 +157,8 @@ export function CityMatch({
                   onClick={() => choose(o.id)}
                   className={ui.matchOption}
                 >
-                  <b className="block text-sm font-medium">{o.label}</b>
-                  {o.hint && <span className="mt-0.5 block text-xs text-primary">{o.hint}</span>}
+                  <b className="block text-sm font-semibold">{o.label}</b>
+                  {o.hint && <span className="mt-0.5 block text-xs text-ink-soft">{o.hint}</span>}
                 </button>
               </li>
             ))}
@@ -167,7 +167,7 @@ export function CityMatch({
             <button
               type="button"
               onClick={() => setStep(step - 1)}
-              className="mt-4 text-sm text-primary hover:text-ink"
+              className="mt-4 text-sm text-ink-soft hover:text-ink"
             >
               ← Назад
             </button>

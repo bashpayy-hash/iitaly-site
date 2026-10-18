@@ -39,7 +39,7 @@ jobs:
       - name: Protect catalogue, payment, API and printed form contracts
         run: node scripts/design-guard.mjs "$BASE_SHA"
       - run: npm ci
-      - name: Enforce the eight gallery colors without shadows or gradients
+      - name: Enforce the restored warm palette
         run: npm run check:palette
       - run: npm run build
       - name: Install isolated browser tools
@@ -47,9 +47,9 @@ jobs:
           npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0 axe-core@4.10.3
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review all public and workspace surfaces on desktop and mobile
-        run: node scripts/gallery-review.mjs
-      - name: Review guided reading, history, keyboard, assistant context and gallery motion
-        run: node scripts/gallery-interactions.mjs
+        run: node scripts/warm-ux-review.mjs
+      - name: Review guided reading, history, keyboard, assistant context
+        run: node scripts/warm-ux-interactions.mjs
       - name: Review admissions questionnaire and annual visa calculator
         run: node scripts/admissions-browser-review.mjs
       - name: Review shared draft, shortlist, comparison and document completion boundaries
@@ -67,6 +67,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: iitaly-gallery-review
+          name: iitaly-warm-ux-review
           path: design-review/
           retention-days: 7
