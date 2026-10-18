@@ -8,12 +8,12 @@
   --muted: var(--text-secondary);
   --line: var(--border-subtle);
   --line-strong: var(--bg-subtle);
-  --accent: var(--accent-primary);
+  --accent: var(--text-primary);
   --focus: var(--accent-primary);
   padding: 0 24px 80px;
   background: var(--bg-base);
   color: var(--ink);
-  font-family: var(--font-onest), system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 .helpers *, .helpers *::before, .helpers *::after { box-sizing: border-box; }
 .helpers :is(a, button, input, select, summary):focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
@@ -22,7 +22,7 @@
 .section + .section { padding-top: 56px; }
 
 .header { max-width: 680px; margin-bottom: 20px; }
-.header h2 { margin: 0; font: 400 28px/1.2 Charter, Georgia, serif; }
+.header h2 { margin: 0; font: 800 28px/1.08 var(--font-sans); }
 .header p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 .toolsGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid var(--line-strong); }

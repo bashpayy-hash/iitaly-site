@@ -27,10 +27,10 @@
 .choiceSelect input { width:18px; height:18px; accent-color:var(--accent-primary); }
 .exampleControl { display:flex; gap:6px; flex-wrap:wrap; }
 .exampleControl button { min-height:44px; border:1px solid var(--border-subtle); border-radius:8px; background:var(--glow-cream); padding:8px 12px; color:var(--text-secondary); font:inherit; font-size:12px; }
-.exampleControl button[aria-pressed="true"] { color:var(--accent-primary); background:var(--bg-base); border-color:var(--border-subtle); }
+.exampleControl button[aria-pressed="true"] { color:var(--text-primary); background:var(--bg-base); border-color:var(--border-subtle); }
 .secondaryPages { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:8px; font-size:11px; color:var(--text-secondary); }
 .secondaryPages button { min-height:44px; min-width:44px; border:1px solid var(--border-subtle); border-radius:8px; background:var(--glow-cream); padding:8px; color:inherit; }
-.secondaryPages button[aria-current="page"] { border-color:var(--accent-primary); color:var(--accent-primary); }
+.secondaryPages button[aria-current="page"] { border-color:var(--accent-primary); color:var(--text-primary); }
 .previewCells { display:flex; gap:3px; flex-wrap:wrap; margin:8px 0 0; }
 .previewCells span { display:grid; place-items:center; width:24px; height:30px; border:1px solid var(--border-subtle); color:var(--text-secondary); font-family:monospace; font-size:16px; }
 @media (any-pointer:coarse) {
