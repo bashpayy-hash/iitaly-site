@@ -7,16 +7,22 @@ export function BotanicalCanvas({ left, right, connectToCards = false }: { left?
   return <div className={styles.canvas} data-botanical-canvas aria-hidden="true">
     <img className={styles.ambient} data-botanical-layer="ambient" src="/illustrations/editorial/pergola-wash-640.webp"
       width="640" height="213" alt="" decoding="async" loading="eager" fetchPriority="low" draggable={false} />
+    <picture>
+    <source media="(max-width:767px)" srcSet="/illustrations/editorial/botanical-canopy-640.webp" />
     <img className={styles.canopy} data-botanical-layer="canopy" src="/illustrations/editorial/botanical-canopy-640.webp"
       srcSet="/illustrations/editorial/botanical-canopy-640.webp 640w, /illustrations/editorial/botanical-canopy-1280.webp 1280w"
       sizes="100vw" width="1280" height="430" alt="" decoding="async" loading="eager" fetchPriority="low" draggable={false} />
+    </picture>
     {left && <div className={styles.left} data-botanical-layer="left">{left}</div>}
     {right && <div className={styles.right} data-botanical-layer="right">{right}</div>}
     {connectToCards && <>
     <span className={`${styles.sprig} ${styles.sprigLeft}`}>
+      <picture>
+      <source media="(max-width:767px)" srcSet="/illustrations/editorial/botanical-canopy-640.webp" />
       <img src="/illustrations/editorial/botanical-canopy-640.webp"
         srcSet="/illustrations/editorial/botanical-canopy-640.webp 640w, /illustrations/editorial/botanical-canopy-1280.webp 1280w"
         sizes="100vw" width="640" height="215" alt="" decoding="async" draggable={false} />
+      </picture>
     </span>
     <span className={`${styles.sprig} ${styles.sprigRight}`}>
       <img src="/illustrations/editorial/pergola-wash-640.webp" width="640" height="213" alt="" decoding="async" draggable={false} />

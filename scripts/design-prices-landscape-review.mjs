@@ -58,6 +58,11 @@ async function layout(page) {
   }));
 }
 try {
+  const dense=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:3,reducedMotion:'reduce'});
+  await dense.route('**/*',route=>['127.0.0.1','localhost'].includes(new URL(route.request().url()).hostname)?route.continue():route.abort());
+  const densePage=await dense.newPage();await visit(densePage,4187);
+  assert.match(await densePage.locator('[data-botanical-layer=canopy]').evaluate(i=>i.currentSrc),/canopy-640\.webp$/,'A high-DPR phone still receives the small decorative overlay');
+  await dense.close();
   for (const width of [320,390,768,1024,1279,1280,1366,1440,1551,1552,1600,1920]) {
     const context = await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce',deviceScaleFactor:1,locale:'ru-RU'});
     let chatCalls=0;
