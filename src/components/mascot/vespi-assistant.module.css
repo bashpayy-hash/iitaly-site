@@ -17,11 +17,13 @@
 .editorial-callout { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: start; gap: 24px; padding: 28px; border: 1px solid var(--portal-border, var(--i-line, var(--color-line))); border-radius: var(--radius-xl); background: var(--portal-surface-soft, var(--color-frost)); overflow: visible; }
 .editorial-callout .visual { width: 96px; margin-top: -42px; }
 .editorial-callout .content { align-self: center; }
-/* The expert reads beside the document; navigation stays beside the action.
-   Different compositions use the same approved identity, without fake poses. */
+/* The expert faces the explanation; navigation stays beside the action. */
 .editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="portrait"] { grid-template-columns: minmax(0, 1fr) 96px; }
 .editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="portrait"] > .visual { grid-column: 2; grid-row: 1; }
 .editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="portrait"] > .content { grid-column: 1; grid-row: 1; }
+.editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="figure"] { grid-template-columns: minmax(0, 1fr) 128px; }
+.editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="figure"] > .visual { grid-column: 2; grid-row: 1; width: 128px; }
+.editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="figure"] > .content { grid-column: 1; grid-row: 1; }
 .portal-copilot { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 20px; }
 .portal-copilot .visual { width: 96px; }
 .floating-bar { display: flex; align-items: center; gap: 16px; }
@@ -34,6 +36,7 @@
 @media (max-width: 600px) {
   .editorial-callout { grid-template-columns: 72px minmax(0, 1fr); gap: 16px; padding: 20px; }
   .editorial-callout .visual { width: 72px; margin-top: -32px; }
+  .editorial-callout[data-vespi-variant="inspector"][data-vespi-appearance="figure"] > .visual { width: 96px; }
   /* Only the introduction shares space with the portrait. Long explanations
      and actions regain the full card width on a phone. */
   .editorial-callout[data-vespi-appearance="portrait"],

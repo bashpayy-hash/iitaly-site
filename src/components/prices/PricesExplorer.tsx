@@ -150,7 +150,7 @@ export function PricesExplorer() {
             <VespiAssistant
               variant="inspector"
               layout="editorial-callout"
-              appearance="portrait"
+              appearance="figure"
               label="Веспи · сверим до подачи"
               className="mt-6"
               title="Можно исправить и проверить снова"

@@ -1,0 +1,68 @@
+{
+  "reference": "public/mascot/vespi/vespi-ride-route-640.webp",
+  "model": "gpt_image_2_5",
+  "background": "transparent",
+  "assets": [
+    {
+      "role": "inspector",
+      "jobId": "f9b9b8e3-d35b-4e6a-8dc8-d029927d37a7",
+      "sourceSha256": "40778d475dc7b552aa5aba2d9b28d85a92ea5c21f9d6f4c65583807ace2a91e2",
+      "master": "inspector-master.webp",
+      "portraitCrop": [
+        235,
+        35,
+        870,
+        670
+      ],
+      "production": [
+        {
+          "file": "public/mascot/vespi/vespi-avatar-inspector-v1-96.webp",
+          "bytes": 4866
+        },
+        {
+          "file": "public/mascot/vespi/vespi-avatar-inspector-v1-192.webp",
+          "bytes": 11804
+        },
+        {
+          "file": "public/mascot/vespi/vespi-inspector-v1-160.webp",
+          "bytes": 7720
+        },
+        {
+          "file": "public/mascot/vespi/vespi-inspector-v1-320.webp",
+          "bytes": 18782
+        }
+      ]
+    },
+    {
+      "role": "copilot",
+      "jobId": "bf1276dd-c785-4ec3-b9c3-59784d936ffe",
+      "sourceSha256": "25b0aadc3871bb5b590ff54fd416520738e9583284046f1e4200d3f9f050a370",
+      "master": "copilot-master.webp",
+      "portraitCrop": [
+        90,
+        45,
+        920,
+        875
+      ],
+      "production": [
+        {
+          "file": "public/mascot/vespi/vespi-avatar-copilot-v1-96.webp",
+          "bytes": 4358
+        },
+        {
+          "file": "public/mascot/vespi/vespi-avatar-copilot-v1-192.webp",
+          "bytes": 9994
+        }
+      ]
+    }
+  ],
+  "created": "2026-10-18",
+  "quality": "high",
+  "resolution": "1k",
+  "aspectRatio": "1:1",
+  "prompts": "prompts.json",
+  "encoding": {
+    "master": "lossless WebP; exact generated RGBA pixels",
+    "production": "Pillow LANCZOS, WebP quality=86, method=6"
+  }
+}

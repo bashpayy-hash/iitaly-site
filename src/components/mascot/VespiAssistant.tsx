@@ -32,12 +32,16 @@ export function VespiAssistant({
 }: VespiAssistantProps) {
   const visual = appearance || (layout === "inline-pill" ? "indicator" : "portrait");
   const hasPortrait = visual === "portrait" || visual === "figure";
+  const imageSizes = layout === "floating-bar" ? "64px"
+    : layout === "editorial-callout" && visual === "figure" && variant === "inspector"
+      ? "(max-width: 600px) 96px, 128px"
+      : "(max-width: 600px) 72px, 96px";
   return <Element {...props}
     className={`${styles.assistant} ${styles[layout]} ${className}`}
     data-vespi-assistant={layout} data-vespi-variant={variant} data-vespi-appearance={visual}>
     {visual !== "none" && <span className={styles.visual} data-vespi-presence={hasPortrait ? "" : undefined} aria-hidden="true">
       {visual === "indicator" ? <VespiIndicator /> : <Vespi variant={variant} presentation={visual} priority={priority}
-        sizes={layout === "floating-bar" ? "64px" : "(max-width: 600px) 72px, 96px"} />}
+        sizes={imageSizes} />}
     </span>}
     <div className={styles.content} data-vespi-content>
       {label && <p className={styles.label} data-vespi-label>{label}</p>}

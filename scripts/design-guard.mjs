@@ -40,6 +40,8 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-18: ship reference-based Higgsfield role artwork in
+  // existing assistant placements. The portal road retains route + figure.
   // User request 2026-10-17: shared contextual Vespi across public pages and
   // portal, preserving each surface's existing palette and product contracts.
   'src/components/mascot/Vespi.tsx',

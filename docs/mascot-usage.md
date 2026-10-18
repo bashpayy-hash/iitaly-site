@@ -43,17 +43,21 @@ an admission verdict, an AI request, a paid feature or an automatic action.
 | Role | Intended use | Current image |
 | --- | --- | --- |
 | `route` | Education choices, catalog and map navigation | Approved face / full rider |
-| `inspector` | Document preparation, upload and actual review | Approved original fallback |
-| `copilot` | Questions, current / future step explanation, next action | Approved original fallback |
+| `inspector` | Document preparation, upload and actual review | Higgsfield glasses portrait / document figure, v1 |
+| `copilot` | Questions, current / future step explanation, next action | Higgsfield chest-up portrait, v1; rider fallback for figure |
 | `celebrate` | A received result or completed step | Approved original fallback |
 
-No new glasses, document pose or animation was generated in this refactor.
-`VESPI_ROLE_ASSETS` has approved assets for `route` and empty entries for the
-other roles. Missing role art resolves to the existing portrait or figure,
-marked `data-vespi-fallback="approved-original"`; never use a missing file URL.
-Add new role assets only after a likeness, small-size, transparency and file-size
-review. The three Higgsfield prompts remain in
-`vespi-meta-guides/higgsfield-prompts.md`; they are not shipped images or video.
+The 18 October implementation registers real `inspector` portrait / figure and
+`copilot` portrait assets. Both were generated with Higgsfield from the approved
+rider reference, inspected against that identity, then cropped and encoded as
+transparent WebP. The document has neutral lines, no official seal or verdict.
+Provenance, exact prompts, lossless masters and crop coordinates are stored in
+`design/mascot/vespi/roles/`; delivery evidence is in `vespi-role-art/README.md`.
+
+`celebrate` and an unavailable special figure still resolve to the original
+artwork, marked `data-vespi-fallback="approved-original"`. The road explicitly
+requests `route + figure`, so changing an assistant pose cannot remove its rider.
+The legacy `Vespa` adapter now forwards roles, including copilot for chat.
 
 | Layout | Visual behavior |
 | --- | --- |
@@ -75,8 +79,8 @@ accepted `terrace.webp`, `campus-arrival.webp` and `balcony-scene.webp`.
 
 | Surface | Placement |
 | --- | --- |
-| Home hero | Existing full rider in the campus foreground |
-| Home process / price | Short indicator / text-only comments, not extra portraits |
+| Home hero | Full rider beside the existing starting action |
+| Home process / price | Copilot at the first workflow step; text-only price explanation |
 | Prices | One inspector callout within the existing paid offer |
 | University catalog | Route portrait before filtering; omitted in the portal's embedded picker |
 | Guides search | Compact «ИИ» indicator, no repeated face crop |
@@ -108,7 +112,7 @@ source details remain legible, factual content.
 ## Meaning and actions
 
 The character never certifies eligibility, a visa or acceptance. No official
-approval seal or invented expert pose is shipped. Deadline text comes from the
+approval seal is shipped; the expert image is an assistant, not an institution. Deadline text comes from the
 existing task / source; absence of requirements is not a defective file.
 The five document statuses and their meanings are unchanged.
 
@@ -146,6 +150,7 @@ The five refined WebP variants together are under 100KB; the smallest road image
 is under 10KB. Responsive `srcSet` / `sizes`, intrinsic dimensions and same-origin
 URLs avoid layout shifts, unnecessary downloads and runtime generation services.
 
-No new asset files are added by the assistant-system refactor. Review future
-poses before expanding this budget. The old `docs/mascot-bible.md` and vector
+The six new role derivatives total 57,524 bytes. A visitor loads only the
+appropriate responsive image, never the lossless masters. New files use `v1`
+URLs; existing rider assets stay unchanged. No video or new animation is added. The old `docs/mascot-bible.md` and vector
 sources remain historical references; they no longer define the shipped face.

@@ -16,11 +16,11 @@ function roadPosition(done: number, total: number) {
   return 8 + (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 84;
 }
 
-function Scooter({ showMascot, complete }: { showMascot: boolean; complete: boolean }) {
+function Scooter({ showMascot }: { showMascot: boolean }) {
   if (!showMascot) return <span className={styles.locationMarker} data-road-location aria-hidden="true"><span /></span>;
   return <span className={styles.scooterArt} data-road-art="vespi-baursakov">
     <span className={styles.scooterBody} data-road-body>
-      <Vespi variant={complete ? "celebrate" : "copilot"} presentation="figure" priority sizes="(max-width: 900px) 48px, 72px" />
+      <Vespi variant="route" presentation="figure" priority sizes="(max-width: 900px) 48px, 72px" />
     </span>
   </span>;
 }
@@ -224,7 +224,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           if (event.target !== event.currentTarget || event.propertyName !== "transform" || !inFlight.current) return;
           inFlight.current = false;
           setMotion(value => ({ ...value, moving: false, arriving: true }));
-        }}><span className={styles.scooterAnchor}><span className={styles.scooterArrival} data-road-arrival><Scooter showMascot={showMascot} complete={!current && total > 0} /></span></span></span>
+        }}><span className={styles.scooterAnchor}><span className={styles.scooterArrival} data-road-arrival><Scooter showMascot={showMascot} /></span></span></span>
       </span>
     </span>
     <span className={styles.roadCopy} aria-live="polite" aria-atomic="true" data-road-next>
