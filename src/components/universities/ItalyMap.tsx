@@ -36,17 +36,17 @@ export function ItalyMap({
     >
       <defs>
         <radialGradient id="mapSea" cx="50%" cy="34%" r="78%">
-          <stop offset="0" stopColor="#1c2430" />
-          <stop offset="0.55" stopColor="#141a24" />
-          <stop offset="1" stopColor="#0d1118" />
+          <stop offset="0" stopColor="#27231d" />
+          <stop offset="0.55" stopColor="#1d1913" />
+          <stop offset="1" stopColor="#15110b" />
         </radialGradient>
         <linearGradient id="mapLand" x1="0" y1="0" x2="0.3" y2="1">
-          <stop offset="0" stopColor="#37455a" />
-          <stop offset="1" stopColor="#1e2632" />
+          <stop offset="0" stopColor="#48443e" />
+          <stop offset="1" stopColor="#29251f" />
         </linearGradient>
         <linearGradient id="mapEdge" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#c3ddfb" stopOpacity="0.95" />
-          <stop offset="1" stopColor="#5f7d9c" stopOpacity="0.55" />
+          <stop offset="0" stopColor="#dedad4" stopOpacity="0.95" />
+          <stop offset="1" stopColor="#7d7973" stopOpacity="0.55" />
         </linearGradient>
         <filter id="mapPinGlow" x="-120%" y="-120%" width="340%" height="340%">
           <feGaussianBlur stdDeviation="4" result="b" />
@@ -65,7 +65,7 @@ export function ItalyMap({
 
       <rect width={MAP_W_PX} height={MAP_H_PX} fill="url(#mapSea)" />
 
-      <g stroke="#8fa3bd" strokeWidth={0.4} opacity={0.1}>
+      <g stroke="#a5a19b" strokeWidth={0.4} opacity={0.1}>
         <line x1="0" y1="130" x2="420" y2="130" />
         <line x1="0" y1="260" x2="420" y2="260" />
         <line x1="0" y1="390" x2="420" y2="390" />
@@ -78,29 +78,29 @@ export function ItalyMap({
         <path
           d="M-40 486 q20 -7 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"
           fill="none"
-          stroke="#5f7d9c"
+          stroke="#7d7973"
           strokeWidth={1.2}
         />
         <path
           d="M-40 502 q20 -6 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0"
           fill="none"
-          stroke="#4a6480"
+          stroke="#64605a"
           strokeWidth={1.2}
         />
       </g>
 
       <g transform="translate(382,40)" opacity={0.55}>
-        <circle r={15} fill="none" stroke="#8fa3bd" strokeWidth={1} />
-        <circle r={1.6} fill="#8fa3bd" />
-        <path d="M0 -10.5 L3 2 L0 0 L-3 2 Z" fill="#e0654f" />
-        <text y={-19} textAnchor="middle" fontSize={8.5} fontWeight={700} fill="#8fa3bd" letterSpacing={1}>
+        <circle r={15} fill="none" stroke="#a5a19b" strokeWidth={1} />
+        <circle r={1.6} fill="#a5a19b" />
+        <path d="M0 -10.5 L3 2 L0 0 L-3 2 Z" fill="#e63946" />
+        <text y={-19} textAnchor="middle" fontSize={8.5} fontWeight={700} fill="#a5a19b" letterSpacing={1}>
           N
         </text>
       </g>
 
       <path
         d={ITALY_PATH}
-        fill="#04060a"
+        fill="#0a0600"
         opacity={0.55}
         transform="translate(1,7)"
         filter="url(#mapLandShadow)"
@@ -143,14 +143,14 @@ export function ItalyMap({
               dimmed ? "opacity-30" : "opacity-100"
             }`}
           >
-            {active && <circle cx={c.x} cy={c.y} r={r + 6} fill="#e0654f" opacity={0.22} />}
+            {active && <circle cx={c.x} cy={c.y} r={r + 6} fill="#e63946" opacity={0.22} />}
             <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#000" opacity={0.3} />
             <circle
               cx={c.x}
               cy={c.y}
               r={r}
-              fill={active ? "#e0654f" : "rgba(24,31,42,.92)"}
-              stroke={active ? "#ffb59f" : "#8fb6e8"}
+              fill={active ? "#e63946" : "rgba(34, 30, 24,.92)"}
+              stroke={active ? "#ffb59f" : "#b5b1ab"}
               strokeWidth={active ? 1.4 : 1.1}
               filter={active ? "url(#mapPinGlow)" : undefined}
               className="transition-colors"
@@ -158,11 +158,11 @@ export function ItalyMap({
             {big ? (
               <g
                 transform={`translate(${c.x - gs / 2},${c.y - gs / 2}) scale(${(gs / 22).toFixed(3)})`}
-                fill={active ? "#fff" : "#cfe0f5"}
+                fill={active ? "#fff" : "#e2ded8"}
                 dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
               />
             ) : (
-              <circle cx={c.x} cy={c.y} r={2.6} fill="#8fb6e8" />
+              <circle cx={c.x} cy={c.y} r={2.6} fill="#b5b1ab" />
             )}
             {label && (
               <text
@@ -172,8 +172,8 @@ export function ItalyMap({
                 fontSize={c.tier === 1 ? 11.5 : 11}
                 fontWeight={active ? 700 : 600}
                 letterSpacing={0.2}
-                fill={active ? "#fff" : c.tier === 1 ? "#cfd9e6" : "#a9b8cc"}
-                stroke="rgba(13,17,24,.85)"
+                fill={active ? "#fff" : c.tier === 1 ? "#dcd8d2" : "#bab6b0"}
+                stroke="rgba(21, 17, 11,.85)"
                 strokeWidth={3}
                 strokeLinejoin="round"
                 paintOrder="stroke"

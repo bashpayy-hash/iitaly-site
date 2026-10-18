@@ -7,6 +7,9 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+  // User request 2026-10-18: replace cold UI colors across all routes.
+  // This permits presentation tokens only; map geometry and API stay protected.
+  'src/app/globals.css', 'src/data/illustrations.ts',
   // User correction 2026-10-17: make Vespi visible in the existing home entry,
   // actual catalogue filters and persistent portal priority, without new tokens.
   'src/components/home/home-assistant.module.css',
@@ -139,8 +142,11 @@ assert.equal((wizard.match(/    id: /g) || []).length, 10, 'The quiz includes in
 const baseItaly = execFileSync('git', ['show', `${base}:src/data/italy.ts`], {encoding:'utf8'});
 const headItaly = readFileSync('src/data/italy.ts', 'utf8');
 assert.equal(headItaly.match(/export const ITALY_PATH = .*;/)?.[0], baseItaly.match(/export const ITALY_PATH = .*;/)?.[0], 'Map geometry is unchanged.');
-const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/region: "[^"]*", /g, '');
+const cityGeometry = source => source.match(/export const CITIES:[\s\S]*?\n};/)?.[0].replace(/region: "[^"]*", /g, '').replace(/sky: "[^"]*"/g, 'sky: "presentation"');
 assert.equal(cityGeometry(headItaly), cityGeometry(baseItaly), 'City identities, coordinates and styles are unchanged.');
 const baseMap = execFileSync('git', ['show', `${base}:src/components/universities/ItalyMap.tsx`], {encoding:'utf8'});
-assert.equal(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8'), baseMap.replace('role="img"', 'role="group"'), 'Only the accessible map role may change in this UX pass.');
-console.log('Approved admissions paths passed; map component, comparison model, global CSS and dependencies remain protected.');
+// The new brief explicitly recolors inline SVG gradients. Erase only color
+// literals for comparison: all paths, coordinates, roles and handlers stay exact.
+const withoutColors = source => source.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
+assert.equal(withoutColors(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8')), withoutColors(baseMap.replace('role="img"', 'role="group"')), 'Map changes are limited to colors; geometry and interaction stay exact.');
+console.log('Approved presentation paths passed; map geometry, comparison model, API and dependencies remain protected.');

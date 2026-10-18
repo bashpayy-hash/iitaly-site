@@ -23,7 +23,7 @@
   margin-top: 20px;
 }
 .moka::before {
-  background: radial-gradient(ellipse at 36% 52%, #deebf2a3, transparent 65%), radial-gradient(ellipse at 66% 54%, #f1e1d782, transparent 65%);
+  background: radial-gradient(ellipse at 36% 52%, #ede9e3a3, transparent 65%), radial-gradient(ellipse at 66% 54%, #f1e1d782, transparent 65%);
 }
 .lemon {
   position: absolute;

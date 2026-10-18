@@ -84,7 +84,7 @@ export function Modal({
         aria-labelledby={labelledBy}
         tabIndex={-1}
         data-lenis-prevent
-        className={`max-h-[88vh] w-full overflow-y-auto overscroll-contain rounded-t-xl border-2 border-ink bg-paper shadow-xl sm:rounded-xl ${className || "max-w-lg"}`}
+        className={`max-h-[88vh] w-full overflow-y-auto overscroll-contain rounded-t-xl border border-ink/10 bg-paper shadow-[var(--shadow-warm-card)] sm:rounded-xl ${className || "max-w-lg"}`}
       >
         {children}
       </div>

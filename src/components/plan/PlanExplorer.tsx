@@ -35,9 +35,9 @@ export function PlanExplorer() {
       <section data-section="plan-header" className={`${art.headerHost} px-5 pt-9 pb-6 text-center sm:pt-14 sm:pb-9`}>
         <StudyAtmosphere />
         <div data-role="heading">
-          <AppleCaption as="p">Персональный маршрут</AppleCaption>
+          <AppleCaption as="p" className="warm-badge">Персональный маршрут</AppleCaption>
           <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
-            Опиши свою ситуацию
+            Опиши свою <span className="warm-highlight">ситуацию</span>
           </AppleHeading>
         </div>
         <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">

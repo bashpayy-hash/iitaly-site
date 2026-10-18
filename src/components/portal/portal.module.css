@@ -1,14 +1,14 @@
 .portal {
-  --i-signal: #fc1c46;
-  --portal-canvas: #fafafa;
+  --i-signal: #e63946;
+  --portal-canvas: #faf8f5;
   --portal-surface: #fff;
-  --portal-surface-soft: #f5f5f7;
-  --portal-border: #e3e3e8;
-  --portal-muted: #5d5d63;
-  --portal-ash: #5d5d63;
-  --portal-ink: #1d1d1f;
-  --portal-accent: #d7133f;
-  --portal-accent-deep: #b91134;
+  --portal-surface-soft: #faf8f5;
+  --portal-border: rgba(20,20,19,.08);
+  --portal-muted: #615d57;
+  --portal-ash: #615d57;
+  --portal-ink: #141413;
+  --portal-accent: #141413;
+  --portal-accent-deep: #141413;
   --portal-heading-font: var(--font-apple-display);
   --portal-serif: var(--portal-heading-font);
   --portal-green: var(--color-green);
@@ -1197,14 +1197,14 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
-  --portal-canvas: #fafafa;
+  --portal-canvas: #faf8f5;
   --portal-surface: #fff;
-  --portal-border: #e3e3e8;
-  --portal-muted: #5d5d63;
-  --portal-ash: #5d5d63;
-  --portal-ink: #1d1d1f;
-  --portal-accent: #d7133f;
-  --portal-accent-deep: #b91134;
+  --portal-border: rgba(20,20,19,.08);
+  --portal-muted: #615d57;
+  --portal-ash: #615d57;
+  --portal-ink: #141413;
+  --portal-accent: #141413;
+  --portal-accent-deep: #141413;
   --portal-green: var(--color-green);
   --portal-danger: var(--portal-ink);
   min-height: calc(100svh - 64px);
@@ -1235,7 +1235,7 @@
   color: inherit;
   text-align: left;
 }
-.optionCard:hover { border-color: #b9b9c2; }
+.optionCard:hover { border-color: #bebab4; }
 .optionCard[data-selected="true"] { border-color: #e8b7c3; background: #fff5f7; }
 .optionCard strong { display: block; font-size: 14px; font-weight: 500; }
 .optionCard span { display: block; margin-top: 2px; color: var(--portal-muted); font-size: 13px; line-height: 1.35; }
@@ -1484,3 +1484,7 @@
 .onboardingPortrait { display: block; flex: none; }
 .onboardingAvatar { display: block; width: 64px; height: 64px; flex: none; object-fit: contain; }
 @media (max-width: 480px) { .onboardingAvatar { width: 48px; height: 48px; } .onboardingGreeting { gap: 12px; } }
+
+/* Functional workspace retains its compact navigation and single next action. */
+.portal { background: radial-gradient(ellipse at 12% 0%, rgba(253,238,228,.45), transparent 42%), var(--portal-canvas); }
+.card { background: #fff; border-radius: 28px; box-shadow: var(--shadow-warm-card); }
