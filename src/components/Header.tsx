@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import depth from "@/components/marketing/surface-depth.module.css";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const links = [
@@ -15,7 +16,7 @@ const links = [
 
 export function Header() {
   const pathname = usePathname();
-  const bar = "border-mist/40 bg-frost/95 backdrop-blur-md";
+  const bar = depth.chrome;
   const brand = "text-carbon";
   const link = "text-graphite hover:text-carbon";
   const panel = "border-mist/40 bg-frost text-carbon";

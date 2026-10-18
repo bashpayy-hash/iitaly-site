@@ -1,0 +1,41 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "marker": {
+        "width": "18px",
+        "height": "18px",
+        "radius": "50%"
+      }
+    },
+    {
+      "width": 1440,
+      "guideAreaGrowth": 27.1
+    },
+    {
+      "width": 1440,
+      "droppedFileChecks": 1,
+      "droppedFileSaves": 1,
+      "futureParentUpload": false
+    },
+    {
+      "width": 390,
+      "marker": {
+        "width": "18px",
+        "height": "18px",
+        "radius": "50%"
+      }
+    },
+    {
+      "width": 390,
+      "guideAreaGrowth": 35
+    },
+    {
+      "width": 390,
+      "droppedFileChecks": 1,
+      "droppedFileSaves": 1,
+      "futureParentUpload": false
+    }
+  ],
+  "errors": []
+}

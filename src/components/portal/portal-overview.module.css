@@ -15,7 +15,8 @@
 @media(max-width:540px) { .documentFeature h2 { font-size: 22px; } .universityChoice { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; } }
 /* One copilot surface: read the real next action first, then locate it on the
    route. No extra welcome card competes with the pinned working area. */
-.road { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: "next route"; align-items: center; gap: 28px; width: 100%; overflow: hidden; padding: 16px 24px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); box-shadow: var(--shadow-warm-card); color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
+.road {
+  composes: paper from "../marketing/surface-depth.module.css"; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: "next route"; align-items: center; gap: 28px; width: 100%; overflow: hidden; padding: 16px 24px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface);  color: var(--portal-ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; touch-action: manipulation; }
 .road:hover:not([data-road-static="true"]):not([data-road-secondary="true"]) .stepAction { background: var(--portal-accent-deep); }
 .road:hover:not([data-road-static="true"]) .arrow { transform: translateX(3px); }
 .road:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 3px; }
@@ -50,7 +51,7 @@
 .scooterBody { display: block; width: 100%; height: 100%; animation: idleRide 2.8s ease-in-out infinite; }
 /* A document or step owns the portrait while open. The pinned route keeps its
    exact position without repeating the same face above the conversation. */
-.locationMarker { display: grid; place-items: center; position: absolute; bottom: -7px; left: 50%; width: 18px; height: 18px; transform: translateX(-50%); border: 2px solid var(--portal-accent); border-radius: 50%; background: var(--portal-surface); }
+.locationMarker { display: grid; place-items: center; position: absolute; bottom: -7px; left: 50%; width: 18px; height: 18px; transform: translateX(-50%); border: 2px solid var(--portal-accent); border-radius: 50%; background: var(--portal-surface); transition-property: none; }
 .locationMarker > span { width: 6px; height: 6px; border-radius: 50%; background: var(--portal-accent); }
 .road[data-road-transition="true"] .fill, .road[data-road-transition="true"] .scooter { transition: transform var(--road-travel-duration) cubic-bezier(.4, 0, .2, 1); }
 .road[data-road-moving="true"] .fill, .road[data-road-moving="true"] .scooter { will-change: transform; }

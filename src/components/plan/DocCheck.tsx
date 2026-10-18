@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
+import { Vespi } from "@/components/mascot/Vespi";
 import { AppleButton } from "@/components/apple/Button";
 import { ScanLine, ShieldCheck, Files, Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
@@ -42,7 +43,7 @@ function inspectorMessage(step: State["step"], availabilityPending: boolean, una
   return "Загрузи справку о доходах, состав семьи, банковскую выписку или перевод. Для проверки требований укажи программу и учебный год.";
 }
 
-export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: DocCheckResult) => void; academicYear?: DocumentReviewContext["academicYear"] } = {}) {
+export function DocCheck({ onComplete, academicYear, portalInspector = false }: { onComplete?: (result: DocCheckResult) => void; academicYear?: DocumentReviewContext["academicYear"]; portalInspector?: boolean } = {}) {
   const router = useRouter();
   const [state, setState] = useState<State>({ step: "idle" });
   const [context, setContext] = useState<DocumentReviewContext>({
@@ -145,6 +146,7 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext}>
+        {portalInspector && <div className={styles.portalInspector} data-portal-inspector data-inspector-state={state.step} aria-hidden="true"><Vespi variant="inspector" presentation="figure" sizes="112px" /></div>}
         <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>

@@ -1,0 +1,20 @@
+{
+  "source": "design/mascot/vespi/vespi-route-master.webp",
+  "operation": "Crop and responsive encoding of approved identity; no new AI generation",
+  "crop": {
+    "left": 180,
+    "top": 0,
+    "width": 864,
+    "height": 840
+  },
+  "files": [
+    {
+      "path": "public/mascot/vespi/vespi-editorial-route-480.webp",
+      "bytes": 35848
+    },
+    {
+      "path": "public/mascot/vespi/vespi-editorial-route-720.webp",
+      "bytes": 62716
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import type { PortalDoc } from "@/lib/portalApi";
 import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
+import { PortalUploadZone } from "./PortalUploadZone";
 import { PortalDocumentContext } from "./PortalDocumentContext";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import portal from "./portal.module.css";
@@ -15,12 +16,13 @@ function dateLabel(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value));
 }
 
-export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?view=docs", onUpload, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, orientir }: {
+export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?view=docs", onUpload, onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, orientir }: {
   title: string;
   doc: PortalDoc;
   onBack: () => void;
   backHref?: string;
   onUpload: () => void;
+  onFileDrop?: (file: File) => void;
   busy: boolean;
   context: DocumentReviewContext;
   onContextChange: (context: DocumentReviewContext) => void;
@@ -93,7 +95,8 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
 
     {canUpload ? <div className={styles.actions} data-fab-yield>
       <p id="portal-document-repeat-hint" className={styles.meta}>Повторная проверка без доплаты. Новый разбор заменит этот.</p>
-      <button type="button" className={styles.fileArea} aria-describedby="portal-document-repeat-hint" data-primary-action disabled={busy} onClick={onUpload}>Проверить новую версию</button>
+      <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} label="Проверить новую версию"
+        describedBy="portal-document-repeat-hint" hint="Приложи файл или перетащи его сюда" />
       {busy && <p className={styles.meta} role="status">Веспи проверяет и сохраняет новую версию…</p>}
     </div> : readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
 

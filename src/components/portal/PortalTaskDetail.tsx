@@ -5,12 +5,13 @@ import type { PortalData, PortalTask } from "@/lib/portalApi";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { isManualTask, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
+import { PortalUploadZone } from "./PortalUploadZone";
 import { PortalDocumentContext } from "./PortalDocumentContext";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import portal from "./portal.module.css";
 import styles from "./portal-step.module.css";
 
-export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContextChange, onBack, backHref = "/portal?view=plan", onUpload, onToggle, onEditProfile, children, managesCompletion = false }: {
+export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContextChange, onBack, backHref = "/portal?view=plan", onUpload, onFileDrop, onToggle, onEditProfile, children, managesCompletion = false }: {
   data: PortalData;
   task: PortalTask;
   busy: boolean;
@@ -20,6 +21,7 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
   onBack: () => void;
   backHref?: string;
   onUpload: () => void;
+  onFileDrop?: (file: File) => void;
   onToggle: (value: boolean) => void;
   onEditProfile: () => void;
   children?: ReactNode;
@@ -58,10 +60,8 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
         event.preventDefault(); onEditProfile();
       }}>Заполнить профиль</a>
       : needDoc ? <>
-        {!hasRetry && <button type="button" className={styles.fileArea} aria-label="Приложить файл" aria-describedby="portal-step-action-hint" data-primary-action disabled={busy} onClick={onUpload}>
-          <span>Приложить файл</span>
-          <small>{busy ? "Проверяю и сохраняю…" : "Шаг закроется, если проверка пройдена"}</small>
-        </button>}
+        {!hasRetry && <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} describedBy="portal-step-action-hint"
+          hint="Шаг закроется, если проверка пройдена" />}
         <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />
       </> : <>
         {children}

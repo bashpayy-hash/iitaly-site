@@ -45,7 +45,8 @@
    около 540px. Селектор сильнее правила выше, порядок файлов не важен. */
 .contentPage .main [data-section="prices-header"] h1 { max-width: 680px; }
 .contentPage .main [role="dialog"] { background: #fff; }
-.header { position: sticky; top: 0; z-index: 50; background: rgba(250,248,245,.94); border-bottom: 1px solid var(--color-warm-line); backdrop-filter: blur(18px); }
+.header {
+  composes: chrome from "./surface-depth.module.css"; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid color-mix(in srgb, var(--color-warm-line) 45%, transparent); }
 .navInner { display: flex; align-items: center; justify-content: space-between; gap: 32px; max-width: 1280px; height: 64px; margin: auto; padding: 0 32px; }
 .wordmark { display: inline-flex; align-items: center; min-height: 44px; color: #141413; font-size: 24px; font-weight: 650; letter-spacing: -.07em; text-decoration: none; white-space: nowrap; }
 .wordmark span { color: var(--i-signal); }
@@ -107,7 +108,7 @@
 .stage { position: relative; padding: 44px 24px 0; overflow: clip; background: #efece6; }
 .stageLabel { display: flex; align-items: center; justify-content: space-between; max-width: 980px; margin: 0 auto 24px; color: #141413; font-size: 12px; letter-spacing: .03em; }
 .stageLabel > span:last-child { color: #655b52; }
-.journey { position: relative; max-width: 1100px; margin: auto; padding: 28px 36px; border: 1px solid var(--color-warm-line); border-radius: 28px 28px 0 0; background: #fff; box-shadow: var(--shadow-warm-card); }
+.journey { position: relative; max-width: 1100px; margin: auto; padding: 28px 36px; border: 1px solid var(--color-warm-line); border-radius: 28px 28px 0 0; background: #fff;  }
 .journeyHeader { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--i-line); }
 .journeyHeader p { margin-top: 4px; color: #6b6761; font-size: 12px; }
 .journeyLogo { font-size: 16px; font-weight: 600; letter-spacing: -.04em; }
@@ -171,15 +172,18 @@
 .formInput[aria-invalid="true"] { border-color: #141413; }
 .guideTopics nav button[aria-current] { border-radius: 8px; background: #fff0f3; padding-inline: 12px; }
 .guideTopics summary:hover { background: #fefaf4; }
-.offerCard { overflow: hidden; border: 1px solid #e7e4df; border-radius: 16px; background: #fff; }
+.offerCard {
+  composes: paper from "./surface-depth.module.css"; overflow: hidden; border: 1px solid #e7e4df; border-radius: 16px; background: #fff; }
 .offerHeading { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 .offerHeading h2 { font-size: 28px; line-height: 1.2; letter-spacing: -.025em; }
 .offerFeatures { list-style: none; }
 .offerFeatures li { line-height: 1.6; }
 .offerFeatures li > span { margin-top: 10px; }
-.termsBox { border: 1px solid #e7e4df; border-radius: 16px; background: #fff; }
+.termsBox {
+  composes: paper from "./surface-depth.module.css"; border: 1px solid #e7e4df; border-radius: 16px; background: #fff; }
 .termsBox summary { min-height: 44px; }
-.optionalService { border-radius: 12px; background: #fff; }
+.optionalService {
+  composes: paper from "./surface-depth.module.css"; border-radius: 12px; background: #fff; }
 .optionalService:hover { border-color: var(--i-link); background: #fff5f7; }
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) { .howHeading { position: sticky; top: 100px; } }
 @media (max-width: 899px) {
@@ -248,6 +252,7 @@
 @media (prefers-contrast: more) { .surface { --i-line: #777; --color-cloud-meta: #46423c; --color-cloud-body: #333; } }
 
 .heroIntro { background: radial-gradient(ellipse at 10% 18%, rgba(253,238,228,.7), transparent 50%), #faf8f5; }
-.offerCard, .termsBox, .optionalService { border-radius: 28px; border-color: var(--color-warm-line); box-shadow: var(--shadow-warm-card); }
+.offerCard, .termsBox, .optionalService { border-radius: 28px; border-color: var(--color-warm-line);  }
 
-.summaryCard { background: #fff; color: #141413; border: 1px solid var(--color-warm-line); border-radius: 28px; box-shadow: var(--shadow-warm-card); }
+.summaryCard {
+  composes: paper from "./surface-depth.module.css"; background: #fff; color: #141413; border: 1px solid var(--color-warm-line); border-radius: 28px;  }

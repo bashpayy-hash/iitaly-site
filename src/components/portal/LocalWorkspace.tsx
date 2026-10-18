@@ -98,6 +98,7 @@ export function LocalWorkspace() {
   const showDetail = active && (location.task || location.doc);
   const readOnly = active ? taskReadOnlyReason(data, active) : "";
   const existing = active ? data.docs[active.id] : undefined;
+  const documentInspectorOpen = Boolean(active && DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])));
   const intake = draft.answers.intake === "2027/28" ? "сентябрь 2027" : draft.answers.intake === "2026/27" ? "2026/27" : "год ещё не выбран";
   const clarify = documents.find(task => data.docs[task.id] && documentOutcome(data.docs[task.id], applicationYear).kind !== "missing");
 
@@ -108,7 +109,7 @@ export function LocalWorkspace() {
     </div>} /></div>
     <main id="main" className={styles.frame}>
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
-      {!wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} currentOpen={Boolean(active)} />}
+      {!wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} currentOpen={Boolean(active)} showMascot={!((location.view === "plan" && !showDetail && position.stage) || documentInspectorOpen)} />}
       <div className={styles.layout}>
         <aside><nav className={styles.nav} aria-label="Разделы личного кабинета">{NAV.map(({ view, title, Icon }) => <a key={view} href={view === "today" ? "/portal" : `/portal?view=${view}`} aria-current={location.view === view ? "page" : undefined} onClick={event => link(event, { view, task: null, doc: null })}><Icon size={18} aria-hidden="true"/>{title}</a>)}</nav></aside>
         <div className={styles.content}>
@@ -129,9 +130,9 @@ export function LocalWorkspace() {
                 {existing && !existing.result && <p className={styles.readOnly}>{existing.summary}</p>}
                 {existing?.result?.review && existing.result.review.academicYear !== applicationYear && <p className={styles.readOnly}>Нужно уточнить: разбор относится к {existing.result.review.academicYear}, а в маршруте выбран {applicationYear}. Это не ошибка файла. Сверь заявку перед подачей.</p>}
                 {existing?.result && <div className={styles.paper}><DocResult result={existing.result}/><p>Разбор хранится в этой вкладке. Файлы и содержание документов не записываются в локальный профиль.</p></div>}
-                {DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])) && <>
+                {documentInspectorOpen && <>
                   <button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
-                  <DocCheck key={active.id} academicYear={draft.answers.intake === "2027/28" || draft.answers.intake === "2026/27" ? draft.answers.intake : "unspecified"} onComplete={result => onReview(active, result)}/>
+                  <DocCheck portalInspector key={active.id} academicYear={draft.answers.intake === "2027/28" || draft.answers.intake === "2026/27" ? draft.answers.intake : "unspecified"} onComplete={result => onReview(active, result)}/>
                 </>}
                 {!DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])) && <>{active.id === "kit" && <PortalPermessoStep/>}<button className={styles.primary} type="button" onClick={() => complete(active)}>Готово</button></>}
                 {data.done[active.id] && !DOC_TASKS[active.id] && <button className={styles.textLink} type="button" onClick={() => updateLocal({ ...local, done: { ...local.done, [active.id]: false } })}>Снять отметку</button>}
