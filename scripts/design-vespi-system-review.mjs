@@ -117,6 +117,64 @@ async function noDuplicatePortraits(page, where) {
   assert(visible.length <= 1, `${where}: at most one portrait in the viewport: ${JSON.stringify(visible)}`);
 }
 
+const ROLE_ARTWORK = {
+  'inspector:portrait': ['vespi-avatar-inspector-v1', [96, 192]],
+  'inspector:figure': ['vespi-inspector-v1', [160, 320]],
+  'copilot:portrait': ['vespi-avatar-copilot-v1', [96, 192]],
+  'route:figure': ['vespi-ride-route', [160, 320, 640]],
+};
+
+// A role label alone must not pass while the original fallback is displayed.
+// Check the selected responsive resource after it is visible and decoded.
+async function actualRoleArtwork(container, role, presentation, where) {
+  const image = container.locator('img[data-vespi]');
+  assert.equal(await image.count(), 1, `${where}: one role image`);
+  await image.scrollIntoViewIfNeeded();
+  await image.waitFor({ state: 'visible' });
+  const rendered = await image.evaluate(async element => {
+    await element.decode();
+    const box = element.getBoundingClientRect();
+    return {
+      src: element.getAttribute('src'), srcSet: element.getAttribute('srcset'),
+      currentSrc: element.currentSrc, naturalWidth: element.naturalWidth, naturalHeight: element.naturalHeight,
+      role: element.getAttribute('data-vespi-role'), fallback: element.getAttribute('data-vespi-fallback'),
+      visible: box.width > 0 && box.height > 0 && box.bottom > 0 && box.top < innerHeight && box.right > 0 && box.left < innerWidth
+        && element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }),
+    };
+  });
+  const [prefix, widths] = ROLE_ARTWORK[`${role}:${presentation}`];
+  const paths = widths.map(width => `/mascot/vespi/${prefix}-${width}.webp`);
+  assert.equal(rendered.role, role, `${where}: semantic role matches the image`);
+  assert.equal(rendered.fallback, null, `${where}: approved role artwork replaces the generic fallback`);
+  assert.equal(rendered.srcSet, paths.map((path, index) => `${path} ${widths[index]}w`).join(', '), `${where}: every responsive candidate belongs to the intended role`);
+  assert(paths.includes(rendered.src), `${where}: initial source belongs to the intended role`);
+  const current = new URL(rendered.currentSrc);
+  assert.equal(current.origin, origin, `${where}: selected artwork is served locally`);
+  assert(paths.includes(current.pathname), `${where}: the browser actually selected the intended role artwork`);
+  assert(rendered.naturalWidth > 0 && rendered.naturalHeight > 0 && rendered.visible, `${where}: role artwork is decoded and visible`);
+}
+
+async function roleAssetBudget() {
+  const manifest = JSON.parse(await readFile('design/mascot/vespi/roles/provenance.json', 'utf8'));
+  const production = manifest.assets.flatMap(asset => asset.production);
+  const expected = Object.entries(ROLE_ARTWORK).filter(([key]) => !key.startsWith('route:'))
+    .flatMap(([, [prefix, widths]]) => widths.map(width => `public/mascot/vespi/${prefix}-${width}.webp`)).sort();
+  assert.deepEqual(production.map(asset => asset.file).sort(), expected, 'Role provenance lists each shipped responsive asset exactly once');
+  const sizes = await Promise.all(production.map(async asset => {
+    const source = await readFile(asset.file);
+    const response = await fetch(origin + asset.file.slice('public'.length));
+    assert.equal(response.status, 200, `${asset.file}: exported asset is served`);
+    assert.match(response.headers.get('content-type') || '', /^image\/webp/, `${asset.file}: exported asset is a WebP`);
+    const served = Buffer.from(await response.arrayBuffer());
+    assert.deepEqual(served, source, `${asset.file}: static export serves the production asset, not stale artwork`);
+    assert.equal(served.byteLength, asset.bytes, `${asset.file}: provenance records the actual byte size`);
+    assert(served.byteLength > 0, `${asset.file}: production asset is not empty`);
+    return served.byteLength;
+  }));
+  const bytes = sizes.reduce((sum, size) => sum + size, 0);
+  assert(bytes <= 64 * 1024, `Role artwork stays within 64 KiB for all responsive variants, received ${bytes} bytes`);
+}
+
 // The user's follow-up explicitly replaces the heavy IITALY. wordmark with
 // iItaly. Preserve its inherited palette and font, while allowing new weight.
 function preservedBrand(value) {
@@ -134,6 +192,7 @@ async function checkWordmark(page) {
 
 try {
   if (!baseline) {
+    await roleAssetBudget();
     // Palette and font declarations are deliberately outside this refactor.
     for (const file of ['src/app/globals.css', 'src/components/marketing/marketing.module.css', 'src/components/marketing/editorial-art.module.css']) {
       const before = execFileSync('git', ['show', `${baseRef}:${file}`], { encoding: 'utf8' });
@@ -257,6 +316,7 @@ try {
       await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
       await visit('/portal?view=docs&doc=statements');
       await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      if (!baseline) await actualRoleArtwork(page.locator('[data-portal-document-inspector]'), 'inspector', 'portrait', `saved report ${width}`);
       await capture('portal-inspector-report');
       results.push({ width, savedReportCapture: true }); await context.close(); continue;
     }
@@ -267,6 +327,7 @@ try {
     if (!baseline) {
       await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
       assert.equal(await advice.getAttribute('data-vespi-variant'), 'inspector', 'Apostille advice uses inspector context');
+      await actualRoleArtwork(advice, 'inspector', 'figure', `guide insight ${width}`);
       await noDuplicatePortraits(page, `guide insight ${width}`);
       await audit(`guide insight ${width}`);
     }
@@ -293,6 +354,7 @@ try {
       const explanation = page.locator('[data-vespi-question-reason]');
       assert(await explanation.isVisible(), 'Each question gives a short reason');
       assert.match(await explanation.innerText(), /аттестат|лет|образован|допуск/i, 'Education context explains why the qualification matters');
+      await actualRoleArtwork(page.locator('[data-plan-question]'), 'copilot', 'portrait', `plan questionnaire ${width}`);
     }
     await capture('plan-question');
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
@@ -302,6 +364,7 @@ try {
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Assistant context preserves the quiz draft');
     await page.locator('#document-check').scrollIntoViewIfNeeded();
+    if (!baseline) await actualRoleArtwork(page.locator('#document-check [data-document-assistant]'), 'inspector', 'portrait', `plan document ${width}`);
     await capture('plan-document');
 
     await visit('/portal');
@@ -319,6 +382,7 @@ try {
       assert.equal(await page.locator('[data-portal-overview] button').count(), 0, 'Overview adds no competing action buttons');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
+      await actualRoleArtwork(page.locator('[data-portal-road]'), 'route', 'figure', `portal road ${width}`);
       await noDuplicatePortraits(page, `portal overview ${width}`);
       await audit(`portal overview ${width}`);
     }
@@ -343,6 +407,7 @@ try {
     assert.equal(await page.locator('[data-step-detail] [data-primary-action]').count(), 1, 'Current file step offers exactly one upload action');
     if (!baseline) {
       assert(await page.locator('[data-step-detail] [data-vespi-variant="inspector"]').count() > 0, 'Current file step uses inspector context');
+      await actualRoleArtwork(page.locator('[data-step-detail] [data-portal-step-guide]'), 'inspector', 'portrait', `portal upload ${width}`);
       await noDuplicatePortraits(page, `portal upload ${width}`);
       await audit(`portal upload ${width}`);
     }
@@ -356,6 +421,7 @@ try {
     assert(await report.getByText('Выбери программу и учебный год.', { exact: true }).isVisible(), 'The saved next action stays visible');
     if (!baseline) {
       assert.equal(await page.locator('[data-portal-document-inspector]').getAttribute('data-vespi-variant'), 'inspector');
+      await actualRoleArtwork(page.locator('[data-portal-document-inspector]'), 'inspector', 'portrait', `saved report ${width}`);
       await noDuplicatePortraits(page, `saved report ${width}`);
       await audit(`saved report ${width}`);
     }

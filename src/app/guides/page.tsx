@@ -73,7 +73,7 @@ function Insight({ guide }: { guide: GuideCard }) {
   const id = guide.id, help = GUIDE_HELP[id], action = guideAction(id);
   const note = guide.warn || (id === "tests" ? TESTS_TIP : "");
   const variant = help.action === "document" || ["cimea", "con", "visa"].includes(id) ? "inspector" : ["education", "tests"].includes(id) ? "route" : "copilot";
-  return <VespiAssistant variant={variant} layout="editorial-callout" label="Веспи · помогу разобраться"
+  return <VespiAssistant variant={variant} layout="editorial-callout" appearance={variant === "inspector" ? "figure" : "portrait"} label="Веспи · помогу разобраться"
     className={ui.insight} data-vespi-tip data-guide-next={id} aria-label="Совет Веспи">
     <div className={ui.insightCopy}>
       <p className={ui.insightNext}>{help.next}</p>

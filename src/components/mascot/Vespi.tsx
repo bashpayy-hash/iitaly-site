@@ -16,12 +16,29 @@ const FIGURE: VespiAsset = {
   srcSet: "/mascot/vespi/vespi-ride-route-160.webp 160w, /mascot/vespi/vespi-ride-route-320.webp 320w, /mascot/vespi/vespi-ride-route-640.webp 640w",
   width: 320, height: 397,
 };
+const COPILOT_PORTRAIT: VespiAsset = {
+  src: "/mascot/vespi/vespi-avatar-copilot-v1-96.webp",
+  srcSet: "/mascot/vespi/vespi-avatar-copilot-v1-96.webp 96w, /mascot/vespi/vespi-avatar-copilot-v1-192.webp 192w",
+  width: 192, height: 192,
+};
+const INSPECTOR_PORTRAIT: VespiAsset = {
+  src: "/mascot/vespi/vespi-avatar-inspector-v1-96.webp",
+  srcSet: "/mascot/vespi/vespi-avatar-inspector-v1-96.webp 96w, /mascot/vespi/vespi-avatar-inspector-v1-192.webp 192w",
+  width: 192, height: 192,
+};
+const INSPECTOR_FIGURE: VespiAsset = {
+  src: "/mascot/vespi/vespi-inspector-v1-160.webp",
+  srcSet: "/mascot/vespi/vespi-inspector-v1-160.webp 160w, /mascot/vespi/vespi-inspector-v1-320.webp 320w",
+  width: 320, height: 320,
+};
 
 /** Role-specific artwork is registered only after likeness/alpha review.
  * No missing URLs or invented expert poses: every role has an approved fallback. */
 export const VESPI_ROLE_ASSETS: Record<VespiVariant, Partial<Record<VespiPresentation, VespiAsset>>> = {
   route: { portrait: PORTRAIT, figure: FIGURE },
-  inspector: {}, celebrate: {}, copilot: {},
+  inspector: { portrait: INSPECTOR_PORTRAIT, figure: INSPECTOR_FIGURE },
+  copilot: { portrait: COPILOT_PORTRAIT },
+  celebrate: {},
 };
 
 /** The approved plush identity with its user-requested helmet route detail.
