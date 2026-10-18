@@ -25,6 +25,8 @@ Build, TypeScript and ESLint pass. The warm palette scan covers 240 tracked prod
 
 The old progress review's whole-card-link, fixed five-phase, front-facing stage portrait and 8–92% scooter assertions intentionally changed with the brief. The review now checks a single actual-stage navigator and its existing actions. Fixture definitions were extracted unchanged into [portal-review-fixtures.mjs](../../scripts/portal-review-fixtures.mjs). Other reviews target the explicit next-action link instead of clicking a non-interactive card background. They continue to exercise the same product actions.
 
+The pricing content comparison permits exactly one approved shorter Vespi sentence. It continues to compare every other original text node, including prices, terms, inclusions and limits, without exclusions.
+
 ## Screenshots
 
 | Screen | Before 1440 | After 1440 | Before 390 | After 390 |
