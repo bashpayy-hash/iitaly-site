@@ -5,21 +5,20 @@ import dynamic from "next/dynamic";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
-import { isManualTask, portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
-import { Vespi } from "@/components/mascot/Vespi";
+import { PortalStageIcon } from "./PortalStageIcon";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./portal-plan.module.css";
 import rules from "./portal-rules.module.css";
-import { WorkspacePhases } from "./WorkspaceCoach";
 
 const PortalRules = dynamic(() => import("./PortalRules").then(module => module.PortalRules), {
   loading: () => <p role="status" className={rules.loading}>Загружаю справку…</p>,
 });
 
-type PlanActions = { onOpenTask: (task: PortalTask) => void; onCompleteTask?: (task: PortalTask) => void; busy?: boolean };
+type PlanActions = { onOpenTask: (task: PortalTask) => void };
 
-export function PlanSection({ data, onOpenTask, onCompleteTask, busy }: PlanActions & { data: PortalData }) {
+export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalData }) {
   const [rulesOpen, setRulesOpen] = useState(false);
   const position = portalPosition(data);
   const hasTasks = data.roadmap.some(stage => stage.tasks.length > 0);
@@ -35,7 +34,7 @@ export function PlanSection({ data, onOpenTask, onCompleteTask, busy }: PlanActi
       currentTask={position.task?.id}
       current={stage.id === position.stage?.id}
       next={stage.id === nextStage?.id}
-      onOpenTask={onOpenTask} onCompleteTask={onCompleteTask} busy={busy}
+      onOpenTask={onOpenTask}
     />;
   }
 
@@ -57,7 +56,6 @@ export function PlanSection({ data, onOpenTask, onCompleteTask, busy }: PlanActi
           </p>}
         </details>
       </div>
-      <WorkspacePhases data={data} onOpenTask={onOpenTask} />
       {!position.stage && <VespiAssistant as="div" variant={hasTasks ? "celebrate" : "copilot"} layout="inline-pill" appearance="indicator" className={styles.complete}
         label={hasTasks ? "Веспи · маршрут пройден" : "Веспи · маршрут"}
         message={hasTasks ? "Все шаги маршрута отмечены." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."} />}
@@ -74,7 +72,7 @@ export function PlanSection({ data, onOpenTask, onCompleteTask, busy }: PlanActi
   );
 }
 
-function StageView({ stage, data, currentTask, current, next, onOpenTask, onCompleteTask, busy }: PlanActions & {
+function StageView({ stage, data, currentTask, current, next, onOpenTask }: PlanActions & {
   stage: PortalStage;
   data: PortalData;
   currentTask?: string;
@@ -93,8 +91,8 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask, onComp
       onToggle={event => setOpen(event.currentTarget.open)}
     >
       <summary className={styles.stageHeading} id={`portal-stage-heading-${stage.id}`}>
-        {current && <span className={styles.stageCopilot}><Vespi variant={currentTask && DOC_TASKS[currentTask] ? "inspector" : "copilot"} presentation="portrait" sizes="(max-width: 600px) 56px, 72px" /></span>}
-        <span className={styles.stageTitle}>{!current && <span className={styles.nextLabel}>{completed === stage.tasks.length ? "Пройдено · " : next ? "Потом · " : "Позже · "}</span>}{stage.title}</span>
+        <PortalStageIcon id={stage.id} className={styles.stageIcon} />
+        <span className={styles.stageTitle}>{!current && <span className={styles.nextLabel}>{completed === stage.tasks.length ? "Пройдено · " : next ? "Потом · " : "Позже · "}</span>}{current ? "Текущие шаги" : stage.title}</span>
         <span className={styles.stageCount}>{completed} из {stage.tasks.length}</span>
         <span className={styles.chevron} aria-hidden="true" />
       </summary>
@@ -106,14 +104,14 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask, onComp
           done={Boolean(data.done[task.id])}
           doc={data.docs?.[task.id]}
           current={task.id === currentTask}
-          onOpenTask={onOpenTask} onCompleteTask={onCompleteTask} busy={busy}
+          onOpenTask={onOpenTask}
         />)}
       </ol>
     </details>
   );
 }
 
-function TaskRow({ task, href, done, doc, current, onOpenTask, onCompleteTask, busy }: PlanActions & {
+function TaskRow({ task, href, done, doc, current, onOpenTask }: PlanActions & {
   task: PortalTask;
   href: string;
   done: boolean;
@@ -130,7 +128,7 @@ function TaskRow({ task, href, done, doc, current, onOpenTask, onCompleteTask, b
   }
 
   return (
-    <li className={styles.task} data-has-check={Boolean(current && !done && isManualTask(task) && onCompleteTask) || undefined}>
+    <li className={styles.task}>
       <a
         className={styles.taskLink}
         href={href}
@@ -149,10 +147,6 @@ function TaskRow({ task, href, done, doc, current, onOpenTask, onCompleteTask, b
         </span>
         <span className={styles.phase}>{done ? "Сделано" : current ? "Сейчас" : task.owner || "Ты"}</span>
       </a>
-      {current && !done && task.available !== false && isManualTask(task) && onCompleteTask && <label className={styles.completeCheck}>
-        <input type="checkbox" checked={false} disabled={busy} aria-label={`Отметить выполненным: ${taskTitle(task)}`} onChange={() => onCompleteTask(task)} />
-        <span aria-hidden="true" />
-      </label>}
     </li>
   );
 }

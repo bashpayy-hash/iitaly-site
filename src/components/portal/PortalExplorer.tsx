@@ -562,7 +562,7 @@ export function PortalExplorer() {
     && (data.done[activeTask.id] || activeTask.available !== false));
   // The persistent road and open conversation share one mascot. University
   // selection keeps the road's guide; task/report panels own their portrait.
-  const detailOwnsMascot = Boolean((section === "plan" && !openTaskId && position?.stage) || (activeTask && (section === "docs" || (section === "plan" && openTaskId && !shortlistEditable))));
+  const detailOwnsMascot = section !== "today";
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
   const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
@@ -613,7 +613,7 @@ export function PortalExplorer() {
         profileFromTask.current = false; setEditingProfile(false); changeSection("today");
       }} />
       {editingProfile && data.client.onboardingComplete && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
-        <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen />
+        <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen navigationOnly />
       </section>}
       </div>
       <main id="main">
@@ -656,7 +656,7 @@ export function PortalExplorer() {
     } />
     <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
-        showMascot={!detailOwnsMascot}
+        showMascot={!detailOwnsMascot} navigationOnly={section !== "today"}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
         secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
@@ -738,7 +738,7 @@ export function PortalExplorer() {
                 busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)} onComplete={() => { void handleToggle(activeTask.id, true); }} />}
               {activeTask.id === "checkDocs" && <DocsSection data={data} currentTaskId={position?.task?.id} onOpenDoc={showDocument} embedded />}
               {activeTask.id === "kit" && <PortalPermessoStep />}
-            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} busy={Boolean(busyTask)} onCompleteTask={task => { if (task.id === currentTask?.id && task.available !== false) void handleToggle(task.id, true); }} />)}
+            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
               <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}

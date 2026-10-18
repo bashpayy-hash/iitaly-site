@@ -1,0 +1,57 @@
+{
+  "base": "4ee084f9c900fa7660a55b17eeab0e11339710f5",
+  "palette_fonts_brand_unchanged": true,
+  "build": "passed",
+  "eslint": "passed",
+  "screenshots": 18,
+  "reviews": {
+    "portal-progress": {
+      "errors": [],
+      "checks": 36,
+      "source": "design-review/portal-progress/results.json"
+    },
+    "tactile": {
+      "errors": [],
+      "checks": 6,
+      "source": "design-review/tactile/results.json"
+    },
+    "workspace": {
+      "errors": [],
+      "checks": 2,
+      "source": "design-review/workspace/results.json"
+    },
+    "vespi-system": {
+      "checks": 4,
+      "source": "design-review/vespi-system/results.json"
+    },
+    "portal-document-report": {
+      "errors": [],
+      "checks": 3,
+      "source": "design-review/portal-document-report/results.json"
+    },
+    "portal-contained-flow": {
+      "errors": [],
+      "checks": 8,
+      "source": "design-review/portal-contained-flow/results.json"
+    },
+    "portal-university-selection": {
+      "errors": [],
+      "checks": 5,
+      "source": "design-review/portal-university-selection/results.json"
+    },
+    "portal-login": {
+      "checks": 5,
+      "source": "design-review/portal-login/results.json"
+    },
+    "reminders": {
+      "errors": [],
+      "checks": 6,
+      "source": "design-review/reminders/results.json"
+    },
+    "warm-palette": {
+      "errors": [],
+      "checks": 12,
+      "source": "design-review/warm-palette/results.json"
+    }
+  }
+}

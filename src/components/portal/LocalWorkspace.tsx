@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
 import { LayoutDashboard, ListChecks, Files, Settings, ShieldCheck, FileText } from "lucide-react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
@@ -17,6 +17,7 @@ import { Wizard } from "@/components/plan/Wizard";
 import { DocCheck, DocResult } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
 import { PlanSection } from "./PlanSection";
+import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { WorkspaceCoach } from "./WorkspaceCoach";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
@@ -50,6 +51,8 @@ export function LocalWorkspace() {
   const [reportCache, setReportCache] = useState<Record<string, Record<string, PortalDoc>>>({});
   const reports = useMemo(() => reportCache[scope] || {}, [reportCache, scope]);
   const [location, setLocation] = useState<Location>({ view: "today", task: null, doc: null });
+  const [roadTravel, setRoadTravel] = useState<RoadTravel>();
+  const travelSequence = useRef(0);
   const [purpose, setPurpose] = useState("all");
   const data = useMemo(() => buildLocalWorkspace(draft, local, reports), [draft, local, reports]);
   const position = portalPosition(data);
@@ -58,6 +61,14 @@ export function LocalWorkspace() {
   const documents = tasks.filter(task => DOC_TASKS[task.id]);
   const plan = draft.complete ? buildPlan(draft.answers) : null;
   const wizardOpen = active?.id === "profile";
+  const chrome = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = chrome.current;
+    if (!element) return;
+    const measure = () => element.parentElement?.style.setProperty("--portal-chrome-height", `${element.getBoundingClientRect().height}px`);
+    measure(); const observer = new ResizeObserver(measure); observer.observe(element);
+    return () => observer.disconnect();
+  }, [wizardOpen]);
 
   useEffect(() => {
     const sync = () => setLocation(readLocation());
@@ -81,6 +92,7 @@ export function LocalWorkspace() {
   function openTask(task: PortalTask) { navigate({ view: DOC_TASKS[task.id] ? "docs" : "plan", task: DOC_TASKS[task.id] ? null : task.id, doc: DOC_TASKS[task.id] ? task.id : null }); }
   function complete(task: PortalTask) {
     if (task.id !== position.task?.id || task.available === false || DOC_TASKS[task.id]) return;
+    if (!data.done[task.id]) setRoadTravel({ fromDone:tasks.filter(item => data.done[item.id]).length, id:++travelSequence.current });
     updateLocal({ ...local, done: { ...local.done, [task.id]: true } });
     navigate({ view: "today", task: null, doc: null });
   }
@@ -88,6 +100,7 @@ export function LocalWorkspace() {
     const report: PortalDoc = { verdict: result.verdict || "warn", summary: result.summary, result, checkedAt: new Date().toISOString() };
     const kind = documentOutcome(report, applicationYear).kind;
     const approved = kind === "approved";
+    if (approved && !data.done[task.id]) setRoadTravel({ fromDone:tasks.filter(item => data.done[item.id]).length, id:++travelSequence.current });
     setReportCache(current => ({ ...current, [scope]: { ...current[scope], [task.id]: report } }));
     // A missing programme/context is an uncertainty, never a file defect or an
     // approval. Only a real passed review closes a file step.
@@ -103,13 +116,13 @@ export function LocalWorkspace() {
   const clarify = documents.find(task => data.docs[task.id] && documentOutcome(data.docs[task.id], applicationYear).kind !== "missing");
 
   return <div className={`${portal.portal} ${styles.workspace}`} data-local-workspace data-portal-design="shared-site">
-    <div className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<div className={styles.headerActions}>
+    <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<div className={styles.headerActions}>
       <a href="#iitaly-chat" data-portal-assistant data-step-id={active?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: active?.id, taskTitle: active ? taskTitle(active) : undefined, taskContext: active?.explain } })); }}>Помощник</a>
       <a href="/portal?view=settings" aria-label="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
-    </div>} /></div>
+    </div>} />{!wizardOpen && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
     <main id="main" className={styles.frame}>
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
-      {!wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} currentOpen={Boolean(active)} showMascot={!((location.view === "plan" && !showDetail && position.stage) || documentInspectorOpen)} />}
+      {location.view === "today" && !wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} />}
       <div className={styles.layout}>
         <aside><nav className={styles.nav} aria-label="Разделы личного кабинета">{NAV.map(({ view, title, Icon }) => <a key={view} href={view === "today" ? "/portal" : `/portal?view=${view}`} aria-current={location.view === view ? "page" : undefined} onClick={event => link(event, { view, task: null, doc: null })}><Icon size={18} aria-hidden="true"/>{title}</a>)}</nav></aside>
         <div className={styles.content}>
@@ -120,7 +133,7 @@ export function LocalWorkspace() {
             <section className={styles.docFeature}><ShieldCheck size={26} aria-hidden="true"/><div><h2>Проверяй документы до подачи</h2><p>Здесь доступна бесплатная проверка одного файла. Безлимитная проверка комплекта и сохранённые разборы — в подключённом кабинете за 667 ₸.</p><a href="/prices">Что входит в кабинет ↗</a></div></section>
             {local.selectedIds.length > 0 && <div className={styles.paper}><h2>Твои университеты</h2><p>{shortlistNames(local.selectedIds).join(" · ")}</p><a className={styles.textLink} href="/portal?view=plan&task=shortlist" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "shortlist"); if (task) openTask(task); }}>Открыть карту и сравнение</a></div>}
           </>}
-          {location.view === "plan" && !showDetail && <><PlanSection data={data} onOpenTask={openTask} onCompleteTask={complete}/></>}
+          {location.view === "plan" && !showDetail && <><PlanSection data={data} onOpenTask={openTask}/></>}
           {showDetail && <>
             {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => link(event, { view: location.doc ? "docs" : "plan", task: null, doc: null })}>← Назад</a>}
             {active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1><Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { updateDraft({ answers, step: 10, complete: true }); navigate({ view: "today", task: null, doc: null }); }}/></>

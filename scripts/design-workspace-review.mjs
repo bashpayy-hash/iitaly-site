@@ -104,10 +104,12 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
     await page.getByRole('link',{name:'План',exact:true}).click();
-    assert.equal(await page.locator('[aria-label="Пять этапов маршрута"] a').count(),5);
+    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
+    assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
-    assert.equal(await checks.count(),1,'Only current eligible self-report can be checked');
-    await checks.click();
+    assert.equal(await checks.count(),0,'Plan rows only open steps; self-report has one path');
+    await page.locator('[data-portal-task][data-current-task=true]').click();
+    await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
     await page.getByRole('link',{name:'Документы',exact:true}).click();

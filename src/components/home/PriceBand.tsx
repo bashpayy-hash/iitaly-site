@@ -31,7 +31,7 @@ export function PriceBand() {
             label="Веспи · перед каждой подачей"
             title={<h3>Проверка документов без лимита</h3>}
             className={assistant.priceInsight}
-            message="Исправил перевод? Пришли новую версию на AI-сверку. Повторные проверки в кабинете входят в этот платёж."
+            message="Проверяй исправленные версии без доплаты."
           />
           <AppleButtonLink href="/prices" variant="filled" className="mt-7">
             Смотреть, что входит

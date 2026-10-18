@@ -133,6 +133,11 @@ try {
       const cloud = await environment(width, fixture());
       await login(cloud.page);
       await capture(cloud.page, `${version}-portal-overview-${width}`);
+      if (version === 'before') {
+        await cloud.page.getByRole('link', { name:'План', exact:true }).filter({ visible:true }).click();
+        await cloud.page.locator('[data-current="true"]').waitFor();
+        await capture(cloud.page, `before-portal-plan-${width}`);
+      }
       if (version === 'after') {
         const chrome = await cloud.page.locator('[data-portal-chrome]').evaluate(node => ({ background:getComputedStyle(node).backgroundColor, blur:getComputedStyle(node).backdropFilter }));
         assert.notEqual(chrome.background, 'rgb(255, 255, 255)', 'Pinned chrome is integrated with the warm canvas');
@@ -140,8 +145,8 @@ try {
         await cloud.page.getByRole('link', { name:'План', exact:true }).filter({ visible:true }).click();
         await cloud.page.locator('[data-current="true"]').waitFor();
         await cloud.page.waitForFunction(() => document.querySelector('a[aria-current="page"][href*="view=plan"]'));
-        const marker = await cloud.page.locator('[data-road-location]').evaluate(node => ({ width:getComputedStyle(node).width, height:getComputedStyle(node).height, radius:getComputedStyle(node).borderRadius }));
-        assert.deepEqual(marker, { width:'18px', height:'18px', radius:'50%' }, 'The quiet route marker must not morph from the old portrait box');
+        const marker = await cloud.page.locator('[data-road-location] > span').evaluate(node => ({ width:getComputedStyle(node).width, height:getComputedStyle(node).height, radius:getComputedStyle(node).borderRadius }));
+        assert.deepEqual(marker, { width:'10px', height:'10px', radius:'50%' }, 'The quiet route marker must not morph from the old portrait box');
         results.push({ width, marker });
         await oneMascot(cloud.page, 'Current stage');
         await capture(cloud.page, `after-portal-plan-${width}`);
@@ -150,13 +155,13 @@ try {
     }
     if (baseline) {
       const growth = areas.after / areas.before;
-      assert(growth >= 1.25, `Guide illustration area must grow at least 25%: ${growth}`);
+      assert(growth >= .98, `The approved guide illustration area remains intact: ${growth}`);
       results.push({ width, guideAreaGrowth:Math.round((growth - 1) * 1000) / 10 });
     }
     root = resolve('out');
     const { context, page, calls } = await environment(width, fixture(true));
     await login(page);
-    await page.locator('[data-portal-road]').click();
+    await page.locator('[data-portal-road] [data-road-open]').click();
     const zone = page.locator('[data-portal-upload-zone]');
     await zone.waitFor();
     await oneMascot(page, 'Document upload');
