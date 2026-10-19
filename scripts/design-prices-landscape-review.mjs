@@ -57,6 +57,26 @@ async function layout(page) {
     }),
   }));
 }
+async function preservedPricingCopy(base, head) {
+  const before=await textInventory(base), after=await textInventory(head);
+  const packageBefore=await textInventory(base, '#main-package');
+  // The user removed this package's repeated pricing header only. Remove one
+  // occurrence from the multiset, not every price/term elsewhere on the page.
+  if(packageBefore.includes('Поступление под ключ')) {
+    for(const value of ['Поступление под ключ','Один платёж','Всё, что делает система, входит в цену','667 ₸','разово · без подписки и доплат']) {
+      assert.equal(packageBefore.filter(item=>item===value).length,1,`Approved package removal is exact: ${value}`);
+      const index=before.indexOf(value);
+      assert(index>=0);
+      before.splice(index,1);
+    }
+  }
+  assertContentPreserved(before,after,'Pricing copy outside the approved repeated header');
+  const packageCard=head.locator('#main-package');
+  assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);
+  assert.equal(await packageCard.getByText('Весь маршрут поступления в одном кабинете',{exact:true}).count(),1);
+  assert.doesNotMatch(await packageCard.innerText(),/667\s*₸/,'The contents card does not repeat the price');
+  assert.match(await head.locator('[data-section="prices-header"] h1').innerText(),/667\s*₸/,'The actual price remains in the hero');
+}
 try {
   const dense=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:3,reducedMotion:'reduce'});
   await dense.route('**/*',route=>['127.0.0.1','localhost'].includes(new URL(route.request().url()).hostname)?route.continue():route.abort());
@@ -70,7 +90,7 @@ try {
     const head = await context.newPage(), base = await context.newPage(); activePage = head;
     for (const page of [head,base]) page.on('pageerror', error => errors.push(error.message));
     await visit(head, 4187); await visit(base, 4188);
-    assertContentPreserved(await textInventory(base), await textInventory(head), 'Pricing copy');
+    await preservedPricingCopy(base, head);
     await writeFile(resolve(output, `layout-${width}.json`), JSON.stringify({before: await layout(base), after: await layout(head)}, null, 2));
     assert.equal(await head.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     const art = head.locator('[data-prices-landscape]');
@@ -92,6 +112,15 @@ try {
     }
     for(const image of await canvas.locator('img').all()) assert(await image.evaluate(i=>i.complete&&i.naturalWidth>0),'All scene images decode locally');
     const protectedCopy=head.locator('[data-protected-typography]');
+    const leaves=protectedCopy.locator('[data-price-leaf]');
+    assert.equal(await leaves.count(),2,'Exactly two painted leaves overlap the banner');
+    for(const leaf of await leaves.all()) {
+      assert.equal(await leaf.getAttribute('aria-hidden'),'true');
+      assert.equal(await leaf.evaluate(el=>getComputedStyle(el).pointerEvents),'none','Leaves cannot intercept a control');
+      assert(await leaf.locator('img').evaluate(img=>img.complete&&img.naturalWidth>0),'The existing botanical artwork decodes');
+      const leafBox=await leaf.boundingBox(), copyBox=await protectedCopy.boundingBox();
+      assert(leafBox.y<copyBox.y && leafBox.y+leafBox.height>copyBox.y,'A leaf crosses the top edge of the banner');
+    }
     assert.match(await protectedCopy.evaluate(el=>getComputedStyle(el,'::before').backgroundImage),/radial-gradient/,'Text has a cream matte above the paint');
     const type=page=>page.locator('[data-section=prices-header] h1').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','color'].map(k=>s[k]);});
     assert.deepEqual(await type(head),await type(base),'Heading type and color are preserved');
@@ -117,14 +146,24 @@ try {
       await head.screenshot({path:resolve(output, `prices-${width}.png`),animations:'disabled'});
       await head.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-${width}.png`),animations:'disabled'});
       await base.locator('[data-section="prices-header"]').screenshot({path:resolve(output, `hero-before-${width}.png`),animations:'disabled'});
+      if(width===390||width===1440) {
+        await head.locator('#main-package').evaluate(element=>{
+          const clearance=(document.querySelector('header')?.getBoundingClientRect().bottom||0)+20;
+          window.scrollBy({top:element.getBoundingClientRect().top-clearance,behavior:'instant'});
+        });
+        await head.screenshot({path:resolve(output,`package-contents-${width}.png`),animations:'disabled'});
+        await head.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+      }
     }
     const launcher=head.locator('#chat-launcher');
     assert.equal(await launcher.getAttribute('data-launcher-labelled'),'true','Pricing has a named assistant capsule');
     assert.match(await launcher.innerText(),/Спросить Веспи/);
     assert.match(await launcher.getAttribute('aria-label'),/Спросить Веспи/,'Visible action is included in its accessible name');
     if(width===1440){
+      await head.waitForFunction(()=>document.querySelector('#chat-launcher')?.getBoundingClientRect().height>=44);
       assert((await launcher.boundingBox()).height>=44);
       await launcher.click();await head.getByRole('dialog').waitFor();
+      await head.waitForFunction(()=>document.activeElement===document.getElementById('chat-input'));
       assert.equal(chatCalls,0,'Opening the assistant never sends an AI request');
       await head.keyboard.press('Escape');await head.getByRole('dialog').waitFor({state:'hidden'});
     }

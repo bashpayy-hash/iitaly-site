@@ -20,6 +20,7 @@ import { PlanSection } from "./PlanSection";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { WorkspaceCoach } from "./WorkspaceCoach";
+import { PortalWelcome } from "./PortalWelcome";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
 
@@ -120,8 +121,14 @@ export function LocalWorkspace() {
     <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<div className={styles.headerActions}>
       <a href="#iitaly-chat" data-portal-assistant data-step-id={active?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: active?.id, taskTitle: active ? taskTitle(active) : undefined, taskContext: active?.explain } })); }}>Помощник</a>
       <a href="/portal?view=settings" aria-label="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
-    </div>} />{!wizardOpen && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
+    </div>} />{!wizardOpen && location.view !== "today" && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
     <main id="main" className={styles.frame}>
+      {location.view === "today" && !wizardOpen && <div className={styles.arrival} data-portal-arrival>
+        <PortalWelcome intakeYear={data.client.intakeYear} />
+        <section data-portal-progress-shell aria-label="Прогресс поступления">
+          <PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
+        </section>
+      </div>}
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
       {location.view === "today" && !wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} />}
       <div className={styles.layout}>

@@ -4,10 +4,30 @@
   content:""; position:absolute; z-index:-1; inset:-34px -20px -20px; pointer-events:none;
   background:radial-gradient(ellipse at center,var(--color-cream) 28%,color-mix(in srgb,var(--color-cream) 97%,transparent) 59%,color-mix(in srgb,var(--color-cream) 78%,transparent) 72%,transparent 90%);
 }
+/* Two details from the approved botanical artwork sit in front of the banner. */
+.foregroundLeaf {
+  position:absolute; z-index:2; width:126px; height:64px; overflow:hidden;
+  pointer-events:none; user-select:none;
+}
+.foregroundLeaf img { position:absolute; width:450px; max-width:none; height:auto; left:-80px; top:-54px; }
+.leafLeft { left:-38px; top:-56px; transform:rotate(-18deg); }
+.leafRight { right:-42px; top:-34px; transform:scaleX(-1) rotate(-28deg); }
 .landscape { display:block; pointer-events:none; user-select:none; }
 .landscape img { display:block; width:100%; height:auto; }
 .packages { position:relative; padding-top:20px; }
 @media (min-width:960px) { .copy::before { inset-inline:-72px; } }
-@media (max-width:767px) { .hero { padding:48px 20px 20px; } .copy::before { inset:-20px -20px -14px; } }
+@media (min-width:768px) and (max-width:1023px) {
+  .leafLeft { left:12px; }
+  .leafRight { right:12px; }
+}
+@media (max-width:767px) {
+  .hero { padding:48px 20px 20px; }
+  .copy::before { inset:-20px -20px -14px; }
+  .foregroundLeaf { width:84px; height:43px; }
+  .foregroundLeaf img { width:300px; left:-54px; top:-36px; }
+  .leafLeft { left:0; top:-28px; }
+  .leafRight { right:0; top:-18px; }
+}
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more) { .copy::before { background:var(--color-cream); } }
+@media (forced-colors:active),print { .foregroundLeaf { display:none; } }
 @media print { .hero { padding-block:24px; } .copy::before { display:none; } }

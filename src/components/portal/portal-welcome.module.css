@@ -1,0 +1,14 @@
+.welcome { display:flex; align-items:center; gap:24px; min-width:0; padding:8px 8px 20px; color:var(--portal-ink); }
+.welcome img { display:block; flex:0 0 auto; width:136px; height:160px; object-fit:contain; user-select:none; }
+.copy { min-width:0; }
+.copy h1 { margin:0; font:600 clamp(26px,2.6vw,34px)/1.16 var(--portal-heading-font); letter-spacing:-.025em; overflow-wrap:anywhere; }
+.copy p { margin:10px 0 0; max-width:50ch; color:var(--portal-muted); font-size:16px; line-height:1.5; }
+.copy .intake { margin-top:7px; font-size:13px; }
+@media(max-width:600px) {
+  .welcome { gap:16px; padding:4px 0 18px; }
+  .welcome img { width:88px; height:112px; }
+  .copy h1 { font-size:25px; }
+  .copy p { margin-top:6px; font-size:14px; }
+  .copy .intake { margin-top:5px; font-size:12px; }
+}
+@media(max-width:380px) { .welcome { gap:12px; } .welcome img { width:76px; height:104px; } .copy h1 { font-size:23px; } }

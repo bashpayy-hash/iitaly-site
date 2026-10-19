@@ -159,7 +159,7 @@ async function roleAssetBudget() {
   const bytes = sizes.reduce((sum, size) => sum + size, 0);
   assert(bytes <= 64 * 1024, `Role artwork stays within 64 KiB for all responsive variants, received ${bytes} bytes`);
   const contextual=JSON.parse(await readFile('design/mascot/vespi/contextual-assets.json','utf8')).assets;
-  assert.deepEqual(contextual.map(asset=>asset.file).sort(),['public/mascot/vespi-document-coach.webp','public/mascot/vespi-guide-invite.webp','public/mascot/vespi-search-avatar.webp']);
+  assert.deepEqual(contextual.map(asset=>asset.file).sort(),['public/mascot/vespi-document-coach.webp','public/mascot/vespi-guide-invite.webp','public/mascot/vespi-guide-peek.webp','public/mascot/vespi-portal-welcome.webp','public/mascot/vespi-search-avatar.webp']);
   for(const asset of contextual){
     const source=await readFile(asset.file);
     assert.equal(source.length,asset.bytes);
@@ -168,7 +168,7 @@ async function roleAssetBudget() {
     assert.equal(response.status,200);
     assert.deepEqual(Buffer.from(await response.arrayBuffer()),source);
   }
-  assert(contextual.reduce((sum,asset)=>sum+asset.bytes,0)<=128*1024,'Three contextual images stay small enough for mobile');
+  assert(contextual.reduce((sum,asset)=>sum+asset.bytes,0)<=128*1024,'The contextual illustration set stays within the existing mobile asset budget');
 }
 
 // The user's follow-up explicitly replaces the heavy IITALY. wordmark with

@@ -35,6 +35,11 @@
 /* Small checkpoints express real saved progress, with no game currency. */
 .eyebrow { margin:0 0 7px; color:var(--portal-muted); font-size:12px; line-height:1.5; }
 .nextAction { min-width:0; }
+.stacked { grid-template-columns:minmax(0,1fr); gap:20px; }
+.stacked .focus { border-top:1px solid var(--portal-border); padding-top:20px; }
+.stacked .nextAction { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:28px; align-items:center; }
+.stacked .nextAction > :not(.action) { grid-column:1; }
+.stacked .action { grid-column:2; grid-row:1 / span 3; margin-top:0; }
 .nav { gap:6px; padding:8px 2px 12px; }
 .nav a { position:relative; justify-content:flex-start; gap:9px; min-width:144px; min-height:66px; padding:8px 10px; border-radius:16px; white-space:normal; }
 .nav a::after { content:""; position:absolute; left:52px; right:-9px; top:31px; height:1px; background:var(--portal-border); z-index:0; }
@@ -60,4 +65,5 @@
 .journey[data-road-feedback-active=true] .count { animation:savedStep 450ms ease-out; }
 @keyframes savedStep { from { transform:translateY(4px); } to { transform:translateY(0); } }
 @media(max-width:480px) { .nav a { min-width:132px; padding:8px; gap:7px; } .stageCopy > span { font-size:12px; } .routeNote { display:none; } }
+@media(max-width:600px) { .stacked { gap:16px; } .stacked .focus { padding-top:16px; } .stacked .nextAction { display:block; } .stacked .action { margin-top:12px; } }
 @media(prefers-reduced-motion:reduce) { .checkpoint { transition:none; } .nav a:hover .checkpoint { transform:none; } .journey[data-road-feedback-active=true] .count { animation:none; } }

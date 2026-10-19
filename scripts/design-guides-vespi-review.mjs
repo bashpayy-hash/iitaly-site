@@ -96,6 +96,8 @@ try {
     assert.equal(await page.locator('[data-guide-sticky]').count(), 0, 'Reading has no competing floating sales offer');
     assert.equal(await page.locator('[data-guide-current] [data-vespi]').count(), 0, 'Stage navigation remains text-only');
     assert(await page.locator('#guide-search').evaluate(input => input.getBoundingClientRect().height >= 44), 'The search field has a 44px touch target');
+    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0,'A fresh visit asks for a starting point before opening an article');
+    assert.equal(await page.locator('[data-guide-empty]').count(),1,'The initial route choice has a clear instruction');
     await screenshot('guides-top');
     await page.locator('[data-guide-select="education"]').click();
     assert.equal(new URL(page.url()).hash, '#education');
@@ -104,6 +106,20 @@ try {
     assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('img').count(), 0, 'Action advice is readable without a repeated mascot');
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
     assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
+    const timeline = page.locator('[data-guide-timeline]');
+    const stageLinks = timeline.locator('a[aria-controls="guide-reading-content"]');
+    assert.equal(await stageLinks.count(), 3, 'Three real route stages remain directly available');
+    const timelineBox = await timeline.boundingBox();
+    const panelBox = await page.locator('[data-guide-panel="education"]').boundingBox();
+    assert(timelineBox.y + timelineBox.height <= panelBox.y + 1, 'Stage selection is above the reading panel, never a left sidebar');
+    const stageBoxes = await stageLinks.evaluateAll(links => links.map(link => { const rect=link.getBoundingClientRect(); return {x:rect.x,y:rect.y,width:rect.width,height:rect.height}; }));
+    assert(stageBoxes.every(box => Math.abs(box.y-stageBoxes[0].y)<1), 'The stage checkpoints share a horizontal row');
+    assert(stageBoxes.every((box,index) => !index || box.x>=stageBoxes[index-1].x+stageBoxes[index-1].width-1), 'Stages follow readable left-to-right order');
+    await page.locator('[data-guide-invite]').evaluate(element => {
+      const clearance=(document.querySelector('header')?.getBoundingClientRect().bottom||0)+20;
+      window.scrollBy({top:element.getBoundingClientRect().top-clearance,behavior:'instant'});
+    });
+    await screenshot('guides-invitation-and-top-route');
     await readingSurfaceContrast();
     assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());
     await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).click();
@@ -257,8 +273,17 @@ try {
     }
     const invite = page.locator('[data-guide-invite]');
     assert.equal(await invite.count(),1,'One contextual invitation replaces the promotional banner');
-    assert.equal(await invite.locator('[data-vespi-guide-invite]').getAttribute('src'),'/mascot/vespi-guide-invite.webp');
+    assert.equal(await invite.locator('[data-vespi-guide-peek]').getAttribute('src'),'/mascot/vespi-guide-peek.webp');
     await invite.locator('img').evaluate(image=>image.decode());
+    const peekAction=invite.getByRole('button',{name:'Тебе помочь? Открыть чат с Веспи',exact:true});
+    const chatsBeforePeek=chats.length;
+    await peekAction.click();
+    await page.getByRole('dialog',{name:'ИИ-консультант',exact:true}).waitFor();
+    await page.waitForFunction(()=>document.activeElement===document.getElementById('chat-input'));
+    assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'),'health-travel','The edge invitation opens help for the selected topic');
+    assert.equal(chats.length,chatsBeforePeek,'Opening the edge invitation cannot send a paid AI request');
+    await page.keyboard.press('Escape');
+    await page.getByRole('dialog',{name:'ИИ-консультант',exact:true}).waitFor({state:'hidden'});
     assert.equal(await page.locator('[data-guide-sticky]').count(),0);
     assert(events.some(e => e.event === 'guide_next_action' && e.props.topic === 'apostille'));
     assert(!events.some(e => JSON.stringify(e).includes('вопрос-без-совпадения')), 'Search text is not sent to analytics');
