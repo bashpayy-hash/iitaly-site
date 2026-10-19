@@ -91,13 +91,8 @@ async function sticky(page){
   if(available>80){await page.evaluate(()=>window.scrollTo(0,Math.min(400,document.documentElement.scrollHeight-innerHeight)));const after=await chrome.boundingBox();assert(Math.abs(before.y-after.y)<1,'Chrome stays pinned');await page.evaluate(()=>window.scrollTo(0,0));}
 }
 try{
-  const base=process.env.BASE_SHA||'27790aa';
-  // The global editorial brief replaces palette and typography. Keep the
-  // current logo geometry/layout while validating its approved paint tokens.
-  execFileSync(process.execPath,['scripts/check-warm-palette.mjs']);
-  assert.match(await readFile('src/app/globals.css','utf8'),/--font-sans:\s*var\(--font-inter-tight\)/);
-  const withoutPaint = source => source.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)|color-mix\(in srgb, var\(--accent-primary\) [\d.]+%, transparent\)/gi,'PAINT');
-  for(const file of ['src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css'])assert.equal(withoutPaint(await readFile(file,'utf8')),withoutPaint(execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'})),file+' geometry and layout unchanged');
+  const base=process.env.BASE_SHA||'4ee084f';
+  for(const file of ['src/app/globals.css','src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css'])assert.equal(await readFile(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}),file+' unchanged');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);
     for(const target of [road(page).locator('[data-road-step-title]'),road(page).locator('[data-road-open]')])assert(await target.evaluate(n=>n.getBoundingClientRect().top>=0&&n.getBoundingClientRect().bottom<innerHeight),'Current verb/action above fold');

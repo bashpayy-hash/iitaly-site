@@ -11,9 +11,18 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 const ReducedMotionContext = createContext(false);
 
 export function MotionProvider({ children }: { children: ReactNode }) {
-  // Server and first client render agree. Reveal/TransitionPanel also check
-  // matchMedia inside their effects before starting, so reduced-motion users
-  // never briefly animate while this shared preference is being initialized.
+  // Начальное значение — всегда false, СИНХРОННО с сервером (там window
+  // нет вообще). Читать matchMedia сразу в лениво инициализаторе кажется
+  // оптимизацией, но ломает гидратацию именно для тех пользователей, кому
+  // эта фича и нужна: у человека с реальным prefers-reduced-motion:reduce
+  // клиентский первый рендер вернул бы true, а серверный HTML — false
+  // (motion-компоненты успевают отрендерить initial-стили на сервере) —
+  // React увидел бы несовпадающий markup. Поэтому первый рендер всегда
+  // "не reduced" на обеих сторонах, а реальное значение эффект применяет
+  // сразу после маунта — на один тик позже, но гарантированно без
+  // hydration mismatch. Синхронный setState в эффекте здесь намеренный:
+  // это тот самый "синхронизировать с внешней системой на маунте" случай,
+  // а не что-то, что можно вычислить из пропсов/состояния React.
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-import { studentRoadmap } from "./studentCopy";
 import { BACKEND_URL } from "./backend";
 import type { DocCheckResult } from "./checkDocument";
 
@@ -99,7 +98,7 @@ export async function fetchPortal(code: string, surname: string): Promise<Portal
     }
     const d = await r.json().catch(() => null);
     if (!d || !d.ok) return { ok: false, error: (d && d.error) || "Не нашли бронь." };
-    return { ok: true, data: studentRoadmap(d as PortalData) };
+    return { ok: true, data: d as PortalData };
   } catch {
     return { ok: false, error: "Нет связи с сервером. Проверь интернет." };
   }
@@ -125,7 +124,7 @@ export async function savePortalProfile(
     });
     const d = await r.json().catch(() => null);
     if (!r.ok || !d?.ok) return { ok: false, error: d?.error || "Не удалось сохранить профиль." };
-    return { ok: true, data: studentRoadmap(d as PortalData) };
+    return { ok: true, data: d as PortalData };
   } catch {
     return { ok: false, error: "Нет связи с сервером" };
   }

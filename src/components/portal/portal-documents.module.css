@@ -2,7 +2,7 @@
 .heading { margin-bottom: 16px; }
 .titleRow { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; }
 .titleRow > [data-portal-art] { width: 64px; height: 64px; }
-.heading h2 { margin: 0; max-width: 24ch; font-family: var(--font-apple-text); font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
+.heading h2 { margin: 0; max-width: 24ch; font-family: var(--font-apple-display); font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
 .heading p { max-width: 65ch; margin-top: 8px; color: var(--portal-muted); font-size: 16px; line-height: 1.55; }
 .serviceNote { max-width: 62ch; margin-top: 16px; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
 .filters { display: flex; flex-wrap: wrap; column-gap: 16px; row-gap: 0; border: 0; padding: 0 0 4px; margin: 0; }
@@ -43,12 +43,8 @@
 .purposes input { position:absolute; opacity:0; }
 .purposes label:has(input:focus-visible) { outline:2px solid var(--portal-ink); outline-offset:3px; }
 .list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; border:0; margin-top:12px; }
-.row { display:flex; flex-direction:column; justify-content:space-between; min-height:180px; padding:22px; border:1px solid var(--portal-border); border-radius: 12px; background:var(--bg-surface); transition:border-color .2s,background-color .2s; }
-.row:hover { background:var(--bg-surface); border-color:var(--text-secondary); }
+.row { display:flex; flex-direction:column; justify-content:space-between; min-height:180px; padding:22px; border:1px solid var(--portal-border); border-radius:24px; background:white; }
+.row:hover { background:var(--color-warm-white); }
 .rowFooter { margin-top:20px; flex-wrap:wrap; }
-.status[data-outcome=approved] { color:var(--text-secondary); background:var(--bg-base); padding:5px 9px; border-radius:999px; }
+.status[data-outcome=approved] { color:#1F7A68; background:#E6F4F1; padding:5px 9px; border-radius:999px; }
 @media(max-width:600px) { .list { grid-template-columns:1fr; } .row { padding:20px; min-height:160px; } }
-
-.purposes label { transition:border-color .2s,background-color .2s; }
-.purposes label:hover { border-color:var(--text-secondary); }
-@media(prefers-reduced-motion:reduce) { .row,.purposes label { transition:none; } }

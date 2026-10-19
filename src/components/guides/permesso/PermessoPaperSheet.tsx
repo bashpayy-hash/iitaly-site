@@ -85,9 +85,9 @@ export function PermessoPaperSheet(props:Props){
     })}
     {ready&&activeField&&<svg className={z.focusLayer} viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true" data-focused-group={activeField.id}>
      <defs><mask id={maskId}><rect width="1" height="1" fill="white"/>{activeRects.map((r,i)=><rect key={i} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="black"/>)}</mask></defs>
-     <rect width="1" height="1" fill="#FFFDF9" opacity=".45" mask={`url(#${maskId})`}/>
-     {pinnedField&&pinnedField.id!==activeField.id&&normalizedRuns(pinnedField).map((r,i)=><rect key={`p${i}`} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="none" stroke="#57534E" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
-     {activeRects.map((r,i)=><rect key={i} data-highlight-for={activeField.id} data-highlight-part={i} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="#E63946" fillOpacity=".07" stroke="#E63946" strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>)}
+     <rect width="1" height="1" fill="#fffdf9" opacity=".45" mask={`url(#${maskId})`}/>
+     {pinnedField&&pinnedField.id!==activeField.id&&normalizedRuns(pinnedField).map((r,i)=><rect key={`p${i}`} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="none" stroke="#a46155" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>)}
+     {activeRects.map((r,i)=><rect key={i} data-highlight-for={activeField.id} data-highlight-part={i} x={r.x-padX} y={r.y-padY} width={r.width+2*padX} height={r.height+2*padY} fill="#b8785e" fillOpacity=".07" stroke="#944137" strokeWidth="1.5" vectorEffect="non-scaling-stroke"/>)}
     </svg>}
    </div>
   </div>

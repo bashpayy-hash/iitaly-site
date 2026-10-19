@@ -1,6 +1,4 @@
 "use client";
-import { TransitionPanel } from "@/components/motion/TransitionPanel";
-import Link from "next/link";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
@@ -16,8 +14,8 @@ import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
-import { PortalNavigation } from "./PortalNavigation";
-import { WorkspaceCoach } from "./WorkspaceCoach";
+import { VESPI_NAME } from "@/components/mascot/Vespi";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import { PortalArtwork } from "./PortalArtwork";
 import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
@@ -564,6 +562,7 @@ export function PortalExplorer() {
     && (data.done[activeTask.id] || activeTask.available !== false));
   // The persistent road and open conversation share one mascot. University
   // selection keeps the road's guide; task/report panels own their portrait.
+  const detailOwnsMascot = section !== "today";
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
   const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
@@ -575,7 +574,15 @@ export function PortalExplorer() {
     return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
   }, [activeTask, assistantContext]);
 
-
+  function openAssistant() {
+    window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: {
+      source: "portal-header",
+      taskId: activeTask?.id,
+      taskTitle: activeTask ? taskTitle(activeTask) : undefined,
+      taskOwner: activeTask?.owner,
+      taskContext: assistantContext,
+    } }));
+  }
 
   function openTask(task: PortalTask) {
     stepReturnSection.current = section;
@@ -638,10 +645,18 @@ export function PortalExplorer() {
   return (
     <div className={styles.portal} data-portal-navigation data-portal-design="shared-site">
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
-    <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={<Link href="/" className="journey-link">На сайт ↗</Link>}/>
+    <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
+      <div className={navigation.headerLinks}>
+        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiAssistant as="div" variant="copilot" layout="inline-pill" appearance="indicator" label="Помощник" className={navigation.helperSignal} /></a>
+        <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
+          if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault(); openSettings();
+        }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton + " " + navigation.settingsLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z" /><circle cx="12" cy="12" r="3" /></svg><span>Настройки</span></a>
+      </div>
+    } />
     <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
-        navigationOnly
+        showMascot={!detailOwnsMascot} navigationOnly={section !== "today"}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
         secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
@@ -649,30 +664,62 @@ export function PortalExplorer() {
     </div>
     <main id="main">
       <div className={styles.shell}>
+        <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
+          <p className={styles.sidebarLabel}>Личный кабинет</p>
+          <nav className={styles.nav} aria-label="Разделы личного кабинета">
+            {NAV.map((item) => (
+              <a
+                key={item.id}
+                href={sectionUrl(item.id)}
+                aria-current={section === item.id ? "page" : undefined}
+                onClick={event => {
+                  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault(); changeSection(item.id);
+                }}
+                className={styles.navItem + " " + (section === item.id ? styles.navItemActive : "")}
+              >
+                <span className={styles.navDot} aria-hidden />
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </aside>
 
         <div className={styles.main + (section === "today" ? " " + artwork.overviewLayout : "")}>
-          <PortalNavigation current={section} onNavigate={changeSection}/>
           {section === "today" ? <div className={styles.topbar + " " + artwork.overviewIntro}>
             <div className={artwork.greetingHeading}>
               <div className={navigation.topCopy}>
-                <h1 className={styles.greeting}>Привет, <span className="editorial-accent">{data.client.name}</span></h1>
+                <h1 className={styles.greeting}>Привет, {data.client.name}</h1>
                 <p className={styles.subline}>Поступление: сентябрь {data.client.intakeYear || "—"}</p>
               </div>
             </div>
           </div> : <h1 className="sr-only">Личный кабинет — {activeTask ? taskTitle(activeTask) : section === "plan" ? "план поступления" : section === "docs" ? "документы" : "настройки"}</h1>}
           {section === "today" && <PortalArtwork placement="overview" />}
 
-
+          <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
+            {NAV.map((item) => (
+              <a
+                key={item.id}
+                href={sectionUrl(item.id)}
+                aria-current={section === item.id ? "page" : undefined}
+                onClick={event => {
+                  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault(); changeSection(item.id);
+                }}
+                className={styles.navItem + " " + (section === item.id ? styles.navItemActive : "")}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
 
           <div id="portal-panel" className={styles.panel + (section === "today" ? " " + artwork.overviewContent : "")}>
-            <TransitionPanel transitionKey={`${section}-${openTaskId || ""}-${openDocument || ""}`}>
             {actionError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
                 <p role="alert">{actionError.message}</p>
                 {actionError.retry && <a href="#portal-panel" onClick={event => { event.preventDefault(); if (!busyTask) actionError.retry?.(); }} aria-disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</a>}
               </div>
             )}
-            {section === "today" && <WorkspaceCoach data={data} onOpenTask={openTask}/>}
             {section === "today" && <TodaySection data={data} onOpenDoc={showDocument} onOpenDocuments={() => changeSection("docs")} shortlist={shortlist} onOpenTask={openTask} />}
             {section === "plan" && (activeTask && openTaskId ? shortlistEditable ? <PortalUniversityStep
               key={activeTask.id} data={data} task={activeTask} selectedIds={shortlist} busy={busyTask !== null}
@@ -693,8 +740,8 @@ export function PortalExplorer() {
               {activeTask.id === "kit" && <PortalPermessoStep />}
             </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
-              <PortalDocumentReport title={taskTitle(activeTask)} doc={data.docs[openDocument]}
-                stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min].filter(Boolean).join(" · ")}
+              <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
+                stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}
                 orientir={taskDate(activeTask)}
                 onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(openDocument)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, openDocument); }} busy={busyTask !== null}
                 canUpload={(!readOnlyReason || canRecheckDocument) && !actionError?.retry} readOnlyReason={readOnlyReason}
@@ -721,7 +768,6 @@ export function PortalExplorer() {
                 />}
               />
             )}
-            </TransitionPanel>
           </div>
         </div>
       </div>

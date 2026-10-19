@@ -53,7 +53,7 @@ try {
     await page.clock.install();
     page.on('pageerror', error => pageErrors.push(error.message));
     await page.goto(origin + '/', { waitUntil: 'networkidle' });
-    const launcher = page.getByRole('button', { name: 'Открыть ИИ-помощника', exact: true });
+    const launcher = page.getByRole('button', { name: 'Задать вопрос ИИ-консультанту', exact: true });
     await launcher.focus();
     await page.keyboard.press('Enter');
     const question = page.getByRole('textbox', { name: 'Вопрос ИИ-консультанту' });

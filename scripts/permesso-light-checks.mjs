@@ -24,10 +24,6 @@ export async function reviewLightWorkbench({ page, editor, model, width, touch, 
     else await page.keyboard.press('Escape');
   };
   const aligned = async id => {
-    // Zoom/scroll can move a different field beneath the synthetic cursor.
-    // Dismiss that transient hover so geometry is measured on the pinned field.
-    await page.mouse.move(0, 0);
-    await page.keyboard.press('Escape');
     const f = model.EDITOR_FIELDS.find(field => field.id === id);
     for (let part = 0; part < f.runs.length; part++) {
       const r = f.runs[part];

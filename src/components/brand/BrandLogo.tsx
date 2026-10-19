@@ -16,8 +16,8 @@ export function BrandLogo({ className = "", compact = false }: {
     >
       <svg className={styles.emblem} data-brand-mark width="36" height="36" viewBox="0 0 36 36" fill="none" focusable="false">
         <defs>
-          <linearGradient id={`${id}-shell`} x1="5" y1="1" x2="31" y2="36" gradientUnits="userSpaceOnUse"><stop stopColor="#E63946"/><stop offset="1" stopColor="#E12D39"/></linearGradient>
-          <linearGradient id={`${id}-citrus`} x1="18" y1="6" x2="24" y2="13" gradientUnits="userSpaceOnUse"><stop stopColor="#FEF6E6"/><stop offset="1" stopColor="#F4A261"/></linearGradient>
+          <linearGradient id={`${id}-shell`} x1="5" y1="1" x2="31" y2="36" gradientUnits="userSpaceOnUse"><stop stopColor="#E63946"/><stop offset="1" stopColor="#C81D25"/></linearGradient>
+          <linearGradient id={`${id}-citrus`} x1="18" y1="6" x2="24" y2="13" gradientUnits="userSpaceOnUse"><stop stopColor="#FFD166"/><stop offset="1" stopColor="#F4A261"/></linearGradient>
         </defs>
         <rect x=".5" y=".5" width="35" height="35" rx="10.5" fill={`url(#${id}-shell)`}/>
         <rect x="1" y="1" width="34" height="34" rx="10" stroke="white" strokeOpacity=".25"/>

@@ -93,7 +93,7 @@ try {
     await visit(page);await noOverflow(page,`initial ${width}`);
     assert.equal(await page.locator('.paper-layer-global').count(),0);
     assert.equal(await page.locator('[data-university-page]').count(),1);
-    assert.equal(await page.locator('header').getByRole('link',{name:'IITALY — главная',exact:true}).count(),1);
+    assert.equal(await page.getByRole('link',{name:'IITALY — главная',exact:true}).count(),1);
     assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('lenis')),false);
     for(const art of await page.locator('[data-university-art]').all()) {
       assert(await art.isVisible());
