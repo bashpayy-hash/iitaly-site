@@ -28,6 +28,16 @@ try {
   async function visit(path){await page.goto('https://warm-ux.test'+path,{waitUntil:'networkidle'});await page.evaluate(()=>document.fonts.ready);}
   async function noOverflow(){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);}
   await visit('/');
+  const intro=page.locator('[data-vespi-intro="home"]');
+  assert.equal(await page.locator('img[data-vespi]').count(),1,'One dedicated home introduction');
+  const introAction=intro.getByRole('button',{name:'Задать вопрос Веспи',exact:true});
+  await introAction.click();
+  const assistant=page.getByRole('dialog',{name:'ИИ-консультант'});
+  await assistant.waitFor();
+  assert.equal(calls.length,0,'Opening the introduction does not send a request');
+  await page.keyboard.press('Escape');await assistant.waitFor({state:'hidden'});
+  await page.waitForFunction(()=>document.activeElement?.hasAttribute('data-vespi-intro-action'));
+  await intro.screenshot({path:resolve(output,`vespi-intro-${width}.png`)});
   const tab=page.getByRole('tab',{name:'Документы',exact:true});await tab.focus();await page.keyboard.press('ArrowRight');
   assert.equal(await page.getByRole('tab',{name:'DSU',exact:true}).getAttribute('aria-selected'),'true');
   assert.match(await page.getByRole('tabpanel').innerText(),/ISEEU/);
@@ -84,7 +94,7 @@ try {
   assert.equal(await cities.count(),30);
   for(let i=0;i<await cities.count();i++){await cities.nth(i).focus();await page.keyboard.press('Enter');assert.equal(await cities.nth(i).getAttribute('aria-pressed'),'true');}
   await noOverflow();assert.deepEqual(errors,[]);
-  results.push({width,previewKeyboard:true,responsiveHeader:true,guideTopics:seen.size,guideHistoryAndFocus:true,guideContextExplicitSend:true,allMapCities:30});
+  results.push({width,vespiIntroChatAndFocus:true,previewKeyboard:true,responsiveHeader:true,guideTopics:seen.size,guideHistoryAndFocus:true,guideContextExplicitSend:true,allMapCities:30});
   await context.close();
  }
  await writeFile(resolve(output,'results.json'),JSON.stringify({results},null,2));

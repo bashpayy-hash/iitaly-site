@@ -1,5 +1,5 @@
 .step {
-  composes: paper from "../marketing/surface-depth.module.css"; min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); }
+  composes: ledger from "../marketing/surface-depth.module.css"; min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 28px; background: var(--portal-surface); }
 .step h2 { margin: 16px 0 10px; font-family: var(--portal-heading-font); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; overflow-wrap: anywhere; }
 .back, .link { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 0; color: var(--portal-ink); font-size: 15px; text-decoration: underline; text-underline-offset: 4px; }
 .meta { color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
@@ -30,3 +30,5 @@
 @media(max-width:900px) { .step { padding: 20px; } .step h2 { font-size: 28px; } }
 @media(max-width:600px) { .assistant [data-vespi-presence] { width: 72px; margin-left: 14px; } }
 @media(max-width:480px) { .step h2 { margin-top: 10px; } .assistant[data-vespi-assistant] { margin: 14px 0; } }
+
+.step {border-radius:16px;border-color:color-mix(in srgb,var(--text-primary) 22%,transparent)}

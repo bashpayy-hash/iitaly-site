@@ -39,3 +39,6 @@
 .helperSignal { align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
 .helperSignal [data-vespi-label] { margin: 0; font: inherit; }
 .helperSignal [data-vespi-indicator] { width: 24px; height: 24px; font-size: 13px; }
+
+.chrome {background:var(--bg-base);box-shadow:none;backdrop-filter:none}
+.chrome::after {display:none}

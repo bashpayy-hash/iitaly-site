@@ -32,7 +32,7 @@
 /* User-requested visible navigator: part of the working filters, not a
    promotional card above them. Reuse this page's existing surface tokens. */
 .filterWorkspace {
-  composes: paper from "../marketing/surface-depth.module.css"; padding: 26px 28px 4px;   background: var(--bg-surface);  border: 1px solid var(--border-subtle); border-radius: 28px; box-shadow: var(--shadow-soft); }
+  composes: ledger from "../marketing/surface-depth.module.css"; padding: 26px 28px 4px;   background: var(--bg-surface);  border: 1px solid var(--border-subtle); border-radius: 28px; box-shadow: var(--shadow-soft); }
 .filterWorkspace .navigator { display: grid; grid-template-columns: minmax(0, 1fr) 96px; grid-template-rows: auto auto auto; column-gap: 24px; row-gap: 0; padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid var(--u-line); }
 .navigator [data-vespi-content] { display: contents; }
 .filterWorkspace .navigator[data-vespi-appearance="portrait"] [data-vespi-presence] { width: 96px; grid-column: 2; grid-row: 1 / 3; align-self: center; }
@@ -237,3 +237,9 @@
 .navigator > h2 {font-size:28px;line-height:1.18;font-weight:750;letter-spacing:-.03em}
 .navigator > p {max-width:78ch;margin-top:12px;color:var(--u-body);font-size:15px;line-height:1.6}
 @media(max-width:600px){.navigator > h2{font-size:23px}.navigator > p{font-size:14px}}
+
+.filterWorkspace {border-color:color-mix(in srgb,var(--text-primary) 22%,transparent);border-radius:16px;box-shadow:none}
+.filterButton {border-radius:8px;border-color:color-mix(in srgb,var(--text-primary) 18%,transparent)}
+.filterButton[aria-pressed="true"] {background:var(--text-primary);color:var(--bg-surface);border-color:var(--text-primary)}
+.filterButton[aria-pressed="true"]:hover {background:var(--text-secondary);border-color:var(--text-secondary)}
+.embedded .filterWorkspace {border:0;border-radius:0}

@@ -1,0 +1,16 @@
+.intro {position:relative;display:grid;grid-template-columns:minmax(0,1fr) 330px;align-items:center;gap:40px;max-width:1160px;margin:24px auto 60px;padding:40px 48px;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:24px;overflow:hidden}
+.copy {min-width:0;position:relative;z-index:1}
+.eyebrow {font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-secondary);margin:0 0 16px}
+.intro h2 {font:750 42px/1.1 var(--font-sans);letter-spacing:-.03em;max-width:18ch}
+.intro h2 span {white-space:nowrap}
+.description {font-size:17px;line-height:1.65;color:var(--text-secondary);max-width:52ch;margin-top:20px}
+.action {display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:48px;padding:12px 22px;margin-top:24px;border:1px solid var(--text-primary);border-radius:9999px;background:var(--text-primary);color:var(--bg-surface);font-size:15px;font-weight:600;transition:background .2s}
+.action:hover {background:var(--text-secondary)}
+.action:focus-visible {outline:2px solid var(--accent-primary);outline-offset:4px}
+.note {font-size:12px;line-height:1.6;color:var(--text-secondary);margin-top:16px;max-width:50ch}
+.portrait {width:100%;align-self:end}
+.portrait img {display:block;width:100%;height:auto;margin-bottom:-40px;transform:rotate(-3deg)}
+@media(max-width:1240px){.intro{margin-inline:32px}}
+@media(max-width:900px){.intro{grid-template-columns:minmax(0,1fr) 240px;padding:32px;gap:16px}.intro h2{font-size:36px}.description{font-size:16px}.portrait img{margin-bottom:-32px}}
+@media(max-width:600px){.intro{display:block;margin:12px 24px 44px;padding:28px 24px}.intro h2{font-size:32px;max-width:8ch}.description{margin-top:24px;font-size:15px}.copy{z-index:1}.eyebrow{max-width:15ch}.portrait{position:absolute;width:150px;right:-12px;top:16px;pointer-events:none}.portrait img{margin:0}.action{font-size:14px;padding:12px 18px}.note{max-width:40ch}}
+@media(max-width:360px){.portrait{width:118px;right:-14px;top:35px}.intro{margin-inline:16px}.intro h2{font-size:30px}}

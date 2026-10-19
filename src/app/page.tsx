@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { StructuredData } from "@/components/marketing/StructuredData";
 import { JourneyTitle } from "@/components/journey/JourneyUI";
 import { RoutePreview } from "@/components/journey/RoutePreview";
+import { VespiIntroSection } from "@/components/mascot/VespiIntroSection";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { UNIS, CITIES } from "@/data/italy";
 import styles from "@/components/marketing/marketing.module.css";
@@ -45,12 +47,13 @@ export default function Home() {
         </li>)}</ol>
       </div>
     </section>
+    <VespiIntroSection />
     <section className="journey-price-section" aria-labelledby="home-price-title">
       <div className="journey-price-card">
         <p className="journey-eyebrow">Доступ на весь цикл поступления</p>
         <h2 id="home-price-title" className="journey-title">Одна цена. <em>Весь маршрут.</em></h2>
         <div className="journey-price-line"><strong>{priceLabel(PRICE_MAIN)}</strong><span>один платёж · без подписки</span></div>
-        <ul>{FEATURES.map(text => <li key={text}><span aria-hidden>✓</span>{text}</li>)}</ul>
+        <ul>{FEATURES.map(text => <li key={text}><Check size={17} strokeWidth={1.5} aria-hidden="true" />{text}</li>)}</ul>
         <Link href="/prices#main-package" className="journey-button" data-fab-yield>Что входит в доступ <span aria-hidden>↗</span></Link>
         <p className="journey-small">Решения о поступлении, стипендии и визе принимают соответствующие учреждения.</p>
       </div>

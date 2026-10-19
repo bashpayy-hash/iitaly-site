@@ -9,6 +9,7 @@ import { FEATURES, PRICE_EXPRESS_CHECK, PRICE_MAIN, priceLabel } from "@/data/pr
 import { HeadingPin } from "@/components/motion/HeadingPin";
 import { PricesHero } from "./PricesHero";
 import heroArt from "./prices-landscape.module.css";
+import ledger from "./prices-ledger.module.css";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import styles from "@/components/marketing/marketing.module.css";
 
@@ -53,10 +54,10 @@ export function PricesExplorer() {
     <>
       <PricesHero />
 
-      <section className={`${heroArt.packages} px-5 py-10`}>
+      <section className={`${heroArt.packages} ${ledger.ledger} px-5 py-10`}>
         <div className="mx-auto max-w-[900px]">
           <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
-            <div className={`${styles.summaryCard} flex-1 p-5`}>
+            <div data-pricing-card className={`${styles.summaryCard} flex-1 p-5`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
                 ИИ оценит шансы, покажет риски и назовёт следующий шаг
@@ -65,7 +66,7 @@ export function PricesExplorer() {
             <span aria-hidden className="hidden text-2xl text-cloud-meta sm:block">
               →
             </span>
-            <div className={`${styles.summaryCard} flex-1 p-5`}>
+            <div data-pricing-card className={`${styles.summaryCard} flex-1 p-5`}>
               <b className="block font-apple-text text-apple-subheading font-semibold">{priceLabel(PRICE_MAIN)}</b>
               <span className="text-apple-body-sm text-cloud-meta">
                 система ведёт поступление от выбора вуза до permesso
@@ -73,7 +74,7 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center`}>
+          <div data-fab-yield data-pricing-card className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center`}>
             <div>
               <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы — это бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
@@ -86,10 +87,10 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
+          <div data-pricing-card id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
             <div className={styles.offerHeading}>
               <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Поступление под ключ</h2>
-              <span className="rounded-apple-pill bg-crimson px-3 py-1 text-apple-caption font-semibold text-white uppercase">
+              <span data-price-label className="rounded-apple-pill bg-crimson px-3 py-1 text-apple-caption font-semibold text-white uppercase">
                 Один платёж
               </span>
             </div>
@@ -113,7 +114,7 @@ export function PricesExplorer() {
                 ? "После подтверждённой оплаты Stripe личный кабинет создаётся автоматически. Код доступа появится сразу на странице подтверждения."
                 : "После подтверждения оплаты мы активируем личный кабинет с маршрутом. Он ведёт весь путь — от выбора программ до первых дней в Италии."}
             </p>
-            <ul className={`${styles.offerFeatures} mt-5 grid gap-4 sm:grid-cols-2`}>
+            <ul data-pricing-features className={`${styles.offerFeatures} mt-5 grid gap-4 sm:grid-cols-2`}>
               {FEATURES.map((f) => (
                 <li key={f} className="flex gap-2 text-apple-body-sm text-cloud-white">
                   <span aria-hidden className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson" />

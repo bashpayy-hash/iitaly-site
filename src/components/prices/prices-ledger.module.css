@@ -1,0 +1,7 @@
+.ledger :global([data-pricing-card]) {border:1px solid color-mix(in srgb,var(--text-primary) 22%,transparent);border-radius:16px;box-shadow:none;background:var(--bg-surface)}
+.ledger :global([data-pricing-card])::before,.ledger :global([data-pricing-card])::after {display:none}
+.ledger :global(#main-package) {border-color:var(--text-primary)}
+.ledger :global([data-price-label]) {background:var(--text-primary);color:var(--bg-surface);border-radius:4px;font-size:11px;letter-spacing:.05em}
+.ledger :global([data-pricing-features]) {padding-block:24px;border-block:1px solid var(--border-subtle)}
+.ledger :global([data-pricing-features]) li > span {background:var(--text-primary)}
+.ledger :global(#main-package) > button {border-radius:12px}
