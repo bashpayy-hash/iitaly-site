@@ -253,3 +253,5 @@
 @media(forced-colors:active) { .filterButton[aria-pressed="true"],.embedded .filterButton[aria-pressed="true"] { background:Highlight;color:HighlightText;border-color:Highlight; } }
 .heroTitle {font-family:var(--font-editorial),Georgia,serif;font-size:clamp(36px,4vw,56px);font-weight:400;letter-spacing:-.02em;line-height:1.08}
 @media(max-width:760px){.heroTitle{font-size:36px}}
+/* Keep long Cyrillic titles clear of decorative art on narrow screens. */
+@media(max-width:767px){.heroInner{grid-template-columns:minmax(0,1fr)}.heroCopy{display:block}.heroTitle{margin-top:16px}.heroDescription{margin-top:20px}.heroArt{grid-column:1;grid-row:auto;justify-self:start;width:128px;margin:12px 0 0}}

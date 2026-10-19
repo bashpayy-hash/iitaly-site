@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Onest, Space_Mono, Inter_Tight, Playfair_Display } from "next/font/google";
+import { Onest, Space_Mono, Inter_Tight } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
@@ -31,11 +32,13 @@ const interTight = Inter_Tight({
 });
 
 // A Cyrillic-capable editorial accent, scoped to major headings only.
-const editorial = Playfair_Display({
+const editorial = localFont({
   variable: "--font-editorial",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
+  src: [
+    { path: "./fonts/playfair-display/regular.woff2", weight: "400 900", style: "normal" },
+    { path: "./fonts/playfair-display/italic.woff2", weight: "400 900", style: "italic" },
+  ],
+  adjustFontFallback: "Times New Roman",
   display: "swap",
 });
 
