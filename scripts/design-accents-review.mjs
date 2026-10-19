@@ -114,14 +114,17 @@ try {
     const beforeLayout = await heroLayout(page);
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
     await settle(page, 4175);
+    const processFAQ=page.getByText('Как проходит работа с iItaly?',{exact:true});
+    await processFAQ.click();
     const headText = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
+    await processFAQ.click();
     const headHeroText = (await page.locator('[data-section="hero"]').innerText()).replace(/\s+/g, ' ').trim();
     assert.equal(await page.locator('[data-section="hero"] h1').innerText(), baseHeroHeading, `Hero heading preserved at ${width}`);
     assert.match(headHeroText, /По региону/);
     assert.doesNotMatch(headHeroText, /7[ \u00a0]?557/);
     assert.match(headText, process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true'
-      ? /После подтверждённой оплаты кабинет создаётся автоматически/
-      : /После подтверждения оплаты мы активируем личный кабинет/);
+      ? /После подтверждения Stripe кабинет создаётся автоматически/
+      : /После подтверждения оплаты мы активируем кабинет/);
     assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
     assert.doesNotMatch(headText, /Telegram и на почту/);
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-polished-${width}.png`), animations: 'disabled' });
@@ -134,7 +137,7 @@ try {
     assert(ctaBox && ctaBox.y + ctaBox.height < 900, 'Free plan action visible in first viewport');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}: horizontal overflow`);
     const accents = page.locator('[data-italian-accent]');
-    assert.equal(await accents.count(), 2);
+    assert.equal(await accents.count(), 1,'Only the pricing accent remains after moving how-it-works into FAQ');
     let visible = 0;
     for (const accent of await accents.all()) {
       assert.equal(await accent.getAttribute('aria-hidden'), 'true');
@@ -155,7 +158,7 @@ try {
       assert.equal(check.pointerEvents, 'none');
       assert.deepEqual(check.overlaps, [], `${width}: ${check.kind} must not cover text or controls`);
     }
-    assert.equal(visible, width >= 768 ? 2 : 1);
+    assert.equal(visible, 1);
     if (width === 1440) {
       for (const [name, asset] of Object.entries(manifest)) {
         const alpha = await page.evaluate(async ({ name }) => {
@@ -174,7 +177,7 @@ try {
     }
     if ([1440, 390].includes(width)) {
       await page.screenshot({ path: resolve(output, `home-${width}.png`), fullPage: true, animations: 'disabled' });
-      for (const name of ['how', 'feature']) {
+      for (const name of ['feature']) {
         await page.locator(`[data-section="${name}"]`).screenshot({ path: resolve(output, `${name}-${width}.png`), animations: 'disabled' });
       }
       await page.locator('[data-italian-accent="lemon"]').locator('..').screenshot({ path: resolve(output, `pricing-${width}.png`), animations: 'disabled' });
@@ -264,7 +267,7 @@ try {
       }
       if (route === '/guides') {
         // The requested Bento UI shares selectable topic cards on all widths.
-        await page.getByRole('navigation', {name:'Этапы справочника'}).getByRole('link', {name:'2. Подготовиться к отъезду', exact:true}).click();
+        await page.getByRole('navigation', {name:'Этапы справочника'}).locator('a[href="#apostille"]').click();
         await page.locator('[data-guide-select="cimea"]').click();
         await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
         assert.equal(await page.locator('[data-guide-select="cimea"]').getAttribute('aria-expanded'),'true');

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 // User request 2026-10-18: shorten repeated Vespi interface copy. This exact
 // replacement retains unlimited rechecks and the institution's decision; all
 // other pricing text, amounts and product conditions still match the base.
+const approvedRemovedUiLabels = new Set(['Веспи · сверим до подачи']);
 const approvedUiCopyChanges = new Map([
   ['AI-сверка без лимита помогает найти замечания до подачи. Загрузи исправленную версию — повторная проверка входит в цену. Решение о приёме документа остаётся за вузом или консульством.',
     'Проверяй документы и исправленные версии без доплаты. Решение о приёме принимает вуз или консульство.'],
@@ -28,6 +29,7 @@ export function assertContentPreserved(before, after, label) {
   const counts = new Map();
   for (const value of after) counts.set(value, (counts.get(value) || 0) + 1);
   for (const value of before) {
+    if (approvedRemovedUiLabels.has(value)) continue; // Explicitly removed decorative byline only.
     const expected = approvedUiCopyChanges.get(value) ?? value;
     // Both revisions can be the new text when comparing against a later base.
     assert((counts.get(expected) || 0) > 0, `${label}: missing original copy: ${value}`);

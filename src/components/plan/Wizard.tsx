@@ -6,7 +6,6 @@ import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
 import { AppleButton } from "@/components/apple/Button";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import type { PlanDraft } from "@/lib/usePlanDraft";
 import { CalendarDays, Timer, Compass, GraduationCap, BookOpen, Wallet, Languages, MapPin, Users, FileCheck2, type LucideIcon } from "lucide-react";
 import styles from "./plan-workspace.module.css";
@@ -222,16 +221,12 @@ function WizStep({
 }) {
   return (
     <div className={styles.question}>
-      <VespiAssistant
-        variant="copilot"
-        layout="portal-copilot"
-        appearance="portrait"
-        label="Веспи · соберём твой маршрут"
-        as="div"
-        data-plan-question={question.id}
-        title={<h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>}
-        message={<span data-vespi-question-reason>{question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}</span>}
-      />
+      <div data-plan-question={question.id}>
+        <h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>
+        <p className={styles.questionReason} data-vespi-question-reason>
+          {question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}
+        </p>
+      </div>
       <div className={styles.options}>
         {question.opts.map((o, index) => {
           const icons: Record<string, LucideIcon[]> = {

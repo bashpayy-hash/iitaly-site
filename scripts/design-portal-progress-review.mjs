@@ -6,8 +6,8 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { fixture, upstreamProgress } from './portal-review-fixtures.mjs';
 
-// User brief 18 October: actual-stage links replace the whole-card scooter
-// action and separate phase tabs. Keep behavior coverage, update visual rules.
+// User refinement: real counts and explicit stage states replace mascot-led progress.
+// Preserve task, upload, save, focus and reduced-motion behavior coverage.
 const require=createRequire(import.meta.url);
 const {chromium}=require(resolve(process.env.REVIEW_TOOLS,'playwright'));
 const sharp=require('sharp');
@@ -37,10 +37,8 @@ async function axe(page,label){
   assert.deepEqual(violations,[],label+': axe');
 }
 async function oneFace(page,label){
-  const images=await page.locator('img[data-vespi]').evaluateAll(nodes=>nodes.filter(n=>{
-    if(n.closest('#chat-launcher,#iitaly-chat'))return false;
-    const r=n.getBoundingClientRect();return n.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})&&r.width&&r.height&&r.top<innerHeight&&r.bottom>0;
-  }).map(n=>n.currentSrc));assert(images.length<=1,`${label}: one visible 3D portrait: ${images.join(',')}`);
+  assert.equal(await page.locator('img[src*="vespi-avatar-"], #chat-launcher img').count(),0,`${label}: no repeated cropped heads`);
+  assert(await page.locator('[data-portal-document-coach]').count()<=1,`${label}: at most one contextual document illustration`);
 }
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
@@ -80,10 +78,19 @@ async function railContract(page,data,compact){
   const tasks=data.roadmap.flatMap(s=>s.tasks),done=tasks.filter(t=>data.done[t.id]).length;
   assert.equal(Number(await road(page).getAttribute('data-road-done')),done);assert.equal(Number(await road(page).getAttribute('data-road-total')),tasks.length,'Ignore obsolete done IDs');
   assert.equal(await road(page).locator('[data-road-stage]').count(),data.roadmap.filter(s=>s.tasks.length).length,'Real stages, no fixed demo phases');
+  const progress=road(page).getByRole('progressbar',{name:'Выполненные шаги маршрута'});
+  assert.equal(Number(await progress.getAttribute('aria-valuenow')),done,'Accessible progress counts completed real tasks');
+  assert.equal(Number(await progress.getAttribute('aria-valuemax')),tasks.length||1);
+  assert.equal(await progress.getAttribute('aria-valuetext'),`${done} из ${tasks.length} шагов`);
+  assert.equal(await road(page).locator('img').count(),0,'Progress is data, not a repeated mascot');
   for(const link of await road(page).locator('[data-road-stage]').all()){
+    const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
+    const stageDone=stage.tasks.filter(task=>data.done[task.id]).length;
+    assert((await link.innerText()).includes(`${stageDone} / ${stage.tasks.length} шагов`),'Each stage shows its own real completed/total count');
+    assert.equal(await link.getAttribute('data-road-stage-state'),stageDone===stage.tasks.length?'done':await link.getAttribute('aria-current')==='step'?'current':'future');
     assert.equal(await link.evaluate(n=>n.tagName),'A');assert(await link.evaluate(n=>n.getBoundingClientRect().height>=44),'Touchable stage link');assert.match(await link.getAttribute('href'),/^\/portal\?view=(plan|docs)&/);
   }
-  if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=116,'Compact rail');}
+  if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}
   await noOverflow(page);await oneFace(page,'Route');
 }
 async function sticky(page){
@@ -130,7 +137,7 @@ try{
     if(['manual','last'].includes(mode)){
       await road(page).locator('[data-road-open]').click();await detail(page).waitFor();assert.equal(await detail(page).locator('button').count(),1);await page.getByRole('button',{name:'Готово',exact:true}).click();
       await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,1);assert.equal(calls[0].value,true);
-      assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').innerText(),'Шаг сделан');assert.equal(await road(page).getAttribute('data-road-done'),mode==='manual'?'2':'1');
+      assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').innerText(),mode==='last'?'Все шаги сохранены':'Шаг сохранён');assert.equal(await road(page).getAttribute('data-road-done'),mode==='manual'?'2':'1');
       await page.reload({waitUntil:'networkidle'});assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').count(),0,'Reload announces no fresh completion');
     }
     if(['parent-file','late-current'].includes(mode)){
@@ -151,11 +158,11 @@ try{
     await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await road(page).getAttribute('data-road-done'),'1');assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').count(),0,'Failed save cannot announce success');
     await page.locator('#portal-panel [role=alert]').locator('..').getByRole('link').click();await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,2);
     if(motion){await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.roadTransition==='true');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.traveling==='false');}
-    const geometry=await road(page).evaluate(node=>{const f=node.querySelector('[data-road-fill]'),m=node.querySelector('[data-road-scooter]');return {fill:f.getBoundingClientRect().width,marker:new DOMMatrix(getComputedStyle(m).transform).m41,transition:getComputedStyle(f).transitionDuration};});
+    const geometry=await road(page).evaluate(node=>{const f=node.querySelector('[data-road-fill]'),m=node.querySelector('[data-road-location]');return {fill:f.getBoundingClientRect().width,marker:new DOMMatrix(getComputedStyle(m).transform).m41,transition:getComputedStyle(f).transitionDuration};});
     assert(Math.abs(geometry.fill-geometry.marker)<1);assert(geometry.transition.split(',').every(v=>parseFloat(v)===0));results.push({motion,errorRetry:true,confirmedFeedbackOnly:true,reducedMotionImmediate:true});await context.close();
   }
   for(const width of [1440,390]){
-    const {page,context}=await open({width,height:844},'onboarding');assert.equal(await page.locator('[data-vespi-intro=portal]').count(),1);assert.equal(await road(page).count(),0);await noOverflow(page);await oneFace(page,'Onboarding');await axe(page,'First-entry introduction '+width);await capture(page,`portal-onboarding-${width}`);await context.close();
+    const {page,context}=await open({width,height:844},'onboarding');assert.equal(await page.locator('[data-vespi-intro=portal]').count(),0);assert.equal(await page.locator('main img[data-vespi]').count(),0,'Onboarding has no repeated portrait');assert.equal(await road(page).count(),0);await noOverflow(page);await oneFace(page,'Onboarding');await axe(page,'First-entry introduction '+width);await capture(page,`portal-onboarding-${width}`);await context.close();
   }
   assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);
   await writeFile(resolve(output,'results.json'),JSON.stringify({results,errors,unexpected},null,2));console.log(JSON.stringify({results,errors,unexpected},null,2));

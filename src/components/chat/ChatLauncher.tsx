@@ -3,9 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { Vespa } from "@/components/Vespa";
-import { VespiIndicator } from "@/components/mascot/VespiAssistant";
-import { useVespiPresence } from "@/components/mascot/useVespiPresence";
+import { MessageCircle } from "lucide-react";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import placement from "./chat-placement.module.css";
 
@@ -68,7 +66,6 @@ export function ChatLauncher({
   const reducedMotion = useReducedMotion();
   const labelled = usePathname() === "/prices";
   const position = labelled ? ANCHOR_POSITION.replace("size-12", placement.labelledLauncher) : ANCHOR_POSITION;
-  const mascotInContent = useVespiPresence();
   const anchorRef = useRef<HTMLDivElement>(null);
   const [blocked, setBlocked] = useState(false);
   const [scrollingDown, setScrollingDown] = useState(false);
@@ -153,7 +150,7 @@ export function ChatLauncher({
       <motion.button
         id="chat-launcher"
         data-launcher-labelled={labelled || undefined}
-        data-vespi-launcher-mode={mascotInContent ? "indicator" : "portrait"}
+        data-vespi-launcher-mode="icon"
         type="button"
         onClick={onOpen}
         aria-label={labelled ? "Спросить Веспи — задать вопрос ИИ-консультанту" : "Задать вопрос ИИ-консультанту"}
@@ -182,7 +179,7 @@ export function ChatLauncher({
         whileHover={{ y: -3, transition: t(SPRING_HOVER) }}
         whileTap={{ scale: 0.94, y: 0, transition: t(SPRING_PRESS) }}
       >
-        {mascotInContent ? <VespiIndicator className={placement.assistantSignal} /> : <Vespa pose="avatar" className="h-10 w-10 object-contain" priority />}
+        <MessageCircle size={22} strokeWidth={1.8} aria-hidden="true" />
         {labelled && <span className={placement.launcherLabel}>Спросить Веспи</span>}
       </motion.button>
     </>

@@ -142,9 +142,9 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             {!portalSelection && <VespiAssistant
               variant="route"
               layout="inline-pill"
-              appearance="portrait"
+              appearance="none"
               as="div"
-              label="Веспи · штурман"
+              label=""
               title={<h2>{navigatorTitle}</h2>}
               className={ui.navigator}
               data-university-navigator

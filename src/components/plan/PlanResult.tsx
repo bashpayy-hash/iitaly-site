@@ -15,8 +15,8 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       <VespiAssistant
         variant="celebrate"
         layout="editorial-callout"
-        appearance="figure"
-        label="Веспи · твой маршрут"
+        appearance="none"
+        label=""
         title={<p className="text-apple-caption font-semibold text-crimson uppercase">Персональный план готов</p>}
         message={<>
             План собран по твоим ответам. Набор: {plan.intake}.

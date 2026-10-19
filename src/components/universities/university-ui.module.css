@@ -33,10 +33,8 @@
    promotional card above them. Reuse this page's existing surface tokens. */
 .filterWorkspace {
   composes: paper from "../marketing/surface-depth.module.css"; padding: 26px 28px 4px; border: 1px solid var(--u-line); border-radius: 24px; background: #fff; }
-.filterWorkspace .navigator { display: grid; grid-template-columns: minmax(0, 1fr) 96px; grid-template-rows: auto auto auto; column-gap: 24px; row-gap: 0; padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid var(--u-line); }
+.filterWorkspace .navigator { display: block; padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid var(--u-line); }
 .navigator [data-vespi-content] { display: contents; }
-.filterWorkspace .navigator[data-vespi-appearance="portrait"] [data-vespi-presence] { width: 96px; grid-column: 2; grid-row: 1 / 3; align-self: center; }
-.navigator [data-vespi-label] { grid-column: 1; grid-row: 1; color: var(--u-meta); }
 .navigator [data-vespi-title] { grid-column: 1; grid-row: 2; align-self: start; font-size: 28px; line-height: 1.18; letter-spacing: -.035em; }
 .navigator [data-vespi-message] { grid-column: 1 / -1; grid-row: 3; max-width: 78ch; margin-top: 12px; color: var(--u-body); font-size: 15px; line-height: 1.5; }
 .filterSummary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-top: 12px; }
@@ -132,8 +130,7 @@
   .heroArt { grid-column: 2; grid-row: 2; width: 58px; margin: 0 auto; }
   .explorer { padding: 24px 20px 40px; }
   .filterWorkspace { padding: 20px 18px 0; }
-  .filterWorkspace .navigator { grid-template-columns: minmax(0, 1fr) 76px; column-gap: 12px; padding-bottom: 18px; margin-bottom: 18px; }
-  .filterWorkspace .navigator[data-vespi-appearance="portrait"] [data-vespi-presence] { width: 76px; }
+  .filterWorkspace .navigator { padding-bottom: 18px; margin-bottom: 18px; }
   .navigator [data-vespi-title] { font-size: 23px; }
   .navigator [data-vespi-message] { font-size: 14px; }
   .filterSummary { gap: 2px; }

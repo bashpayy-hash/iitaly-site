@@ -6,7 +6,7 @@ import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalUploadZone } from "./PortalUploadZone";
 import { PortalDocumentContext } from "./PortalDocumentContext";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import portal from "./portal.module.css";
 import styles from "./portal-document.module.css";
 
@@ -77,11 +77,11 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
       {orientir && <p className={styles.meta}>{orientir} — это не срок конкретного вуза.</p>}
     </header>
     <div className={styles.decision} data-outcome={outcome.kind}>
-      <VespiAssistant as="div" variant="inspector" layout="portal-copilot" appearance="portrait" label="Веспи · разбор документа" className={styles.inspector} data-portal-document-inspector>
+      <div className={styles.inspector} data-portal-document-inspector>
         <h3>{outcome.label}</h3>
         <p>{reasons[outcome.kind]}</p>
         {(result?.summary || doc.summary) && <p>{result?.summary || doc.summary}</p>}
-      </VespiAssistant>
+      </div>
     </div>
 
     {!result ? <div className={styles.block}>
@@ -94,6 +94,7 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
     </div>}
 
     {canUpload ? <div className={styles.actions} data-fab-yield>
+      <PortalDocumentCoach />
       <p id="portal-document-repeat-hint" className={styles.meta}>Повторная проверка без доплаты. Новый разбор заменит этот.</p>
       <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} label="Проверить новую версию"
         describedBy="portal-document-repeat-hint" hint="Приложи файл или перетащи его сюда" />

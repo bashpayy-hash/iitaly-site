@@ -125,8 +125,8 @@ export function PricesExplorer() {
             <VespiAssistant
               variant="inspector"
               layout="editorial-callout"
-              appearance="figure"
-              label="Веспи · сверим до подачи"
+              appearance="none"
+              label=""
               className="mt-6"
               title="Можно исправить и проверить снова"
               message="Проверяй документы и исправленные версии без доплаты. Решение о приёме принимает вуз или консульство."

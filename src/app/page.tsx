@@ -1,7 +1,6 @@
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialMotion } from "@/components/marketing/EditorialMotion";
 import { Hero } from "@/components/home/Hero";
-import { HowItWorks } from "@/components/home/HowItWorks";
 import { VespiIntroSection } from "@/components/mascot/VespiIntroSection";
 import { FeatureBanner } from "@/components/home/FeatureBanner";
 import { Split } from "@/components/home/Split";
@@ -17,7 +16,6 @@ export default function Home() {
       <div data-editorial-home>
         <Hero />
         <Stats />
-        <HowItWorks />
         <Split />
         <VespiIntroSection />
         <FeatureBanner />

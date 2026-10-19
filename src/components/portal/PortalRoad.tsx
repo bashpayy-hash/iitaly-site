@@ -6,7 +6,7 @@ import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import styles from "./portal-journey.module.css";
 import { PortalStageIcon } from "./PortalStageIcon";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { Check, ChevronRight, LockKeyhole } from "lucide-react";
 
 export type RoadTravel = { fromDone: number; id: number };
 
@@ -17,7 +17,7 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, showMascot = true, navigationOnly = false }: {
+export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -47,8 +47,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   const target = useRef(destination);
   const [completion, setCompletion] = useState<number | null>(null);
 
-  // This token is supplied only after a server-confirmed completion. No token
-  // means an immediate position, including the first login and profile changes.
+  // This token is supplied only after a confirmed saved completion (local or
+  // cloud). First login and profile changes never trigger completion feedback.
   /* eslint-disable react-hooks/set-state-in-effect -- Synchronize a confirmed completion with the browser's interruptible CSS transition, including its pre-paint starting position. */
   useEffect(() => {
     const clearPending = () => {
@@ -64,7 +64,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       target.current = destination;
       // Acknowledgement shares the count's existing space. It never blocks the
       // next action and is also readable when motion is disabled.
-      setCompletion(travel.id);
+      setCompletion(done > travel.fromDone ? travel.id : null);
       timers.current.push(window.setTimeout(() => {
         setCompletion(null);
         setMotion(value => ({ ...value, arriving: false }));
@@ -105,7 +105,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       setCompletion(null);
       setMotion({ position: destination, transition: false, moving: false, entering: false, arriving: false });
     }
-  }, [travel, destination, total, onTravelStart]);
+  }, [travel, destination, total, done, onTravelStart]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
@@ -132,16 +132,17 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
     const target = nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
-    if (target && nav.current) nav.current.scrollLeft = Math.max(0, target.offsetLeft - nav.current.offsetLeft - 8);
+    if (target && nav.current) nav.current.scrollLeft = Math.max(0, target.getBoundingClientRect().left - nav.current.getBoundingClientRect().left + nav.current.scrollLeft - 8);
   }, [stage?.id]);
-  const title = current ? taskTitle(current) : "Все шаги отмечены";
+  const allComplete = total > 0 && done === total;
+  const title = current ? taskTitle(current) : allComplete ? "Все шаги отмечены" : "Следующий шаг пока недоступен";
   const orientir = current ? taskDate(current) : "";
   const action = current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг";
 
   return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
     data-portal-road data-road-navigation-only={navigationOnly ? "true" : undefined}
-    data-road-mascot={showMascot && !navigationOnly ? "visible" : "in-content"}
+    data-road-mascot="none"
     data-road-static={currentOpen || navigationOnly ? "true" : undefined}
     data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}
     data-current-step={current?.id} data-road-done={done} data-road-total={total}
@@ -149,39 +150,43 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
     data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!navigationOnly && <div className={styles.focus} data-road-next aria-live="polite" aria-atomic="true">
-      <VespiAssistant as="div" variant={current && DOC_TASKS[current.id] ? "inspector" : "copilot"} layout="portal-copilot"
-        appearance={showMascot ? "portrait" : "none"} label={current ? "Следующий шаг" : total ? "Маршрут пройден" : "Начнём с профиля"}
-        title={<h2 data-road-step-title>{total ? title : "Маршрут пока не появился"}</h2>}>
+      <div className={styles.nextAction}>
+        <p className={styles.eyebrow}>{current ? "Следующий шаг" : allComplete ? "Маршрут отмечен" : "Твой маршрут"}</p>
+        <h2 data-road-step-title>{total ? title : "Маршрут пока не появился"}</h2>
         {current && <p className={styles.meta} data-road-meta>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", orientir].filter(Boolean).join(" · ")}</p>}
         {current && !currentOpen && <a className={styles.action} data-road-open data-road-action href={portalTaskHref(data, current)} aria-label={`Дальше: ${title}. Открыть этот шаг.`} onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); onOpenTask(current);
         }}>{action}<span aria-hidden="true">↗</span></a>}
-      </VespiAssistant>
+        {allComplete && <p className={styles.meta}>Пройденные шаги и документы остаются доступны.</p>}
+      </div>
     </div>}
     <div className={styles.route}>
       <div className={styles.summary}><span>Твой маршрут</span><span className={styles.count}>
         <span data-road-count>{done} из {total} шагов</span>
-        <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? "Шаг сделан" : ""}</span>
+        <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
       <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">
-        {stages.map(row => {
-          const next = row.tasks.find(task => !data.done[task.id]) || row.tasks[0];
-          const complete = row.tasks.every(task => data.done[task.id]);
-          return <a key={row.id} href={portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}`}
+        {stages.map((row, index) => {
+          const next = row.id === stage?.id && current ? current : row.tasks.find(task => !data.done[task.id]) || row.tasks[0];
+          const stageDone = row.tasks.filter(task => data.done[task.id]).length;
+          const complete = stageDone === row.tasks.length;
+          const isCurrent = row.id === stage?.id;
+          return <a key={row.id} href={portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isCurrent ? "Текущий" : "Впереди"}` }
             data-road-stage-state={complete ? "done" : row.id === stage?.id ? "current" : "future"}
             aria-current={row.id === stage?.id ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); onOpenTask(next);
-            }}><PortalStageIcon id={row.id} /><span>{row.title}</span></a>;
+            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <LockKeyhole size={15} />}</span><span className={styles.stageCopy}><span>{row.title}</span><small>{stageDone} / {row.tasks.length} шагов</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
         })}
       </nav>
-      <div className={styles.track} aria-hidden="true"><span className={styles.fill} data-road-fill style={{ transform:`scaleX(${motion.position / 100})` }} />
+      <div className={styles.track} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`}><span className={styles.fill} data-road-fill style={{ transform:`scaleX(${motion.position / 100})` }} />
         <span className={styles.marker} data-road-scooter data-road-location style={{ transform:`translateX(${motion.position}%)` }} onTransitionEnd={event => {
           if (event.target !== event.currentTarget || event.propertyName !== "transform" || !inFlight.current) return;
           inFlight.current = false; setMotion(value => ({ ...value, moving:false, arriving:true }));
         }}><span /></span>
       </div>
+      {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова. Будущие — посмотреть заранее.</p>}
     </div>
   </section>;
 }

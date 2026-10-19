@@ -31,3 +31,33 @@
 @media(max-width:480px) { .journey { padding:14px; border-radius:20px; } .compact { padding:8px 10px 10px; } .focus h2 { font-size:19px; } .focus [data-vespi-assistant] { grid-template-columns:48px minmax(0,1fr); gap:10px; } .focus [data-vespi-presence] { width:48px !important; } .nav a { padding:8px 10px; } }
 @media(prefers-reduced-motion:reduce) { .journey .fill,.journey .marker { transition:none !important; } }
 @media(forced-colors:active) { .nav a[aria-current=step] { outline:2px solid Highlight; } .track { border-bottom:1px solid CanvasText; } .fill { border-bottom:3px solid CanvasText; } }
+
+/* Small checkpoints express real saved progress, with no game currency. */
+.eyebrow { margin:0 0 7px; color:var(--portal-muted); font-size:12px; line-height:1.5; }
+.nextAction { min-width:0; }
+.nav { gap:6px; padding:8px 2px 12px; }
+.nav a { position:relative; justify-content:flex-start; gap:9px; min-width:144px; min-height:66px; padding:8px 10px; border-radius:16px; white-space:normal; }
+.nav a::after { content:""; position:absolute; left:52px; right:-9px; top:31px; height:1px; background:var(--portal-border); z-index:0; }
+.nav a:last-child::after { display:none; }
+.checkpoint { display:grid; place-items:center; position:relative; z-index:1; flex:0 0 34px; width:34px; height:34px; border:1px solid var(--portal-border); border-bottom-width:3px; border-radius:50%; background:var(--portal-surface); color:var(--portal-muted); }
+.stageCopy { position:relative; z-index:1; display:grid; gap:3px; min-width:0; padding:3px; background:var(--portal-surface); }
+.stageCopy > span { font-size:13px; line-height:1.3; }
+.stageCopy small { font-size:11px; font-weight:400; color:var(--portal-muted); }
+.stageNumber { display:none; }
+.nav a[aria-current=step] { background:var(--portal-surface-soft); border-color:var(--portal-border); }
+.nav a[aria-current=step] .stageCopy { background:var(--portal-surface-soft); }
+.nav a[aria-current=step] .checkpoint { border-color:var(--color-red); background:var(--portal-surface); color:var(--portal-ink); }
+.nav a[data-road-stage-state=done] .checkpoint { background:#E6F4F1; border-color:#1F7A68; color:#1F7A68; }
+.nav a[data-road-stage-state=done] svg { opacity:1; }
+.nav a:hover .checkpoint { transform:translateY(-1px); }
+.checkpoint { transition:transform 160ms ease; }
+.track { margin-inline:4px; }
+.fill { background:#1F7A68; }
+.marker > span { border-color:#1F7A68; }
+.routeNote { display:flex; align-items:flex-start; gap:5px; margin-top:12px; color:var(--portal-muted); font-size:12px; line-height:1.5; }
+.routeNote svg { flex-shrink:0; margin-top:2px; }
+.feedback { color:#1F7A68; font-weight:600; }
+.journey[data-road-feedback-active=true] .count { animation:savedStep 450ms ease-out; }
+@keyframes savedStep { from { transform:translateY(4px); } to { transform:translateY(0); } }
+@media(max-width:480px) { .nav a { min-width:132px; padding:8px; gap:7px; } .stageCopy > span { font-size:12px; } .routeNote { display:none; } }
+@media(prefers-reduced-motion:reduce) { .checkpoint { transition:none; } .nav a:hover .checkpoint { transform:none; } .journey[data-road-feedback-active=true] .count { animation:none; } }
