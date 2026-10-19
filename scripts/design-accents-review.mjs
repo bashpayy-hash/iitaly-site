@@ -125,8 +125,6 @@ try {
     assert.match(headText, process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true'
       ? /После подтверждения Stripe кабинет создаётся автоматически/
       : /После подтверждения оплаты мы активируем кабинет/);
-    assert.match(headText, /Календарь дедлайнов с напоминаниями в Telegram/);
-    assert.doesNotMatch(headText, /Telegram и на почту/);
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-polished-${width}.png`), animations: 'disabled' });
     const afterLayout = await heroLayout(page);
     await writeFile(resolve(output, `hero-layout-${width}.json`), JSON.stringify({beforeLayout,afterLayout},null,2));
@@ -137,7 +135,7 @@ try {
     assert(ctaBox && ctaBox.y + ctaBox.height < 900, 'Free plan action visible in first viewport');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}: horizontal overflow`);
     const accents = page.locator('[data-italian-accent]');
-    assert.equal(await accents.count(), 1,'Only the pricing accent remains after moving how-it-works into FAQ');
+    assert.equal(await accents.count(), 0,'The removed landing pricing section leaves no detached decorative accent');
     let visible = 0;
     for (const accent of await accents.all()) {
       assert.equal(await accent.getAttribute('aria-hidden'), 'true');
@@ -180,7 +178,6 @@ try {
       for (const name of ['feature']) {
         await page.locator(`[data-section="${name}"]`).screenshot({ path: resolve(output, `${name}-${width}.png`), animations: 'disabled' });
       }
-      await page.locator('[data-italian-accent="lemon"]').locator('..').screenshot({ path: resolve(output, `pricing-${width}.png`), animations: 'disabled' });
     }
     results.push({ test: `${width}px: reviewed hero copy, local campus art, no overflow or illustration overlap`, passed: true, visibleAccents: visible });
 
@@ -241,7 +238,11 @@ try {
       const beforeText = await textInventory(page);
       await settle(page, 4175, route);
       const afterText = await textInventory(page);
-      if (route === '/prices') assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
+      if (route === '/prices') {
+        assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
+        assert.match(afterText, /Календарь дедлайнов с напоминаниями в Telegram/);
+        assert.doesNotMatch(afterText, /Telegram и на почту/);
+      }
       else if (route === '/plan') {
         assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
         assert(await page.getByRole('heading', {name: 'Когда хочешь начать учёбу?'}).isVisible());
