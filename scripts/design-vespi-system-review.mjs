@@ -127,7 +127,16 @@ async function documentCoach(page, where) {
   assert.equal(await coach.count(),1, `${where}: one contextual document coach`);
   const image=coach.locator('img');
   assert.equal(await image.getAttribute('src'),'/mascot/vespi-document-coach.webp');
-  await image.evaluate(element=>element.decode());
+  await coach.scrollIntoViewIfNeeded();
+  if (await image.isVisible()) {
+    await page.waitForFunction(() => {
+      const image=document.querySelector('[data-portal-document-coach] img');
+      return image?.complete && image.naturalWidth > 0;
+    }, null, { timeout: 10000 });
+  } else {
+    assert(page.viewportSize().width <= 380, `${where}: only narrow screens omit the decorative pose`);
+    assert(await coach.getByRole('heading', {name:'Подготовим файл к разбору'}).isVisible(), `${where}: the preparation guidance stays visible`);
+  }
 }
 
 async function roleAssetBudget() {

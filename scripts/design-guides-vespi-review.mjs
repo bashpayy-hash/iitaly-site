@@ -50,6 +50,20 @@ try {
       assert.deepEqual(violations, [], `${where}: accessibility`);
     }
     function currentNext(id) { return page.locator(`[data-guide-next="${id}"]`).filter({ visible: true }); }
+    async function readingSurfaceContrast() {
+      // An unresolved surface token silently makes these controls transparent.
+      // Verify the painted number, not its intentionally transparent stage link.
+      const stageNumber = page.locator('[data-guide-timeline] a[aria-current="step"] > span[aria-hidden="true"]');
+      const nextTopic = page.locator('[data-guide-next-topic]').filter({ visible: true });
+      for (const [label, control] of [['Current stage number', stageNumber], ['Next topic', nextTopic]]) {
+        assert.equal(await control.count(), 1, `${label}: one active control`);
+        const colors = await control.evaluate(element => {
+          const style = getComputedStyle(element);
+          return { background: style.backgroundColor, text: style.color };
+        });
+        assert.deepEqual(colors, { background: 'rgb(20, 20, 19)', text: 'rgb(255, 255, 255)' }, `${label}: opaque ink surface preserves readable white text`);
+      }
+    }
     async function addProviderBadge() {
       await page.evaluate(() => {
         const badge = document.createElement('iframe');
@@ -90,6 +104,7 @@ try {
     assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('img').count(), 0, 'Action advice is readable without a repeated mascot');
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
     assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
+    await readingSurfaceContrast();
     assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());
     await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).click();
     await page.locator('[data-guide-origin="education"]').waitFor();
@@ -210,6 +225,7 @@ try {
       assert.equal(await cards.count(), expected, stageLabel + ': correct chapter count');
       for (const id of await cards.evaluateAll(nodes => nodes.map(node => node.dataset.guideSelect))) chapterIds.add(id);
       assert.equal(await stageNavigation.locator('[aria-current="step"]').getAttribute('href'), '#'+stageLabel);
+      await readingSurfaceContrast();
     }
     assert.equal(chapterIds.size, 13, 'All reviewed topics remain available across the three stages');
     assert(chapterIds.has('visa') && chapterIds.has('permesso'), 'Visa and the original trainer entry remain available');
