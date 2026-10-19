@@ -152,6 +152,7 @@ try {
           window.scrollBy({top:element.getBoundingClientRect().top-clearance,behavior:'instant'});
         });
         await head.screenshot({path:resolve(output,`package-contents-${width}.png`),animations:'disabled'});
+        await head.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
       }
     }
     const launcher=head.locator('#chat-launcher');
@@ -159,8 +160,10 @@ try {
     assert.match(await launcher.innerText(),/Спросить Веспи/);
     assert.match(await launcher.getAttribute('aria-label'),/Спросить Веспи/,'Visible action is included in its accessible name');
     if(width===1440){
+      await head.waitForFunction(()=>document.querySelector('#chat-launcher')?.getBoundingClientRect().height>=44);
       assert((await launcher.boundingBox()).height>=44);
       await launcher.click();await head.getByRole('dialog').waitFor();
+      await head.waitForFunction(()=>document.activeElement===document.getElementById('chat-input'));
       assert.equal(chatCalls,0,'Opening the assistant never sends an AI request');
       await head.keyboard.press('Escape');await head.getByRole('dialog').waitFor({state:'hidden'});
     }
