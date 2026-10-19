@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Onest, Space_Mono, Inter_Tight } from "next/font/google";
+import { Onest, Space_Mono, Inter_Tight, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
@@ -7,13 +7,7 @@ import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlayGate } from "@/components/PaperOverlayGate";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 
-// Единственная гарнитура продукта — variable, один файл на весь диапазон
-// начертаний (100–900), реальная поддержка казахской кириллицы
-// (cyrillic-ext). Раньше здесь было три разные гарнитуры (Unbounded для
-// заголовков, Golos Text для текста, Instrument Serif для «редакторских»
-// курсивов) — набор, который на разных экранах читался как склейка
-// нескольких чужих дизайн-систем. Иерархия теперь строится весом и
-// размером внутри одной гарнитуры (см. Typography.tsx), а не сменой шрифта.
+// Legacy body fallback, including Kazakh Cyrillic.
 const onest = Onest({
   variable: "--font-onest",
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
@@ -29,14 +23,19 @@ const spaceMono = Space_Mono({
   display: "swap",
 });
 
-// Apple-хром сайта (везде, кроме /universities) набран практическим
-// аналогом SF Pro: Inter Tight, самохостится через next/font, та же
-// причина, что и у Onest выше, — без стороннего CDN и сдвига макета.
-// SF Pro всё равно стоит первым в стеке (globals.css) — на реальном Mac/
-// iPhone победит она, здесь только надёжный фолбэк для всех остальных.
+// Self-hosted sans-serif for navigation, forms and working content.
 const interTight = Inter_Tight({
   variable: "--font-inter-tight",
   subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  display: "swap",
+});
+
+// A Cyrillic-capable editorial accent, scoped to major headings only.
+const editorial = Playfair_Display({
+  variable: "--font-editorial",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -77,7 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ru"
-      className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} h-full antialiased`}
+      className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} ${editorial.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
         <MotionProvider>

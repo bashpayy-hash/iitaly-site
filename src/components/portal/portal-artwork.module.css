@@ -4,12 +4,7 @@
   user-select: none;
 }
 
-.artwork img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+.artwork > [data-framed-art] { width: 100%; }
 
 .greetingHeading {
   display: flex;
@@ -30,7 +25,7 @@
 
 .overviewIntro { grid-column: 1; grid-row: 1; margin-bottom: 24px; align-self: center; }
 .overviewContent { grid-column: 1 / -1; grid-row: 2; }
-.overview { grid-column: 2; grid-row: 1; width: 160px; aspect-ratio: 4 / 3; margin-top: -8px; align-self: center; }
+.overview { grid-column: 2; grid-row: 1; width: 160px; margin-top: -8px; align-self: center; }
 
 .planHeading {
   display: flex;
@@ -41,7 +36,7 @@
 }
 
 .planHeading > :first-child { flex: 1; }
-.plan { width: 136px; aspect-ratio: 4 / 3; }
+.plan { width: 136px; }
 
 .documentHeading {
   display: flex;
@@ -51,7 +46,7 @@
 }
 
 .documentCopy { min-width: 0; }
-.documents { width: 112px; height: 112px; }
+.documents { width: 112px; }
 
 @media (max-width: 1100px) {
   .overviewLayout { grid-template-columns: minmax(0, 1fr) 128px; column-gap: 24px; }
@@ -63,7 +58,7 @@
   .planHeading { gap: 12px; margin-bottom: 8px; }
   .plan { width: 64px; }
   .documentHeading { align-items: flex-start; gap: 12px; }
-  .documents { width: 64px; height: 64px; }
+  .documents { width: 64px; }
 }
 
 @media (max-width: 540px) {

@@ -1,4 +1,5 @@
 "use client";
+import { TransitionPanel } from "@/components/motion/TransitionPanel";
 import Link from "next/link";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -664,6 +665,7 @@ export function PortalExplorer() {
 
 
           <div id="portal-panel" className={styles.panel + (section === "today" ? " " + artwork.overviewContent : "")}>
+            <TransitionPanel transitionKey={`${section}-${openTaskId || ""}-${openDocument || ""}`}>
             {actionError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
                 <p role="alert">{actionError.message}</p>
@@ -719,6 +721,7 @@ export function PortalExplorer() {
                 />}
               />
             )}
+            </TransitionPanel>
           </div>
         </div>
       </div>

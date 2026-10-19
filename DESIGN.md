@@ -1,58 +1,87 @@
-# iItaly — Warm Modern Italian Editorial SaaS
+# iItaly — warm editorial product interface
 
-The user explicitly authorized a global design-system unification on 18 October 2026.
-This replaces all earlier page-specific palettes and the earlier prohibition on
-changing colors outside /guides. The supplied /guides screenshot is the composition
-reference: airy spacing, rounded pills, confident headings and Italian artwork.
+The current direction is a light, readable EdTech product. Editorial typography,
+framed Italian artwork and restrained motion are accents within that product.
+The rejected gallery landing-page system is not a template for the application:
+do not restore full-screen black rooms, a putty page background, giant clipped
+wordmarks, hexagonal navigation or miniature utility text.
 
-## Canonical source
+## Canonical styles
 
-`src/app/globals.css` owns the complete palette in :root and the Tailwind v4 theme.
-`design/warm-tokens.json` is its portable color manifest. Do not add another palette.
-Main colors: base #FAF8F5, surface #FFFFFF, subtle #F3EFEA, primary text #141413,
-secondary text #57534E, muted #8C857B, accent #E63946. Supporting colors are the
-user-specified cream, peach, lemon and coral-gradient stops in the manifest.
+`src/app/globals.css` owns the shared CSS variables and Tailwind theme.
+`design/warm-tokens.json` is the portable color manifest. Use these tokens rather
+than introducing page-specific palettes. The warm base is #FAF8F5, cards are
+#FFFFFF, primary text is #141413, secondary text is #57534E and the delicate
+editorial border is #DFDCD5. Existing coral brand accents remain restrained.
 
-Use the same fonts, spacing rhythm, pills, soft warm shadows and 24–32px content
-cards on home, universities, plan, prices, guides, portal and utility routes.
-Inter Tight is the shared UI face from the accepted guides page. Main headings
-use weight 800, tracking -0.03em and line height 1.08. One meaningful phrase or
-word receives the shared editorial accent. Small captions remain readable.
+Inter Tight remains the interface face. Buttons, labels, filters, task lists,
+body text and numeric indicators use the sans serif. Playfair Display is an
+accent for major H1/H2 headings only: 36–56px on desktop and 32–40px on small
+screens, line height around 1.08 and tracking around -0.02em. Never put the
+serif face on small labels, prices, navigation or checklist content.
 
-The fixed ambient layer and the guides hero use cream, peach and lemon washes
-blurred by 90px. Content cards are white. Active tabs are white or pale coral,
-with graphite/coral type, warm borders and soft shadows. Controls have a visible
-coral focus ring, 44px targets where applicable and reduced-motion support.
+Use 9–12px card corners, clear thin borders and generous section spacing.
+Primary actions are comfortable capsules. Working surfaces remain white and
+quiet, without decorative shadows or atmosphere behind the content. Keep the
+established logo, obvious focus states and accessible contrast.
 
-The university map uses the same light palette. Its geometry, selection,
-keyboard controls and labels are unchanged. Status text and icons retain their
-meaning without relying on a separate color palette. Existing approved Italian
-illustrations remain artwork; repeated mascot portraits are removed. Interface color rules
-apply to CSS, Tailwind, inline styles, SVG and generated social cards.
+## Artwork and motion
 
-## Validation
+Classical Italian architecture appears in contained frames, small vignettes and
+rectangular miniatures. All image boundaries are deliberate; there are no torn
+white edges, blurred cutouts or repeated 3D portraits. The home hero pairs a
+framed view with the interactive route example. The example is explicitly
+labelled and must never appear to be the visitor's saved progress.
 
-`npm run check:palette` scans all application source, styles, vector assets and
-the token manifest. It rejects out-of-palette color literals and obsolete color
-utilities. Build the static export with `npm run build`; inspect every route and
-interactive state at desktop and mobile sizes. Check actual computed colors as
-well as source literals so inherited browser defaults cannot escape inspection.
+Artwork provenance belongs in `public/art/sources.json`. Keep original artist,
+work title, museum source and public-domain/Open Access status. Use a consistent
+subtle warm image treatment; do not recolor interface data or documentary scans.
 
-Product facts, API contracts, payments, authentication and saved plans are outside
-the visual change. Do not invent admissions requirements, prices or outcomes.
+Motion is progressive enhancement. Content is readable before hydration and
+with JavaScript disabled. Reveals use a short, restrained upward movement;
+framed images zoom slightly inside their masks. State transitions must retain
+focus, URL history, working controls and readable content. Honor
+`prefers-reduced-motion` by removing reveal movement and transition delays.
 
-## Current product structure
+## Product structure and copy
 
-Preserve the shared local questionnaire and guest workspace, isolated cloud sign-in, one consolidated portal navigation, face-free utility icons and the established logo. The pricing botanical scene, terrace, tomato artwork and responsive geometry remain intact. Route progress is task completion, not admission probability; local completion does not create AI review verdicts or paid privileges. These surfaces use the canonical tokens above.
+Home has one focused action block, a three-stage admissions timeline and one
+compact price feature list. Payment is not an admissions stage. The text-only
+Vespi introduction opens the existing chat without sending a message. Guides,
+filters and task cards remain free of mascot portraits and promotional banners.
+The assistant is a quiet text-and-icon entry; colorful emoji are excluded.
 
-## Current product-flow changes
+Guides start with four situations, preserve all thirteen source-backed topics,
+and show one article and one next-step action at a time. Keep deep links,
+browser history, keyboard focus and contextual help. Portal uses one navigation:
+Now / Full route / Documents / Settings. Task instructions, needed files and
+existing deadlines are visible without opening a help accordion.
 
-The user cancelled the Renaissance gallery direction. The warm palette, fonts, logo, header and component scale above remain the baseline (1d9b9dc). Do not restore the rejected serif typography, ink rooms, giant wordmark or classical painting system.
+Address the student directly. Do not reintroduce delegated owner tags or the
+removed family-role wording. Stable task IDs such as `familyDocs` remain part
+of stored and backend contracts; their display labels use the student's action.
+The legacy server-copy normalization remains in place.
 
-Home uses a functional, explicitly labelled route example, one focused action block, a three-stage admissions timeline and one compact price feature list. Guides start with four scenarios and preserve all thirteen source-backed topics, URL history and contextual help. Portal navigation is consolidated into Now / Full route / Documents / Settings; task checklists, files and existing deadlines are visible. Do not reintroduce portrait repetition, payment as an admissions stage, or delegated owner tags. The assistant remains a quiet functional chat entry.
+## Protected behavior
 
-## Selective refinement — 19 October 2026
+Product facts, prices, API requests, payments, authentication, saved plans and
+Permesso geometry are outside visual changes. Do not invent requirements,
+deadlines or outcomes. Completion is the user's task progress, not an admission
+probability, AI verdict or entitlement to paid features. Keep the shared local
+questionnaire, guest workspace and isolated cloud sign-in intact.
 
-The user requested emoji removal, the return of Vespi's introduction and selective rigor from earlier versions. Keep one illustrated introduction on the home page, after the admissions timeline. Its button opens the existing assistant without automatically sending a message. Reuse the approved responsive WebP artwork; keep task cards, guides and filters free of repeated portraits.
+The university map keeps its geometry, labels, keyboard controls, selection
+and comparison behavior. Official form scans and their editable overlays are
+functional documents, not decorative artwork.
 
-University filters, pricing decisions and portal working cards use the shared `ledger` surface: white, a clear graphite border, 16px corners and no decorative shadow. Portal navigation uses a simple active underline. These scoped changes retain the warm palette and illustrated marketing sections; they do not restore the cancelled gallery system. Colorful emoji are excluded from application source; functional icons use the existing Lucide set.
+## Verification
+
+Run `npm run check:palette`, `node scripts/design-guard.mjs <reviewed-base>`,
+`npm run lint` and the production build. The contract guard preserves admissions,
+prices, payments, API contracts, dependencies, map data and Permesso geometry.
+
+Run the responsive route and interaction checks against the static export.
+Verify no horizontal overflow, broken art, utility serif text, mascot images,
+critical/serious accessibility errors or hidden reduced-motion content. Test
+home route tabs, chat open/close focus, all guide scenarios and history, map
+keyboard selection, and the existing portal/payment/document workflows.

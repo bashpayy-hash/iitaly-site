@@ -8,6 +8,9 @@ import { GUIDES, type GuideCard } from "@/data/guides";
 import { ADMISSION_SOURCES, REVIEWED_AT, REVIEWED_LABEL } from "@/data/admissions";
 import { isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import ui from "./guides.module.css";
+import { FramedArtwork } from "@/components/marketing/FramedArtwork";
+import { Reveal } from "@/components/motion/Reveal";
+import { TransitionPanel } from "@/components/motion/TransitionPanel";
 
 const SCENARIOS = [
   { id:"education",title:"Школа / 11 классов",description:"Как компенсировать год и выбрать путь к поступлению.",ids:["education","tests","minors","military"] },
@@ -31,9 +34,10 @@ export default function GuidesPage(){
   useEffect(()=>{window.dispatchEvent(new CustomEvent("iitaly:guide-context",{detail:{guideId:topic||undefined}}));return()=>{window.dispatchEvent(new CustomEvent("iitaly:guide-context",{detail:{}}));};},[topic]);
   function select(id:GuideId|null){setTopic(id);setQuery("");window.history.pushState({},"",id?`#${id}`:"/guides");requestAnimationFrame(()=>{if(id){heading.current?.focus({preventScroll:true});heading.current?.scrollIntoView({block:"start",behavior:"instant"});}else document.getElementById("guide-start")?.scrollIntoView({block:"start",behavior:"instant"});});}
   return <MarketingLayout><div className={ui.shell} data-guides-meta>
-    <header id="guide-start" className="journey-page-header" data-section="guides-header"><p className="journey-eyebrow">Справочник · бесплатно</p><JourneyTitle as="h1">Бюрократия.<br/><em>По порядку.</em></JourneyTitle><p>Не нужно разбираться во всём сразу. Выбери свою ситуацию — пройдём необходимые темы шаг за шагом.</p></header>
+    <header id="guide-start" className={`journey-page-header ${ui.header}`} data-section="guides-header"><Reveal><p className="journey-eyebrow">Справочник · бесплатно</p><JourneyTitle as="h1">Бюрократия.<br/><em>По порядку.</em></JourneyTitle><p className={ui.description}>Не нужно разбираться во всём сразу. Выбери свою ситуацию — пройдём необходимые темы шаг за шагом.</p></Reveal><FramedArtwork scene="canal" variant="miniature" className={ui.headerArt} /></header>
     <div className="journey-body">
-    {!current ? <section className={ui.start} aria-labelledby="scenario-heading"><h2 id="scenario-heading">Какая у тебя сейчас ситуация?</h2><div className={ui.scenarios}>{SCENARIOS.map((item,index)=><button key={item.id} type="button" className={ui.scenario} data-guide-scenario={item.id} onClick={()=>select(item.ids[0])}><span className={ui.number}>0{index+1}<StepDot/></span><h3>{item.title}</h3><p>{item.description}</p><span className={ui.scenarioAction}>Начать разбор <span aria-hidden>↗</span></span></button>)}</div>
+    <TransitionPanel transitionKey={topic || "start"}>
+    {!current ? <section className={ui.start} aria-labelledby="scenario-heading"><h2 id="scenario-heading">Какая у тебя сейчас ситуация?</h2><div className={ui.scenarios}>{SCENARIOS.map((item,index)=><Reveal key={item.id} delay={index * 0.06} className={ui.scenarioReveal}><button type="button" className={ui.scenario} data-guide-scenario={item.id} onClick={()=>select(item.ids[0])}><span className={ui.number}>0{index+1}<StepDot/></span><h3>{item.title}</h3><p>{item.description}</p><span className={ui.scenarioAction}>Начать разбор <span aria-hidden>↗</span></span></button></Reveal>)}</div>
       <details className={ui.search}><summary>Найти конкретную тему</summary><label htmlFor="guide-search">Поиск по справочнику</label><input id="guide-search" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Например, перевод или permesso"/><p role="status">{query?`Найдено тем: ${results.length}`:"Введи название документа или вопрос."}</p><ul>{results.map(g=><li key={g.id}><button className="journey-link" onClick={()=>{if(isGuideId(g.id))select(g.id);}}>{g.title} <span aria-hidden>↗</span></button></li>)}</ul></details>
     </section> : <section className={ui.journey} aria-label="Пошаговый разбор">
       <div className={ui.journeyTop}><button className="journey-link" onClick={()=>select(null)}>Изменить ситуацию</button><span>{scenario?.title} · {step+1} / {scenario?.ids.length}</span></div>
@@ -46,6 +50,7 @@ export default function GuidesPage(){
         <div className={ui.next}>{step>0?<button className="journey-link" onClick={()=>select(scenario.ids[step-1])}>Предыдущий шаг</button>:<span/>}{scenario&&step<scenario.ids.length-1?<button className="journey-button" onClick={()=>select(scenario.ids[step+1])}><span>Далее: {TOPICS.find(g=>g.id===scenario.ids[step+1])?.title}</span></button>:<Link href="/plan#questionnaire" className="journey-button"><span>Перейти к своему плану</span></Link>}</div>
       </article>
     </section>}
+    </TransitionPanel>
     <div className={ui.review}><span>Материалы сверены <time dateTime={REVIEWED_AT}>{REVIEWED_LABEL}</time></span><Link href="/changes-2026-27" className="journey-link">Изменения 2026/27 ↗</Link></div>
     </div></div></MarketingLayout>;
 }

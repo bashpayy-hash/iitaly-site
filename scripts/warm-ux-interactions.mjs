@@ -29,7 +29,7 @@ try {
   async function noOverflow(){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);}
   await visit('/');
   const intro=page.locator('[data-vespi-intro="home"]');
-  assert.equal(await page.locator('img[data-vespi]').count(),1,'One dedicated home introduction');
+  assert.equal(await page.locator('img[data-vespi], img[src*="/mascot/"]').count(),0,'The introduction is a quiet functional entry without a 3D portrait');
   const introAction=intro.getByRole('button',{name:'Задать вопрос Веспи',exact:true});
   await introAction.click();
   const assistant=page.getByRole('dialog',{name:'ИИ-консультант'});
@@ -93,8 +93,19 @@ try {
   const cities=page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button');
   assert.equal(await cities.count(),30);
   for(let i=0;i<await cities.count();i++){await cities.nth(i).focus();await page.keyboard.press('Enter');assert.equal(await cities.nth(i).getAttribute('aria-pressed'),'true');}
+  await noOverflow();
+  // A reveal is decorative: scrolling must leave the content readable and actionable.
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await visit('/');
+  const reveals=page.locator('[data-editorial-reveal]');
+  assert(await reveals.count()>0,'Home has editorial reveals');
+  await reveals.last().scrollIntoViewIfNeeded();
+  await page.waitForFunction(()=>[...document.querySelectorAll('[data-editorial-reveal]')].filter(el=>{const b=el.getBoundingClientRect();return b.bottom>0&&b.top<innerHeight;}).every(el=>getComputedStyle(el).opacity==='1'),null,{timeout:3000});
+  await introAction.click();await assistant.waitFor();
+  await page.keyboard.press('Escape');await assistant.waitFor({state:'hidden'});
+  await page.waitForFunction(()=>document.activeElement?.hasAttribute('data-vespi-intro-action'));
   await noOverflow();assert.deepEqual(errors,[]);
-  results.push({width,vespiIntroChatAndFocus:true,previewKeyboard:true,responsiveHeader:true,guideTopics:seen.size,guideHistoryAndFocus:true,guideContextExplicitSend:true,allMapCities:30});
+  results.push({width,vespiIntroChatAndFocus:true,editorialRevealReadable:true,previewKeyboard:true,responsiveHeader:true,guideTopics:seen.size,guideHistoryAndFocus:true,guideContextExplicitSend:true,allMapCities:30});
   await context.close();
  }
  await writeFile(resolve(output,'results.json'),JSON.stringify({results},null,2));

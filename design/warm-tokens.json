@@ -15,11 +15,12 @@
     "accent-start": "#E12D39",
     "accent-end": "#F06543",
     "accent-terracotta": "#D9534F",
-    "accent-amber": "#F4A261"
+    "accent-amber": "#F4A261",
+    "border-subtle": "#DFDCD5"
   },
   "radius": {
     "pill": "9999px",
-    "card": "28px"
+    "card": "12px"
   },
   "source": "src/app/globals.css"
 }
