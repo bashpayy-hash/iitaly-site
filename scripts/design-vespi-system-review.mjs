@@ -240,6 +240,8 @@ try {
         await noLegacyPortraits(entry, 'home hero');
         assert.equal(await page.locator('[data-vespi-intro="home"]').count(),1,'The dedicated home introduction is retained');
         assert.equal(await page.locator('[data-section="how"]').count(),0,'How-it-works facts moved to FAQ');
+        assert.equal(await page.getByRole('region',{name:'IITALY в цифрах',exact:true}).count(),0,'The redundant metrics section is removed from the landing page');
+        assert.equal(await page.getByRole('link',{name:'Смотреть, что входит',exact:true}).count(),0,'The duplicate landing pricing section is removed');
         assert.equal(await page.getByText('Как проходит работа с iItaly?',{exact:true}).count(),1);
         await noDuplicatePortraits(page, `home entry ${width}`);
       }
@@ -250,9 +252,9 @@ try {
         if (name === 'home') {
           await page.locator(baseline ? '[data-section="how"]' : '[data-vespi-intro="home"]').evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
           await capture('home-introduction');
-          const priceBand = page.locator('section').filter({ has: page.getByRole('link', { name: 'Смотреть, что входит', exact: true }) });
-          await priceBand.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
-          await capture('home-price-band');
+          const faq = page.getByRole('heading',{name:'Можно ли нам доверять',exact:true});
+          await faq.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
+          await capture('home-faq');
         } else if (name === 'prices') {
           const target = page.locator('#main-package').getByRole('button', { name: 'Оформить и оплатить', exact: true });
           await target.evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
