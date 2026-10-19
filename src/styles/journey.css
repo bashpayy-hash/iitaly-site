@@ -84,3 +84,38 @@
 .journey-portal-nav a {padding:10px 16px;border-radius:0;border-bottom:2px solid transparent}
 .journey-portal-nav a[aria-current=page] {background:none;border-bottom-color:var(--text-primary);box-shadow:none}
 @media(max-width:760px){.journey-portal-nav{gap:0 12px}.journey-portal-nav a{padding:10px 8px}}
+
+/* Warm product layout with a small editorial layer. */
+.journey-title {font-family:var(--font-editorial),Georgia,serif;font-size:clamp(36px,4vw,52px);font-weight:400;letter-spacing:-.02em}
+.journey-title em {background:none;color:var(--text-primary);font-style:italic}
+.journey-page-header .journey-title {font-size:clamp(36px,4vw,56px)}
+.journey-hero {padding-block:64px 80px}
+.journey-hero-grid {grid-template-columns:1.05fr 1fr;gap:72px;max-width:1160px}
+.journey-hero-art {min-width:0;max-width:520px;position:relative}
+.journey-hero-art > [data-framed-art] {height:300px}
+.journey-hero-art > [data-framed-art] > span {height:100%;aspect-ratio:auto}
+.journey-hero-art .journey-route-preview {position:relative;margin:-40px 20px 0;z-index:1}
+.journey-route-preview {padding:24px;border-radius:12px;box-shadow:var(--shadow-soft)}
+.journey-preview-university {font-size:22px;margin-top:16px}
+.journey-preview-caption,.journey-preview-top,.journey-preview-footer {font-size:14px}
+.journey-preview-top span:first-child {padding:0;background:none}
+.journey-preview-top span:last-child {padding:0}
+.journey-preview-tabs {margin:20px 0}
+.journey-preview-tabs button {font-size:14px;min-height:44px}
+.journey-route-preview dl div {font-size:14px;padding-block:10px}
+.journey-preview-footer {margin-top:16px}
+.journey-price-card,.journey-current-task,.journey-card {border:1px solid var(--border-subtle);border-radius:12px;box-shadow:none}
+.journey-price-card .journey-button,.journey-current-task .journey-button {border-radius:999px}
+.journey-price-card .journey-eyebrow,.journey-current-task .journey-eyebrow,.journey-small,.journey-task-date,.journey-route-readout {font-size:14px}
+.journey-price-section {padding-block:80px}
+.journey-price-line strong {font-family:var(--font-sans);font-size:43px}
+.journey-button [aria-hidden] {transition:transform .2s}
+.journey-button:hover {transform:none}
+.journey-button:hover [aria-hidden] {transform:translate(2px,-2px)}
+.journey-link {text-decoration:none;background-image:linear-gradient(currentColor,currentColor);background-size:0 1px;background-repeat:no-repeat;background-position:left calc(100% - 8px);transition:background-size .2s}
+.journey-link:hover {background-size:100% 1px}
+@media(max-width:900px){.journey-hero-grid{gap:36px}}
+@media(max-width:760px){.journey-hero{padding-block:40px 64px}.journey-hero-grid{grid-template-columns:1fr}.journey-hero-art{width:100%;max-width:520px;margin:auto}.journey-hero-art > [data-framed-art]{height:250px}.journey-hero-art .journey-route-preview{margin:-28px 12px 0;padding:20px}.journey-price-section{padding-block:64px}.journey-preview-tabs button{padding-inline:5px;gap:5px;font-size:14px}.journey-title{font-size:36px}}
+@media(max-width:360px){.journey-hero-art .journey-route-preview{margin-inline:0;padding:16px}.journey-route-preview dl div{gap:8px}.journey-preview-tabs{padding:4px;gap:0}.journey-preview-tabs button{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.journey-button [aria-hidden],.journey-link{transition:none}}
+h1.journey-title,h2.journey-title {font-weight:400}

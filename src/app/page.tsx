@@ -5,6 +5,8 @@ import { StructuredData } from "@/components/marketing/StructuredData";
 import { JourneyTitle } from "@/components/journey/JourneyUI";
 import { RoutePreview } from "@/components/journey/RoutePreview";
 import { VespiIntroSection } from "@/components/mascot/VespiIntroSection";
+import { FramedArtwork } from "@/components/marketing/FramedArtwork";
+import { Reveal } from "@/components/motion/Reveal";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { UNIS, CITIES } from "@/data/italy";
 import styles from "@/components/marketing/marketing.module.css";
@@ -21,7 +23,7 @@ export default function Home() {
     <StructuredData />
     <section className="journey-hero" data-section="hero">
       <div className="journey-hero-grid">
-        <div>
+        <Reveal>
           <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
           <h1 className={styles.heroTitle}>Твоё будущее.<br />Теперь в <span className="editorial-accent">Италии.</span></h1>
           <p className={styles.heroDescription}>Поступление становится понятнее, когда знаешь свой следующий шаг. Собери личный маршрут — от первого решения до начала учёбы.</p>
@@ -31,8 +33,11 @@ export default function Home() {
           </div>
           <p className={styles.heroNote}>Короткий опрос · Без регистрации</p>
           <div className="journey-stats"><span><strong>{UNIS.length}</strong> университета</span><span><strong>{Object.keys(CITIES).length}</strong> городов</span></div>
-        </div>
-        <RoutePreview />
+        </Reveal>
+        <Reveal delay={0.06} className="journey-hero-art">
+          <FramedArtwork scene="piazza" variant="landscape" priority />
+          <RoutePreview />
+        </Reveal>
       </div>
     </section>
     <section className={styles.how} data-section="how" aria-label="Три этапа поступления">
@@ -43,7 +48,7 @@ export default function Home() {
           <p>Три последовательных этапа. На каждом — понятный результат.</p>
         </div>
         <ol className={styles.steps}>{STAGES.map((stage, index) => <li className={styles.step} key={stage.title}>
-          <span className={styles.stepNumber}>0{index + 1}</span><div><h3>{stage.title}</h3><p>{stage.text}</p><small>{stage.result}</small></div>
+          <div><span className={styles.stepNumber}>0{index + 1}</span><FramedArtwork scene={(["piazza", "canal", "lagoon"] as const)[index]} variant="vignette" /></div><Reveal delay={index * 0.06}><h3>{stage.title}</h3><p>{stage.text}</p><small>{stage.result}</small></Reveal>
         </li>)}</ol>
       </div>
     </section>

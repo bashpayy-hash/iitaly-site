@@ -8,13 +8,13 @@ export const DURATION = {
   fast: 0.16,
   normal: 0.32,
   slow: 0.56,
-  reveal: 0.75,
+  reveal: 0.6,
   narrative: 1.3,
 } as const;
 
 export const EASE = {
   standard: [0.4, 0, 0.2, 1] as [number, number, number, number],
-  reveal: [0.22, 1, 0.36, 1] as [number, number, number, number],
+  reveal: [0.16, 1, 0.3, 1] as [number, number, number, number],
   /**
    * Наводка резкости: долгая задержка у нуля (контрольная точка 0.52/0.01
    * держит кривую прижатой к началу почти половину времени), потом
@@ -29,3 +29,5 @@ export const EASE = {
    */
   focus: [0.52, 0.01, 0, 1] as [number, number, number, number],
 };
+
+export const EDITORIAL_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";

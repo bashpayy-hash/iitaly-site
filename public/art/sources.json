@@ -1,0 +1,38 @@
+[
+  {
+    "file": "canaletto-grand-canal.jpg",
+    "title": "The Grand Canal, Venice, Looking South toward the Rialto Bridge",
+    "artist": "Canaletto",
+    "source": "https://www.metmuseum.org/art/collection/search/438100",
+    "image": "https://collectionapi.metmuseum.org/api/collection/v1/iiif/438100/1328084/main-image",
+    "license": "Public domain / The Met Open Access",
+    "date": "18th century",
+    "verified": "2026-10-19",
+    "sha256": "b4cf959a13a7fd76a85040a0bd5a9e3420fa89272fa21f2b7f8d1dd1d9a82eff",
+    "treatment": "Original museum JPEG, unaltered. Presentation-only CSS: object-fit cover, crop photographic support edges, sepia(0.08), contrast(0.98)."
+  },
+  {
+    "file": "canaletto-lagoon.jpg",
+    "title": "A Lock, a Column, and a Church beside a Lagoon",
+    "artist": "Canaletto",
+    "source": "https://www.metmuseum.org/art/collection/search/438105",
+    "image": "https://collectionapi.metmuseum.org/api/collection/v1/iiif/438105/1328089/main-image",
+    "license": "Public domain / The Met Open Access",
+    "date": "18th century",
+    "verified": "2026-10-19",
+    "sha256": "cf1cb43f38abf59f1127099b0bcf35fe81a0bb48d4076f31e4eefb1b7ffb46c1",
+    "treatment": "Original museum JPEG, unaltered. Presentation-only CSS: object-fit cover, crop photographic support edges, sepia(0.08), contrast(0.98)."
+  },
+  {
+    "file": "canaletto-san-marco.jpg",
+    "title": "Piazza San Marco",
+    "artist": "Canaletto",
+    "source": "https://www.metmuseum.org/art/collection/search/435839",
+    "image": "https://collectionapi.metmuseum.org/api/collection/v1/iiif/435839/1763010/main-image",
+    "license": "Public domain / The Met Open Access",
+    "date": "18th century",
+    "verified": "2026-10-19",
+    "sha256": "2861938a6db3ff000e5332390e66226d00c99000d5b19f5a4f44565ed624df1a",
+    "treatment": "Original museum JPEG, unaltered. Presentation-only CSS: object-fit cover, crop photographic support edges, sepia(0.08), contrast(0.98)."
+  }
+]

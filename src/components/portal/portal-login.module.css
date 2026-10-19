@@ -1,13 +1,4 @@
-/* Экран входа в кабинет — в общем стиле сайта (marketing.module.css,
-   /universities): белые карточки с серой рамкой и радиусом 24px, гротеск
-   заголовков, красная кнопка-пилюля, поля как в сравнении вузов, и
-   акварель кампуса — та же, что на главной и в боковой панели кабинета.
-
-   Раньше экран жил в отдельном референсе: бежевый фон, засечки, чёрная
-   кнопка, фотореалистичная картинка со стороннего CDN и никакой шапки
-   сайта — человек, нажавший «Личный кабинет», попадал будто на другой
-   сайт и без навигации назад. Маска у картинки — для читаемости текста над
-   ней, а не декоративный градиент. */
+/* Portal entry shares the product canvas and clear, framed editorial imagery. */
 .page {
   --login-ink: var(--text-primary);
   --login-body: var(--text-secondary);
@@ -19,7 +10,7 @@
   padding: 48px 24px 72px;
 
   color: var(--login-ink);
- background: transparent; --login-line: var(--border-subtle); --login-action-deep: var(--text-primary); }
+ background: transparent; --login-line: var(--border-subtle); --login-action-deep: var(--text-secondary); }
 
 .page *,
 .page *::before,
@@ -47,13 +38,13 @@
   border: 1px solid var(--login-line);
 
   background: var(--bg-surface);
- border-radius: 28px 90px 28px 28px; box-shadow: var(--shadow-art); }
+ border-radius: 12px; box-shadow: none; }
 
 .copy { position: relative; z-index: 1; }
 .eyebrow {
   margin: 0 0 12px;
   color: var(--login-muted);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: .025em;
   line-height: 1.5;
@@ -75,22 +66,9 @@
   font-size: 16px;
   line-height: 1.55;
 }
-.art {
-  position: absolute;
-  z-index: 0;
-  inset: 190px 0 52px;
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, var(--text-primary) 24%, var(--text-primary) 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, var(--text-primary) 24%, var(--text-primary) 88%, transparent 100%);
-}
-.art picture { display: block; width: 100%; height: 100%; }
-.artImage {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 72% 62%;
-}
+.art { position:relative; z-index:0; width:100%; min-height:240px; height:280px; margin:28px 0; pointer-events:none; }
+.art > [data-framed-art] {height:100%;}
+.art > [data-framed-art] > span {height:100%;aspect-ratio:auto;}
 .companion { position: absolute; z-index: 1; left: 44px; bottom: 88px; width: 148px; height: auto; pointer-events: none; }
 @media (max-width: 1000px) and (min-width: 761px) { .companion { left: 26px; width: 120px; } }
 @media (max-width: 760px) { .companion { left: 24px; bottom: 8px; width: 112px; } }
@@ -103,7 +81,7 @@
   margin-top: auto;
   padding-top: 24px;
   color: var(--login-muted);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.5;
 }
 .route span { flex-shrink: 0; }
@@ -114,7 +92,7 @@
   margin: 0;
   padding: 36px;
   border: 1px solid var(--login-line);
-  border-radius: 28px;
+  border-radius: 12px;
   background: var(--bg-surface);
 }
 .cardTitle {
@@ -134,27 +112,28 @@
 }
 .fields { display: grid; gap: 20px; margin-top: 28px; }
 .field { display: grid; gap: 8px; min-width: 0; }
-.field > span { color: var(--login-body); font-size: 13px; font-weight: 500; line-height: 1.5; }
+.field > span { color: var(--login-body); font-size: 14px; font-weight: 500; line-height: 1.5; }
 .field input {
   width: 100%;
   min-width: 0;
   min-height: 52px;
   border: 1px solid var(--border-subtle);
-  border-radius: 9999px;
+  border-radius: 9px;
   background: var(--bg-surface);
   padding: 13px 14px;
   color: var(--login-ink);
   font: inherit;
   font-size: 16px;
   line-height: 1.4;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition: border-color .2s;
 }
 .field input::placeholder { color: var(--text-muted); opacity: 1; }
-.field input:hover { border-color: var(--border-subtle); }
+.field input:hover { border-color: var(--text-secondary); }
 .field input:focus {
-  outline: none;
+  outline: 2px solid var(--login-action);
+  outline-offset: 3px;
   border-color: var(--login-action);
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
 }
 .field input[aria-invalid="true"] { border-color: var(--login-action-deep); }
 .error {
@@ -202,29 +181,19 @@
   .intro, .card { padding: 26px; }
   .intro { min-height: 560px; }
   .title { font-size: 34px; }
-  .art { inset-block-start: 230px; }
-  .route { gap: 6px; font-size: 11px; }
+  .art { height:260px; }
+  .route { gap: 6px; font-size: 13px; }
   .cardTitle { font-size: 24px; }
 }
 @media (max-width: 760px) {
   .page { min-height: 0; padding: 24px 16px 40px; }
   .shell { grid-template-columns: minmax(0, 1fr); max-width: 520px; gap: 16px; }
-  .intro { min-height: 0; padding: 24px; border-radius: 28px; }
+  .intro { min-height: 0; padding: 24px; border-radius: 12px; }
   .title { max-width: 360px; font-size: clamp(28px, 7.4vw, 34px); }
   .lead { margin-top: 12px; font-size: 15px; line-height: 1.5; }
-
-  .art {
-    position: relative;
-    inset: auto;
-    height: 168px;
-    flex: 0 0 168px;
-    margin: 8px -24px -24px;
-    mask-image: linear-gradient(to bottom, transparent, var(--text-primary) 24%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, var(--text-primary) 24%);
-  }
-  .artImage { object-position: 70% 60%; }
+  .art { height:200px; min-height:0; flex:none; margin:24px 0 0; }
   .route { display: none; }
-  .card { padding: 24px; border-radius: 28px; }
+  .card { padding: 24px; border-radius: 12px; }
   .cardTitle { font-size: 24px; }
   .fields { margin-top: 24px; gap: 16px; }
 }

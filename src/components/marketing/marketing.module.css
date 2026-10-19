@@ -249,3 +249,22 @@
 @media (prefers-contrast: more) { .surface { --i-line: var(--text-secondary); --color-cloud-meta: var(--text-secondary); --color-cloud-body: var(--text-primary); } }
 
 .summaryCard { composes: paper from "./surface-depth.module.css"; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 28px; }
+
+/* Product editorial scale: restrained headings and readable utility text. */
+.heroTitle,.contentPage .main h1 {font-family:var(--font-editorial),Georgia,serif;font-size:clamp(36px,4.3vw,56px);font-weight:400;line-height:1.08;letter-spacing:-.02em}
+.heroTitle span {color:var(--text-primary)}
+.heroDescription {font-size:18px;line-height:1.65;letter-spacing:0;max-width:48ch}
+.heroNote {font-size:14px}
+.journey,.guideArticle,.offerCard,.termsCard,.summaryCard {border-radius:12px;box-shadow:none}
+.how {padding-block:80px}
+.howInner {gap:64px}
+.step {grid-template-columns:96px minmax(0,1fr);gap:24px}
+.stepNumber {display:block;font-size:14px;margin-bottom:14px;color:var(--text-secondary)}
+.step small {font-size:14px}
+.desktopNav a::before,.portalLink::after {content:"";position:absolute;left:0;right:0;bottom:16px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .2s}
+.desktopNav a:hover::before,.portalLink:hover::after {transform:scaleX(1)}
+.portalLink {position:relative}
+.button svg,.button [aria-hidden],.portalLink span {transition:transform .2s}
+.button:hover svg,.button:hover [aria-hidden],.portalLink:hover span {transform:translate(2px,-2px)}
+@media(max-width:760px){.how{padding-block:64px}.heroDescription{font-size:17px}.step{grid-template-columns:80px minmax(0,1fr);gap:18px}.step h3{font-size:20px}.howInner{gap:32px}}
+@media(prefers-reduced-motion:reduce){.desktopNav a::before,.portalLink::after,.button svg,.button [aria-hidden],.portalLink span{transition:none}}

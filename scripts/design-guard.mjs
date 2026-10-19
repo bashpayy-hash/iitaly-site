@@ -7,7 +7,7 @@ const base = process.argv[2];
 assert(base, 'Pass the reviewed base commit SHA.');
 const read = path => readFileSync(path, 'utf8');
 const before = path => execFileSync('git', ['show', `${base}:${path}`], {encoding:'utf8'});
-// Restore the warm UI while preserving the requested product and content changes.
+// Editorial refinements may not change product contracts or admissions facts.
 for (const path of [
   'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts',
   'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts',
@@ -35,10 +35,10 @@ function inspect(directory) {
     if(!/\.(tsx?|jsx?|css|html|json|svg)$/.test(path))continue;
     const source = read(path);
     assert(!forbiddenCopy.test(source), `${path}: obsolete role wording`);
-    if (path !== 'src/components/mascot/VespiIntroSection.tsx') assert(!/["'`(]\/mascot\//.test(source), `${path}: repeated mascot artwork`);
+    assert(!/["'`(]\/mascot\//.test(source), `${path}: discarded 3D mascot artwork`);
     assert(!/[\p{Emoji_Presentation}\p{Regional_Indicator}\uFE0F\u20E3]/u.test(source), `${path}: emoji in interface copy`);
-    assert(!/gallery-|font-davinci|font-playfair|color-putty|canaletto/i.test(source), `${path}: discarded gallery design`);
+    assert(!/gallery-(?:room|wordmark|parallax)|font-davinci|color-putty|surface-ink-room|374px|#c4c3b6/i.test(source), `${path}: discarded gallery layout`);
   }
 }
 inspect('src');inspect('tools');
-console.log('Warm UX contracts passed: exact admissions/prices/payment/API/dependencies/map/Permesso geometry, minimal assistant and student-directed copy.');
+console.log('Editorial UX contracts passed: exact admissions/prices/payment/API/dependencies/map/Permesso geometry, no 3D mascots or emoji, minimal assistant and student-directed copy.');

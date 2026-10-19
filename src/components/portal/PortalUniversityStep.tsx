@@ -45,15 +45,19 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
       {date && <p className={styles.meta}>{date} — это не срок конкретного вуза.</p>}
       <p id="portal-step-action-hint" className={styles.hint} data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
       <p id="portal-shortlist-storage" className={styles.meta}>Список сохраняется только в этом браузере.</p>
-      <details className={styles.help} data-step-help>
-        <summary>Как выполнить этот шаг</summary>
-        <p>Отметка «В мой список» добавляет вуз в список. Затем нажми «Сохранить». Сравнение — отдельный инструмент: можно сопоставить до трёх вузов, не добавляя их в список.</p>
+      <section className={styles.help} data-step-help aria-labelledby="portal-shortlist-instructions">
+        <h3 id="portal-shortlist-instructions">Как выбрать вузы</h3>
+        <ol>
+          <li>Отметь подходящие вузы кнопкой «В мой список».</li>
+          <li>При необходимости сравни до трёх вузов. Сравнение работает отдельно и не меняет твой список.</li>
+          <li>Нажми «Сохранить», чтобы перейти к следующему шагу.</li>
+        </ol>
         <p>Выбор вуза не определяет требования программы. До подачи сверь программу, экзамены и сроки на её официальной странице.</p>
         {taskHelpDetails(task).map(text => <p key={text}>{text}</p>)}
         {done && <a href="#portal-step-heading" className={styles.back} aria-disabled={busy} onClick={event => {
           event.preventDefault(); if (!busy) onReopen();
         }}>Вернуть шаг в работу</a>}
-      </details>
+      </section>
     </header>
 
     <UniversitiesExplorer portalSelection={{ selectedIds: draft, onToggle: toggle }} />

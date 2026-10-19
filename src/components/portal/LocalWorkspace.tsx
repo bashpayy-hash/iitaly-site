@@ -1,4 +1,5 @@
 "use client";
+import { TransitionPanel } from "@/components/motion/TransitionPanel";
 import Link from "next/link";
 
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
@@ -123,6 +124,7 @@ export function LocalWorkspace() {
       {location.view === "today" && <h1 className="sr-only">Личный кабинет</h1>}
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
       <PortalNavigation current={location.view} onNavigate={view=>navigate({view,task:null,doc:null})}/>
+      <TransitionPanel transitionKey={`${location.view}-${location.task || ""}-${location.doc || ""}`}>
       {location.view === "today" && !wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} />}
       <div className={styles.layout}>
         <div className={styles.content}>
@@ -171,6 +173,7 @@ export function LocalWorkspace() {
           </>}
         </div>
       </div>
+      </TransitionPanel>
     </main>
   </div>;
 }

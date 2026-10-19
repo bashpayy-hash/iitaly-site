@@ -15,6 +15,7 @@ import { track } from "@/lib/track";
 import { UniversityArtwork } from "./UniversityArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
+import { TransitionPanel } from "@/components/motion/TransitionPanel";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
 // ItalyMap новую ссылку и заставляла карту сравнивать точки заново.
@@ -197,6 +198,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             </div>
 
             <div id="selected-city" className={ui.cityResult}>
+              <TransitionPanel transitionKey={`${activeCity || "empty"}-${typeFilter}-${engOnly}`}>
               {activeCity ? (
                 <CityPanel
                   cityId={activeCity}
@@ -220,6 +222,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                   <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
                 </div>
               )}
+              </TransitionPanel>
             </div>
           </div>
         </div>

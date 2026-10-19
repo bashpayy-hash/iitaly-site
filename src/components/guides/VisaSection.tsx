@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
 import { ADMISSION_SOURCES } from "@/data/admissions";
+import { DisclosurePanel } from "@/components/motion/TransitionPanel";
 import {
   VG_PER_YEAR,
   VISA_DOCS,
@@ -27,7 +28,7 @@ function VisaAccordion({
   const panelId = `${id}-panel`;
 
   return (
-    <section className="rounded-[24px] border border-subtle/80 bg-white/70 p-1.5">
+    <section className="rounded-[12px] border border-subtle/80 bg-white/70 p-1.5">
       <button
         id={triggerId}
         type="button"
@@ -43,15 +44,16 @@ function VisaAccordion({
           className={`shrink-0 text-muted transition-transform duration-200 motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
         />
       </button>
-      <div
+      <DisclosurePanel
+        open={open}
         id={panelId}
         role="region"
         aria-labelledby={triggerId}
-        hidden={!open}
-        className="mx-2 border-t border-subtle/80 px-2 pt-4 pb-4"
       >
+        <div className="mx-2 border-t border-subtle/80 px-2 pt-4 pb-4">
         {children}
-      </div>
+        </div>
+      </DisclosurePanel>
     </section>
   );
 }
@@ -66,7 +68,7 @@ export function VisaSection() {
 
       <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
         {VISA_KEY_FACTS.map((f) => (
-          <div key={f.label} className="rounded-[20px] border border-subtle/80 bg-base/80 px-3 py-4 text-center">
+          <div key={f.label} className="rounded-[12px] border border-subtle/80 bg-base/80 px-3 py-4 text-center">
             <b className="block font-apple-display text-[20px] leading-7 font-semibold tracking-tight text-primary">{f.value}</b>
             <span className="text-[13px] leading-5 text-secondary">{f.label}</span>
           </div>
@@ -101,7 +103,7 @@ export function VisaSection() {
         <VisaAccordion summary={<b className="font-semibold">Что проверить перед подачей</b>}>
           <div className="space-y-2">
             {VISA_REJECT_REASONS.map((r, i) => (
-              <div key={i} className="rounded-[18px] border border-subtle/80 bg-glow-lemon/70 px-4 py-3 text-[14px] leading-6 text-secondary">
+              <div key={i} className="rounded-[12px] border border-subtle/80 bg-glow-lemon/70 px-4 py-3 text-[14px] leading-6 text-secondary">
                 {r}
               </div>
             ))}

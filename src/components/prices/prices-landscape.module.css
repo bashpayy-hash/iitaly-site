@@ -1,13 +1,36 @@
-.hero { position:relative; isolation:isolate; z-index:1; padding:96px 20px 20px; text-align:center; }
-.copy { position:relative; z-index:1; isolation:isolate; width:min(100%,760px); margin-inline:auto; }
-.copy::before {
-  content:""; position:absolute; z-index:-1; inset:-34px -20px -20px; pointer-events:none;
-  background:radial-gradient(ellipse at center,var(--color-cream) 28%,color-mix(in srgb,var(--color-cream) 97%,transparent) 59%,color-mix(in srgb,var(--color-cream) 78%,transparent) 72%,transparent 90%);
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, .8fr);
+  align-items: center;
+  gap: 64px;
+  max-width: 1160px;
+  margin-inline: auto;
+  padding: 80px 24px 48px;
 }
-.landscape { display:block; pointer-events:none; user-select:none; }
-.landscape img { display:block; width:100%; height:auto; }
-.packages { position:relative; padding-top:20px; }
-@media (min-width:960px) { .copy::before { inset-inline:-72px; } }
-@media (max-width:767px) { .hero { padding:48px 20px 20px; } .copy::before { inset:-20px -20px -14px; } }
-@media (prefers-reduced-transparency:reduce),(prefers-contrast:more) { .copy::before { background:var(--color-cream); } }
-@media print { .hero { padding-block:24px; } .copy::before { display:none; } }
+.copy { min-width: 0; }
+.heading {
+  max-width: 690px;
+  margin-top: 16px;
+  color: var(--text-primary);
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+}
+.price { white-space: nowrap; font-family: var(--font-sans); font-size: .82em; font-weight: 500; font-variant-numeric: tabular-nums; }
+.description { max-width: 590px; margin-top: 24px; color: var(--text-secondary); font-size: 17px; line-height: 1.65; }
+.copy nav { justify-content: flex-start; }
+.artwork { width: 100%; }
+.landscape { display: block; }
+.packages { position: relative; padding-top: 20px; }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1.6fr) minmax(180px, 1fr); gap: 28px; padding-top: 64px; }
+}
+@media (max-width: 639px) {
+  .hero { grid-template-columns: 1fr; gap: 28px; padding: 48px 20px 32px; }
+  .heading { font-size: 36px; }
+  .description { font-size: 16px; }
+  .artwork { width: 100%; max-width: 360px; }
+}
+@media print { .hero { padding-block: 24px; } .artwork { display: none; } }
