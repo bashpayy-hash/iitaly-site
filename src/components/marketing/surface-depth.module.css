@@ -52,3 +52,6 @@
   .paper::before, .paper::after, .chrome::after { display: none; }
 }
 @media print { .paper { box-shadow: none; } .paper::before, .paper::after, .chrome::after { display: none; } }
+
+/* Clear document surfaces for decisions, filters and working forms. */
+.ledger {position:relative;background:var(--bg-surface);border:1px solid color-mix(in srgb,var(--text-primary) 22%,transparent);border-radius:16px;box-shadow:none}

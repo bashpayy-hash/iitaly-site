@@ -35,7 +35,8 @@ function inspect(directory) {
     if(!/\.(tsx?|jsx?|css|html|json|svg)$/.test(path))continue;
     const source = read(path);
     assert(!forbiddenCopy.test(source), `${path}: obsolete role wording`);
-    assert(!/["'`(]\/mascot\//.test(source), `${path}: repeated mascot artwork`);
+    if (path !== 'src/components/mascot/VespiIntroSection.tsx') assert(!/["'`(]\/mascot\//.test(source), `${path}: repeated mascot artwork`);
+    assert(!/[\p{Emoji_Presentation}\p{Regional_Indicator}\uFE0F\u20E3]/u.test(source), `${path}: emoji in interface copy`);
     assert(!/gallery-|font-davinci|font-playfair|color-putty|canaletto/i.test(source), `${path}: discarded gallery design`);
   }
 }

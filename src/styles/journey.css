@@ -71,3 +71,16 @@
 .journey-preview-tabs button[aria-selected=true] .journey-dot {color:var(--accent-primary)}
 
 .journey-link,.journey-button {scroll-margin-top:100px;scroll-margin-bottom:24px}
+
+/* The route and price are working documents within the warm site. */
+.journey-price-card,.journey-current-task {border:1px solid color-mix(in srgb,var(--text-primary) 24%,transparent);border-radius:16px;box-shadow:none}
+.journey-price-card .journey-title em {background:none;color:var(--text-primary)}
+.journey-price-card .journey-eyebrow,.journey-current-task .journey-eyebrow {padding:0;border:0;border-radius:0;background:none;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.journey-price-line {font-variant-numeric:tabular-nums}
+.journey-price-card .journey-button,.journey-current-task .journey-button {border-radius:12px}
+.journey-price-card li {padding-top:16px;border-top:1px solid var(--border-subtle)}
+.journey-price-card li svg {flex-shrink:0;margin-top:3px}
+.journey-portal-nav {gap:8px;padding:0 0 8px;background:none;border-radius:0;border-bottom:1px solid color-mix(in srgb,var(--text-primary) 22%,transparent)}
+.journey-portal-nav a {padding:10px 16px;border-radius:0;border-bottom:2px solid transparent}
+.journey-portal-nav a[aria-current=page] {background:none;border-bottom-color:var(--text-primary);box-shadow:none}
+@media(max-width:760px){.journey-portal-nav{gap:0 12px}.journey-portal-nav a{padding:10px 8px}}

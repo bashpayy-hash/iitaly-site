@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CircleCheck } from "lucide-react";
 import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
@@ -195,7 +196,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           {step === "manual" && (
             <div>
               <div className="text-center">
-                <div aria-hidden className="text-4xl">✅</div>
+                <CircleCheck aria-hidden="true" className="mx-auto size-10 text-primary" strokeWidth={1.5} />
                 <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">
                   Переведи сумму и пришли чек — после подтверждения мы активируем доступ или начнём выполнение услуги.

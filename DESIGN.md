@@ -50,3 +50,9 @@ Preserve the shared local questionnaire and guest workspace, isolated cloud sign
 The user cancelled the Renaissance gallery direction. The warm palette, fonts, logo, header and component scale above remain the baseline (1d9b9dc). Do not restore the rejected serif typography, ink rooms, giant wordmark or classical painting system.
 
 Home uses a functional, explicitly labelled route example, one focused action block, a three-stage admissions timeline and one compact price feature list. Guides start with four scenarios and preserve all thirteen source-backed topics, URL history and contextual help. Portal navigation is consolidated into Now / Full route / Documents / Settings; task checklists, files and existing deadlines are visible. Do not reintroduce portrait repetition, payment as an admissions stage, or delegated owner tags. The assistant remains a quiet functional chat entry.
+
+## Selective refinement — 19 October 2026
+
+The user requested emoji removal, the return of Vespi's introduction and selective rigor from earlier versions. Keep one illustrated introduction on the home page, after the admissions timeline. Its button opens the existing assistant without automatically sending a message. Reuse the approved responsive WebP artwork; keep task cards, guides and filters free of repeated portraits.
+
+University filters, pricing decisions and portal working cards use the shared `ledger` surface: white, a clear graphite border, 16px corners and no decorative shadow. Portal navigation uses a simple active underline. These scoped changes retain the warm palette and illustrated marketing sections; they do not restore the cancelled gallery system. Colorful emoji are excluded from application source; functional icons use the existing Lucide set.
