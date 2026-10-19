@@ -30,7 +30,8 @@ export function VespiAssistant({
   as: Element = "aside", label = "Веспи · рядом на каждом шаге",
   title, message, children, priority = false, className = "", ...props
 }: VespiAssistantProps) {
-  const visual = appearance || (layout === "inline-pill" ? "indicator" : "portrait");
+  // Character artwork is opt-in and tied to the surface's actual task.
+  const visual = appearance || "none";
   const hasPortrait = visual === "portrait" || visual === "figure";
   const imageSizes = layout === "floating-bar" ? "64px"
     : layout === "editorial-callout" && visual === "figure" && variant === "inspector"

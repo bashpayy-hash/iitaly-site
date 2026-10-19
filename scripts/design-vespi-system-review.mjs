@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -98,17 +99,8 @@ async function brand(page) {
 }
 
 async function noDuplicatePortraits(page, where) {
-  const contentVisible = await page.locator('img[data-vespi]').evaluateAll(images => images.some(image => {
-    if (image.closest('#chat-launcher, #iitaly-chat')) return false;
-    const rect = image.getBoundingClientRect();
-    return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth
-      && image.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true });
-  }));
-  if (contentVisible && await page.locator('#chat-launcher').count()) {
-    // Content and the launcher update through separate observers; their real
-    // rendered state must settle before the invariant is sampled on CI.
-    await page.locator('#chat-launcher[data-vespi-launcher-mode="indicator"]').waitFor({ state: 'attached' });
-  }
+  assert.equal(await page.locator('#chat-launcher img').count(),0, `${where}: floating launcher never repeats a portrait`);
+  assert.equal(await page.locator('img[src*="vespi-avatar-"]').count(),0, `${where}: legacy cropped heads are absent`);
   const visible = await page.locator('img[data-vespi]').evaluateAll(elements => elements.filter(element => {
     const rect = element.getBoundingClientRect();
     return rect.width && rect.height && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth
@@ -126,32 +118,25 @@ const ROLE_ARTWORK = {
 
 // A role label alone must not pass while the original fallback is displayed.
 // Check the selected responsive resource after it is visible and decoded.
-async function actualRoleArtwork(container, role, presentation, where) {
-  const image = container.locator('img[data-vespi]');
-  assert.equal(await image.count(), 1, `${where}: one role image`);
-  await image.scrollIntoViewIfNeeded();
-  await image.waitFor({ state: 'visible' });
-  const rendered = await image.evaluate(async element => {
-    await element.decode();
-    const box = element.getBoundingClientRect();
-    return {
-      src: element.getAttribute('src'), srcSet: element.getAttribute('srcset'),
-      currentSrc: element.currentSrc, naturalWidth: element.naturalWidth, naturalHeight: element.naturalHeight,
-      role: element.getAttribute('data-vespi-role'), fallback: element.getAttribute('data-vespi-fallback'),
-      visible: box.width > 0 && box.height > 0 && box.bottom > 0 && box.top < innerHeight && box.right > 0 && box.left < innerWidth
-        && element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }),
-    };
-  });
-  const [prefix, widths] = ROLE_ARTWORK[`${role}:${presentation}`];
-  const paths = widths.map(width => `/mascot/vespi/${prefix}-${width}.webp`);
-  assert.equal(rendered.role, role, `${where}: semantic role matches the image`);
-  assert.equal(rendered.fallback, null, `${where}: approved role artwork replaces the generic fallback`);
-  assert.equal(rendered.srcSet, paths.map((path, index) => `${path} ${widths[index]}w`).join(', '), `${where}: every responsive candidate belongs to the intended role`);
-  assert(paths.includes(rendered.src), `${where}: initial source belongs to the intended role`);
-  const current = new URL(rendered.currentSrc);
-  assert.equal(current.origin, origin, `${where}: selected artwork is served locally`);
-  assert(paths.includes(current.pathname), `${where}: the browser actually selected the intended role artwork`);
-  assert(rendered.naturalWidth > 0 && rendered.naturalHeight > 0 && rendered.visible, `${where}: role artwork is decoded and visible`);
+async function noLegacyPortraits(container, where) {
+  assert.equal(await container.locator('img[data-vespi], img[src*="vespi-avatar-"]').count(),0, `${where}: utility content has no hanging mascot head`);
+}
+
+async function documentCoach(page, where) {
+  const coach=page.locator('[data-portal-document-coach]');
+  assert.equal(await coach.count(),1, `${where}: one contextual document coach`);
+  const image=coach.locator('img');
+  assert.equal(await image.getAttribute('src'),'/mascot/vespi-document-coach.webp');
+  await coach.scrollIntoViewIfNeeded();
+  if (await image.isVisible()) {
+    await page.waitForFunction(() => {
+      const image=document.querySelector('[data-portal-document-coach] img');
+      return image?.complete && image.naturalWidth > 0;
+    }, null, { timeout: 10000 });
+  } else {
+    assert(page.viewportSize().width <= 380, `${where}: only narrow screens omit the decorative pose`);
+    assert(await coach.getByRole('heading', {name:'Подготовим файл к разбору'}).isVisible(), `${where}: the preparation guidance stays visible`);
+  }
 }
 
 async function roleAssetBudget() {
@@ -173,6 +158,17 @@ async function roleAssetBudget() {
   }));
   const bytes = sizes.reduce((sum, size) => sum + size, 0);
   assert(bytes <= 64 * 1024, `Role artwork stays within 64 KiB for all responsive variants, received ${bytes} bytes`);
+  const contextual=JSON.parse(await readFile('design/mascot/vespi/contextual-assets.json','utf8')).assets;
+  assert.deepEqual(contextual.map(asset=>asset.file).sort(),['public/mascot/vespi-document-coach.webp','public/mascot/vespi-guide-invite.webp','public/mascot/vespi-search-avatar.webp']);
+  for(const asset of contextual){
+    const source=await readFile(asset.file);
+    assert.equal(source.length,asset.bytes);
+    assert.equal(createHash('sha256').update(source).digest('hex'),asset.sha256,'The shipped contextual asset matches its provenance');
+    const response=await fetch(origin+asset.file.slice('public'.length));
+    assert.equal(response.status,200);
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()),source);
+  }
+  assert(contextual.reduce((sum,asset)=>sum+asset.bytes,0)<=128*1024,'Three contextual images stay small enough for mobile');
 }
 
 // The user's follow-up explicitly replaces the heavy IITALY. wordmark with
@@ -195,7 +191,7 @@ async function checkWordmark(page) {
 try {
   if (!baseline) {
     await roleAssetBudget();
-    // The user explicitly replaces all cold colors; retain the font contract.
+    // Mascot placement changes preserve the established typography and palette.
     const fonts = source => source.match(/--font-[^;]+;/g);
     const before = execFileSync('git', ['show', `${baseRef}:src/app/globals.css`], { encoding: 'utf8' });
     assert.deepEqual(fonts(await readFile('src/app/globals.css', 'utf8')), fonts(before), 'Typography tokens remain unchanged');
@@ -237,12 +233,14 @@ try {
       brands[`${name}-${width}`] = await brand(page);
       if (!baseline && beforeBrands[`${name}-${width}`]) assert.deepEqual(preservedBrand(brands[`${name}-${width}`]), preservedBrand(beforeBrands[`${name}-${width}`]), `${name} ${width}: preserve typography while applying the authorized warm palette`);
       if (!baseline && name === 'home') {
-        const entry = page.getByRole('complementary', { name: 'Начать с Веспи', exact: true });
+        const entry = page.locator('[data-section="hero"]');
         const action = entry.getByRole('link', { name: 'Составить план бесплатно', exact: true });
         const box = await action.boundingBox();
         assert(box && box.y + box.height <= (width < 600 ? 844 : 1000), 'The real starting action stays in the first viewport');
-        const mascot = await entry.locator('[data-vespi]').boundingBox();
-        assert(mascot && !(mascot.x < box.x + box.width && mascot.x + mascot.width > box.x && mascot.y < box.y + box.height && mascot.y + mascot.height > box.y), 'Vespi never obscures the starting action');
+        await noLegacyPortraits(entry, 'home hero');
+        assert.equal(await page.locator('[data-vespi-intro="home"]').count(),1,'The dedicated home introduction is retained');
+        assert.equal(await page.locator('[data-section="how"]').count(),0,'How-it-works facts moved to FAQ');
+        assert.equal(await page.getByText('Как проходит работа с iItaly?',{exact:true}).count(),1);
         await noDuplicatePortraits(page, `home entry ${width}`);
       }
       if (!sectionsOnly) await capture(name);
@@ -250,31 +248,17 @@ try {
       // Baseline anchors are real containers that also existed before Vespi.
       if (width === 1440 || width === 390) {
         if (name === 'home') {
-          await page.locator('[data-section="how"]').evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
-          await capture('home-how');
+          await page.locator(baseline ? '[data-section="how"]' : '[data-vespi-intro="home"]').evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
+          await capture('home-introduction');
           const priceBand = page.locator('section').filter({ has: page.getByRole('link', { name: 'Смотреть, что входит', exact: true }) });
           await priceBand.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
           await capture('home-price-band');
         } else if (name === 'prices') {
-          const target = baseline ? page.locator('#main-package').getByRole('button', { name: 'Оформить и оплатить', exact: true }) : page.locator('#main-package [data-vespi-assistant]');
+          const target = page.locator('#main-package').getByRole('button', { name: 'Оформить и оплатить', exact: true });
           await target.evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
           if (!baseline) {
-            // The observer publishes after the scroll frame. Capture its real
-            // settled state, not the preceding launcher's portrait frame.
-            await page.locator('#chat-launcher[data-vespi-launcher-mode="indicator"]').waitFor({ state: 'attached' });
-            await page.waitForFunction(() => {
-              const launcher = document.getElementById('chat-launcher');
-              if (!launcher) return false;
-              const rect = launcher.getBoundingClientRect();
-              return launcher.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
-                && Number(getComputedStyle(launcher).opacity) >= 0.99 && rect.top < innerHeight && rect.bottom > 0;
-            });
-            await noDuplicatePortraits(page, `prices insight ${width}`);
-            if (width < 600) {
-              const card = await target.boundingBox();
-              const explanation = await target.locator('[data-vespi-message]').boundingBox();
-              assert(explanation && card && explanation.width >= card.width - 50, 'The mobile explanation uses the card width instead of a narrow column beside the portrait');
-            }
+            await noLegacyPortraits(page.locator('main'),'pricing');
+            await noDuplicatePortraits(page, `pricing ${width}`);
           }
           await capture('prices-insight');
         } else if (name === 'universities') {
@@ -301,7 +285,7 @@ try {
       }
       if (!baseline && !sectionsOnly) {
         await checkWordmark(page);
-        assert(await page.locator('[data-vespi-assistant], [data-vespi-indicator]').count() > 0, `${name}: shared assistant system is integrated`);
+        assert.equal(await page.locator('#chat-launcher').count(),1, `${name}: one functional assistant entry remains`);
         const roles = await page.locator('[data-vespi-assistant]').evaluateAll(elements => elements.map(element => ({ role: element.dataset.vespiVariant, layout: element.dataset.vespiAssistant })));
         assert(roles.every(({ role, layout }) => ['route', 'inspector', 'celebrate', 'copilot'].includes(role) && ['inline-pill', 'editorial-callout', 'portal-copilot', 'floating-bar'].includes(layout)), `${name}: role and layout stay within the shared public contract`);
         await audit(`${name} ${width}`);
@@ -319,7 +303,7 @@ try {
       await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
       await visit('/portal?view=docs&doc=statements');
       await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
-      if (!baseline) await actualRoleArtwork(page.locator('[data-portal-document-inspector]'), 'inspector', 'portrait', `saved report ${width}`);
+      if (!baseline) await noLegacyPortraits(page.locator('[data-portal-document-inspector]'), `saved report ${width}`);
       await capture('portal-inspector-report');
       results.push({ width, savedReportCapture: true }); await context.close(); continue;
     }
@@ -329,10 +313,9 @@ try {
     await advice.evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
     if (!baseline) {
       await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
-      assert.equal(await advice.getAttribute('data-vespi-variant'), 'inspector', 'Apostille advice uses inspector context');
-      // The latest brief reserves 3D for the intro/active assistant. Reading
-      // advice now uses a face-free editorial helmet detail.
-      assert.equal(await advice.locator('svg[data-vespi="editorial-mark"]').count(), 1);
+      assert.equal(await advice.getAttribute('data-guide-next'), 'apostille', 'Advice follows the selected topic');
+      // Reading advice is plain content; the requested illustrations sit at search and timeline.
+      assert.equal(await advice.locator('[data-vespi]').count(), 0);
       assert.equal(await advice.locator('img[data-vespi]').count(), 0);
       await noDuplicatePortraits(page, `guide insight ${width}`);
       await audit(`guide insight ${width}`);
@@ -346,13 +329,13 @@ try {
       if (await checklist.getAttribute('aria-expanded') === 'false') await checklist.click();
       await page.locator('#active-guide-title').focus();
       await page.locator('#active-guide-title').evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
-      await page.locator('[data-guide-sticky]').waitFor({ state: 'visible' });
-      await capture('guides-sticky');
+      assert.equal(await page.locator('[data-guide-sticky]').count(),0);
+      await capture('guides-reading');
     }
 
     await visit('/plan');
     if (!baseline) {
-      assert(await page.locator('[data-vespi-variant="copilot"]').count() > 0, 'Questionnaire uses a copilot');
+      assert.equal(await page.locator('[data-plan-question] img').count(),0,'Questionnaire content stays portrait-free');
       assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'The document workbench uses a utility icon, preserving the single mascot anchor');
     }
     await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
@@ -360,7 +343,7 @@ try {
       const explanation = page.locator('[data-vespi-question-reason]');
       assert(await explanation.isVisible(), 'Each question gives a short reason');
       assert.match(await explanation.innerText(), /аттестат|лет|образован|допуск/i, 'Education context explains why the qualification matters');
-      await actualRoleArtwork(page.locator('[data-plan-question]'), 'copilot', 'portrait', `plan questionnaire ${width}`);
+      await noLegacyPortraits(page.locator('[data-plan-question]'), `plan questionnaire ${width}`);
     }
     await capture('plan-question');
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
@@ -386,11 +369,11 @@ try {
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
-      assert.equal(await page.locator('[data-portal-road] [data-vespi]').count(), 1, 'Overview keeps Vespi on the existing next-action road');
+      assert.equal(await page.locator('[data-portal-road] img').count(),0,'Progress has no mascot image');
       assert.equal(await page.locator('[data-portal-overview] button').count(), 0, 'Overview adds no competing action buttons');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
-      await actualRoleArtwork(page.locator('[data-portal-road]'), 'copilot', 'portrait', `portal focus ${width}`);
+      await noLegacyPortraits(page.locator('[data-portal-road]'), `portal focus ${width}`);
       await noDuplicatePortraits(page, `portal overview ${width}`);
       await audit(`portal overview ${width}`);
     }
@@ -414,8 +397,9 @@ try {
     await page.locator('[data-step-detail="statements"]').waitFor();
     assert.equal(await page.locator('[data-step-detail] [data-primary-action]').count(), 1, 'Current file step offers exactly one upload action');
     if (!baseline) {
-      assert(await page.locator('[data-step-detail] [data-vespi-variant="inspector"]').count() > 0, 'Current file step uses inspector context');
-      await actualRoleArtwork(page.locator('[data-step-detail] [data-portal-step-guide]'), 'inspector', 'portrait', `portal upload ${width}`);
+      assert(await page.locator('[data-step-detail] [data-portal-step-guide]').isVisible(), 'Current file step shows its action instructions');
+      await noLegacyPortraits(page.locator('[data-step-detail] [data-portal-step-guide]'), `portal upload ${width}`);
+      await documentCoach(page, `portal upload ${width}`);
       await noDuplicatePortraits(page, `portal upload ${width}`);
       await audit(`portal upload ${width}`);
     }
@@ -428,8 +412,8 @@ try {
     assert(await report.getByText(data.docs.statements.result.summary, { exact: true }).isVisible(), 'The saved summary is shown verbatim');
     assert(await report.getByText('Выбери программу и учебный год.', { exact: true }).isVisible(), 'The saved next action stays visible');
     if (!baseline) {
-      assert.equal(await page.locator('[data-portal-document-inspector]').getAttribute('data-vespi-variant'), 'inspector');
-      await actualRoleArtwork(page.locator('[data-portal-document-inspector]'), 'inspector', 'portrait', `saved report ${width}`);
+      assert(await page.locator('[data-portal-document-inspector]').isVisible(), 'The saved report decision remains readable');
+      await noLegacyPortraits(page.locator('[data-portal-document-inspector]'), `saved report ${width}`);
       await noDuplicatePortraits(page, `saved report ${width}`);
       await audit(`saved report ${width}`);
     }

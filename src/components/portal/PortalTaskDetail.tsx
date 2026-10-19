@@ -7,7 +7,7 @@ import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { isManualTask, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { PortalUploadZone } from "./PortalUploadZone";
 import { PortalDocumentContext } from "./PortalDocumentContext";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import portal from "./portal.module.css";
 import styles from "./portal-step.module.css";
 
@@ -44,12 +44,11 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
     <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
     <p className={styles.meta}>{meta}</p>
     {date && <p className={styles.date}>{date} — это не срок конкретного вуза.</p>}
-    <VespiAssistant as="div" variant={done ? "celebrate" : needDoc ? "inspector" : "copilot"} layout="portal-copilot" appearance="portrait"
-      label={done ? "Веспи · шаг сохранён" : readOnly ? "Веспи · заглянем вперёд" : needDoc ? "Веспи · проверим документ" : "Веспи · пройдём этот шаг"}
-      message={taskExplanation(task)} className={styles.assistant} data-portal-step-guide>
+    <div className={styles.instructions} data-portal-step-guide>
+      <p>{taskExplanation(task)}</p>
       {readOnly && <p className={styles.reason}>{readOnly}</p>}
       {!readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
-    </VespiAssistant>
+    </div>
     {readOnly ? <>
       {done && manual && !hasRetry && <a className={styles.link} href="#portal-step-heading" aria-disabled={busy} onClick={event => {
         event.preventDefault(); if (!busy) onToggle(false);
@@ -60,6 +59,7 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
         event.preventDefault(); onEditProfile();
       }}>Заполнить профиль</a>
       : needDoc ? <>
+        <PortalDocumentCoach />
         {!hasRetry && <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} describedBy="portal-step-action-hint"
           hint="Шаг закроется, если проверка пройдена" />}
         <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />
@@ -69,7 +69,7 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
           {!hasRetry && <button type="submit" className={portal.primaryButton} aria-describedby="portal-step-action-hint" data-primary-action disabled={busy}>{busy ? "Сохраняю…" : "Готово"}</button>}
         </form>}
       </>}
-    {help.length > 0 && <details className={styles.notes} data-step-help>
+    {help.length > 0 && <details className={styles.notes} data-step-help open>
       <summary>Как выполнить этот шаг</summary>
       {help.map(text => <p key={text} className={styles.note}>{text}</p>)}
     </details>}

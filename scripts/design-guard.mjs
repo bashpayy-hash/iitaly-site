@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 
 const base = process.argv[2];
 assert(base, 'Pass the reviewed base commit SHA.');
@@ -48,6 +48,9 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User refinement: one contextual document illustration beside the real upload.
+  'src/components/portal/PortalDocumentCoach.tsx',
+  'src/components/portal/portal-document-coach.module.css',
   // User request 2026-10-18: one actual-stage navigator, face-free section icons,
   // shared introduction and a helmet detail; palette, data and API stay frozen.
   "src/components/portal/PortalStageIcon.tsx",
@@ -172,3 +175,24 @@ const baseMap = execFileSync('git', ['show', `${base}:src/components/universitie
 const withoutColors = source => source.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
 assert.equal(withoutColors(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8')), withoutColors(baseMap.replace('role="img"', 'role="group"')), 'Map changes are limited to colors; geometry and interaction stay exact.');
 console.log('Approved presentation paths passed; map geometry, comparison model, API and dependencies remain protected.');
+
+// The current request changes presentation only, not stored data or service contracts.
+for (const path of [
+  'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
+  'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts','src/lib/chat.ts',
+  'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts','src/lib/portalApi.ts',
+  'src/lib/localWorkspace.ts','src/lib/usePlanDraft.ts','src/lib/portalShortlist.ts',
+  'src/components/universities/comparison-model.ts',
+  'src/components/guides/permesso/permessoOriginalGeometry.ts',
+  'src/components/guides/permesso/permessoData.ts',
+  'src/components/guides/permesso/permessoTransferModel.ts',
+  'src/app/globals.css','src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css',
+  'package.json','package-lock.json','next.config.ts','netlify.toml',
+]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
+assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');
+assert(!/HowItWorks/.test(readFileSync('src/app/page.tsx','utf8')),'Do not restore the removed home section');
+for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBand.tsx']) {
+  assert(!/VespiAssistant|<Vespi\b/.test(readFileSync(path,'utf8')),`${path}: removed mascot callout`);
+}
+assert(!/VespiIntroSection/.test(readFileSync('src/app/guides/page.tsx','utf8')),'Guides do not repeat the home introduction');
+assert(!/useVespiPresence|<Vespi\b/.test(readFileSync('src/components/chat/ChatLauncher.tsx','utf8')),'Floating help is a quiet icon entry');

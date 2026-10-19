@@ -171,7 +171,7 @@ try {
     await page.getByRole('link',{name:'Изменить ответы анкеты',exact:true}).click();
     await page.getByRole('heading',{name:'Когда хочешь начать учёбу?',exact:true}).waitFor();
     assert.equal(await page.locator('[data-vespi] [data-vespi]').count(),0);
-    assert.equal(await page.locator('[data-vespi]').count(),1,'Only the wizard owns Vespi while editing');
+    assert.equal(await page.locator('img[data-vespi]').count(),0,'Editing the questionnaire has no repeated mascot portrait');
     await capture('portal-questionnaire');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'No protected API calls during guest questionnaire, selection or self-report');
     results.push({width,sharedDraft:true,guestWithoutAuth:true,persistentSelection:true,existingMapAndComparison:true,noFutureUpload:true,exampleHonest:true,singleMascot:true,applicableReviewYearOnly:true,noStoredFileOrReportContent:true});

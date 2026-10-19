@@ -50,6 +50,20 @@ try {
       assert.deepEqual(violations, [], `${where}: accessibility`);
     }
     function currentNext(id) { return page.locator(`[data-guide-next="${id}"]`).filter({ visible: true }); }
+    async function readingSurfaceContrast() {
+      // An unresolved surface token silently makes these controls transparent.
+      // Verify the painted number, not its intentionally transparent stage link.
+      const stageNumber = page.locator('[data-guide-timeline] a[aria-current="step"] > span[aria-hidden="true"]');
+      const nextTopic = page.locator('[data-guide-next-topic]').filter({ visible: true });
+      for (const [label, control] of [['Current stage number', stageNumber], ['Next topic', nextTopic]]) {
+        assert.equal(await control.count(), 1, `${label}: one active control`);
+        const colors = await control.evaluate(element => {
+          const style = getComputedStyle(element);
+          return { background: style.backgroundColor, text: style.color };
+        });
+        assert.deepEqual(colors, { background: 'rgb(20, 20, 19)', text: 'rgb(255, 255, 255)' }, `${label}: opaque ink surface preserves readable white text`);
+      }
+    }
     async function addProviderBadge() {
       await page.evaluate(() => {
         const badge = document.createElement('iframe');
@@ -60,13 +74,7 @@ try {
       });
     }
     async function openHelper() {
-      if (width >= 1024) await page.getByRole('button', { name: 'Разобрать тему с Веспи', exact: true }).click();
-      else if (await page.locator('header summary').isVisible()) {
-        await page.locator('header summary').click();
-        await page.getByRole('button', { name: 'Задать вопрос', exact: true }).click();
-      } else {
-        await page.getByRole('button', { name: 'Задать вопрос ИИ-консультанту', exact: true }).click();
-      }
+      await page.getByRole('button', { name: 'Есть вопрос? Спроси Веспи', exact: true }).click();
       await page.getByRole('dialog', { name: 'ИИ-консультант' }).waitFor();
       await page.waitForFunction(() => document.activeElement === document.getElementById('chat-input'));
     }
@@ -78,34 +86,25 @@ try {
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');
     await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
-    // The shared assistant now reserves a real portrait for contextual advice.
-    // Search uses a semantic AI indicator instead of repeating the same face.
-    assert.equal(await page.locator('[data-section="guides-header"] [data-vespi]').count(), 0, 'The command bar does not duplicate a portrait');
-    assert.equal(await page.locator('#guide-command [data-vespi-indicator]').count(), 1, 'The command bar keeps a compact AI indicator');
+    const avatar = page.locator('#guide-command [data-vespi-search-avatar]');
+    assert.equal(await avatar.count(), 1, 'Search has one deliberate compact avatar');
+    assert.equal(await avatar.getAttribute('src'), '/mascot/vespi-search-avatar.webp');
+    await avatar.evaluate(image => image.decode());
+    assert.equal(await page.locator('[data-vespi-intro="guides"]').count(), 0, 'Guides have no duplicated promotional introduction');
+    assert.equal(await page.locator('#chat-launcher img').count(), 0, 'Floating help remains a text-and-icon entry');
     assert.equal(await page.locator('main time').count(),1,'The common rule-verification date appears once');
-    assert.equal(await page.locator('[data-guide-sticky]').isVisible(), false, 'The conversion bar yields while the hero is visible');
+    assert.equal(await page.locator('[data-guide-sticky]').count(), 0, 'Reading has no competing floating sales offer');
     assert.equal(await page.locator('[data-guide-current] [data-vespi]').count(), 0, 'Stage navigation remains text-only');
     assert(await page.locator('#guide-search').evaluate(input => input.getBoundingClientRect().height >= 44), 'The search field has a 44px touch target');
     await screenshot('guides-top');
-    assert(await page.locator('#guide-command a').evaluateAll(links => links.every(link => {
-      const rect = link.getBoundingClientRect(), y = rect.y + rect.height / 2;
-      if (y <= 0 || y >= innerHeight) return true;
-      return [0.2, 0.5, 0.85].every(fraction => {
-        const x = rect.x + rect.width * fraction;
-        return x <= 0 || x >= innerWidth || link.contains(document.elementFromPoint(x, y));
-      });
-    })), 'Visible prompt chips are not covered by the floating helper');
-    await page.getByRole('link', { name: 'У меня 11 классов — что делать?', exact: true }).click();
+    await page.locator('[data-guide-select="education"]').click();
     assert.equal(new URL(page.url()).hash, '#education');
-    assert.equal((await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').innerText()).replace(/\s+/g, ' ').trim(), '1. Выбрать маршрут');
+    assert.equal(await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').getAttribute('href'), '#education');
     assert.match(await page.locator('[data-vespi-tip]').filter({ visible: true }).innerText(), /Foundation не заменяет выпускной аттестат/);
-    assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('[data-vespi]').count(), 1, 'The selected insight has one face-free Vespi detail');
-    assert(await page.locator('[data-vespi-tip] [data-vespi-presence]').filter({ visible: true }).evaluate(element => {
-      const rect = element.getBoundingClientRect();
-      return rect.width >= 72 && rect.width <= 96;
-    }), 'The editorial detail is 72–96px, without a repeated 3D face');
+    assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('img').count(), 0, 'Action advice is readable without a repeated mascot');
     assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
     assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
+    await readingSurfaceContrast();
     assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());
     await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).click();
     await page.locator('[data-guide-origin="education"]').waitFor();
@@ -129,10 +128,8 @@ try {
     const inlineAdvice = page.locator('[data-vespi-tip]').filter({ visible: true });
     await inlineAdvice.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
     await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
-    // The sticky and launcher have independent IntersectionObservers. Wait
-    // for the launcher to publish the new viewport before counting portraits.
-    await page.locator('#chat-launcher[data-vespi-launcher-mode="indicator"]').waitFor({ state: 'attached' });
-    assert.equal(await inlineAdvice.getAttribute('data-vespi-variant'), 'inspector', 'Document advice uses the inspector role');
+    assert.equal(await page.locator('#chat-launcher img').count(), 0, 'The helper launcher never repeats a head');
+    assert.equal(await inlineAdvice.getAttribute('data-guide-next'), 'apostille', 'Document advice stays tied to the selected topic');
     assert(await page.locator('img[data-vespi]').evaluateAll(images => images.filter(image => {
       const rect = image.getBoundingClientRect();
       return image.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
@@ -157,7 +154,7 @@ try {
 
     await visit('/guides#translation');
     await openHelper();
-    assert.equal(await page.locator('[data-guide-sticky]').isVisible(), false, 'The conversion bar yields to the open helper');
+    assert.equal(await page.locator('[data-guide-sticky]').count(), 0, 'No sales bar is mounted behind the open helper');
     const question = page.getByRole('textbox', { name: 'Вопрос ИИ-консультанту' });
     assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'), 'translation');
     await page.getByRole('link', { name: 'Что проверить в переводе для вуза и для визы?', exact: true }).click();
@@ -191,7 +188,7 @@ try {
     assert(await launcher.evaluate(button => button.getBoundingClientRect().bottom < document.getElementById('nl-badge-frame').getBoundingClientRect().top), 'The launcher also stays above the badge');
     await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
     // A topic change updates helper context but preserves the user's draft.
-    await page.getByRole('navigation', { name: 'Этапы справочника' }).getByRole('link', { name: '3. После приезда', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('a[href="#permesso"]').click();
     await openHelper();
     assert.equal(await question.inputValue(), 'Мой незаконченный вопрос');
     assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'), 'permesso');
@@ -216,18 +213,19 @@ try {
     assert.equal(await question.inputValue(), 'Мой незаконченный вопрос', 'An empty search cannot replace an existing chat draft');
     await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({ state: 'hidden' });
-    await page.getByRole('button', { name: 'Показать все темы', exact: true }).click();
-    // Stage tabs intentionally filter 2 / 8 / 3 cards instead of listing all
+    await page.getByRole('button', { name: 'Сбросить поиск', exact: true }).click();
+    // Timeline stages intentionally filter 2 / 8 / 3 cards instead of listing all
     // thirteen native disclosures at once. Search still spans every stage.
     const stageNavigation = page.getByRole('navigation', { name: 'Этапы справочника' });
     assert.equal(await page.locator('[data-guide-select]').count(), 2, 'Reset returns to the first stage');
     const chapterIds = new Set();
-    for (const [stageLabel, expected] of [['1. Выбрать маршрут', 2], ['2. Подготовиться к отъезду', 8], ['3. После приезда', 3]]) {
-      await stageNavigation.getByRole('link', { name: stageLabel, exact: true }).click();
+    for (const [stageLabel, expected] of [['education', 2], ['apostille', 8], ['permesso', 3]]) {
+      await stageNavigation.locator(`a[href="#${stageLabel}"]`).click();
       const cards = page.locator('[data-guide-select]');
       assert.equal(await cards.count(), expected, stageLabel + ': correct chapter count');
       for (const id of await cards.evaluateAll(nodes => nodes.map(node => node.dataset.guideSelect))) chapterIds.add(id);
-      assert.equal((await stageNavigation.locator('[aria-current="step"]').innerText()).replace(/\s+/g, ' ').trim(), stageLabel);
+      assert.equal(await stageNavigation.locator('[aria-current="step"]').getAttribute('href'), '#'+stageLabel);
+      await readingSurfaceContrast();
     }
     assert.equal(chapterIds.size, 13, 'All reviewed topics remain available across the three stages');
     assert(chapterIds.has('visa') && chapterIds.has('permesso'), 'Visa and the original trainer entry remain available');
@@ -236,80 +234,39 @@ try {
     await page.locator('[data-guide-select="cimea"]').click();
     await page.waitForFunction(() => document.activeElement?.id === 'active-guide-title');
     assert.equal(await page.locator('#active-guide-title').evaluate(el => document.activeElement === el), true, 'Selecting a topic moves keyboard focus to its heading');
-    await page.getByRole('button', { name: 'К списку тем', exact: true }).click();
-    assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 0, 'Back closes the selected topic');
-    assert.equal(await search.evaluate(el => document.activeElement === el), true, 'Back returns focus to the command bar');
-    let stickyExercised = false;
-    if (width === 1440 || width === 390) {
-      // This long chapter leaves both the hero and the whole inline insight outside
-      // the viewport, which is the intended moment for the conversion pill.
-      await visit('/guides#visa');
-      await page.locator('[data-guide-panel="visa"]').waitFor();
-      await page.waitForFunction(() => document.activeElement?.id === 'active-guide-title'
-        && document.activeElement.closest('[data-guide-panel]')?.getAttribute('data-guide-panel') === 'visa');
-      // The whole advice panel now suppresses the sticky offer, including its
-      // portrait overhang. Expand real reading content so the test actually
-      // leaves that panel outside the viewport and its early-yield margin.
-      const checklist = page.getByRole('button', { name: 'Чек-лист документов', exact: true });
-      if (await checklist.getAttribute('aria-expanded') === 'false') await checklist.click();
-      await page.waitForFunction(() => [...document.querySelectorAll('[data-guide-panel="visa"] button')]
-        .some(button => button.textContent === 'Чек-лист документов' && button.getAttribute('aria-expanded') === 'true'));
-      // goto can be a same-document hash change after Back focused search.
-      // Match a card selection: keyboard focus leaves the command input.
-      await page.locator('#active-guide-title').focus();
-      await page.locator('#active-guide-title').evaluate(heading => heading.scrollIntoView({ block: 'start' }));
-      const sticky = page.locator('[data-guide-sticky]');
-      // The desktop checklist can be shorter than a full viewport plus the
-      // insight's early-yield margin. Find a real reading interval rather than
-      // assuming its heading always provides one; never hide a real callout.
-      await checklist.evaluate(async button => {
-        const section = button.closest('[data-guide-panel]');
-        await Promise.all(section.getAnimations({subtree:true}).map(animation => animation.finished.catch(()=>{})));
-      });
-      const interval = await page.evaluate(() => {
-        const absoluteBottom = el => el.getBoundingClientRect().bottom + scrollY;
-        const absoluteTop = el => el.getBoundingClientRect().top + scrollY;
-        const hero = document.querySelector('[data-section="guides-header"]');
-        const blockers = [...document.querySelectorAll('[data-vespi-tip], [data-vespi-tip] [data-vespi-presence], [data-vespi-intro=guides]')]
-          .filter(el => {const r=el.getBoundingClientRect();return r.width&&r.height;});
-        return {min:absoluteBottom(hero)+24,max:Math.min(...blockers.map(absoluteTop))-innerHeight-180};
-      });
-      if (interval.max >= interval.min) {
-      await page.evaluate(y => window.scrollTo({top:y,behavior:'instant'}),(interval.min+interval.max)/2);
-      await sticky.waitFor({ state: 'visible' }).catch(async error => {
-        console.log('Sticky visibility diagnostic',JSON.stringify(await page.evaluate(()=>({width:innerWidth,height:innerHeight,y:scrollY,max:document.documentElement.scrollHeight-innerHeight,hash:location.hash,rects:[...document.querySelectorAll('[data-section="guides-header"],[data-guide-panel],[data-vespi-tip],[data-vespi-tip] [data-vespi-presence],[data-vespi-intro=guides]')].map(el=>({kind:el.getAttribute('data-guide-panel')||el.getAttribute('data-section')||el.tagName,rect:el.getBoundingClientRect().toJSON()}))}))));
-        throw error;
-      });
-      stickyExercised = true;
-      await addProviderBadge();
-      assert(await sticky.evaluate(element => {
-        const rect = element.getBoundingClientRect();
-        const badge = document.getElementById('nl-badge-frame').getBoundingClientRect();
-        return rect.left >= 0 && rect.right <= innerWidth && rect.bottom <= badge.top;
-      }), 'The conversion pill stays in the viewport above the provider badge');
-      for (const control of await sticky.locator('a, button').all()) {
-        assert(await control.evaluate(element => {
-          const rect = element.getBoundingClientRect();
-          return rect.width >= 44 && rect.height >= 44 && element.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
-        }), 'Sticky controls have reachable 44px touch targets');
-      }
-      await screenshot('guides-sticky-with-provider');
-      await sticky.getByRole('button', { name: 'Скрыть предложение плана', exact: true }).click();
-      await sticky.waitFor({ state: 'hidden' });
-      await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
-      } else {
-        await sticky.waitFor({ state: 'hidden' });
-        assert(interval.max < interval.min,'A visible contextual guide suppresses the duplicate floating offer');
-      }
+    await search.fill('CIMEA');
+    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0,'Searching suspends reading without duplicated content');
+    await page.getByRole('button',{name:'Сбросить поиск',exact:true}).click();
+    assert.equal(await search.evaluate(el=>document.activeElement===el),true,'Reset returns focus to search');
+    await page.locator('[data-guide-panel="education"]').waitFor();
+    await visit('/guides#visa');
+    await search.fill('CIMEA');
+    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0);
+    await search.fill('');
+    await page.locator('[data-guide-panel="visa"]').waitFor();
+    assert.equal(new URL(page.url()).hash,'#visa','Erasing search restores the same reading topic');
+    // The timeline's next action traverses all reviewed chapters, including stage boundaries.
+    await visit('/guides#education');
+    const orderedTopics = ['education','tests','apostille','translation','cimea','con','iseeu','visa','minors','military','permesso','codice','health-travel'];
+    for (let index = 0; index < orderedTopics.length; index++) {
+      const id = orderedTopics[index];
+      await page.locator(`[data-guide-panel="${id}"]`).filter({visible:true}).waitFor();
+      assert.equal(new URL(page.url()).hash, '#'+id);
+      assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),1);
+      if (index < orderedTopics.length-1) await page.locator('[data-guide-next-topic]').filter({visible:true}).click();
     }
+    const invite = page.locator('[data-guide-invite]');
+    assert.equal(await invite.count(),1,'One contextual invitation replaces the promotional banner');
+    assert.equal(await invite.locator('[data-vespi-guide-invite]').getAttribute('src'),'/mascot/vespi-guide-invite.webp');
+    await invite.locator('img').evaluate(image=>image.decode());
+    assert.equal(await page.locator('[data-guide-sticky]').count(),0);
     assert(events.some(e => e.event === 'guide_next_action' && e.props.topic === 'apostille'));
     assert(!events.some(e => JSON.stringify(e).includes('вопрос-без-совпадения')), 'Search text is not sent to analytics');
     assert.deepEqual(errors, []);
     assert.deepEqual(unexpected, []);
-    results.push({ width, stageFiltering:true, visiblePromptChipsReachable:true, oneExpandedCard:true, contextualInsight:true, inlineActionVisibleAndReachable:true, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, stickyDismissible:stickyExercised, a11y:true, overflow:false });
+    results.push({ width, stageFiltering:true, timelineNextAcrossStages:true, oneExpandedCard:true, contextualInsight:true, inlineActionVisibleAndReachable:true, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, noFloatingSalesOffer:true, a11y:true, overflow:false });
     await context.close();
   }
-  assert(results.some(result => result.stickyDismissible),'The floating offer is exercised where a real reading interval exists');
   await writeFile(resolve(output, 'results.json'), JSON.stringify(results, null, 2));
   console.log(JSON.stringify(results, null, 2));
 } catch (error) {

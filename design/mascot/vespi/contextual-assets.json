@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-10-19",
+  "provider": "Higgsfield",
+  "model": "gpt_image_2_5",
+  "variant": "flare",
+  "background": "transparent",
+  "identity_references": [
+    {
+      "role": "image",
+      "value": "https://iitaly.netlify.app/mascot/vespi/vespi-editorial-route-720.webp"
+    },
+    {
+      "role": "image",
+      "value": "https://iitaly.netlify.app/mascot/vespi/vespi-inspector-v1-320.webp"
+    }
+  ],
+  "assets": [
+    {
+      "file": "public/mascot/vespi-search-avatar.webp",
+      "job_id": "124ab6c3-7b79-4fd4-8b78-eea28ebac779",
+      "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261019_012257_124ab6c3-7b79-4fd4-8b78-eea28ebac779.png",
+      "prompt": "Create a polished production web asset of the EXACT SAME fictional Vespi mascot shown in the supplied references, preserving its identity and original iItaly brand. Preserve the cream plush rounded body and face, tiny black oval eyes, delicate curved eyebrows, tiny curved smile, subtle peach cheeks, glossy Italian-red open-face helmet with cream trim and one cream stripe, and olive-green short cape/scarf with red clasp. Retain the warm tactile plush material and soft studio lighting of the reference. No redesign, no new face, no human skin, no lettering, no logos, no captions, no UI, no icons around it, no decorative objects, no scooter or vehicle. True transparent alpha background, no colored backdrop, no ground plane or cast shadow. Silhouette edges crisp and clean, restrained character proportions, limbs clearly attached, exactly two arms and two legs. Functional avatar for an AI search entry. Crop from upper chest to above the helmet, centered front-facing gentle three-quarter head, looking attentively at the viewer. No glasses for this avatar. Make the face occupy most of the square while leaving at least 10% transparent margin around the entire helmet, with shoulders below. It must read recognizably as the same Vespi at 40 pixels and work inside a circular crop. Warm calm welcoming expression, not exaggerated.",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "processing": "Standard ImageMagick resize and WebP quality90 conversion only; alpha preserved, no background removal or generative retouching.",
+      "dimensions": [
+        384,
+        384
+      ],
+      "bytes": 14386,
+      "sha256": "273c5863bf578bfa27579f30934fa561dc0ea98b91c3eddc48ae32df70c41384"
+    },
+    {
+      "file": "public/mascot/vespi-guide-invite.webp",
+      "job_id": "4aae20b2-946b-42da-8b63-3a293e7b0a9f",
+      "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261019_012242_4aae20b2-946b-42da-8b63-3a293e7b0a9f.png",
+      "prompt": "Create a polished production web asset of the EXACT SAME fictional Vespi mascot shown in the supplied references, preserving its identity and original iItaly brand. Preserve the cream plush rounded body and face, tiny black oval eyes, delicate curved eyebrows, tiny curved smile, subtle peach cheeks, glossy Italian-red open-face helmet with cream trim and one cream stripe, and olive-green short cape/scarf with red clasp. Retain the warm tactile plush material and soft studio lighting of the reference. No redesign, no new face, no human skin, no lettering, no logos, no captions, no UI, no icons around it, no decorative objects, no scooter or vehicle. True transparent alpha background, no colored backdrop, no ground plane or cast shadow. Silhouette edges crisp and clean, restrained character proportions, limbs clearly attached, exactly two arms and two legs. Full-body contextual guide illustration, standing upright on both feet, complete body and shoes visible with 8% clear transparent margin. Body faces slightly toward viewer's right. Its right-side arm reaches gently to viewer's right with an open palm, presenting an imaginary admission timeline outside the image; the other arm rests naturally by the body. Eyes look toward that open palm with a small reassuring smile. No glasses, nothing held, no pedestal. Compact full-body composition, not a floating head, not waving at camera.",
+      "source_dimensions": [
+        880,
+        1168
+      ],
+      "processing": "Standard ImageMagick resize and WebP quality90 conversion only; alpha preserved, no background removal or generative retouching.",
+      "dimensions": [
+        480,
+        637
+      ],
+      "bytes": 23094,
+      "sha256": "2afebb67ae8db3e8ea08499225624d278f870c93a5b6419ffcbf7c50bfc657e2"
+    },
+    {
+      "file": "public/mascot/vespi-document-coach.webp",
+      "job_id": "9b80960e-dff7-4f36-b89d-be79d9563fb0",
+      "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261019_012242_9b80960e-dff7-4f36-b89d-be79d9563fb0.png",
+      "prompt": "Create a polished production web asset of the EXACT SAME fictional Vespi mascot shown in the supplied references, preserving its identity and original iItaly brand. Preserve the cream plush rounded body and face, tiny black oval eyes, delicate curved eyebrows, tiny curved smile, subtle peach cheeks, glossy Italian-red open-face helmet with cream trim and one cream stripe, and olive-green short cape/scarf with red clasp. Retain the warm tactile plush material and soft studio lighting of the reference. No redesign, no new face, no human skin, no lettering, no logos, no captions, no UI, no icons around it, no decorative objects, no scooter or vehicle. True transparent alpha background, no colored backdrop, no ground plane or cast shadow. Silhouette edges crisp and clean, restrained character proportions, limbs clearly attached, exactly two arms and two legs. Full-body contextual document coach illustration, complete standing body and both feet fully visible with 8% clear transparent margin. Wear the subtle round thin-frame spectacles seen in the second reference. Hold one small warm-paper clipboard at chest height with one hand; the other hand carefully points to a line on the sheet while looking down at it attentively. Paper contains only three short neutral gray horizontal strokes, NO readable text, checkmark, numbers or badges. Thoughtful calm helpful expression. The clipboard is the only prop. Arms and feet stay clearly visible. Not a floating head, no desk, no furniture.",
+      "source_dimensions": [
+        880,
+        1168
+      ],
+      "processing": "Standard ImageMagick resize and WebP quality90 conversion only; alpha preserved, no background removal or generative retouching.",
+      "dimensions": [
+        480,
+        637
+      ],
+      "bytes": 28300,
+      "sha256": "1d349f7e090bfe0e7ae488790f16d3e66bc8fddefb87668e08e747bbd8f9b1e9"
+    }
+  ]
+}

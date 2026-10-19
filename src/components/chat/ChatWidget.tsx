@@ -17,8 +17,7 @@ import { demoReply } from "@/data/chatDemo";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
-import { Vespa } from "@/components/Vespa";
-import { VespaReveal } from "@/components/VespaReveal";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { VESPI_NAME } from "@/components/mascot/Vespi";
@@ -350,7 +349,7 @@ export function ChatWidget() {
               className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#e7e4df] bg-white text-[#141413]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
-                <Vespa pose="avatar" className="h-9 w-9 object-contain" priority />
+                <MessageCircle size={22} strokeWidth={1.8} aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
                 <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
@@ -432,8 +431,8 @@ export function ChatWidget() {
               ))}
               {typing && (
                 <div className={`flex w-fit items-center gap-2 rounded-lg px-3 py-2 ${calmMode ? "bg-[#faf8f5]" : "bg-cream"}`}>
-                  <VespaReveal pose="thinking" className="h-7 w-auto shrink-0" />
-                  <span className="flex items-center gap-1.5">
+                  <span className="sr-only" role="status">Веспи готовит ответ</span>
+                  <span className="flex items-center gap-1.5" aria-hidden="true">
                     <span
                       className="chp-dot h-1.5 w-1.5 rounded-full bg-ink-soft"
                       style={{ animationDelay: "0s" }}
@@ -513,7 +512,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
   if (done) {
     return (
       <div className="flex items-start gap-2.5 rounded-lg border-2 border-green bg-green/10 p-4 text-sm">
-        <VespaReveal pose="success" className="h-10 w-auto shrink-0" />
+        <CheckCircle2 size={22} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
         <div>
           <b className="block">Записали</b>
           <p className="mt-1 text-ink-soft">

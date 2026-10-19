@@ -18,6 +18,7 @@ import { DocCheck, DocResult } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
 import { PlanSection } from "./PlanSection";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { WorkspaceCoach } from "./WorkspaceCoach";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
@@ -144,6 +145,7 @@ export function LocalWorkspace() {
                 {existing?.result?.review && existing.result.review.academicYear !== applicationYear && <p className={styles.readOnly}>Нужно уточнить: разбор относится к {existing.result.review.academicYear}, а в маршруте выбран {applicationYear}. Это не ошибка файла. Сверь заявку перед подачей.</p>}
                 {existing?.result && <div className={styles.paper}><DocResult result={existing.result}/><p>Разбор хранится в этой вкладке. Файлы и содержание документов не записываются в локальный профиль.</p></div>}
                 {documentInspectorOpen && <>
+                  <PortalDocumentCoach />
                   <button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
                   <DocCheck portalInspector key={active.id} academicYear={draft.answers.intake === "2027/28" || draft.answers.intake === "2026/27" ? draft.answers.intake : "unspecified"} onComplete={result => onReview(active, result)}/>
                 </>}

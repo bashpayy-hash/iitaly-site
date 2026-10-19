@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
-import { Vespi } from "@/components/mascot/Vespi";
 import { AppleButton } from "@/components/apple/Button";
 import { ScanLine, ShieldCheck, Files, Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
@@ -145,8 +144,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
 
   return (
     <div className={styles.workbench} data-document-workbench>
-      <div className={styles.auditContext}>
-        {portalInspector && <div className={styles.portalInspector} data-portal-inspector data-inspector-state={state.step} aria-hidden="true"><Vespi variant="inspector" presentation="figure" sizes="112px" /></div>}
+      <div className={styles.auditContext} data-portal-inspector={portalInspector || undefined} data-inspector-state={portalInspector ? state.step : undefined}>
         <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>

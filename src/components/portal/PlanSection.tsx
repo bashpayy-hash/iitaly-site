@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type MouseEvent } from "react";
+import { ArrowRight, Check, LockKeyhole } from "lucide-react";
 import dynamic from "next/dynamic";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
@@ -8,7 +9,6 @@ import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
 import { PortalStageIcon } from "./PortalStageIcon";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./portal-plan.module.css";
 import rules from "./portal-rules.module.css";
 
@@ -58,9 +58,8 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
           </p>}
         </details>
       </div>
-      {!position.stage && <VespiAssistant as="div" variant={hasTasks ? "celebrate" : "copilot"} layout="inline-pill" appearance="indicator" className={styles.complete}
-        label={hasTasks ? "Веспи · маршрут пройден" : "Веспи · маршрут"}
-        message={hasTasks ? "Все шаги маршрута отмечены." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."} />}
+      <p className={styles.pathHint}>Один шаг за раз. К сделанному можно вернуться, а будущие шаги — изучить заранее.</p>
+      {!position.stage && <p className={styles.complete}>{hasTasks ? "Все шаги маршрута отмечены. Сохранённые документы и инструкции остаются доступны." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."}</p>}
       {position.stage && renderStage(position.stage)}
       {nextStage && renderStage(nextStage)}
       {remainingStages.length > 0 && <details className={styles.fullRoute} key={position.stage?.id || "complete"}>
@@ -89,19 +88,21 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask }: Plan
       id={`portal-stage-${stage.id}`}
       className={styles.stage}
       data-current={current || undefined}
+      data-stage-complete={completed === stage.tasks.length || undefined}
       open={open}
       onToggle={event => setOpen(event.currentTarget.open)}
     >
       <summary className={styles.stageHeading} id={`portal-stage-heading-${stage.id}`}>
         <PortalStageIcon id={stage.id} className={styles.stageIcon} />
-        <span className={styles.stageTitle}>{!current && <span className={styles.nextLabel}>{completed === stage.tasks.length ? "Пройдено · " : next ? "Потом · " : "Позже · "}</span>}{current ? "Текущие шаги" : stage.title}</span>
+        <span className={styles.stageTitle}><span className={styles.nextLabel}>{current ? "Сейчас · " : completed === stage.tasks.length ? "Пройдено · " : next ? "Дальше · " : "Позже · "}</span>{stage.title}</span>
         <span className={styles.stageCount}>{completed} из {stage.tasks.length}</span>
         <span className={styles.chevron} aria-hidden="true" />
       </summary>
       <ol className={styles.tasks}>
-        {stage.tasks.map(task => <TaskRow
+        {stage.tasks.map((task, index) => <TaskRow
           key={task.id}
           task={task}
+          index={index}
           href={portalTaskHref(data, task)}
           done={Boolean(data.done[task.id])}
           doc={data.docs?.[task.id]}
@@ -113,8 +114,9 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask }: Plan
   );
 }
 
-function TaskRow({ task, href, done, doc, current, onOpenTask }: PlanActions & {
+function TaskRow({ task, index, href, done, doc, current, onOpenTask }: PlanActions & {
   task: PortalTask;
+  index: number;
   href: string;
   done: boolean;
   doc: PortalData["docs"][string] | undefined;
@@ -136,18 +138,20 @@ function TaskRow({ task, href, done, doc, current, onOpenTask }: PlanActions & {
         href={href}
         data-portal-task={task.id}
         data-current-task={current || undefined}
+        aria-current={current ? "step" : undefined}
         data-blocked={task.available === false || undefined}
         data-done={done || undefined}
+        data-task-state={done ? "done" : current ? "current" : "later"}
         data-document-outcome={outcome?.kind}
         onClick={openTask}
       >
-        <span className={styles.point} aria-hidden="true" />
+        <span className={styles.point} aria-hidden="true">{done ? <Check size={20} strokeWidth={2} /> : current ? <ArrowRight size={20} /> : task.available === false ? <LockKeyhole size={17} /> : String(index + 1).padStart(2, "0")}</span>
         <span className={styles.taskContent}>
           <span className={styles.taskTitle}>{taskTitle(task)}</span>
           {date && <span className={styles.meta}>{date}</span>}
           {outcome && <span className={styles.documentStatus} data-outcome={outcome.kind}>{outcome.label}</span>}
         </span>
-        <span className={styles.phase}>{done ? "Сделано" : current ? "Сейчас" : task.owner || "Ты"}</span>
+        <span className={styles.phase}>{done ? "Сделано" : current ? "Начать" : "Позже"}</span>
       </a>
     </li>
   );

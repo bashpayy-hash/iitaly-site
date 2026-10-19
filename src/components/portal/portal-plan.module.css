@@ -61,3 +61,29 @@
 
 /* The latest brief explicitly allows checking the eligible current self-report
    in place. Future steps and file steps never get this control. */
+
+/* A readable task path: saved, current and later nodes retain real statuses. */
+.pathHint { max-width:65ch; margin:12px 0 24px; color:var(--portal-muted); font-size:14px; line-height:1.6; }
+.stage { margin-top:12px; border:1px solid var(--portal-border); border-radius:24px; background:var(--portal-surface); overflow:hidden; }
+.stageHeading { padding:18px 20px; }
+.stage[data-current] { border-color:var(--color-red); }
+.stage[data-stage-complete] .stageIcon { color:#1F7A68; }
+.nextLabel { display:block; margin-bottom:3px; font-size:11px; text-transform:uppercase; letter-spacing:.055em; }
+.tasks { padding:4px 20px 18px; }
+.task { position:relative; }
+.task + .task { border-top:0; }
+.task:not(:last-child)::before { content:""; position:absolute; top:32px; bottom:-16px; left:21px; width:2px; background:var(--portal-border); }
+.task:has([data-done]):not(:last-child)::before { background:#1F7A68; opacity:.5; }
+.taskLink { position:relative; grid-template-columns:44px minmax(0,1fr) auto; gap:16px; align-items:center; padding:16px 0; }
+.point { position:relative; z-index:1; display:grid; place-items:center; width:44px; height:44px; margin:0; border:1px solid var(--portal-border); border-bottom-width:3px; border-radius:50%; background:var(--portal-surface-soft); color:var(--portal-muted); font-size:13px; font-variant-numeric:tabular-nums; }
+.taskLink[data-done] .point { background:#E6F4F1; border-color:#1F7A68; color:#1F7A68; }
+.taskLink[data-current-task] .point { border:2px solid var(--color-red); border-bottom-width:4px; background:var(--portal-surface); color:var(--portal-ink); }
+.taskLink[data-current-task] .phase { padding:5px 10px; border-radius:999px; background:var(--portal-ink); color:var(--portal-surface); }
+.taskLink[data-blocked] .taskTitle { color:var(--portal-muted); }
+.taskLink:hover .point { transform:translateY(-2px); }
+.point { transition:transform 160ms ease; }
+.phase { max-width:none; font-size:12px; }
+.fullRoute { border-top:0; margin-top:12px; }
+.fullRoute > .routeHeading { padding-inline:4px; }
+@media(max-width:600px) { .stageHeading { padding:16px; } .tasks { padding:0 16px 12px; } .taskLink { grid-template-columns:40px minmax(0,1fr); gap:12px; } .point { width:40px; height:40px; } .task:not(:last-child)::before { left:19px; } .phase { grid-column:2; justify-self:start; text-align:left; margin-top:-8px; } .taskTitle { font-size:15px; } .taskLink[data-current-task] .phase { font-size:11px; } }
+@media(prefers-reduced-motion:reduce) { .point { transition:none; } .taskLink:hover .point { transform:none; } }

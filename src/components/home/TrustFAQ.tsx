@@ -5,9 +5,16 @@ import styles from "@/components/marketing/marketing.module.css";
 import { AppleCaption, AppleHeading, AppleBody } from "@/components/apple/Typography";
 import { track } from "@/lib/track";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
+import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 
 /** Existing FAQ copy and analytics, presented on a quiet white surface. */
 const FAQ = [
+  {
+    q: "Как проходит работа с iItaly?",
+    a: `Начни бесплатно: за 10 минут пройди опрос о своей ситуации или загрузи документ на проверку. До оплаты ты увидишь маршрут и условия проверки стипендии. Затем — один платёж ${priceLabel(PRICE_MAIN)}, без подписки. ${STRIPE_ENABLED
+      ? "После подтверждения Stripe кабинет создаётся автоматически, а код доступа появляется сразу на сайте."
+      : "После подтверждения оплаты мы активируем кабинет и присылаем код доступа в WhatsApp."} В кабинете — персональный чек-лист: аттестат, DoV/CIMEA, Universitaly и стипендия DSU. Документы проверяет ИИ до подачи. CIMEA Verification занимает 60 рабочих дней; сроки вуза и DSU нужно проверять отдельно. Досье на визу D готовим заранее: рассмотрение может занять до 90 дней. После прилёта кабинет ведёт по первым шагам в Италии — codice fiscale, kit giallo и Questura.`,
+  },
   {
     q: "Гарантируете поступление, визу или стипендию?",
     a: "Нет — это решают университет, консульство и регион Италии, а не мы и не ИИ. Мы отвечаем за другое: правильный маршрут, проверенные документы и ничего не упущенное по срокам.",
