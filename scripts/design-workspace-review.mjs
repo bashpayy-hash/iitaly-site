@@ -107,9 +107,8 @@ try {
     assert.deepEqual(local.selectedIds,['bocconi']);assert.equal(local.done.shortlist,true);
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
-    await page.getByRole('link',{name:'Весь маршрут',exact:true}).click();
-    assert.equal(await page.locator('[aria-label="Навигация кабинета"]').count(),1);
-    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),0);
+    await page.getByRole('link',{name:'План',exact:true}).click();
+    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert.equal(await checks.count(),0,'Plan rows only open steps; self-report has one path');
@@ -129,7 +128,7 @@ try {
     assert.equal(await page.locator('[data-document="apostille"]').count(),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await capture('portal-settings');await audit('guest settings');
-    await page.getByRole('link',{name:'Сейчас',exact:true}).click();
+    await page.getByRole('link',{name:'Обзор',exact:true}).click();
     for(let step=0;step<12;step++) {
       await page.locator('section[aria-label="Твой следующий шаг"] a').click();
       if(await page.getByLabel('Выбрать документ для проверки').count())break;
@@ -144,7 +143,7 @@ try {
       await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);
       await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
       await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
-      await page.getByRole('link',{name:'Весь маршрут',exact:true}).waitFor();
+      await page.getByRole('link',{name:'План',exact:true}).waitFor();
       await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc'));
     }
     await review(fixtureReview('warn','2027/28','unspecified'));
@@ -165,17 +164,17 @@ try {
     assert.equal(storedState.reviews[currentDoc],'approved');
     await page.getByRole('link',{name:'Документы',exact:true}).click();
     await page.locator(`[data-document="${currentDoc}"]`).click();
-    assert.equal(await page.locator('img[data-vespi]').count(),0,'Reopening a saved file keeps the task free of repeated mascot artwork');
+    assert.equal(await page.locator('[data-portal-inspector]').count(),1,'The saved file keeps its inspector when reopened for a new version');
     assert.equal(await page.locator('section[aria-label="Твой следующий шаг"] [data-vespi]').count(),0,'The route yields its portrait while the saved file owns the inspector');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await page.getByRole('link',{name:'Изменить ответы анкеты',exact:true}).click();
     await page.getByRole('heading',{name:'Когда хочешь начать учёбу?',exact:true}).waitFor();
     assert.equal(await page.locator('[data-vespi] [data-vespi]').count(),0);
-    assert.equal(await page.locator('img[data-vespi]').count(),0,'The questionnaire stays free of mascot artwork');
+    assert.equal(await page.locator('[data-vespi]').count(),1,'Only the wizard owns Vespi while editing');
     await capture('portal-questionnaire');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'No protected API calls during guest questionnaire, selection or self-report');
-    results.push({width,sharedDraft:true,guestWithoutAuth:true,persistentSelection:true,existingMapAndComparison:true,noFutureUpload:true,exampleHonest:true,noMascot:true,applicableReviewYearOnly:true,noStoredFileOrReportContent:true});
+    results.push({width,sharedDraft:true,guestWithoutAuth:true,persistentSelection:true,existingMapAndComparison:true,noFutureUpload:true,exampleHonest:true,singleMascot:true,applicableReviewYearOnly:true,noStoredFileOrReportContent:true});
     await context.close();
   }
   assert.deepEqual(errors,[],'No browser runtime errors');

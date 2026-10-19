@@ -10,7 +10,7 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
  *  - glass     — только для контролов НАД фото/видео (плавающая навигация)
  *
  * Радиус вложенной кнопки — та же капсула (радиус = половина высоты), это
- * само по себе всегда "концентрично" любому контейнеру с достаточным
+ * само по себе всегда "концентрично" любому родителю с достаточным
  * скруглением, поэтому отдельный radius-проп не нужен на этой странице.
  *
  * Главное действие (primary) дополнительно помечается data-fab-yield:
@@ -41,26 +41,26 @@ const sizeClass: Record<Size, string> = {
 
 const variantClass: Record<Variant, string> = {
   primary:
-    "rounded-pill border border-ink bg-ink text-white shadow-soft-md " +
+    "rounded-pill border-2 border-ink bg-ink text-white shadow-soft-md " +
     "hover:-translate-y-px hover:bg-ink hover:border-ink hover:shadow-soft-lg " +
     "active:translate-y-0 active:scale-[0.98] active:shadow-soft-sm",
   secondary:
-    "rounded-pill border border-subtle bg-transparent text-ink " +
+    "rounded-pill border-2 border-ink bg-transparent text-ink " +
     "hover:-translate-y-px hover:bg-ink hover:text-cream hover:shadow-soft-md " +
     "active:translate-y-0 active:scale-[0.98]",
   tertiary:
     "h-auto min-h-11 gap-1.5 px-1 text-ink underline-offset-4 " +
-    "hover:text-primary active:scale-[0.98]",
-  icon: "size-11 shrink-0 rounded-full border border-subtle bg-transparent text-ink hover:bg-ink hover:text-cream active:scale-[0.94]",
+    "hover:text-red active:scale-[0.98]",
+  icon: "size-11 shrink-0 rounded-full border-2 border-ink bg-transparent text-ink hover:bg-ink hover:text-cream active:scale-[0.94]",
   // Легаси-алиасы: остальные страницы (planExplorer/prices/portal/...) вне
   // рамок этого прохода вызывают Button с variant="dark"/"ghost" — держим
   // их работающими на новой системе состояний/motion, не трогая эти файлы.
   dark:
-    "rounded-pill border border-subtle bg-ink text-cream shadow-soft-md " +
+    "rounded-pill border-2 border-ink bg-ink text-cream shadow-soft-md " +
     "hover:-translate-y-px hover:bg-ink hover:border-ink hover:shadow-soft-lg " +
     "active:translate-y-0 active:scale-[0.98] active:shadow-soft-sm",
   ghost:
-    "rounded-pill border border-subtle bg-transparent text-ink " +
+    "rounded-pill border-2 border-ink bg-transparent text-ink " +
     "hover:-translate-y-px hover:bg-ink hover:text-cream hover:shadow-soft-md " +
     "active:translate-y-0 active:scale-[0.98]",
   glass:

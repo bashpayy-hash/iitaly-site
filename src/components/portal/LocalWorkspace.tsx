@@ -1,10 +1,8 @@
 "use client";
-import { TransitionPanel } from "@/components/motion/TransitionPanel";
-import Link from "next/link";
 
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
-import { ShieldCheck, FileText } from "lucide-react";
+import { LayoutDashboard, ListChecks, Files, Settings, ShieldCheck, FileText } from "lucide-react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { usePlanDraft } from "@/lib/usePlanDraft";
 import { buildLocalWorkspace, localWorkspaceScope, useLocalWorkspace } from "@/lib/localWorkspace";
@@ -20,8 +18,6 @@ import { DocCheck, DocResult } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
 import { PlanSection } from "./PlanSection";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
-import { PortalNavigation } from "./PortalNavigation";
-import { TaskInstructions } from "./TaskInstructions";
 import { WorkspaceCoach } from "./WorkspaceCoach";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
@@ -29,6 +25,7 @@ import styles from "./workspace.module.css";
 const PortalPermessoStep = dynamic(() => import("./PortalPermessoStep").then(module => module.PortalPermessoStep), { loading: () => <p role="status">Загружаю бланк…</p> });
 type View = "today" | "plan" | "docs" | "settings";
 type Location = { view: View; task: string | null; doc: string | null };
+const NAV = [{ view: "today" as const, title: "Обзор", Icon: LayoutDashboard }, { view: "plan" as const, title: "План", Icon: ListChecks }, { view: "docs" as const, title: "Документы", Icon: Files }];
 function readLocation(): Location {
   const params = new URLSearchParams(window.location.search);
   const raw = params.get("view");
@@ -119,18 +116,19 @@ export function LocalWorkspace() {
   const clarify = documents.find(task => data.docs[task.id] && documentOutcome(data.docs[task.id], applicationYear).kind !== "missing");
 
   return <div className={`${portal.portal} ${styles.workspace}`} data-local-workspace data-portal-design="shared-site">
-    <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<Link href="/" className="journey-link">На сайт ↗</Link>} />{!wizardOpen && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
+    <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<div className={styles.headerActions}>
+      <a href="#iitaly-chat" data-portal-assistant data-step-id={active?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: active?.id, taskTitle: active ? taskTitle(active) : undefined, taskContext: active?.explain } })); }}>Помощник</a>
+      <a href="/portal?view=settings" aria-label="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
+    </div>} />{!wizardOpen && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
     <main id="main" className={styles.frame}>
-      {location.view === "today" && <h1 className="sr-only">Личный кабинет</h1>}
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
-      <PortalNavigation current={location.view} onNavigate={view=>navigate({view,task:null,doc:null})}/>
-      <TransitionPanel transitionKey={`${location.view}-${location.task || ""}-${location.doc || ""}`}>
       {location.view === "today" && !wizardOpen && <WorkspaceCoach data={data} onOpenTask={openTask} />}
       <div className={styles.layout}>
+        <aside><nav className={styles.nav} aria-label="Разделы личного кабинета">{NAV.map(({ view, title, Icon }) => <a key={view} href={view === "today" ? "/portal" : `/portal?view=${view}`} aria-current={location.view === view ? "page" : undefined} onClick={event => link(event, { view, task: null, doc: null })}><Icon size={18} aria-hidden="true"/>{title}</a>)}</nav></aside>
         <div className={styles.content}>
           {location.view === "today" && <>
             <p className={styles.intro}>Поступление: {intake}. {draft.complete ? "Маршрут построен по твоим ответам." : "Начни с анкеты — ответы из «Моего плана» уже здесь."}</p>
-            {position.next && <p className={styles.next}>Потом · {taskTitle(position.next)}. Откроется после текущего шага.</p>}
+            {position.next && <p className={styles.next}>Потом · {taskTitle(position.next)}. Это {position.next.owner || "ты"}, сейчас открывать не нужно.</p>}
             {clarify && <a className={styles.textLink} href={`/portal?view=docs&doc=${clarify.id}`} onClick={event => { event.preventDefault(); openTask(clarify); }}>{DOC_TASKS[clarify.id]} · {documentOutcome(data.docs[clarify.id], applicationYear).label}</a>}
             <section className={styles.docFeature}><ShieldCheck size={26} aria-hidden="true"/><div><h2>Проверяй документы до подачи</h2><p>Здесь доступна бесплатная проверка одного файла. Безлимитная проверка комплекта и сохранённые разборы — в подключённом кабинете за 667 ₸.</p><a href="/prices">Что входит в кабинет ↗</a></div></section>
             {local.selectedIds.length > 0 && <div className={styles.paper}><h2>Твои университеты</h2><p>{shortlistNames(local.selectedIds).join(" · ")}</p><a className={styles.textLink} href="/portal?view=plan&task=shortlist" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "shortlist"); if (task) openTask(task); }}>Открыть карту и сравнение</a></div>}
@@ -140,7 +138,7 @@ export function LocalWorkspace() {
             {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => link(event, { view: location.doc ? "docs" : "plan", task: null, doc: null })}>← Назад</a>}
             {active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1><Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { updateDraft({ answers, step: 10, complete: true }); navigate({ view: "today", task: null, doc: null }); }}/></>
               : active.id === "shortlist" && (!readOnly || data.done.shortlist) ? <PortalUniversityStep data={data} task={active} selectedIds={local.selectedIds} busy={false} onBack={() => navigate({ view: "plan", task: null, doc: null })} backHref="/portal?view=plan" onReopen={() => updateLocal({ ...local, done: { ...local.done, shortlist: false } })} onSave={async selectedIds => { updateLocal({ ...local, scope: localWorkspaceScope(draft, selectedIds), selectedIds, reviews: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? local.reviews : {}, done: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? { ...local.done, shortlist: true } : { shortlist: true } }); navigate({ view: "today", task: null, doc: null }); return true; }}/>
-              : <><h1 className={styles.heading}>{taskTitle(active)}</h1><TaskInstructions task={active}/>
+              : <><h1 className={styles.heading}>{taskTitle(active)}</h1><p className={styles.intro}>{active.owner || "Ты"} · {active.time || "По ситуации"}</p><p className={styles.intro}>{active.explain}</p>
                 {readOnly && <p className={styles.readOnly}>{readOnly}</p>}
                 {existing && !existing.result && <p className={styles.readOnly}>{existing.summary}</p>}
                 {existing?.result?.review && existing.result.review.academicYear !== applicationYear && <p className={styles.readOnly}>Нужно уточнить: разбор относится к {existing.result.review.academicYear}, а в маршруте выбран {applicationYear}. Это не ошибка файла. Сверь заявку перед подачей.</p>}
@@ -173,7 +171,6 @@ export function LocalWorkspace() {
           </>}
         </div>
       </div>
-      </TransitionPanel>
     </main>
   </div>;
 }

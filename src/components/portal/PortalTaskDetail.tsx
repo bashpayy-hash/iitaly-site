@@ -4,10 +4,10 @@ import type { ReactNode } from "react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
-import { isManualTask, taskActionHint, taskDate, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
+import { isManualTask, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { PortalUploadZone } from "./PortalUploadZone";
 import { PortalDocumentContext } from "./PortalDocumentContext";
-import { TaskInstructions } from "./TaskInstructions";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import portal from "./portal.module.css";
 import styles from "./portal-step.module.css";
 
@@ -32,8 +32,9 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
   const needDoc = Boolean(DOC_TASKS[task.id]);
   const manual = isManualTask(task);
   const date = taskDate(task);
+  const help = taskHelpDetails(task);
   const stage = data.roadmap.find(row => row.tasks.some(item => item.id === task.id));
-  const meta = [stage?.title, task.time || TASK_META[task.id]?.min].filter(Boolean).join(" · ");
+  const meta = [stage?.title, task.time || TASK_META[task.id]?.min, task.owner || "Ты"].filter(Boolean).join(" · ");
 
   return <section className={styles.step} data-step-detail={task.id} aria-labelledby="portal-step-heading">
     <a href={backHref} className={styles.back} onClick={event => {
@@ -43,9 +44,12 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
     <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
     <p className={styles.meta}>{meta}</p>
     {date && <p className={styles.date}>{date} — это не срок конкретного вуза.</p>}
-    <TaskInstructions task={task}/>
-    {readOnly && <p className={styles.reason}>{readOnly}</p>}
-    {!readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
+    <VespiAssistant as="div" variant={done ? "celebrate" : needDoc ? "inspector" : "copilot"} layout="portal-copilot" appearance="portrait"
+      label={done ? "Веспи · шаг сохранён" : readOnly ? "Веспи · заглянем вперёд" : needDoc ? "Веспи · проверим документ" : "Веспи · пройдём этот шаг"}
+      message={taskExplanation(task)} className={styles.assistant} data-portal-step-guide>
+      {readOnly && <p className={styles.reason}>{readOnly}</p>}
+      {!readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
+    </VespiAssistant>
     {readOnly ? <>
       {done && manual && !hasRetry && <a className={styles.link} href="#portal-step-heading" aria-disabled={busy} onClick={event => {
         event.preventDefault(); if (!busy) onToggle(false);
@@ -65,5 +69,9 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
           {!hasRetry && <button type="submit" className={portal.primaryButton} aria-describedby="portal-step-action-hint" data-primary-action disabled={busy}>{busy ? "Сохраняю…" : "Готово"}</button>}
         </form>}
       </>}
+    {help.length > 0 && <details className={styles.notes} data-step-help>
+      <summary>Как выполнить этот шаг</summary>
+      {help.map(text => <p key={text} className={styles.note}>{text}</p>)}
+    </details>}
   </section>;
 }

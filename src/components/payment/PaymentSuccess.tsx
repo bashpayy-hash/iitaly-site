@@ -124,7 +124,7 @@ export function PaymentSuccess() {
             <p className="mt-3 text-apple-body-sm text-cloud-body">
               Stripe подтвердил платёж, а IITALY автоматически создал твой маршрут.
             </p>
-            <div className="mt-6 rounded-xl border border-subtle bg-surface p-6 text-left shadow-soft-md">
+            <div className="mt-6 rounded-xl border border-white/15 bg-carbon p-4 text-left">
               <p className="text-apple-caption text-cloud-meta">Фамилия</p>
               <b className="text-cloud-white">{view.surname}</b>
               <p className="mt-4 text-apple-caption text-cloud-meta">Код кабинета</p>

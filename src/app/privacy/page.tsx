@@ -97,7 +97,8 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
     body: (
       <p>
         IITALY рассчитан в том числе на школьников 16–18 лет. Если тебе нет 18, оплату и решения,
-        связанные с передачей документов и персональных данных, лучше оформлять с законным представителем.
+        связанные с передачей документов и персональных данных, лучше оформлять вместе с родителем
+        или законным представителем.
       </p>
     ),
   },
@@ -110,7 +111,7 @@ export default function PrivacyPage() {
       <main id="main">
         <section className="px-5 py-10 sm:py-14">
           <div className="mx-auto max-w-[720px]">
-            <h1 className="font-display text-3xl font-extrabold tracking-[-0.03em] [overflow-wrap:anywhere] sm:text-4xl">
+            <h1 className="font-display text-3xl font-semibold tracking-tight uppercase sm:text-4xl">
               Политика конфиденциальности
             </h1>
             <p className="mt-1.5 text-xs text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
@@ -119,7 +120,7 @@ export default function PrivacyPage() {
               {SECTIONS.map((s) => (
                 <div key={s.title}>
                   <h2 className="font-display text-lg font-bold">{s.title}</h2>
-                  <div className="mt-1.5 text-sm text-ink-soft [&_a]:font-bold [&_a]:text-primary [&_b]:text-ink">
+                  <div className="mt-1.5 text-sm text-ink-soft [&_a]:font-bold [&_a]:text-red [&_b]:text-ink">
                     {s.body}
                   </div>
                 </div>

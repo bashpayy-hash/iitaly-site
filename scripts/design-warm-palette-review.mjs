@@ -99,9 +99,9 @@ try {
       const cold=snapshot.values.filter(item=>coldColors(item.colors).length);
       assert.deepEqual(cold,[],`${path} ${width}: no cold computed text, surfaces, borders, glows or SVG`);
       if(path==='/guides'){
-        assert.match(await page.locator('h1 > span').evaluate(e=>getComputedStyle(e).backgroundImage),/230, 57, 70/);
-        assert.equal(await page.locator('[data-vespi-indicator]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 240, 240)');
-        assert.equal(await page.locator('nav[aria-label="Этапы справочника"]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(243, 239, 234)');
+        assert.match(await page.locator('h1 > span').evaluate(e=>getComputedStyle(e).backgroundImage),/217, 43, 56/);
+        assert.equal(await page.locator('[data-vespi-indicator]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(255, 242, 242)');
+        assert.equal(await page.locator('nav[aria-label="Этапы справочника"]').evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(239, 236, 230)');
       }
       await page.addScriptTag({content:axe.source});
       const accessibility=await page.evaluate(()=>window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));

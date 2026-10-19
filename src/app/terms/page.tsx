@@ -19,7 +19,7 @@ export default function TermsPage() {
       <main id="main">
         <section className="px-5 py-10 sm:py-14">
           <div className="mx-auto max-w-[720px]">
-            <h1 className="font-display text-3xl font-extrabold tracking-[-0.03em] [overflow-wrap:anywhere] sm:text-4xl">
+            <h1 className="font-display text-3xl font-semibold tracking-tight uppercase sm:text-4xl">
               Условия сервиса
             </h1>
             <p className="mt-1.5 text-xs text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
@@ -73,7 +73,7 @@ export default function TermsPage() {
                     ? "если платные функции кабинета ещё не использовались: не загружались документы на проверку и не отмечались шаги маршрута выполненными."
                     : "если личный кабинет ещё не активирован и персональный маршрут не выдан."}
                   {" "}Чтобы запросить возврат, напиши в WhatsApp IITALY по номеру{" "}
-                  <a className="font-bold text-primary underline underline-offset-4" href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer">
+                  <a className="font-bold text-red underline underline-offset-4" href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer">
                     {PAY_PHONE}
                   </a>.
                 </p>
@@ -91,7 +91,7 @@ export default function TermsPage() {
                 <h2 className="font-display text-lg font-bold text-ink">Пользователи младше 18 лет</h2>
                 <p className="mt-1.5">
                   Если пользователю нет 18 лет, оплату и существенные решения по документам
-                  следует согласовывать с законным представителем.
+                  следует согласовывать с родителем или законным представителем.
                 </p>
               </section>
             </div>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
+import { Vespi } from "@/components/mascot/Vespi";
 import { AppleButton } from "@/components/apple/Button";
 import { ScanLine, ShieldCheck, Files, Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
@@ -42,7 +43,7 @@ function inspectorMessage(step: State["step"], availabilityPending: boolean, una
   return "Загрузи справку о доходах, состав семьи, банковскую выписку или перевод. Для проверки требований укажи программу и учебный год.";
 }
 
-export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: DocCheckResult) => void; academicYear?: DocumentReviewContext["academicYear"]; portalInspector?: boolean } = {}) {
+export function DocCheck({ onComplete, academicYear, portalInspector = false }: { onComplete?: (result: DocCheckResult) => void; academicYear?: DocumentReviewContext["academicYear"]; portalInspector?: boolean } = {}) {
   const router = useRouter();
   const [state, setState] = useState<State>({ step: "idle" });
   const [context, setContext] = useState<DocumentReviewContext>({
@@ -145,7 +146,7 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext}>
-
+        {portalInspector && <div className={styles.portalInspector} data-portal-inspector data-inspector-state={state.step} aria-hidden="true"><Vespi variant="inspector" presentation="figure" sizes="112px" /></div>}
         <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>
@@ -294,7 +295,7 @@ export function DocCheck({ onComplete, academicYear }: { onComplete?: (result: D
 
       <div aria-live="polite" className="mt-5">
         {(state.step === "error" || state.step === "retry") && !unavailable && (
-          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-primary">
+          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
             {state.message}
             {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}
           </div>
@@ -334,7 +335,7 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
           <ShieldCheck size={22} aria-hidden="true" />
-          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-primary" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
+          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
           <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
         </div>
         {result.summary && <p>{result.summary}</p>}
@@ -365,11 +366,11 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
             <div key={i} className="flex gap-2.5 text-apple-body-sm">
               <span
                 aria-hidden
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
+                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                   c.status === "ok"
                     ? "bg-green/15 text-green"
                     : c.status === "error"
-                      ? "bg-red/15 text-primary"
+                      ? "bg-red/15 text-red"
                       : c.status === "warn"
                         ? "bg-warn/15 text-warn"
                         : "bg-white/10 text-cloud-meta"

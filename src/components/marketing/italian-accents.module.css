@@ -23,7 +23,7 @@
   margin-top: 20px;
 }
 .moka::before {
-  background: radial-gradient(ellipse at 36% 52%, color-mix(in srgb, var(--bg-subtle) 63.92%, transparent), transparent 65%), radial-gradient(ellipse at 66% 54%, color-mix(in srgb, var(--accent-soft) 50.98%, transparent), transparent 65%);
+  background: radial-gradient(ellipse at 36% 52%, #ede9e3a3, transparent 65%), radial-gradient(ellipse at 66% 54%, #f1e1d782, transparent 65%);
 }
 .lemon {
   position: absolute;
@@ -42,7 +42,7 @@
 }
 .balcony::before {
   inset: -2%;
-  background: radial-gradient(ellipse at 35% 55%, color-mix(in srgb, var(--bg-subtle) 70.2%, transparent), transparent 64%), radial-gradient(ellipse at 65% 44%, color-mix(in srgb, var(--bg-subtle) 50.2%, transparent), transparent 66%);
+  background: radial-gradient(ellipse at 35% 55%, #e0eee6b3, transparent 64%), radial-gradient(ellipse at 65% 44%, #eee5d780, transparent 66%);
 }
 @media (min-width: 1280px) { .balcony { display: block; } }
 @media (max-width: 767px) {

@@ -73,7 +73,7 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
       >
         <div className={styles.file}>
           <h3>{row.title}</h3>
-          <p className={styles.meta}>{[taskDate(row), row.doc?.fileName].filter(Boolean).join(" · ")}</p>
+          <p className={styles.meta}>{[row.owner || "Ты", taskDate(row), row.doc?.fileName].filter(Boolean).join(" · ")}</p>
           {row.available === false && !row.doc && <p className={styles.meta}>{taskBlockedReason(row)}</p>}
         </div>
         <div className={styles.rowFooter}>

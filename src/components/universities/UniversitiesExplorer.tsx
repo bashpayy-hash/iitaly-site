@@ -15,7 +15,7 @@ import { track } from "@/lib/track";
 import { UniversityArtwork } from "./UniversityArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
-import { TransitionPanel } from "@/components/motion/TransitionPanel";
+import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
 // ItalyMap новую ссылку и заставляла карту сравнивать точки заново.
@@ -126,7 +126,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         <div className={ui.heroInner}>
           <div className={ui.heroCopy}>
             <p className={ui.eyebrow}>43 университета · 30 городов</p>
-            <h1 className={ui.heroTitle}>Университеты<br /><span className="editorial-accent">Италии</span></h1>
+            <h1 className={ui.heroTitle}>Университеты<br /><span>Италии</span></h1>
             <p className={ui.heroDescription}>
               Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
               жизни там. Можно сравнить до трёх университетов.
@@ -139,7 +139,17 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       <section className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
-            {!portalSelection && <div className={ui.navigator} data-university-navigator><h2>{navigatorTitle}</h2><p>{navigatorMessage}</p></div>}
+            {!portalSelection && <VespiAssistant
+              variant="route"
+              layout="inline-pill"
+              appearance="portrait"
+              as="div"
+              label="Веспи · штурман"
+              title={<h2>{navigatorTitle}</h2>}
+              className={ui.navigator}
+              data-university-navigator
+              message={navigatorMessage}
+            />}
             {portalSelection && cityShortcut}
             <Filters
               typeFilter={typeFilter}
@@ -198,7 +208,6 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             </div>
 
             <div id="selected-city" className={ui.cityResult}>
-              <TransitionPanel transitionKey={`${activeCity || "empty"}-${typeFilter}-${engOnly}`}>
               {activeCity ? (
                 <CityPanel
                   cityId={activeCity}
@@ -222,7 +231,6 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                   <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
                 </div>
               )}
-              </TransitionPanel>
             </div>
           </div>
         </div>

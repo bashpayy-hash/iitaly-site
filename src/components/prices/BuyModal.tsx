@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CircleCheck } from "lucide-react";
 import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
@@ -165,7 +164,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   className={styles.formInput} />
               </label>
 
-              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-primary">{error}</p>}
+              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-red">{error}</p>}
 
               <AppleButton type="submit" variant="filled" className="mt-5 w-full">
                 {STRIPE_ENABLED ? "Перейти к оплате" : "Оформить заказ"}
@@ -196,7 +195,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           {step === "manual" && (
             <div>
               <div className="text-center">
-                <CircleCheck aria-hidden="true" className="mx-auto size-10 text-primary" strokeWidth={1.5} />
+                <div aria-hidden className="text-4xl">✅</div>
                 <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">
                   Переведи сумму и пришли чек — после подтверждения мы активируем доступ или начнём выполнение услуги.

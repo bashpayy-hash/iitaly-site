@@ -17,7 +17,7 @@
 .nav a[aria-current=page] { font-weight:600; }
 .content { min-width:0; }
 .coach {
-  composes: ledger from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,1fr); gap:24px; padding:28px; background:white; border:1px solid var(--color-warm-line); border-radius: 12px;  }
+  composes: paper from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,1fr); gap:24px; padding:28px; background:white; border:1px solid var(--color-warm-line); border-radius:28px;  }
 .coach [data-vespi-assistant] { padding:0; border:0; background:transparent; }
 .coach h1 { font:600 28px/1.2 var(--font-apple-display); letter-spacing:-.025em; }
 .coach [data-vespi-message] { max-width:60ch; font-size:14px; line-height:1.6; }
@@ -33,46 +33,31 @@
 .docFeature p { font-size:14px; color:var(--color-cloud-body); line-height:1.6; }
 .docFeature a,.textLink { display:inline-flex; min-height:44px; align-items:center; font-size:14px; text-decoration:underline; text-underline-offset:4px; }
 .paper {
-  composes: ledger from "../marketing/surface-depth.module.css"; margin-top:16px; padding:24px; border:1px solid var(--color-warm-line); background:white; border-radius: 12px; }
+  composes: paper from "../marketing/surface-depth.module.css"; margin-top:16px; padding:24px; border:1px solid var(--color-warm-line); background:white; border-radius:24px; }
 .paper p { font-size:14px; line-height:1.6; color:var(--color-cloud-body); margin-top:10px; }
 .paper h2,.paper h3 { font-size:22px; font-weight:600; line-height:1.3; }
 .paper a:focus-visible,.workspace :is(a,button,select):focus-visible { outline:2px solid var(--color-ink); outline-offset:4px; }
 .filters { display:flex; flex-wrap:wrap; gap:8px; margin:20px 0; }
-.filters label { position:relative; display:flex; align-items:center; justify-content:center; padding:10px 14px; min-height:44px; font-size:14px; border:1px solid var(--color-warm-line); border-radius:999px; cursor:pointer; }
+.filters label { position:relative; display:flex; align-items:center; justify-content:center; padding:10px 14px; min-height:44px; font-size:13px; border:1px solid var(--color-warm-line); border-radius:999px; cursor:pointer; }
 .filters label:has(input:checked) { background:var(--color-warm-stone); font-weight:600; }
 .filters label:has(input:focus-visible) { outline:2px solid var(--color-ink); outline-offset:3px; }
 .filters input { position:absolute; opacity:0; }
 .vault { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
 .docCard {
-  composes: ledger from "../marketing/surface-depth.module.css"; display:flex; flex-direction:column; align-items:flex-start; padding:22px; border:1px solid var(--color-warm-line); background:white; border-radius: 12px; min-width:0; }
+  composes: paper from "../marketing/surface-depth.module.css"; display:flex; flex-direction:column; align-items:flex-start; padding:22px; border:1px solid var(--color-warm-line); background:white; border-radius:24px; min-width:0; }
 .docCard > svg { color:var(--color-cloud-body); margin-bottom:16px; }
 .docCard h3 { font-size:17px; line-height:1.4; font-weight:600; }
-.docCard p { color:var(--color-cloud-body); font-size:14px; line-height:1.6; margin-top:10px; }
+.docCard p { color:var(--color-cloud-body); font-size:13px; line-height:1.6; margin-top:10px; }
 .docCard .status { margin-top:auto; padding-top:18px; }
 .status { display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.5; }
 .status[data-kind=fix] { color:var(--color-red-deep); }
-.status[data-kind=approved] { color:var(--text-secondary); }
+.status[data-kind=approved] { color:#1F7A68; }
 .collection { display:inline-flex; padding:5px 10px; background:var(--color-warm-stone); color:var(--color-cloud-body); border-radius:999px; font-size:13px; }
-.collection[data-collecting=true] { background:var(--bg-subtle); color:var(--text-primary); }
-.collection[data-verified=true] { background:var(--bg-base); color:var(--text-secondary); }
-.readOnly { margin-top:18px; padding:18px; background:var(--color-warm-stone); border-radius: 12px; font-size:14px; line-height:1.6; }
+.collection[data-collecting=true] { background:#FEF3C7; color:#B45309; }
+.collection[data-verified=true] { background:#E6F4F1; color:#1F7A68; }
+.readOnly { margin-top:18px; padding:18px; background:var(--color-warm-stone); border-radius:16px; font-size:14px; line-height:1.6; }
 @media(max-width:1000px) { .coach { grid-template-columns:minmax(0,1fr); padding:24px; gap:16px; } .layout { grid-template-columns:140px minmax(0,1fr); gap:24px; } }
 @media(max-width:700px) { .frame { padding:12px 16px 30px; } .layout { display:block; margin-top:20px; } .nav { position:fixed; top:auto; left:0; right:0; bottom:0; display:grid; grid-template-columns:repeat(3,1fr); z-index:50; padding:8px 12px max(8px,env(safe-area-inset-bottom)); background:white; border-top:1px solid var(--color-warm-line); gap:6px; } .nav a { justify-content:center; padding:8px 5px; font-size:13px; min-height:44px; border-radius:12px; } .nav svg { display:none; } .coach { grid-template-columns:1fr; padding:20px; gap:16px; } .coach h1 { font-size:24px; } .coach [data-vespi-assistant] { gap:14px; } .primary { width:100%; margin-top:16px; } .headerActions > a { padding:8px; } .headerActions .settingsText { display:none; } .localStatus { padding-bottom:12px; } .localStatus a { min-height:36px; } .vault { grid-template-columns:1fr; } .paper { padding:20px; } }
 @media(max-width:380px) { }
 @media(max-width:900px) { .routeShell { padding:4px 20px 8px; } }
 @media(max-width:480px) { .routeShell { padding:3px 16px 7px; } }
-
-.layout {display:block;margin-top:24px}
-.frame {max-width:1100px}
-.routeShell {max-width:1100px}
-.header {position:relative}
-
-.paper,.docCard,.coach {border-radius: 12px;border-color:var(--border-subtle)}
-.primary {border-radius:999px}
-.header {background:var(--bg-base);box-shadow:none;backdrop-filter:none}
-.header::after {display:none}
-
-.primary { transition:background-color .2s,color .2s; }
-.filters label { transition:border-color .2s,background-color .2s; }
-.filters label:hover { border-color:var(--text-secondary); }
-@media(prefers-reduced-motion:reduce) { .primary,.filters label { transition:none; } }

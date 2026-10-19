@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ButtonLink } from "@/components/Button";
 import { Display, Body, Caption } from "@/components/Typography";
+import { Vespa } from "@/components/Vespa";
 
 export const metadata: Metadata = {
   title: "Страница не найдена",
@@ -14,10 +15,10 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main id="main">
-        <section className="bg-transparent px-5 py-20 sm:py-28">
+      <main>
+        <section className="border-b-2 border-ink bg-cream px-5 py-20 sm:py-28">
           <div className="mx-auto flex max-w-[640px] flex-col items-center text-center">
-            <span aria-hidden="true" className="text-6xl">↗</span>
+            <Vespa pose="404" className="h-40 w-auto sm:h-48" />
             <Caption as="p" className="mt-8">
               Ошибка 404
             </Caption>
