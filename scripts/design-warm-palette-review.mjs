@@ -104,6 +104,8 @@ try {
         assert.equal(await avatar.count(),1,'The search uses one contextual avatar');
         assert.equal(await avatar.getAttribute('src'),'/mascot/vespi-search-avatar.webp');
         assert(await avatar.evaluate(e=>e.complete&&e.naturalWidth>0),'The new search avatar loads');
+        assert.equal(await page.locator('[data-guide-timeline] a[aria-current="step"]').count(),0,'A fresh guide visit waits for a route choice');
+        await page.locator('[data-guide-select="education"]').click();
         assert.equal(await page.locator('[data-guide-timeline] a[aria-current="step"] > span').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(20, 20, 19)','The current timeline stage uses the existing warm ink');
       }
       await page.addScriptTag({content:axe.source});

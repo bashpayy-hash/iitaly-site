@@ -17,7 +17,7 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false }: {
+export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -28,6 +28,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   secondaryAction?: boolean;
   showMascot?: boolean;
   navigationOnly?: boolean;
+  progressFirst?: boolean;
 }) {
   const tasks = data.roadmap.flatMap(row => row.tasks);
   const total = tasks.length;
@@ -139,17 +140,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   const orientir = current ? taskDate(current) : "";
   const action = current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг";
 
-  return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""}`}
-    style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
-    data-portal-road data-road-navigation-only={navigationOnly ? "true" : undefined}
-    data-road-mascot="none"
-    data-road-static={currentOpen || navigationOnly ? "true" : undefined}
-    data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}
-    data-current-step={current?.id} data-road-done={done} data-road-total={total}
-    data-traveling={motion.moving ? "true" : "false"} data-road-moving={motion.moving ? "true" : "false"}
-    data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
-    data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
-    {!navigationOnly && <div className={styles.focus} data-road-next aria-live="polite" aria-atomic="true">
+  const focus = !navigationOnly && <div className={styles.focus} data-road-next aria-live="polite" aria-atomic="true">
       <div className={styles.nextAction}>
         <p className={styles.eyebrow}>{current ? "Следующий шаг" : allComplete ? "Маршрут отмечен" : "Твой маршрут"}</p>
         <h2 data-road-step-title>{total ? title : "Маршрут пока не появился"}</h2>
@@ -160,7 +151,19 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
         }}>{action}<span aria-hidden="true">↗</span></a>}
         {allComplete && <p className={styles.meta}>Пройденные шаги и документы остаются доступны.</p>}
       </div>
-    </div>}
+    </div>;
+
+  return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""}`}
+    style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
+    data-portal-road data-road-navigation-only={navigationOnly ? "true" : undefined}
+    data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
+    data-road-static={currentOpen || navigationOnly ? "true" : undefined}
+    data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}
+    data-current-step={current?.id} data-road-done={done} data-road-total={total}
+    data-traveling={motion.moving ? "true" : "false"} data-road-moving={motion.moving ? "true" : "false"}
+    data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
+    data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
+    {!progressFirst && focus}
     <div className={styles.route}>
       <div className={styles.summary}><span>Твой маршрут</span><span className={styles.count}>
         <span data-road-count>{done} из {total} шагов</span>
@@ -188,5 +191,6 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       </div>
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова. Будущие — посмотреть заранее.</p>}
     </div>
+    {progressFirst && focus}
   </section>;
 }

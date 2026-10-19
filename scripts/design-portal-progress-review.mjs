@@ -74,7 +74,8 @@ async function railContract(page,data,compact){
   assert.equal(await road(page).count(),1,'Exactly one global route');
   assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута',exact:true}).count(),1,'One actual-stage navigator');
   assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0,'No second taxonomy/ring');
-  assert.equal(await page.locator('main [data-portal-road]').count(),0,'No duplicate route in content');
+  assert.equal(await page.locator('main [data-portal-road]').count(),compact?0:1,'The overview route follows the greeting; other views keep one compact chrome route');
+  assert.equal(await page.locator('[data-portal-welcome]').count(),compact?0:1,'The personal welcome appears only on the overview');
   const tasks=data.roadmap.flatMap(s=>s.tasks),done=tasks.filter(t=>data.done[t.id]).length;
   assert.equal(Number(await road(page).getAttribute('data-road-done')),done);assert.equal(Number(await road(page).getAttribute('data-road-total')),tasks.length,'Ignore obsolete done IDs');
   assert.equal(await road(page).locator('[data-road-stage]').count(),data.roadmap.filter(s=>s.tasks.length).length,'Real stages, no fixed demo phases');
@@ -93,6 +94,22 @@ async function railContract(page,data,compact){
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}
   await noOverflow(page);await oneFace(page,'Route');
 }
+async function arrivalOrder(page,data) {
+  const welcome=page.locator('[data-portal-welcome]');
+  assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
+  const image=welcome.locator('img');
+  assert.equal(await image.getAttribute('src'),'/mascot/vespi-portal-welcome.webp');
+  await image.evaluate(img=>img.decode());
+  assert.equal(await road(page).getAttribute('data-road-progress-first'),'true');
+  const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
+  const progressBox=await road(page).getByRole('progressbar').boundingBox();
+  const nextBox=await road(page).locator('[data-road-next]').boundingBox();
+  const detailsBox=await page.locator('[data-portal-overview]').boundingBox();
+  assert(greetingBox.y+greetingBox.height<=roadBox.y+1,'Welcome precedes the route');
+  assert(progressBox.y+progressBox.height<=nextBox.y+1,'Progress precedes the current task details');
+  assert(roadBox.y+roadBox.height<=detailsBox.y+1,'Overview details follow the route');
+  assert(greetingBox.y>=0 && progressBox.y+progressBox.height<=await page.evaluate(()=>innerHeight),'Greeting and progress remain in the first viewport');
+}
 async function sticky(page){
   const chrome=page.locator('[data-portal-chrome]'),before=await chrome.boundingBox(),available=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight);
   if(available>80){await page.evaluate(()=>window.scrollTo(0,Math.min(400,document.documentElement.scrollHeight-innerHeight)));const after=await chrome.boundingBox();assert(Math.abs(before.y-after.y)<1,'Chrome stays pinned');await page.evaluate(()=>window.scrollTo(0,0));}
@@ -102,7 +119,8 @@ try{
   for(const file of ['src/app/globals.css','src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css'])assert.equal(await readFile(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}),file+' unchanged');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);
-    for(const target of [road(page).locator('[data-road-step-title]'),road(page).locator('[data-road-open]')])assert(await target.evaluate(n=>n.getBoundingClientRect().top>=0&&n.getBoundingClientRect().bottom<innerHeight),'Current verb/action above fold');
+    await arrivalOrder(page,data);
+    assert.equal(await road(page).locator('[data-road-open]').count(),1,'The real current task remains one action after progress');
     assert.equal(await page.locator('button').count(),0,'Overview has no buttons');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-overview-${viewport.width}`);
     await go(page,'План');await page.locator('[data-portal-task="shortlist"]').waitFor();await railContract(page,data,true);
@@ -126,7 +144,7 @@ try{
     await page.getByRole('link',{name:'Настройки',exact:true}).click();await page.getByRole('heading',{name:'Данные для маршрута',exact:true}).waitFor();await railContract(page,data,true);
     assert.equal(await page.getByRole('link',{name:'Настройки',exact:true}).getAttribute('aria-current'),'page');assert(await page.locator('[data-settings-back]').isVisible());
     assert.equal(await page.locator('#notifications').locator('summary').innerText(),'Напоминания выключены');assert.equal(await nav(page).getByRole('link').count(),3);
-    await axe(page,'Settings '+viewport.width);results.push({viewport,singleActualRoute:true,currentVerbAboveFold:true,noRepeatedTaskInPlan:true,noStageFaces:true,futureReadOnly:true,helperContext:true,sticky:true,axe:true});await context.close();
+    await axe(page,'Settings '+viewport.width);results.push({viewport,singleActualRoute:true,personalWelcomeBeforeProgress:true,detailsAfterProgress:true,noRepeatedTaskInPlan:true,noStageFaces:true,futureReadOnly:true,helperContext:true,sticky:true,axe:true});await context.close();
   }
   for(const width of [1440,390])for(const mode of ['zero','complete','empty','blocked','near','dates','parents','manual','last','full-route','screenshot-parent','late-current','parent-file','help']){
     const {page,context,data,calls,fileCalls}=await open({width,height:width===390?844:900},mode);await railContract(page,data,false);

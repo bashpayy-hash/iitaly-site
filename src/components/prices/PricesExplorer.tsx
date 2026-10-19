@@ -88,15 +88,8 @@ export function PricesExplorer() {
           </div>
 
           <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
-            <div className={styles.offerHeading}>
-              <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Поступление под ключ</h2>
-              <span className="rounded-apple-pill bg-crimson px-3 py-1 text-apple-caption font-semibold text-white uppercase">
-                Один платёж
-              </span>
-            </div>
-            <p className="mt-2 text-apple-body-sm text-cloud-body">Всё, что делает система, входит в цену</p>
-            <p className="mt-3 font-apple-display text-apple-display font-semibold text-cloud-white">{priceLabel(PRICE_MAIN)}</p>
-            <p className="mt-1 text-apple-caption text-cloud-meta">разово · без подписки и доплат</p>
+            <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Что включено</h2>
+            <p className="mt-2 text-apple-body-sm text-cloud-body">Весь маршрут поступления в одном кабинете</p>
             <div className="mt-5 grid grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-[24px] border border-white/10">
               {[
                 { v: "28", l: "шагов в маршруте" },
@@ -109,11 +102,6 @@ export function PricesExplorer() {
                 </div>
               ))}
             </div>
-            <p className="mt-4  px-4 py-3 text-apple-body-sm text-cloud-white">
-              {STRIPE_ENABLED
-                ? "После подтверждённой оплаты Stripe личный кабинет создаётся автоматически. Код доступа появится сразу на странице подтверждения."
-                : "После подтверждения оплаты мы активируем личный кабинет с маршрутом. Он ведёт весь путь — от выбора программ до первых дней в Италии."}
-            </p>
             <ul className={`${styles.offerFeatures} mt-5 grid gap-4 sm:grid-cols-2`}>
               {FEATURES.map((f) => (
                 <li key={f} className="flex gap-2 text-apple-body-sm text-cloud-white">
@@ -131,6 +119,11 @@ export function PricesExplorer() {
               title="Можно исправить и проверить снова"
               message="Проверяй документы и исправленные версии без доплаты. Решение о приёме принимает вуз или консульство."
             />
+            <p className="mt-5 text-apple-body-sm text-cloud-body">
+              {STRIPE_ENABLED
+                ? "После подтверждённой оплаты Stripe личный кабинет создаётся автоматически. Код доступа появится сразу на странице подтверждения."
+                : "После подтверждения оплаты мы активируем личный кабинет с маршрутом. Он ведёт весь путь — от выбора программ до первых дней в Италии."}
+            </p>
             <p className="mt-5 text-apple-caption text-cloud-meta uppercase">
               Доступ на весь цикл поступления, без ограничения по времени
             </p>

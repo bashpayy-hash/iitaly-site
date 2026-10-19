@@ -65,6 +65,44 @@
       ],
       "bytes": 28300,
       "sha256": "1d349f7e090bfe0e7ae488790f16d3e66bc8fddefb87668e08e747bbd8f9b1e9"
+    },
+    {
+      "file": "public/mascot/vespi-guide-peek.webp",
+      "role": "guide-screen-edge-helper",
+      "generated_at": "2026-10-19",
+      "job_id": "3d09b198-7659-4014-b703-e371e47d82ef",
+      "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261019_225725_3d09b198-7659-4014-b703-e371e47d82ef.png",
+      "prompt": "Create a polished production web asset of the EXACT SAME fictional Vespi mascot in the two supplied references. Preserve the cream tactile plush rounded face/body, small black oval eyes, curved subtle eyebrows, tiny warm smile, pale peach cheeks, glossy Italian-red vintage open-face helmet with cream trim and one cream stripe, short olive-trim cape/scarf with red clasp. Preserve its proportions and materials, not a new character. No scooter, no vehicle, no glasses, no text, no speech balloon, no UI, no lettering, no logos, no pedestal. True transparent alpha background, no backdrop, no ground plane or shadow outside its silhouette. Soft warm studio lighting, clean crisp silhouette. Exactly two arms, natural attached hands, no extra limbs. Composition for a friendly assistant peeking INTO a webpage from the RIGHT SCREEN EDGE. Show a cohesive upper-body three-quarter pose: helmet and face lean conspicuously LEFT into the canvas while the lower torso extends toward and is cropped by the bottom-right image edge. Head gently tilted about 10 degrees, looking directly at the viewer with a slightly curious inviting smile. Both shoulders and cape stay visibly attached. The LEFT hand in the image is raised a little with an open relaxed palm as if politely asking whether help is needed; the right hand and forearm sit naturally nearer the right edge, as though holding an invisible edge. DO NOT render an actual frame, wall, edge, door or surface. Keep head fully within image and all fingers natural; no detached floating head. Compact tasteful bust silhouette with plenty of transparency toward upper-left; no legs/feet visible. The artistic result must feel like one charming character leaning around the browser's right boundary, not a full-body presentation pose.",
+      "source_dimensions": [
+        1024,
+        1024
+      ],
+      "processing": "Standard ImageMagick resize and WebP quality90 conversion only; alpha preserved, no background removal or generative retouching.",
+      "dimensions": [
+        480,
+        480
+      ],
+      "bytes": 18710,
+      "sha256": "65965ebf0106486fc0675f75291e219c42bf97e5b49b85f49564208f88184eaa"
+    },
+    {
+      "file": "public/mascot/vespi-portal-welcome.webp",
+      "role": "portal-personal-welcome",
+      "generated_at": "2026-10-19",
+      "job_id": "d17b9a18-625d-4efb-ab00-6effb33e62a7",
+      "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261019_225725_d17b9a18-625d-4efb-ab00-6effb33e62a7.png",
+      "prompt": "Create a polished production web asset of the EXACT SAME fictional Vespi mascot in the two supplied references. Preserve the cream tactile plush rounded face/body, small black oval eyes, curved subtle eyebrows, tiny warm smile, pale peach cheeks, glossy Italian-red vintage open-face helmet with cream trim and one cream stripe, short olive-trim cape/scarf with red clasp. Preserve its proportions and materials, not a new character. No scooter, no vehicle, no glasses, no text, no speech balloon, no UI, no lettering, no logos, no pedestal. True transparent alpha background, no backdrop, no ground plane or shadow outside its silhouette. Soft warm studio lighting, clean crisp silhouette. Exactly two arms, natural attached hands, no extra limbs. Full-body welcoming pose for the opening of a personal student dashboard. The same Vespi stands comfortably with both boots visible and a stable gentle contrapposto, facing slightly toward viewer's left. One hand at shoulder level makes a small friendly open-palm wave directed toward the viewer, the other hand rests lightly at chest near the cape clasp. A delighted restrained friendly smile with alert warm eyes; no huge cartoon grin, no exaggerated gesturing. Body and head aligned naturally, cape drapes gracefully, helmet identity exact. Compose centered with a 7 percent clear transparent margin around complete body and every hand. Boots warm brown as in current mascot. It should feel like a personal hello from a thoughtful companion, and read clearly at 130 pixels high.",
+      "source_dimensions": [
+        880,
+        1168
+      ],
+      "processing": "Standard ImageMagick resize and WebP quality90 conversion only; alpha preserved, no background removal or generative retouching.",
+      "dimensions": [
+        480,
+        637
+      ],
+      "bytes": 31404,
+      "sha256": "c089d745981fd35e85e47de5b25b028b7ac65564811ddc82f153a3d352cd7ea4"
     }
   ]
 }

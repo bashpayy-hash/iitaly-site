@@ -16,6 +16,12 @@ export function PricesHero() {
       </span>
     } />
     <div className={styles.copy} data-protected-typography>
+      <span className={`${styles.foregroundLeaf} ${styles.leafLeft}`} data-price-leaf="left" aria-hidden="true">
+        <img src="/illustrations/editorial/lemon-accent.webp" width="1024" height="688" alt="" decoding="async" draggable={false} />
+      </span>
+      <span className={`${styles.foregroundLeaf} ${styles.leafRight}`} data-price-leaf="right" aria-hidden="true">
+        <img src="/illustrations/editorial/lemon-accent.webp" width="1024" height="688" alt="" decoding="async" draggable={false} />
+      </span>
       <div data-role="heading">
         <p className="warm-badge">Цена</p>
         <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">

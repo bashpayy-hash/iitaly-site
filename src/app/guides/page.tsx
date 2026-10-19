@@ -94,15 +94,27 @@ function TopicBody({ guide }: { guide: GuideCard }) {
 
 export default function GuidesPage() {
   const [stage, setStage] = useState(0);
-  const [activeId, setActiveId] = useState<GuideId | null>("education");
+  const [activeId, setActiveId] = useState<GuideId | null>(null);
   const [query, setQuery] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
+  const topicListRef = useRef<HTMLOListElement>(null);
   const terms = normalize(query).trim().split(/\s+/).filter(Boolean);
   const filtered = TOPICS.filter(guide => terms.every(term => searchable(guide).includes(term)));
   const active = TOPICS.find(guide => guide.id === activeId);
   const currentId = active && isGuideId(active.id) ? active.id : undefined;
   const currentStage = currentId ? stageOf(currentId) : stage;
+  const selectedStage = STAGES[currentStage];
   const nextTopic = currentId ? TOPICS[TOPICS.findIndex(guide => guide.id === currentId) + 1] : undefined;
+
+  useEffect(() => {
+    const list = topicListRef.current;
+    const selected = list?.querySelector<HTMLElement>('[aria-current="true"]');
+    if (!list || !selected || list.scrollWidth <= list.clientWidth) return;
+    const listBox = list.getBoundingClientRect();
+    const selectedBox = selected.getBoundingClientRect();
+    if (selectedBox.left >= listBox.left && selectedBox.right <= listBox.right) return;
+    list.scrollTo({ left: list.scrollLeft + selectedBox.left - listBox.left - (list.clientWidth - selectedBox.width) / 2, behavior: "instant" });
+  }, [activeId]);
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("iitaly:guide-context", { detail: { guideId: currentId } }));
@@ -120,7 +132,7 @@ export default function GuidesPage() {
     function followHash() {
       const id = window.location.hash.slice(1);
       if (!isGuideId(id)) {
-        setQuery(""); setStage(0); setActiveId("education");
+        setQuery(""); setStage(0); setActiveId(null);
         return;
       }
       setQuery(""); setStage(stageOf(id)); setActiveId(id);
@@ -166,8 +178,8 @@ export default function GuidesPage() {
                     setActiveId(null);
                   } else {
                     const hashTopic = window.location.hash.slice(1);
-                    const restoredTopic = isGuideId(hashTopic) ? hashTopic : STAGES[stage].ids[0];
-                    setStage(stageOf(restoredTopic));
+                    const restoredTopic = isGuideId(hashTopic) ? hashTopic : null;
+                    setStage(restoredTopic ? stageOf(restoredTopic) : 0);
                     setActiveId(restoredTopic);
                   }
                 }} />
@@ -181,30 +193,36 @@ export default function GuidesPage() {
         <section id="guide-topics" className={ui.topics} aria-labelledby="guide-route-title">
           <div className={ui.routeIntro} data-guide-invite data-fab-yield>
             <div>
-              <p className={ui.routeEyebrow}>Твой путь по шагам</p>
               <h2 id="guide-route-title">Сначала маршрут. Потом документы.</h2>
               <p>Начни с первого этапа или выбери тот, на котором ты сейчас. Я помогу разобраться с каждой темой по порядку.</p>
             </div>
-            <Image src="/mascot/vespi-guide-invite.webp" alt="" width={300} height={360} unoptimized className={ui.invitePose} data-vespi-guide-invite />
+            <div className={ui.edgeHelper} data-guide-edge-helper>
+              <button type="button" className={ui.helpBubble} onClick={() => {
+                track("guide_helper_opened", { topic: currentId || "overview", source: "edge-invite" });
+                openGuideHelper(currentId);
+              }} aria-label="Тебе помочь? Открыть чат с Веспи">Тебе помочь?<ArrowUpRight size={16} aria-hidden="true" /></button>
+              <Image src="/mascot/vespi-guide-peek.webp" alt="" width={320} height={320} unoptimized className={ui.peekPose} data-vespi-guide-peek />
+            </div>
           </div>
 
           <div className={ui.readingLayout}>
             <nav className={ui.timeline} aria-label="Этапы справочника" data-guide-current={currentId || ""} data-guide-timeline>
-              <ol>{STAGES.map((item, index) => <li key={item.title} className={ui.timelineStage} data-current-stage={currentStage === index}>
-                <a className={ui.stageLink} href={`#${item.ids[0]}`} aria-current={currentStage === index ? "step" : undefined} onClick={event => { event.preventDefault(); selectTopic(item.ids[0], "stage"); }}>
+              <ol className={ui.stageTrack}>{STAGES.map((item, index) => <li key={item.title} className={ui.timelineStage} data-current-stage={Boolean(currentId) && currentStage === index}>
+                <a className={ui.stageLink} href={`#${item.ids[0]}`} aria-current={currentId && currentStage === index ? "step" : undefined} aria-controls="guide-reading-content" onClick={event => { event.preventDefault(); selectTopic(item.ids[0], "stage"); }}>
                   <span className={ui.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                   <span><strong>{item.title}</strong><small>{item.description}</small></span>
                 </a>
-                {currentStage === index && !terms.length && <ol className={ui.topicList} aria-label="Темы выбранного этапа">{item.ids.map((id, topicIndex) => {
-                  const guide = TOPICS.find(topic => topic.id === id)!;
-                  return <li key={id}><button type="button" className={ui.topicLink} data-guide-select={id} aria-current={activeId === id ? "true" : undefined} aria-expanded={activeId === id} aria-controls={`guide-panel-${id}`} onClick={() => selectTopic(id, "card")}>
-                    <span aria-hidden="true">{index + 1}.{topicIndex + 1}</span><span>{guide.title}</span>
-                  </button></li>;
-                })}</ol>}
               </li>)}</ol>
+              {!terms.length && <ol ref={topicListRef} className={ui.topicList} aria-label="Темы выбранного этапа">{selectedStage.ids.map((id, topicIndex) => {
+                const guide = TOPICS.find(topic => topic.id === id)!;
+                return <li key={id}><button type="button" className={ui.topicLink} data-guide-select={id} aria-current={activeId === id ? "true" : undefined} aria-expanded={activeId === id} aria-controls={`guide-panel-${id}`} onClick={() => selectTopic(id, "card")}>
+                  <span aria-hidden="true">{currentStage + 1}.{topicIndex + 1}</span><span>{guide.title}</span>
+                </button></li>;
+              })}</ol>}
             </nav>
 
-            <div className={ui.readingContent}>
+            <div id="guide-reading-content" className={ui.readingContent}>
+              {!active && !terms.length && <p className={ui.readingPrompt} data-guide-empty>Выбери этап или тему, чтобы открыть пошаговый разбор.</p>}
               {terms.length > 0 && <section className={ui.searchResults} aria-labelledby="guide-search-results-title">
                 <h2 id="guide-search-results-title">{filtered.length ? "Подходящие темы" : "Такой темы не нашли"}</h2>
                 {filtered.length ? <div className={ui.resultList}>{filtered.map(guide => <button key={guide.id} type="button" className={ui.resultTopic} data-guide-select={guide.id} aria-controls={`guide-panel-${guide.id}`} onClick={() => { if (isGuideId(guide.id)) selectTopic(guide.id, "card"); }}>
