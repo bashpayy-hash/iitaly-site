@@ -54,7 +54,7 @@
 .checkValue p, .checkValue b { font-size: 14px; font-weight: 400; }
 .actions { display: grid; grid-template-columns: auto minmax(180px,1fr) auto; gap: 12px; margin: 28px 0 12px 182px; }
 .actions button { padding: 12px 14px; border: 1px solid #cbc7bf; border-radius: 8px; background: #fff; color: #373734; }
-.actions button[data-transfer-confirm] { background: #121212; color: #f8f8f6; border-color: #121212; }
+.actions button[data-transfer-confirm] { background: #121212; color: #FAF8F5; border-color: #121212; }
 .actions button:last-child { font-size: 12px; border-color: transparent; background: transparent; }
 .next { margin: 0 0 22px 182px; color: #66635d; font-size: 12px; line-height: 1.5; }
 .jump, .finish details { padding: 16px 0; border-top: 1px solid #ddd9d1; }
