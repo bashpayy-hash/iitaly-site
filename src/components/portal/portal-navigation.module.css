@@ -36,6 +36,16 @@
   .settingsLink { width: 44px; padding: 8px; }
   .settingsLink span { display: none; }
 }
+/* На 320px знак, «Помощник» и шестерёнка не помещались в поля шапки на
+   27px, и страница кабинета прокручивалась вбок на 6px. До 360px сжимаем
+   только промежутки и боковые поля пилюли; значок, подпись и тач-зона
+   шестерёнки (44px) остаются как были. */
+@media (max-width: 360px) {
+  .chrome > header > div { gap: 12px; }
+  .headerLinks { gap: 4px; }
+  .headerLinks > .settingsButton:not(.settingsLink) { padding-inline: 8px; }
+  .headerLinks [data-vespi-label] { font-size: 13px; }
+}
 
 /* The page's guide owns the portrait; the helper remains one quiet entry. */
 .helperSignal { align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
