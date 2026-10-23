@@ -3,6 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { PortalData } from "@/lib/portalApi";
 import { taskBlockedReason, taskTitle } from "@/lib/portalNavigation";
+import { portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
 import settings from "./portal-settings.module.css";
@@ -28,7 +29,7 @@ export function ProfileSection({
     const rows: string[] = [];
     for (const stage of data.roadmap) {
       for (const task of stage.tasks) {
-        if (data.done[task.id]) continue;
+        if (portalTaskDone(data, task)) continue;
         rows.push("• " + taskTitle(task) + (task.timingLabel ? " — " + taskBlockedReason(task) : task.deadline ? " — Ориентир: " + task.deadline : ""));
       }
     }

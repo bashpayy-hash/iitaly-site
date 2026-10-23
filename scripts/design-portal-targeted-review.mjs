@@ -126,6 +126,7 @@ try {
     assert.equal(await detail(page).getByRole('button').count(),0,'Future stage is a read-only preview');
     data.docs.apostille={verdict:'ok',fileName:'synthetic.txt'};
     data.docs.translate={verdict:'warn',summary:'Требования заявки не подтверждены.'};
+    data.docs.insurance={verdict:'warn',summary:'Синтетическая предварительная проверка будущего этапа.'};
     await page.goto(origin+'/portal',{waitUntil:'networkidle'});await page.locator('[data-portal-overview]').waitFor();
     assert.equal(await road(page).getAttribute('data-road-done'),'4','Ready document counts even without a done flag');
     assert.match(await road(page).locator('[data-road-stage=docs]').innerText(),/1 \/ 5 шагов/);
@@ -136,6 +137,9 @@ try {
     assert.match(await page.locator('[data-document=translate]').innerText(),/Что сделать:/);
     assert.doesNotMatch(await page.locator('[data-document=translate]').innerText(),/Нужно уточнить|мы сообщим/);
     await axe(page,`documents ${width}`);await noOverflow(page);await capture(page,`documents-${width}`);
+    await page.locator('[data-document=insurance]').click();
+    const futureReport=page.getByRole('region',{name:'Разбор документа',exact:true});await futureReport.waitFor();
+    assert.equal(await futureReport.getByRole('button').count(),0,'An existing future report remains read-only even if its raw available flag is true');
     if(width!==320) {
       await go(page,'Обзор');await page.locator('[data-saved-universities]').getByRole('link',{name:'изменить',exact:true}).click();
       await page.locator('[data-portal-universities]').waitFor();

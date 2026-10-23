@@ -26,3 +26,8 @@ export function portalProgress(data: PortalData) {
   // previously displayed 100% turn back into 30%. Only eligible work counts.
   return { stages, currentIndex, done, ahead, total: tasks.length, pct: tasks.length ? done / tasks.length * 100 : 0 };
 }
+
+export function portalTaskStageOpen(data: PortalData, taskId: string): boolean {
+  const stage = data.roadmap.find(row => row.tasks.some(task => task.id === taskId));
+  return Boolean(stage && portalProgress(data).stages.find(row => row.id === stage.id)?.open);
+}

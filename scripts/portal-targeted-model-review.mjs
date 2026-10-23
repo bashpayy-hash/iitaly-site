@@ -12,7 +12,7 @@ function load(file) {
   new Function('require','module','exports',code)(name=>load(name.startsWith('@/')?resolve('src',name.slice(2)):resolve(dirname(file),name)),compiled,compiled.exports);
   return compiled.exports;
 }
-const {portalProgress,portalTaskDone}=load(resolve('src/lib/portalProgress'));
+const {portalProgress,portalTaskDone,portalTaskStageOpen}=load(resolve('src/lib/portalProgress'));
 const {documentOutcome,DocumentStatus}=load(resolve('src/lib/portalDocument'));
 const {selectedUniversities}=load(resolve('src/lib/portalShortlist'));
 const {UNIS}=load(resolve('src/data/italy'));
@@ -21,6 +21,8 @@ const task=id=>({id,t:id,available:true});
 const data={client:{},roadmap:[{id:'start',tasks:['profile','shortlist','chances'].map(task)},{id:'docs',tasks:['apostille','translate'].map(task)},{id:'arrival',tasks:['kit','codice','questura'].map(task)}],done:{profile:true,shortlist:true,chances:true,kit:true,codice:true,apostille:true},docs:{}};
 assert.equal(portalProgress(data).done,3,'An unchecked file flag cannot count as ready');
 assert.equal(portalProgress(data).ahead,2,'Future completion is separate');
+assert.equal(portalTaskStageOpen(data,'kit'),false,'Future stages remain previews despite early marks');
+assert.equal(portalTaskStageOpen(data,'apostille'),true);
 data.docs.apostille={verdict:'ok'};delete data.done.apostille;
 assert.equal(portalTaskDone(data,data.roadmap[1].tasks[0]),true,'Reviewed file counts without the stale manual flag');
 assert.equal(portalProgress(data).done,4);assert.equal(portalProgress(data).pct,50);

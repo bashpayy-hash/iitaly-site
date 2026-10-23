@@ -36,7 +36,7 @@ import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
 import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending, nearestUniversityDeadline } from "@/lib/portalShortlist";
-import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
+import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
 import { PortalUniversitySummary } from "./PortalUniversitySummary";
 import { WIZ } from "@/data/wizard";
@@ -506,8 +506,10 @@ export function PortalExplorer() {
       if (version !== sessionVersion.current) return;
       if (!saved?.ok) throw new Error(typeof saved?.error === "string" ? saved.error : "Не удалось сохранить результат.");
       setData((prev) => (prev ? { ...prev, docs: saved.docs, done: saved.done, progress: saved.progress } : prev));
-      if (data && saved.done[taskId]) {
-        if (!data.done[taskId]) {
+      const task = data?.roadmap.flatMap(stage => stage.tasks).find(row => row.id === taskId);
+      const updated = data ? { ...data, docs: saved.docs, done: saved.done } : null;
+      if (data && updated && task && portalTaskDone(updated, task)) {
+        if (portalProgress(updated).done > portalProgress(data).done) {
           completionFocusPending.current = true;
           setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
         }
@@ -604,7 +606,7 @@ export function PortalExplorer() {
   const documentBackHref = documentReturnTask.current ? `/portal?view=plan&task=${encodeURIComponent(documentReturnTask.current)}` : sectionUrl(stepReturnSection.current);
   const shortlistEditable = Boolean(activeTask?.id === "shortlist" && (data?.done.shortlist || !readOnlyReason));
   const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
-    && (data.done[activeTask.id] || activeTask.available !== false));
+    && portalTaskStageOpen(data, activeTask.id) && (portalTaskDone(data, activeTask) || activeTask.available !== false));
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
   const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 

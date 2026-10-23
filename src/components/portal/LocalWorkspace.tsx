@@ -24,7 +24,7 @@ import { WorkspaceCoach } from "./WorkspaceCoach";
 import { PortalUniversitySummary } from "./PortalUniversitySummary";
 import { PortalStepInstructions } from "./PortalStepInstructions";
 import { SavedProfileAnswers } from "./SavedProfileAnswers";
-import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
+import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
 import { PortalWelcome } from "./PortalWelcome";
 import portal from "./portal.module.css";
@@ -122,7 +122,7 @@ export function LocalWorkspace() {
   const showDetail = active && (location.task || location.doc);
   const readOnly = active ? taskReadOnlyReason(data, active) : "";
   const existing = active ? data.docs[active.id] : undefined;
-  const documentInspectorOpen = Boolean(active && DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])));
+  const documentInspectorOpen = Boolean(active && DOC_TASKS[active.id] && portalTaskStageOpen(data, active.id) && (!readOnly || Boolean(existing && portalTaskDone(data, active))));
   const intake = draft.answers.intake === "2027/28" ? "сентябрь 2027" : draft.answers.intake === "2026/27" ? "2026/27" : "год ещё не выбран";
   const clarify = documents.find(task => data.docs[task.id] && documentOutcome(data.docs[task.id], applicationYear).kind !== "missing");
 
