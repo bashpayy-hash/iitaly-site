@@ -410,7 +410,7 @@ try {
     await visit('/portal?view=docs&doc=statements');
     const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
     await report.waitFor();
-    assert(await report.getByRole('heading', { name: 'Нужно уточнить', exact: true }).isVisible(), 'Missing application context keeps the clarification status');
+    assert(await report.getByRole('heading', { name: baseline ? 'Нужно уточнить' : 'На проверке', exact: true }).isVisible(), 'Missing application context keeps the reviewing status');
     assert(await report.getByText(data.docs.statements.result.summary, { exact: true }).isVisible(), 'The saved summary is shown verbatim');
     assert(await report.getByText('Выбери программу и учебный год.', { exact: true }).isVisible(), 'The saved next action stays visible');
     if (!baseline) {
