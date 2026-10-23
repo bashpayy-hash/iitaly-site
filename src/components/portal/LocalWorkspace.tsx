@@ -15,10 +15,11 @@ import type { PortalDoc, PortalTask } from "@/lib/portalApi";
 import type { DocCheckResult } from "@/lib/checkDocument";
 import { nearestUniversityDeadline } from "@/lib/portalShortlist";
 import { Wizard } from "@/components/plan/Wizard";
-import { DocCheck, DocResult } from "@/components/plan/DocCheck";
+import { DocCheck } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
 import { PlanSection } from "./PlanSection";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import { PortalDocumentReport } from "./PortalDocumentReport";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { WorkspaceCoach } from "./WorkspaceCoach";
 import { PortalUniversitySummary } from "./PortalUniversitySummary";
@@ -107,8 +108,8 @@ export function LocalWorkspace() {
     updateLocal({ ...local, done: { ...local.done, [task.id]: true } });
     navigate({ view: "today", task: null, doc: null });
   }
-  function onReview(task: PortalTask, result: DocCheckResult) {
-    const report: PortalDoc = { verdict: result.verdict || "warn", summary: result.summary, result, checkedAt: new Date().toISOString(), routeAcademicYear: applicationYear };
+  function onReview(task: PortalTask, result: DocCheckResult, fileName?: string) {
+    const report: PortalDoc = { fileName, verdict: result.verdict || "warn", summary: result.summary, result, checkedAt: new Date().toISOString(), routeAcademicYear: applicationYear };
     const kind = documentOutcome(report, applicationYear).kind;
     const approved = kind === "approved";
     if (approved && !data.done[task.id]) setRoadTravel({ fromDone:portalProgress(data).done, id:++travelSequence.current });
@@ -152,19 +153,27 @@ export function LocalWorkspace() {
           </>}
           {location.view === "plan" && !showDetail && <><PlanSection data={data} onOpenTask={openTask}/></>}
           {showDetail && <>
-            {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => { event.preventDefault(); if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: location.doc ? "docs" : "plan", task: null, doc: null }); }}>← Назад</a>}
+            {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && !(DOC_TASKS[active.id] && existing) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => { event.preventDefault(); if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: location.doc ? "docs" : "plan", task: null, doc: null }); }}>← Назад</a>}
             {active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1>{draft.complete ? <SavedProfileAnswers profile={data.client.profile || {}} answers={draft.answers} onEdit={() => updateDraft({ ...draft, step: 0, complete: false })} /> : <Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { updateDraft({ answers, step: 10, complete: true }); navigate({ view: "today", task: null, doc: null }); }}/>}</>
               : active.id === "shortlist" && (!readOnly || data.done.shortlist) ? <PortalUniversityStep localOnly data={data} task={active} selectedIds={local.selectedIds} busy={false} onBack={() => navigate({ view: "plan", task: null, doc: null })} backHref="/portal?view=plan" onReopen={() => updateLocal({ ...local, done: { ...local.done, shortlist: false } })} onSave={async selectedIds => { updateLocal({ ...local, scope: localWorkspaceScope(draft, selectedIds), selectedIds, reviews: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? local.reviews : {}, done: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? { ...local.done, shortlist: true } : { shortlist: true } }); navigate({ view: "today", task: null, doc: null }); return true; }}/>
+              : DOC_TASKS[active.id] && existing ? <PortalDocumentReport key={active.id} title={DOC_TASKS[active.id]} doc={existing} storage="local"
+                busy={false} context={existing.result?.review || { profile: "general", academicYear: applicationYear, applicantScope: "unspecified" }} onContextChange={() => {}}
+                onBack={() => { if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: "docs", task: null, doc: null }); }}
+                onDocuments={() => navigate({ view: "docs", task: null, doc: null })} onUpload={() => {}}
+                canUpload={documentInspectorOpen} readOnlyReason={readOnly} preparationTime={active.time || undefined}
+                stepMeta={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))?.title}
+                uploadSlot={<><button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
+                  <DocCheck portalInspector initialContext={existing.result?.review} academicYear={applicationYear} onComplete={(result, fileName) => onReview(active, result, fileName)} />
+                </>} />
               : <><h1 className={styles.heading}>{taskTitle(active)}</h1><p className={styles.intro}>{active.time || "По ситуации"}</p><p className={styles.intro}>{active.explain}</p>
                 <PortalStepInstructions taskId={active.id} />
                 {readOnly && <p className={styles.readOnly}>{readOnly}</p>}
                 {existing && !existing.result && <p className={styles.readOnly}>{existing.summary}</p>}
                 {existing?.result?.review && existing.result.review.academicYear !== applicationYear && <p className={styles.readOnly}>Нужно уточнить: разбор относится к {existing.result.review.academicYear}, а в маршруте выбран {applicationYear}. Это не ошибка файла. Сверь заявку перед подачей.</p>}
-                {existing?.result && <div className={styles.paper}><DocResult result={existing.result} portalStatus applicationYear={applicationYear} /><p>Разбор хранится в этой вкладке. Файлы и содержание документов не записываются в локальный профиль.</p></div>}
                 {documentInspectorOpen && <>
                   <PortalDocumentCoach />
                   <button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
-                  <DocCheck portalInspector key={active.id} academicYear={draft.answers.intake === "2027/28" || draft.answers.intake === "2026/27" ? draft.answers.intake : "unspecified"} onComplete={result => onReview(active, result)}/>
+                  <DocCheck portalInspector key={active.id} academicYear={draft.answers.intake === "2027/28" || draft.answers.intake === "2026/27" ? draft.answers.intake : "unspecified"} onComplete={(result, fileName) => onReview(active, result, fileName)}/>
                 </>}
                 {!DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])) && <>{active.id === "kit" && <PortalPermessoStep/>}<button className={styles.primary} type="button" onClick={() => complete(active)}>Готово</button></>}
                 {data.done[active.id] && !DOC_TASKS[active.id] && <button className={styles.textLink} type="button" onClick={() => updateLocal({ ...local, done: { ...local.done, [active.id]: false } })}>Снять отметку</button>}

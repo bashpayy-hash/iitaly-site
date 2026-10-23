@@ -48,3 +48,8 @@
 .rowFooter { margin-top:20px; flex-wrap:wrap; }
 .status[data-outcome=approved] { color:#1F7A68; background:#E6F4F1; padding:5px 9px; border-radius:999px; }
 @media(max-width:600px) { .list { grid-template-columns:1fr; } .row { padding:20px; min-height:160px; } }
+
+.file .status { margin-top:10px; font-size:14px; }
+.nextAction { margin-top:12px; font-size:16px; line-height:1.6; }
+.rowFooter { margin-top:16px; }
+.rowAction { font-size:15px; }

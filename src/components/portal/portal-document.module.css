@@ -1,52 +1,64 @@
-.report {
-  composes: paper from "../marketing/surface-depth.module.css"; min-width: 0; width: 100%; padding: 28px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); overflow-wrap: anywhere; }
-.heading { margin: 24px 0; }
-.heading > p:first-child { color: var(--portal-muted); }
-.heading h2 { margin: 6px 0 10px; font-family: var(--portal-heading-font); font-size: 32px; line-height: 1.15; font-weight: 600; letter-spacing: -.03em; scroll-margin-top: 88px; }
-.meta { color: var(--portal-muted); font-size: 14px; line-height: 1.6; }
-.decision { border-block: 1px solid var(--portal-border); padding: 24px 0; }
-.inspector[data-vespi-assistant] { display: flow-root; margin: 0; }
-.inspector [data-vespi-presence] { float: right; width: 96px; margin: -8px 0 12px 20px; }
-.inspector [data-vespi-content] { display: contents; }
-.decision h3 { font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; line-height: 1.25; margin-bottom: 12px; }
-.decision[data-outcome="fix"] h3 { color: var(--portal-danger); }
-.decision p, .block p, .context p { max-width: 65ch; margin-top: 8px; font-size: 16px; line-height: 1.6; }
-.block { padding: 24px 0; border-bottom: 1px solid var(--portal-border); }
-.block h3 { font-family: var(--portal-heading-font); font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-.findings, .steps { max-width: 65ch; list-style: decimal; padding-left: 22px; font-size: 16px; line-height: 1.6; }
-.findings li + li { margin-top: 20px; }
-.steps li + li { margin-top: 8px; }
-.checks { list-style: none; padding: 0; display: grid; gap: 18px; font-size: 16px; }
-.checks li { display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 16px; align-items: start; }
-.checks p { margin-top: 4px; }
-.checkStatus { font-size: 13px; line-height: 1.5; color: var(--portal-muted); }
-.checkStatus[data-status="ok"] { color: var(--portal-green); }
-.actions { display: grid; justify-items: start; gap: 10px; padding: 24px 0 12px; }
-.fileArea { width: fit-content; max-width: 100%; min-height: 48px; padding: 12px 22px; border: 1px solid var(--portal-accent); border-radius: 999px; background: var(--portal-accent); color: var(--portal-surface); font-size: 16px; line-height: 1.4; font-weight: 500; cursor: pointer; }
-.fileArea:hover { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
-.fileArea:disabled { cursor: wait; opacity: .6; }
-.readOnly { max-width: 65ch; margin: 24px 0 12px; color: var(--portal-muted); font-size: 16px; line-height: 1.6; }
-.textAction { display: inline-flex; align-items: center; justify-content: flex-start; min-height: 44px; padding: 8px 0; border: 0; background: transparent; color: var(--portal-ink); text-align: left; font-size: 15px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
-.textAction:hover { text-decoration-thickness: 2px; }
-.context, .sources { margin: 16px 0; border-top: 1px solid var(--portal-border); font-size: 15px; }
-.context summary, .sources summary { cursor: pointer; padding: 14px 0; min-height: 48px; font-weight: 500; }
-.context fieldset { min-width: 0; padding: 12px 0; }
-.context legend { font-size: 16px; font-weight: 550; }
-.contextFields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
-.contextFields label { min-width: 0; display: grid; gap: 7px; }
-.context select { min-width: 0; width: 100%; min-height: 46px; background: var(--portal-surface); border: 1px solid var(--portal-border); border-radius: 8px; padding: 10px; font-size: 16px; color: var(--portal-ink); }
-.scopeChoice { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; line-height: 1.65; }
-.scopeChoice input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--portal-ink); }
-.sources ul { list-style: none; padding: 8px 0; }
-.sources a { display: inline-block; padding: 10px 0; min-height: 44px; color: var(--portal-ink); text-decoration: underline; text-underline-offset: 3px; }
-.report :is(button, a, summary, select, input, h2):focus-visible, .context :is(summary, select, input):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
-@media (max-width: 900px) {
-  .report { padding: 20px; }
-  .heading h2 { font-size: 28px; }
-}
-@media (max-width: 540px) {
-  .inspector [data-vespi-presence] { width: 72px; margin-left: 14px; }
-  .checks li { grid-template-columns: 1fr; gap: 4px; }
-  .contextFields { grid-template-columns: 1fr; }
-  .actions button { white-space: normal; }
-}
+.report { scroll-margin-top:calc(var(--portal-chrome-height, 64px) + 16px); min-width:0; width:100%; padding:28px 32px; border:1px solid var(--portal-border); border-radius:24px; background:var(--portal-surface); overflow-wrap:anywhere; }
+.breadcrumbs { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.heading { margin:16px 0 20px; }
+.heading h2 { margin:0 0 14px; max-width:30ch; font-family:var(--portal-heading-font); font-size:32px; line-height:1.18; font-weight:600; letter-spacing:-.025em; scroll-margin-top:88px; }
+.statusBadge { display:inline-flex; padding:5px 11px; border-radius:999px; background:var(--portal-surface-soft); color:var(--portal-ink); font-size:14px; font-weight:600; line-height:1.5; }
+.statusBadge[data-outcome=approved] { background:#E6F4F1; color:#1F7A68; }
+.statusBadge[data-outcome=fix],.statusBadge[data-outcome=unreadable] { color:var(--portal-danger); }
+.meta { color:var(--portal-muted); font-size:14px; line-height:1.6; }
+.decision { padding:0; }
+.decision p,.block p,.context p,.nextStep > p { max-width:68ch; margin:8px 0 0; font-size:16px; line-height:1.6; }
+.resultSummary { font-weight:500; color:var(--portal-ink); }
+.readiness { color:var(--portal-muted); }
+.limitations { margin-top:12px; }
+.limitations p { color:var(--portal-muted); }
+.limitations ul { margin:8px 0 0; padding-left:20px; font-size:15px; line-height:1.6; }
+.nextStep { padding:22px 0 26px; }
+.nextStep h3,.fileDetails h3,.block h3 { margin:0 0 10px; font-family:var(--portal-heading-font); font-size:20px; line-height:1.35; font-weight:600; }
+.nextStep > .meta { font-size:14px; }
+.nextStep > .fileArea,.nextStep > .textAction { margin-top:16px; }
+.fileArea { display:inline-flex; align-items:center; justify-content:center; gap:6px; max-width:100%; min-height:48px; padding:12px 22px; border:1px solid var(--portal-accent); border-radius:999px; background:var(--portal-accent); color:var(--portal-surface); font-size:16px; line-height:1.4; font-weight:500; text-decoration:none; cursor:pointer; text-align:center; }
+.fileArea:hover { background:var(--portal-muted); border-color:var(--portal-muted); }
+.fileArea:disabled { cursor:wait; opacity:.6; }
+.textAction { display:inline-flex; align-items:center; min-height:44px; padding:8px 0; border:0; background:transparent; color:var(--portal-ink); text-align:left; font-size:15px; line-height:1.5; text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+.textAction:hover { text-decoration-thickness:2px; }
+.fileDetails { padding:24px 0; border-top:1px solid var(--portal-border); }
+.fileDetails dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 28px; }
+.fileDetails dt { color:var(--portal-muted); font-size:14px; margin-bottom:4px; }
+.fileDetails dd { font-size:16px; line-height:1.5; }
+.fileDetails dd small { display:block; margin-top:4px; color:var(--portal-muted); font-size:14px; }
+.fileDetails > p { margin-top:18px; }
+.block { padding:24px 0; border-top:1px solid var(--portal-border); }
+.findings,.steps { max-width:68ch; list-style:decimal; padding-left:22px; font-size:16px; line-height:1.6; }
+.findings li + li { margin-top:20px; }
+.steps li + li { margin-top:8px; }
+.checks { list-style:none; padding:0; display:grid; gap:18px; font-size:16px; }
+.checks li { display:grid; grid-template-columns:136px minmax(0,1fr); gap:16px; align-items:start; }
+.checks p { margin-top:4px; line-height:1.6; }
+.checkStatus { font-size:14px; line-height:1.5; color:var(--portal-muted); }
+.checkStatus[data-status=ok] { color:var(--portal-green); }
+.readOnly { max-width:68ch; margin:16px 0; color:var(--portal-muted); font-size:16px; line-height:1.6; }
+.context,.sources { margin:0; border-top:1px solid var(--portal-border); font-size:15px; }
+.context summary,.sources summary { cursor:pointer; padding:16px 0; min-height:48px; font-weight:600; font-size:16px; }
+.context fieldset { min-width:0; padding:0 0 16px; }
+.context legend { font-size:16px; font-weight:550; }
+.contextFields { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+.contextFields label { min-width:0; display:grid; gap:7px; font-size:15px; }
+.context select { min-width:0; width:100%; min-height:46px; background:var(--portal-surface); border:1px solid var(--portal-muted); border-radius:8px; padding:10px; font-size:16px; color:var(--portal-ink); }
+.scopeChoice { display:flex; align-items:flex-start; gap:12px; padding:8px 0; line-height:1.65; }
+.scopeChoice input { width:20px; height:20px; margin-top:2px; flex-shrink:0; accent-color:var(--portal-ink); }
+.sources ul { list-style:none; padding:8px 0; }
+.sources > ol,.sources > p,.sources > ul { margin-bottom:20px; }
+.sources a { display:inline-block; padding:10px 0; min-height:44px; color:var(--portal-ink); text-decoration:underline; text-underline-offset:3px; }
+.uploadForm { min-width:0; }
+.replacement { margin:16px 0 0; font-size:15px; line-height:1.6; font-weight:500; }
+.selectedFile { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-top:18px; }
+.selectedFile p { min-width:0; flex:1; font-size:16px; overflow-wrap:anywhere; }
+.selectedFile span { display:block; color:var(--portal-muted); font-size:14px; margin-top:4px; }
+.operation { display:grid; gap:12px; margin-top:20px; font-size:16px; line-height:1.6; }
+.operation progress { width:100%; height:6px; accent-color:var(--portal-ink); }
+.operationError { margin-top:16px; font-size:16px; line-height:1.6; color:var(--portal-danger); }
+.operationError button { margin-top:12px; }
+.report :is(button,a,summary,select,input,h2):focus-visible,.uploadForm :is(button,a,summary,select,input):focus-visible { outline:2px solid var(--portal-ink); outline-offset:4px; }
+@media(max-width:900px) { .report { padding:20px; } .heading h2 { font-size:28px; } }
+@media(max-width:540px) { .fileDetails dl,.contextFields { grid-template-columns:1fr; } .checks li { grid-template-columns:1fr; gap:4px; } .fileArea { width:100%; } .heading h2 { font-size:26px; } }

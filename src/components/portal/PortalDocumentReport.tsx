@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { PortalDoc } from "@/lib/portalApi";
 import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
-import { PortalUploadZone } from "./PortalUploadZone";
-import { PortalDocumentContext } from "./PortalDocumentContext";
+import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
-import portal from "./portal.module.css";
 import styles from "./portal-document.module.css";
 
 const CHECK_LABEL = { ok: "В порядке", warn: "Нужно уточнить", error: "Несоответствие", unknown: "Не подтверждено" };
@@ -16,7 +14,7 @@ function dateLabel(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value));
 }
 
-export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?view=docs", onUpload, onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, orientir }: {
+export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?view=docs", onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, preparationTime, orientir, onDocuments, operation, error, onResetError, uploadSlot, storage = "cloud" }: {
   title: string;
   doc: PortalDoc;
   onBack: () => void;
@@ -30,8 +28,17 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
   readOnlyReason?: string;
   stepMeta?: string;
   orientir?: string;
+  preparationTime?: string;
+  onDocuments?: () => void;
+  operation?: DocumentOperation;
+  error?: DocumentActionError | null;
+  onResetError?: () => void;
+  uploadSlot?: ReactNode;
+  storage?: "cloud" | "local";
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const uploadVisible = uploadOpen || busy || Boolean(error);
   useEffect(() => {
     let cancelled = false;
     let frame = 0;
@@ -44,7 +51,7 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
         const chrome = document.querySelector("[data-portal-chrome]");
         if (heading.current && chrome) heading.current.style.scrollMarginTop = `${chrome.getBoundingClientRect().height + 24}px`;
         heading.current?.focus({ preventScroll: true });
-        heading.current?.scrollIntoView({ block: "start", behavior: "instant" });
+        heading.current?.closest("section")?.scrollIntoView({ block: "start", behavior: "instant" });
       });
     });
     return () => { cancelled = true; cancelAnimationFrame(frame); };
@@ -57,52 +64,79 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
   const checks = result?.checks || [];
   const nextSteps = result?.nextSteps || [];
   const reasons = {
-    approved: "Документ прошёл проверку IITALY в пределах указанного ниже профиля. Окончательное решение о приёме принимает учреждение.",
-    fix: "Проверка не пройдена. Исправь найденные несоответствия и загрузи обновлённый файл.",
-    clarify: "Готовность к подаче пока не подтверждена. Для итогового решения не хватает требований или сведений. Что именно нужно уточнить, указано ниже.",
-    unreadable: "Проверку не удалось завершить: необходимые сведения не читаются. Загрузи более чёткий скан или фото.",
+    approved: "Проверка IITALY пройдена в пределах сохранённого контекста. Решение о приёме документа принимает учреждение.",
+    fix: "В разборе есть замечания. Исправь их перед новой проверкой.",
+    clarify: "Готовность к подаче пока не подтверждена. Проверка завершена, но для оценки требований не хватает сведений.",
+    unreadable: "Проверку не удалось завершить: необходимые сведения не читаются.",
     missing: "Результат проверки пока отсутствует.",
   };
+  const summary = result?.summary || doc.summary;
+  const missingContext = review && review.rulesStatus !== "verified" ? [
+    review.profile === "general" && "Не выбрана стипендиальная программа.",
+    review.academicYear === "unspecified" && "Не указан учебный год заявки.",
+    review.profile !== "general" && review.applicantScope === "unspecified" && "Не подтверждена ситуация заявителя.",
+  ].filter(Boolean) : [];
+  const toDocuments = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!onDocuments || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault(); onDocuments();
+  };
   return <section role="region" aria-label="Разбор документа" className={styles.report}>
-    <a href={backHref} className={styles.textAction} onClick={event => {
-      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      onBack();
-    }}>Назад</a>
+    <nav className={styles.breadcrumbs} aria-label="Навигация документа">
+      <a href="/portal?view=docs" className={styles.textAction} onClick={toDocuments}>К документам</a>
+      <a href={backHref} className={styles.textAction} onClick={event => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault(); onBack();
+      }}>Назад</a>
+    </nav>
     <header className={styles.heading}>
-      <p className={portal.kicker}>Разбор документа</p>
       <h2 ref={heading} tabIndex={-1}>{title}</h2>
-      {stepMeta && <p className={styles.meta}>{stepMeta}</p>}
-      {(doc.fileName || checked) && <p className={styles.meta}>{doc.fileName}{doc.fileName && checked ? " · " : ""}{checked ? `Проверено ${checked}` : ""}</p>}
-      {orientir && <p className={styles.meta}>{orientir} — это не срок конкретного вуза.</p>}
+      <span className={styles.statusBadge} data-outcome={outcome.kind}>{outcome.label}</span>
     </header>
     <div className={styles.decision} data-outcome={outcome.kind}>
       <div className={styles.inspector} data-portal-document-inspector>
-        <h3>{outcome.label}</h3>
-        <p>{reasons[outcome.kind]}</p>
-        {outcome.action && <p>Что сделать: {outcome.action}</p>}
-        {(result?.summary || doc.summary) && <p>{result?.summary || doc.summary}</p>}
+        {summary && <p className={styles.resultSummary}>{summary}</p>}
+        <p className={styles.readiness}>{outcome.kind === "clarify" && review?.notice ? "Проверка завершена. Для подтверждения готовности нужны уточнения." : reasons[outcome.kind]}</p>
+        {review && review.rulesStatus !== "verified" && <div className={styles.limitations} data-document-limitations>
+          <p>{review.notice}</p>
+          {missingContext.length > 0 && <ul>{missingContext.map(text => <li key={String(text)}>{text}</li>)}</ul>}
+        </div>}
+        {doc.routeAcademicYear && review && review.academicYear !== doc.routeAcademicYear && <p className={styles.readiness}>Разбор относится к {review.academicYear === "unspecified" ? "неуказанному учебному году" : review.academicYear}, а в маршруте выбран {doc.routeAcademicYear === "unspecified" ? "неуказанный год" : doc.routeAcademicYear}. Это не ошибка файла. Уточни контекст перед повторной проверкой.</p>}
       </div>
     </div>
 
-    {!result ? <div className={styles.block}>
-      <h3>Для полного разбора нужна новая проверка</h3>
-      <p>От этой проверки сохранился только краткий итог. Подробности старого разбора восстановить нельзя. Загрузи файл ещё раз — новый полный отчёт останется в кабинете.</p>
-    </div> : <div className={styles.block}>
+    <section className={styles.nextStep} aria-label="Следующее действие с документом">
       <h3>Следующий шаг</h3>
-      {nextSteps.length ? <ol className={styles.steps}>{nextSteps.map((step, index) => <li key={index}>{step}</li>)}</ol>
-        : <p>{outcome.kind === "approved" ? "Вернись к списку документов и продолжай маршрут." : reasons[outcome.kind]}</p>}
-    </div>}
+      <p>{nextSteps[0] || outcome.action || "Продолжай маршрут. Сохранённый разбор останется доступен в документах."}</p>
+      {problems.length > 0 && <ul className={styles.steps}>{problems.map((problem, index) => <li key={index}>{problem.text}{problem.fix ? ` ${problem.fix}` : ""}</li>)}</ul>}
+      {!result && <p className={styles.meta}>От прошлой проверки остался только краткий итог. Подробности старого разбора восстановить нельзя.</p>}
+      {canUpload && <p className={styles.meta}>Исходный файл не хранится в {storage === "local" ? "локальном профиле" : "кабинете"}. Для новой проверки выбери его на устройстве или загрузи исправленную версию.</p>}
+      {outcome.kind === "approved" && !uploadVisible && <a href="/portal?view=docs" className={styles.fileArea} onClick={toDocuments}>Продолжить в документах</a>}
+      {canUpload && !uploadVisible && <button type="button" className={outcome.kind === "approved" ? styles.textAction : styles.fileArea} data-document-prepare
+        onClick={() => setUploadOpen(true)}>{outcome.kind === "approved" ? "Проверить новую версию" : outcome.kind === "fix" || outcome.kind === "unreadable" ? "Загрузить исправленный файл" : "Уточнить параметры и загрузить файл"}<span aria-hidden="true"> →</span></button>}
+      {!canUpload && readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
+      {canUpload && uploadVisible && <div data-fab-yield>
+        <PortalDocumentCoach />
+        {uploadSlot || (onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
+          replacing operation={operation} error={error} onResetError={onResetError} />)}
+      </div>}
+    </section>
 
-    {canUpload ? <div className={styles.actions} data-fab-yield>
-      <PortalDocumentCoach />
-      <p id="portal-document-repeat-hint" className={styles.meta}>Новая проверка заменит текущий разбор.</p>
-      <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} label="Проверить новую версию"
-        describedBy="portal-document-repeat-hint" hint="Приложи файл или перетащи его сюда" />
-      {busy && <p className={styles.meta} role="status">Веспи проверяет и сохраняет новую версию…</p>}
-    </div> : readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
-
+    <section className={styles.fileDetails} aria-label="Файл и сроки">
+      <h3>Файл и сроки</h3>
+      <dl>
+        {doc.fileName && <div><dt>Имя файла в разборе</dt><dd>{doc.fileName}</dd></div>}
+        {checked && <div><dt>Дата проверки</dt><dd>{checked}</dd></div>}
+        {stepMeta && <div><dt>Этап маршрута</dt><dd>{stepMeta}</dd></div>}
+        {preparationTime && <div><dt>Подготовка документа</dt><dd>{preparationTime}</dd></div>}
+        {orientir && <div><dt>Плановый ориентир</dt><dd>{orientir.replace(/^Ориентир: /, "")}<small>Это не срок конкретного вуза.</small></dd></div>}
+      </dl>
+      <p className={styles.meta}>{storage === "local" ? "Полный разбор доступен в этой вкладке. В локальном профиле остаётся только краткий итог, без файла." : "В кабинете сохраняется последний разбор и имя файла. Копия самого документа не сохраняется."}</p>
+    </section>
     {result && <>
+      {nextSteps.length > 0 && <details className={styles.sources}>
+        <summary>Все рекомендации из разбора</summary>
+        <ol className={styles.steps}>{nextSteps.map((step, index) => <li key={index}>{step}</li>)}</ol>
+      </details>}
       {problems.length > 0 && <div className={styles.block}>
         <h3>Что исправить</h3>
         <ol className={styles.findings}>
@@ -114,23 +148,23 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
           </li>)}
         </ol>
       </div>}
-      <div className={styles.block}>
-        <h3>Что проверено</h3>
+      <details className={styles.sources}>
+        <summary>Что проверено: полный разбор</summary>
         {checks.length ? <ul className={styles.checks}>
           {checks.map((check, index) => <li key={index}>
             <span className={styles.checkStatus} data-status={check.status || "unknown"}>{CHECK_LABEL[check.status || "unknown"]}</span>
             <div><strong>{check.label || "Проверка сведений"}</strong>{check.note && <p>{check.note}</p>}</div>
           </li>)}
         </ul> : <p>Отдельные пункты проверки в этом результате не указаны. Ориентируйся на итог и ограничения разбора.</p>}
-      </div>
+      </details>
       {review && <div className={styles.block}>
-        <h3>{review.rulesStatus === "verified" ? "В пределах какой заявки" : "Что осталось уточнить"}</h3>
+        <h3>Контекст сохранённой проверки</h3>
         <p><strong>{review.profileLabel}{review.academicYear !== "unspecified" ? ` · ${review.academicYear}` : " · учебный год не указан"}</strong></p>
-        <p>{review.notice}</p>
+        {review.rulesStatus === "verified" && <p>{review.notice}</p>}
+        <p className={styles.meta}>Эти сведения относятся к уже выполненной проверке. Подтверждение требований и решение вуза не являются одним событием.</p>
         {review.referenceYear !== null && <p>Год доходов в выбранном профиле: {review.referenceYear}.</p>}
       </div>}
     </>}
-    {canUpload && <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />}
     {review && <details className={styles.sources}>
       <summary>Источники и дата сверки правил</summary>
       <p className={styles.meta}>База сверена {dateLabel(review.verifiedOn) || review.verifiedOn}. Это дата проверки базы; сайты учреждений не просматриваются заново при каждом разборе.</p>

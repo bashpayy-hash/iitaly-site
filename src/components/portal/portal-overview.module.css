@@ -28,3 +28,12 @@
 .orientirs p { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 16px; padding: 4px 0; font-size: 15px; line-height: 1.5; }
 .orientirs p > span:last-child { color: var(--portal-muted); }
 @media(max-width:480px) { .next { grid-template-columns:76px minmax(0,1fr); gap:12px; } }
+
+.orientirs > a { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 18px; min-height:48px; padding:10px 0; font-size:16px; line-height:1.5; color:var(--portal-ink); text-decoration:none; }
+.orientirs > a span:last-child { color:var(--portal-muted); }
+.orientirs > a:hover,.next:hover .rowContent { text-decoration:underline; text-underline-offset:4px; }
+.overview a:focus-visible { outline:2px solid var(--portal-ink); outline-offset:4px; }
+.document,.next { font-size:16px; }
+.fileName { display:block; margin-bottom:8px; font-weight:600; }
+.document .status { display:inline-flex; padding:4px 10px; background:var(--portal-surface-soft); border-radius:999px; font-size:14px; }
+.documentReason { margin-top:10px; }

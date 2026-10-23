@@ -170,7 +170,10 @@ try{
       await oneFace(page,'File inspector');await axe(page,'File '+mode+' '+width);
       if(mode==='parent-file'){
         const transfer=await page.evaluateHandle(()=>{const d=new DataTransfer();d.items.add(new File(['SYNTHETIC DOCUMENT ONLY. NO PERSONAL DATA.'],'synthetic-review.txt',{type:'text/plain'}));return d;});
-        await page.locator('[data-portal-upload-zone]').dispatchEvent('drop',{dataTransfer:transfer});await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.deepEqual(fileCalls,['check','save']);assert.equal(calls.length,0,'No separate uploaded self-report');
+        await page.locator('[data-portal-upload-zone]').dispatchEvent('drop',{dataTransfer:transfer});
+        assert.deepEqual(fileCalls,[],'Dropping selects a file without starting a check');
+        await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
+        await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.deepEqual(fileCalls,['check','save']);assert.equal(calls.length,0,'No separate uploaded self-report');
       }
     }
     if(mode==='screenshot-parent'){await go(page,'План');await page.locator('[data-current-task=true]').waitFor();assert.equal(await page.locator('[data-road-step-title]').count(),0);assert.equal(await page.getByText('Рассчитать бюджет и оценить шансы на стипендию DSU',{exact:true}).count(),1,'Direct budget task appears once');await capture(page,`portal-plan-parent-${width}`);}

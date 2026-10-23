@@ -133,9 +133,9 @@ try {
     await go(page,'Документы');await page.locator('[data-document-list]').waitFor();
     assert.equal(await page.getByRole('heading',{name:'Твои документы',exact:true}).count(),1);
     assert.match(await page.locator('[data-document=apostille]').innerText(),/Готово/);
-    assert.match(await page.locator('[data-document=translate]').innerText(),/На проверке/);
+    assert.match(await page.locator('[data-document=translate]').innerText(),/Нужно уточнить/);
     assert.match(await page.locator('[data-document=translate]').innerText(),/Что сделать:/);
-    assert.doesNotMatch(await page.locator('[data-document=translate]').innerText(),/Нужно уточнить|мы сообщим/);
+    assert.doesNotMatch(await page.locator('[data-document=translate]').innerText(),/На проверке|мы сообщим/);
     await axe(page,`documents ${width}`);await noOverflow(page);await capture(page,`documents-${width}`);
     await page.locator('[data-document=insurance]').click();
     const futureReport=page.getByRole('region',{name:'Разбор документа',exact:true});await futureReport.waitFor();

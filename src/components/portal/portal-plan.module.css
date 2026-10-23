@@ -68,7 +68,7 @@
 .stageHeading { padding:18px 20px; }
 .stage[data-current] { border-color:var(--color-red); }
 .stage[data-stage-complete] .stageIcon { color:#1F7A68; }
-.nextLabel { display:block; margin-bottom:3px; font-size:11px; text-transform:uppercase; letter-spacing:.055em; }
+.nextLabel { display:block; margin-bottom:3px; font-size:13px; text-transform:none; letter-spacing:.055em; }
 .tasks { padding:4px 20px 18px; }
 .task { position:relative; }
 .task + .task { border-top:0; }
@@ -85,5 +85,5 @@
 .phase { max-width:none; font-size:12px; }
 .fullRoute { border-top:0; margin-top:12px; }
 .fullRoute > .routeHeading { padding-inline:4px; }
-@media(max-width:600px) { .stageHeading { padding:16px; } .tasks { padding:0 16px 12px; } .taskLink { grid-template-columns:40px minmax(0,1fr); gap:12px; } .point { width:40px; height:40px; } .task:not(:last-child)::before { left:19px; } .phase { grid-column:2; justify-self:start; text-align:left; margin-top:-8px; } .taskTitle { font-size:15px; } .taskLink[data-current-task] .phase { font-size:11px; } }
+@media(max-width:600px) { .stageHeading { padding:16px; } .tasks { padding:0 16px 12px; } .taskLink { grid-template-columns:40px minmax(0,1fr); gap:12px; } .point { width:40px; height:40px; } .task:not(:last-child)::before { left:19px; } .phase { grid-column:2; justify-self:start; text-align:left; margin-top:-8px; } .taskTitle { font-size:16px; } .taskLink[data-current-task] .phase { font-size:14px; } }
 @media(prefers-reduced-motion:reduce) { .point { transition:none; } .taskLink:hover .point { transform:none; } }

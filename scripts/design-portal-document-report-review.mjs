@@ -109,7 +109,7 @@ async function reportActionLimit(page, label) {
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
   // User-requested drop zone adds a visible hint and decorative arrow. Its
   // accessible action name and the one-action limit remain unchanged.
-  if (await buttons.count()) assert.equal(await buttons.getAttribute('aria-label'), 'Проверить новую версию', 'The only saved-report action explicitly starts another file check');
+  if (await buttons.count()) assert.equal(await page.locator('[data-document-prepare]').count(), 1, 'The only initial report action prepares an explicit new check');
   assert.doesNotMatch(await report(page).innerText(), /Спросить про этот шаг|Продолжить маршрут|Открыть разбор/);
 }
 
@@ -170,16 +170,17 @@ try {
     await page.locator('[data-step-detail=statements]').waitFor();
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
     assert.equal(await page.locator('button').count(), 1, 'Current document exposes only file selection');
-    await page.getByText('Параметры следующей проверки', { exact: true }).click();
     assert.equal(await page.getByRole('combobox', { name: /^Стипендиальная программа/ }).inputValue(), 'general');
     assert.equal(await page.getByRole('combobox', { name: /^Учебный год заявки/ }).inputValue(), 'unspecified');
-    await page.getByText('Параметры следующей проверки', { exact: true }).click();
-    await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles({ name: 'test-bank-statement-' + 'long-filename-'.repeat(12) + '.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC DOCUMENT: bank balance is zero KZT on 31 December 2025. Test fixture without personal data.') });
+    await page.getByRole('button', {name:'Проверить документ',exact:true}).click();
     await report(page).waitFor();
     await reportHeadingVisible(page, 'Uploaded clarification');
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements', 'The saved result opens automatically and has an address');
-    assert.match(await report(page).innerText(), /На проверке/);
+    assert.match(await report(page).innerText(), /Нужно уточнить/);
+    assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
+    await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.doesNotMatch(await report(page).innerText(), /Нужно исправить|Критических ошибок:/);
@@ -189,15 +190,17 @@ try {
     await page.reload({ waitUntil: 'networkidle' });
     await report(page).waitFor();
     await reportHeadingVisible(page, 'Reloaded clarification');
+    assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
+    await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
     await backToList(page);
-    assert.match(await row(page, 'statements').innerText(), /На проверке/);
+    assert.match(await row(page, 'statements').innerText(), /Нужно уточнить/);
     const clarifyColor = await page.locator('[data-document=statements] [data-outcome=clarify]').evaluate(element => getComputedStyle(element).color);
     const fixColor = await page.locator('[data-document=apostille] [data-outcome=fix]').evaluate(element => getComputedStyle(element).color);
     assert.notEqual(clarifyColor, fixColor, 'Clarification is not coloured as a document error');
-    assert.match(await page.locator('[data-document-filter=reviewing]').innerText(), /На проверке 2/);
+    assert.match(await page.locator('[data-document-filter=reviewing]').innerText(), /Нужно уточнить 2/);
     assert.match(await page.locator('[data-document-filter=not_started]').innerText(), /Не начато 1/);
     assert.equal(await row(page, 'translate').isVisible(), true, 'Approved files stay discoverable in the complete list');
     await noListButtons(page, `Document list ${width}px`);
@@ -217,7 +220,7 @@ try {
     const sources = report(page).locator('details').filter({ hasText: 'Источники и дата сверки правил' });
     assert.equal(await sources.evaluate(element => element.open), false, 'Sources remain available in a closed disclosure');
     const nextStep = report(page).getByRole('heading', { name: 'Следующий шаг', exact: true });
-    const checks = report(page).getByRole('heading', { name: 'Что проверено', exact: true });
+    const checks = report(page).getByText('Что проверено: полный разбор', {exact:true});
     assert((await nextStep.boundingBox()).y < (await checks.boundingBox()).y, 'The next action is shown before supporting checks');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[aria-label="Разбор документа"]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(v => ['serious', 'critical'].includes(v.impact)).map(v => ({ id: v.id, nodes: v.nodes.map(n => ({ target: n.target, failureSummary: n.failureSummary })) })));
@@ -235,8 +238,8 @@ try {
         assert.equal(await page.locator('button').count(), 0, 'Future read-only reports contain no action');
       }
       if (task === 'cimea') {
-        await report(page).getByRole('heading', { name: 'Для полного разбора нужна новая проверка', exact: true }).waitFor();
-        assert.match(await report(page).innerText(), /От этой проверки сохранился только краткий итог\./);
+        await report(page).getByText('От прошлой проверки остался только краткий итог. Подробности старого разбора восстановить нельзя.', {exact:true}).waitFor();
+        assert.match(await report(page).innerText(), /От прошлой проверки остался только краткий итог\./);
       }
       await noOverflow(page, `${task} ${width}px`);
       await reportActionLimit(page, `${task} report ${width}px`);
@@ -245,13 +248,13 @@ try {
     await page.getByRole('link', { name: 'Обзор', exact: true }).filter({ visible: true }).click();
     assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
     const overview = page.locator('[data-portal-overview]');
-    assert.match(await overview.innerText(), /На проверке/);
+    assert.match(await overview.innerText(), /Нужно уточнить/);
     assert.match(await overview.innerText(), /Банковские выписки/, 'Overview identifies the document rather than an opaque filename');
     assert.match(await overview.innerText(), /Что сделать:/, 'Overview gives one concrete next action');
     await noOverflow(page, `Document summary ${width}px`);
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).click();
     const plan = page.locator('#portal-stage-documents');
-    assert.match(await plan.innerText(), /На проверке/);
+    assert.match(await plan.innerText(), /Нужно уточнить/);
     assert.equal(await page.locator('button').count(), 0, 'Plan has no action buttons');
     const statement = plan.locator('[data-portal-task=statements]');
     await (await statement.evaluate(element => element.tagName === 'A') ? statement : statement.getByRole('link')).click();
@@ -265,9 +268,10 @@ try {
       nextCheckResult = repeat === 1 ? clarify : approved;
       await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
       await openReport(page, 'translate');
-      await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).click();
+      await page.locator('[data-document-prepare]').click();
       const saved = page.waitForResponse(response => new URL(response.url()).pathname === '/api/portal/TEST-01/doc');
       await page.locator('input[type=file]').setInputFiles({ name: `synthetic-approved-recheck-${repeat}.txt`, mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC TRANSLATION. No personal data.') });
+      await page.getByRole('button', {name:'Проверить документ',exact:true}).click();
       await saved;
       await page.waitForLoadState('networkidle');
       assert.deepEqual(calls, { check: 1 + repeat, save: 1 + repeat }, 'Each explicit recheck calls check and save exactly once');

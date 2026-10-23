@@ -4,6 +4,7 @@ import { type CSSProperties, useEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { documentOutcome } from "@/lib/portalDocument";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
@@ -141,9 +142,10 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   const allComplete = total > 0 && done === total;
   const title = current ? taskTitle(current) : allComplete ? "Все шаги отмечены" : "Следующий шаг пока недоступен";
   const orientir = current ? taskDate(current) : "";
-  const instruction = current ? taskInstructionTitle(current) : "";
-  const explainer = current ? taskShortExplainer(current) : "";
-  const action = instruction || (current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг");
+  const savedDocument = current && DOC_TASKS[current.id] ? data.docs[current.id] : undefined;
+  const instruction = current && !savedDocument ? taskInstructionTitle(current) : "";
+  const explainer = savedDocument ? documentOutcome(savedDocument).action : current ? taskShortExplainer(current) : "";
+  const action = (savedDocument ? "Открыть разбор" : instruction) || (current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг");
 
   const focus = !navigationOnly && <div className={styles.focus} data-road-next aria-live="polite" aria-atomic="true">
       <div className={styles.nextAction}>
@@ -186,12 +188,13 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           const opened = progress.stages.find(item => item.id === row.id)?.open;
           const complete = Boolean(opened && stageDone === row.tasks.length);
           const isCurrent = row.id === (activeStageId || stage?.id);
-          return <a key={row.id} href={portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isCurrent ? "Текущий" : "Впереди"}` }
+          const isRouteCurrent = row.id === stage?.id;
+          return <a key={row.id} href={portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
             data-road-stage-state={complete ? "done" : isCurrent ? "current" : "future"}
             aria-current={isCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); onOpenTask(next);
-            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small>{stageDone} / {row.tasks.length} шагов</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
+            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов{isRouteCurrent ? " · сейчас" : ""}</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
         })}
       </nav>
       <div className={styles.track} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`}><span className={styles.fill} data-road-fill style={{ transform:`scaleX(${motion.position / 100})` }} />

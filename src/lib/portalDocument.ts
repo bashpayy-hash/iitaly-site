@@ -9,7 +9,8 @@ export enum DocumentStatus {
 }
 export const DOCUMENT_STATUS_LABELS: Record<DocumentStatus, string> = {
   [DocumentStatus.NotStarted]: "Не начато",
-  [DocumentStatus.Reviewing]: "На проверке",
+  // The stored identifier means missing evidence, not an active background job.
+  [DocumentStatus.Reviewing]: "Нужно уточнить",
   [DocumentStatus.NeedsFix]: "Нужно исправить",
   [DocumentStatus.Ready]: "Готово",
 };

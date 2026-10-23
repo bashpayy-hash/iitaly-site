@@ -5,8 +5,7 @@ import type { PortalData, PortalTask } from "@/lib/portalApi";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { isManualTask, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
-import { PortalUploadZone } from "./PortalUploadZone";
-import { PortalDocumentContext } from "./PortalDocumentContext";
+import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { portalTaskDone, portalProgress } from "@/lib/portalProgress";
 import { PortalStepInstructions } from "./PortalStepInstructions";
@@ -14,7 +13,7 @@ import { SavedProfileAnswers } from "./SavedProfileAnswers";
 import portal from "./portal.module.css";
 import styles from "./portal-step.module.css";
 
-export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContextChange, onBack, backHref = "/portal?view=plan", onUpload, onFileDrop, onToggle, onEditProfile, children, managesCompletion = false }: {
+export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContextChange, onBack, backHref = "/portal?view=plan", onFileDrop, onToggle, onEditProfile, children, managesCompletion = false, operation, error, onResetError }: {
   data: PortalData;
   task: PortalTask;
   busy: boolean;
@@ -29,6 +28,9 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
   onEditProfile: () => void;
   children?: ReactNode;
   managesCompletion?: boolean;
+  operation?: DocumentOperation;
+  error?: DocumentActionError | null;
+  onResetError?: () => void;
 }) {
   const done = portalTaskDone(data, task);
   const readOnly = taskReadOnlyReason(data, task);
@@ -46,7 +48,7 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
     }}>Назад</a>
     <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
     <p className={styles.meta}>{meta}</p>
-    {date && <p className={styles.date}>{date} — это не срок конкретного вуза.</p>}
+    {date && <p className={styles.date}>{date}. Это не срок конкретного вуза.</p>}
     <div className={styles.instructions} data-portal-step-guide>
       <p>{taskExplanation(task)}</p>
       {readOnly && <p className={styles.reason}>{readOnly}</p>}
@@ -69,9 +71,9 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
       }}>Заполнить профиль</a>
       : needDoc ? <>
         <PortalDocumentCoach />
-        {!hasRetry && <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} describedBy="portal-step-action-hint"
-          hint="Шаг закроется, если проверка пройдена" />}
-        <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy} />
+        {onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
+          operation={operation} error={error} onResetError={onResetError} />}
+        <p className={styles.meta}>Шаг закроется, если проверка пройдена. Это не означает принятие документа вузом.</p>
       </> : <>
         {children}
         {manual && !managesCompletion && <form className={styles.selfReport} onSubmit={event => { event.preventDefault(); if (!busy) onToggle(true); }}>

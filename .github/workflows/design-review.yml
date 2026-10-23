@@ -99,6 +99,7 @@ jobs:
         run: |
           node scripts/portal-targeted-model-review.mjs
           node scripts/design-portal-targeted-review.mjs
+          node scripts/design-portal-document-clarity-review.mjs
       - name: Review student journey, error recovery and accessibility
         run: node scripts/design-ux-review.mjs
       - name: Review Vespi guide context, quiz continuity and explicit AI requests

@@ -44,11 +44,11 @@ function inspectorMessage(step: State["step"], availabilityPending: boolean, una
   return "Загрузи справку о доходах, состав семьи, банковскую выписку или перевод. Для проверки требований укажи программу и учебный год.";
 }
 
-export function DocCheck({ onComplete, academicYear, portalInspector = false }: { onComplete?: (result: DocCheckResult) => void; academicYear?: DocumentReviewContext["academicYear"]; portalInspector?: boolean } = {}) {
+export function DocCheck({ onComplete, academicYear, portalInspector = false, initialContext }: { onComplete?: (result: DocCheckResult, fileName?: string) => void; initialContext?: DocumentReviewContext; academicYear?: DocumentReviewContext["academicYear"]; portalInspector?: boolean } = {}) {
   const router = useRouter();
   const [state, setState] = useState<State>({ step: "idle" });
   const [context, setContext] = useState<DocumentReviewContext>({
-    profile: "general", academicYear: academicYear || "unspecified", applicantScope: "unspecified",
+    profile: initialContext?.profile || "general", academicYear: initialContext?.academicYear || academicYear || "unspecified", applicantScope: initialContext?.applicantScope || "unspecified",
   });
   function updateContext(value: Partial<DocumentReviewContext>) {
     setContext(current => ({ ...current, ...value }));
@@ -111,7 +111,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
       const result = await checkDocument(payload, undefined, context);
       setState({ step: "done", file, payload, result });
       track("doc_check_done", { verdict: result.verdict });
-      onComplete?.(result);
+      onComplete?.(result, file.name);
     } catch (e) {
       /* Текст ошибки готовит checkDocument — там же, где известно, что
          именно случилось. Раньше он собирался здесь по e.message, и
@@ -147,7 +147,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext} data-portal-inspector={portalInspector || undefined} data-inspector-state={portalInspector ? state.step : undefined}>
-        <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>
+        {!portalInspector && <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>}
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
@@ -211,6 +211,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
         </>}
       </div>}
 
+      {portalInspector && <p className="text-apple-body-sm text-cloud-body">Новая проверка заменит текущий разбор. Исходный файл остаётся только в открытой форме.</p>}
       {state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
           className={styles.dropzone}
@@ -237,7 +238,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
           />
           <Files aria-hidden="true" />
           <b className={styles.fileAction}>Выбрать документ</b>
-          <small>или перетащи сюда<br />Фото, PDF, Word до 5 МБ</small>
+          <small>или перетащи сюда<br />{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>
       ) : (
         <div className="mt-5 flex items-start gap-3 rounded-apple-input border border-white/15 p-4 sm:items-center sm:gap-4">
