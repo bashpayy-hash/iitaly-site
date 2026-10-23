@@ -4,7 +4,7 @@ import type { MouseEvent } from "react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
-import { portalPosition, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal-overview.module.css";
 
@@ -14,7 +14,7 @@ function followRow(event: MouseEvent<HTMLAnchorElement>, open: () => void) {
   open();
 }
 
-export function TodaySection({ data, onOpenDoc, onOpenDocuments, }: {
+export function TodaySection({ data, onOpenDoc, onOpenDocuments, onOpenTask, }: {
   data: PortalData;
   onOpenDoc: (id: string) => void;
   onOpenDocuments: () => void;
@@ -50,22 +50,23 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, }: {
         data-document-outcome={outcome.kind}
         onClick={event => followRow(event, () => onOpenDoc(fileTask.id))}
       >
-        <span className={styles.fileName}>{DOC_TASKS[fileTask.id]}</span>{" · "}
+        <span className={styles.fileName}>{DOC_TASKS[fileTask.id]}</span>{" "}
         <span className={styles.status} data-outcome={outcome.kind}>{outcome.label}</span>
         {outcome.action && <span className={styles.documentReason}>Что сделать: {outcome.action}</span>}
       </a>}
       <div className={styles.routeContext} data-overview-support>
       {orientirs.length > 0 && <section className={styles.orientirs} aria-label="Ближайшие сроки" data-near-orientirs>
-        <h2>Ближайшие сроки</h2>
-        {orientirs.map(row => <p key={row.id} data-orientir-task={row.id}>
+        <h2>Ближайшие ориентиры</h2>
+        <p className={styles.choiceNote}>Ориентиры подготовки, не дедлайны конкретного вуза.</p>
+        {orientirs.map(row => <a key={row.id} href={portalTaskHref(data, row)} data-orientir-task={row.id} onClick={event => followRow(event, () => onOpenTask(row))}>
           <span>{taskTitle(row)}</span>
-          <span>{taskDate(row)}</span>
-        </p>)}
+          <span>{taskDate(row)} <span aria-hidden="true">→</span></span>
+        </a>)}
       </section>}
-      {next && <p className={styles.next} data-road-later>
+      {next && <a className={styles.next} data-road-later href={portalTaskHref(data, next)} onClick={event => followRow(event, () => onOpenTask(next))}>
         <span className={styles.label}>Потом</span>
-        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>К этому шагу перейдём позже.</span></span>
-      </p>}
+        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>Посмотреть инструкцию заранее →</span></span>
+      </a>}
       </div>
     </div>
   );

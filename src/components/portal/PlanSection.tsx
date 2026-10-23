@@ -59,7 +59,7 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
           </p>}
         </details>
       </div>
-      <p className={styles.pathHint}>Один шаг за раз. К сделанному можно вернуться, а будущие шаги — изучить заранее.</p>
+      <p className={styles.pathHint}>Текущий шаг выделен. Сохранённые документы можно открыть снова, будущие задачи можно изучить заранее.</p>
       {!position.stage && <p className={styles.complete}>{hasTasks ? "Все шаги маршрута отмечены. Сохранённые документы и инструкции остаются доступны." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."}</p>}
       {position.stage && renderStage(position.stage)}
       {nextStage && renderStage(nextStage)}
@@ -151,8 +151,9 @@ function TaskRow({ task, index, href, done, doc, current, onOpenTask }: PlanActi
           <span className={styles.taskTitle}>{taskTitle(task)}</span>
           {date && <span className={styles.meta}>{date}</span>}
           {outcome && <span className={styles.documentStatus} data-outcome={outcome.kind}>{outcome.label}</span>}
+          {outcome && doc && outcome.action && <span className={styles.meta}>{outcome.action}</span>}
         </span>
-        <span className={styles.phase}>{done ? "Сделано" : current ? "Начать" : "Позже"}</span>
+        <span className={styles.phase}>{done ? "Сделано" : doc ? "Разбор" : current ? "Продолжить" : "Посмотреть"}</span>
       </a>
     </li>
   );

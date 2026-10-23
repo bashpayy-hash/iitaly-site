@@ -140,6 +140,8 @@ try {
     const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
     async function review(result) {
       reviewResult=result;
+      const prepare=page.locator('[data-document-prepare]');
+      if(await prepare.count())await prepare.click();
       await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);
       await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
       await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
@@ -164,6 +166,7 @@ try {
     assert.equal(storedState.reviews[currentDoc],'approved');
     await page.getByRole('link',{name:'Документы',exact:true}).click();
     await page.locator(`[data-document="${currentDoc}"]`).click();
+    await page.locator('[data-document-prepare]').click();
     assert.equal(await page.locator('[data-portal-inspector]').count(),1,'The saved file keeps its inspector when reopened for a new version');
     assert.equal(await page.locator('section[aria-label="Твой следующий шаг"] [data-vespi]').count(),0,'The route yields its portrait while the saved file owns the inspector');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');

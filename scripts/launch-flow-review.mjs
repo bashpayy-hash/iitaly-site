@@ -141,14 +141,16 @@ try {
     await page.locator('[data-document=statements]').click();
     await page.locator('[data-step-detail=statements]').waitFor();
     assert.equal(await page.locator('button').count(), 1);
-    await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
     await input.setInputFiles({ name: 'unsupported.exe', mimeType: 'application/octet-stream', buffer: Buffer.from('synthetic fixture') });
-    await page.getByRole('link', { name: 'Выбрать другой файл', exact: true }).waitFor();
+    await page.getByRole('button', {name:'Проверить документ',exact:true}).click();
+    await page.locator('[data-document-operation-error]').waitFor();
     assert.equal(calls.check, 0);
-    await page.getByRole('link', { name: 'Выбрать другой файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Выбрать другой файл', exact: true }).click();
     await input.setInputFiles({ name: 'fixture.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC TEST DOCUMENT. No personal data. Bank balance is 0 KZT on 31 December 2025.') });
+    await page.getByRole('button', {name:'Проверить документ',exact:true}).click();
     await page.getByRole('alert').filter({ hasText: 'Тест: проверка временно недоступна.' }).waitFor();
-    await page.getByRole('link', { name: 'Проверить файл ещё раз', exact: true }).click();
+    await page.getByRole('button', { name: 'Проверить файл ещё раз', exact: true }).click();
     await page.getByRole('alert').filter({ hasText: 'проверка завершена, но результат не сохранён' }).waitFor();
     assert.equal(calls.check, 2);
     await page.evaluate(async () => {
@@ -157,15 +159,15 @@ try {
       await new Promise(requestAnimationFrame);
     });
     assert.equal(await page.locator('#chat-launcher').count(), 0, 'Portal helper lives only in its header');
-    assert((await page.locator('button').count()) <= 1, 'Recovery does not add a second button');
+    assert.equal(await page.locator('[data-document-operation-error] button:enabled').count(),1,'Save recovery has one enabled primary action');
     await page.screenshot({ path: resolve(output, 'portal-save-recovery-390.png'), fullPage: true });
-    await page.getByRole('link', { name: 'Сохранить результат', exact: true }).click();
+    await page.getByRole('button', { name: 'Сохранить результат', exact: true }).click();
     const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
     await page.locator('[data-portal-overview]').waitFor();
     assert.equal(await page.locator('[data-current-step=test-task]').count(), 1, 'A confirmed file completion returns directly to the road and names the next step');
     await page.locator('[data-overview-document]').click();
     await report.waitFor();
-    await report.getByRole('heading', { name: 'Готово', exact: true }).waitFor();
+    await report.getByText('Готово', {exact:true}).waitFor();
     // The owner requested unlimited explicit rechecks, including approved files.
     assert.equal(await page.locator('button').count(), 1, 'An approved document has one explicit new-version action');
     assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1);

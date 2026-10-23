@@ -39,6 +39,7 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
         <h2 id="portal-documents-heading">Твои документы</h2>
         <PortalArtwork placement="documents" />
       </div>
+      <p>Здесь видны результаты проверки и то, что нужно подготовить. «Готово» означает проверку IITALY, а не принятие документа вузом.</p>
     </header>}
     {embedded && <h3 id="portal-documents-heading" className={styles.embeddedTitle}>Документы твоего маршрута</h3>}
     {rows.length > 0 && <fieldset className={styles.purposes}>
@@ -66,14 +67,14 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
       >
         <div className={styles.file}>
           <h3>{row.title}</h3>
+          <span className={styles.status} data-outcome={row.outcome.kind}><StatusMark kind={row.outcome.kind} />{row.outcome.label}</span>
+          {row.outcome.action && <p className={styles.nextAction}>Что сделать: {row.outcome.action}</p>}
           <p className={styles.meta}>{[taskDate(row), row.doc?.fileName].filter(Boolean).join(" · ")}</p>
           {row.available === false && !row.doc && <p className={styles.meta}>{taskBlockedReason(row)}</p>}
         </div>
         <div className={styles.rowFooter}>
-          <span className={styles.status} data-outcome={row.outcome.kind}><StatusMark kind={row.outcome.kind} />{row.outcome.label}</span>
           <span className={styles.rowAction}>{row.doc ? "Разбор" : row.id === currentTaskId && row.available !== false ? "Приложить файл" : "Подробнее"}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg></span>
         </div>
-        {row.outcome.action && <p className={styles.meta}>Что сделать: {row.outcome.action}</p>}
       </a>)}
       {!rows.length && <VespiAssistant as="div" variant="inspector" layout="portal-copilot" appearance="indicator" label="Веспи · документы маршрута" className={styles.empty}
         message={currentTaskId ? "Здесь пока нет документов. Список зависит от шагов твоего маршрута. Начни с текущего шага наверху — он подскажет, что подготовить." : "Здесь пока нет документов. Когда в маршруте появится шаг с файлом, здесь будет нужный документ."} />}
