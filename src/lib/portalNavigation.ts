@@ -1,16 +1,16 @@
 import type { PortalData, PortalTask } from "./portalApi";
 import { DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
+import { portalProgress, portalTaskDone } from "./portalProgress";
 
 // Display the existing roadmap in its own order; do not add dependencies or dates.
 export function portalPosition(data: PortalData) {
-  let stageIndex = data.roadmap.findIndex(stage => stage.tasks.some(task => !data.done[task.id] && task.available !== false));
-  if (stageIndex < 0) stageIndex = data.roadmap.findIndex(stage => stage.tasks.some(task => !data.done[task.id]));
+  const stageIndex = portalProgress(data).currentIndex;
   const stage = data.roadmap[stageIndex] || null;
-  const task = stage?.tasks.find(task => !data.done[task.id] && task.available !== false) || null;
+  const task = stage?.tasks.find(task => !portalTaskDone(data, task) && task.available !== false) || null;
   const tasks = data.roadmap.flatMap(stage => stage.tasks);
   const taskIndex = task ? tasks.findIndex(row => row.id === task.id) : -1;
-  const next = taskIndex >= 0 ? tasks.slice(taskIndex + 1).find(row => !data.done[row.id]) || null : null;
-  return { stage, stageIndex, task, next, done: stage?.tasks.filter(row => data.done[row.id]).length || 0, total: stage?.tasks.length || 0 };
+  const next = taskIndex >= 0 ? tasks.slice(taskIndex + 1).find(row => !portalTaskDone(data, row)) || null : null;
+  return { stage, stageIndex, task, next, done: stage?.tasks.filter(row => portalTaskDone(data, row)).length || 0, total: stage?.tasks.length || 0 };
 }
 
 // Saved roadmaps may still contain the old delegation copy. Normalize it only
@@ -70,7 +70,7 @@ export function taskBlockedReason(task: PortalTask): string {
 
 export function taskExplanation(task: PortalTask): string {
   const explanations: Record<string, string> = {
-    profile: "Укажи образование и цель, чтобы настроить маршрут.",
+    profile: "Этап учёбы, цель и бюджет помогают убрать лишние шаги и расставить задачи по порядку.",
     shortlist: "Посмотри города на карте, сравни вузы и отметь подходящие в свой список.",
     chances: "Рассчитай бюджет на поступление и проверь условия региональной стипендии DSU для своей ситуации.",
     path12: "Выбери, как дополнить школьное образование для поступления.",
@@ -123,8 +123,8 @@ export function taskHelpDetails(task: PortalTask): string[] {
 // Read-only detail is a presentation rule; the roadmap's availability is unchanged.
 export function taskReadOnlyReason(data: PortalData, task: PortalTask): string {
   const position = portalPosition(data);
-  if (data.done[task.id]) return "Этот шаг уже сделан.";
-  const future = !data.done[task.id] && position.task?.id !== task.id;
+  if (portalTaskDone(data, task)) return "Этот шаг уже сделан.";
+  const future = position.task?.id !== task.id;
   if (future && position.task) return `Сначала: ${taskTitle(position.task)}.${task.available === false ? ` ${taskBlockedReason(task)}` : ""}`;
   if (task.available === false) return taskBlockedReason(task);
   return "";

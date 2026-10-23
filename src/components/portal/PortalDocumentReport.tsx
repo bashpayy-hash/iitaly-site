@@ -80,6 +80,7 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
       <div className={styles.inspector} data-portal-document-inspector>
         <h3>{outcome.label}</h3>
         <p>{reasons[outcome.kind]}</p>
+        {outcome.action && <p>Что сделать: {outcome.action}</p>}
         {(result?.summary || doc.summary) && <p>{result?.summary || doc.summary}</p>}
       </div>
     </div>

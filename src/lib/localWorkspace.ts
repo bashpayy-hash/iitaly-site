@@ -3,6 +3,7 @@
 import { useMemo, useSyncExternalStore } from "react";
 import type { PlanDraft } from "./usePlanDraft";
 import { buildPlan } from "./planBuilder";
+import { taskShortExplainer } from "./portalStepCopy";
 import { validShortlist } from "./portalShortlist";
 import type { DocumentOutcomeKind } from "./portalDocument";
 import type { PortalData, PortalDoc, PortalTask } from "./portalApi";
@@ -67,7 +68,7 @@ function stepPhase(title: string): number {
 export function buildLocalWorkspace(draft: PlanDraft, local: LocalWorkspace, reports: Record<string, PortalDoc>): PortalData {
   const plan = buildPlan(draft.answers);
   const tasks: PortalTask[] = [];
-  if (!draft.complete) tasks.push({ id: "profile", t: "Заполнить анкету", time: "2 мин", explain: "Ответь на 10 вопросов. Используем те же ответы, что и на странице «Мой план»." });
+  tasks.push({ id: "profile", t: "Заполнить анкету", time: "2 мин", explain: "Ответь на 10 вопросов. Используем те же ответы, что и на странице «Мой план»." });
   tasks.push({ id: "shortlist", t: "Выбрать университеты", time: "15 мин", explain: "Сравни вузы на карте и сохрани свой список. Условия и сроки зависят от конкретной программы." });
   if (draft.complete) {
     plan.steps.forEach(step => {
@@ -81,7 +82,7 @@ export function buildLocalWorkspace(draft: PlanDraft, local: LocalWorkspace, rep
     tasks.push({ id: "housing", t: "Подготовить подтверждение жилья", explain: plan.docs[3].d, time: "По ситуации" });
     tasks.push({ id: "kit", t: "Подготовить заявление на вид на жительство (permesso)", explain: "После въезда по визе D подготовь заявление. Тренажёр помогает заполнить MOD. 209; это не подача заявления.", time: "30 мин" });
   }
-  const roadmap = WORKSPACE_PHASES.map((title, index) => ({ id: `workspace-phase-${index}`, title, tasks: tasks.filter(task => workspacePhase(task) === index) }));
+  const roadmap = WORKSPACE_PHASES.map((title, index) => ({ id: `workspace-phase-${index}`, title, tasks: tasks.filter(task => workspacePhase(task) === index).map(task => ({ ...task, short_explainer: taskShortExplainer(task) })) }));
   const done = Object.fromEntries(tasks.map(task => [task.id, task.id === "profile" ? draft.complete : task.id === "shortlist" ? Boolean(local.done.shortlist && local.selectedIds.length) : Boolean(local.done[task.id])]));
   const completed = tasks.filter(task => done[task.id]).length;
   return { client: { name: "", intakeYear: draft.answers.intake === "2027/28" ? 2027 : draft.answers.intake === "2026/27" ? 2026 : undefined, onboardingComplete: true, profile: draft.answers }, roadmap, done, docs: { ...Object.fromEntries(Object.entries(local.reviews).map(([id, kind]) => [id, { verdict: kind === "approved" ? "ok" : kind === "fix" ? "error" : kind === "unreadable" ? "unreadable" : "warn", summary: "Сохранён итог предыдущей проверки. Полный разбор и файл остаются только в открытой вкладке." } satisfies PortalDoc])), ...reports }, progress: { done: completed, total: tasks.length, pct: tasks.length ? completed / tasks.length * 100 : 0 } };

@@ -9,6 +9,9 @@ export interface PortalTask {
   id: string;
   t: string;
   explain?: string | null;
+  short_explainer?: string;
+  instruction_title?: string;
+  assistant_question?: string;
   owner?: string;
   time?: string | null;
   available?: boolean;
@@ -35,6 +38,7 @@ export interface PortalDoc {
   problems?: number;
   fileName?: string;
   checkedAt?: string;
+  routeAcademicYear?: string;
   result?: DocCheckResult;
 }
 
@@ -44,6 +48,7 @@ export interface PortalProfile {
   budget?: string;
   educationPath?: "university_kz" | "foundation";
   onboardingDone?: boolean;
+  universityIds?: string[];
 }
 
 export interface PortalClient {
@@ -113,6 +118,7 @@ export async function savePortalProfile(
     budget?: string;
     educationPath?: "university_kz" | "foundation" | null;
     onboardingDone?: boolean;
+    universityIds?: string[];
   },
 ): Promise<PortalResult> {
   if (!BACKEND_URL) return { ok: false, error: "Нет связи с сервером" };

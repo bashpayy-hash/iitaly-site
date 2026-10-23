@@ -4,9 +4,11 @@ import { type CSSProperties, useEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
+import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
 import { PortalStageIcon } from "./PortalStageIcon";
-import { Check, ChevronRight, LockKeyhole } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 
 export type RoadTravel = { fromDone: number; id: number };
 
@@ -17,11 +19,13 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false }: {
+export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
-  onOpenTask: (task: PortalTask) => void;
+  onOpenTask: (task: PortalTask, intent?: "instruction" | "upload") => void;
+  activeStageId?: string;
+  deadline?: string;
   travel?: RoadTravel;
   onTravelStart?: () => void;
   currentOpen?: boolean;
@@ -30,9 +34,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   navigationOnly?: boolean;
   progressFirst?: boolean;
 }) {
-  const tasks = data.roadmap.flatMap(row => row.tasks);
-  const total = tasks.length;
-  const done = tasks.filter(task => data.done[task.id]).length;
+  const progress = portalProgress(data);
+  const { total, done } = progress;
   const destination = roadPosition(done, total);
   const [motion, setMotion] = useState(() => ({
     position: roadPosition(typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? done : travel?.fromDone ?? done, total),
@@ -134,53 +137,61 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
   useEffect(() => {
     const target = nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
     if (target && nav.current) nav.current.scrollLeft = Math.max(0, target.getBoundingClientRect().left - nav.current.getBoundingClientRect().left + nav.current.scrollLeft - 8);
-  }, [stage?.id]);
+  }, [stage?.id, activeStageId]);
   const allComplete = total > 0 && done === total;
   const title = current ? taskTitle(current) : allComplete ? "Все шаги отмечены" : "Следующий шаг пока недоступен";
   const orientir = current ? taskDate(current) : "";
-  const action = current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг";
+  const instruction = current ? taskInstructionTitle(current) : "";
+  const explainer = current ? taskShortExplainer(current) : "";
+  const action = instruction || (current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг");
 
   const focus = !navigationOnly && <div className={styles.focus} data-road-next aria-live="polite" aria-atomic="true">
       <div className={styles.nextAction}>
         <p className={styles.eyebrow}>{current ? "Следующий шаг" : allComplete ? "Маршрут отмечен" : "Твой маршрут"}</p>
         <h2 data-road-step-title>{total ? title : "Маршрут пока не появился"}</h2>
+        {explainer && <p className={styles.meta} data-step-short-explainer>{explainer}</p>}
         {current && <p className={styles.meta} data-road-meta>{[current.time || TASK_META[current.id]?.min, orientir].filter(Boolean).join(" · ")}</p>}
-        {current && !currentOpen && <a className={styles.action} data-road-open data-road-action href={portalTaskHref(data, current)} aria-label={`Дальше: ${title}. Открыть этот шаг.`} onClick={event => {
+        {current && !currentOpen && <a className={styles.action} data-road-open data-road-action href={instruction ? `/portal?view=plan&task=${encodeURIComponent(current.id)}` : portalTaskHref(data, current)} aria-label={`${action}. ${title}.`} onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-          event.preventDefault(); onOpenTask(current);
-        }}>{action}<span aria-hidden="true">↗</span></a>}
+          event.preventDefault(); onOpenTask(current, instruction ? "instruction" : undefined);
+        }}>{action}<span aria-hidden="true">→</span></a>}
+        {current && current.available !== false && instruction && DOC_TASKS[current.id] && !currentOpen && <a className={styles.uploadLink} data-road-upload href={portalTaskHref(data, current)} onClick={event => {
+          if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault(); onOpenTask(current, "upload");
+        }}>У меня уже есть, загрузить</a>}
         {allComplete && <p className={styles.meta}>Пройденные шаги и документы остаются доступны.</p>}
       </div>
     </div>;
 
   return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
-    data-portal-road data-road-navigation-only={navigationOnly ? "true" : undefined}
+    data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
     data-road-static={currentOpen || navigationOnly ? "true" : undefined}
     data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}
-    data-current-step={current?.id} data-road-done={done} data-road-total={total}
+    data-current-step={current?.id} data-road-done={done} data-road-total={total} data-road-ahead={progress.ahead}
     data-traveling={motion.moving ? "true" : "false"} data-road-moving={motion.moving ? "true" : "false"}
     data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
     <div className={styles.route}>
-      <div className={styles.summary}><span>Твой маршрут</span><span className={styles.count}>
-        <span data-road-count>{done} из {total} шагов</span>
+      <div className={styles.summary}><span>Твой маршрут{deadline && <span className={styles.goalDeadline}>{deadline}</span>}</span><span className={styles.count}>
+        <span data-road-count>{done} из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
       <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">
         {stages.map((row, index) => {
-          const next = row.id === stage?.id && current ? current : row.tasks.find(task => !data.done[task.id]) || row.tasks[0];
-          const stageDone = row.tasks.filter(task => data.done[task.id]).length;
-          const complete = stageDone === row.tasks.length;
-          const isCurrent = row.id === stage?.id;
+          const next = row.id === stage?.id && current ? current : row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
+          const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
+          const opened = progress.stages.find(item => item.id === row.id)?.open;
+          const complete = Boolean(opened && stageDone === row.tasks.length);
+          const isCurrent = row.id === (activeStageId || stage?.id);
           return <a key={row.id} href={portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isCurrent ? "Текущий" : "Впереди"}` }
-            data-road-stage-state={complete ? "done" : row.id === stage?.id ? "current" : "future"}
-            aria-current={row.id === stage?.id ? "step" : undefined} onClick={event => {
+            data-road-stage-state={complete ? "done" : isCurrent ? "current" : "future"}
+            aria-current={isCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); onOpenTask(next);
-            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <LockKeyhole size={15} />}</span><span className={styles.stageCopy}><span>{row.title}</span><small>{stageDone} / {row.tasks.length} шагов</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
+            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small>{stageDone} / {row.tasks.length} шагов</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
         })}
       </nav>
       <div className={styles.track} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`}><span className={styles.fill} data-road-fill style={{ transform:`scaleX(${motion.position / 100})` }} />
@@ -189,7 +200,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           inFlight.current = false; setMotion(value => ({ ...value, moving:false, arriving:true }));
         }}><span /></span>
       </div>
-      {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова. Будущие — посмотреть заранее.</p>}
+      {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
     </div>
     {progressFirst && focus}
   </section>;

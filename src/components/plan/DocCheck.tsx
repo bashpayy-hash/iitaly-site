@@ -1,5 +1,7 @@
 "use client";
 
+import { documentOutcome } from "@/lib/portalDocument";
+
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
@@ -309,7 +311,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
           </div>
         )}
         {state.step === "done" && (
-          <DocResult result={state.result} onCta={onComplete ? undefined : () => router.push("/prices")} />
+          <DocResult result={state.result} portalStatus={portalInspector} onCta={onComplete ? undefined : () => router.push("/prices")} />
         )}
       </div>
 
@@ -323,7 +325,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false }: 
   );
 }
 
-export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: () => void }) {
+export function DocResult({ result, onCta, portalStatus = false, applicationYear }: { result: DocCheckResult; onCta?: () => void; portalStatus?: boolean; applicationYear?: string }) {
   const v = result.verdict || "warn";
   const headingId = useId();
   const resultRef = useRef<HTMLDivElement>(null);
@@ -333,7 +335,7 @@ export function DocResult({ result, onCta }: { result: DocCheckResult; onCta?: (
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
           <ShieldCheck size={22} aria-hidden="true" />
-          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{LABEL[v] || "Результат"}</span>
+          <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{portalStatus ? documentOutcome({ verdict: v, result }, applicationYear).label : LABEL[v] || "Результат"}</span>
           <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
         </div>
         {result.summary && <p>{result.summary}</p>}

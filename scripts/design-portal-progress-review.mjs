@@ -76,7 +76,13 @@ async function railContract(page,data,compact){
   assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0,'No second taxonomy/ring');
   assert.equal(await page.locator('main [data-portal-road]').count(),compact?0:1,'The overview route follows the greeting; other views keep one compact chrome route');
   assert.equal(await page.locator('[data-portal-welcome]').count(),compact?0:1,'The personal welcome appears only on the overview');
-  const tasks=data.roadmap.flatMap(s=>s.tasks),done=tasks.filter(t=>data.done[t.id]).length;
+  const fileIds=new Set(['apostille','translate','notary','cimea','familyDocs','iseeu','statements','insurance','housing','universitaly']);
+  const complete=t=>fileIds.has(t.id)?data.docs[t.id]?.verdict==='ok':Boolean(data.done[t.id]);
+  const tasks=data.roadmap.flatMap(s=>s.tasks);
+  let current=data.roadmap.findIndex(s=>s.tasks.some(t=>!complete(t)&&t.available!==false));
+  if(current<0)current=data.roadmap.findIndex(s=>s.tasks.some(t=>!complete(t)));
+  const openStages=current<0?data.roadmap:data.roadmap.slice(0,current+1);
+  const done=openStages.flatMap(s=>s.tasks).filter(complete).length;
   assert.equal(Number(await road(page).getAttribute('data-road-done')),done);assert.equal(Number(await road(page).getAttribute('data-road-total')),tasks.length,'Ignore obsolete done IDs');
   assert.equal(await road(page).locator('[data-road-stage]').count(),data.roadmap.filter(s=>s.tasks.length).length,'Real stages, no fixed demo phases');
   const progress=road(page).getByRole('progressbar',{name:'Выполненные шаги маршрута'});
@@ -86,9 +92,9 @@ async function railContract(page,data,compact){
   assert.equal(await road(page).locator('img').count(),0,'Progress is data, not a repeated mascot');
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
-    const stageDone=stage.tasks.filter(task=>data.done[task.id]).length;
+    const stageDone=stage.tasks.filter(complete).length;
     assert((await link.innerText()).includes(`${stageDone} / ${stage.tasks.length} шагов`),'Each stage shows its own real completed/total count');
-    assert.equal(await link.getAttribute('data-road-stage-state'),stageDone===stage.tasks.length?'done':await link.getAttribute('aria-current')==='step'?'current':'future');
+    assert.equal(await link.getAttribute('data-road-stage-state'),openStages.includes(stage)&&stageDone===stage.tasks.length?'done':await link.getAttribute('aria-current')==='step'?'current':'future');
     assert.equal(await link.evaluate(n=>n.tagName),'A');assert(await link.evaluate(n=>n.getBoundingClientRect().height>=44),'Touchable stage link');assert.match(await link.getAttribute('href'),/^\/portal\?view=(plan|docs)&/);
   }
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}

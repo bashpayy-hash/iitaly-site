@@ -31,6 +31,6 @@ export function PortalUploadZone({ busy, onChoose, onFileDrop, label = "Прил
     }}>
     <Upload aria-hidden="true" />
     <span><strong>{busy ? "Проверяю и сохраняю…" : label}</strong><small>{hint}</small></span>
-    <span className={styles.arrow} aria-hidden="true">↗</span>
+    <span className={styles.arrow} aria-hidden="true">→</span>
   </button>;
 }

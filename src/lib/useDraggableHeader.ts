@@ -38,7 +38,7 @@ export function useDraggableHeader(
   useEffect(() => {
     const panel = panelRef.current;
     const head = headRef.current;
-    if (!panel || !head) return;
+    if (!active || !panel || !head) return;
 
     function box() {
       const r = panel!.getBoundingClientRect();
