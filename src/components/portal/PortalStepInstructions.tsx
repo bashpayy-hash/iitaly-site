@@ -10,6 +10,6 @@ export function PortalStepInstructions({ taskId }: { taskId: string }) {
   return <section className={styles.instructions} data-step-instructions aria-label="Инструкция к шагу">
     <ol className={styles.instructionList}>{guide.rows.map(row => <li key={row.label}><strong>{row.label}.</strong> {row.value.replaceAll("—", ":")}</li>)}</ol>
     {guide.warn && <p className={styles.note}>{guide.warn.replaceAll("—", ":")}</p>}
-    <p className={styles.note}>{guide.sources.map(id => <a key={id} href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer" className={styles.link}>{ADMISSION_SOURCES[id].label} ↗</a>)}</p>
+    <p className={`${styles.note} ${styles.instructionSources}`}>{guide.sources.map(id => <a key={id} href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer" className={styles.link}>{ADMISSION_SOURCES[id].label} ↗</a>)}</p>
   </section>;
 }
