@@ -156,7 +156,7 @@ try {
       assert.equal(check.pointerEvents, 'none');
       assert.deepEqual(check.overlaps, [], `${width}: ${check.kind} must not cover text or controls`);
     }
-    assert.equal(visible, 1);
+    assert.equal(visible, 0, 'No detached accent remains after removing the landing pricing section');
     if (width === 1440) {
       for (const [name, asset] of Object.entries(manifest)) {
         const alpha = await page.evaluate(async ({ name }) => {
@@ -240,8 +240,8 @@ try {
       const afterText = await textInventory(page);
       if (route === '/prices') {
         assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
-        assert.match(afterText, /Календарь дедлайнов с напоминаниями в Telegram/);
-        assert.doesNotMatch(afterText, /Telegram и на почту/);
+        assert.match(afterText.join(' '), /Календарь дедлайнов с напоминаниями в Telegram/);
+        assert.doesNotMatch(afterText.join(' '), /Telegram и на почту/);
       }
       else if (route === '/plan') {
         assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
