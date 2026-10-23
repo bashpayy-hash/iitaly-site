@@ -165,7 +165,7 @@ try {
     assert.equal(await page.locator('[data-current-step=test-task]').count(), 1, 'A confirmed file completion returns directly to the road and names the next step');
     await page.locator('[data-overview-document]').click();
     await report.waitFor();
-    await report.getByRole('heading', { name: 'Проверка пройдена', exact: true }).waitFor();
+    await report.getByRole('heading', { name: 'Готово', exact: true }).waitFor();
     // The owner requested unlimited explicit rechecks, including approved files.
     assert.equal(await page.locator('button').count(), 1, 'An approved document has one explicit new-version action');
     assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1);
@@ -174,7 +174,7 @@ try {
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
     await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
     await page.locator('[data-document-outcome=approved]').waitFor();
-    assert.match(await page.locator('[data-document=statements]').innerText(), /Проверка пройдена/);
+    assert.match(await page.locator('[data-document=statements]').innerText(), /Готово/);
     assert.equal(calls.check, 2, 'Retrying storage must not run another AI check');
     assert.equal(calls.save, 2);
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
