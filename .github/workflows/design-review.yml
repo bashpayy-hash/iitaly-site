@@ -95,6 +95,10 @@ jobs:
         run: node scripts/admissions-browser-review.mjs
       - name: Review shared questionnaire, local workspace and existing cloud boundary
         run: node scripts/design-workspace-review.mjs
+      - name: Review honest progress, document states and profile persistence
+        run: |
+          node scripts/portal-targeted-model-review.mjs
+          node scripts/design-portal-targeted-review.mjs
       - name: Review student journey, error recovery and accessibility
         run: node scripts/design-ux-review.mjs
       - name: Review Vespi guide context, quiz continuity and explicit AI requests

@@ -9,10 +9,24 @@
 .launcherLabel { color:inherit; font-family:var(--font-apple-text); font-size:14px; line-height:1.2; white-space:nowrap; }
 @media (max-width:480px) { .labelledLauncher { width:168px; } .launcherLabel { font-size:13px; } }
 
-:global(body:has(#nl-badge-frame)) .aboveBadge {
+:global(body:has(#nl-badge-frame)) .aboveBadge:not(.portalPanel) {
   bottom: calc(76px + env(safe-area-inset-bottom, 0px));
 }
 
-:global(body:has(#nl-badge-frame)) .panel {
+:global(body:has(#nl-badge-frame)) .panel:not(.portalPanel) {
   max-height: calc(100dvh - 96px - env(safe-area-inset-bottom, 0px));
+}
+
+/* The portal assistant is a work panel, with its own reserved desktop column. */
+:global(body:has([data-portal-design])) :global(#nl-badge-frame) { display:none !important; }
+:global(body:has([data-portal-chat="true"])) .portalPanel {
+  top:16px; bottom:16px; right:16px; left:auto; height:calc(100dvh - 32px); max-height:calc(100dvh - 32px); width:380px;
+}
+.portalPanel > div:first-child { cursor:default; touch-action:auto; }
+.portalPanel input::placeholder { color:#615d57; opacity:1; }
+@media(min-width:1101px) {
+  :global(body:has([data-portal-chat="true"])) :global([data-portal-design]) { margin-right:412px; }
+}
+@media(max-width:1100px) {
+  :global(body:has([data-portal-chat="true"])) .portalPanel { inset:0; width:100%; height:100dvh; max-height:100dvh; border-radius:0; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
 }

@@ -13,7 +13,7 @@ import { portalPosition, taskReadOnlyReason, taskTitle } from "@/lib/portalNavig
 import { DOC_TASKS } from "@/lib/portalMeta";
 import type { PortalDoc, PortalTask } from "@/lib/portalApi";
 import type { DocCheckResult } from "@/lib/checkDocument";
-import { shortlistNames } from "@/lib/portalShortlist";
+import { nearestUniversityDeadline } from "@/lib/portalShortlist";
 import { Wizard } from "@/components/plan/Wizard";
 import { DocCheck, DocResult } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
@@ -21,6 +21,11 @@ import { PlanSection } from "./PlanSection";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { WorkspaceCoach } from "./WorkspaceCoach";
+import { PortalUniversitySummary } from "./PortalUniversitySummary";
+import { PortalStepInstructions } from "./PortalStepInstructions";
+import { SavedProfileAnswers } from "./SavedProfileAnswers";
+import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
+import { taskQuestions } from "@/lib/portalStepCopy";
 import { PortalWelcome } from "./PortalWelcome";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
@@ -63,7 +68,7 @@ export function LocalWorkspace() {
   const active = tasks.find(task => task.id === (location.doc || location.task));
   const documents = tasks.filter(task => DOC_TASKS[task.id]);
   const plan = draft.complete ? buildPlan(draft.answers) : null;
-  const wizardOpen = active?.id === "profile";
+  const wizardOpen = active?.id === "profile" && !draft.complete;
   const chrome = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = chrome.current;
@@ -79,31 +84,34 @@ export function LocalWorkspace() {
     return () => { window.removeEventListener("popstate", sync); };
   }, []);
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: active ? { taskId: active.id, taskTitle: taskTitle(active), taskContext: active.explain } : {} }));
+    window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: active ? { taskId: active.id, taskTitle: taskTitle(active), taskContext: active.explain, taskDone: portalTaskDone(data, active), questions: taskQuestions(active, portalTaskDone(data, active)) } : {} }));
     return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
-  }, [active]);
+  }, [active, data]);
 
   function navigate(next: Location) {
     const url = next.doc ? `/portal?view=docs&doc=${encodeURIComponent(next.doc)}` : next.task ? `/portal?view=plan&task=${encodeURIComponent(next.task)}` : next.view === "today" ? "/portal" : `/portal?view=${next.view}`;
-    window.history.pushState({}, "", url);
+    window.history.pushState({ portalBackHref: window.location.pathname + window.location.search }, "", url);
     setLocation(next); window.scrollTo({ top: 0, behavior: "instant" });
   }
   function link(event: MouseEvent<HTMLAnchorElement>, next: Location) {
     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault(); navigate(next);
   }
-  function openTask(task: PortalTask) { navigate({ view: DOC_TASKS[task.id] ? "docs" : "plan", task: DOC_TASKS[task.id] ? null : task.id, doc: DOC_TASKS[task.id] ? task.id : null }); }
+  function openTask(task: PortalTask, intent?: "instruction" | "upload") {
+    const document = DOC_TASKS[task.id] && intent !== "instruction";
+    navigate({ view: document ? "docs" : "plan", task: document ? null : task.id, doc: document ? task.id : null });
+  }
   function complete(task: PortalTask) {
     if (task.id !== position.task?.id || task.available === false || DOC_TASKS[task.id]) return;
-    if (!data.done[task.id]) setRoadTravel({ fromDone:tasks.filter(item => data.done[item.id]).length, id:++travelSequence.current });
+    if (!data.done[task.id]) setRoadTravel({ fromDone:portalProgress(data).done, id:++travelSequence.current });
     updateLocal({ ...local, done: { ...local.done, [task.id]: true } });
     navigate({ view: "today", task: null, doc: null });
   }
   function onReview(task: PortalTask, result: DocCheckResult) {
-    const report: PortalDoc = { verdict: result.verdict || "warn", summary: result.summary, result, checkedAt: new Date().toISOString() };
+    const report: PortalDoc = { verdict: result.verdict || "warn", summary: result.summary, result, checkedAt: new Date().toISOString(), routeAcademicYear: applicationYear };
     const kind = documentOutcome(report, applicationYear).kind;
     const approved = kind === "approved";
-    if (approved && !data.done[task.id]) setRoadTravel({ fromDone:tasks.filter(item => data.done[item.id]).length, id:++travelSequence.current });
+    if (approved && !data.done[task.id]) setRoadTravel({ fromDone:portalProgress(data).done, id:++travelSequence.current });
     setReportCache(current => ({ ...current, [scope]: { ...current[scope], [task.id]: report } }));
     // A missing programme/context is an uncertainty, never a file defect or an
     // approval. Only a real passed review closes a file step.
@@ -114,20 +122,20 @@ export function LocalWorkspace() {
   const showDetail = active && (location.task || location.doc);
   const readOnly = active ? taskReadOnlyReason(data, active) : "";
   const existing = active ? data.docs[active.id] : undefined;
-  const documentInspectorOpen = Boolean(active && DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])));
+  const documentInspectorOpen = Boolean(active && DOC_TASKS[active.id] && portalTaskStageOpen(data, active.id) && (!readOnly || Boolean(existing && portalTaskDone(data, active))));
   const intake = draft.answers.intake === "2027/28" ? "сентябрь 2027" : draft.answers.intake === "2026/27" ? "2026/27" : "год ещё не выбран";
   const clarify = documents.find(task => data.docs[task.id] && documentOutcome(data.docs[task.id], applicationYear).kind !== "missing");
 
   return <div className={`${portal.portal} ${styles.workspace}`} data-local-workspace data-portal-design="shared-site">
     <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" onHome={() => navigate({ view: "today", task: null, doc: null })} actions={<div className={styles.headerActions}>
-      <a href="#iitaly-chat" data-portal-assistant data-step-id={active?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: active?.id, taskTitle: active ? taskTitle(active) : undefined, taskContext: active?.explain } })); }}><VespiAvatar /><span>Помощник</span></a>
+      <a href="#iitaly-chat" data-portal-assistant data-step-id={active?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: active?.id, taskTitle: active ? taskTitle(active) : undefined, taskContext: active?.explain, taskDone: active ? portalTaskDone(data, active) : false, questions: active ? taskQuestions(active, portalTaskDone(data, active)) : undefined } })); }}><VespiAvatar /><span>Помощник</span></a>
       <a href="/portal?view=settings" aria-label="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
-    </div>} />{!wizardOpen && location.view !== "today" && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
+    </div>} />{!wizardOpen && location.view !== "today" && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={active ? data.roadmap.find(row => row.tasks.some(task => task.id === active.id))?.id : undefined} deadline={nearestUniversityDeadline(local.selectedIds)} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
     <main id="main" className={styles.frame}>
       {location.view === "today" && !wizardOpen && <div className={styles.arrival} data-portal-arrival>
-        <PortalWelcome intakeYear={data.client.intakeYear} />
+        <PortalWelcome intakeYear={data.client.intakeYear}><PortalUniversitySummary ids={local.selectedIds} onEdit={() => { const task = tasks.find(item => item.id === "shortlist"); if (task) openTask(task); }}/></PortalWelcome>
         <section data-portal-progress-shell aria-label="Прогресс поступления">
-          <PortalRoad data={data} current={position.task} stage={position.stage} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
+          <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={active ? data.roadmap.find(row => row.tasks.some(task => task.id === active.id))?.id : undefined} deadline={nearestUniversityDeadline(local.selectedIds)} onOpenTask={openTask} navigationOnly travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
         </section>
       </div>}
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
@@ -139,19 +147,20 @@ export function LocalWorkspace() {
             <p className={styles.intro}>Поступление: {intake}. {draft.complete ? "Маршрут построен по твоим ответам." : "Начни с анкеты — ответы из «Моего плана» уже здесь."}</p>
             {position.next && <p className={styles.next}>Потом · {taskTitle(position.next)}. К этому шагу перейдём позже.</p>}
             {clarify && <a className={styles.textLink} href={`/portal?view=docs&doc=${clarify.id}`} onClick={event => { event.preventDefault(); openTask(clarify); }}>{DOC_TASKS[clarify.id]} · {documentOutcome(data.docs[clarify.id], applicationYear).label}</a>}
-            <section className={styles.docFeature}><ShieldCheck size={26} aria-hidden="true"/><div><h2>Проверяй документы до подачи</h2><p>Здесь доступна бесплатная проверка одного файла. Безлимитная проверка комплекта и сохранённые разборы — в подключённом кабинете за 667 ₸.</p><a href="/prices">Что входит в кабинет ↗</a></div></section>
-            {local.selectedIds.length > 0 && <div className={styles.paper}><h2>Твои университеты</h2><p>{shortlistNames(local.selectedIds).join(" · ")}</p><a className={styles.textLink} href="/portal?view=plan&task=shortlist" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "shortlist"); if (task) openTask(task); }}>Открыть карту и сравнение</a></div>}
+            <section className={styles.docFeature}><ShieldCheck size={26} aria-hidden="true"/><div><h2>Твои документы</h2><a href="/portal?view=docs" onClick={event => link(event, { view: "docs", task: null, doc: null })}>Открыть документы →</a></div></section>
+
           </>}
           {location.view === "plan" && !showDetail && <><PlanSection data={data} onOpenTask={openTask}/></>}
           {showDetail && <>
-            {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => link(event, { view: location.doc ? "docs" : "plan", task: null, doc: null })}>← Назад</a>}
-            {active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1><Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { updateDraft({ answers, step: 10, complete: true }); navigate({ view: "today", task: null, doc: null }); }}/></>
-              : active.id === "shortlist" && (!readOnly || data.done.shortlist) ? <PortalUniversityStep data={data} task={active} selectedIds={local.selectedIds} busy={false} onBack={() => navigate({ view: "plan", task: null, doc: null })} backHref="/portal?view=plan" onReopen={() => updateLocal({ ...local, done: { ...local.done, shortlist: false } })} onSave={async selectedIds => { updateLocal({ ...local, scope: localWorkspaceScope(draft, selectedIds), selectedIds, reviews: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? local.reviews : {}, done: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? { ...local.done, shortlist: true } : { shortlist: true } }); navigate({ view: "today", task: null, doc: null }); return true; }}/>
+            {!(active.id === "shortlist" && (!readOnly || data.done.shortlist)) && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => { event.preventDefault(); if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: location.doc ? "docs" : "plan", task: null, doc: null }); }}>← Назад</a>}
+            {active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1>{draft.complete ? <SavedProfileAnswers profile={data.client.profile || {}} answers={draft.answers} onEdit={() => updateDraft({ ...draft, step: 0, complete: false })} /> : <Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { updateDraft({ answers, step: 10, complete: true }); navigate({ view: "today", task: null, doc: null }); }}/>}</>
+              : active.id === "shortlist" && (!readOnly || data.done.shortlist) ? <PortalUniversityStep localOnly data={data} task={active} selectedIds={local.selectedIds} busy={false} onBack={() => navigate({ view: "plan", task: null, doc: null })} backHref="/portal?view=plan" onReopen={() => updateLocal({ ...local, done: { ...local.done, shortlist: false } })} onSave={async selectedIds => { updateLocal({ ...local, scope: localWorkspaceScope(draft, selectedIds), selectedIds, reviews: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? local.reviews : {}, done: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? { ...local.done, shortlist: true } : { shortlist: true } }); navigate({ view: "today", task: null, doc: null }); return true; }}/>
               : <><h1 className={styles.heading}>{taskTitle(active)}</h1><p className={styles.intro}>{active.time || "По ситуации"}</p><p className={styles.intro}>{active.explain}</p>
+                <PortalStepInstructions taskId={active.id} />
                 {readOnly && <p className={styles.readOnly}>{readOnly}</p>}
                 {existing && !existing.result && <p className={styles.readOnly}>{existing.summary}</p>}
                 {existing?.result?.review && existing.result.review.academicYear !== applicationYear && <p className={styles.readOnly}>Нужно уточнить: разбор относится к {existing.result.review.academicYear}, а в маршруте выбран {applicationYear}. Это не ошибка файла. Сверь заявку перед подачей.</p>}
-                {existing?.result && <div className={styles.paper}><DocResult result={existing.result}/><p>Разбор хранится в этой вкладке. Файлы и содержание документов не записываются в локальный профиль.</p></div>}
+                {existing?.result && <div className={styles.paper}><DocResult result={existing.result} portalStatus applicationYear={applicationYear} /><p>Разбор хранится в этой вкладке. Файлы и содержание документов не записываются в локальный профиль.</p></div>}
                 {documentInspectorOpen && <>
                   <PortalDocumentCoach />
                   <button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
@@ -169,8 +178,8 @@ export function LocalWorkspace() {
               const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);
               return <a className={styles.docCard} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
                 <FileText size={25} aria-hidden="true"/><h3>{DOC_TASKS[task.id]}</h3><p>{info?.where}</p><p>{info?.validity}</p>
-                <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>
-                <span className={styles.collection} data-collecting={Boolean(local.collecting[task.id])} data-verified={outcome.kind === "approved"}>{outcome.kind === "approved" ? "Проверено Веспи" : local.collecting[task.id] ? "В процессе сбора" : "Не начато"}</span>
+                <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{outcome.action && <p>Что сделать: {outcome.action}</p>}
+
               </a>;
             })}</div>
           </>}

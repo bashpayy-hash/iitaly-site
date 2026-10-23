@@ -48,6 +48,12 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // User request 2026-10-23: honest progress, step explanations, profile
+  // persistence and contextual assistant. Existing unrelated contracts stay fixed.
+  'src/lib/portalProgress.ts', 'src/lib/portalStepCopy.ts', 'src/data/portal-step-copy.json',
+  'src/components/portal/PortalUniversitySummary.tsx', 'src/components/portal/SavedProfileAnswers.tsx',
+  'src/components/portal/PortalStepInstructions.tsx',
+  'src/lib/useDraggableHeader.ts',
   // User request 2026-10-20: a personal greeting before the existing route.
   // This is presentation only; profile and task data contracts stay protected.
   'src/components/portal/PortalWelcome.tsx',
@@ -184,8 +190,8 @@ console.log('Approved presentation paths passed; map geometry, comparison model,
 for (const path of [
   'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
   'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts','src/lib/chat.ts',
-  'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts','src/lib/portalApi.ts',
-  'src/lib/usePlanDraft.ts','src/lib/portalShortlist.ts',
+  'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts',
+  'src/lib/usePlanDraft.ts',
   'src/components/universities/comparison-model.ts',
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
   'src/components/guides/permesso/permessoData.ts',
@@ -204,8 +210,15 @@ assert(!/useVespiPresence|<Vespi\b/.test(readFileSync('src/components/chat/ChatL
 // User request 2026-10-20: direct task copy and no owner-role division.
 // Allow only those exact template edits; IDs, persistence and completion logic stay fixed.
 const localTaskPresentation = source => source
+  .replace('import { taskShortExplainer } from "./portalStepCopy";\n', '')
+  .replace('if (!draft.complete) tasks.push', 'tasks.push')
+  .replace('.map(task => ({ ...task, short_explainer: taskShortExplainer(task) }))', '')
   .replace(/, owner: \/финанс\|запас до выплаты\/\.test\(step\.t\) \? "Родители" : "Ты"/g, '')
   .replace(/, owner: "(?:Ты|Родители)"/g, '')
   .replace('Попросить родителей собрать семейные справки', 'Собрать справки о составе и доходах семьи для DSU')
   .replace('Попросить родителей подготовить банковские выписки', 'Подготовить банковские выписки');
 assert.equal(localTaskPresentation(readFileSync('src/lib/localWorkspace.ts', 'utf8')), localTaskPresentation(execFileSync('git', ['show', `${base}:src/lib/localWorkspace.ts`], { encoding: 'utf8' })), 'Local task IDs and workspace logic unchanged');
+
+// Only the explicitly requested optional profile/copy fields extend this contract.
+const withoutPortalFields = source => source.split('\n').filter(line => !/^\s*(universityIds|short_explainer|instruction_title|assistant_question|routeAcademicYear)\?:/.test(line)).join('\n');
+assert.equal(withoutPortalFields(readFileSync('src/lib/portalApi.ts','utf8')), withoutPortalFields(execFileSync('git',['show',`${base}:src/lib/portalApi.ts`],{encoding:'utf8'})), 'Portal endpoint/authentication implementations unchanged');

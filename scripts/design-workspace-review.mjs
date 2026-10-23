@@ -91,7 +91,7 @@ try {
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
     await page.getByRole('link',{name:'Продолжить в личном кабинете ↗',exact:true}).click();
     await page.locator('[data-local-workspace]').waitFor();
-    await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+    await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
     await page.locator('[data-portal-universities]').waitFor();
     await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
     await page.locator('[data-university-select="bocconi"]').check();
@@ -100,7 +100,7 @@ try {
     assert.equal(await page.locator('[data-university-comparison] [data-comparison-row]').count(),12,'Existing comparison stays intact in the guest portal');
     await capture('portal-selection');
     await page.locator('[data-shortlist-save]').click();
-    await page.getByRole('heading',{name:'Твои университеты',exact:true}).waitFor();
+    await page.locator('[data-saved-universities]').waitFor();
     await page.reload({waitUntil:'networkidle'});
     assert.match(await page.locator('main').innerText(),/Bocconi/,'Saved university survives reload');
     const local=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
@@ -130,13 +130,13 @@ try {
     await capture('portal-settings');await audit('guest settings');
     await page.getByRole('link',{name:'Обзор',exact:true}).click();
     for(let step=0;step<12;step++) {
-      await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+      await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
       if(await page.getByLabel('Выбрать документ для проверки').count())break;
       await page.getByRole('button',{name:'Готово',exact:true}).click();
     }
     const upload=page.getByLabel('Выбрать документ для проверки');
     await upload.waitFor();
-    const currentDoc=new URL(page.url()).searchParams.get('doc');
+    const currentDoc=new URL(page.url()).searchParams.get('doc') || new URL(page.url()).searchParams.get('task');
     const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
     async function review(result) {
       reviewResult=result;
@@ -144,7 +144,7 @@ try {
       await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
       await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
       await page.getByRole('link',{name:'План',exact:true}).waitFor();
-      await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc'));
+      await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc')&&!new URLSearchParams(location.search).has('task'));
     }
     await review(fixtureReview('warn','2027/28','unspecified'));
     let storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
@@ -152,12 +152,12 @@ try {
     assert.equal(storedState.reviews[currentDoc],'clarify');
     assert.doesNotMatch(JSON.stringify(storedState),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
     await page.reload({waitUntil:'networkidle'});
-    await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+    await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
     await review(fixtureReview('ok','2026/27','verified'));
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],false,'A verified review from another intake cannot close this route task');
     assert.equal(storedState.reviews[currentDoc],'clarify');
-    await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+    await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
     await review(fixtureReview('ok','2027/28','verified'));
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],true,'Only an applicable passed review closes the file task');

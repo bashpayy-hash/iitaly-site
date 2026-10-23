@@ -67,3 +67,9 @@
 @media(max-width:480px) { .nav a { min-width:132px; padding:8px; gap:7px; } .stageCopy > span { font-size:12px; } .routeNote { display:none; } }
 @media(max-width:600px) { .stacked { gap:16px; } .stacked .focus { padding-top:16px; } .stacked .nextAction { display:block; } .stacked .action { margin-top:12px; } }
 @media(prefers-reduced-motion:reduce) { .checkpoint { transition:none; } .nav a:hover .checkpoint { transform:none; } .journey[data-road-feedback-active=true] .count { animation:none; } }
+
+.goalDeadline,.ahead { display:block; font-size:12px; font-weight:400; margin-top:4px; color:var(--portal-muted); }
+.uploadLink { display:inline-flex; align-items:center; min-height:44px; margin-top:4px; font-size:14px; text-decoration:underline; text-underline-offset:4px; }
+.stacked .nextAction > .uploadLink { grid-column:2; grid-row:4; justify-self:center; }
+.stacked .nextAction:has(.uploadLink) .action { grid-row:2 / span 2; }
+@media(max-width:600px) { .uploadLink { display:flex; } }

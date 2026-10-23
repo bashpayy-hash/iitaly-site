@@ -109,9 +109,14 @@ try {
     const timeline = page.locator('[data-guide-timeline]');
     const stageLinks = timeline.locator('a[aria-controls="guide-reading-content"]');
     assert.equal(await stageLinks.count(), 3, 'Three real route stages remain directly available');
-    const timelineBox = await timeline.boundingBox();
-    const panelBox = await page.locator('[data-guide-panel="education"]').boundingBox();
-    assert(timelineBox.y + timelineBox.height <= panelBox.y + 1, 'Stage selection is above the reading panel, never a left sidebar');
+    // The topic heading scrolls into view on the next frame. Read both rects
+    // together so a scroll between two protocol calls cannot change one origin.
+    const stageAbovePanel = await page.evaluate(() => {
+      const timeline = document.querySelector('[data-guide-timeline]').getBoundingClientRect();
+      const panel = document.querySelector('[data-guide-panel="education"]').getBoundingClientRect();
+      return timeline.bottom <= panel.top + 1;
+    });
+    assert(stageAbovePanel, 'Stage selection is above the reading panel, never a left sidebar');
     const stageBoxes = await stageLinks.evaluateAll(links => links.map(link => { const rect=link.getBoundingClientRect(); return {x:rect.x,y:rect.y,width:rect.width,height:rect.height}; }));
     assert(stageBoxes.every(box => Math.abs(box.y-stageBoxes[0].y)<1), 'The stage checkpoints share a horizontal row');
     assert(stageBoxes.every((box,index) => !index || box.x>=stageBoxes[index-1].x+stageBoxes[index-1].width-1), 'Stages follow readable left-to-right order');

@@ -7,6 +7,7 @@ import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalTaskDone } from "@/lib/portalProgress";
 import { PortalArtwork } from "./PortalArtwork";
 import { PortalStageIcon } from "./PortalStageIcon";
 import styles from "./portal-plan.module.css";
@@ -81,7 +82,7 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask }: Plan
   next: boolean;
 }) {
   const [open, setOpen] = useState(current);
-  const completed = stage.tasks.filter(task => data.done[task.id]).length;
+  const completed = stage.tasks.filter(task => portalTaskDone(data, task)).length;
 
   return (
     <details
@@ -104,7 +105,7 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask }: Plan
           task={task}
           index={index}
           href={portalTaskHref(data, task)}
-          done={Boolean(data.done[task.id])}
+          done={portalTaskDone(data, task)}
           doc={data.docs?.[task.id]}
           current={task.id === currentTask}
           onOpenTask={onOpenTask}

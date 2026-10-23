@@ -17,7 +17,10 @@ export function fixture(mode = 'partial') {
   if (mode === 'zero') data.done = {};
   if (mode === 'onboarding') { data.client.onboardingComplete = false; data.client.profile = {}; data.done = {}; }
   if (mode === 'profile') { data.client.profile.education = 'НИШ / 12 лет'; delete data.client.profile.educationPath; }
-  if (mode === 'complete') data.done = Object.fromEntries([...ids, 'obsolete-task'].map(id => [id, true]));
+  if (mode === 'complete') {
+    data.done = Object.fromEntries([...ids, 'obsolete-task'].map(id => [id, true]));
+    data.docs = { statements: { verdict: 'ok' }, familyDocs: { verdict: 'ok' } };
+  }
   if (mode === 'empty') { data.roadmap = []; data.done = {}; }
   if (mode === 'blocked') data.roadmap.forEach(stage => stage.tasks.forEach(task => { task.available = false; }));
   if (mode === 'near') data.roadmap[0].tasks[1].daysLeft = 3;
@@ -70,6 +73,7 @@ export function fixture(mode = 'partial') {
       { id: 'statements', t: 'Подготовить банковскую выписку', available: true, owner: 'Ты', time: '10 мин' },
     ] }, ...structuredClone(roadmap.slice(2))];
     data.done = { apostille: true, translate: true, notary: true, cimea: true, 'obsolete-task': true };
+    data.docs = Object.fromEntries(['apostille', 'translate', 'notary', 'cimea'].map(id => [id, { verdict: 'ok' }]));
   }
   return data;
 }

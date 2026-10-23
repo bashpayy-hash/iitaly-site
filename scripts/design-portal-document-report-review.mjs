@@ -155,14 +155,14 @@ try {
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
     await page.locator('[data-document-list]').waitFor();
-    assert.match(await page.locator('main').innerText(), /без лимита/i, 'The document screen makes repeat checking discoverable');
+    assert.match(await page.locator('main').innerText(), /Твои документы/, 'The cabinet uses a functional heading');
     assert.equal(await page.locator('[data-document]').count(), 6, 'All required documents are visible without opening status groups');
-    assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'approved', 'fix', 'clarify', 'unreadable', 'missing']);
+    assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'not_started', 'reviewing', 'needs_fix', 'ready']);
     assert.deepEqual(await page.locator('[data-document]').evaluateAll(elements => elements.map(element => element.dataset.document)), ['statements', 'apostille', 'cimea', 'familyDocs', 'insurance', 'translate'], 'Current file first, then documents needing action, then approved');
     assert.match(await page.locator('[data-document-filter=all]').innerText(), /Все 6/);
-    assert.match(await page.locator('[data-document-filter=missing]').innerText(), /Не загружен 2/);
-    await page.locator('[data-document-filter=fix]').click();
-    assert.equal(await page.locator('[data-document]').count(), 1);
+    assert.match(await page.locator('[data-document-filter=not_started]').innerText(), /Не начато 2/);
+    await page.locator('[data-document-filter=needs_fix]').click();
+    assert.equal(await page.locator('[data-document]').count(), 2);
     assert.equal(await row(page, 'apostille').isVisible(), true);
     await page.locator('[data-document-filter=all]').click();
     await noListButtons(page, `Document list ${width}px`);
@@ -179,7 +179,7 @@ try {
     await report(page).waitFor();
     await reportHeadingVisible(page, 'Uploaded clarification');
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements', 'The saved result opens automatically and has an address');
-    assert.match(await report(page).innerText(), /Нужно уточнить/);
+    assert.match(await report(page).innerText(), /На проверке/);
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.doesNotMatch(await report(page).innerText(), /Нужно исправить|Критических ошибок:/);
@@ -193,12 +193,12 @@ try {
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
     await backToList(page);
-    assert.match(await row(page, 'statements').innerText(), /Нужно уточнить/);
+    assert.match(await row(page, 'statements').innerText(), /На проверке/);
     const clarifyColor = await page.locator('[data-document=statements] [data-outcome=clarify]').evaluate(element => getComputedStyle(element).color);
     const fixColor = await page.locator('[data-document=apostille] [data-outcome=fix]').evaluate(element => getComputedStyle(element).color);
     assert.notEqual(clarifyColor, fixColor, 'Clarification is not coloured as a document error');
-    assert.match(await page.locator('[data-document-filter=clarify]').innerText(), /Нужно уточнить 2/);
-    assert.match(await page.locator('[data-document-filter=missing]').innerText(), /Не загружен 1/);
+    assert.match(await page.locator('[data-document-filter=reviewing]').innerText(), /На проверке 2/);
+    assert.match(await page.locator('[data-document-filter=not_started]').innerText(), /Не начато 1/);
     assert.equal(await row(page, 'translate').isVisible(), true, 'Approved files stay discoverable in the complete list');
     await noListButtons(page, `Document list ${width}px`);
     await noOverflow(page, `Document list ${width}px`);
@@ -245,13 +245,13 @@ try {
     await page.getByRole('link', { name: 'Обзор', exact: true }).filter({ visible: true }).click();
     assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
     const overview = page.locator('[data-portal-overview]');
-    assert.match(await overview.innerText(), /Нужно уточнить/);
+    assert.match(await overview.innerText(), /На проверке/);
     assert.match(await overview.innerText(), /Банковские выписки/, 'Overview identifies the document rather than an opaque filename');
-    assert((await overview.innerText()).includes(data.docs.statements.summary), 'Overview includes the saved review reason');
+    assert.match(await overview.innerText(), /Что сделать:/, 'Overview gives one concrete next action');
     await noOverflow(page, `Document summary ${width}px`);
     await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).click();
     const plan = page.locator('#portal-stage-documents');
-    assert.match(await plan.innerText(), /Нужно уточнить/);
+    assert.match(await plan.innerText(), /На проверке/);
     assert.equal(await page.locator('button').count(), 0, 'Plan has no action buttons');
     const statement = plan.locator('[data-portal-task=statements]');
     await (await statement.evaluate(element => element.tagName === 'A') ? statement : statement.getByRole('link')).click();
@@ -276,7 +276,7 @@ try {
       await page.reload({ waitUntil: 'networkidle' });
       assert.deepEqual(calls, { check: 1 + repeat, save: 1 + repeat }, 'Reloading never spends another document check');
     }
-    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, completedFileRecheckedTwice: true, unsuccessfulReplacementRemainsRecheckable: true, rechecksRequireExplicitUpload: true, overflow: false, seriousAxe: violations });
+    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fourUnifiedStatuses: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, completedFileRecheckedTwice: true, unsuccessfulReplacementRemainsRecheckable: true, rechecksRequireExplicitUpload: true, overflow: false, seriousAxe: violations });
     await context.close();
   }
   assert.deepEqual(errors, []);

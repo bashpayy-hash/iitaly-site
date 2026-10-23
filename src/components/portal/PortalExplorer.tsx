@@ -35,7 +35,10 @@ import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewC
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
-import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist } from "@/lib/portalShortlist";
+import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending, nearestUniversityDeadline } from "@/lib/portalShortlist";
+import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
+import { taskQuestions } from "@/lib/portalStepCopy";
+import { PortalUniversitySummary } from "./PortalUniversitySummary";
 import { WIZ } from "@/data/wizard";
 import { EMPTY_PLAN_DRAFT, type PlanDraft } from "@/lib/usePlanDraft";
 import { LocalWorkspace } from "./LocalWorkspace";
@@ -123,6 +126,7 @@ export function PortalExplorer() {
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   const [roadTravel, setRoadTravel] = useState<{ fromDone: number; id: number }>();
   const [shortlist, setShortlist] = useState<string[]>([]);
+  const [shortlistNotice, setShortlistNotice] = useState("");
   // Kept only in this authenticated session, never shared with the public quiz
   // or another account. Switching portal views must not discard these answers.
   const [assessmentDraft, setAssessmentDraft] = useState<PlanDraft>(EMPTY_PLAN_DRAFT);
@@ -136,6 +140,7 @@ export function PortalExplorer() {
   const triedAutoLogin = useRef(false);
   const focusSettingsTarget = useRef<SettingsTarget | null>(null);
   const stepReturnSection = useRef<Section>("plan");
+  const stepReturnHref = useRef("/portal?view=plan");
   const documentReturnTask = useRef<string | null>(null);
   const travelSequence = useRef(0);
   const completionFocusPending = useRef(false);
@@ -169,7 +174,23 @@ export function PortalExplorer() {
     try { key = await portalShortlistKey(c, res.data.client.surname || sn); } catch {}
     if (version !== sessionVersion.current) return;
     shortlistKey.current = key;
-    setShortlist(key ? readShortlist(key) : []);
+    const remoteIds = validShortlist(res.data.client.profile?.universityIds);
+    const localIds = key ? readShortlist(key) : [];
+    const pending = key && shortlistPending(key);
+    const selected = pending || (!res.data.client.profile?.universityIds && localIds.length) ? localIds : remoteIds;
+    setShortlist(selected);
+    setShortlistNotice("");
+    if (key && selected.length && (pending || !res.data.client.profile?.universityIds)) {
+      markShortlistPending(key, true);
+      void savePortalProfile(c, sn, { universityIds: selected }).then(saved => {
+        if (version !== sessionVersion.current) return;
+        if (saved.ok && JSON.stringify(validShortlist(saved.data.client.profile?.universityIds)) === JSON.stringify(selected)) {
+          markShortlistPending(key!, false);
+        } else setShortlistNotice("Выбор сохранён на этом устройстве. Синхронизация с профилем пока недоступна.");
+      });
+    } else if (key && remoteIds.length) {
+      try { writeShortlist(key, remoteIds); } catch { /* The server remains the source of truth. */ }
+    }
     const profileAnswers = { ...res.data.client.profile, intake: res.data.client.intakeYear === 2027 ? "2027/28" : res.data.client.intakeYear === 2026 ? "2026/27" : undefined };
     const answers = Object.fromEntries(WIZ.flatMap(question => {
       const value = profileAnswers[question.id as keyof typeof profileAnswers];
@@ -197,6 +218,7 @@ export function PortalExplorer() {
     setOpenDocument(documentFromLocation());
     documentReturnTask.current = typeof window.history.state?.portalDocumentReturnTask === "string" ? window.history.state.portalDocumentReturnTask : null;
     setOpenTaskId(taskFromLocation());
+    stepReturnHref.current = typeof window.history.state?.portalBackHref === "string" ? window.history.state.portalBackHref : "/portal?view=plan";
     try {
       localStorage.setItem(KEY, c);
       localStorage.setItem(KEY_SN, sn);
@@ -232,6 +254,7 @@ export function PortalExplorer() {
       setOpenDocument(documentFromLocation());
       documentReturnTask.current = typeof window.history.state?.portalDocumentReturnTask === "string" ? window.history.state.portalDocumentReturnTask : null;
       setOpenTaskId(taskFromLocation());
+      stepReturnHref.current = typeof window.history.state?.portalBackHref === "string" ? window.history.state.portalBackHref : "/portal?view=plan";
       stepReturnSection.current = next === "docs" ? "docs" : "plan";
       // A hash-only history entry may retain the same React section.
       if (next === "settings") focusSettings();
@@ -353,7 +376,7 @@ export function PortalExplorer() {
       setData((prev) => prev ? { ...prev, done: res.done, progress: res.progress } : prev);
       if (value && !data.done[taskId] && res.done[taskId]) {
         completionFocusPending.current = true;
-        setRoadTravel({ fromDone: data.roadmap.flatMap(stage => stage.tasks).filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+        setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
       } else setRoadTravel(undefined);
       changeSection("today");
       track("portal_task", { done: value });
@@ -370,23 +393,47 @@ export function PortalExplorer() {
     }
   }
 
+  async function syncUniversities(ids: string[]) {
+    if (!code || !surname) return false;
+    const version = sessionVersion.current;
+    const res = await savePortalProfile(code, surname, { universityIds: ids });
+    if (version !== sessionVersion.current) return false;
+    if (!res.ok || JSON.stringify(validShortlist(res.data.client.profile?.universityIds)) !== JSON.stringify(ids)) {
+      setShortlistNotice("Выбор сохранён на этом устройстве. Синхронизация с профилем пока недоступна.");
+      return false;
+    }
+    if (shortlistKey.current) markShortlistPending(shortlistKey.current, false);
+    setShortlistNotice("");
+    setData(previous => previous ? { ...previous, client: { ...previous.client, profile: res.data.client.profile } } : previous);
+    return true;
+  }
+
   async function handleSaveUniversities(ids: string[]): Promise<boolean> {
     if (!data || busyTask) return false;
     const task = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "shortlist");
     if (!task || (!data.done.shortlist && taskReadOnlyReason(data, task))) return false;
+    const version = sessionVersion.current;
+    const selected = validShortlist(ids);
+    if (!selected.length) return false;
+    let cached = false;
     try {
-      if (!shortlistKey.current) throw new Error("Browser storage unavailable");
-      const saved = writeShortlist(shortlistKey.current, ids);
-      setShortlist(saved);
-    } catch {
-      setActionError({ message: "Не удалось сохранить выбор в браузере. Разреши хранение данных сайта и нажми «Сохранить» ещё раз. Маршрут не изменён." });
+      if (shortlistKey.current) {
+        writeShortlist(shortlistKey.current, selected);
+        markShortlistPending(shortlistKey.current, true);
+        cached = true;
+      }
+    } catch { /* Still try the authenticated server if browser storage is blocked. */ }
+    setBusyTask("shortlist");
+    const synced = await syncUniversities(selected);
+    if (version !== sessionVersion.current) return false;
+    setBusyTask(null);
+    if (!synced && !cached) {
+      setShortlistNotice("");
+      setActionError({ message: "Выбор не сохранён. Проверь интернет и разрешение на хранение данных, затем попробуй ещё раз." });
       return false;
     }
-    if (data.done.shortlist) {
-      setActionError(null);
-      changeSection("today");
-      return true;
-    }
+    setShortlist(selected);
+    if (data.done.shortlist || !synced) { setActionError(null); changeSection("today"); return true; }
     return handleToggle("shortlist", true);
   }
 
@@ -407,7 +454,7 @@ export function PortalExplorer() {
         if (current && !data.done[current.id] && res.data.done[current.id]) {
           completionFocusPending.current = true;
           if (previousTasks.map(task => task.id).join("|") === nextTasks.map(task => task.id).join("|")) {
-            setRoadTravel({ fromDone: previousTasks.filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+            setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
           }
         }
       }
@@ -459,10 +506,12 @@ export function PortalExplorer() {
       if (version !== sessionVersion.current) return;
       if (!saved?.ok) throw new Error(typeof saved?.error === "string" ? saved.error : "Не удалось сохранить результат.");
       setData((prev) => (prev ? { ...prev, docs: saved.docs, done: saved.done, progress: saved.progress } : prev));
-      if (data && saved.done[taskId]) {
-        if (!data.done[taskId]) {
+      const task = data?.roadmap.flatMap(stage => stage.tasks).find(row => row.id === taskId);
+      const updated = data ? { ...data, docs: saved.docs, done: saved.done } : null;
+      if (data && updated && task && portalTaskDone(updated, task)) {
+        if (portalProgress(updated).done > portalProgress(data).done) {
           completionFocusPending.current = true;
-          setRoadTravel({ fromDone: data.roadmap.flatMap(stage => stage.tasks).filter(task => data.done[task.id]).length, id: ++travelSequence.current });
+          setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
         }
         changeSection("today");
       } else showDocument(taskId, false);
@@ -551,44 +600,55 @@ export function PortalExplorer() {
   }
 
   const position = useMemo(() => data ? portalPosition(data) : null, [data]);
-  const currentTask = position?.task || position?.stage?.tasks.find(task => !data?.done[task.id]) || null;
+  const currentTask = position?.task || position?.stage?.tasks.find(task => data && !portalTaskDone(data, task)) || null;
   const activeTask = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === (openDocument || openTaskId)) || null;
   const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask) : "";
   const documentBackHref = documentReturnTask.current ? `/portal?view=plan&task=${encodeURIComponent(documentReturnTask.current)}` : sectionUrl(stepReturnSection.current);
   const shortlistEditable = Boolean(activeTask?.id === "shortlist" && (data?.done.shortlist || !readOnlyReason));
   const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
-    && (data.done[activeTask.id] || activeTask.available !== false));
+    && portalTaskStageOpen(data, activeTask.id) && (portalTaskDone(data, activeTask) || activeTask.available !== false));
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
   const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {
       portal: true, taskId: activeTask?.id, taskTitle: activeTask ? taskTitle(activeTask) : undefined,
-      taskContext: assistantContext,
+      taskContext: assistantContext, taskDone: activeTask && data ? portalTaskDone(data, activeTask) : false,
+      questions: activeTask && data ? taskQuestions(activeTask, portalTaskDone(data, activeTask)) : undefined,
     } }));
     return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
-  }, [activeTask, assistantContext]);
+  }, [activeTask, assistantContext, data]);
 
   function openAssistant() {
     window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: {
       source: "portal-header",
       taskId: activeTask?.id,
       taskTitle: activeTask ? taskTitle(activeTask) : undefined,
-      taskContext: assistantContext,
+      taskContext: assistantContext, taskDone: activeTask && data ? portalTaskDone(data, activeTask) : false,
+      questions: activeTask && data ? taskQuestions(activeTask, portalTaskDone(data, activeTask)) : undefined,
     } }));
   }
 
-  function openTask(task: PortalTask) {
-    stepReturnSection.current = section;
-    if (DOC_TASKS[task.id]) {
+  function backFromTask() {
+    if (window.history.state?.portalBackHref) window.history.back();
+    else changeSection("plan");
+  }
+
+  function openTask(task: PortalTask, intent?: "instruction" | "upload") {
+    if (!activeTask) stepReturnSection.current = section;
+    if (DOC_TASKS[task.id] && intent !== "instruction") {
       showDocument(task.id, true, stepReturnSection.current);
+      if (intent === "upload") requestUpload(task.id);
       return;
     }
     setOpenDocument(null);
     setOpenTaskId(task.id);
     setSection("plan");
     const url = `/portal?view=plan&task=${encodeURIComponent(task.id)}`;
-    if (window.location.pathname + window.location.search !== url) window.history.pushState({}, "", url);
+    if (window.location.pathname + window.location.search !== url) {
+      stepReturnHref.current = window.location.pathname + window.location.search;
+      window.history.pushState({ portalBackHref: stepReturnHref.current }, "", url);
+    }
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
@@ -650,7 +710,8 @@ export function PortalExplorer() {
     } />
     {section !== "today" && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
-        navigationOnly
+        activeStageId={activeTask ? data.roadmap.find(row => row.tasks.some(task => task.id === activeTask.id))?.id : undefined}
+        deadline={nearestUniversityDeadline(shortlist)} navigationOnly
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
         secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
@@ -658,10 +719,10 @@ export function PortalExplorer() {
     </div>
     <main id="main">
       {section === "today" && <div className={navigation.arrival} data-portal-arrival>
-        <PortalWelcome name={data.client.name} intakeYear={data.client.intakeYear} />
+        <PortalWelcome name={data.client.name} intakeYear={data.client.intakeYear}><PortalUniversitySummary ids={shortlist} onEdit={() => { const task = data.roadmap.flatMap(row => row.tasks).find(task => task.id === "shortlist"); if (task) openTask(task); }} /></PortalWelcome>
         <section data-portal-progress-shell aria-label="Прогресс поступления">
           <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
-            progressFirst onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
+            deadline={nearestUniversityDeadline(shortlist)} progressFirst onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
         </section>
       </div>}
       <div className={styles.shell}>
@@ -707,6 +768,7 @@ export function PortalExplorer() {
           </nav>
 
           <div id="portal-panel" className={styles.panel}>
+            {shortlistNotice && <p role="status" className={styles.muted}>{shortlistNotice} <button type="button" className={styles.textLink} disabled={Boolean(busyTask)} onClick={() => { void handleSaveUniversities(shortlist); }}>Повторить синхронизацию</button></p>}
             {actionError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
                 <p role="alert">{actionError.message}</p>
@@ -716,13 +778,13 @@ export function PortalExplorer() {
             {section === "today" && <TodaySection data={data} onOpenDoc={showDocument} onOpenDocuments={() => changeSection("docs")} shortlist={shortlist} onOpenTask={openTask} />}
             {section === "plan" && (activeTask && openTaskId ? shortlistEditable ? <PortalUniversityStep
               key={activeTask.id} data={data} task={activeTask} selectedIds={shortlist} busy={busyTask !== null}
-              onBack={() => changeSection(stepReturnSection.current)} backHref={sectionUrl(stepReturnSection.current)} onSave={handleSaveUniversities}
+              onBack={backFromTask} backHref={stepReturnHref.current} onSave={handleSaveUniversities}
               onReopen={() => { void handleToggle("shortlist", false); }}
             /> : <PortalTaskDetail
               key={activeTask.id + ":" + Boolean(data.done[activeTask.id])}
               data={data} task={activeTask} busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)}
               context={reviewContext} onContextChange={setReviewContext}
-              onBack={() => changeSection(stepReturnSection.current)} backHref={sectionUrl(stepReturnSection.current)} onUpload={() => requestUpload(activeTask.id)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, activeTask.id); }}
+              onBack={backFromTask} backHref={stepReturnHref.current} onUpload={() => requestUpload(activeTask.id)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, activeTask.id); }}
               onToggle={value => { void handleToggle(activeTask.id, value); }}
               onEditProfile={() => { profileFromTask.current = true; setEditingProfile(true); }}
               managesCompletion={activeTask.id === "chances"}

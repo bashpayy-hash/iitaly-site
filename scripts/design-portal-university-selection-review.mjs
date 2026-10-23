@@ -65,6 +65,14 @@ async function setup(width, { failSave = false, blockedStorage = false, height =
       lookups.push(body);
       return json(data[body.code]);
     }
+    const profile = url.pathname.match(/^\/api\/portal\/(TEST-0[12])\/profile$/);
+    if (profile) {
+      const code=profile[1], body=request.postDataJSON();
+      assert.equal(body.surname,accounts[code]);
+      assert(Array.isArray(body.universityIds));
+      data[code].client.profile.universityIds=body.universityIds;
+      return json(data[code]);
+    }
     const match = url.pathname.match(/^\/api\/portal\/(TEST-0[12])\/task$/);
     if (match) {
       const code = match[1], body = request.postDataJSON();
@@ -216,13 +224,19 @@ try {
     await chooseMilan(page);
     await select(page, 'bocconi').check();
     await save(page).click();
+    if(failure==='storage') {
+      await page.locator('[data-portal-overview]').waitFor();
+      assert.deepEqual(data['TEST-01'].client.profile.universityIds,['bocconi'],'Backend persistence works even if the local fallback is unavailable');
+      assert.equal(data['TEST-01'].done.shortlist,true);
+      assert.equal(calls.length,1);
+      results.push({failure,backendPersistence:true});
+      await context.close();continue;
+    }
     await page.locator('#portal-panel [role=alert]').waitFor();
     assert.equal(data['TEST-01'].done.shortlist, undefined, 'A failed save never completes the step');
     assert.equal(await select(page, 'bocconi').isChecked(), true, 'A failed save preserves the selected draft');
     assert.equal(await page.locator('[data-portal-road]').getAttribute('data-current-step'), 'shortlist');
-    if (failure === 'storage') {
-      assert.equal(calls.length, 0, 'Unavailable local storage prevents a misleading successful completion request');
-    } else {
+    {
       assert.equal(calls.length, 1);
       await page.reload({ waitUntil: 'networkidle' });
       await picker(page).waitFor();

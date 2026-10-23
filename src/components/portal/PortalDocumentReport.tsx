@@ -80,6 +80,7 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
       <div className={styles.inspector} data-portal-document-inspector>
         <h3>{outcome.label}</h3>
         <p>{reasons[outcome.kind]}</p>
+        {outcome.action && <p>Что сделать: {outcome.action}</p>}
         {(result?.summary || doc.summary) && <p>{result?.summary || doc.summary}</p>}
       </div>
     </div>
@@ -95,7 +96,7 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
 
     {canUpload ? <div className={styles.actions} data-fab-yield>
       <PortalDocumentCoach />
-      <p id="portal-document-repeat-hint" className={styles.meta}>Повторная проверка без доплаты. Новый разбор заменит этот.</p>
+      <p id="portal-document-repeat-hint" className={styles.meta}>Новая проверка заменит текущий разбор.</p>
       <PortalUploadZone busy={busy} onChoose={onUpload} onFileDrop={onFileDrop} label="Проверить новую версию"
         describedBy="portal-document-repeat-hint" hint="Приложи файл или перетащи его сюда" />
       {busy && <p className={styles.meta} role="status">Веспи проверяет и сохраняет новую версию…</p>}

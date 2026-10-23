@@ -32,3 +32,11 @@
 @media(max-width:900px) { .step { padding: 20px; } .step h2 { font-size: 28px; } }
 @media(max-width:600px) { .assistant [data-vespi-presence] { width: 72px; margin-left: 14px; } }
 @media(max-width:480px) { .step h2 { margin-top: 10px; } .assistant[data-vespi-assistant] { margin: 14px 0; } }
+.answers { display:grid; gap:12px; margin:20px 0 0; font-size:15px; line-height:1.5; }
+.answers > div { display:grid; grid-template-columns:minmax(90px,1fr) minmax(0,3fr); gap:16px; }
+.answers dt { color:var(--portal-muted); }
+.answers dd { margin:0; overflow-wrap:anywhere; }
+
+.instructionList { list-style:decimal; padding-left:24px; font-size:15px; line-height:1.6; }
+.instructionList li + li { margin-top:12px; }
+.instructionSources { display:flex; flex-wrap:wrap; gap:8px 16px; }
