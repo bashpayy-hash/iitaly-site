@@ -160,15 +160,16 @@ try{
     }
     if(['parent-file','late-current'].includes(mode)){
       await road(page).locator('[data-road-open]').click();await detail(page).waitFor();assert.equal(await detail(page).locator('button[data-primary-action]').count(),1,'Current file has one action');
-      if(mode==='parent-file')assert.match(await detail(page).locator('h2').innerText(),/^Попросить родителей/);
+      if(mode==='parent-file')assert.equal(await detail(page).locator('h2').innerText(),'Собрать справки о составе и доходах семьи для DSU');
       await oneFace(page,'File inspector');await axe(page,'File '+mode+' '+width);
       if(mode==='parent-file'){
         const transfer=await page.evaluateHandle(()=>{const d=new DataTransfer();d.items.add(new File(['SYNTHETIC DOCUMENT ONLY. NO PERSONAL DATA.'],'synthetic-review.txt',{type:'text/plain'}));return d;});
         await page.locator('[data-portal-upload-zone]').dispatchEvent('drop',{dataTransfer:transfer});await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.deepEqual(fileCalls,['check','save']);assert.equal(calls.length,0,'No separate uploaded self-report');
       }
     }
-    if(mode==='screenshot-parent'){await go(page,'План');await page.locator('[data-current-task=true]').waitFor();assert.equal(await page.locator('[data-road-step-title]').count(),0);assert.equal(await page.getByText('Попросить родителей оценить шансы на стипендию',{exact:true}).count(),1,'Reported parent task appears once');await capture(page,`portal-plan-parent-${width}`);}
+    if(mode==='screenshot-parent'){await go(page,'План');await page.locator('[data-current-task=true]').waitFor();assert.equal(await page.locator('[data-road-step-title]').count(),0);assert.equal(await page.getByText('Рассчитать бюджет и оценить шансы на стипендию DSU',{exact:true}).count(),1,'Direct budget task appears once');await capture(page,`portal-plan-parent-${width}`);}
     if(mode==='late-current')await capture(page,`portal-document-${width}`);
+    assert.doesNotMatch(await page.locator('#portal-panel').innerText(),/родител/i,'Saved owner roles must not reintroduce delegated task copy');
     await noOverflow(page);results.push({width,mode,passed:true});await context.close();
   }
   for(const motion of [false,true]){

@@ -14,8 +14,7 @@ import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
-import { VESPI_NAME } from "@/components/mascot/Vespi";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
 import { PortalWelcome } from "./PortalWelcome";
 import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
@@ -564,7 +563,7 @@ export function PortalExplorer() {
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {
-      portal: true, taskId: activeTask?.id, taskTitle: activeTask ? taskTitle(activeTask) : undefined, taskOwner: activeTask?.owner,
+      portal: true, taskId: activeTask?.id, taskTitle: activeTask ? taskTitle(activeTask) : undefined,
       taskContext: assistantContext,
     } }));
     return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
@@ -575,7 +574,6 @@ export function PortalExplorer() {
       source: "portal-header",
       taskId: activeTask?.id,
       taskTitle: activeTask ? taskTitle(activeTask) : undefined,
-      taskOwner: activeTask?.owner,
       taskContext: assistantContext,
     } }));
   }
@@ -643,7 +641,7 @@ export function PortalExplorer() {
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
     <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
       <div className={navigation.headerLinks}>
-        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiAssistant as="div" variant="copilot" layout="inline-pill" appearance="indicator" label="Помощник" className={navigation.helperSignal} /></a>
+        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiAvatar /><span>Помощник</span></a>
         <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); openSettings();
@@ -735,8 +733,8 @@ export function PortalExplorer() {
               {activeTask.id === "kit" && <PortalPermessoStep />}
             </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
-              <PortalDocumentReport title={/родител/i.test(activeTask.owner || "") ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
-                stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min, activeTask.owner || "Ты"].filter(Boolean).join(" · ")}
+              <PortalDocumentReport title={openDocument === "familyDocs" ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
+                stepMeta={[data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title, activeTask.time || TASK_META[activeTask.id]?.min].filter(Boolean).join(" · ")}
                 orientir={taskDate(activeTask)}
                 onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(openDocument)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, openDocument); }} busy={busyTask !== null}
                 canUpload={(!readOnlyReason || canRecheckDocument) && !actionError?.retry} readOnlyReason={readOnlyReason}

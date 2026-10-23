@@ -36,8 +36,3 @@
   .settingsLink { width: 44px; padding: 8px; }
   .settingsLink span { display: none; }
 }
-
-/* The page's guide owns the portrait; the helper remains one quiet entry. */
-.helperSignal { align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
-.helperSignal [data-vespi-label] { margin: 0; font: inherit; }
-.helperSignal [data-vespi-indicator] { width: 24px; height: 24px; font-size: 13px; }

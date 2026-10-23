@@ -1,0 +1,57 @@
+.result, .transition {
+  --result-ink: var(--portal-ink, #141413);
+  --result-muted: var(--portal-muted, #57534E);
+  --result-line: var(--portal-border, #E4DDD5);
+  color: var(--result-ink);
+}
+.result { animation: result-reveal 260ms cubic-bezier(.16,1,.3,1) both; }
+.next { margin-top: 24px; padding: 24px; border: 1px solid var(--result-line); border-radius: 24px; background: #FFFDF9; }
+.nextHeading { display: flex; align-items: flex-start; gap: 14px; }
+.next h4, .route h4 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.35; letter-spacing: -.02em; }
+.number { display: grid; place-items: center; flex: 0 0 28px; width: 28px; height: 28px; border: 1px solid var(--result-line); border-radius: 50%; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.next .number { background: var(--result-ink); border-color: var(--result-ink); color: #FFFFFF; }
+.summary, .intro { max-width: 66ch; margin: 12px 0 0; font-size: 15px; line-height: 1.65; color: var(--result-muted); }
+.action { display: flex; gap: 10px; align-items: flex-start; margin: 18px 0; font-size: 16px; line-height: 1.6; font-weight: 500; }
+.action svg { flex-shrink: 0; margin-top: 4px; }
+.references { margin-top: 18px; border-top: 1px solid var(--result-line); }
+.references summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 0; font-size: 14px; list-style: none; cursor: pointer; }
+.references p, .stepBody > p { max-width: 70ch; color: var(--result-muted); font-size: 15px; line-height: 1.7; }
+.references a, .stepBody a { display: inline-flex; align-items: center; min-height: 44px; color: var(--result-ink); }
+.references li > span, .stepBody li > span { font-size: 13px; }
+.route { margin-top: 32px; }
+.steps { margin: 20px 0 0; padding: 0; list-style: none; }
+.steps > li { display: flex; align-items: flex-start; gap: 14px; padding: 16px 0; border-top: 1px solid var(--result-line); }
+.steps > li > .number { margin-top: 2px; }
+.step { flex: 1; min-width: 0; }
+.step > summary { display: flex; align-items: flex-start; gap: 16px; min-height: 44px; list-style: none; cursor: pointer; }
+.step > summary > span { flex: 1; min-width: 0; }
+.step strong { display: block; font-size: 16px; font-weight: 500; line-height: 1.5; }
+.preview { display: block; max-width: 65ch; margin-top: 5px; color: var(--result-muted); font-size: 14px; line-height: 1.6; }
+.step summary > svg { flex-shrink: 0; margin-top: 4px; }
+.stepBody { padding-top: 2px; animation: result-reveal 200ms ease-out; }
+.stepBody .action { color: var(--result-ink); }
+.documents { margin-top: 24px; padding: 4px 0; border-top: 1px solid var(--result-line); border-bottom: 1px solid var(--result-line); }
+.documents > summary { display: flex; align-items: center; gap: 12px; min-height: 56px; font-size: 16px; font-weight: 500; list-style: none; cursor: pointer; }
+.documents > summary > span { flex: 1; }
+.documents > p, .documents li p { margin: 4px 0 12px; color: var(--result-muted); font-size: 14px; line-height: 1.65; }
+.documents ul { margin: 16px 0; padding: 0; list-style: none; }
+.documents li { padding: 10px 0; }
+.documents strong { font-size: 15px; font-weight: 500; }
+.result summary::-webkit-details-marker { display: none; }
+.result summary > svg:last-child { transition: transform 200ms ease; }
+.result details[open] > summary > svg:last-child { transform: rotate(180deg); }
+.result :is(a, summary):focus-visible, .transition button:focus-visible { outline: 2px solid var(--result-ink); outline-offset: 4px; }
+.result :is(p, strong, span, a) { overflow-wrap: anywhere; }
+.transition { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 320px; padding: 24px 0; }
+.transition h3 { max-width: 25ch; margin: 24px 0 10px; font-size: 24px; font-weight: 600; line-height: 1.3; letter-spacing: -.025em; }
+.transition p { max-width: 48ch; margin: 0; color: var(--result-muted); font-size: 16px; line-height: 1.6; }
+.transitionTrack { display: flex; align-items: center; width: 168px; }
+.transitionTrack > span { display: grid; place-items: center; flex: 0 0 40px; height: 40px; border: 1px solid var(--result-line); border-radius: 50%; }
+.transitionTrack > span:first-child { background: var(--result-ink); border-color: var(--result-ink); color: #FFFFFF; }
+.transitionTrack i { position: relative; flex: 1; height: 1px; overflow: hidden; background: var(--result-line); }
+.transitionTrack i::after { content: ''; position: absolute; inset: 0; background: var(--result-ink); transform-origin: left; animation: route-join 1000ms cubic-bezier(.16,1,.3,1) both; }
+.transition button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 20px; padding: 8px 0; border: 0; background: transparent; color: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+@keyframes route-join { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes result-reveal { from { opacity: .5; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media(max-width:480px) { .next { padding: 18px; } .nextHeading, .steps > li { gap: 10px; } .next h4 { font-size: 18px; } .transition h3 { font-size: 22px; } }
+@media(prefers-reduced-motion:reduce) { .result, .stepBody, .transitionTrack i::after { animation: none; } .result summary > svg:last-child { transition: none; } }

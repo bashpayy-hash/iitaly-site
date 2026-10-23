@@ -17,10 +17,10 @@ import { demoReply } from "@/data/chatDemo";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
-import { VESPI_NAME } from "@/components/mascot/Vespi";
+import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import placement from "./chat-placement.module.css";
 
@@ -120,16 +120,12 @@ export function ChatWidget() {
     : displayContext.taskId === "shortlist"
     ? ["Как выбрать программы?", "Что сравнить у программ?"]
     : displayContext.taskId
-      ? /родител/i.test(displayContext.taskOwner || "")
-        ? ["Что попросить у родителей?", "Что подготовить вместе?"]
-        : ["С чего начать этот шаг?", "Что нужно подготовить?"]
+      ? ["С чего начать этот шаг?", "Что нужно подготовить?"]
       : ["С чего начать поступление?", "Как пользоваться маршрутом?"];
   const portalHint = displayContext.taskId === "shortlist"
     ? "Помогу разобраться, что сравнить при выборе программ."
     : displayContext.taskId
-      ? /родител/i.test(displayContext.taskOwner || "")
-        ? "Разберём, что подготовить вместе с родителями."
-        : "Разберём, с чего начать и что подготовить для этого шага."
+      ? "Разберём, с чего начать и что подготовить для этого шага."
       : "Открой шаг, чтобы обсудить его детали. Или спроси про поступление здесь.";
   const helperHint = guidesMode ? "Выбери вопрос или напиши свой. Отправлю его только по твоему нажатию." : portalHint;
 
@@ -267,7 +263,7 @@ export function ChatWidget() {
 
     const context = stepContext.current;
     const scopedText = context.taskId
-      ? `[Открытый шаг IITALY: ${context.taskId}; название: ${context.taskTitle || ""}; кто делает: ${context.taskOwner || "Ты"}. ${context.taskContext || ""}]\n${text}`
+      ? `[Открытый шаг IITALY: ${context.taskId}; название: ${context.taskTitle || ""}. ${context.taskContext || ""}]\n${text}`
       : context.portal ? `[Личный кабинет IITALY: шаг сейчас не открыт.]\n${text}`
       : context.guideId ? `[Открытая тема справочника IITALY: ${context.guideId}; название: ${GUIDE_HELP[context.guideId].title}. Чтение темы не подтверждает образование, выбранную программу или требования к документу пользователя.]\n${text}` : text;
     const nextHistory: ChatMessage[] = [
@@ -348,9 +344,7 @@ export function ChatWidget() {
               ref={headRef}
               className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#e7e4df] bg-white text-[#141413]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
-                <MessageCircle size={22} strokeWidth={1.8} aria-hidden="true" />
-              </span>
+              <VespiAvatar size={40} />
               <div className="min-w-0 flex-1">
                 <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
                 <span className={`block mt-1 text-[13px] leading-tight ${calmMode ? "text-[#6c6862]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>

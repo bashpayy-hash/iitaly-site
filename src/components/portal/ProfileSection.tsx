@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import type { PortalData } from "@/lib/portalApi";
+import { taskBlockedReason, taskTitle } from "@/lib/portalNavigation";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
 import settings from "./portal-settings.module.css";
@@ -23,24 +24,24 @@ export function ProfileSection({
 }) {
   const [copied, setCopied] = useState(false);
   const profile = data.client.profile || {};
-  const parentTasks = useMemo(() => {
+  const remainingTasks = useMemo(() => {
     const rows: string[] = [];
     for (const stage of data.roadmap) {
       for (const task of stage.tasks) {
-        if (!task.owner?.toLowerCase().includes("родител") || data.done[task.id]) continue;
-        rows.push("• " + task.t + (task.timingLabel ? " — " + task.timingLabel : task.deadline ? " — Ориентир: " + task.deadline : ""));
+        if (data.done[task.id]) continue;
+        rows.push("• " + taskTitle(task) + (task.timingLabel ? " — " + taskBlockedReason(task) : task.deadline ? " — Ориентир: " + task.deadline : ""));
       }
     }
     return rows;
   }, [data]);
 
-  async function copyParents() {
+  async function copyChecklist() {
     const text = [
-      "IITALY — что понадобится от родителей",
+      "IITALY — мой список задач",
       "",
-      ...parentTasks,
+      ...remainingTasks,
       "",
-      "Откройте кабинет вместе со студентом, чтобы увидеть пояснения по каждому шагу.",
+      "Подробные инструкции к каждому шагу — в личном кабинете.",
     ].join("\n");
     try {
       await navigator.clipboard.writeText(text);
@@ -81,14 +82,14 @@ export function ProfileSection({
           </dl>
         </section>
 
-        <details id="parents" className={settings.disclosure}>
-          <summary>Что понадобится от семьи</summary>
+        <details id="checklist" className={settings.disclosure}>
+          <summary>Список задач</summary>
           <p>
-            Мы не создаём отдельный родительский логин без твоего согласия. Вместо этого можно скопировать только список задач, где нужна помощь семьи.
+            Скопируй оставшиеся задачи с ориентирами по срокам, чтобы держать список под рукой.
           </p>
-          {parentTasks.length ? (
-            <a href="/portal?view=settings#parents" className={settings.textAction} onClick={(event) => { event.preventDefault(); void copyParents(); }}>
-              {copied ? "Скопировано" : "Скопировать список для родителей"}
+          {remainingTasks.length ? (
+            <a href="/portal?view=settings#checklist" className={settings.textAction} onClick={(event) => { event.preventDefault(); void copyChecklist(); }}>
+              {copied ? "Скопировано" : "Скопировать список задач"}
             </a>
           ) : <p className={styles.taskNote}>Пока задач нет</p>}
         </details>

@@ -232,7 +232,7 @@ try {
       }
       if (task === 'familyDocs') {
         assert.match(await report(page).innerText(), /Загрузи чёткий скан всех страниц/);
-        assert.equal(await page.locator('button').count(), 0, 'Parent-owned reports contain no student action');
+        assert.equal(await page.locator('button').count(), 0, 'Future read-only reports contain no action');
       }
       if (task === 'cimea') {
         await report(page).getByRole('heading', { name: 'Для полного разбора нужна новая проверка', exact: true }).waitFor();

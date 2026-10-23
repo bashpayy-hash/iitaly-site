@@ -22,7 +22,7 @@ export function Hero() {
               <Link href="/universities">Смотреть университеты <span aria-hidden>↗</span></Link>
             </div>
           </div>
-          <p className={styles.heroNote}>Короткий опрос · Для школьников 16–18 лет и их родителей</p>
+          <p className={styles.heroNote}>Короткий опрос · Для абитуриентов и студентов</p>
           <Link href="/changes-2026-27" className="mt-3 inline-block min-h-11 py-2 text-sm underline underline-offset-4">Правила 2026/27–2027/28 · проверено 9 октября</Link>
         </div>
         <CampusArtwork />

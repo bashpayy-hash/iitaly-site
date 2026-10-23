@@ -5,6 +5,7 @@ import { WIZ, type WizAnswers } from "@/data/wizard";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
+import { AssessmentTransition, useAssessmentTransition } from "./AssessmentTransition";
 import { AppleButton } from "@/components/apple/Button";
 import type { PlanDraft } from "@/lib/usePlanDraft";
 import { CalendarDays, Timer, Compass, GraduationCap, BookOpen, Wallet, Languages, MapPin, Users, FileCheck2, type LucideIcon } from "lucide-react";
@@ -20,7 +21,7 @@ const QUESTION_CONTEXT: Record<string, string> = {
   budget: "Стипендию и средства на визу нужно проверять отдельно.",
   field: "От направления зависят тесты и условия конкурса. Точные требования проверим у программы.",
   lang: "От ответа зависит, что делать дальше: подтвердить язык или подготовиться к тесту.",
-  age: "Если тебе ещё нет 18, в маршрут нужны отдельные шаги для родителей, жилья и документов.",
+  age: "Если тебе ещё нет 18, в маршрут нужны отдельные требования к жилью и документам.",
   residence: "Используем процедуру для твоего места проживания.",
   dsuRegion: "Требования к справкам проверяем по конкретному конкурсу.",
 };
@@ -37,6 +38,7 @@ function ruPlural(n: number, one: string, few: string, many: string): string {
 
 export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onDraftChange: (draft: PlanDraft) => void; onDone: (answers: WizAnswers) => void }) {
   const { step, answers } = draft;
+  const { preparing, begin, finish: finishTransition } = useAssessmentTransition();
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -47,11 +49,11 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   const finished = step >= WIZ.length;
 
   useEffect(() => {
-    if (!stepChanged.current) return;
+    if (!stepChanged.current || preparing) return;
     liveRef.current?.focus({ preventScroll: true });
     liveRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
     stepChanged.current = false;
-  }, [step]);
+  }, [step, preparing]);
 
   // Реальный превью того же движка, что строит финальный план (buildPlan) —
   // не отдельная выдуманная "заглушка ради демо-эффекта". Показываем его
@@ -72,6 +74,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   function choose(id: string, value: string) {
     stepChanged.current = true;
     if (step === 0) track("plan_started");
+    if (step + 1 === WIZ.length) begin();
     onDraftChange({ answers: { ...answers, [id]: value }, step: step + 1, complete: false });
     track("wiz_step", { s: id });
     track("plan_step_completed", { step: step, of: WIZ.length });
@@ -116,7 +119,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
       </div>
 
       <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="mt-6 rounded-apple-card">
-        {finished ? (
+        {preparing ? <AssessmentTransition onSkip={finishTransition} /> : finished ? (
           <>
             {preview && (
               <div className="mb-6 rounded-apple-card border border-white/15 bg-frost p-4">
@@ -124,7 +127,8 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
                   Уже готово по твоим ответам
                 </p>
                 <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0]?.t}</p>
-                <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.p}</p>
+                <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.summary || preview.steps[0]?.p}</p>
+                {preview.steps[0]?.action && <p className="mt-3 text-apple-body-sm text-cloud-white">{preview.steps[0].action}</p>}
                 <p className="mt-2 text-apple-caption text-cloud-meta">
                   {(() => {
                     const stepsLeft = Math.max(preview.steps.length - 1, 0);
@@ -183,7 +187,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
               <a href="/privacy" className="font-semibold text-crimson">
                 Как мы работаем с данными
               </a>
-              . Если тебе меньше 18, заполняй вместе с родителем.
+              . Если тебе меньше 18, заполняй вместе с законным представителем.
             </p>
             </details>
           </>
@@ -200,7 +204,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
       <div className="mt-6 flex items-center justify-between border-t border-white/15 pt-4">
         <button
           type="button"
-          onClick={() => { stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
+          onClick={() => { finishTransition(); stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
           className={`min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
         >
           ← Назад

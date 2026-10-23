@@ -34,7 +34,7 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
   const date = taskDate(task);
   const help = taskHelpDetails(task);
   const stage = data.roadmap.find(row => row.tasks.some(item => item.id === task.id));
-  const meta = [stage?.title, task.time || TASK_META[task.id]?.min, task.owner || "Ты"].filter(Boolean).join(" · ");
+  const meta = [stage?.title, task.time || TASK_META[task.id]?.min].filter(Boolean).join(" · ");
 
   return <section className={styles.step} data-step-detail={task.id} aria-labelledby="portal-step-heading">
     <a href={backHref} className={styles.back} onClick={event => {

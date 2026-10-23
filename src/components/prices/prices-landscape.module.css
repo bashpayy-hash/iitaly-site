@@ -4,30 +4,28 @@
   content:""; position:absolute; z-index:-1; inset:-34px -20px -20px; pointer-events:none;
   background:radial-gradient(ellipse at center,var(--color-cream) 28%,color-mix(in srgb,var(--color-cream) 97%,transparent) 59%,color-mix(in srgb,var(--color-cream) 78%,transparent) 72%,transparent 90%);
 }
-/* Two details from the approved botanical artwork sit in front of the banner. */
-.foregroundLeaf {
-  position:absolute; z-index:2; width:126px; height:64px; overflow:hidden;
-  pointer-events:none; user-select:none;
+/* Detached painted petals overlap the banner, without clipped branches. */
+.foregroundPetal {
+  position:absolute; z-index:2; overflow:hidden; pointer-events:none; user-select:none;
 }
-.foregroundLeaf img { position:absolute; width:450px; max-width:none; height:auto; left:-80px; top:-54px; }
-.leafLeft { left:-38px; top:-56px; transform:rotate(-18deg); }
-.leafRight { right:-42px; top:-34px; transform:scaleX(-1) rotate(-28deg); }
+.foregroundPetal img { position:absolute; width:216px; max-width:none; height:auto; }
+.petalLeft { left:24px; top:-24px; width:58px; height:62px; transform:rotate(-14deg); }
+.petalLeft img { left:-20px; top:-18px; }
+.petalMiddle { right:112px; top:-18px; width:36px; height:38px; transform:rotate(22deg); }
+.petalMiddle img { left:-108px; top:-45px; }
+.petalRight { right:28px; top:-28px; width:58px; height:48px; transform:rotate(-18deg); }
+.petalRight img { left:-145px; top:-85px; }
 .landscape { display:block; pointer-events:none; user-select:none; }
 .landscape img { display:block; width:100%; height:auto; }
 .packages { position:relative; padding-top:20px; }
 @media (min-width:960px) { .copy::before { inset-inline:-72px; } }
-@media (min-width:768px) and (max-width:1023px) {
-  .leafLeft { left:12px; }
-  .leafRight { right:12px; }
-}
 @media (max-width:767px) {
   .hero { padding:48px 20px 20px; }
   .copy::before { inset:-20px -20px -14px; }
-  .foregroundLeaf { width:84px; height:43px; }
-  .foregroundLeaf img { width:300px; left:-54px; top:-36px; }
-  .leafLeft { left:0; top:-28px; }
-  .leafRight { right:0; top:-18px; }
+  .petalLeft { left:0; top:-28px; transform:scale(.75) rotate(-14deg); }
+  .petalMiddle { right:64px; top:-22px; transform:scale(.75) rotate(22deg); }
+  .petalRight { right:0; top:-30px; transform:scale(.75) rotate(-18deg); }
 }
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more) { .copy::before { background:var(--color-cream); } }
-@media (forced-colors:active),print { .foregroundLeaf { display:none; } }
+@media (forced-colors:active),print { .foregroundPetal { display:none; } }
 @media print { .hero { padding-block:24px; } .copy::before { display:none; } }
