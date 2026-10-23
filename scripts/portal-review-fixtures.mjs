@@ -35,7 +35,7 @@ export function fixture(mode = 'partial') {
     task.warn = task.note;
   }
   if (mode === 'parents') data.done.shortlist = true;
-  if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
+  if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Попросить родителей собрать семейные справки', explain: 'Попроси родителей собрать справки по требованиям конкурса.', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
   if (mode === 'last') { data.roadmap = [{ id: 'arrival', title: 'Переезд', tasks: [{ id: 'manual-task', t: 'Подготовить сведения', available: true, owner: 'Ты' }] }]; data.done = {}; }
   if (mode === 'full-route' || mode === 'screenshot-parent') {
@@ -57,7 +57,7 @@ export function fixture(mode = 'partial') {
     // make overall progress differ from progress inside the current stage.
     data.roadmap = data.roadmap.filter(stage => stage.id !== 'education12');
     Object.assign(data.roadmap[0].tasks.find(task => task.id === 'chances'), {
-      t: 'Оценить шансы на стипендию', owner: 'Ты + родители', time: '10 мин',
+      t: 'Попросить родителей оценить шансы на стипендию', owner: 'Ты + родители', time: '10 мин',
     });
     data.done = { profile: true, shortlist: true, apostille: true, translate: true, 'obsolete-task': true };
   }

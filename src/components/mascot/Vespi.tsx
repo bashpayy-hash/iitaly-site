@@ -74,3 +74,19 @@ export function Vespi({ variant = "ride", presentation, className = "", alt = ""
     draggable={false}
   />;
 }
+
+/** Compact identity inside an assistant control or chat header. */
+export function VespiAvatar({ size = 24 }: { size?: 24 | 40 }) {
+  return <img
+    src="/mascot/vespi-search-avatar.webp"
+    width={size}
+    height={size}
+    alt=""
+    aria-hidden="true"
+    data-vespi-assistant-avatar
+    className="block shrink-0 rounded-full object-cover"
+    style={{ width: size, height: size }}
+    decoding="async"
+    draggable={false}
+  />;
+}

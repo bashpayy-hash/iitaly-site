@@ -185,7 +185,7 @@ for (const path of [
   'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
   'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts','src/lib/chat.ts',
   'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts','src/lib/portalApi.ts',
-  'src/lib/localWorkspace.ts','src/lib/usePlanDraft.ts','src/lib/portalShortlist.ts',
+  'src/lib/usePlanDraft.ts','src/lib/portalShortlist.ts',
   'src/components/universities/comparison-model.ts',
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
   'src/components/guides/permesso/permessoData.ts',
@@ -200,3 +200,12 @@ for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBan
 }
 assert(!/VespiIntroSection/.test(readFileSync('src/app/guides/page.tsx','utf8')),'Guides do not repeat the home introduction');
 assert(!/useVespiPresence|<Vespi\b/.test(readFileSync('src/components/chat/ChatLauncher.tsx','utf8')),'Floating help is a quiet icon entry');
+
+// User request 2026-10-20: direct task copy and no owner-role division.
+// Allow only those exact template edits; IDs, persistence and completion logic stay fixed.
+const localTaskPresentation = source => source
+  .replace(/, owner: \/финанс\|запас до выплаты\/\.test\(step\.t\) \? "Родители" : "Ты"/g, '')
+  .replace(/, owner: "(?:Ты|Родители)"/g, '')
+  .replace('Попросить родителей собрать семейные справки', 'Собрать справки о составе и доходах семьи для DSU')
+  .replace('Попросить родителей подготовить банковские выписки', 'Подготовить банковские выписки');
+assert.equal(localTaskPresentation(readFileSync('src/lib/localWorkspace.ts', 'utf8')), localTaskPresentation(execFileSync('git', ['show', `${base}:src/lib/localWorkspace.ts`], { encoding: 'utf8' })), 'Local task IDs and workspace logic unchanged');

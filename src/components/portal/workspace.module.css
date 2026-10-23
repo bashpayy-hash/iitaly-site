@@ -5,7 +5,7 @@
 .header > header::after { display:none; }
 .routeShell { max-width:1280px; margin:auto; padding:4px 32px 10px; }
 .headerActions { display:flex; gap:8px; align-items:center; }
-.headerActions > a { display:flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; padding:8px 12px; border-radius:999px; font-size:14px; }
+.headerActions > a { display:flex; align-items:center; justify-content:center; gap:7px; min-width:44px; min-height:44px; padding:8px 12px; border-radius:999px; font-size:14px; }
 .headerActions > a:hover { background:var(--color-warm-stone); }
 .frame { max-width:1280px; padding:20px 32px 60px; margin:auto; }
 .arrival { padding-bottom:18px; }

@@ -112,14 +112,14 @@ try {
     }
     for(const image of await canvas.locator('img').all()) assert(await image.evaluate(i=>i.complete&&i.naturalWidth>0),'All scene images decode locally');
     const protectedCopy=head.locator('[data-protected-typography]');
-    const leaves=protectedCopy.locator('[data-price-leaf]');
-    assert.equal(await leaves.count(),2,'Exactly two painted leaves overlap the banner');
+    const leaves=protectedCopy.locator('[data-price-petal]');
+    assert.equal(await leaves.count(),3,'Three detached painted petals overlap the banner');
     for(const leaf of await leaves.all()) {
       assert.equal(await leaf.getAttribute('aria-hidden'),'true');
-      assert.equal(await leaf.evaluate(el=>getComputedStyle(el).pointerEvents),'none','Leaves cannot intercept a control');
-      assert(await leaf.locator('img').evaluate(img=>img.complete&&img.naturalWidth>0),'The existing botanical artwork decodes');
+      assert.equal(await leaf.evaluate(el=>getComputedStyle(el).pointerEvents),'none','Petals cannot intercept a control');
+      assert(await leaf.locator('img').evaluate(img=>img.complete&&img.naturalWidth>0),'The transparent petal artwork decodes');
       const leafBox=await leaf.boundingBox(), copyBox=await protectedCopy.boundingBox();
-      assert(leafBox.y<copyBox.y && leafBox.y+leafBox.height>copyBox.y,'A leaf crosses the top edge of the banner');
+      assert(leafBox.y<copyBox.y && leafBox.y+leafBox.height>copyBox.y,'A petal crosses the top edge of the banner');
     }
     assert.match(await protectedCopy.evaluate(el=>getComputedStyle(el,'::before').backgroundImage),/radial-gradient/,'Text has a cream matte above the paint');
     const type=page=>page.locator('[data-section=prices-header] h1').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','color'].map(k=>s[k]);});

@@ -144,7 +144,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       <div className={styles.nextAction}>
         <p className={styles.eyebrow}>{current ? "Следующий шаг" : allComplete ? "Маршрут отмечен" : "Твой маршрут"}</p>
         <h2 data-road-step-title>{total ? title : "Маршрут пока не появился"}</h2>
-        {current && <p className={styles.meta} data-road-meta>{[current.time || TASK_META[current.id]?.min, current.owner || "Ты", orientir].filter(Boolean).join(" · ")}</p>}
+        {current && <p className={styles.meta} data-road-meta>{[current.time || TASK_META[current.id]?.min, orientir].filter(Boolean).join(" · ")}</p>}
         {current && !currentOpen && <a className={styles.action} data-road-open data-road-action href={portalTaskHref(data, current)} aria-label={`Дальше: ${title}. Открыть этот шаг.`} onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); onOpenTask(current);
