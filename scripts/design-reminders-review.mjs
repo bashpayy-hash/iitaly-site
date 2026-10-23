@@ -127,7 +127,10 @@ try {
     assert.doesNotMatch(await page.locator('#questionnaire').innerText(), /Claude|Anthropic|Клод/i);
     assert.match(await page.locator('#document-check').innerText(), /После нажатия «Проверить документ» файл передаётся в Anthropic/);
     assert.match(mainText, /План собран по твоим ответам/);
-    assert.match(mainText, /Это чек-лист, а не результат проверки файла/);
+    const documents = page.locator('[data-assessment-result] details').filter({ has: page.getByText('Какие документы понадобятся', { exact: true }) });
+    await documents.locator('summary').click();
+    assert.match(await documents.innerText(), /Это ориентир для сбора/);
+    assert.match(await documents.innerText(), /файлы ещё не проверены/);
 
     const settings = page.getByRole('link', { name: 'Настроить напоминания', exact: true });
     assert.equal(await settings.getAttribute('href'), '/portal?view=help');
