@@ -249,9 +249,11 @@ try {
       await page.getByRole('region', { name: 'Разбор документа', exact: true }).getByRole('link', { name: 'Назад', exact: true }).click();
       await page.locator('[data-step-detail="checkDocs"]').waitFor();
       assert.equal(new URL(page.url()).searchParams.get('task'), 'checkDocs', 'Report Back returns to the exact checkDocs task');
-      await page.goBack();
-      await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      // The document's Back action now traverses history instead of appending
+      // another task entry. Forward reopens the report; Back returns to its task.
       await page.goForward();
+      await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      await page.goBack();
       await page.locator('[data-step-detail="checkDocs"]').waitFor();
       assert.equal(calls.length, 0, 'Opening and reviewing saved files never completes a task');
       await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
