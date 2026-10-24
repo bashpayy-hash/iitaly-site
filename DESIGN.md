@@ -1,5 +1,20 @@
 # iItaly — единая тёплая система
 
+## Low Arc identity · 24 October 2026
+
+The supplied green fold / red low arc replaces the previous citrus app mark.
+Higgsfield informed the refinement; production uses flat vector geometry in
+`src/components/brand/mark.json`, shared by the header, portal and link preview.
+The open diagonal is transparent, not a white overlay. Brand green `#087C55`
+belongs to the mark only; existing UI accent, semantic statuses and global
+tokens remain unchanged. The wordmark is upright, monochrome, weight 700 in the
+existing display family. Use the white monochrome variant on the dark footer.
+No logo shadows, gradients or hover rotation. Normal mark 36px, compact 28px;
+the favicon keeps a light backing for dark browser chrome. Export assets with
+`node scripts/export-brand-assets.mjs`. The handmade Vespi system stays intact.
+
+## Established product surfaces
+
 Актуальный запрос пользователя, 18 октября 2026, отменяет прежний запрет
 на смену палитры и локальную синюю тему `/guides`.
 

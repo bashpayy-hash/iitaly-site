@@ -122,7 +122,9 @@ async function sticky(page){
 }
 try{
   const base=process.env.BASE_SHA||'4ee084f';
-  for(const file of ['src/app/globals.css','src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css'])assert.equal(await readFile(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}),file+' unchanged');
+  // The user explicitly replaced the brand mark on 24 October. The portal's
+  // global palette, typography, progress and interaction contracts stay fixed.
+  for(const file of ['src/app/globals.css'])assert.equal(await readFile(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}),file+' unchanged');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);
     await arrivalOrder(page,data);

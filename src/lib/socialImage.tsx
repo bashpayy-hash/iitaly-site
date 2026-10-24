@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { PRICE_MAIN, fmtPrice } from "@/data/pricing";
+import { BrandMark } from "@/components/brand/BrandMark";
 
 export const SOCIAL_IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
@@ -20,9 +21,9 @@ export function socialImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 34, fontWeight: 600, letterSpacing: -0.85 }}>
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 28, height: 36, borderRadius: 14, background: "#e63946", color: "#fff", fontSize: 29, letterSpacing: 0 }}>i</span>
-            <span>Italy</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 34, fontWeight: 700, letterSpacing: -0.85 }}>
+            <BrandMark size={48} />
+            <span>iItaly</span>
           </div>
           <div style={{ display: "flex", fontSize: 22, color: "#686868" }}>Казахстан → Италия</div>
         </div>

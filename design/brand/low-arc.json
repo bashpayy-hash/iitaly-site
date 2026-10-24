@@ -1,0 +1,12 @@
+{
+  "direction": "Low Arc",
+  "requestedAt": "2026-10-24",
+  "source": "User-supplied green fold / red low arc concept",
+  "higgsfieldReferenceMedia": "94be51b2-f608-4fa8-a923-0bf8d809c903",
+  "higgsfieldRefinementJob": "ea146579-1f79-4fb0-8204-3f551744c3f7",
+  "model": "gpt_image_2_5",
+  "production": "Hand-resolved flat vector geometry, not the generated raster",
+  "geometry": "src/components/brand/mark.json",
+  "exports": ["public/brand/iitaly-mark.svg", "public/brand/iitaly-mark-mono.svg", "src/app/icon.svg", "src/app/apple-icon.png"],
+  "scope": "Shared identity and link previews; existing product colors, typography, mascot, data and behavior remain unchanged"
+}

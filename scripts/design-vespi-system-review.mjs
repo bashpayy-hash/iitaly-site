@@ -185,7 +185,9 @@ async function checkWordmark(page) {
   assert.equal(await wordmark.locator('[data-brand-initial]').innerText(), 'i');
   assert.equal(await wordmark.locator('[data-brand-word]').innerText(), 'iItaly');
   assert.equal((await wordmark.innerText()).replace(/\s+/g, ''), 'iItaly', 'The shared wordmark has no trailing dot');
-  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), 'rgb(230, 57, 70)', 'The initial uses the shared coral signal on every surface');
+  assert.equal(await wordmark.getAttribute('data-brand-version'), 'low-arc', 'Every header uses the approved Low Arc mark');
+  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), 'rgb(20, 20, 19)', 'The new wordmark is monochrome; UI signal colors stay unchanged');
+  assert.equal(await wordmark.locator('[data-brand-mark] path').count(), 2, 'The shared mark retains its two open shapes at every size');
 }
 
 try {
