@@ -64,12 +64,13 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           <div data-saved-universities>{universities.length ? universities.map(university => <a key={university.id} className={styles.pill} href="/portal?view=plan&task=shortlist" onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); if (universityTask) onOpenTask(universityTask); }}>{university.name}{university.deadline && <span> · До {fmtDate(university.deadline)}</span>}<span className="sr-only">, изменить выбор вузов</span><span aria-hidden="true">→</span></a>) : universityTask && <a className={styles.pill} href="/portal?view=plan&task=shortlist" onClick={event => { event.preventDefault(); onOpenTask(universityTask); }}>Выбрать университеты <span aria-hidden="true">→</span></a>}</div>
         </div>
       </div>
-      <div className={styles.progressStats}><strong>{progress.done} из {progress.total} шагов</strong>{progress.ahead>0&&<small>заранее: {progress.ahead}</small>}<span className={styles.pace}><span style={{"--pace":`${position.total ? 100 * position.done / position.total : 0}%`} as React.CSSProperties}/>{position.done} из {position.total} в текущем этапе</span></div>
+      <div className={styles.progressStats}><strong>{progress.done} из {progress.total} шагов</strong>{progress.ahead>0&&<small>заранее: {progress.ahead}</small>}{position.total>0?<span className={styles.pace}><span style={{"--pace":`${100 * position.done / position.total}%`} as React.CSSProperties}/>{position.done} из {position.total} в текущем этапе</span>:progress.total>0&&progress.done===progress.total?<span className={styles.pace}>Маршрут завершён</span>:null}</div>
     </div>
     <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} deadline={nearestUniversityDeadline(shortlist)} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
     <p className={styles.routeHint}>Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>
     <div className={styles.stageBody} data-portal-overview>
     {future&&<div className={styles.focusGuard}><span><Info size={16} strokeWidth={1.5}/>Ты просматриваешь будущий этап. Твой текущий шаг сейчас в разделе «{position.stage?.title}».</span><button type="button" onClick={()=>position.stage&&onSelectStage(position.stage.id)}>Вернуться к текущему шагу →</button></div>}
+    {ordered.length>0&&ordered.every(row=>portalTaskDone(data,row))&&<div className={styles.finished}><h2>Все шаги этапа отмечены</h2><p>Сохранённые ответы и результаты можно открыть в списке ниже.</p></div>}
     <div className={styles.taskList} aria-label="Задачи этапа">
     {visibleTasks.map(row=>{
       const done=portalTaskDone(data,row),savedDone=portalTaskDone(savedData,row),doc=data.docs[row.id];
