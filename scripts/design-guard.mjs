@@ -85,6 +85,10 @@ const approvedReminderUiPaths = new Set([
   // User request 2026-10-17: shared contextual Vespi across public pages and
   // portal, preserving each surface's existing palette and product contracts.
   'src/components/mascot/Vespi.tsx',
+  // User request 2026-10-24: handmade spatial scenes and decorative idle pose.
+  // These two presentation files cannot change route, document or API contracts.
+  'src/components/mascot/VespiScene.tsx',
+  'src/components/mascot/vespi-scene.module.css',
   'src/components/mascot/VespiAssistant.tsx',
   'src/components/mascot/vespi-assistant.module.css',
   'src/components/mascot/useVespiPresence.ts',
