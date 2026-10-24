@@ -24,6 +24,8 @@
 }
 .portalPanel > div:first-child { cursor:default; touch-action:auto; }
 .portalPanel input::placeholder { color:#615d57; opacity:1; }
+.portalPanel .dialogVespi { width:76px; height:62px; flex:0 0 76px; }
+.portalPanel .replyVespi { float:left; width:48px; height:44px; margin:0 8px 4px -4px; }
 @media(min-width:1101px) {
   :global(body:has([data-portal-chat="true"])) :global([data-portal-design]) { margin-right:412px; }
 }

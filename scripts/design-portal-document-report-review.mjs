@@ -1,3 +1,4 @@
+import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -245,15 +246,15 @@ try {
       await reportActionLimit(page, `${task} report ${width}px`);
       await backToList(page);
     }
-    await page.getByRole('link', { name: 'Обзор', exact: true }).filter({ visible: true }).click();
+    await portalDestination(page, 'Обзор');
     assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
     const overview = page.locator('[data-portal-overview]');
     assert.match(await overview.innerText(), /Нужно уточнить/);
-    assert.match(await overview.innerText(), /Банковские выписки/, 'Overview identifies the document rather than an opaque filename');
+    assert.match(await overview.innerText(), /Банковские выписки|Подготовить банковские выписки/, 'Overview identifies the document rather than an opaque filename');
     assert.match(await overview.innerText(), /Что сделать:/, 'Overview gives one concrete next action');
     await noOverflow(page, `Document summary ${width}px`);
-    await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).click();
-    const plan = page.locator('#portal-stage-documents');
+    await portalDestination(page, 'План');
+    const plan = page.locator('[data-portal-focus]');
     assert.match(await plan.innerText(), /Нужно уточнить/);
     assert.equal(await page.locator('button').count(), 0, 'Plan has no action buttons');
     const statement = plan.locator('[data-portal-task=statements]');
@@ -266,7 +267,7 @@ try {
     // file repeatedly. This must not require a self-report or reopen future steps.
     for (let repeat = 1; repeat <= 2; repeat += 1) {
       nextCheckResult = repeat === 1 ? clarify : approved;
-      await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
+      await portalDestination(page, 'Документы');
       await openReport(page, 'translate');
       await page.locator('[data-document-prepare]').click();
       const saved = page.waitForResponse(response => new URL(response.url()).pathname === '/api/portal/TEST-01/doc');

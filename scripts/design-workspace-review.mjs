@@ -1,3 +1,4 @@
+import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -81,7 +82,7 @@ try {
     const peer=await context.newPage();await peer.goto(origin+'/portal',{waitUntil:'networkidle'});
     await peer.locator('[data-local-workspace]').waitFor();
     assert.match(await peer.locator('main').innerText(),/сентябрь 2027/,'Selected year appears in another tab');
-    await peer.locator('[data-local-workspace] section[aria-label="Твой следующий шаг"] a').click();
+    await peer.locator('[data-road-open]').click();
     await peer.getByRole('heading',{name:'Что заканчиваешь?',exact:true}).waitFor();
     await peer.close();
     for(const title of ['11 классов','4,7 и выше','Бакалавриат','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Другой регион / пока не знаю']) {
@@ -91,7 +92,7 @@ try {
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
     await page.getByRole('link',{name:'Продолжить в личном кабинете ↗',exact:true}).click();
     await page.locator('[data-local-workspace]').waitFor();
-    await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
+    await page.locator('[data-road-open]').first().click();
     await page.locator('[data-portal-universities]').waitFor();
     await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
     await page.locator('[data-university-select="bocconi"]').check();
@@ -107,7 +108,7 @@ try {
     assert.deepEqual(local.selectedIds,['bocconi']);assert.equal(local.done.shortlist,true);
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
-    await page.getByRole('link',{name:'План',exact:true}).click();
+    await portalDestination(page, 'План');
     assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
@@ -116,21 +117,21 @@ try {
     await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
-    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await portalDestination(page, 'Документы');
     await page.locator('[data-document="apostille"]').click();
     assert.equal(await page.getByLabel('Выбрать документ для проверки').count(),0,'Future file step cannot upload');
     assert.match(await page.locator('main').innerText(),/Сначала:/);
     await capture('portal-future');
-    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await portalDestination(page, 'Документы');
     await capture('portal-documents');await audit('guest document vault');
     await page.getByRole('radio',{name:'Для DSU',exact:true}).check();
     assert.equal(await page.locator('[data-document="familyDocs"]').count(),1);
     assert.equal(await page.locator('[data-document="apostille"]').count(),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await capture('portal-settings');await audit('guest settings');
-    await page.getByRole('link',{name:'Обзор',exact:true}).click();
+    await portalDestination(page, 'Обзор');
     for(let step=0;step<12;step++) {
-      await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
+      await page.locator('[data-road-open]').first().click();
       if(await page.getByLabel('Выбрать документ для проверки').count())break;
       await page.getByRole('button',{name:'Готово',exact:true}).click();
     }
@@ -145,7 +146,7 @@ try {
       await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);
       await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
       await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
-      await page.getByRole('link',{name:'План',exact:true}).waitFor();
+      await page.locator('[data-portal-focus]').waitFor();
       await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc')&&!new URLSearchParams(location.search).has('task'));
     }
     await review(fixtureReview('warn','2027/28','unspecified'));
@@ -154,17 +155,17 @@ try {
     assert.equal(storedState.reviews[currentDoc],'clarify');
     assert.doesNotMatch(JSON.stringify(storedState),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
     await page.reload({waitUntil:'networkidle'});
-    await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
+    await page.locator('[data-road-open]').first().click();
     await review(fixtureReview('ok','2026/27','verified'));
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],false,'A verified review from another intake cannot close this route task');
     assert.equal(storedState.reviews[currentDoc],'clarify');
-    await page.locator('section[aria-label="Твой следующий шаг"] a').first().click();
+    await page.locator('[data-road-open]').first().click();
     await review(fixtureReview('ok','2027/28','verified'));
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],true,'Only an applicable passed review closes the file task');
     assert.equal(storedState.reviews[currentDoc],'approved');
-    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await portalDestination(page, 'Документы');
     await page.locator(`[data-document="${currentDoc}"]`).click();
     await page.locator('[data-document-prepare]').click();
     assert.equal(await page.locator('[data-portal-inspector]').count(),1,'The saved file keeps its inspector when reopened for a new version');

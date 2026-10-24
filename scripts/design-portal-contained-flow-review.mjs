@@ -1,3 +1,4 @@
+import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 // User-requested regression: every IITALY tool stays in the authenticated
 // portal. Official sources and Telegram remain explicit external destinations.
 import assert from 'node:assert/strict';
@@ -126,15 +127,8 @@ async function setup(width, current = 'shortlist') {
   return { page, context, data, calls, profileCalls, contained };
 }
 async function openTask(page, id) {
-  await nav(page, 'План').click();
-  const row = page.locator(`[data-portal-task="${id}"]`);
-  await row.waitFor({ state: 'attached' });
-  const ancestors = row.locator('xpath=ancestor::details');
-  for (let index = 0; index < await ancestors.count(); index += 1) {
-    const ancestor = ancestors.nth(index);
-    if (await ancestor.getAttribute('open') === null) await ancestor.locator(':scope > summary').click();
-  }
-  await row.click();
+  await portalDestination(page, 'План');
+  await portalTask(page, id);
   await page.locator(`[data-step-detail="${id}"]`).waitFor();
 }
 async function checkAndCapture(page, name, width, { axe = true } = {}) {
@@ -199,7 +193,7 @@ try {
       await page.goForward();
       await overview(page).waitFor({ state: 'attached' });
       contained('Shortlist, rules, logo and browser history');
-      await nav(page, 'План').click();
+      await portalDestination(page, 'План');
       const planRules = page.locator('[data-portal-rules-disclosure]');
       await planRules.locator(':scope > summary').click();
       await planRules.locator('[data-portal-rules]').waitFor();
@@ -212,7 +206,7 @@ try {
     }
     {
       const { page, context, calls, profileCalls, data, contained } = await setup(width, 'chances');
-      await page.locator('[data-portal-road] [data-road-open]').click();
+      await page.locator('[data-road-open]').click();
       const assessment = page.locator('[data-portal-assessment]');
       await assessment.waitFor();
       assert.equal(await assessment.locator('input[type="tel"], a[href="/plan"], a[href="/prices"]').count(), 0, 'The inline assessment has no lead gate or sales detour');
@@ -245,7 +239,7 @@ try {
     }
     {
       const { page, context, calls, contained } = await setup(width, 'checkDocs');
-      await page.locator('[data-portal-road] [data-road-open]').click();
+      await page.locator('[data-road-open]').click();
       await page.locator('[data-step-detail="checkDocs"] [data-document-list]').waitFor();
       await checkAndCapture(page, 'check-documents', width);
       await detail(page).locator('[data-document="apostille"]').click();
@@ -255,9 +249,11 @@ try {
       await page.getByRole('region', { name: 'Разбор документа', exact: true }).getByRole('link', { name: 'Назад', exact: true }).click();
       await page.locator('[data-step-detail="checkDocs"]').waitFor();
       assert.equal(new URL(page.url()).searchParams.get('task'), 'checkDocs', 'Report Back returns to the exact checkDocs task');
-      await page.goBack();
-      await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      // The document's Back action now traverses history instead of appending
+      // another task entry. Forward reopens the report; Back returns to its task.
       await page.goForward();
+      await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      await page.goBack();
       await page.locator('[data-step-detail="checkDocs"]').waitFor();
       assert.equal(calls.length, 0, 'Opening and reviewing saved files never completes a task');
       await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
@@ -269,7 +265,7 @@ try {
     }
     {
       const { page, context, calls, contained } = await setup(width, 'kit');
-      await page.locator('[data-portal-road] [data-road-open]').click();
+      await page.locator('[data-road-open]').click();
       const trainer = page.locator('[data-portal-permesso] [data-permesso-editor]');
       await trainer.waitFor();
       await trainer.getByRole('button', { name: 'Продление Rinnovo · карточка уже есть', exact: true }).click();

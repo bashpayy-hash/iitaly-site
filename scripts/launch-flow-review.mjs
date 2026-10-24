@@ -1,3 +1,4 @@
+import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -165,7 +166,7 @@ try {
     const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
     await page.locator('[data-portal-overview]').waitFor();
     assert.equal(await page.locator('[data-current-step=test-task]').count(), 1, 'A confirmed file completion returns directly to the road and names the next step');
-    await page.locator('[data-overview-document]').click();
+    await portalTask(page, 'statements');
     await report.waitFor();
     await report.getByText('Готово', {exact:true}).waitFor();
     // The owner requested unlimited explicit rechecks, including approved files.
@@ -174,14 +175,14 @@ try {
     assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-secondary'), 'true', 'Rechecking a previous file keeps the road secondary');
     assert.equal(calls.check, 2, 'Opening the saved report never starts another check');
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
-    await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
+    await portalDestination(page, 'Документы');
     await page.locator('[data-document-outcome=approved]').waitFor();
     assert.match(await page.locator('[data-document=statements]').innerText(), /Готово/);
     assert.equal(calls.check, 2, 'Retrying storage must not run another AI check');
     assert.equal(calls.save, 2);
-    await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
+    await portalDestination(page, 'План');
     assert.equal(calls.task, 0, 'File check and upload close the document step without a separate self-report');
-    assert.equal(await page.locator('button').count(), 0);
+    assert.equal(await page.locator('[data-focus-complete]').count(), 1);
     await page.locator('[data-portal-task="test-task"]').click();
     const detail = page.locator('[data-step-detail="test-task"]');
     await detail.waitFor();
@@ -192,12 +193,12 @@ try {
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor({ state: 'hidden' });
     await page.locator('[data-portal-overview]').waitFor();
     const completedRoad = page.locator('[data-portal-road]');
-    assert.match(await completedRoad.innerText(), /Все шаги отмечены/);
+    assert.match(await page.locator('[data-portal-focus]').innerText(), /Все шаги этапа отмечены/);
     assert.equal(await completedRoad.getAttribute('data-road-done'), await completedRoad.getAttribute('data-road-total'), 'The terminal label requires every real route task to be completed');
     assert.equal(await completedRoad.locator('[data-road-open]').count(), 0, 'A completed route has no next-action link');
     assert.equal(await page.locator('button').count(), 0, 'The completed route has no action to click');
-    await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).first().click();
-    await page.locator('[data-portal-task="test-task"][data-done=true]').waitFor({ state: 'attached' });
+    await portalDestination(page, 'План');
+    await page.locator('[data-focus-row="test-task"] [data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);
     results.push({ test: 'Portal exposes file, check, storage and task errors with precise recovery; saved result retry does not recheck', passed: true });
     await context.close();

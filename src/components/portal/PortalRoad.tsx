@@ -20,11 +20,13 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline }: {
+export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
   onOpenTask: (task: PortalTask, intent?: "instruction" | "upload") => void;
+  onSelectStage?: (stageId: string) => void;
+  embedded?: boolean;
   activeStageId?: string;
   deadline?: string;
   travel?: RoadTravel;
@@ -165,7 +167,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
       </div>
     </div>;
 
-  return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""}`}
+  return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
     data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
@@ -189,11 +191,11 @@ export function PortalRoad({ data, current, stage, onOpenTask, travel, onTravelS
           const complete = Boolean(opened && stageDone === row.tasks.length);
           const isCurrent = row.id === (activeStageId || stage?.id);
           const isRouteCurrent = row.id === stage?.id;
-          return <a key={row.id} href={portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
+          return <a key={row.id} href={onSelectStage ? `/portal?stage=${encodeURIComponent(row.id)}` : portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
             data-road-stage-state={complete ? "done" : isCurrent ? "current" : "future"}
             aria-current={isCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-              event.preventDefault(); onOpenTask(next);
+              event.preventDefault(); if (onSelectStage) onSelectStage(row.id); else onOpenTask(next);
             }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов{isRouteCurrent ? " · сейчас" : ""}</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
         })}
       </nav>

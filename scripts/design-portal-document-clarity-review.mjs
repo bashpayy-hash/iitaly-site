@@ -1,3 +1,4 @@
+import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -24,8 +25,7 @@ await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch();
 const results=[],errors=[],unexpected=[];
 const road=page=>page.locator('[data-portal-road]');
-const nav=page=>page.locator('nav[aria-label="Разделы личного кабинета"],nav[aria-label="Разделы кабинета"]').filter({visible:true});
-async function go(page,name){await nav(page).getByRole('link',{name,exact:true}).click();}
+async function go(page,name){await portalDestination(page,name);}
 async function capture(page,name){await sharp(await page.screenshot({animations:'disabled'})).webp({quality:82}).toFile(resolve(output,name+'.webp'));}
 async function noOverflow(page){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No page-wide horizontal scrolling');}
 async function axe(page,label){
@@ -80,7 +80,7 @@ try {
   data.docs.apostille={verdict:'warn',fileName:'attestat.pdf',checkedAt:'2026-10-20T10:00:00Z',result:structuredClone(original)};
   const {page,context}=await open({width,height:900},'partial',{data});
   assert.equal(await road(page).getAttribute('data-road-done'),'3');assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
-  assert.match(await road(page).locator('[data-road-open]').innerText(),/Открыть разбор/);
+  assert.match(await page.locator('[data-road-open]').innerText(),/Открыть разбор/);
   await capture(page,`overview-${width}`);
   await go(page,'План');await noOverflow(page);await capture(page,`plan-${width}`);
   await go(page,'Документы');await capture(page,`documents-${width}`);
