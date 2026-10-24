@@ -1,5 +1,13 @@
 .report { scroll-margin-top:calc(var(--portal-chrome-height, 64px) + 16px); min-width:0; width:100%; padding:28px 32px; border:1px solid var(--portal-border); border-radius:24px; background:var(--portal-surface); overflow-wrap:anywhere; }
 .breadcrumbs { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.report { container-type:inline-size; container-name:document-report; }
+.focusArea { min-width:0; }
+.focusCopy { min-width:0; }
+.reportScene { display:none; }
+@container document-report (min-width:780px) {
+  .focusArea { display:grid; grid-template-columns:minmax(0,1fr) 224px; gap:24px; align-items:start; }
+  .reportScene { display:block; position:sticky; top:calc(var(--portal-chrome-height,64px) + 28px); width:224px; margin-top:64px; }
+}
 .heading { margin:16px 0 20px; }
 .heading h2 { margin:0 0 14px; max-width:30ch; font-family:var(--portal-heading-font); font-size:32px; line-height:1.18; font-weight:600; letter-spacing:-.025em; scroll-margin-top:88px; }
 .statusBadge { display:inline-flex; padding:5px 11px; border-radius:999px; background:var(--portal-surface-soft); color:var(--portal-ink); font-size:14px; font-weight:600; line-height:1.5; }

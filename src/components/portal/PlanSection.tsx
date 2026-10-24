@@ -45,9 +45,8 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
     <div className={styles.plan}>
       <div className={styles.intro}>
         <div className={styles.titleRow}>
+          <div className={styles.introCopy}>
           <h2 className={styles.heading}>План поступления</h2>
-          <PortalArtwork placement="plan" />
-        </div>
         <details className={rules.disclosure} data-portal-rules-disclosure onToggle={event => setRulesOpen(event.currentTarget.open)}>
           <summary>Правила сверены 9 октября 2026</summary>
           {rulesOpen && <PortalRules />}
@@ -58,8 +57,11 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
             }}>открой оценку ситуации</a>.
           </p>}
         </details>
+          <p className={styles.pathHint}>Текущий шаг выделен. Сохранённые документы можно открыть снова, будущие задачи можно изучить заранее.</p>
+          </div>
+          <PortalArtwork placement="plan" />
+        </div>
       </div>
-      <p className={styles.pathHint}>Текущий шаг выделен. Сохранённые документы можно открыть снова, будущие задачи можно изучить заранее.</p>
       {!position.stage && <p className={styles.complete}>{hasTasks ? "Все шаги маршрута отмечены. Сохранённые документы и инструкции остаются доступны." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."}</p>}
       {position.stage && renderStage(position.stage)}
       {nextStage && renderStage(nextStage)}

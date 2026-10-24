@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { VespiScene } from "@/components/mascot/VespiScene";
 import { ArrowRight, ArrowUpRight, BookOpen, Check, Search, X } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
@@ -169,7 +170,7 @@ export default function GuidesPage() {
           <div id="guide-command" className={ui.command} data-fab-yield>
             <label htmlFor="guide-search" className="sr-only">Найти тему</label>
             <div className={ui.commandBar}>
-              <Image src="/mascot/vespi-search-avatar.webp" alt="" width={64} height={64} unoptimized className={ui.commandAvatar} data-vespi-search-avatar />
+              <Image src="/mascot/handmade-v1/avatar-96.webp" alt="" width={64} height={64} unoptimized className={ui.commandAvatar} data-vespi-search-avatar />
               <div className={ui.commandField}><span aria-hidden="true">Веспи поможет найти ответ</span>
                 <input ref={searchRef} id="guide-search" type="search" value={query} autoComplete="off" spellCheck={false} placeholder="Найди свою тему: аттестат, виза, DSU…" onChange={event => {
                   const value = event.target.value;
@@ -201,7 +202,7 @@ export default function GuidesPage() {
                 track("guide_helper_opened", { topic: currentId || "overview", source: "edge-invite" });
                 openGuideHelper(currentId);
               }} aria-label="Тебе помочь? Открыть чат с Веспи">Тебе помочь?<ArrowUpRight size={16} aria-hidden="true" /></button>
-              <Image src="/mascot/vespi-guide-peek.webp" alt="" width={320} height={320} unoptimized className={ui.peekPose} data-vespi-guide-peek />
+              <div className={ui.peekPose} data-vespi-guide-peek><VespiScene pose="peek" sizes="(max-width: 600px) 114px, 168px" /></div>
             </div>
           </div>
 

@@ -88,7 +88,7 @@ try {
     await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
     const avatar = page.locator('#guide-command [data-vespi-search-avatar]');
     assert.equal(await avatar.count(), 1, 'Search has one deliberate compact avatar');
-    assert.equal(await avatar.getAttribute('src'), '/mascot/vespi-search-avatar.webp');
+    assert.equal(await avatar.getAttribute('src'), '/mascot/handmade-v1/avatar-96.webp');
     await avatar.evaluate(image => image.decode());
     assert.equal(await page.locator('[data-vespi-intro="guides"]').count(), 0, 'Guides have no duplicated promotional introduction');
     assert.equal(await page.locator('#chat-launcher img').count(), 0, 'Floating help remains a text-and-icon entry');
@@ -278,7 +278,7 @@ try {
     }
     const invite = page.locator('[data-guide-invite]');
     assert.equal(await invite.count(),1,'One contextual invitation replaces the promotional banner');
-    assert.equal(await invite.locator('[data-vespi-guide-peek]').getAttribute('src'),'/mascot/vespi-guide-peek.webp');
+    assert.equal(await invite.locator('[data-vespi-guide-peek] img').getAttribute('src'),'/mascot/handmade-v1/peek-640.webp');
     await invite.locator('img').evaluate(image=>image.decode());
     const peekAction=invite.getByRole('button',{name:'Тебе помочь? Открыть чат с Веспи',exact:true});
     const chatsBeforePeek=chats.length;

@@ -102,7 +102,7 @@ try {
         assert.match(await page.locator('h1 > span').evaluate(e=>getComputedStyle(e).backgroundImage),/217, 43, 56/);
         const avatar=page.locator('[data-vespi-search-avatar]');
         assert.equal(await avatar.count(),1,'The search uses one contextual avatar');
-        assert.equal(await avatar.getAttribute('src'),'/mascot/vespi-search-avatar.webp');
+        assert.equal(await avatar.getAttribute('src'),'/mascot/handmade-v1/avatar-96.webp');
         assert(await avatar.evaluate(e=>e.complete&&e.naturalWidth>0),'The new search avatar loads');
         assert.equal(await page.locator('[data-guide-timeline] a[aria-current="step"]').count(),0,'A fresh guide visit waits for a route choice');
         await page.locator('[data-guide-select="education"]').click();

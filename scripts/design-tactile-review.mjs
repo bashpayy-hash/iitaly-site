@@ -121,7 +121,7 @@ try {
           const image = document.querySelector('[data-vespi-editorial] img');
           return image?.complete && image.naturalWidth > 0;
         });
-        assert(await scene.locator('img').evaluate(image => image.naturalWidth > 0 && /vespi-editorial-route-(480|720)\.webp$/.test(image.currentSrc)), 'Editorial scene uses a decoded responsive approved asset');
+        assert(await scene.locator('img').evaluate(image => image.naturalWidth > 0 && /handmade-v1\/peek-(320|640)\.webp$/.test(image.currentSrc)), 'Editorial scene uses a decoded responsive approved asset');
         assert(await scene.getByRole('link').evaluate(node => node.getBoundingClientRect().height >= 44), 'Editorial action is touch-sized');
         await oneMascot(page, 'Editorial scene');
         await capture(page, `after-vespi-scene-${width}`);
@@ -175,8 +175,11 @@ try {
     await zone.dispatchEvent('dragover', { dataTransfer:transfer });
     assert.equal(await zone.getAttribute('data-drag'), 'true');
     await zone.dispatchEvent('drop', { dataTransfer:transfer });
+    assert.deepEqual(calls, [], 'Drop selects the file and requires confirmation before checking');
+    assert.match(await page.locator('[data-selected-document]').innerText(), /synthetic-review.txt/);
+    await page.getByRole('button', { name:'Проверить документ', exact:true }).click();
     await page.locator('[data-portal-overview]').waitFor({ state:'attached' });
-    assert.deepEqual(calls, ['check', 'save'], 'Drop checks once, saves once, and returns to overview');
+    assert.deepEqual(calls, ['check', 'save'], 'Confirmed file checks once, saves once, and returns to overview');
     await page.getByRole('link', { name:'План', exact:true }).filter({ visible:true }).click();
     await page.locator('[data-portal-task="statements"][data-done="true"]').waitFor();
     await page.locator('[data-portal-task="familyDocs"]').click();

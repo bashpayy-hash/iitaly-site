@@ -103,8 +103,8 @@ async function railContract(page,data,compact){
 async function arrivalOrder(page,data) {
   const welcome=page.locator('[data-portal-welcome]');
   assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
-  const image=welcome.locator('img');
-  assert.equal(await image.getAttribute('src'),'/mascot/vespi-portal-welcome.webp');
+  const image=welcome.locator('img[data-vespi]');
+  assert.equal(await image.getAttribute('src'),'/mascot/handmade-v1/welcome-640.webp');
   await image.evaluate(img=>img.decode());
   assert.equal(await road(page).getAttribute('data-road-progress-first'),'true');
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
@@ -131,7 +131,8 @@ try{
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-overview-${viewport.width}`);
     await go(page,'План');await page.locator('[data-portal-task="shortlist"]').waitFor();await railContract(page,data,true);
     assert.equal(await page.locator('[data-portal-task="shortlist"]').count(),1,'Current task written once');
-    assert.equal(await page.locator('main img[data-vespi]').count(),0,'No 3D heads in stage headings');assert.equal(await page.locator('button').count(),0,'Plan has no buttons');assert.equal(await page.getByRole('checkbox').count(),0,'Plan rows cannot complete a step');
+    assert.equal(await page.locator('main [data-vespi-scene=route]').count(),1,'One contextual map scene in the plan introduction');
+    assert.equal(await page.locator('[data-portal-task] img[data-vespi], [data-road-stage] img').count(),0,'Tasks and stage navigation never repeat a mascot');assert.equal(await page.locator('button').count(),0,'Plan has no buttons');assert.equal(await page.getByRole('checkbox').count(),0,'Plan rows cannot complete a step');
     assert.equal(await page.locator('#portal-stage-start').getAttribute('open'),'','Current stage opens');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-plan-${viewport.width}`);
     await sticky(page);await axe(page,'Plan '+viewport.width);

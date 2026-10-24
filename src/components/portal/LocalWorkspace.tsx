@@ -28,6 +28,7 @@ import { SavedProfileAnswers } from "./SavedProfileAnswers";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
 import { PortalWelcome } from "./PortalWelcome";
+import { PortalArtwork } from "./PortalArtwork";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
 
@@ -180,7 +181,7 @@ export function LocalWorkspace() {
               </>}
           </>}
           {location.view === "docs" && !showDetail && <>
-            <h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Отметка о сборе — твоя. Итог проверки появляется только после реального разбора файла.</p>
+            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Отметка о сборе принадлежит тебе. Итог проверки появляется только после реального разбора файла.</p></div><PortalArtwork placement="documents" /></div>
             <fieldset className={styles.filters}><legend className="sr-only">Назначение документа</legend>{[{ id: "all", label: "Все" }, { id: "uni", label: "Для вуза" }, { id: "dsu", label: "Для DSU" }, { id: "visa", label: "Для визы D" }].map(item => <label key={item.id}><input type="radio" name="local-document-purpose" value={item.id} checked={purpose === item.id} onChange={() => setPurpose(item.id)}/>{item.label}</label>)}</fieldset>
             {!documents.length && <div className={styles.paper}><h2>Сначала уточним твой маршрут</h2><p>После анкеты здесь появятся документы по твоей ситуации. Поздние этапы откроются по мере выполнения текущих шагов.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "profile"); if (task) openTask(task); }}>Заполнить анкету</a></div>}
             <div className={styles.vault}>{documents.filter(task => purpose === "all" || DOCUMENT_INFO[task.id]?.purpose === purpose).map(task => {

@@ -108,6 +108,8 @@ jobs:
         run: node scripts/design-warm-palette-review.mjs
       - name: Review shared Vespi roles, typography and single visible mascot
         run: node scripts/design-vespi-system-review.mjs
+      - name: Review spatial Vespi, decorative idle and actual checking states
+        run: node scripts/design-vespi-handmade-review.mjs
       - name: Review launch document retry, long filenames and modal focus
         run: node scripts/launch-document-review.mjs
       - name: Review launch chat, contact recovery and free-plan access
