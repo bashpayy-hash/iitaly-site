@@ -198,7 +198,7 @@ try {
     assert.equal(await completedRoad.locator('[data-road-open]').count(), 0, 'A completed route has no next-action link');
     assert.equal(await page.locator('[data-task-check]:enabled,[data-focus-complete],[data-road-open]').count(),0,'The completed route has no executable completion or invented next action');
     await portalDestination(page, 'План');
-    await page.locator('[data-focus-row="test-task"] [data-done=true]').waitFor({ state: 'attached' });
+    await page.locator('[data-task-check="test-task"][data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);
     results.push({ test: 'Portal exposes file, check, storage and task errors with precise recovery; saved result retry does not recheck', passed: true });
     await context.close();
