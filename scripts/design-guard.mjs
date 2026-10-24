@@ -22,6 +22,8 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   // Existing palette/fonts stay unchanged outside the logo's requested weight.
   'src/components/brand/BrandLogo.tsx',
   'src/components/brand/brand-logo.module.css',
+  // 2026-10-24: user-supplied Low Arc identity; UI tokens and product logic stay fixed.
+  'src/components/brand/BrandMark.tsx', 'src/components/brand/mark.json',
   'src/app/icon.svg', 'src/app/apple-icon.png',
   // User request 2026-10-17: Lucide icons for the Meta-inspired /guides redesign.
   // Only the lucide-react dependency is added; existing runtime versions stay fixed.
@@ -202,7 +204,7 @@ for (const path of [
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
   'src/components/guides/permesso/permessoData.ts',
   'src/components/guides/permesso/permessoTransferModel.ts',
-  'src/app/globals.css','src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css',
+  'src/app/globals.css',
   'package.json','package-lock.json','next.config.ts','netlify.toml',
 ]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
 assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');

@@ -91,6 +91,8 @@ jobs:
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review paper transfer, explicit acknowledgements and date boundaries
         run: node scripts/design-permesso-transfer-review.mjs
+      - name: Review shared Low Arc identity, icons and responsive placements
+        run: node scripts/design-brand-review.mjs
       - name: Review admissions quiz, source links and annual visa calculator
         run: node scripts/admissions-browser-review.mjs
       - name: Review shared questionnaire, local workspace and existing cloud boundary

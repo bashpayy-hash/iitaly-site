@@ -24,7 +24,7 @@ export function Header() {
   return (
     <header className={`sticky top-0 z-50 border-b ${bar}`}>
       <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-6 px-5">
-        <Link href="/" aria-label="IITALY — главная" className={`flex shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold ${brand}`}>
+        <Link href="/" aria-label="IITALY — главная" className={`flex min-h-11 shrink-0 items-center gap-2 font-apple-text text-[14px] font-semibold ${brand}`}>
           <BrandLogo />
         </Link>
 
