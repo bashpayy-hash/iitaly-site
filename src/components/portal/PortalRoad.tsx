@@ -179,8 +179,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
     <div className={styles.route}>
-      <div className={styles.summary}><span>Твой маршрут{deadline && <span className={styles.goalDeadline}>{deadline}</span>}</span><span className={styles.count}>
-        <span data-road-count className={embedded ? "sr-only" : undefined}>{done} из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
+      <div className={styles.summary}><span>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</span><span className={styles.count}>
+        <span data-road-count>{done} из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
       <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">

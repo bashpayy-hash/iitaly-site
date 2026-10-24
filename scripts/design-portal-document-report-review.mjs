@@ -249,14 +249,14 @@ try {
     await portalDestination(page, 'Обзор');
     assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
     const overview = page.locator('[data-portal-overview]');
-    assert.match(await overview.innerText(), /Нужно уточнить/);
+    assert.doesNotMatch(await overview.innerText(), /Нужно уточнить/,'Review detail is not repeated in the checklist');
     assert.match(await overview.innerText(), /Банковские выписки|Подготовить банковские выписки/, 'Overview identifies the document rather than an opaque filename');
-    assert.match(await overview.innerText(), /Что сделать:/, 'Overview gives one concrete next action');
+    assert.equal((await overview.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),'Открыть разбор →');
     await noOverflow(page, `Document summary ${width}px`);
     await portalDestination(page, 'План');
     const plan = page.locator('[data-portal-focus]');
-    assert.match(await plan.innerText(), /Нужно уточнить/);
-    assert.equal(await page.locator('[data-task-check=statements]:enabled').count(),0,'A saved document outcome cannot be self-approved by the checklist');
+    assert.doesNotMatch(await plan.innerText(), /Нужно уточнить/);
+    assert.equal(await page.locator('[data-task-check=statements]').count(),1,'Manual task acknowledgement remains distinct from the saved review');
     const statement = plan.locator('[data-portal-task=statements]');
     await (await statement.evaluate(element => element.tagName === 'A') ? statement : statement.getByRole('link')).click();
     await report(page).waitFor();

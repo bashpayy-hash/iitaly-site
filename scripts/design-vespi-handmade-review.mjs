@@ -63,7 +63,7 @@ try {
     await page.getByRole('button',{name:'Войти в кабинет',exact:true}).click();
     await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
     const progress=await summary(page);await layout(page,'overview '+width);
-    assert.equal(await page.locator('[data-vespi-scene]').count(),0,'Overview has statistics, not a duplicate mascot');
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1,'One welcome pose sits above the route card');
     await page.clock.fastForward(45_100);
     assert.deepEqual(await summary(page),progress);assert.equal(JSON.stringify(data),before);assert.deepEqual(calls,[],'Idle display sends no mutation or AI request');
     await capture(page,'overview-'+width);

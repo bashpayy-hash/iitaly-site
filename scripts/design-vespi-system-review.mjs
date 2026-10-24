@@ -365,8 +365,8 @@ try {
     if (!baseline) {
       await checkWordmark(page);
       assert.equal(await page.locator('[data-portal-road] img').count(),0,'Progress has no mascot image');
-      assert(await page.locator('[data-portal-overview] [data-focus-guide]').count()>0,'Overview exposes contextual instruction actions');
-      assert.equal(await page.locator('[data-portal-overview] [data-task-check]:enabled').count(),0,'Current shortlist and document requirements cannot be bypassed');
+      assert(await page.locator('[data-portal-overview] [data-road-open]').isVisible(),'Overview exposes the active breakdown action');
+      assert.equal(await page.locator('[data-task-check=shortlist]').count(),1,'University selection keeps its check and opens the actual selection flow');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
       await noLegacyPortraits(page.locator('[data-portal-road]'), `portal focus ${width}`);

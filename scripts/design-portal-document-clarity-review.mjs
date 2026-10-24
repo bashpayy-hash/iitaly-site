@@ -80,7 +80,7 @@ try {
   data.docs.apostille={verdict:'warn',fileName:'attestat.pdf',checkedAt:'2026-10-20T10:00:00Z',result:structuredClone(original)};
   const {page,context}=await open({width,height:900},'partial',{data});
   assert.equal(await road(page).getAttribute('data-road-done'),'3');assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
-  assert.match(await page.locator('[data-road-open]').innerText(),/Файл и полный разбор/);
+  assert.match((await page.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),/Открыть разбор/);
   await capture(page,`overview-${width}`);
   await go(page,'План');await noOverflow(page);await capture(page,`plan-${width}`);
   await go(page,'Документы');await capture(page,`documents-${width}`);

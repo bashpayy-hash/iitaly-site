@@ -37,13 +37,6 @@ export function usePortalFeedback() {
     clearTimeout(timeout.current);
     setFeedback({ id: ++sequence.current, taskId, title });
     window.dispatchEvent(new CustomEvent("iitaly:task-saved", {detail:{taskId,title}}));
-    const anchor=document.querySelector<HTMLElement>(`[data-task-check="${CSS.escape(taskId)}"]`);
-    const rect=anchor?.getBoundingClientRect();
-    const confetti=(window as typeof window & {confetti?: (options:Record<string,unknown>)=>unknown}).confetti;
-    if(rect && rect.width && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const origin={x:(rect.left+rect.width/2)/innerWidth,y:(rect.top+rect.height/2)/innerHeight};
-      try { confetti?.({particleCount:15,spread:48,startVelocity:13,gravity:.85,ticks:85,scalar:.55,shapes:["square"],colors:["#B96750","#91A58D","#D8C7A8"],origin,disableForReducedMotion:true,zIndex:95}); } catch { /* Decoration must never interrupt saved feedback. */ }
-    }
 
     timeout.current = setTimeout(() => setFeedback(null), 2200);
     const ctx = context.current;

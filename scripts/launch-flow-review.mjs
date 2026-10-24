@@ -182,7 +182,7 @@ try {
     assert.equal(calls.save, 2);
     await portalDestination(page, 'План');
     assert.equal(calls.task, 0, 'File check and upload close the document step without a separate self-report');
-    assert.equal(await page.locator('[data-focus-complete]').count(), 1);
+    assert.equal(await page.locator('[data-task-check=test-task]').count(),1);
     await page.locator('[data-portal-task="test-task"]').click();
     const detail = page.locator('[data-step-detail="test-task"]');
     await detail.waitFor();
@@ -193,10 +193,10 @@ try {
     await page.getByRole('alert').filter({ hasText: 'Тест: отметка не сохранена.' }).waitFor({ state: 'hidden' });
     await page.locator('[data-portal-overview]').waitFor();
     const completedRoad = page.locator('[data-portal-road]');
-    assert.match(await page.locator('[data-portal-focus]').innerText(), /Все шаги этапа отмечены/);
+    assert.equal(await page.locator('[data-task-check][aria-checked=false]').count(),0,'Completed checklist keeps every saved check visible');
     assert.equal(await completedRoad.getAttribute('data-road-done'), await completedRoad.getAttribute('data-road-total'), 'The terminal label requires every real route task to be completed');
     assert.equal(await completedRoad.locator('[data-road-open]').count(), 0, 'A completed route has no next-action link');
-    assert.equal(await page.locator('[data-task-check]:enabled,[data-focus-complete],[data-road-open]').count(),0,'The completed route has no executable completion or invented next action');
+    assert.equal(await page.locator('[data-task-check][aria-checked=false]:enabled,[data-road-open]').count(),0,'The completed route has no executable completion or invented next action');
     await portalDestination(page, 'План');
     await page.locator('[data-task-check="test-task"][data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);
