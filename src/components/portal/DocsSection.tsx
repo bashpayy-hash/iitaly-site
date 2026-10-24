@@ -36,10 +36,12 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
     {!embedded && <header className={styles.heading}>
       <div className={styles.titleRow}>
+        <div className={styles.headingCopy}>
         <h2 id="portal-documents-heading">Твои документы</h2>
+        <p>Здесь видны результаты проверки и то, что нужно подготовить. «Готово» означает проверку IITALY, а не принятие документа вузом.</p>
+        </div>
         <PortalArtwork placement="documents" />
       </div>
-      <p>Здесь видны результаты проверки и то, что нужно подготовить. «Готово» означает проверку IITALY, а не принятие документа вузом.</p>
     </header>}
     {embedded && <h3 id="portal-documents-heading" className={styles.embeddedTitle}>Документы твоего маршрута</h3>}
     {rows.length > 0 && <fieldset className={styles.purposes}>

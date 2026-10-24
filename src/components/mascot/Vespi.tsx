@@ -7,29 +7,29 @@ export type VespiPresentation = "portrait" | "figure";
 
 type VespiAsset = { src: string; srcSet: string; width: number; height: number };
 const PORTRAIT: VespiAsset = {
-  src: "/mascot/vespi/vespi-avatar-route-96.webp",
-  srcSet: "/mascot/vespi/vespi-avatar-route-96.webp 96w, /mascot/vespi/vespi-avatar-route-192.webp 192w",
+  src: "/mascot/handmade-v1/avatar-96.webp",
+  srcSet: "/mascot/handmade-v1/avatar-96.webp 96w, /mascot/handmade-v1/avatar-192.webp 192w",
   width: 192, height: 192,
 };
 const FIGURE: VespiAsset = {
-  src: "/mascot/vespi/vespi-ride-route-320.webp",
-  srcSet: "/mascot/vespi/vespi-ride-route-160.webp 160w, /mascot/vespi/vespi-ride-route-320.webp 320w, /mascot/vespi/vespi-ride-route-640.webp 640w",
-  width: 320, height: 397,
+  src: "/mascot/handmade-v1/welcome-320.webp",
+  srcSet: "/mascot/handmade-v1/welcome-320.webp 320w, /mascot/handmade-v1/welcome-640.webp 640w",
+  width: 640, height: 512,
 };
 const COPILOT_PORTRAIT: VespiAsset = {
-  src: "/mascot/vespi/vespi-avatar-copilot-v1-96.webp",
-  srcSet: "/mascot/vespi/vespi-avatar-copilot-v1-96.webp 96w, /mascot/vespi/vespi-avatar-copilot-v1-192.webp 192w",
+  src: "/mascot/handmade-v1/avatar-96.webp",
+  srcSet: "/mascot/handmade-v1/avatar-96.webp 96w, /mascot/handmade-v1/avatar-192.webp 192w",
   width: 192, height: 192,
 };
 const INSPECTOR_PORTRAIT: VespiAsset = {
-  src: "/mascot/vespi/vespi-avatar-inspector-v1-96.webp",
-  srcSet: "/mascot/vespi/vespi-avatar-inspector-v1-96.webp 96w, /mascot/vespi/vespi-avatar-inspector-v1-192.webp 192w",
+  src: "/mascot/handmade-v1/avatar-96.webp",
+  srcSet: "/mascot/handmade-v1/avatar-96.webp 96w, /mascot/handmade-v1/avatar-192.webp 192w",
   width: 192, height: 192,
 };
 const INSPECTOR_FIGURE: VespiAsset = {
-  src: "/mascot/vespi/vespi-inspector-v1-160.webp",
-  srcSet: "/mascot/vespi/vespi-inspector-v1-160.webp 160w, /mascot/vespi/vespi-inspector-v1-320.webp 320w",
-  width: 320, height: 320,
+  src: "/mascot/handmade-v1/checking-320.webp",
+  srcSet: "/mascot/handmade-v1/checking-320.webp 320w, /mascot/handmade-v1/checking-640.webp 640w",
+  width: 640, height: 512,
 };
 
 /** Role-specific artwork is registered only after likeness/alpha review.
@@ -41,7 +41,7 @@ export const VESPI_ROLE_ASSETS: Record<VespiVariant, Partial<Record<VespiPresent
   celebrate: {},
 };
 
-/** The approved plush identity with its user-requested helmet route detail.
+/** The handmade identity: subtle cloth, sparse loose threads, small button eyes.
  * Versioned assets avoid stale cached images after the visual refinement. */
 export function Vespi({ variant = "ride", presentation, className = "", alt = "", priority = false, sizes }: {
   variant?: "ride" | "avatar" | VespiVariant;
@@ -78,7 +78,9 @@ export function Vespi({ variant = "ride", presentation, className = "", alt = ""
 /** Compact identity inside an assistant control or chat header. */
 export function VespiAvatar({ size = 24 }: { size?: 24 | 40 }) {
   return <img
-    src="/mascot/vespi-search-avatar.webp"
+    src="/mascot/handmade-v1/avatar-96.webp"
+    srcSet="/mascot/handmade-v1/avatar-96.webp 96w, /mascot/handmade-v1/avatar-192.webp 192w"
+    sizes={`${size}px`}
     width={size}
     height={size}
     alt=""

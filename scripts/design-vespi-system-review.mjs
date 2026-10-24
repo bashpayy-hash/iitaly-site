@@ -126,7 +126,7 @@ async function documentCoach(page, where) {
   const coach=page.locator('[data-portal-document-coach]');
   assert.equal(await coach.count(),1, `${where}: one contextual document coach`);
   const image=coach.locator('img');
-  assert.equal(await image.getAttribute('src'),'/mascot/vespi-document-coach.webp');
+  assert.equal(await image.getAttribute('src'),'/mascot/handmade-v1/documents-640.webp');
   await coach.scrollIntoViewIfNeeded();
   if (await image.isVisible()) {
     await page.waitForFunction(() => {

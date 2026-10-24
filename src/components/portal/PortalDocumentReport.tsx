@@ -6,6 +6,7 @@ import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
+import { VespiScene } from "@/components/mascot/VespiScene";
 import styles from "./portal-document.module.css";
 
 const CHECK_LABEL = { ok: "В порядке", warn: "Нужно уточнить", error: "Несоответствие", unknown: "Не подтверждено" };
@@ -88,6 +89,8 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
         event.preventDefault(); onBack();
       }}>Назад</a>
     </nav>
+    <div className={styles.focusArea} data-document-focus>
+    <div className={styles.focusCopy}>
     <header className={styles.heading}>
       <h2 ref={heading} tabIndex={-1}>{title}</h2>
       <span className={styles.statusBadge} data-outcome={outcome.kind}>{outcome.label}</span>
@@ -115,11 +118,17 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
         onClick={() => setUploadOpen(true)}>{outcome.kind === "approved" ? "Проверить новую версию" : outcome.kind === "fix" || outcome.kind === "unreadable" ? "Загрузить исправленный файл" : "Уточнить параметры и загрузить файл"}<span aria-hidden="true"> →</span></button>}
       {!canUpload && readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
       {canUpload && uploadVisible && <div data-fab-yield>
-        <PortalDocumentCoach />
+        <PortalDocumentCoach illustrated={false} />
         {uploadSlot || (onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
           replacing operation={operation} error={error} onResetError={onResetError} />)}
       </div>}
     </section>
+    </div>
+    <VespiScene
+      pose={busy && operation?.phase === "checking" ? "checking" : error ? "clarify" : operation?.phase === "saved" ? "saved" : uploadVisible ? "documents" : outcome.kind === "approved" ? "saved" : "clarify"}
+      className={styles.reportScene} sizes="224px"
+    />
+    </div>
 
     <section className={styles.fileDetails} aria-label="Файл и сроки">
       <h3>Файл и сроки</h3>
