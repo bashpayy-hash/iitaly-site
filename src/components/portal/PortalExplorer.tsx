@@ -515,11 +515,19 @@ export function PortalExplorer() {
     setOpenDocument(taskId);
     setOpenTaskId(null);
     const url = `/portal?view=docs&doc=${encodeURIComponent(taskId)}`;
-    if (window.location.pathname + window.location.search !== url) window.history.pushState({ portalDocumentReturnTask: documentReturnTask.current }, "", url);
+    if (window.location.pathname + window.location.search !== url) window.history.pushState({
+      portalDocumentReturnTask: documentReturnTask.current,
+      portalBackHref: window.location.pathname + window.location.search,
+    }, "", url);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   function closeDocument() {
+    if (typeof window.history.state?.portalBackHref === "string" && window.history.state.portalBackHref.startsWith("/portal")) {
+      if (stepReturnSection.current === "docs") documentReturnFocus.current = openDocument;
+      window.history.back();
+      return;
+    }
     const parent = data?.roadmap.flatMap(stage => stage.tasks).find(task => task.id === documentReturnTask.current);
     if (parent) {
       documentReturnTask.current = null;
@@ -659,7 +667,8 @@ export function PortalExplorer() {
   const documentError = activeTask && actionError?.taskId === activeTask.id ? actionError : null;
   const activeOperation = activeTask?.id === documentOperation?.taskId ? documentOperation : undefined;
   const readOnlyReason = data && activeTask ? taskReadOnlyReason(data, activeTask) : "";
-  const documentBackHref = documentReturnTask.current ? `/portal?view=plan&task=${encodeURIComponent(documentReturnTask.current)}` : sectionUrl(stepReturnSection.current);
+  const documentHistoryHref = typeof window !== "undefined" && typeof window.history.state?.portalBackHref === "string" ? window.history.state.portalBackHref : null;
+  const documentBackHref = documentHistoryHref || (documentReturnTask.current ? `/portal?view=plan&task=${encodeURIComponent(documentReturnTask.current)}` : sectionUrl(stepReturnSection.current));
   const shortlistEditable = Boolean(activeTask?.id === "shortlist" && (data?.done.shortlist || !readOnlyReason));
   const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
     && portalTaskStageOpen(data, activeTask.id) && (portalTaskDone(data, activeTask) || activeTask.available !== false));

@@ -92,7 +92,7 @@ try {
     await page.locator('[data-focus-row="translate"] a').click();
     await page.locator('[data-step-detail="translate"]').waitFor();
     assert.equal(await page.locator('[data-road-stage="docs"]').getAttribute('aria-current'),'step');
-    await page.goBack();await page.locator('[data-portal-focus]').waitFor();
+    await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus][data-selected-stage="docs"]').waitFor();
     await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('[data-portal-focus]').getAttribute('data-selected-stage'),'docs');
     await page.locator('[data-portal-assistant]').click();
     await page.locator('[data-portal-chat="true"]').waitFor();
