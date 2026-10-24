@@ -50,6 +50,10 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // 2026-10-24: stage-only portal canvas and feedback after confirmed completion.
+  'src/components/portal/PortalFocus.tsx', 'src/components/portal/PortalCompletion.tsx',
+  'src/components/portal/usePortalFeedback.ts', 'src/components/portal/portal-focus.module.css',
+  'src/components/mascot/VespiOutline.tsx',
   // 2026-10-24: explicit file selection, review operation feedback and saved-report hierarchy.
   'src/components/portal/PortalDocumentUpload.tsx',
   // User request 2026-10-23: honest progress, step explanations, profile

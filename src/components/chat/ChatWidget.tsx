@@ -21,6 +21,7 @@ import { CheckCircle2 } from "lucide-react";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
+import { VespiScene } from "@/components/mascot/VespiScene";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import placement from "./chat-placement.module.css";
 
@@ -378,7 +379,7 @@ export function ChatWidget() {
               ref={headRef}
               className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#e7e4df] bg-white text-[#141413]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              <VespiAvatar size={40} />
+              {portalMode ? <VespiScene pose="welcome" sizes="76px" className={placement.dialogVespi} /> : <VespiAvatar size={40} />}
               <div className="min-w-0 flex-1">
                 <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
                 <span className={`block mt-1 text-[13px] leading-tight ${calmMode ? "text-[#6c6862]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>
@@ -454,6 +455,7 @@ export function ChatWidget() {
                       : "bg-cream text-ink"
                   }`}
                 >
+                  {portalMode && m.who === "ai" && i === messages.slice(1).findLastIndex(message => message.who === "ai") && <VespiScene pose="route" sizes="48px" className={placement.replyVespi} />}
                   {m.text}
                 </div>
               ))}

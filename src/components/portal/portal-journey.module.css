@@ -80,4 +80,11 @@
 .compact .nav a::after { top:27px; }
 .compact .summary { font-size:14px; }
 .stageCopy small[data-current-stage] { color:var(--portal-ink); }
+.journey.embedded { padding:0; border:0; border-radius:0; box-shadow:none; background:transparent; }
+.embedded::after,.embedded::before { display:none; }
+.embedded .route { padding-inline:0; }
+.embedded .track { height:6px; margin-top:8px; }
+.embedded .marker { top:-2px; }
+.embedded .summary { margin-bottom:6px; }
+.embedded .feedback { position:absolute; inset:auto 0 -16px auto; font-size:11px; }
 @media(max-width:600px) { .compact .nav a { min-width:156px; } }

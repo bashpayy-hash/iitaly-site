@@ -1,3 +1,4 @@
+import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -24,7 +25,6 @@ await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch(),results=[],errors=[];
 const scene=(page,pose)=>page.locator(`[data-vespi-scene=${pose}]`);
 const capture=async(page,name)=>sharp(await page.screenshot({animations:'disabled'})).webp({quality:85}).toFile(resolve(output,name+'.webp'));
-const nav=page=>page.locator('nav[aria-label="Разделы личного кабинета"],nav[aria-label="Разделы кабинета"]').filter({visible:true});
 const summary=page=>page.locator('[data-portal-road]').evaluate(el=>({done:el.dataset.roadDone,ahead:el.dataset.roadAhead,total:el.querySelector('[role=progressbar]')?.getAttribute('aria-valuemax'),value:el.querySelector('[role=progressbar]')?.getAttribute('aria-valuenow')}));
 async function decoded(page,pose){const img=scene(page,pose).locator('img').first();await img.evaluate(e=>e.decode());assert(await img.evaluate(e=>e.complete&&e.naturalWidth>0));}
 async function layout(page,label){
@@ -73,8 +73,8 @@ try {
     await page.keyboard.press('Shift');assert.equal(await page.locator('[data-vespi-resting]').count(),0,'Keyboard wakes Vespi');
     await page.clock.fastForward(45_100);await page.waitForFunction(()=>Boolean(document.querySelector('[data-vespi-resting]')));
     await page.locator('h1').dispatchEvent('pointerdown');assert.equal(await page.locator('[data-vespi-resting]').count(),0,'Pointer wakes Vespi');
-    await nav(page).getByRole('link',{name:'План',exact:true}).click();await decoded(page,'route');await layout(page,'plan '+width);
-    await nav(page).getByRole('link',{name:'Документы',exact:true}).click();await decoded(page,'documents');await layout(page,'documents '+width);
+    await portalDestination(page, 'План');await decoded(page,'welcome');await layout(page,'plan '+width);
+    await portalDestination(page, 'Документы');await decoded(page,'documents');await layout(page,'documents '+width);
     await page.locator('[data-document=apostille]').click();const report=page.getByRole('region',{name:'Разбор документа'});await report.waitFor();
     assert.equal(await report.locator('[data-vespi-scene=checking]').count(),0,'Stored clarification is never portrayed as active checking');
     assert.equal(await scene(page,'clarify').isVisible(),width===1440,'Narrow report preserves room for the action');

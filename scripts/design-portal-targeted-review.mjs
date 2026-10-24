@@ -1,3 +1,4 @@
+import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -25,8 +26,7 @@ const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.
 const results=[],errors=[],unexpected=[];let activePage;
 const road=page=>page.locator('[data-portal-road]');
 const detail=page=>page.locator('[data-step-detail]');
-const nav=page=>page.locator('nav[aria-label="Разделы личного кабинета"],nav[aria-label="Разделы кабинета"]').filter({visible:true});
-async function go(page,name){await nav(page).getByRole('link',{name,exact:true}).click();}
+async function go(page,name){await portalDestination(page,name);}
 async function capture(page,name){await sharp(await page.screenshot({animations:'disabled'})).webp({quality:82}).toFile(resolve(output,name+'.webp'));}
 async function noOverflow(page){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No page-wide horizontal scrolling');}
 async function axe(page,label){
@@ -86,10 +86,10 @@ try {
     assert(Math.abs(transform-3/total)<.001,'Progress position uses actual eligible fraction');
     assert.match(await page.locator('[data-portal-welcome] [data-saved-universities]').innerText(),/Bocconi/);
     assert.doesNotMatch(await page.locator('main').innerText(),/Выбраны в этом браузере|До подачи в/);
-    const instruction=road(page).locator('[data-road-open]');
+    const instruction=page.locator('[data-road-open]');
     assert.match(await instruction.innerText(),/Как поставить апостиль/);
     assert.match(await instruction.getAttribute('href'),/view=plan&task=apostille/);
-    assert.equal(await road(page).locator('[data-road-upload]').innerText(),'У меня уже есть, загрузить');
+    assert.equal(await page.locator('[data-road-upload]').innerText(),'У меня уже есть, загрузить');
     await capture(page,`overview-${width}`);
     await instruction.click();await detail(page).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('view'),'plan');
@@ -111,18 +111,18 @@ try {
     await noOverflow(page);await axe(page,`chat ${width}`);await capture(page,`chat-${width}`);
     await chat.getByRole('button',{name:'Закрыть чат',exact:true}).click();await chat.waitFor({state:'hidden'});
     assert.equal(await page.locator('[data-portal-design]').evaluate(el=>el.inert),false);
-    await road(page).locator('[data-road-stage="start"]').click();await page.locator('[data-saved-profile]').waitFor();
+    await road(page).locator('[data-road-stage="start"]').click();await portalTask(page,'profile');await page.locator('[data-saved-profile]').waitFor();
     assert.match(await page.locator('[data-saved-profile]').innerText(),/Этап учёбы|Бакалавриат|До 3 млн/);
     assert(await page.locator('[data-saved-profile]').getByRole('link',{name:'Изменить',exact:true}).isVisible());
     assert.equal(await road(page).locator('[aria-current="step"]').getAttribute('data-road-stage'),'start');
-    assert.equal(await nav(page).locator('[aria-current=page]').innerText(),'План');
+    assert.equal(await page.locator('aside').count(),0,'The pipeline is the only stage navigation');
     await page.locator('[data-portal-assistant]').click();await chat.waitFor();
     await chat.getByRole('link',{name:'Что дальше?',exact:true}).waitFor();
     assert.equal(await chat.getByRole('link',{name:'С чего начать этот шаг?',exact:true}).count(),0);
     await chat.getByRole('button',{name:'Закрыть чат',exact:true}).click();await chat.waitFor({state:'hidden'});
     await detail(page).getByRole('link',{name:'Назад',exact:true}).click();
-    await page.locator('[data-step-detail=apostille]').waitFor();
-    await road(page).locator('[data-road-stage="arrival"]').click();await detail(page).waitFor();
+    await page.locator('[data-portal-focus][data-selected-stage=start]').waitFor();
+    await road(page).locator('[data-road-stage="arrival"]').click();await page.locator('[data-road-open]').click();await detail(page).waitFor();
     assert.equal(await detail(page).getByRole('button').count(),0,'Future stage is a read-only preview');
     data.docs.apostille={verdict:'ok',fileName:'synthetic.txt'};
     data.docs.translate={verdict:'warn',summary:'Требования заявки не подтверждены.'};
@@ -141,7 +141,7 @@ try {
     const futureReport=page.getByRole('region',{name:'Разбор документа',exact:true});await futureReport.waitFor();
     assert.equal(await futureReport.getByRole('button').count(),0,'An existing future report remains read-only even if its raw available flag is true');
     if(width!==320) {
-      await go(page,'Обзор');await page.locator('[data-saved-universities]').getByRole('link',{name:'изменить',exact:true}).click();
+      await go(page,'Обзор');await page.locator('[data-saved-universities] a').first().click();
       await page.locator('[data-portal-universities]').waitFor();
       await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
       await page.locator('[data-university-select=polimi]').check();options.failProfile=true;

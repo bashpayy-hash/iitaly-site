@@ -8,15 +8,17 @@ import { PortalLogin } from "./PortalLogin";
 import { PortalOnboarding } from "./PortalOnboarding";
 import { PortalTaskDetail } from "./PortalTaskDetail";
 import { PortalUniversityStep } from "./PortalUniversityStep";
-import { TodaySection } from "./TodaySection";
-import { PlanSection } from "./PlanSection";
+import { PortalFocus } from "./PortalFocus";
+import { PortalCompletion, PortalSoundSetting } from "./PortalCompletion";
+import { usePortalFeedback } from "./usePortalFeedback";
+import focusStyles from "./portal-focus.module.css";
 import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import type { DocumentOperation } from "./PortalDocumentUpload";
 import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
-import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
-import { PortalWelcome } from "./PortalWelcome";
+import { VESPI_NAME } from "@/components/mascot/Vespi";
+import { VespiOutline } from "@/components/mascot/VespiOutline";
 import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
@@ -39,7 +41,6 @@ import { track } from "@/lib/track";
 import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending, nearestUniversityDeadline } from "@/lib/portalShortlist";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
-import { PortalUniversitySummary } from "./PortalUniversitySummary";
 import { WIZ } from "@/data/wizard";
 import { EMPTY_PLAN_DRAFT, type PlanDraft } from "@/lib/usePlanDraft";
 import { LocalWorkspace } from "./LocalWorkspace";
@@ -58,12 +59,6 @@ type Section = "today" | "plan" | "docs" | "settings";
 type SettingsTarget = "profile" | "notifications";
 type ActionError = { retryKind?: "check" | "save"; taskId?: string; message: string; retryLabel?: string; retry?: () => void };
 
-const NAV: { id: Section; label: string }[] = [
-  { id: "today", label: "Обзор" },
-  { id: "plan", label: "План" },
-  { id: "docs", label: "Документы" },
-];
-
 type TaskWithStage = { task: PortalTask; stageId: string; stageTitle: string; order: number };
 
 function tasksWithStages(data: PortalData): TaskWithStage[] {
@@ -79,7 +74,7 @@ function sectionFromLocation(): Section {
   if (typeof window === "undefined") return "today";
   const view = new URLSearchParams(window.location.search).get("view");
   if (view === "settings" || view === "help" || view === "profile") return "settings";
-  return NAV.some((item) => item.id === view) ? view as Section : "today";
+  return view === "plan" || view === "docs" ? view : "today";
 }
 
 function taskFromLocation(): string | null {
@@ -120,6 +115,8 @@ export function PortalExplorer() {
   const [restoringSession, setRestoringSession] = useState(true);
   const [loginRequested, setLoginRequested] = useState(false);
   const [section, setSection] = useState<Section>("today");
+  const [selectedStageId, setSelectedStageId] = useState<string>();
+  const feedback = usePortalFeedback();
   const [busyTask, setBusyTask] = useState<string | null>(null);
   const [actionError, setActionError] = useState<ActionError | null>(null);
   const [documentOperation, setDocumentOperation] = useState<DocumentOperation>();
@@ -160,7 +157,7 @@ export function PortalExplorer() {
     const observer = new ResizeObserver(measure);
     observer.observe(chrome);
     return () => observer.disconnect();
-  }, [hasPortalData, data?.client.onboardingComplete, editingProfile]);
+  }, [hasPortalData, data?.client.onboardingComplete, editingProfile, section, openTaskId, openDocument]);
 
   async function login(sn: string, c: string, silent = false) {
     const res = await fetchPortal(c, sn);
@@ -220,6 +217,7 @@ export function PortalExplorer() {
     if (nextSection === "settings") focusSettingsTarget.current = settingsTargetFromLocation();
     canonicalizeSettingsLocation();
     setSection(nextSection);
+    setSelectedStageId(new URLSearchParams(window.location.search).get("stage") || undefined);
     setOpenDocument(documentFromLocation());
     documentReturnTask.current = typeof window.history.state?.portalDocumentReturnTask === "string" ? window.history.state.portalDocumentReturnTask : null;
     setOpenTaskId(taskFromLocation());
@@ -256,6 +254,7 @@ export function PortalExplorer() {
       canonicalizeSettingsLocation();
       setEditingProfile(false);
       setSection(next);
+      setSelectedStageId(new URLSearchParams(window.location.search).get("stage") || undefined);
       setOpenDocument(documentFromLocation());
       documentReturnTask.current = typeof window.history.state?.portalDocumentReturnTask === "string" ? window.history.state.portalDocumentReturnTask : null;
       setOpenTaskId(taskFromLocation());
@@ -324,6 +323,7 @@ export function PortalExplorer() {
 
   function exit() {
     sessionVersion.current += 1;
+    feedback.reset();
     setActionError(null);
     setBusyTask(null);
     setOpenDocument(null);
@@ -351,6 +351,7 @@ export function PortalExplorer() {
   function changeSection(next: Section, push = true) {
     if (next !== "settings") focusSettingsTarget.current = null;
     setSection(next);
+    setSelectedStageId(undefined);
     setOpenDocument(null);
     setOpenTaskId(null);
     documentReturnTask.current = null;
@@ -360,6 +361,13 @@ export function PortalExplorer() {
     }
     window.scrollTo({ top: 0, behavior: "instant" });
     track("portal_sec", { s: next });
+  }
+
+  function selectStage(id: string) {
+    changeSection("today", false);
+    setSelectedStageId(id);
+    const url = `/portal?stage=${encodeURIComponent(id)}`;
+    if (window.location.pathname + window.location.search !== url) window.history.pushState({}, "", url);
   }
 
   function openSettings(target: SettingsTarget = "profile") {
@@ -375,6 +383,8 @@ export function PortalExplorer() {
 
   async function handleToggle(taskId: string, value: boolean) {
     if (!code || !surname || !data || busyTask) return false;
+    feedback.reset();
+    if (value) feedback.prime();
     const version = sessionVersion.current;
     const actionTask = tasksWithStages(data).find(({ task }) => task.id === taskId)?.task;
     const actionTitle = actionTask ? taskTitle(actionTask) : "Шаг маршрута";
@@ -386,6 +396,7 @@ export function PortalExplorer() {
       if (!res?.ok) throw new Error(typeof res?.error === "string" ? res.error : "Отметка не сохранена. Попробуй ещё раз.");
       setData((prev) => prev ? { ...prev, done: res.done, progress: res.progress } : prev);
       if (value && !data.done[taskId] && res.done[taskId]) {
+        feedback.confirm(taskId, actionTitle);
         completionFocusPending.current = true;
         setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
       } else setRoadTravel(undefined);
@@ -420,6 +431,7 @@ export function PortalExplorer() {
   }
 
   async function handleSaveUniversities(ids: string[]): Promise<boolean> {
+    feedback.prime();
     if (!data || busyTask) return false;
     const task = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "shortlist");
     if (!task || (!data.done.shortlist && taskReadOnlyReason(data, task))) return false;
@@ -456,13 +468,17 @@ export function PortalExplorer() {
     onboardingDone?: boolean;
   }) {
     if (!code || !surname) return { ok: false as const, error: "Сначала войди в кабинет." };
+    feedback.prime();
+    const version = sessionVersion.current;
     const res = await savePortalProfile(code, surname, payload);
+    if (version !== sessionVersion.current) return { ok: false as const, error: "Сессия кабинета изменилась. Открой профиль снова." };
     if (res.ok) {
-      if (profileFromTask.current && data) {
+      if (data) {
         const previousTasks = data.roadmap.flatMap(stage => stage.tasks);
         const nextTasks = res.data.roadmap.flatMap(stage => stage.tasks);
         const current = portalPosition(data).task;
         if (current && !data.done[current.id] && res.data.done[current.id]) {
+          feedback.confirm(current.id, taskTitle(current));
           completionFocusPending.current = true;
           if (previousTasks.map(task => task.id).join("|") === nextTasks.map(task => task.id).join("|")) {
             setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
@@ -529,6 +545,9 @@ export function PortalExplorer() {
       const task = data?.roadmap.flatMap(stage => stage.tasks).find(row => row.id === taskId);
       const updated = data ? { ...data, docs: saved.docs, done: saved.done } : null;
       if (data && updated && task && portalTaskDone(updated, task)) {
+        if (!portalTaskDone(data, task)) {
+          feedback.confirm(task.id, taskTitle(task));
+        }
         if (portalProgress(updated).done > portalProgress(data).done) {
           completionFocusPending.current = true;
           setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
@@ -554,6 +573,7 @@ export function PortalExplorer() {
 
   async function handleFileChosen(file: File | null, taskId: string, context = reviewContext) {
     if (!file || !taskId || !code || !surname) return;
+    feedback.prime();
     const version = sessionVersion.current;
     setBusyTask(taskId);
     setActionError(null);
@@ -644,24 +664,27 @@ export function PortalExplorer() {
   const canRecheckDocument = Boolean(activeTask && DOC_TASKS[activeTask.id] && data?.docs?.[activeTask.id]
     && portalTaskStageOpen(data, activeTask.id) && (portalTaskDone(data, activeTask) || activeTask.available !== false));
   const universityContext = shortlist.length ? `Выбранные университеты: ${shortlistNames(shortlist).join(", ")}. Конкретные программы и их сроки пока не подтверждены.` : "";
-  const assistantContext = activeTask ? [taskExplanation(activeTask), ...taskHelpDetails(activeTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(activeTask) : readOnlyReason || taskActionHint(activeTask)].filter(Boolean).join(" ") : undefined;
+  const focusStage = data?.roadmap.find(stage => stage.id === selectedStageId) || position?.stage;
+  const assistantTask = activeTask || (section === "today" || section === "plan" ? focusStage?.tasks.find(task => data && !portalTaskDone(data, task) && task.available !== false) || currentTask : null);
+  const assistantReadOnly = data && assistantTask ? taskReadOnlyReason(data, assistantTask) : "";
+  const assistantContext = assistantTask ? [taskExplanation(assistantTask), ...taskHelpDetails(assistantTask), universityContext, canRecheckDocument ? "Можно проверить новую версию. Новый разбор заменит предыдущий; результат проверки может изменить отметку шага." : shortlistEditable ? taskActionHint(assistantTask) : assistantReadOnly || taskActionHint(assistantTask)].filter(Boolean).join(" ") : undefined;
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {
-      portal: true, taskId: activeTask?.id, taskTitle: activeTask ? taskTitle(activeTask) : undefined,
-      taskContext: assistantContext, taskDone: activeTask && data ? portalTaskDone(data, activeTask) : false,
-      questions: activeTask && data ? taskQuestions(activeTask, portalTaskDone(data, activeTask)) : undefined,
+      portal: true, taskId: assistantTask?.id, taskTitle: assistantTask ? taskTitle(assistantTask) : undefined,
+      taskContext: assistantContext, taskDone: assistantTask && data ? portalTaskDone(data, assistantTask) : false,
+      questions: assistantTask && data ? taskQuestions(assistantTask, portalTaskDone(data, assistantTask)) : undefined,
     } }));
     return () => { window.dispatchEvent(new CustomEvent("iitaly:portal-context", { detail: {} })); };
-  }, [activeTask, assistantContext, data]);
+  }, [assistantTask, assistantContext, data]);
 
   function openAssistant() {
     window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: {
       source: "portal-header",
-      taskId: activeTask?.id,
-      taskTitle: activeTask ? taskTitle(activeTask) : undefined,
-      taskContext: assistantContext, taskDone: activeTask && data ? portalTaskDone(data, activeTask) : false,
-      questions: activeTask && data ? taskQuestions(activeTask, portalTaskDone(data, activeTask)) : undefined,
+      taskId: assistantTask?.id,
+      taskTitle: assistantTask ? taskTitle(assistantTask) : undefined,
+      taskContext: assistantContext, taskDone: assistantTask && data ? portalTaskDone(data, assistantTask) : false,
+      questions: assistantTask && data ? taskQuestions(assistantTask, portalTaskDone(data, assistantTask)) : undefined,
     } }));
   }
 
@@ -736,77 +759,33 @@ export function PortalExplorer() {
     );
   }
 
+  const showFocus = section === "today" || (section === "plan" && !activeTask);
+
   return (
-    <div className={styles.portal} data-portal-navigation data-portal-design="shared-site">
+    <div className={`${styles.portal} ${focusStyles.portalRoot}`} data-portal-navigation data-portal-design="shared-site">
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
     <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
       <div className={navigation.headerLinks}>
-        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={activeTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiAvatar /><span>Помощник</span></a>
+        <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={assistantTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiOutline /><span>Помощник</span></a>
         <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); openSettings();
         }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton + " " + navigation.settingsLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z" /><circle cx="12" cy="12" r="3" /></svg><span>Настройки</span></a>
       </div>
     } />
-    {section !== "today" && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
+    {!showFocus && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
         activeStageId={activeTask ? data.roadmap.find(row => row.tasks.some(task => task.id === activeTask.id))?.id : undefined}
-        deadline={nearestUniversityDeadline(shortlist)} navigationOnly
+        deadline={nearestUniversityDeadline(shortlist)} navigationOnly onSelectStage={selectStage}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
         secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
     </section>}
     </div>
     <main id="main">
-      {section === "today" && <div className={navigation.arrival} data-portal-arrival>
-        <PortalWelcome name={data.client.name} intakeYear={data.client.intakeYear}><PortalUniversitySummary ids={shortlist} onEdit={() => { const task = data.roadmap.flatMap(row => row.tasks).find(task => task.id === "shortlist"); if (task) openTask(task); }} /></PortalWelcome>
-        <section data-portal-progress-shell aria-label="Прогресс поступления">
-          <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
-            deadline={nearestUniversityDeadline(shortlist)} progressFirst onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
-        </section>
-      </div>}
-      <div className={styles.shell}>
-        <aside className={styles.sidebar} aria-label="Разделы личного кабинета">
-          <p className={styles.sidebarLabel}>Личный кабинет</p>
-          <nav className={styles.nav} aria-label="Разделы личного кабинета">
-            {NAV.map((item) => (
-              <a
-                key={item.id}
-                href={sectionUrl(item.id)}
-                aria-current={section === item.id ? "page" : undefined}
-                onClick={event => {
-                  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                  event.preventDefault(); changeSection(item.id);
-                }}
-                className={styles.navItem + " " + (section === item.id ? styles.navItemActive : "")}
-              >
-                <span className={styles.navDot} aria-hidden />
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
+      <div className={`${styles.shell} ${focusStyles.shell}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div className={styles.main}>
-          {section !== "today" && <h1 className="sr-only">Личный кабинет — {activeTask ? taskTitle(activeTask) : section === "plan" ? "план поступления" : section === "docs" ? "документы" : "настройки"}</h1>}
-
-          <nav className={navigation.mobileNav} aria-label="Разделы кабинета">
-            {NAV.map((item) => (
-              <a
-                key={item.id}
-                href={sectionUrl(item.id)}
-                aria-current={section === item.id ? "page" : undefined}
-                onClick={event => {
-                  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                  event.preventDefault(); changeSection(item.id);
-                }}
-                className={styles.navItem + " " + (section === item.id ? styles.navItemActive : "")}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
+          {!showFocus && <h1 className="sr-only">Личный кабинет: {activeTask ? taskTitle(activeTask) : section === "docs" ? "документы" : "настройки"}</h1>}
           <div id="portal-panel" className={styles.panel}>
             {shortlistNotice && <p role="status" className={styles.muted}>{shortlistNotice} <button type="button" className={styles.textLink} disabled={Boolean(busyTask)} onClick={() => { void handleSaveUniversities(shortlist); }}>Повторить синхронизацию</button></p>}
             {actionError && !documentError && (
@@ -815,7 +794,9 @@ export function PortalExplorer() {
                 {actionError.retry && <a href="#portal-panel" onClick={event => { event.preventDefault(); if (!busyTask) actionError.retry?.(); }} aria-disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</a>}
               </div>
             )}
-            {section === "today" && <TodaySection data={data} onOpenDoc={showDocument} onOpenDocuments={() => changeSection("docs")} shortlist={shortlist} onOpenTask={openTask} />}
+            {showFocus && <PortalFocus data={data} selectedStageId={selectedStageId} shortlist={shortlist} busy={busyTask !== null}
+              travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} onSelectStage={selectStage}
+              onOpenTask={openTask} onComplete={task => { void handleToggle(task.id, true); }} onDocuments={() => changeSection("docs")} onSettings={() => openSettings()} />}
             {section === "plan" && (activeTask && openTaskId ? shortlistEditable ? <PortalUniversityStep
               key={activeTask.id} data={data} task={activeTask} selectedIds={shortlist} busy={busyTask !== null}
               onBack={backFromTask} backHref={stepReturnHref.current} onSave={handleSaveUniversities}
@@ -834,7 +815,7 @@ export function PortalExplorer() {
                 busy={busyTask !== null} hasRetry={Boolean(actionError?.retry)} onComplete={() => { void handleToggle(activeTask.id, true); }} />}
               {activeTask.id === "checkDocs" && <DocsSection data={data} currentTaskId={position?.task?.id} onOpenDoc={showDocument} embedded />}
               {activeTask.id === "kit" && <PortalPermessoStep />}
-            </PortalTaskDetail> : <PlanSection data={data} onOpenTask={openTask} />)}
+            </PortalTaskDetail> : null)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
               <PortalDocumentReport key={openDocument} title={openDocument === "familyDocs" ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title}
@@ -854,7 +835,7 @@ export function PortalExplorer() {
               onEditProfile={() => { profileFromTask.current = true; setEditingProfile(true); }}
             /> : <DocsSection currentTaskId={position?.task?.id} data={data} onOpenDoc={showDocument} />)}
             {section === "settings" && (
-              <ProfileSection
+              <><ProfileSection
                 data={data}
                 onEditProfile={() => setEditingProfile(true)}
                 onBack={() => changeSection("today")}
@@ -866,13 +847,14 @@ export function PortalExplorer() {
                   onDisableTelegram={handleDisableTelegram}
                   onRefreshNotifications={handleRefreshNotifications}
                 />}
-              />
+              /><PortalSoundSetting enabled={feedback.sound} onToggle={feedback.toggleSound} /></>
             )}
           </div>
         </div>
       </div>
 
     </main>
+    <PortalCompletion feedback={feedback.feedback} />
     </div>
   );
 }
