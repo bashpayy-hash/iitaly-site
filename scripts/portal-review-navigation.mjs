@@ -5,17 +5,17 @@ export async function portalDestination(page, name) {
   await home.click();
   await page.locator('[data-portal-focus]').waitFor();
   if (name === 'Документы') {
-    await page.locator('[data-unlimited-documents]').click();
+    await page.locator('[data-portal-documents]').click();
   } else if (name === 'План') {
     await page.locator('[data-road-stage][aria-current="step"]').click();
   }
 }
 export async function portalTask(page, id) {
-  if(!await page.locator(`[data-portal-task="${id}"]`).count()) {
+  if(!await page.locator(`[data-focus-row="${id}"],[data-portal-task="${id}"]`).count()) {
     const stages=await page.locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('data-road-stage')));
     for(const stage of stages) {
       await page.locator(`[data-road-stage="${stage}"]`).click();
-      if(await page.locator(`[data-portal-task="${id}"]`).count())break;
+      if(await page.locator(`[data-focus-row="${id}"],[data-portal-task="${id}"]`).count())break;
     }
   }
   const row=page.locator(`[data-focus-row="${id}"]`);

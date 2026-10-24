@@ -21,7 +21,7 @@ import { CheckCircle2 } from "lucide-react";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
-import { VespiScene } from "@/components/mascot/VespiScene";
+import { VespiVideoAvatar } from "@/components/mascot/VespiVideoAvatar";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import placement from "./chat-placement.module.css";
 
@@ -39,6 +39,8 @@ interface PortalChatContext {
   taskDone?: boolean;
   questions?: string[];
   guideId?: GuideId;
+  instruction?: string[];
+  instructionHref?: string;
 }
 
 function visibleGuideContext(): PortalChatContext {
@@ -106,6 +108,14 @@ export function ChatWidget() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [celebrating,setCelebrating]=useState(false);
+  useEffect(()=>{
+    let timer:ReturnType<typeof setTimeout>;
+    if(!open||!portalMode){timer=setTimeout(()=>setCelebrating(false),0);return()=>clearTimeout(timer);}
+    const saved=()=>{setCelebrating(true);clearTimeout(timer);timer=setTimeout(()=>setCelebrating(false),3000);};
+    window.addEventListener("iitaly:task-saved",saved);
+    return()=>{clearTimeout(timer);window.removeEventListener("iitaly:task-saved",saved);};
+  },[open,portalMode]);
   const [busy, setBusy] = useState(false);
   const [typing, setTyping] = useState(false);
   const [showLead, setShowLead] = useState(false);
@@ -192,10 +202,10 @@ export function ChatWidget() {
 
   useEffect(() => {
     function onOpenRequest(e: Event) {
-      const detail = (e as CustomEvent<{ prefill?: string; source?: string; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string; taskDone?: boolean; questions?: string[]; guideId?: string }>)
+      const detail = (e as CustomEvent<{ prefill?: string; source?: string; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string; taskDone?: boolean; questions?: string[]; instruction?: string[]; instructionHref?:string; guideId?: string }>)
         .detail;
       const nextContext: PortalChatContext = detail?.source === "portal-header" ? {
-        portal: true, taskId: detail.taskId, taskTitle: detail.taskTitle, taskOwner: detail.taskOwner, taskContext: detail.taskContext, taskDone: detail.taskDone, questions: detail.questions,
+        portal: true, taskId: detail.taskId, taskTitle: detail.taskTitle, taskOwner: detail.taskOwner, taskContext: detail.taskContext, taskDone: detail.taskDone, questions: detail.questions, instruction: detail.instruction, instructionHref: detail.instructionHref,
       } : detail?.source === "guides"
         ? isGuideId(detail.guideId) ? { guideId: detail.guideId } : {}
         : visibleGuideContext();
@@ -379,7 +389,7 @@ export function ChatWidget() {
               ref={headRef}
               className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#e7e4df] bg-white text-[#141413]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              {portalMode ? <VespiScene pose="welcome" sizes="76px" className={placement.dialogVespi} /> : <VespiAvatar size={40} />}
+              {portalMode ? <VespiVideoAvatar state={celebrating ? "celebrate" : input.trim() || busy ? "thinking" : "idle"} /> : <VespiAvatar size={40} />}
               <div className="min-w-0 flex-1">
                 <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
                 <span className={`block mt-1 text-[13px] leading-tight ${calmMode ? "text-[#6c6862]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>
@@ -427,6 +437,8 @@ export function ChatWidget() {
               aria-live="polite"
               className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
             >
+              {portalMode && celebrating && <p role="status" className="text-sm leading-6">Отличная работа! Шаг закрыт, двигаемся дальше.</p>}
+              {portalMode && displayContext.instruction?.length && <section data-chat-step-guide className="text-sm leading-6"><h3 className="font-semibold text-base">{displayContext.taskTitle}</h3><ol className="mt-3 list-decimal pl-5 space-y-3">{displayContext.instruction.map((text,index)=><li key={index}>{text}</li>)}</ol></section>}
               {calmMode && !hasConversation && !showLead && (
                 <div className="text-sm leading-6">
                   <p>{helperHint}</p>
@@ -455,7 +467,7 @@ export function ChatWidget() {
                       : "bg-cream text-ink"
                   }`}
                 >
-                  {portalMode && m.who === "ai" && i === messages.slice(1).findLastIndex(message => message.who === "ai") && <VespiScene pose="route" sizes="48px" className={placement.replyVespi} />}
+
                   {m.text}
                 </div>
               ))}

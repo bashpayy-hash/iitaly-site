@@ -36,6 +36,8 @@ export function usePortalFeedback() {
     if (!alive.current) return;
     clearTimeout(timeout.current);
     setFeedback({ id: ++sequence.current, taskId, title });
+    window.dispatchEvent(new CustomEvent("iitaly:task-saved", {detail:{taskId,title}}));
+
     timeout.current = setTimeout(() => setFeedback(null), 2200);
     const ctx = context.current;
     if (!soundEnabled.current || !ctx || ctx.state !== "running") return;

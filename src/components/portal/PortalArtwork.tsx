@@ -1,14 +1,11 @@
 /* eslint-disable @next/next/no-img-element -- Responsive local WebP assets for static export. */
 import styles from "./portal-artwork.module.css";
-import { VespiScene } from "@/components/mascot/VespiScene";
 
 type ArtworkPlacement = "overview" | "plan" | "documents";
 
 /** Decorative Higgsfield artwork: it carries no step, status or interaction. */
 export function PortalArtwork({ placement }: { placement: ArtworkPlacement }) {
-  if (placement !== "overview") return <div className={styles.spatial} data-portal-art={placement === "plan" ? "route" : "documents"} aria-hidden="true">
-    <VespiScene pose={placement === "plan" ? "route" : "documents"} sizes="(max-width: 600px) 88px, 216px" />
-  </div>;
+  if (placement !== "overview") return null;
   return <div className={`${styles.artwork} ${styles.overview}`} aria-hidden="true" data-portal-art="study">
     <img
       src="/illustrations/editorial/portal-study-256.webp"

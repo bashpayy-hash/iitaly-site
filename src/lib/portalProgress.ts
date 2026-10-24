@@ -2,12 +2,10 @@ import type { PortalData, PortalTask } from "./portalApi";
 import { DOC_TASKS } from "./portalMeta";
 import { documentOutcome, DocumentStatus } from "./portalDocument";
 
-/** File completion comes from the same review outcome as the document list.
- * Old manual flags can neither approve an unreviewed file nor hide a passed one. */
+/** A checklist mark records the user's completed task. It does not approve
+ * a file: documentOutcome remains the sole source for review/readiness badges. */
 export function portalTaskDone(data: PortalData, task: PortalTask): boolean {
-  return DOC_TASKS[task.id]
-    ? documentOutcome(data.docs?.[task.id]).status === DocumentStatus.Ready
-    : Boolean(data.done[task.id]);
+  return Boolean(data.done[task.id]) || Boolean(DOC_TASKS[task.id] && documentOutcome(data.docs?.[task.id]).status === DocumentStatus.Ready);
 }
 
 export function portalProgress(data: PortalData) {

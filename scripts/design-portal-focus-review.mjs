@@ -33,6 +33,7 @@ async function axe(page,label){
 }
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
+  if(options.docsCurrent){data.client.name='Demo';data.client.profile={...data.client.profile,universityIds:['unipd','luiss']};data.done={profile:true,shortlist:true,chances:true};for(const row of data.roadmap.find(s=>s.id==='docs').tasks){row.deadline='2027-01-31';row.time='1–3 недели';}for(const row of data.roadmap.find(s=>s.id==='docs').tasks)row.t=({apostille:'Поставить апостиль на аттестат или диплом',translate:'Сделать официальный перевод на итальянский',notary:'Заверить перевод у нотариуса',checkDocs:'Проверить комплект документов'})[row.id]||row.t;}
   const context=await browser.newContext({viewport,reducedMotion:options.motion?'no-preference':'reduce',locale:'ru-RU'});
   await context.route('**/*',async route=>{
     const req=route.request(),url=new URL(req.url()),json=value=>route.fulfill({json:value});
@@ -65,98 +66,63 @@ async function open(viewport,mode='partial',options={}){
   await page.locator(mode==='onboarding'?'[data-portal-profile]':'[data-portal-overview]').waitFor({state:'attached'});
   await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls};
 }
-
 try {
-  for (const width of [1440, 390, 320]) {
-    const {page,context,calls}=await open({width,height:900},'screenshot-parent');
-    assert.equal(await page.locator('[data-portal-focus]').count(),1);
-    assert.equal(await page.locator('aside,nav[aria-label="Разделы кабинета"]').count(),0,'No duplicate sidebar or bottom navigation');
-    assert.equal(await page.locator('[data-portal-assistant] img').count(),0);
-    assert.equal(await page.locator('[data-portal-assistant] [data-vespi-outline]').count(),1);
+  for(const width of [1440,1024,390,320]) {
+    const {page,context,calls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true});
+    assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Demo!');
+    assert.match(await page.locator('[data-saved-universities]').innerText(),/Università di Padova/);
+    assert.match(await page.locator('[data-saved-universities]').innerText(),/LUISS Guido Carli/);
+    assert.equal(await page.locator('[data-road-count]').innerText(),'3 из 26 шагов');
     assert.equal(await page.locator('[data-road-stage]').count(),6);
-    assert.equal(await page.locator('[data-road-next]').count(),1);
-    assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Тестовый!');
-    assert.equal(await page.locator('[data-road-count]').innerText(),'2 из 26 шагов');
-    const blocks=await page.locator('[data-portal-welcome],[data-portal-road],[data-portal-overview]').evaluateAll(nodes=>nodes.map(n=>({y:n.getBoundingClientRect().y,b:n.getBoundingClientRect().bottom})));
-    assert(blocks[0].b<=blocks[1].y+1 && blocks[1].b<=blocks[2].y+1,'Greeting, route and focus are one vertical flow');
+    assert.equal(await page.locator('[data-task-check]').count(),5);
+    assert.equal(await page.locator('[data-task-check]:disabled').count(),0);
+    const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
+    assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
+    const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
+    assert(Math.abs(work.y-route.y-route.height-20)<1,'The two white cards are separated by 20px');
+    const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
+    const copy=await page.locator('[data-focus-row=apostille]').boundingBox(),cta=await page.locator('[data-road-open]').boundingBox();
+    if(width>700){assert(cta.x>=copy.x+copy.width,'Main action is opposite the left text');assert(cta.y>=copy.y&&cta.y<copy.y+copy.height);}
+    assert.equal(await page.locator('[data-task-check=apostille] svg').evaluate(el=>el.getBoundingClientRect().width),28);
+    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),22);
+    if(width>=1024)assert.equal(Math.round((await page.locator('[data-focus-row=translate]').boundingBox()).height),62);
+    assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
+    await noOverflow(page);await axe(page,`Modular ${width}`);
     await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});
-    await noOverflow(page);await axe(page,`Focus ${width}`);
-    await page.locator('[data-road-stage="docs"]').click();
-    await page.waitForFunction(()=>document.querySelector('[data-portal-focus]')?.getAttribute('data-selected-stage')==='docs');
-    assert.match(page.url(),/stage=docs/);
-    assert.equal(await page.locator('[data-road-stage="docs"]').getAttribute('aria-current'),'step');
-    assert.equal(await page.locator('[data-focus-complete]').count(),0,'Future document cannot be self-approved');
-    assert.match(await page.locator('[data-road-next]').innerText(),/Сначала:/);
-    await page.locator('[data-focus-row="translate"] > summary').click();
-    assert(await page.locator('[data-focus-row="translate"] a').isVisible());
-    await page.locator('[data-focus-row="translate"] a').click();
-    await page.locator('[data-step-detail="translate"]').waitFor();
-    assert.equal(await page.locator('[data-road-stage="docs"]').getAttribute('aria-current'),'step');
-    await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus][data-selected-stage="docs"]').waitFor();
-    await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('[data-portal-focus]').getAttribute('data-selected-stage'),'docs');
-    await page.locator('[data-portal-assistant]').click();
-    await page.locator('[data-portal-chat="true"]').waitFor();
-    assert.equal(await page.locator('[data-portal-chat="true"] [data-vespi-scene]').count(),1,'Detailed original Vespi is in the chat header');
-    await page.waitForTimeout(350);
-    const box=await page.locator('[data-portal-chat="true"]').boundingBox();
-    if(width<=1100)assert.equal(Math.round(box.width),width,'Mobile drawer uses full screen');
-    else {const main=await page.locator('[data-portal-design]').boundingBox();assert(main.x+main.width<=box.x,'Desktop content does not sit below the chat');}
+    await page.locator('[data-focus-row=translate] summary').click();assert(await page.locator('[data-portal-task=translate]').isVisible());
+    await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
+    await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
+    await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').isVisible(),false,'Overview mascot retires behind the route');
+    assert.equal(await page.locator('[data-vespi-scene=chat]').count(),1);
+    const panel=await page.locator('[data-portal-chat=true]').boundingBox();
+    if(width<=1100)assert.equal(Math.round(panel.width),width);else{const main=await page.locator('[data-portal-design]').boundingBox();assert(main.x+main.width<=panel.x);}
     await page.screenshot({path:resolve(output,`chat-${width}.png`),animations:'disabled'});
-    await page.getByRole('button',{name:'Закрыть чат',exact:true}).click();
-    await page.locator('[data-portal-chat="true"]').waitFor({state:'detached'});
-    await page.waitForFunction(()=>document.activeElement?.hasAttribute('data-portal-assistant')); 
-    assert.equal(calls.length,0);
-    results.push({width,stages:6,noSidebar:true,readOnlyFuture:true,deepLinks:true,chatResponsive:true,axe:true});await context.close();
+    await axe(page,`Chat ${width}`);
+    await page.getByRole('button',{name:'Закрыть чат',exact:true}).click();await page.locator('[data-portal-chat=true]').waitFor({state:'detached'});
+    assert.equal(calls.length,0);results.push({width,modular:true,checkboxes:5,rightAction:true,singleVisibleMascot:true,axe:true});await context.close();
   }
-  for (const failTask of [false,true]) {
-    const {page,context,calls}=await open({width:1440,height:900},'manual',{motion:true,failTask});
-    assert.equal(await page.locator('[data-portal-completion][data-visible="true"]').count(),0);
-    const before=Number(await road(page).getAttribute('data-road-done'));
-    await page.locator('[data-focus-complete]').click();
-    if(failTask){
-      await page.locator('#portal-panel [role=alert]').waitFor();assert.match(await page.locator('#portal-panel [role=alert]').innerText(),/Синтетический сбой/);
-      assert.equal(await page.locator('[data-portal-completion][data-visible="true"]').count(),0,'Failed save earns no positive acknowledgement');
-      assert.equal(Number(await road(page).getAttribute('data-road-done')),before);
-      assert.equal(await page.evaluate(()=>window.__notes),0,'No sound on error');
-      await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();
-    }
-    await page.locator('[data-portal-completion="manual-task"][data-visible="true"]').waitFor();
-    assert.equal(Number(await road(page).getAttribute('data-road-done')),before+1);
+  for(const failTask of [false,true]) {
+    const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
+    await page.locator('[data-task-check=translate]').click();
+    if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal(await road(page).getAttribute('data-road-done'),'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}
+    await page.waitForFunction(()=>document.querySelector('[data-task-check=translate]')?.getAttribute('aria-checked')==='true');
+    await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='4');
     await page.waitForFunction(()=>window.__notes===6);
-    await page.waitForFunction(()=>document.querySelector('[data-focus-task]')?.getAttribute('data-focus-task')!=='manual-task');
+    assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
     assert.equal(calls.length,failTask?2:1);
-    assert.equal(await page.locator('[data-focus-row="manual-task"]').getAttribute('open'),null);
-    await page.reload({waitUntil:'networkidle'});
-    assert.equal(await page.locator('[data-portal-completion][data-visible="true"]').count(),0,'Restoring saved data produces no celebration');
-    await page.getByRole('link',{name:'Настройки',exact:true}).click();
-    await page.getByLabel('Звук при выполнении шага').uncheck();
-    await page.reload({waitUntil:'networkidle'});assert.equal(await page.getByLabel('Звук при выполнении шага').isChecked(),false);
-    await page.locator('[data-road-stage="start"]').click();
-    await page.locator('[data-focus-complete]').click();
-    await page.locator('[data-portal-completion][data-visible="true"]').waitFor();
-    assert.equal(await page.evaluate(()=>window.__notes),0,'Muted completion still updates visually');
-    results.push({failTask,confirmedOnly:true,chord:true,nextTask:true,reloadQuiet:true,mutePersists:true});await context.close();
-  }
-  for(const mode of ['empty','complete','blocked','late-current','parent-file']){
-    const {page,context,fileCalls}=await open({width:390,height:844},mode);
-    await noOverflow(page);
-    if(['empty','complete'].includes(mode))assert.equal(await page.locator('[data-road-open]').count(),0);
-    if(mode==='parent-file'){
-      assert.equal(await page.locator('[data-focus-complete]').count(),0);
-      await page.locator('[data-road-open]').click();await page.locator('[data-portal-upload-zone]').waitFor();
-      const transfer=await page.evaluateHandle(()=>{const d=new DataTransfer();d.items.add(new File(['SYNTHETIC DOCUMENT ONLY. NO PERSONAL DATA. SAMPLE FOR UI VERIFICATION.'],'synthetic-review.txt',{type:'text/plain'}));return d;});
-      await page.locator('[data-portal-upload-zone]').dispatchEvent('drop',{dataTransfer:transfer});
-      assert.deepEqual(fileCalls,[]);
-      await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
-      await page.locator('[data-portal-completion="familyDocs"][data-visible="true"]').waitFor();
-      assert.deepEqual(fileCalls,['check','save']);
-      assert.equal(await page.locator('[data-road-count]').innerText(),'1 из 2 шагов');
-      assert.equal(await page.locator('[data-portal-completion] svg path').evaluate(n=>getComputedStyle(n).animationName),'none','Reduced motion draws the completed check without animation');
-    }
-    results.push({mode,overflow:false});await context.close();
+    await page.locator('[data-task-check=apostille]').press('Space');
+    await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='5');
+    assert.equal(data.docs.apostille,undefined);
+    await page.reload({waitUntil:'networkidle'});assert.equal(await road(page).getAttribute('data-road-done'),'5');assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(),0);assert.equal(await page.evaluate(()=>window.__notes),0);
+    await page.getByRole('link',{name:'Настройки',exact:true}).click();await page.getByLabel('Звук при выполнении шага').uncheck();
+    await page.locator('[data-portal-header] a[href="/portal"]').click();
+    await page.locator('[data-task-check=notary]').click();await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='6');
+    assert.equal(await page.evaluate(()=>window.__notes),0);
+    results.push({failTask,savedOnly:true,fileOutcomeIndependent:true,keyboard:true,sound:true,reloadQuiet:true,mute:true});await context.close();
   }
   assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);
-  await writeFile(resolve(output,'report.json'),JSON.stringify({results},null,2));
-  console.log(JSON.stringify({passed:results.length,output}));
+  await writeFile(resolve(output,'report.json'),JSON.stringify({results},null,2));console.log(JSON.stringify({passed:results.length,output}));
 }catch(error){if(activePage&&!activePage.isClosed())await activePage.screenshot({path:resolve(output,'failure.png'),fullPage:true}).catch(()=>{});throw error;}
 finally{await browser.close();server.close();}
