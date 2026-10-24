@@ -61,40 +61,43 @@ try {
     await page.goto(origin+'/portal?auth=login',{waitUntil:'networkidle'});
     await page.getByLabel('Фамилия',{exact:true}).fill('Testov');await page.getByLabel('Код доступа',{exact:true}).fill('TEST-01');
     await page.getByRole('button',{name:'Войти в кабинет',exact:true}).click();
-    await scene(page,'welcome').waitFor();await decoded(page,'welcome');await page.evaluate(()=>document.fonts.ready);
+    await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
     const progress=await summary(page);await layout(page,'overview '+width);
+    assert.equal(await page.locator('[data-vespi-scene]').count(),0,'Overview has statistics, not a duplicate mascot');
     await page.clock.fastForward(45_100);
-    await page.waitForFunction(()=>Boolean(document.querySelector('[data-vespi-resting]')));
-    const rest=scene(page,'welcome').locator('img').last();await rest.evaluate(e=>e.decode());
-    assert.equal(await rest.evaluate(e=>getComputedStyle(e).opacity),'1');
-    assert.equal(await rest.evaluate(e=>getComputedStyle(e).transitionProperty),'none','Reduced motion removes crossfade even when the global duration remains defined');
-    assert.deepEqual(await summary(page),progress);assert.equal(JSON.stringify(data),before);assert.deepEqual(calls,[],'Rest sends no mutation or AI request');
-    await capture(page,'rest-'+width);
-    await page.keyboard.press('Shift');assert.equal(await page.locator('[data-vespi-resting]').count(),0,'Keyboard wakes Vespi');
-    await page.clock.fastForward(45_100);await page.waitForFunction(()=>Boolean(document.querySelector('[data-vespi-resting]')));
-    await page.locator('h1').dispatchEvent('pointerdown');assert.equal(await page.locator('[data-vespi-resting]').count(),0,'Pointer wakes Vespi');
-    await portalDestination(page, 'План');await decoded(page,'welcome');await layout(page,'plan '+width);
-    await portalDestination(page, 'Документы');await decoded(page,'documents');await layout(page,'documents '+width);
+    assert.deepEqual(await summary(page),progress);assert.equal(JSON.stringify(data),before);assert.deepEqual(calls,[],'Idle display sends no mutation or AI request');
+    await capture(page,'overview-'+width);
+    await portalDestination(page,'План');await layout(page,'plan '+width);
+    await portalDestination(page,'Документы');await layout(page,'documents '+width);
+    assert.equal(await page.locator('[data-vespi-scene]').count(),0,'Documents keep advice without another mascot');
     await page.locator('[data-document=apostille]').click();const report=page.getByRole('region',{name:'Разбор документа'});await report.waitFor();
     assert.equal(await report.locator('[data-vespi-scene=checking]').count(),0,'Stored clarification is never portrayed as active checking');
-    assert.equal(await scene(page,'clarify').isVisible(),width===1440,'Narrow report preserves room for the action');
+    assert.equal(await page.locator('[data-vespi-scene]').count(),0,'Saved report leaves the mascot in chat only');
     await layout(page,'report '+width);
     if(width===1440){
-      await report.locator('[data-document-prepare]').click();await decoded(page,'documents');
+      await report.locator('[data-document-prepare]').click();
       let finishCheck;const pending=new Promise(resolve=>finishCheck=resolve);
       await context.route('**/api/check-document',async route=>{calls.push('check');await pending;return route.fulfill({json:{ok:true,result:{verdict:'warn',summary:'Разбор выполнен. Требования заявки нужно уточнить.',checks:[],problems:[],nextSteps:[]}}});});
       await context.route('**/api/portal/TEST-01/doc',async route=>{calls.push('save');const body=route.request().postDataJSON();data.docs.apostille={verdict:body.result.verdict,result:body.result,fileName:body.fileName};return route.fulfill({json:{ok:true,docs:data.docs,done:data.done,progress:upstreamProgress(data)}});});
       const form=page.locator('[data-document-upload-form]');
       await form.locator('input[type=file]').setInputFiles({name:'synthetic.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC REVIEW, NOT A REAL DOCUMENT')});
       assert.deepEqual(calls,[],'Choosing file does not start checking');
-      await form.getByRole('button',{name:'Проверить документ',exact:true}).click();await scene(page,'checking').waitFor();
-      assert(await form.locator('[data-document-operation=checking]').isVisible());await decoded(page,'checking');
-      finishCheck();await scene(page,'saved').waitFor();assert.deepEqual(calls,['check','save']);
+      await form.getByRole('button',{name:'Проверить документ',exact:true}).click();await form.locator('[data-document-operation=checking]').waitFor();
+      assert(await form.locator('[data-document-operation=checking]').isVisible());
+      finishCheck();await page.waitForFunction(()=>!document.querySelector('[data-document-operation=checking]'));assert.deepEqual(calls,['check','save']);
       assert.match(await report.innerText(),/Нужно уточнить/,'Acknowledging a saved report never changes its verdict');
       assert.deepEqual(await summary(page),progress,'Saving clarification leaves completion unchanged');
-      await decoded(page,'saved');await layout(page,'saved '+width);
+      await layout(page,'saved '+width);
     }
-    await context.close();results.push({width,restIsDecorative:true,noOverflow:true,contextualPoses:true});
+    await page.locator('[data-portal-assistant]').click();await decoded(page,'chat');
+    assert.equal(await page.locator('[data-vespi-scene]').count(),1,'Exactly one mascot when chat is open');
+    assert.equal(await scene(page,'chat').getAttribute('data-vespi-video-state'),'idle');
+    await page.getByPlaceholder('Твой вопрос…').fill('Что уточнить?');
+    assert.equal(await scene(page,'chat').getAttribute('data-vespi-video-state'),'thinking');
+    await page.getByRole('button',{name:'Закрыть чат',exact:true}).click();
+    await page.locator('[data-portal-chat=true]').waitFor({state:'detached'});
+    assert.equal(await page.locator('[data-vespi-scene]').count(),0);
+    await context.close();results.push({width,noDuplicateMascot:true,noOverflow:true,contextualState:true});
   }
   // The existing home introduction and guide invitation attach to the edge.
   for(const width of [1440,390]){

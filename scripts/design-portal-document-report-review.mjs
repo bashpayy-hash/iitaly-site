@@ -256,7 +256,7 @@ try {
     await portalDestination(page, 'План');
     const plan = page.locator('[data-portal-focus]');
     assert.match(await plan.innerText(), /Нужно уточнить/);
-    assert.equal(await page.locator('button').count(), 0, 'Plan has no action buttons');
+    assert.equal(await page.locator('[data-task-check=statements]:enabled').count(),0,'A saved document outcome cannot be self-approved by the checklist');
     const statement = plan.locator('[data-portal-task=statements]');
     await (await statement.evaluate(element => element.tagName === 'A') ? statement : statement.getByRole('link')).click();
     await report(page).waitFor();

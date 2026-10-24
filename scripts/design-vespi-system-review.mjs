@@ -125,18 +125,9 @@ async function noLegacyPortraits(container, where) {
 async function documentCoach(page, where) {
   const coach=page.locator('[data-portal-document-coach]');
   assert.equal(await coach.count(),1, `${where}: one contextual document coach`);
-  const image=coach.locator('img');
-  assert.equal(await image.getAttribute('src'),'/mascot/handmade-v1/documents-640.webp');
+  assert.equal(await coach.locator('img').count(),0, `${where}: no duplicate mascot outside chat`);
   await coach.scrollIntoViewIfNeeded();
-  if (await image.isVisible()) {
-    await page.waitForFunction(() => {
-      const image=document.querySelector('[data-portal-document-coach] img');
-      return image?.complete && image.naturalWidth > 0;
-    }, null, { timeout: 10000 });
-  } else {
-    assert(page.viewportSize().width <= 380, `${where}: only narrow screens omit the decorative pose`);
-    assert(await coach.getByRole('heading', {name:'Подготовим файл к разбору'}).isVisible(), `${where}: the preparation guidance stays visible`);
-  }
+  assert(await coach.getByRole('heading',{name:'Подготовим файл к разбору'}).isVisible(),`${where}: preparation guidance remains visible`);
 }
 
 async function roleAssetBudget() {
@@ -374,7 +365,8 @@ try {
     if (!baseline) {
       await checkWordmark(page);
       assert.equal(await page.locator('[data-portal-road] img').count(),0,'Progress has no mascot image');
-      assert.equal(await page.locator('[data-portal-overview] button').count(), 0, 'Overview adds no competing action buttons');
+      assert(await page.locator('[data-portal-overview] [data-focus-guide]').count()>0,'Overview exposes contextual instruction actions');
+      assert.equal(await page.locator('[data-portal-overview] [data-task-check]:enabled').count(),0,'Current shortlist and document requirements cannot be bypassed');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
       await noLegacyPortraits(page.locator('[data-portal-road]'), `portal focus ${width}`);

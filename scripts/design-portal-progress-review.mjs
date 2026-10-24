@@ -103,9 +103,7 @@ async function railContract(page,data,compact){
 async function arrivalOrder(page,data) {
   const welcome=page.locator('[data-portal-welcome]');
   assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
-  const image=welcome.locator('img[data-vespi]');
-  assert.equal(await image.getAttribute('src'),'/mascot/handmade-v1/welcome-640.webp');
-  await image.evaluate(img=>img.decode());
+  assert.equal(await welcome.locator('img').count(),0,'Greeting uses actual statistics, with mascot only in chat');
   assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
   const progressBox=await road(page).getByRole('progressbar').boundingBox();
@@ -129,12 +127,12 @@ try{
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);
     await arrivalOrder(page,data);
     assert.equal(await page.locator('[data-road-open]').count(),1,'The real current task remains one action after progress');
-    assert.equal(await page.locator('button').count(),0,'Overview has no buttons');
+    assert(await page.locator('[data-focus-guide]').count()>0,'Instructions open directly from a task');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-overview-${viewport.width}`);
     await go(page,'План');await page.locator('[data-portal-task="shortlist"]').waitFor();await railContract(page,data,false);
     assert.equal(await page.locator('[data-portal-task="shortlist"]').count(),1,'Current task written once');
-    assert.equal(await page.locator('main [data-vespi-scene=welcome]').count(),1,'The selected stage shares the same compact greeting');
-    assert.equal(await page.locator('[data-portal-task] img[data-vespi], [data-road-stage] img').count(),0,'Tasks and stage navigation never repeat a mascot');assert.equal(await page.locator('button').count(),0,'Plan has no buttons');assert.equal(await page.getByRole('checkbox').count(),0,'Plan rows cannot complete a step');
+    assert.equal(await page.locator('main [data-vespi-scene]').count(),0,'The selected stage keeps statistics in place of the duplicate mascot');
+    assert.equal(await page.locator('[data-portal-task] img[data-vespi], [data-road-stage] img').count(),0,'Tasks and stage navigation never repeat a mascot');assert.equal(await page.locator('[data-task-check]:enabled').count(),0,'This fixture has no manually completable current task');
     assert.equal(await page.locator('[data-portal-focus]').getAttribute('data-selected-stage'),'start','Current stage opens');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-plan-${viewport.width}`);
     await sticky(page);await axe(page,'Plan '+viewport.width);

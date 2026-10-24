@@ -72,6 +72,7 @@ try {
     assert.equal(await page.locator('[data-portal-focus]').count(),1);
     assert.equal(await page.locator('aside,nav[aria-label="Разделы кабинета"]').count(),0,'No duplicate sidebar or bottom navigation');
     assert.equal(await page.locator('[data-portal-assistant] img').count(),0);
+    assert.equal(await page.locator('[data-vespi-scene]').count(),0,'No mascot when chat is closed');
     assert.equal(await page.locator('[data-portal-assistant] [data-vespi-outline]').count(),1);
     assert.equal(await page.locator('[data-road-stage]').count(),6);
     assert.equal(await page.locator('[data-road-next]').count(),1);
@@ -88,8 +89,8 @@ try {
     assert.equal(await page.locator('[data-focus-complete]').count(),0,'Future document cannot be self-approved');
     assert.match(await page.locator('[data-road-next]').innerText(),/Сначала:/);
     await page.locator('[data-focus-row="translate"] > summary').click();
-    assert(await page.locator('[data-focus-row="translate"] a').isVisible());
-    await page.locator('[data-focus-row="translate"] a').click();
+    assert(await page.locator('[data-portal-task="translate"]').isVisible());
+    await page.locator('[data-portal-task="translate"]').click();
     await page.locator('[data-step-detail="translate"]').waitFor();
     assert.equal(await page.locator('[data-road-stage="docs"]').getAttribute('aria-current'),'step');
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus][data-selected-stage="docs"]').waitFor();
@@ -112,6 +113,12 @@ try {
     const {page,context,calls}=await open({width:1440,height:900},'manual',{motion:true,failTask});
     assert.equal(await page.locator('[data-portal-completion][data-visible="true"]').count(),0);
     const before=Number(await road(page).getAttribute('data-road-done'));
+    await page.waitForFunction(()=>typeof window.confetti==='function');
+    await page.evaluate(()=>{const emit=window.confetti;window.__bursts=[];window.confetti=options=>{const b=document.querySelector('[data-task-check="manual-task"]').getBoundingClientRect();window.__bursts.push({options,center:{x:(b.left+b.width/2)/innerWidth,y:(b.top+b.height/2)/innerHeight}});return emit(options);};});
+    await page.locator('[data-focus-guide="manual-task"]').click();
+    await page.locator('[data-chat-step-guide]').waitFor();
+    assert.equal(await page.locator('[data-vespi-scene]').count(),1);
+    assert(await page.locator('[data-chat-step-guide] li').count()>0,'Instructions appear without an AI request');
     await page.locator('[data-focus-complete]').click();
     if(failTask){
       await page.locator('#portal-panel [role=alert]').waitFor();assert.match(await page.locator('#portal-panel [role=alert]').innerText(),/Синтетический сбой/);
@@ -121,8 +128,17 @@ try {
       await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();
     }
     await page.locator('[data-portal-completion="manual-task"][data-visible="true"]').waitFor();
-    assert.equal(Number(await road(page).getAttribute('data-road-done')),before+1);
+    await page.waitForFunction(value=>Number(document.querySelector('[data-portal-road]')?.getAttribute('data-road-done'))===value,before+1);
     await page.waitForFunction(()=>window.__notes===6);
+    const bursts=await page.evaluate(()=>window.__bursts);
+    assert.equal(bursts.length,1,'Exactly one saved completion burst');assert.equal(bursts[0].options.particleCount,15);
+    assert.deepEqual(bursts[0].options.origin,bursts[0].center,'Particles start at the actual checkbox');
+    assert.equal(await page.locator('[data-vespi-video-state=celebrate]').count(),1);
+    await page.getByRole('button',{name:'Закрыть чат',exact:true}).click();
+    await page.locator('[data-portal-chat=true]').waitFor({state:'detached'});
+    await page.locator('[data-portal-assistant]').click();await page.locator('[data-vespi-video-state=idle]').waitFor();
+    await page.getByRole('button',{name:'Закрыть чат',exact:true}).click();
+    await page.locator('[data-portal-chat=true]').waitFor({state:'detached'});
     await page.waitForFunction(()=>document.querySelector('[data-focus-task]')?.getAttribute('data-focus-task')!=='manual-task');
     assert.equal(calls.length,failTask?2:1);
     assert.equal(await page.locator('[data-focus-row="manual-task"]').getAttribute('open'),null);

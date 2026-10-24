@@ -6,7 +6,6 @@ import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
-import { VespiScene } from "@/components/mascot/VespiScene";
 import styles from "./portal-document.module.css";
 
 const CHECK_LABEL = { ok: "В порядке", warn: "Нужно уточнить", error: "Несоответствие", unknown: "Не подтверждено" };
@@ -124,10 +123,6 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
       </div>}
     </section>
     </div>
-    <VespiScene
-      pose={busy && operation?.phase === "checking" ? "checking" : error ? "clarify" : operation?.phase === "saved" ? "saved" : uploadVisible ? "documents" : outcome.kind === "approved" ? "saved" : "clarify"}
-      className={styles.reportScene} sizes="224px"
-    />
     </div>
 
     <section className={styles.fileDetails} aria-label="Файл и сроки">
