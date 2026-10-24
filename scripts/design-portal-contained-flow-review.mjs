@@ -194,14 +194,10 @@ try {
       await overview(page).waitFor({ state: 'attached' });
       contained('Shortlist, rules, logo and browser history');
       await portalDestination(page, 'План');
-      const planRules = page.locator('[data-portal-rules-disclosure]');
-      await planRules.locator(':scope > summary').click();
-      await planRules.locator('[data-portal-rules]').waitFor();
-      assert.equal(await planRules.getAttribute('open') !== null, true);
-      assert.equal(await planRules.locator('a[href="/changes-2026-27"], a[href="/plan"]').count(), 0);
-      await checkAndCapture(page, 'plan-rules', width);
-      contained('Plan rules');
-      results.push({ width, futureStepsReadOnly: true, universityRulesInline: true, rulesKeyboardFocusTrap: true, unsavedSelectionPreserved: true, logoReturnsOverview: true, browserHistory: true, planRulesInline: true });
+      assert.equal(await page.locator('[data-portal-focus] [data-portal-rules-disclosure]').count(), 0, 'The task card has no footer rules disclosure; university-specific rules remain in the university dialog');
+      await checkAndCapture(page, 'plan-tasks', width);
+      contained('Plan tasks');
+      results.push({ width, futureStepsReadOnly: true, universityRulesInline: true, rulesKeyboardFocusTrap: true, unsavedSelectionPreserved: true, logoReturnsOverview: true, browserHistory: true, noTaskFooter: true });
       await context.close();
     }
     {
