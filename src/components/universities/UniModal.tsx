@@ -59,8 +59,8 @@ export function UniModal({
           {selection && <UniversityRules key={uni.id} />}
           <div className="mt-5 flex flex-wrap gap-3">
             {selection && <label className={ui.shortlistToggle}>
-              <input type="checkbox" className={ui.checkbox} checked={selection.selected} onChange={selection.onToggle} aria-label={`В мой список: ${uni.name}`} />
-              В мой список
+              <input type="checkbox" className={ui.checkbox} checked={selection.selected} onChange={selection.onToggle} aria-label={`Выбрать университет: ${uni.name}`} />
+              {selection.selected ? "Университет выбран" : "Выбрать университет"}
             </label>}
             <AppleButton
               type="button"

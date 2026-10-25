@@ -95,9 +95,8 @@ async function setup(width, { failSave = false, blockedStorage = false, height =
 }
 async function login(page, code) {
   await page.goto(`${origin}/portal?auth=login`, { waitUntil: 'networkidle' });
-  // Guest workspace is the default; explicitly connect the cloud fixture.
-    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗', exact: true }).click();
-    await page.getByLabel('Фамилия', { exact: true }).fill(accounts[code]);
+  // The explicit auth URL opens login after client hydration; wait for its field.
+  await page.getByLabel('Фамилия', { exact: true }).fill(accounts[code]);
   await page.getByLabel('Код доступа', { exact: true }).fill(code);
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
   await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
@@ -119,6 +118,14 @@ async function chooseMilan(page) {
 async function assertNoOverflow(page, label) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label);
 }
+async function assertSaveVisible(page) {
+  const visible = await save(page).evaluate(element => {
+    const box = element.getBoundingClientRect();
+    return box.width >= 44 && box.height >= 44 && box.top >= 0 && box.bottom <= innerHeight &&
+      box.left >= 0 && box.right <= innerWidth && element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+  });
+  assert(visible, 'Save is visible, unobstructed and at least 44px at every scroll position');
+}
 async function logout(page) {
   await nav(page, 'Настройки').click();
   await nav(page, 'Выйти').click();
@@ -130,6 +137,7 @@ try {
     const { context, page, calls, data } = await setup(width);
     await openPicker(page);
     assert.equal(await save(page).isDisabled(), true, 'An empty shortlist cannot complete the step');
+    await assertSaveVisible(page);
     await page.evaluate(() => document.fonts.ready);
     const initialChoice = await picker(page).getByRole('combobox', { name: 'Сразу к городу', exact: true }).evaluate(element => {
       const box = element.getBoundingClientRect(), saveBar = document.querySelector('[data-shortlist-selection]').getBoundingClientRect(), save = document.querySelector('[data-shortlist-save]').getBoundingClientRect();
@@ -146,8 +154,19 @@ try {
     assert.equal(await select(page, 'bocconi').count(), 0, 'Existing catalogue filters still work in the portal');
     assert.equal(await select(page, 'polimi').count(), 1);
     await picker(page).getByRole('button', { name: 'Все вузы', exact: true }).click();
+    const selectionPosition = await select(page, 'bocconi').evaluate(element => {
+      const label = element.closest('label').getBoundingClientRect();
+      const details = element.closest('[data-uni-card]').querySelector('dl').getBoundingClientRect();
+      return { height: label.height, beforeDetails: label.bottom <= details.top };
+    });
+    assert(selectionPosition.beforeDetails && selectionPosition.height >= 44, 'The clearly named shortlist action comes before the card details');
+    if (width === 1440) {
+      const rows = await picker(page).locator('[data-uni-card] dl').evaluateAll(lists => lists.slice(0, 2).map(list => [...list.querySelectorAll('dt')].map(row => row.getBoundingClientRect().top)));
+      assert(rows.length === 2 && rows[0].every((top, index) => Math.abs(top - rows[1][index]) < 1), 'Cost, exams and scholarship rows align across neighbouring cards');
+    }
     await select(page, 'bocconi').check();
     await page.waitForFunction(() => !document.querySelector('[data-shortlist-save]').disabled);
+    await assertSaveVisible(page);
     await page.screenshot({ path: resolve(output, `selection-chosen-${width}.png`), fullPage: false });
     assert.equal(await save(page).isEnabled(), true);
     assert.equal(calls.length, 0, 'Selecting a city or university never silently completes the step');
@@ -163,6 +182,7 @@ try {
     assert((await table.locator('[data-comparison-row]').count()) < 12, 'The existing differences filter works');
     assert.equal(await select(page, 'polimi').isChecked(), false, 'Comparison candidates are separate from the saved shortlist');
     assert.equal(await select(page, 'bocconi').isChecked(), true);
+    await assertSaveVisible(page);
     await assertNoOverflow(page, `Embedded map/comparison at ${width}px`);
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[data-portal-universities]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
@@ -209,6 +229,7 @@ try {
   {
     const { context, page } = await setup(390, { height: 667 });
     await openPicker(page);
+    await assertSaveVisible(page);
     const city = picker(page).getByRole('combobox', { name: 'Сразу к городу', exact: true });
     const usable = await city.evaluate(element => {
       const box = element.getBoundingClientRect();

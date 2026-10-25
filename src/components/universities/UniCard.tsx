@@ -19,7 +19,7 @@ export function UniCard({
   selection?: { selected: boolean; onToggle: () => void };
 }) {
   return (
-    <div className={ui.uniCard} data-uni-card={uni.id}>
+    <div className={ui.uniCard} data-uni-card={uni.id} data-has-shortlist={Boolean(selection)}>
       <button
         type="button"
         onClick={onOpen}
@@ -28,6 +28,11 @@ export function UniCard({
         <p className={ui.uniName}>{uni.name}</p>
         <p className={ui.uniType}>{uni.tp}</p>
       </button>
+      {selection && <label className={ui.shortlistToggle}>
+        <input type="checkbox" checked={selection.selected} onChange={selection.onToggle}
+          aria-label={`Выбрать университет: ${uni.name}`} data-university-select={uni.id} className={ui.checkbox} />
+        {selection.selected ? "Университет выбран" : "Выбрать университет"}
+      </label>}
       <dl className={ui.uniDetails}>
         <div>
           <dt className={ui.detailLabel}>Стоимость</dt>
@@ -43,17 +48,6 @@ export function UniCard({
         </div>
       </dl>
       <div className={ui.cardActions}>
-        {selection && <label className={ui.shortlistToggle}>
-          <input
-            type="checkbox"
-            checked={selection.selected}
-            onChange={selection.onToggle}
-            aria-label={`В мой список: ${uni.name}`}
-            data-university-select={uni.id}
-            className={ui.checkbox}
-          />
-          В мой список
-        </label>}
         <div className={ui.tags}>
           {uni.eng && (
             <span className={ui.tag}>

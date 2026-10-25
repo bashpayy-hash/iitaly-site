@@ -75,3 +75,5 @@
 .embedded .selector select { min-height: 44px; }
 .shortlistChoice { display: flex; gap: 9px; align-items: center; min-height: 44px; margin-top: 8px; color: #141413; font-size: 14px; cursor: pointer; }
 .shortlistChoice input { width: 16px; height: 16px; accent-color: #141413; }
+.embeddedHeading { margin:0 0 18px; color:var(--ink); font:600 22px/1.3 var(--font-sans); letter-spacing:-.02em; }
+.embedded .shortlistChoice { color:var(--accent-text); }.embedded .shortlistChoice:has(:checked) { color:var(--status-green); }.embedded .shortlistChoice input { accent-color:var(--status-green); }
