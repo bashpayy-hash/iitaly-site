@@ -26,7 +26,9 @@
 .checkpoint { position:relative; z-index:1; display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border:1.5px dashed #C9BFAE; border-radius:50%; background:var(--portal-surface); color:var(--portal-muted); font-variant-numeric:tabular-nums; }
 .nav a[aria-current=step] .checkpoint { border:2px solid var(--portal-ink); color:var(--portal-ink); }
 .nav a[aria-current=step] .stageCopy>span { color:var(--portal-ink-strong,#2A211D); font-weight:600; }
-.nav a[data-road-stage-state=done] .checkpoint { border:2px solid var(--route-green); background:var(--portal-surface); color:var(--route-green); transform:rotate(-8deg); }
+.nav a[data-road-stage-state=done] .checkpoint { border:2px solid var(--route-green); background:var(--portal-surface); color:var(--route-green); }
+/* Штамп наклонён внутри кольца: сами кольца остаются на одной оси. */
+.nav a[data-road-stage-state=done] .checkpoint svg { transform:rotate(-8deg); }
 .stageCopy { display:grid; gap:4px; width:100%; }
 .stageCopy>span { display:flex; justify-content:center; align-items:flex-start; min-height:34px; font-size:13px; line-height:1.4; }
 .stageCopy small { color:var(--portal-muted); font-size:12px; font-weight:400; font-variant-numeric:tabular-nums; }
