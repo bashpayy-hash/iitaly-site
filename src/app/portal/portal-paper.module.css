@@ -1,4 +1,48 @@
-.paper { min-width:0; min-height:100svh; background:#F6F3EC; }
-/* Overlay layer: above surfaces, below focus/dialog chrome; never captures input. */
-.grain { position:fixed; inset:0; z-index:60; pointer-events:none; opacity:0.035; mix-blend-mode:multiply; }
-@media(forced-colors:active) { .grain { display:none; } }
+/* zhol is scoped to /portal. Public pages retain their own tokens and fonts. */
+.paper {
+  --paper:#F7F4EA; --ink:#352B28; --ink-strong:#2A211D; --quiet:#5C6056;
+  --tracker-off:#6E685D; --accent:#B83A27; --accent-text:#A33421;
+  --card:#FBF9F3; --border:#DCD3C3; --beige:#EFE7D8;
+  --dark-slide:#392A22; --dark-border:#5A4A40;
+  --on-dark:#FAF9F3; --on-dark-accent:#F29A89; --on-dark-quiet:#C9CFC4; --on-dark-tracker:#A89F95;
+  --status-green:#356450; --status-amber:#8A5A12;
+  --font-sans:"Inter Tight",sans-serif; --font-display:var(--font-sans); --font-editorial:var(--font-sans);
+  --font-apple-display:var(--font-sans); --font-apple-text:var(--font-sans);
+  --color-cream:var(--paper); --color-paper:var(--card); --color-ink:var(--ink); --color-ink-soft:var(--ink-strong);
+  --color-warm-line:var(--border); --color-warm-stone:var(--beige); --color-cloud-body:var(--quiet);
+  --color-warn:var(--status-amber); --color-red-deep:var(--accent-text); --color-green:var(--status-green);
+  --depth-ambient:none; --depth-contact:none; --depth-highlight:none;
+  min-width:0; min-height:100svh; color:var(--ink); font-family:var(--font-sans); font-synthesis:none;
+  background:var(--paper) url('/zhol/bg_cream.jpg') center top / 1440px auto repeat;
+}
+.paper :is(h1,h2,h3,h4) { font-family:var(--font-sans); font-weight:600; letter-spacing:-.02em; }
+.paper :is(strong,b) { font-weight:600; }
+.paper ::selection { color:var(--ink-strong); background:var(--beige); }
+.paper :is(input,textarea) { caret-color:var(--accent); }
+.paper :is(a,button,input,textarea,select,summary):focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+/* Remove inherited public-site surface effects, leaving just the two authored shadows. */
+.paper :where(*, *::before, *::after) { box-shadow:none; }
+.paper :global([data-portal-design]) { --depth-ambient:none; --depth-contact:none; --depth-highlight:none; }
+.paper :global([data-portal-header]) { background:transparent; border:0; box-shadow:none; backdrop-filter:none; }
+.paper :global([data-portal-header])::after { display:none; }
+.paper :global([data-portal-header]) > div { position:relative; max-width:1360px; min-height:74px; height:74px; }
+.paper :global([data-portal-header]) > div::after { content:""; position:absolute; left:32px; right:32px; bottom:0; height:2px; background:var(--border); pointer-events:none; }
+.paper :global([data-portal-header]) nav[aria-label="Основная навигация"] a { color:var(--tracker-off); font-weight:400; }
+.paper :global([data-portal-header]) nav[aria-label="Основная навигация"] a[aria-current="page"] { color:var(--accent-text); font-weight:600; }
+.paper :global([data-portal-header]) nav[aria-label="Основная навигация"] a[aria-current="page"]::after { z-index:1; height:4px; background:var(--accent); }
+.paper :global([data-portal-header]) nav[aria-label="Мобильная навигация"] { background:var(--card); border-color:var(--border); }
+.paper :global([data-portal-header]) nav[aria-label="Мобильная навигация"] a { color:var(--tracker-off); border-color:var(--border); }
+.paper :global([data-portal-header]) nav[aria-label="Мобильная навигация"] a[aria-current="page"] { color:var(--accent-text); font-weight:600; }
+.paper :global([data-portal-header]) :global(.logo-link) { color:var(--ink); }
+.paper :global([data-portal-assistant]) { background:var(--card); border:1px solid var(--border); color:var(--ink); }
+.grain { position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.018; mix-blend-mode:multiply; }
+@media(max-width:900px) { .paper :global([data-portal-header]) > div::after { left:20px; right:20px; } }
+@media(max-width:600px) { .paper :global([data-portal-header]) > div { height:64px; min-height:64px; }.paper :global([data-portal-header]) > div::after { left:12px; right:12px; } }
+@media(forced-colors:active) { .grain { display:none; }.paper { background:Canvas; }.paper :global([data-portal-header]) > div::after { background:CanvasText; } }
+/* The assistant is mounted outside the route wrapper. Theme only its portal variant. */
+:global(body):has(.paper) :global([data-portal-chat="true"]) {
+  --font-apple-text:"Inter Tight",sans-serif; --font-apple-display:"Inter Tight",sans-serif;
+  color:#352B28; background:#FBF9F3; border-color:#DCD3C3; box-shadow:none; font-family:"Inter Tight",sans-serif;
+}
+:global(body):has(.paper) :global([data-portal-chat="true"]) > div:first-child { background:#FBF9F3; color:#352B28; border-color:#DCD3C3; }
+.paper :global([data-brand-logo]) { font-family:var(--font-sans); font-weight:600; }
