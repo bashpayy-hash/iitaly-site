@@ -137,7 +137,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   const stages = data.roadmap.filter(row => row.tasks.length);
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
-    const target = nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
+    const target = nav.current?.querySelector<HTMLElement>('[data-stage-selected="true"]') || nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
     if (target && nav.current) nav.current.scrollLeft = Math.max(0, target.getBoundingClientRect().left - nav.current.getBoundingClientRect().left + nav.current.scrollLeft - 8);
   }, [stage?.id, activeStageId]);
   const allComplete = total > 0 && done === total;
@@ -167,7 +167,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     </div>;
 
   return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""}`}
-    style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms` } as CSSProperties}
+    style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100, "--stage-count": stages.length || 1 } as CSSProperties}
     data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
     data-road-static={currentOpen || navigationOnly ? "true" : undefined}
@@ -180,9 +180,11 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     <div className={styles.route}>
       <div className={styles.summary}><span>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</span><span className={styles.count}>
         <span data-road-count><span className={styles.countNumbers}>{done} из {total}</span> шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
+        {progress.ahead > 0 && <span className={styles.aheadReason}>Будущие этапы пока не входят в счёт.</span>}
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
       <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">
+        <span className={styles.routeLine} aria-hidden="true"><span className={styles.routeFill} data-route-fill /></span>
         {stages.map((row, index) => {
           const next = row.id === stage?.id && current ? current : row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
           const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
@@ -192,11 +194,11 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
           const isRouteCurrent = row.id === stage?.id;
           const segmentFill = opened ? stageDone / row.tasks.length : 0;
           return <a style={{ "--stage-fill": segmentFill } as CSSProperties} key={row.id} href={onSelectStage ? `/portal?stage=${encodeURIComponent(row.id)}` : portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
-            data-road-stage-state={complete ? "done" : isCurrent ? "current" : "future"}
-            aria-current={isCurrent ? "step" : undefined} onClick={event => {
+            data-road-stage-state={complete ? "done" : isRouteCurrent ? "current" : "future"} data-stage-selected={isCurrent || undefined}
+            aria-current={isRouteCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); if (onSelectStage) onSelectStage(row.id); else onOpenTask(next);
-            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов{isRouteCurrent ? " · сейчас" : ""}</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
+            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов<span className={styles.stageState} data-stage-ahead={!opened && stageDone > 0 || undefined}>{isRouteCurrent ? "сейчас" : !opened && stageDone > 0 ? "заранее" : ""}</span></small></span></a>;
         })}
       </nav>
       <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />

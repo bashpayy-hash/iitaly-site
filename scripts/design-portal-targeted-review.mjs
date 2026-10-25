@@ -87,6 +87,7 @@ try {
     assert.equal(await progressbar.getAttribute('aria-valuenow'),'3');assert.equal(await progressbar.getAttribute('aria-valuemax'),String(total));
     const segments=await road(page).locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>Number(el.style.getPropertyValue('--stage-fill'))));
     assert.deepEqual(segments,[1,0,0,0,0,0],'Only eligible saved stage work fills the route');
+    assert(Math.abs(await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')))-3/total)<0.0001,'The visible rail uses ordered progress, not all checked tasks');
     assert.match(await page.locator('[data-portal-welcome] [data-saved-universities]').innerText(),/Bocconi/);
     assert.doesNotMatch(await page.locator('main').innerText(),/Выбраны в этом браузере|До подачи в/);
     const instruction=page.locator('[data-road-open]');
@@ -117,7 +118,7 @@ try {
     await road(page).locator('[data-road-stage="start"]').click();await portalTask(page,'profile');await page.locator('[data-saved-profile]').waitFor();
     assert.match(await page.locator('[data-saved-profile]').innerText(),/Этап учёбы|Бакалавриат|До 3 млн/);
     assert(await page.locator('[data-saved-profile]').getByRole('link',{name:'Изменить',exact:true}).isVisible());
-    assert.equal(await road(page).locator('[aria-current="step"]').getAttribute('data-road-stage'),'start');
+    assert.equal(await road(page).locator('[aria-current="step"]').getAttribute('data-road-stage'),'docs','Reading an earlier stage does not move the current stage');
     assert.equal(await page.locator('aside').count(),0,'The pipeline is the only stage navigation');
     await page.locator('[data-portal-assistant]').click();await chat.waitFor();
     await chat.getByRole('link',{name:'Что дальше?',exact:true}).waitFor();
@@ -125,7 +126,7 @@ try {
     await chat.getByRole('button',{name:'Закрыть чат',exact:true}).click();await chat.waitFor({state:'hidden'});
     await detail(page).getByRole('link',{name:'Назад',exact:true}).click();
     await page.locator('[data-portal-focus][data-selected-stage=start]').waitFor();
-    await road(page).locator('[data-road-stage="arrival"]').click();await page.locator('[data-road-open]').click();await detail(page).waitFor();
+    await road(page).locator('[data-road-stage="arrival"]').click();await portalTask(page,'questura');await detail(page).waitFor();
     assert.equal(await detail(page).getByRole('button').count(),0,'Future stage is a read-only preview');
     data.docs.apostille={verdict:'ok',fileName:'synthetic.txt'};
     data.docs.translate={verdict:'warn',summary:'Требования заявки не подтверждены.'};
@@ -144,7 +145,7 @@ try {
     const futureReport=page.getByRole('region',{name:'Разбор документа',exact:true});await futureReport.waitFor();
     assert.equal(await futureReport.getByRole('button').count(),0,'An existing future report remains read-only even if its raw available flag is true');
     if(width!==320) {
-      await go(page,'Обзор');await page.locator('[data-saved-universities] a').first().click();
+      await go(page,'Обзор');await portalTask(page,'shortlist');
       await page.locator('[data-portal-universities]').waitFor();
       await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
       await page.locator('[data-university-select=polimi]').check();options.failProfile=true;
