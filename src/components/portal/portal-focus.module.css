@@ -131,11 +131,14 @@
 @media(max-width:600px) {
  .portalRoot .shell { padding-inline:12px; }.portalRoot .shell[data-focus-layout=detail] { padding:16px; }.portalRoot .localFrame { padding:8px 12px 20px; }
  .canvas { gap:16px; margin:18px auto 12px; }.welcome { padding-bottom:4px; }.welcome h1 { font-size:32px; margin-bottom:8px; }.welcomeMeta { font-size:12px; }
- .nowCard { --glow-at:88% 86%; display:block; padding:18px; }.nowRubric { font-size:10px; letter-spacing:1.5px; padding-bottom:12px; margin-bottom:14px; }.nowCard h2 { font-size:22px; margin-bottom:8px; }.nowTitle { font-size:16px; }.nowDeadline { margin-top:14px; }.dayCount strong { font-size:34px; }
- .vespiQuote { margin:16px 0 0; width:calc(100% - 104px); min-height:120px; }.vespiQuote p { font-size:13px; }.vespiQuote cite { font-size:11px; }
- .nowAhead { margin-top:16px; padding-bottom:14px; }.nowAhead ul { grid-template-columns:1fr; gap:8px; }
- .mascotWindow { position:absolute; right:6px; bottom:0; width:106px; height:120px; margin:0; }.welcomeScene { width:150px; height:120px; flex-shrink:0; }
- .nowCard:has(.nowAhead) .vespiQuote { width:100%; min-height:0; }.nowAhead { padding-right:100px; min-height:120px; }
+ /* Телефон: Веспи справа от шага и ориентира, цитата во всю ширину — плашка
+    остаётся низкой, и прогресс маршрута виден на первом экране даже на 667px. */
+ .nowCard { --glow-at:88% 38%; display:grid; grid-template-columns:minmax(0,1fr) 108px; gap:0 8px; padding:16px 18px 18px; }
+ .nowRubric { grid-column:1 / -1; font-size:10px; letter-spacing:1.5px; padding-bottom:10px; margin-bottom:12px; }
+ .nowCard h2 { grid-column:1; font-size:22px; margin-bottom:6px; }.nowNext,.nowDeadline { grid-column:1; }.nowTitle { font-size:16px; }.nowDeadline { margin-top:10px; }.dayCount strong { font-size:30px; }
+ .vespiQuote { grid-column:1 / -1; grid-row:auto; margin:14px 0 0; }.vespiQuote p { font-size:13px; }.vespiQuote cite { margin-top:6px; font-size:11px; }
+ .nowAhead { grid-column:1 / -1; margin-top:14px; padding-top:12px; }.nowAhead ul { grid-template-columns:1fr; gap:8px; }
+ .mascotWindow { grid-column:2; grid-row:2 / 5; align-self:end; width:108px; height:100px; margin:0; }.welcomeScene { width:125px; height:100px; flex-shrink:0; }
  .routeCard { padding:16px 12px 10px; }.stageBody { padding:18px 10px 4px; }.stageHeading { gap:12px; align-items:flex-start; padding:0 4px 16px; }.stageHeading h2 { font-size:21px; }
  .canvas .souvenir { flex:0 0 112px; display:block; padding:8px; }.souvenirArt { width:86px; height:60px; margin:auto; }.souvenir figcaption { gap:4px; margin-top:4px; }.souvenir figcaption>span { font-size:10px; letter-spacing:1px; }.souvenir strong { font-size:12px; }
  .stamps { gap:8px; margin-top:12px; }.stamp { width:23px; height:23px; }.stampTrack { gap:4px; }
