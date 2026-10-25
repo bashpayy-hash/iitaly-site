@@ -1,23 +1,34 @@
 .portal {
+  /* Кабинет в стиле zhol: тёплая бумага, коричневый текст, один терракотовый
+     акцент для штампов, ярлыков и цифр. Кнопки — тёмная пилюля, как на сайте.
+     Шрифт — тот же, что у сайта (SF Pro / Inter Tight), без засечек. */
   --i-signal: #e63946;
-  --portal-canvas: #F6F3EC;
-  --portal-surface: #fff;
-  --portal-surface-soft: #FAF8F3;
-  --portal-border: #DFD9CE;
-  --portal-muted: #615d57;
-  --portal-ash: #615d57;
-  --portal-ink: #141413;
-  --portal-accent: #141413;
-  --portal-accent-deep: #141413;
-  --portal-heading-font: var(--font-sans);
-  --font-apple-display: var(--font-sans);
-  --font-apple-text: var(--font-sans);
-  --portal-green: #1B5E55;
-  --portal-warn: var(--color-warn);
-  --portal-danger: var(--color-red-deep);
+  --portal-canvas: #F7F4EA;
+  --portal-surface: #FBF9F3;
+  --portal-surface-soft: #EFE7D8;
+  --portal-border: #DCD3C3;
+  --portal-muted: #5C6056;
+  --portal-ash: #6E685D;
+  --portal-ink: #352B28;
+  --portal-ink-strong: #2A211D;
+  --portal-accent: #352B28;
+  --portal-accent-deep: #2A211D;
+  --portal-signal: #B83A27;
+  --portal-signal-text: #A33421;
+  --portal-green: #356450;
+  --portal-warn: #8A5A12;
+  --portal-heading-font: var(--font-apple-display);
+  --font-sans: var(--font-apple-text);
+  --font-display: var(--font-apple-display);
+  --font-editorial: var(--font-apple-display);
+  /* Одно движение на весь кабинет: только transform и opacity, без пружин. */
+  --portal-ease: cubic-bezier(.2, .8, .2, 1);
+  --portal-fast: 160ms;
+  --portal-base: 240ms;
+  --portal-slow: 360ms;
   min-height: 100vh;
   min-height: 100svh;
-  background: var(--portal-canvas);
+  background: var(--portal-canvas) url("/textures/zhol-paper.webp") repeat 0 0 / 640px 640px;
   color: var(--portal-ink);
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -267,7 +278,8 @@
   height: 100%;
   border-radius: inherit;
   background: var(--portal-accent);
-  transition: width 320ms ease;
+  transform-origin: left;
+  transition: transform var(--portal-base) var(--portal-ease);
 }
 
 .statusBadge {
@@ -1199,28 +1211,18 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
-  --portal-canvas: #F6F3EC;
-  --portal-surface: #fff;
-  --portal-border: #DFD9CE;
-  --portal-muted: #615d57;
-  --portal-ash: #615d57;
-  --portal-ink: #141413;
-  --portal-accent: #141413;
-  --portal-accent-deep: #141413;
-  --portal-green: #1B5E55;
-  --portal-danger: var(--portal-ink);
   min-height: calc(100svh - 64px);
   padding: 32px 24px 64px;
   font-family: var(--font-apple-text);
   line-height: 1.5;
-  background: var(--portal-canvas);
+  background: transparent;
   color: var(--portal-ink);
 }
 .onboardingShell { max-width: 760px; margin: 0 auto; }
 .onboardingTop { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 44px; color: var(--portal-muted); font-size: 13px; }
 .onboardingTop .portalBrand { margin: 0; }
 .onboardingProgress { height: 3px; margin: 10px 0 26px; overflow: hidden; border-radius: 999px; background: #e1dacf; }
-.onboardingProgress span { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transition: width 240ms ease; }
+.onboardingProgress span { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transform-origin: left; transition: transform var(--portal-base) var(--portal-ease); }
 .onboardingCard { padding: 24px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); }
 .onboardingTitle { max-width: 650px; margin: 4px 0 0; font-family: var(--font-apple-display); font-size: clamp(28px,4vw,36px); font-weight: 600; line-height: 1.08; letter-spacing: -.03em; }
 .onboardingLead { max-width: 620px; margin: 10px 0 0; color: var(--portal-muted); font-size: 16px; line-height: 1.5; }

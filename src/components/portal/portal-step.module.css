@@ -38,15 +38,15 @@
 .answers dd { margin:0; overflow-wrap:anywhere; }
 
 .instructionList { list-style:none; padding:0; margin:0; font:400 15px/1.6 var(--font-sans); }
-.instructionList li { display:grid; grid-template-columns:34px minmax(0,1fr); gap:16px; padding:18px 20px; margin-top:10px; border-left:3px solid #1B5E55; background:#FAF8F3; }
+.instructionList li { display:grid; grid-template-columns:34px minmax(0,1fr); gap:16px; padding:18px 20px; margin-top:10px; border-left:3px solid var(--portal-signal,#B83A27); background:#FAF8F3; }
 .instructionList strong { display:block; font-weight:600; }.instructionList p { margin:4px 0 0; color:var(--portal-muted); }
-.instructionIndex { color:#1B5E55; font-weight:600; font-variant-numeric:tabular-nums; }
+.instructionIndex { color:var(--portal-signal-text,#A33421); font-weight:600; font-variant-numeric:tabular-nums; }
 .instructionSources { display:flex; flex-wrap:wrap; gap:8px 16px; }
 
-.editorialHero { display:grid; grid-template-columns:1.4fr 1fr; gap:24px; align-items:stretch; margin:12px 0 24px; padding-bottom:24px; border-bottom:1px solid #E2DDD3; }
+.editorialHero { display:grid; grid-template-columns:1.4fr 1fr; gap:24px; align-items:stretch; margin:12px 0 24px; padding-bottom:24px; border-bottom:1px solid var(--portal-border,#DCD3C3); }
 .editorialHero>div { min-width:0; }
-.rubric { margin:0 0 12px; color:#6B6257; font:600 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
-.editorialHero .detailTitle { margin:0; color:#292524; font:600 clamp(26px,2.5vw,34px)/1.18 var(--font-sans); letter-spacing:-.025em; }
+.rubric { margin:0 0 12px; color:var(--portal-signal-text,#A33421); font:600 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
+.editorialHero .detailTitle { margin:0; color:var(--portal-ink-strong,#2A211D); font:600 clamp(26px,2.5vw,34px)/1.18 var(--font-apple-display); letter-spacing:-.025em; }
 .detailExplainer { margin-top:14px; color:#615D57; font-size:15px; line-height:1.6; }
 .detailMeta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
 .detailMeta span { padding:5px 9px; border-radius:5px; background:#EFECE6; font-size:12px; color:#57534E; }

@@ -188,7 +188,27 @@ const approvedAdmissionsPaths = new Set([
 const approvedLaunchPaths = new Set([
   'src/lib/phone.ts', 'src/lib/lead.ts', 'src/components/chat/ChatLauncher.tsx',
 ]);
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path)), [], 'Protected source or contract changed.');
+// User request 2026-10-25: gamify the personal cabinet one small step at a
+// time, situational Vespi poses that never repeat, one font and motion system,
+// and the supplied zhol paper/risograph style inside the cabinet only.
+// Presentation and reward feedback only: roadmap, progress formula, document
+// verdicts, API and data contracts stay as they are.
+const approvedGamifiedPortalPaths = new Set([
+  'src/components/mascot/VespiPose.tsx',
+  'src/components/portal/portalStageArt.ts',
+  'src/components/portal/RisoArtImage.tsx',
+  'src/components/portal/PortalFocus.tsx',
+  'src/components/portal/PortalCompletion.tsx',
+  'src/components/portal/PortalRouteVespi.tsx',
+  'src/components/portal/PortalWelcome.tsx',
+  'src/components/portal/LocalWorkspace.tsx',
+  'src/components/portal/portal-focus.module.css',
+  'src/components/portal/portal-journey.module.css',
+  'src/components/portal/higgsfield-visual.module.css',
+  'src/components/portal/portal-upload.module.css',
+  'src/data/higgsfieldVisuals.ts',
+]);
+assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 10990;/);
 // User-approved launch price: only the main amount may change; the optional

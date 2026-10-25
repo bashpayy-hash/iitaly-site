@@ -12,6 +12,7 @@ import { PortalUniversityStep } from "./PortalUniversityStep";
 import { PortalFocus } from "./PortalFocus";
 import { PortalCompletion, PortalSoundSetting } from "./PortalCompletion";
 import { usePortalFeedback } from "./usePortalFeedback";
+import { VespiPose } from "@/components/mascot/VespiPose";
 import focusStyles from "./portal-focus.module.css";
 import { DocsSection } from "./DocsSection";
 import { PortalDocumentReport } from "./PortalDocumentReport";
@@ -797,7 +798,9 @@ export function PortalExplorer() {
           <div id="portal-panel" className={styles.panel}>
             {shortlistNotice && <p role="status" className={styles.muted}>{shortlistNotice} <button type="button" className={styles.textLink} disabled={Boolean(busyTask)} onClick={() => { void handleSaveUniversities(shortlist); }}>Повторить синхронизацию</button></p>}
             {actionError && !documentError && (
-              <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError}>
+              <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError} data-portal-action-error>
+                {/* В обзоре Веспи уже стоит в колонке «Сейчас»: одна фигура на экран. */}
+                {!showFocus && <span className={styles.errorVespi} data-vespi-scene="oops" aria-hidden="true"><VespiPose pose="oops" sizes="72px" /></span>}
                 <p role="alert">{actionError.message}</p>
                 {actionError.retry && <a href="#portal-panel" onClick={event => { event.preventDefault(); if (!busyTask) actionError.retry?.(); }} aria-disabled={busyTask !== null} className={styles.textLink}>{actionError.retryLabel}</a>}
               </div>
@@ -862,7 +865,7 @@ export function PortalExplorer() {
       </div>
 
     </main>
-    <PortalCompletion feedback={feedback.feedback} />
+    <PortalCompletion feedback={feedback.feedback} data={data} />
     </div>
   );
 }

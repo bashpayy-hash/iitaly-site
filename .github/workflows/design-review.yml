@@ -113,6 +113,8 @@ jobs:
         run: node scripts/design-warm-palette-review.mjs
       - name: Review shared Vespi roles, typography and single visible mascot
         run: node scripts/design-vespi-system-review.mjs
+      - name: Review unique Vespi poses, step stamps and stage souvenirs
+        run: node scripts/design-vespi-unique-review.mjs
       - name: Review spatial Vespi, decorative idle and actual checking states
         run: node scripts/design-vespi-handmade-review.mjs
       - name: Review launch document retry, long filenames and modal focus

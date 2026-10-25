@@ -8,8 +8,10 @@ import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigatio
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
-import { PortalRouteVespi } from "./PortalRouteVespi";
+import { VespiPose } from "@/components/mascot/VespiPose";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import { RisoArtImage } from "./RisoArtImage";
+import { STAGE_ART, stageKey } from "./portalStageArt";
 import styles from "./portal-focus.module.css";
 
 type Props = {
@@ -57,6 +59,14 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const days = daysTo(position.task);
   const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
     .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
+  // Один костюм Веспи на текущий этап маршрута; сувенир — у выбранного этапа.
+  const stages = data.roadmap.filter(stage => stage.tasks.length);
+  const routeStage = position.stage || stages[0];
+  const allDone = progress.total > 0 && progress.done === progress.total;
+  const routeArt = STAGE_ART[stageKey(routeStage?.id)];
+  const nowPose = progress.total === 0 ? "first-plan" : allDone ? "encourage" : routeArt.pose;
+  const selectedArt = STAGE_ART[stageKey(selected?.id)];
+  const stageComplete = ordered.length > 0 && completed.length === ordered.length;
 
   function check(row: PortalTask) {
     if (busy || portalTaskDone(savedData, row)) return;
@@ -75,7 +85,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         </p>
       </div>
     </div>
-    <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+    <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now data-now-stage={stageKey(routeStage?.id)}>
+      {routeStage && <p className={styles.stageLabel} data-now-stage-label>{allDone ? "Маршрут пройден" : `Этап ${stages.findIndex(stage => stage.id === routeStage.id) + 1} из ${stages.length} · ${routeStage.title}`}</p>}
       <h2 id="portal-now-heading">Сейчас</h2>
       <div className={styles.nowNext}>
         <p className={styles.nowLabel}>Следующий шаг</p>
@@ -91,13 +102,22 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
         <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
       </div>}
-      <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
+      <div className={styles.mascotWindow}><div className={styles.welcomeScene} data-vespi-scene={nowPose} aria-hidden="true"><VespiPose pose={nowPose} priority sizes="(max-width: 600px) 110px, (max-width: 1100px) 160px, 220px" /></div></div>
     </aside>
     <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
     </div>
     <div className={styles.stageBody} data-portal-overview>
-      <div className={styles.stageHeading}><h2>{selected?.title}</h2><span>{completed.length} / {ordered.length}</span></div>
+      <div className={styles.stageHeading} data-stage-reward={stageComplete ? "earned" : "locked"}>
+        <div className={styles.stageTitle}>
+          <h2>{selected?.title}</h2>
+          <p className={styles.stampTally} data-stamp-tally><span className={styles.stampDots} aria-hidden="true">{ordered.map(row => <i key={row.id} data-stamped={portalTaskDone(data, row) || undefined} />)}</span><span>Штампы: <b>{completed.length} / {ordered.length}</b></span></p>
+        </div>
+        <figure className={styles.souvenir} data-stage-souvenir={selectedArt.souvenir}>
+          <RisoArtImage art={selectedArt.souvenir} locked={!stageComplete} sizes="72px" className={styles.souvenirArt} />
+          <figcaption><span>{stageComplete ? "Сувенир получен" : "Сувенир за этап"}</span>{selectedArt.prize}</figcaption>
+        </figure>
+      </div>
       <div className={styles.taskList} aria-label="Задачи этапа">
         {visibleTasks.map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
