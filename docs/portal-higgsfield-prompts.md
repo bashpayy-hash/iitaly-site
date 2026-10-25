@@ -1,6 +1,6 @@
 # iItaly portal: Higgsfield exports
 
-The portal uses the site's existing `--font-sans` (Onest), including its greeting and progress count. Its header is the same MarketingHeader, with the three public navigation links and the portal actions. No portal-specific font download remains. Task previews are compact text rows; the media slot and three-step instructions appear only inside the task breakdown.
+The portal uses the site's existing `--font-sans` (Onest) for the interface and `--font-editorial` (Charter/Georgia) only for its greeting. Its header is the same MarketingHeader, with the three public navigation links and the portal actions. No portal-specific font download remains. Task previews are compact text rows; the media slot and three-step instructions appear only inside the task breakdown. Vespi sits inside the contextual Now column and hides while the assistant chat is open.
 
 ## Connect exports
 

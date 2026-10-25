@@ -17,6 +17,7 @@ export async function portalTask(page, id) {
     }
   }
   const row=page.locator(`[data-focus-row="${id}"]`);
-  if(await row.count() && !(await row.evaluate(n=>n.open)))await row.locator('summary').click();
-  await page.locator(`[data-portal-task="${id}"]`).click();
+  const action=page.locator(`[data-portal-task="${id}"]`);
+  if(await action.count())await action.click();
+  else await row.getByRole('link').click();
 }

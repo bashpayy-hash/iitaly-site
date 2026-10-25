@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META, fmtDate } from "@/lib/portalMeta";
 import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigation";
@@ -21,7 +21,19 @@ type Props = {
   onDocuments: () => void; onSettings: () => void;
 };
 
-export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onSettings }: Props) {
+function daysTo(task: PortalTask | null) {
+  if (!task?.deadline || !/^\d{4}-\d{2}-\d{2}$/.test(task.deadline)) return null;
+  if (task.daysLeft != null && Number.isFinite(task.daysLeft)) return task.daysLeft;
+  const today = new Date();
+  const days = Math.round((Date.parse(`${task.deadline}T00:00:00Z`) - Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+  return Number.isFinite(days) ? days : null;
+}
+
+function dayWord(days: number) {
+  return days % 10 === 1 && days % 100 !== 11 ? "день" : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 12 || days % 100 > 14) ? "дня" : "дней";
+}
+
+export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete }: Props) {
   const [data, setDisplayed] = useState(savedData);
   const shown = useRef(savedData);
   useEffect(() => {
@@ -31,20 +43,20 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     return () => clearTimeout(timer);
   }, [savedData]);
   const position = portalPosition(data);
+  const progress = portalProgress(data);
   const selected = data.roadmap.find(stage => stage.id === selectedStageId) || position.stage || data.roadmap[0];
   const rows = [...(selected?.tasks || [])];
   // Keep the server's chronology within each group; dates never reorder steps.
   const ordered = rows;
   const completed = ordered.filter(row => portalTaskDone(data, row));
   const pending = ordered.filter(row => !portalTaskDone(data, row));
-  const current = pending.find(row => row.available !== false) || pending[0];
+  const current = selected?.id === position.stage?.id ? position.task : null;
   const visibleTasks = [...completed, ...(current ? [current] : []), ...pending.filter(row => row.id !== current?.id)];
-  const scope = `${selected?.id}:${current?.id}`;
-  const [disclosure, setDisclosure] = useState<{ scope: string; id: string | null }>({ scope: "", id: null });
-  const openId = disclosure.scope === scope ? disclosure.id : current?.id;
   const universities = selectedUniversities(shortlist);
   const firstName = data.client.name?.trim().split(/\s+/)[0];
-  const universityTask = data.roadmap.flatMap(stage => stage.tasks).find(row => row.id === "shortlist");
+  const days = daysTo(position.task);
+  const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
+    .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
 
   function check(row: PortalTask) {
     if (busy || portalTaskDone(savedData, row)) return;
@@ -56,45 +68,69 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     <div className={styles.welcome} data-portal-welcome>
       <div className={styles.welcomeCopy}>
         <h1>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
-        <div className={styles.pills}>
-          {data.client.intakeYear && <a className={styles.pill} href="/portal?view=settings" onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onSettings(); }}>Поступление: сентябрь {data.client.intakeYear}</a>}
-          <div data-saved-universities>{universities.map(university => <a key={university.id} className={styles.pill} href="/portal?view=plan&task=shortlist" onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); if (universityTask) onOpenTask(universityTask); }}>{university.name}</a>)}</div>
-        </div>
+        <p className={styles.welcomeMeta}>
+          {data.client.intakeYear && <span>Поступление: сентябрь {data.client.intakeYear}</span>}
+          {data.client.intakeYear && universities.length > 0 && <span aria-hidden="true"> · </span>}
+          <span data-saved-universities>{universities.map(university => university.name).join(" · ")}</span>
+        </p>
       </div>
-      <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
     </div>
+    <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+      <h2 id="portal-now-heading">Сейчас</h2>
+      <div className={styles.nowNext}>
+        <p className={styles.nowLabel}>Следующий шаг</p>
+        <p className={styles.nowTitle}>{position.task ? taskTitle(position.task) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
+      </div>
+      {position.task && <div className={styles.nowDeadline} data-now-deadline>
+        {days === null ? <p className={styles.nowLabel}>Ориентир пока не указан</p> : <>
+          {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
+          <time dateTime={position.task.deadline || undefined}>{fmtDate(position.task.deadline)}</time>
+        </>}
+      </div>}
+      {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
+        <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
+        <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
+      </div>}
+      <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
+    </aside>
     <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
     </div>
     <div className={styles.stageBody} data-portal-overview>
+      <div className={styles.stageHeading}><h2>{selected?.title}</h2><span>{completed.length} / {ordered.length}</span></div>
       <div className={styles.taskList} aria-label="Задачи этапа">
         {visibleTasks.map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
-          const open = openId === row.id, isCurrent = current?.id === row.id;
+          const isCurrent = current?.id === row.id, open = isCurrent;
           const date = row.deadline && /^\d{4}-\d{2}-\d{2}$/.test(row.deadline) ? fmtDate(row.deadline) : "";
           const time = row.time || TASK_META[row.id]?.min;
           const description = row.id === "translate" ? "Получателю может понадобиться перевод документа и его приложений." : row.id === "apostille" ? "Уточнить требования выбранного вуза и поставить штамп в ЦОНе" : taskShortExplainer(row);
           const href = data.docs[row.id] ? portalTaskHref(data, row) : `/portal?view=plan&task=${encodeURIComponent(row.id)}`;
+          const openTask = (event: React.MouseEvent<HTMLAnchorElement>) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined);
+          };
           return <article key={row.id} className={styles.task} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
-            <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
+            <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
+              {!savedDone && !isCurrent && <span className={styles.taskNumber} aria-hidden="true">{ordered.findIndex(task => task.id === row.id) + 1}</span>}
             </button>
-            <details className={styles.taskDetails} data-focus-row={row.id} open={open}>
-              <summary onClick={event => { event.preventDefault(); setDisclosure({ scope, id: open ? null : row.id }); }}>
-                <span className={styles.headingCopy}><strong data-road-step-title={isCurrent || undefined}>{taskTitle(row)}</strong></span>
-                <span className={styles.rowMeta}>{done ? <span className={styles.doneBadge}>Выполнено <Check size={13} aria-hidden="true" /></span> : date && <span className={styles.dateBadge}>Ориентир: {date}</span>}<ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" /></span>
-              </summary>
-              <div className={styles.taskBody}>
+            <div className={styles.taskDetails} data-focus-row={row.id}>
+              <div className={styles.taskHeading}>
+                <h3 className={styles.headingCopy}>{isCurrent ? <strong data-road-step-title>{taskTitle(row)}</strong> : <a href={href} onClick={openTask}><strong>{taskTitle(row)}</strong></a>}</h3>
+                {!open && <span className={styles.rowMeta}>{done ? <span className={styles.doneBadge}>Выполнено</span> : date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}<ChevronRight size={14} strokeWidth={1.5} aria-hidden="true" /></span>}
+              </div>
+              {open && <div className={styles.taskBody}>
                 {description && <p className={styles.explainer} title={description} data-step-short-explainer>{description}</p>}
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {done ? <span className={styles.doneBadge}>Выполнено <Check size={13} aria-hidden="true" /></span> : date && <span>Ориентир: {date}</span>}
+                  {date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}
                   {!done && time && <span>Срок: {time}</span>}
                 </div>
-              </div>
-            </details>
+              </div>}
+            </div>
             {open && <div className={styles.taskActions}>
-              {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым <Check size={16} strokeWidth={1.5} aria-hidden="true" /></button>}
-              <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined); }}>Открыть разбор <span aria-hidden="true">→</span></a>
+              <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
+              {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
             </div>}
           </article>;
         })}

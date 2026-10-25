@@ -1,5 +1,5 @@
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
-import { portalDestination } from './portal-review-navigation.mjs';
+import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -104,7 +104,7 @@ async function railContract(page,data,compact){
 async function arrivalOrder(page,data) {
   const welcome=page.locator('[data-portal-welcome]');
   assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
-  assert.equal(await welcome.locator('[data-vespi-scene=welcome]').count(),1,'Vespi rests above the separate route card');
+  assert.equal(await page.locator('[data-portal-now] [data-vespi-scene=welcome]').count(),1,'Vespi belongs to the Now column');
   assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
   const progressBox=await road(page).getByRole('progressbar').boundingBox();
@@ -145,7 +145,7 @@ try{
       await page.keyboard.press('Enter');
     }else await road(page).locator('[data-road-stage="documents"]').click();
     await page.locator('[data-portal-focus][data-selected-stage=documents]').waitFor();
-    await page.locator('[data-road-open]').click();
+    await portalTask(page,'statements');
     await detail(page).waitFor();await railContract(page,data,true);
     assert.equal(await detail(page).getAttribute('data-step-detail'),'statements');assert.match(await detail(page).innerText(),/Сначала:/);
     assert.equal(await detail(page).locator('button,[data-portal-upload-zone]').count(),0,'Future document cannot upload/complete');
@@ -162,7 +162,7 @@ try{
     if(['complete','empty'].includes(mode))assert.equal(await page.locator('[data-road-open]').count(),0,'Finished/empty route has no invented action');
     if(mode==='dates')assert((await page.locator('[data-orientir-task]').count())<=2);
     if(['near','dates'].includes(mode))assert.doesNotMatch(await road(page).innerText(),/Дедлайн:/);
-    if(mode==='blocked'){await page.locator('[data-road-open]').click();await detail(page).waitFor();assert.equal(await detail(page).locator('button').count(),0);assert.match(await detail(page).innerText(),/Сначала|появ|рано|услов|программ|позже/i);}
+    if(mode==='blocked'){assert.equal(await page.locator('[data-expanded=true]').count(),0,'No unavailable step is presented as the current focus');await portalTask(page,'shortlist');await detail(page).waitFor();assert.equal(await detail(page).locator('button').count(),0);assert.match(await detail(page).innerText(),/Сначала|появ|рано|услов|программ|позже/i);}
     if(['manual','last'].includes(mode)){
       await page.locator('[data-road-open]').click();await detail(page).waitFor();assert.equal(await detail(page).locator('button').count(),1);await page.getByRole('button',{name:'Готово',exact:true}).click();
       await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,1);assert.equal(calls[0].value,true);
@@ -181,7 +181,7 @@ try{
         await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.deepEqual(fileCalls,['check','save']);assert.equal(calls.length,0,'No separate uploaded self-report');
       }
     }
-    if(mode==='screenshot-parent'){await go(page,'План');await page.locator('[data-current-task=true]').waitFor();assert.equal(await page.locator('[data-road-step-title]').count(),1);assert.equal(await page.getByText('Рассчитать бюджет и оценить шансы на стипендию DSU',{exact:true}).count(),1,'Direct budget task appears once');await capture(page,`portal-plan-parent-${width}`);}
+    if(mode==='screenshot-parent'){await go(page,'План');await page.locator('[data-current-task=true]').waitFor();assert.equal(await page.locator('[data-road-step-title]').count(),1);assert.equal(await page.locator('[data-portal-overview]').getByText('Рассчитать бюджет и оценить шансы на стипендию DSU',{exact:true}).count(),1,'Direct budget task appears once in the checklist');await capture(page,`portal-plan-parent-${width}`);}
     if(mode==='late-current')await capture(page,`portal-document-${width}`);
     assert.doesNotMatch(await page.locator('#portal-panel').innerText(),/родител/i,'Saved owner roles must not reintroduce delegated task copy');
     await noOverflow(page);results.push({width,mode,passed:true});await context.close();
@@ -192,7 +192,7 @@ try{
     await page.locator('#portal-panel [role=alert]').locator('..').getByRole('link').click();await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,2);
     if(motion){await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.roadTransition==='true');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.traveling==='false');}
     assert.equal(await road(page).locator('[data-road-fill],[data-road-location]').count(),0);
-    const transitions=await road(page).locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el,'::before').transitionDuration));
+    const transitions=await road(page).locator('[data-route-fill]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).transitionDuration));
     assert(transitions.every(value=>value.split(',').every(v=>parseFloat(v)===0)),'Reduced motion immediately stops every route segment');results.push({motion,errorRetry:true,confirmedFeedbackOnly:true,reducedMotionImmediate:true});await context.close();
   }
   for(const width of [1440,390]){
