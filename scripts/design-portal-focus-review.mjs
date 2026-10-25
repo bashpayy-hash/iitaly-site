@@ -1,4 +1,3 @@
-import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -30,7 +29,7 @@ async function noOverflow(page){assert.equal(await page.evaluate(()=>document.do
 async function axe(page,label){
   await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-  assert.deepEqual(await editorialContrastFindings(page, violations),[],label+': axe');
+  assert.deepEqual(violations,[],label+': axe');
 }
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
@@ -69,6 +68,28 @@ async function open(viewport,mode='partial',options={}){
   await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls};
 }
 try {
+  for (const width of [1440,390]) {
+    const context=await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce'});
+    await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+    const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
+    await page.goto(origin+'/portal',{waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
+    assert.equal(await page.locator('[data-road-count]').innerText(),'0 из 2 шагов');
+    assert.equal(await page.locator('[data-road-locked]').count(),5);
+    assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
+    assert.equal(await page.locator('[data-stamp-count]').innerText(),'0 / 2');
+    assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
+    assert.equal(await page.locator('[data-stage-souvenir] img').evaluate(img=>img.complete&&img.naturalWidth>0),true);
+    assert.notEqual(await page.locator('[data-stage-souvenir]').evaluate(el=>getComputedStyle(el).boxShadow),'none');
+    assert.equal(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).length),0);
+    await page.evaluate(()=>document.fonts.load('500 16px "Inter Tight"','Привет, Қазақстан!'));
+    assert.equal(await page.evaluate(()=>document.fonts.check('500 16px "Inter Tight"','Привет, Қазақстан!')),true);
+    const hit=await page.locator('[data-task-check=profile]').boundingBox();assert(hit.width>=44&&hit.height>=44);
+    await noOverflow(page);await axe(page,`New local profile ${width}`);
+    await page.screenshot({path:resolve(output,`guest-${width}.png`),fullPage:true,animations:'disabled'});
+    await page.locator('[data-task-ready=profile]').click();await page.locator('[data-plan-wizard]').waitFor();
+    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')||'{}').complete===true),false,'Completion opens the real questionnaire rather than faking saved answers');
+    results.push({width,guest:true,lockedStages:5,realQuestionnaire:true});await context.close();
+  }
   for(const width of [1440,1024,768,390,320]) {
     const {page,context,calls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true});
     assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Demo!');
@@ -92,16 +113,16 @@ try {
         paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
-    assert.match(editorial.greeting,/Charter, Georgia, serif/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Onest/);
-    assert.equal(editorial.greetingWeight,'400');assert.equal(editorial.countWeight,'600');
+    assert.match(editorial.greeting,/Inter Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
+    assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
     assert.equal(await page.locator('[data-focus-row] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
     assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the checkpoint route remains');
     assert.equal(await page.getByRole('progressbar',{name:'Выполненные шаги маршрута'}).count(),1);
     assert.equal(await page.locator('[data-portal-overview] [data-higgsfield-visual],[data-portal-overview] [data-micro-steps],[data-portal-rubric]').count(),0,'Preview contains no illustration, microsteps or rubric');
     if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
     else { await page.getByLabel('Открыть меню',{exact:true}).click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).getByRole('link',{name:'Гайды и виза'}).isVisible());await page.getByLabel('Открыть меню',{exact:true}).press('Escape'); }
-    assert.equal(editorial.paper,'rgb(246, 243, 236)');assert.equal(editorial.noise,'0.035');assert.equal(editorial.noisePointer,'none');
-    assert.equal(editorial.left,'1px');assert.equal(editorial.leftColor,'rgb(230, 226, 218)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(250, 248, 245)');
+    assert.equal(editorial.paper,'rgb(247, 244, 234)');assert.equal(editorial.noise,'0.018');assert.equal(editorial.noisePointer,'none');
+    assert.equal(editorial.left,'2px');assert.equal(editorial.leftColor,'rgb(53, 43, 40)');assert.equal(editorial.radius,'20px');assert.equal(editorial.background,'rgb(251, 249, 243)');
     assert.equal(await page.locator('[data-portal-grain] feTurbulence').getAttribute('baseFrequency'),'0.75');
     assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
@@ -109,7 +130,7 @@ try {
     assert(Math.abs(fill-4/26)<0.0001,'Visible rail excludes the two tasks completed ahead');
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
-    assert.equal(await page.locator('[data-task-check=notary]').innerText(),'3','Future task has an ordinal, not an empty radio circle');
+    assert.match(await page.locator('article').filter({has:page.locator('[data-focus-row=notary]')}).innerText(),/03/,'Future task retains its chronological index');
     if(width>600){
       const points=await page.locator('[data-road-stage]>span:first-child').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
       assert(Math.max(...points)-Math.min(...points)<1,'Every checkpoint uses the same axis');
@@ -124,26 +145,25 @@ try {
     const now=await page.locator('[data-portal-now]').boundingBox();
     if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);assert(Math.abs(now.y+now.height-work.y-work.height)<1,'Now column fills the route/checklist height');}
     else assert(now.y+now.height<=route.y,'Now column moves above the route');
-    const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate]').boundingBox();
+    const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
-    if(width>600){assert(card.height<=180,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+19);}
-    else {assert(Math.abs(openButton.width-(card.width-26))<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
-    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(8, 124, 85)');
+    if(width>600){assert(card.height<=220,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+10);}
+    else {assert(Math.abs(openButton.width-(card.width-28))<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
+    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(184, 58, 39)');
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
-    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),24);
+    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),26);
     assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
-    await noOverflow(page);await axe(page,`Modular ${width}`);
-    await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});
+    await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1);assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
-    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Onest/);
+    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Inter Tight/);
     assert.equal(await page.locator('[data-step-detail=translate] [data-micro-steps] li').count(),3,'Detailed instructions remain inside the breakdown');
     await noOverflow(page);await page.screenshot({path:resolve(output,`task-${width}.png`),fullPage:true,animations:'disabled'});
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
@@ -174,9 +194,11 @@ try {
     await page.waitForFunction(()=>window.__notes===3);
     assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
+    assert.equal(await page.locator('[data-stamp=translate]').getAttribute('data-stamped'),'true');
+    assert.equal(await page.locator('[data-stamp-count]').innerText(),'1 / 5');
     const order=await page.locator('[data-focus-row]').evaluateAll(nodes=>nodes.map(el=>el.dataset.focusRow));
     assert.deepEqual(order,['translate','apostille','notary','cimea','checkDocs'],'Completed tasks precede current and future, preserving chronology within groups');
-    const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(120, 113, 108)');
+    const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(92, 96, 86)');
     assert.equal(calls.length,failTask?2:1);
     await page.locator('[data-task-ready=apostille]').press('Space');
     await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='5');

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Supplied local risograph assets, with explicit responsive dimensions. */
 
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
@@ -10,6 +11,7 @@ import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
 import { PortalRouteVespi } from "./PortalRouteVespi";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
 
 type Props = {
@@ -55,6 +57,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const universities = selectedUniversities(shortlist);
   const firstName = data.client.name?.trim().split(/\s+/)[0];
   const days = daysTo(position.task);
+  const stageIndex = data.roadmap.filter(stage => stage.tasks.length).findIndex(stage => stage.id === position.stage?.id);
+  const stageTotal = data.roadmap.filter(stage => stage.tasks.length).length;
+  const savedStampCount = rows.filter(row => portalTaskDone(savedData, row)).length;
+  const introduction = position.task?.id === "profile";
   const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
     .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
 
@@ -76,17 +82,24 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       </div>
     </div>
     <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+      <svg className={styles.darkGrain} data-dark-grain aria-hidden="true" focusable="false" width="100%" height="100%">
+        <filter id="portal-dark-grain"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" /></filter>
+        <rect width="100%" height="100%" filter="url(#portal-dark-grain)" />
+      </svg>
+      <p className={styles.nowRubric}>Этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
       <h2 id="portal-now-heading">Сейчас</h2>
       <div className={styles.nowNext}>
         <p className={styles.nowLabel}>Следующий шаг</p>
         <p className={styles.nowTitle}>{position.task ? taskTitle(position.task) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
       </div>
-      {position.task && <div className={styles.nowDeadline} data-now-deadline>
-        {days === null ? <p className={styles.nowLabel}>Ориентир пока не указан</p> : <>
-          {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
-          <time dateTime={position.task.deadline || undefined}>{fmtDate(position.task.deadline)}</time>
-        </>}
+      {position.task && days !== null && <div className={styles.nowDeadline} data-now-deadline>
+        {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
+        <time dateTime={position.task.deadline || undefined}>{fmtDate(position.task.deadline)}</time>
       </div>}
+      {position.task && <blockquote className={styles.vespiQuote}>
+        <p>{introduction ? `Ответь на ${WIZ.length} вопросов по бюджету и целям — я уберу лишние шаги и открою полный маршрут.` : taskShortExplainer(position.task)}</p>
+        <cite>Веспи Баурысаков · ИИ-помощник</cite>
+      </blockquote>}
       {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
         <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
         <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
@@ -97,7 +110,22 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
     </div>
     <div className={styles.stageBody} data-portal-overview>
-      <div className={styles.stageHeading}><h2>{selected?.title}</h2><span>{completed.length} / {ordered.length}</span></div>
+      <div className={styles.stageHeading}>
+        <div className={styles.stageTitle}>
+          <h2>{selected?.title}</h2>
+          <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
+            <span>Штампы: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
+            <span className={styles.stampTrack} aria-hidden="true">{ordered.map((row, index) => {
+              const saved = portalTaskDone(savedData, row), before = portalTaskDone(data, row);
+              return <span key={row.id} className={styles.stamp} data-stamp={row.id} data-stamped={saved} data-just-stamped={saved && !before}>{saved ? <Check size={14} strokeWidth={2} /> : <span>{String(index + 1).padStart(2, "0")}</span>}</span>;
+            })}</span>
+          </div>
+        </div>
+        <figure className={styles.souvenir} data-stage-souvenir data-earned={savedStampCount === ordered.length && ordered.length > 0}>
+          <img src="/zhol/map-pencil-320.webp" srcSet="/zhol/map-pencil-320.webp 320w, /zhol/map-pencil-640.webp 640w" sizes="(max-width:600px) 86px, 104px" width="104" height="73" alt="" />
+          <figcaption><span>Сувенир за этап</span><strong>Карта маршрута</strong></figcaption>
+        </figure>
+      </div>
       <div className={styles.taskList} aria-label="Задачи этапа">
         {visibleTasks.map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
@@ -113,15 +141,15 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           return <article key={row.id} className={styles.task} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
-              {!savedDone && !isCurrent && <span className={styles.taskNumber} aria-hidden="true">{ordered.findIndex(task => task.id === row.id) + 1}</span>}
             </button>
+            <span className={styles.stepIndex} aria-hidden="true">{String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0")}</span>
             <div className={styles.taskDetails} data-focus-row={row.id}>
               <div className={styles.taskHeading}>
                 <h3 className={styles.headingCopy}>{isCurrent ? <strong data-road-step-title>{taskTitle(row)}</strong> : <a href={href} onClick={openTask}><strong>{taskTitle(row)}</strong></a>}</h3>
                 {!open && <span className={styles.rowMeta}>{done ? <span className={styles.doneBadge}>Выполнено</span> : date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}<ChevronRight size={14} strokeWidth={1.5} aria-hidden="true" /></span>}
               </div>
               {open && <div className={styles.taskBody}>
-                {description && <p className={styles.explainer} title={description} data-step-short-explainer>{description}</p>}
+                {description && <p className={styles.explainer} data-step-short-explainer><img src="/zhol/icon-msg.webp" width="18" height="18" alt="" />{description}</p>}
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
                   {date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}
                   {!done && time && <span>Срок: {time}</span>}
