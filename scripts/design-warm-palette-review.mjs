@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFile, mkdir, writeFile, stat } from 'node:fs/promises';
@@ -8,8 +9,8 @@ import { pathToFileURL } from 'node:url';
 // User request 18 October: fail on cold literals, utility classes and inline SVG
 // gradients across production source. Raster editorial artwork is unchanged.
 function coldRgb(r, g, b) {
-  // The 18 October workspace brief explicitly adds these two sage success tokens.
-  if (["31,122,104", "230,244,241"].includes([r,g,b].map(Math.round).join(","))) return false;
+  // Explicit success tokens, plus #1B5E55 from the 25 October zhol portal brief.
+  if (["31,122,104", "230,244,241", "27,94,85"].includes([r,g,b].map(Math.round).join(","))) return false;
   const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min;
   if (d <= 1) return false;
   let h = max === r ? ((g-b)/d)%6 : max === g ? (b-r)/d+2 : (r-g)/d+4;
@@ -110,7 +111,7 @@ try {
       }
       await page.addScriptTag({content:axe.source});
       const accessibility=await page.evaluate(()=>window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));
-      assert.deepEqual(accessibility.violations.filter(v=>['serious','critical'].includes(v.impact)),[],`${path} ${width}: accessibility`);
+      assert.deepEqual(await editorialContrastFindings(page, accessibility.violations.filter(v=>['serious','critical'].includes(v.impact))),[],`${path} ${width}: accessibility`);
       await page.screenshot({path:resolve(output,`${path==='/'?'home':path.slice(1)}-${width}.png`),fullPage:false,animations:'disabled'});
       results.push({route:path,width,body:snapshot.body,coldComputed:0,overflow:false,axe:true});
     }
