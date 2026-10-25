@@ -10,7 +10,8 @@
   --portal-accent: #141413;
   --portal-accent-deep: #141413;
   --portal-heading-font: var(--font-sans);
-  --portal-serif: var(--font-editorial);
+  --font-apple-display: var(--font-sans);
+  --font-apple-text: var(--font-sans);
   --portal-green: #1B5E55;
   --portal-warn: var(--color-warn);
   --portal-danger: var(--color-red-deep);

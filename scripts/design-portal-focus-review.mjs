@@ -6,7 +6,7 @@ import { resolve, extname, sep } from 'node:path';
 import { createRequire } from 'node:module';
 import { fixture, upstreamProgress } from './portal-review-fixtures.mjs';
 
-// Editorial refinement preserves the existing modular layout and saved task contracts.
+// Compact previews preserve the route and saved task contracts; instructions stay in the detail.
 // Preserve task, upload, save, focus and reduced-motion behavior coverage.
 const require=createRequire(import.meta.url);
 const {chromium}=require(resolve(process.env.REVIEW_TOOLS,'playwright'));
@@ -35,6 +35,7 @@ async function axe(page,label){
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
   if(options.docsCurrent){data.client.name='Demo';data.client.profile={...data.client.profile,universityIds:['unipd','luiss']};data.done={profile:true,shortlist:true,chances:true};for(const row of data.roadmap.find(s=>s.id==='docs').tasks){row.deadline='2027-01-31';row.time='1–3 недели';}for(const row of data.roadmap.find(s=>s.id==='docs').tasks)row.t=({apostille:'Поставить апостиль на аттестат или диплом',translate:'Сделать официальный перевод на итальянский',notary:'Заверить перевод у нотариуса',checkDocs:'Проверить комплект документов'})[row.id]||row.t;}
+  if(options.translationCurrent){data.done.apostille=true;data.roadmap.find(s=>s.id==='docs').tasks.find(t=>t.id==='translate').time='~3–7 дней';}
   const context=await browser.newContext({viewport,reducedMotion:options.motion?'no-preference':'reduce',locale:'ru-RU'});
   await context.route('**/*',async route=>{
     const req=route.request(),url=new URL(req.url()),json=value=>route.fulfill({json:value});
@@ -68,35 +69,35 @@ async function open(viewport,mode='partial',options={}){
   await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls};
 }
 try {
-  for(const width of [1440,1024,390,320]) {
-    const {page,context,calls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true});
+  for(const width of [1440,1024,768,390,320]) {
+    const {page,context,calls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true});
     assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Demo!');
     assert.match(await page.locator('[data-saved-universities]').innerText(),/Università di Padova/);
     assert.match(await page.locator('[data-saved-universities]').innerText(),/LUISS Guido Carli/);
-    assert.equal(await page.locator('[data-road-count]').innerText(),'3 из 26 шагов');
+    assert.equal(await page.locator('[data-road-count]').innerText(),'4 из 26 шагов');
     assert.equal(await page.locator('[data-road-stage]').count(),6);
     assert.equal(await page.locator('[data-task-check]').count(),5);
     assert.equal(await page.locator('[data-task-check]:disabled').count(),0);
     const editorial=await page.evaluate(()=>{
       const style=q=>getComputedStyle(document.querySelector(q));
-      const task=style('[data-focus-task=apostille]');
-      return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=apostille] strong').fontFamily,
+      const task=style('[data-focus-task=translate]');
+      return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
+        greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>span').fontFamily,countWeight:style('[data-road-count]>span').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
-    assert.match(editorial.greeting,/Charter, Georgia, serif/);assert.match(editorial.title,/Onest/);
+    assert.equal(editorial.greeting,editorial.title);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Onest/);
+    assert.equal(editorial.greetingWeight,'700');assert.equal(editorial.countWeight,'700');
     assert.equal(await page.locator('[data-focus-row] summary strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
     assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the checkpoint route remains');
     assert.equal(await page.getByRole('progressbar',{name:'Выполненные шаги маршрута'}).count(),1);
-    assert.equal(await page.locator('[data-higgsfield-visual=docs]').count(),1);
-    assert.equal(await page.locator('[data-focus-task=apostille] [data-micro-steps] li').count(),3);
+    assert.equal(await page.locator('[data-portal-overview] [data-higgsfield-visual],[data-portal-overview] [data-micro-steps],[data-portal-rubric]').count(),0,'Preview contains no illustration, microsteps or rubric');
     if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
     else { await page.getByLabel('Открыть меню',{exact:true}).click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).getByRole('link',{name:'Гайды и виза'}).isVisible());await page.getByLabel('Открыть меню',{exact:true}).press('Escape'); }
     assert.equal(editorial.paper,'rgb(246, 243, 236)');assert.equal(editorial.noise,'0.035');assert.equal(editorial.noisePointer,'none');
-    assert.equal(editorial.left,'4px');assert.equal(editorial.leftColor,'rgb(200, 75, 49)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(250, 248, 243)');
+    assert.equal(editorial.left,'1px');assert.equal(editorial.leftColor,'rgb(230, 226, 218)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(250, 248, 245)');
     assert.equal(await page.locator('[data-portal-grain] feTurbulence').getAttribute('baseFrequency'),'0.75');
-    assert.match(await page.locator('[data-focus-task=apostille] [data-portal-rubric]').innerText(),/ШАГ 01 ИЗ 05 · ТЕКУЩИЙ ФОКУС/i);
-    assert(await page.locator('[data-task-ready=apostille]').isVisible());
+    assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
     const line=await page.locator('[data-road-stage=start]').evaluate(el=>{const css=getComputedStyle(el,'::after');return [css.borderTopStyle,css.borderTopWidth,css.borderTopColor]});
     assert.deepEqual(line,['solid','2px','rgb(27, 94, 85)']);
@@ -108,18 +109,25 @@ try {
     const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
     assert(Math.abs(work.y-route.y-route.height-20)<1,'The two white cards are separated by 20px');
     const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
-    const copy=await page.locator('[data-focus-row=apostille]').boundingBox(),art=await page.locator('[data-higgsfield-visual=docs]').boundingBox();
-    if(width>700){assert(Math.abs(art.x-copy.x-copy.width-24)<2,'Editorial columns have a 24px gap');assert(Math.abs(copy.width/art.width-1.4)<0.02,'Editorial columns use a 1.4:1 ratio');}else assert(art.y>=copy.y+copy.height,'Art stacks below the action on mobile');
-    assert.equal(await page.locator('[data-task-check=apostille] svg').evaluate(el=>el.getBoundingClientRect().width),28);
-    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),22);
-    if(width>=1024)assert.equal(Math.round((await page.locator('[data-focus-row=translate]').boundingBox()).height),64);
+    const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate]').boundingBox();
+    const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
+    assert(Math.abs(ready.y-openButton.y)<1,'Both buttons share one row');assert(ready.x<openButton.x,'Secondary action precedes the main action');
+    if(width>700){assert(card.height<=140,`Compact task height ${card.height} at ${width}px`);assert(Math.abs(ready.x-copy.x-copy.width-24)<2,'Actions sit 24px to the right of the copy');assert(Math.abs((ready.y+ready.height/2)-(card.y+card.height/2))<2,'Actions are vertically centered');}
+    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(20, 20, 19)');
+    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),24);
+    assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
+    assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').evaluate(el=>el.getBoundingClientRect().height<=parseFloat(getComputedStyle(el).lineHeight)+1),true,'Description stays one line');
+    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>span').count(),2);
+    if(width>=1024)assert.equal(Math.round((await page.locator('[data-focus-row=notary]').boundingBox()).height),64);
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
     await noOverflow(page);await axe(page,`Modular ${width}`);
     await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});
+    await page.locator('[data-focus-row=notary] summary').click();assert.equal(await page.locator('[data-focus-row=notary] summary strong').evaluate(el=>getComputedStyle(el).fontSize),width<=600?'14px':'16px');
     await page.locator('[data-focus-row=translate] summary').click();assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
     assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Onest/);
+    assert.equal(await page.locator('[data-step-detail=translate] [data-micro-steps] li').count(),3,'Detailed instructions remain inside the breakdown');
     await noOverflow(page);await page.screenshot({path:resolve(output,`task-${width}.png`),fullPage:true,animations:'disabled'});
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
@@ -135,10 +143,10 @@ try {
       for(const part of ['svg','span']){
         await page.locator('header a.logo-link').locator(part).first().click();await page.waitForURL(origin+'/');
         await page.goBack({waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();
-        assert.equal(await page.locator('[data-road-count]').innerText(),'3 из 26 шагов');
+        assert.equal(await page.locator('[data-road-count]').innerText(),'4 из 26 шагов');
       }
     }
-    assert.equal(calls.length,0);results.push({width,modular:true,checkboxes:5,editorialGrid:true,singleVisibleMascot:true,editorial:true,axeOtherRules:true,consistentFonts:true});await context.close();
+    assert.equal(calls.length,0);results.push({width,compactHeight:card.height,checkboxes:5,instructionsOnlyInDetail:true,singleVisibleMascot:true,axeOtherRules:true,consistentFonts:true});await context.close();
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});

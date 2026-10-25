@@ -1,6 +1,6 @@
 # iItaly portal: Higgsfield exports
 
-The portal shares `--font-sans` (Onest) and `--font-editorial` (Charter, Georgia, serif) with Modulo 1. Its header is the same MarketingHeader, with the three public navigation links and the portal actions. No portal-specific font download remains.
+The portal uses the site's existing `--font-sans` (Onest), including its greeting and progress count. Its header is the same MarketingHeader, with the three public navigation links and the portal actions. No portal-specific font download remains. Task previews are compact text rows; the media slot and three-step instructions appear only inside the task breakdown.
 
 ## Connect exports
 
