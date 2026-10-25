@@ -5,6 +5,32 @@ import { useEffect, useRef, useState } from "react";
 const SOUND_KEY = "iitaly_portal_completion_sound";
 export type CompletionFeedback = { id: number; taskId: string; title: string };
 
+/** Full requested chord. Reuse the gesture-unlocked context on mobile Safari. */
+export function playDopamineSound(preparedContext?: AudioContext) {
+  const Audio = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!Audio) return;
+  const ctx = preparedContext || new Audio();
+  const now = ctx.currentTime;
+  let remaining = 3;
+  [587.33, 880, 1174.66].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now + i * 0.055);
+    gain.gain.setValueAtTime(0.001, now + i * 0.055);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.055 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.055 + 0.65);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + i * 0.055);
+    osc.stop(now + i * 0.055 + 0.7);
+    osc.onended = () => {
+      osc.disconnect(); gain.disconnect();
+      if (--remaining === 0 && !preparedContext) void ctx.close().catch(() => {});
+    };
+  });
+}
+
 /** Called from a user gesture; a saved task, never a click, earns the chime. */
 export function usePortalFeedback() {
   const [sound, setSound] = useState(true);
@@ -42,19 +68,7 @@ export function usePortalFeedback() {
     const ctx = context.current;
     if (!soundEnabled.current || !ctx || ctx.state !== "running") return;
     try {
-      // Original, quiet two-part confirmation chord, synthesized locally.
-      [[523.25, 659.25, 783.99], [659.25, 830.61, 987.77]].forEach((chord, part) => chord.forEach((frequency, index) => {
-        const at = ctx.currentTime + part * .105;
-        const oscillator = ctx.createOscillator();
-        const gain = ctx.createGain();
-        oscillator.type = "sine"; oscillator.frequency.setValueAtTime(frequency, at);
-        gain.gain.setValueAtTime(.0001, at);
-        gain.gain.exponentialRampToValueAtTime(.026 / (index + 1), at + .018);
-        gain.gain.exponentialRampToValueAtTime(.0001, at + .55);
-        oscillator.connect(gain); gain.connect(ctx.destination);
-        oscillator.start(at); oscillator.stop(at + .6);
-        oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
-      }));
+      playDopamineSound(ctx);
     } catch { /* Visual and text confirmation remain available without audio. */ }
   }
 

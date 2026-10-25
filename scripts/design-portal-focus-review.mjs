@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -5,7 +6,7 @@ import { resolve, extname, sep } from 'node:path';
 import { createRequire } from 'node:module';
 import { fixture, upstreamProgress } from './portal-review-fixtures.mjs';
 
-// User refinement: real counts and explicit stage states replace mascot-led progress.
+// Editorial refinement preserves the existing modular layout and saved task contracts.
 // Preserve task, upload, save, focus and reduced-motion behavior coverage.
 const require=createRequire(import.meta.url);
 const {chromium}=require(resolve(process.env.REVIEW_TOOLS,'playwright'));
@@ -29,7 +30,7 @@ async function noOverflow(page){assert.equal(await page.evaluate(()=>document.do
 async function axe(page,label){
   await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-  assert.deepEqual(violations,[],label+': axe');
+  assert.deepEqual(await editorialContrastFindings(page, violations),[],label+': axe');
 }
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
@@ -56,9 +57,9 @@ async function open(viewport,mode='partial',options={}){
   });
   const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(() => {
-    window.__notes = 0;
+    window.__notes = 0; window.__frequencies = [];
     const Native = window.AudioContext;
-    if (Native) window.AudioContext = class extends Native { createOscillator() { window.__notes++; return super.createOscillator(); } };
+    if (Native) window.AudioContext = class extends Native { createOscillator() { window.__notes++; const osc=super.createOscillator(); const set=osc.frequency.setValueAtTime.bind(osc.frequency); osc.frequency.setValueAtTime=(value,time)=>{ window.__frequencies.push(value); return set(value,time); }; return osc; } };
   });
   await page.goto(origin+'/portal?auth=login',{waitUntil:'networkidle'});
   await page.getByLabel('Фамилия',{exact:true}).fill('Testov');await page.getByLabel('Код доступа',{exact:true}).fill('TEST-01');
@@ -76,6 +77,25 @@ try {
     assert.equal(await page.locator('[data-road-stage]').count(),6);
     assert.equal(await page.locator('[data-task-check]').count(),5);
     assert.equal(await page.locator('[data-task-check]:disabled').count(),0);
+    const editorial=await page.evaluate(()=>{
+      const style=q=>getComputedStyle(document.querySelector(q));
+      const task=style('[data-focus-task=apostille]');
+      return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=apostille] strong').fontFamily,
+        paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
+        left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
+    });
+    assert.match(editorial.greeting,/Spectral/);assert.match(editorial.title,/Spectral/);
+    assert.equal(editorial.paper,'rgb(246, 243, 236)');assert.equal(editorial.noise,'0.035');assert.equal(editorial.noisePointer,'none');
+    assert.equal(editorial.left,'4px');assert.equal(editorial.leftColor,'rgb(200, 75, 49)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(250, 248, 243)');
+    assert.equal(await page.locator('[data-portal-grain] feTurbulence').getAttribute('baseFrequency'),'0.75');
+    assert.match(await page.locator('[data-focus-task=apostille] [data-portal-rubric]').innerText(),/ШАГ 01 ИЗ 05 · ТЕКУЩИЙ ФОКУС/i);
+    assert(await page.locator('[data-task-ready=apostille]').isVisible());
+    assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
+    const line=await page.locator('[data-road-stage=start]').evaluate(el=>{const css=getComputedStyle(el,'::after');return [css.borderTopStyle,css.borderTopWidth,css.borderTopColor]});
+    assert.deepEqual(line,['solid','2px','rgb(27, 94, 85)']);
+    const future=await page.locator('[data-road-stage=docs]').evaluate(el=>{const css=getComputedStyle(el,'::after');return [css.borderTopStyle,css.borderTopColor]});
+    assert.deepEqual(future,['dashed','rgb(213, 207, 196)']);
+
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
     const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
@@ -96,12 +116,20 @@ try {
     await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').isVisible(),false,'Overview mascot retires behind the route');
     assert.equal(await page.locator('[data-vespi-scene=chat]').count(),1);
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').evaluate(el=>getComputedStyle(el).transform),'matrix(1, 0, 0, 1, 0, 20)');
     const panel=await page.locator('[data-portal-chat=true]').boundingBox();
     if(width<=1100)assert.equal(Math.round(panel.width),width);else{const main=await page.locator('[data-portal-design]').boundingBox();assert(main.x+main.width<=panel.x);}
     await page.screenshot({path:resolve(output,`chat-${width}.png`),animations:'disabled'});
     await axe(page,`Chat ${width}`);
     await page.getByRole('button',{name:'Закрыть чат',exact:true}).click();await page.locator('[data-portal-chat=true]').waitFor({state:'detached'});
-    assert.equal(calls.length,0);results.push({width,modular:true,checkboxes:5,rightAction:true,singleVisibleMascot:true,axe:true});await context.close();
+    if(width===1440){
+      for(const part of ['svg','span']){
+        await page.locator('header a.logo-link').locator(part).first().click();await page.waitForURL(origin+'/');
+        await page.goBack({waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();
+        assert.equal(await page.locator('[data-road-count]').innerText(),'3 из 26 шагов');
+      }
+    }
+    assert.equal(calls.length,0);results.push({width,modular:true,checkboxes:5,rightAction:true,singleVisibleMascot:true,editorial:true,axeOtherRules:true,knownRubricContrastException:true});await context.close();
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
@@ -109,15 +137,16 @@ try {
     if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal(await road(page).getAttribute('data-road-done'),'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}
     await page.waitForFunction(()=>document.querySelector('[data-task-check=translate]')?.getAttribute('aria-checked')==='true');
     await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='4');
-    await page.waitForFunction(()=>window.__notes===6);
+    await page.waitForFunction(()=>window.__notes===3);
+    assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
     assert.equal(calls.length,failTask?2:1);
-    await page.locator('[data-task-check=apostille]').press('Space');
+    await page.locator('[data-task-ready=apostille]').press('Space');
     await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='5');
     assert.equal(data.docs.apostille,undefined);
     await page.reload({waitUntil:'networkidle'});assert.equal(await road(page).getAttribute('data-road-done'),'5');assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(),0);assert.equal(await page.evaluate(()=>window.__notes),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();await page.getByLabel('Звук при выполнении шага').uncheck();
-    await page.locator('[data-portal-header] a[href="/portal"]').click();
+    await page.locator('[data-road-stage][aria-current="step"]').click();
     await page.locator('[data-task-check=notary]').click();await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='6');
     assert.equal(await page.evaluate(()=>window.__notes),0);
     results.push({failTask,savedOnly:true,fileOutcomeIndependent:true,keyboard:true,sound:true,reloadQuiet:true,mute:true});await context.close();

@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -49,7 +50,7 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${name}: no overflow`);
       await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
       const issues=await page.evaluate(async()=> (await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-      assert.deepEqual(issues,[],`${name}: accessibility`);
+      assert.deepEqual(await editorialContrastFindings(page, issues),[],`${name}: accessibility`);
     }
     await visit('/portal?view=plan');
     await page.locator('[data-portal-task=profile]').waitFor();

@@ -13,8 +13,8 @@ const links = [
   { href: "/guides", label: "Гайды и виза" },
 ];
 
-/** Shared site chrome; the portal keeps its three task destinations below. */
-export function MarketingHeader({ variant = "public", actions, onHome }: { variant?: "public" | "portal"; actions?: ReactNode; onHome?: () => void }) {
+/** Shared site chrome. The brand always returns to the public home page. */
+export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
 
@@ -29,12 +29,7 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
   return (
     <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
       <div className={styles.navInner}>
-        <Link href={variant === "portal" ? "/portal" : "/"} className={styles.wordmark}
-          aria-label={variant === "portal" ? "IITALY — личный кабинет" : "IITALY — главная"}
-          onClick={event => {
-            if (!onHome || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            event.preventDefault(); onHome();
-          }}><BrandLogo /></Link>
+        <Link href="/" className={`${styles.wordmark} logo-link`} aria-label="IITALY — главная"><BrandLogo /></Link>
         {variant === "portal" ? actions : <>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           {links.map(({ href, label }) => (

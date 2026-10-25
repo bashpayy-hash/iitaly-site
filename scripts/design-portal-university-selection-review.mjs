@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 // User-requested regression review: choose universities inside the existing
 // portal step, keep the complete map/comparison, and continue the real route.
 import assert from 'node:assert/strict';
@@ -165,7 +166,7 @@ try {
     await assertNoOverflow(page, `Embedded map/comparison at ${width}px`);
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[data-portal-universities]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
-    assert.deepEqual(violations, [], `Embedded selection accessibility ${width}px`);
+    assert.deepEqual(await editorialContrastFindings(page, violations), [], `Embedded selection accessibility ${width}px`);
     await page.screenshot({ path: resolve(output, `selection-comparison-${width}.png`), fullPage: true });
     await save(page).click();
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });

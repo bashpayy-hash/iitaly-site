@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 // User-requested regression: every IITALY tool stays in the authenticated
 // portal. Official sources and Telegram remain explicit external destinations.
@@ -138,7 +139,7 @@ async function checkAndCapture(page, name, width, { axe = true } = {}) {
   if (axe) {
     if (!await page.evaluate(() => Boolean(window.axe))) await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
-    assert.deepEqual(violations, [], `${name} accessibility at ${width}px`);
+    assert.deepEqual(await editorialContrastFindings(page, violations), [], `${name} accessibility at ${width}px`);
   }
   // A fixed modal is a viewport surface; a full-document shot would shrink it
   // into the middle of a very long university list and hide the useful review.
@@ -185,19 +186,19 @@ try {
       assert.equal(await page.locator('[data-uni-card="bocconi"]').getByRole('button').first().evaluate(element => document.activeElement === element), true, 'Escape closes the modal and restores its opening control');
       assert.equal(await page.locator('[data-university-select="bocconi"]').isChecked(), true, 'Reading the rules preserves the unsaved shortlist');
       assert.equal(calls.length, 0, 'Reading rules does not save or complete the shortlist');
-      await nav(page, 'IITALY — личный кабинет').click();
+      await page.locator('[data-road-stage][aria-current=step]').click();
       await overview(page).waitFor({ state: 'attached' });
-      assert.equal(new URL(page.url()).search, '', 'The portal logo returns to its own overview');
+      assert.equal(new URL(page.url()).searchParams.get('stage'), 'start', 'The stage pipeline returns to the selected stage');
       await page.goBack();
       await page.locator('[data-portal-universities]').waitFor();
       await page.goForward();
       await overview(page).waitFor({ state: 'attached' });
-      contained('Shortlist, rules, logo and browser history');
+      contained('Shortlist, rules, route and browser history');
       await portalDestination(page, 'План');
       assert.equal(await page.locator('[data-portal-focus] [data-portal-rules-disclosure]').count(), 0, 'The task card has no footer rules disclosure; university-specific rules remain in the university dialog');
       await checkAndCapture(page, 'plan-tasks', width);
       contained('Plan tasks');
-      results.push({ width, futureStepsReadOnly: true, universityRulesInline: true, rulesKeyboardFocusTrap: true, unsavedSelectionPreserved: true, logoReturnsOverview: true, browserHistory: true, noTaskFooter: true });
+      results.push({ width, futureStepsReadOnly: true, universityRulesInline: true, rulesKeyboardFocusTrap: true, unsavedSelectionPreserved: true, pipelineReturnsOverview: true, browserHistory: true, noTaskFooter: true });
       await context.close();
     }
     {

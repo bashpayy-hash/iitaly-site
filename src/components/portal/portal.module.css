@@ -1,17 +1,17 @@
 .portal {
   --i-signal: #e63946;
-  --portal-canvas: #faf8f5;
+  --portal-canvas: #F6F3EC;
   --portal-surface: #fff;
-  --portal-surface-soft: #faf8f5;
-  --portal-border: rgba(20,20,19,.08);
+  --portal-surface-soft: #FAF8F3;
+  --portal-border: #DFD9CE;
   --portal-muted: #615d57;
   --portal-ash: #615d57;
   --portal-ink: #141413;
   --portal-accent: #141413;
   --portal-accent-deep: #141413;
   --portal-heading-font: var(--font-apple-display);
-  --portal-serif: var(--portal-heading-font);
-  --portal-green: var(--color-green);
+  --portal-serif: var(--font-portal-editorial), Georgia, serif;
+  --portal-green: #1B5E55;
   --portal-warn: var(--color-warn);
   --portal-danger: var(--color-red-deep);
   min-height: 100vh;
@@ -1198,15 +1198,15 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
-  --portal-canvas: #faf8f5;
+  --portal-canvas: #F6F3EC;
   --portal-surface: #fff;
-  --portal-border: rgba(20,20,19,.08);
+  --portal-border: #DFD9CE;
   --portal-muted: #615d57;
   --portal-ash: #615d57;
   --portal-ink: #141413;
   --portal-accent: #141413;
   --portal-accent-deep: #141413;
-  --portal-green: var(--color-green);
+  --portal-green: #1B5E55;
   --portal-danger: var(--portal-ink);
   min-height: calc(100svh - 64px);
   padding: 32px 24px 64px;
