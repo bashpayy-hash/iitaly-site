@@ -5,11 +5,11 @@
 .focus h2 { font:600 22px/1.2 var(--font-sans); letter-spacing:-.025em; margin:0; overflow-wrap:anywhere; }
 .eyebrow { margin:0 0 7px; color:var(--portal-muted); font-size:12px; }
 .meta { margin-top:8px; color:var(--portal-muted); font-size:16px; line-height:1.5; }
-.action { display:inline-flex; align-items:center; justify-content:center; gap:14px; min-height:44px; margin-top:12px; padding:10px 20px; border-radius:8px; background:#1B5E55; color:#fff; font-size:14px; font-weight:500; text-decoration:none; }
+.action { display:inline-flex; align-items:center; justify-content:center; gap:14px; min-height:44px; margin-top:12px; padding:10px 20px; border-radius:999px; background:#141413; color:#fff; font-size:14px; font-weight:500; text-decoration:none; }
 .summary { display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--portal-muted); font-size:13px; line-height:1.5; font-variant-numeric:tabular-nums; margin-bottom:12px; }
 .summary>span:first-child { color:var(--portal-ink); font-weight:600; }
 .count { position:relative; display:grid; text-align:right; }
-.countNumbers { font:400 34px/1.15 var(--font-editorial); letter-spacing:-.02em; color:#1B5E55; }
+.countNumbers { font:700 34px/1.15 var(--font-sans); letter-spacing:-.03em; color:#1B5E55; }
 .feedback { position:absolute; inset:auto 0 -18px auto; color:#1B5E55; font-size:11px; font-weight:600; white-space:nowrap; }
 .feedback:empty { display:none; }
 .nav { position:relative; display:flex; gap:8px; padding:8px 2px 6px; overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:thin; scrollbar-color:#D5CFC4 transparent; scroll-padding-inline:8px; }
