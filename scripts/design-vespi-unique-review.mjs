@@ -112,7 +112,7 @@ try {
       assert.equal(await now.locator('img[data-vespi-pose]').count(), 1, 'Exactly one Vespi in the Now plate');
       assert.equal(await now.locator('img[data-vespi-pose]').getAttribute('data-vespi-pose'), poses[`stage-${stage === 'education12' ? 'education' : stage}`] ? `stage-${stage === 'education12' ? 'education' : stage}` : null, 'The Now plate wears the current stage costume');
       assert.match(await page.locator('[data-now-stage-label]').textContent(), /^Этап \d+ из \d+ · /, 'The plate names one stage of the route');
-      const tally = page.locator('[data-stamp-tally]');
+      const tally = page.locator('[data-stage-stamps]');
       assert.match(await tally.innerText(), /Штампы: \d+ \/ \d+/);
       assert.equal(await page.locator('[data-stage-souvenir] img[data-riso-art]').count(), 1, 'The stage shows the souvenir it awards');
       assert.equal(await page.locator('main img[data-vespi-pose]').count(), 1, 'One mascot on the overview');
@@ -125,7 +125,7 @@ try {
     {
       const { page, context } = await portal(viewport, 'manual');
       assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(), 0, 'No reward on login');
-      const before = await page.locator('[data-stamp-tally] i[data-stamped]').count();
+      const before = await page.locator('[data-stage-stamps] [data-stamp][data-stamped=true]').count();
       await page.locator('[data-task-ready="manual-task"]').click();
       const reward = page.locator('[data-portal-completion][data-visible=true]');
       await reward.waitFor();
@@ -134,7 +134,7 @@ try {
       assert.match(await reward.textContent(), /Штамп получен/);
       assert.match(await reward.locator('[data-reward-tally]').innerText(), /из \d+/);
       await page.waitForTimeout(500);
-      assert.equal(await page.locator('[data-stamp-tally] i[data-stamped]').count(), before + 1, 'The stage gains exactly one stamp');
+      assert.equal(await page.locator('[data-stage-stamps] [data-stamp][data-stamped=true]').count(), before + 1, 'The stage gains exactly one stamp');
       await decoded(page);
       await mascots(page, `step reward ${width}`);
       await page.screenshot({ path: resolve(output, `reward-step-${width}.png`) });

@@ -1,4 +1,3 @@
-import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -30,7 +29,7 @@ async function noOverflow(page){assert.equal(await page.evaluate(()=>document.do
 async function axe(page,label){
   await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-  assert.deepEqual(await editorialContrastFindings(page, violations),[],label+': axe');
+  assert.deepEqual(violations,[],label+': axe');
 }
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
@@ -69,6 +68,33 @@ async function open(viewport,mode='partial',options={}){
   await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls};
 }
 try {
+  for (const width of [1440,390]) {
+    const context=await browser.newContext({viewport:{width,height:960},reducedMotion:'reduce'});
+    await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
+    const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
+    await page.goto(origin+'/portal',{waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
+    assert.equal(await page.locator('[data-road-count]').innerText(),'0 из 2 шагов');
+    assert.equal(await page.locator('[data-road-locked]').count(),4);
+    assert.deepEqual(await page.locator('[data-road-locked]').evaluateAll(nodes=>nodes.map(el=>el.getAttribute('aria-label').replace(/^\d+\. |\. После анкеты$/g,''))),['Язык и тесты','Документы','Финансы и DSU','Виза и переезд'],'Locked stages are the phases the questionnaire really opens');
+    assert.match(await page.locator('[data-now-stage-label]').textContent(),/^Этап 1 из 5 · /,'The plate counts the same stages as the route');
+    assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
+    assert.equal(await page.locator('[data-stamp-count]').innerText(),'0 / 2');
+    assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
+    await page.locator('[data-stage-souvenir] img').scrollIntoViewIfNeeded();
+    await page.waitForFunction(()=>{const img=document.querySelector('[data-stage-souvenir] img');return img.complete&&img.naturalWidth>0;});
+    assert.equal(await page.locator('[data-stage-souvenir]').getAttribute('data-earned'),'false');
+    assert.notEqual(await page.locator('[data-stage-souvenir]').evaluate(el=>getComputedStyle(el).boxShadow),'none');
+    // Owner 2026-10-25: gradients only for the terracotta glow behind Vespi and the current step's kraft.
+    assert.deepEqual(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).map(node=>node.hasAttribute('data-portal-now')?'now':node.hasAttribute('data-focus-task')?'step':node.tagName)),['now','step']);
+    await page.evaluate(()=>document.fonts.load('500 16px "Inter Tight"','Привет, Қазақстан!'));
+    assert.equal(await page.evaluate(()=>document.fonts.check('500 16px "Inter Tight"','Привет, Қазақстан!')),true);
+    const hit=await page.locator('[data-task-check=profile]').boundingBox();assert(hit.width>=44&&hit.height>=44);
+    await noOverflow(page);await axe(page,`New local profile ${width}`);
+    await page.screenshot({path:resolve(output,`guest-${width}.png`),fullPage:true,animations:'disabled'});
+    await page.locator('[data-task-ready=profile]').click();await page.locator('[data-plan-wizard]').waitFor();
+    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')||'{}').complete===true),false,'Completion opens the real questionnaire rather than faking saved answers');
+    results.push({width,guest:true,lockedStages:4,realQuestionnaire:true});await context.close();
+  }
   for(const width of [1440,1024,768,390,320]) {
     const {page,context,calls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true});
     assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Demo!');
@@ -94,8 +120,8 @@ try {
         paper:style('[data-portal-editorial]').backgroundColor,texture:style('[data-portal-editorial]').backgroundImage,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
-    // User request 2026-10-25: the cabinet uses the site faces, no serif headline.
-    assert.match(editorial.greeting,/Inter Tight/);assert.doesNotMatch(editorial.greeting,/Charter|Georgia|Spectral/);assert.match(editorial.title,/Inter Tight/);assert.match(editorial.count,/Inter Tight/);
+    // Owner's zhol kit, 2026-10-25: the kit's Inter Tight everywhere, no serif headline.
+    assert.match(editorial.greeting,/Inter Tight/);assert.doesNotMatch(editorial.greeting,/Charter|Georgia|Spectral/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
     assert.equal(await page.locator('[data-focus-row] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
     assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the checkpoint route remains');
@@ -104,15 +130,21 @@ try {
     if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
     else { await page.getByLabel('Открыть меню',{exact:true}).click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).getByRole('link',{name:'Гайды и виза'}).isVisible());await page.getByLabel('Открыть меню',{exact:true}).press('Escape'); }
     assert.equal(editorial.paper,'rgb(247, 244, 234)');assert.match(editorial.texture,/zhol-paper\.webp/,'zhol paper texture');
-    assert.equal(editorial.left,'1px');assert.equal(editorial.leftColor,'rgb(220, 211, 195)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(239, 231, 216)');
-    assert.equal(await page.locator('[data-portal-grain],feTurbulence').count(),0,'Paper is a cached image, not a live full-screen SVG filter');
+    assert.equal(editorial.left,'2px');assert.equal(editorial.leftColor,'rgb(53, 43, 40)');assert.equal(editorial.radius,'20px');assert.equal(editorial.background,'rgb(251, 249, 243)');
+    // Owner 2026-10-25: visible tactile grain as background layers, never a fixed full-screen filter.
+    assert.equal(await page.locator('[data-portal-grain]').count(),0,'No fixed full-screen grain overlay');
+    const tactile=await page.evaluate(()=>{const s=q=>getComputedStyle(document.querySelector(q));const root=s('[data-portal-navigation]'),step=s('[data-focus-task=translate]'),grain=s('[data-portal-now] [data-dark-grain]');
+      return {root:root.backgroundImage,rootBlend:root.backgroundBlendMode,step:step.backgroundImage,stepShadow:step.boxShadow,grain:grain.opacity,grainBlend:grain.mixBlendMode};});
+    assert.match(tactile.root,/^url\("data:image\/svg\+xml.*feTurbulence.*opacity='0\.06'/,'Paper grain at 6%');assert.match(tactile.rootBlend,/^multiply/);
+    assert.match(tactile.step,/feTurbulence.*baseFrequency='0\.9'.*opacity='0\.07'/,'Kraft grain on the current step');assert.match(tactile.step,/linear-gradient\(135deg/);assert.match(tactile.stepShadow,/inset/);
+    assert.equal(tactile.grain,'0.08');assert.equal(tactile.grainBlend,'overlay');
     assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
     const fill=await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')));
     assert(Math.abs(fill-4/26)<0.0001,'Visible rail excludes the two tasks completed ahead');
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
-    assert.equal(await page.locator('[data-task-check=notary]').innerText(),'3','Future task has an ordinal, not an empty radio circle');
+    assert.match(await page.locator('article').filter({has:page.locator('[data-focus-row=notary]')}).innerText(),/03/,'Future task retains its chronological index');
     if(width>600){
       const points=await page.locator('[data-road-stage]>span:first-child').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
       assert(Math.max(...points)-Math.min(...points)<1,'Every checkpoint uses the same axis');
@@ -128,24 +160,23 @@ try {
     if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);
       // User request 2026-10-25: the dark plate hugs its content, no empty middle.
       assert(now.height<=route.height+work.height+20,'Now plate is not stretched beyond the work area');
-      const gap=await page.locator('[data-portal-now]').evaluate(el=>{const pic=el.querySelector('[data-vespi-scene]').getBoundingClientRect();const text=[...el.children].filter(c=>!c.contains(el.querySelector('[data-vespi-scene]'))).map(c=>c.getBoundingClientRect().bottom);return pic.top-Math.max(...text);});
+      const gap=await page.locator('[data-portal-now]').evaluate(el=>{const pic=el.querySelector('[data-vespi-scene]').getBoundingClientRect();const text=[...el.children].filter(c=>c.tagName!=='svg'&&!c.contains(el.querySelector('[data-vespi-scene]'))).map(c=>c.getBoundingClientRect().bottom);return pic.top-Math.max(...text);});
       assert(gap<48,`No hole between the text and Vespi (${Math.round(gap)}px)`);}
     else assert(now.y+now.height<=route.y,'Now column moves above the route');
-    const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate]').boundingBox();
+    const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
-    if(width>600){assert(card.height<=180,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+19);}
-    else {assert(Math.abs(openButton.width-(card.width-26))<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
-    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(53, 43, 40)','Primary action is the dark pill shared with the site');
+    if(width>600){assert(card.height<=220,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+10);}
+    else {assert(Math.abs(openButton.width-(card.width-28))<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
+    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(184, 58, 39)');
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
-    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),28);
+    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),26);
     assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('main [data-vespi-scene]').count(),1,'One mascot on the overview');
-    await noOverflow(page);await axe(page,`Modular ${width}`);
-    await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});
+    await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1);assert(await page.locator('[data-portal-task=translate]').isVisible());
@@ -181,6 +212,8 @@ try {
     await page.waitForFunction(()=>window.__notes===3);
     assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
+    assert.equal(await page.locator('[data-stamp=translate]').getAttribute('data-stamped'),'true');
+    assert.equal(await page.locator('[data-stamp-count]').innerText(),'1 / 5');
     const order=await page.locator('[data-focus-row]').evaluateAll(nodes=>nodes.map(el=>el.dataset.focusRow));
     assert.deepEqual(order,['translate','apostille','notary','cimea','checkDocs'],'Completed tasks precede current and future, preserving chronology within groups');
     const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(92, 96, 86)');

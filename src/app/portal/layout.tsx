@@ -1,4 +1,5 @@
 import styles from "./portal-paper.module.css";
+import "./zhol-fonts.css";
 
 /* Бумага кабинета — кэшируемая текстура zhol (13 КБ), а не полноэкранный
    SVG-фильтр: на недорогих Android живой feTurbulence перерисовывается при

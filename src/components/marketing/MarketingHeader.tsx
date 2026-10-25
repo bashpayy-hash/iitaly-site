@@ -17,7 +17,7 @@ const links = [
 export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
-  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices") : links;
+  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices").map(link => link.href === "/plan" ? { ...link, href: "/portal" } : link) : links;
 
   useEffect(() => {
     function closeOutside(event: PointerEvent) {

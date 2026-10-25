@@ -7,8 +7,22 @@ import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
+import { WORKSPACE_PHASES } from "@/lib/localWorkspace";
 import styles from "./portal-journey.module.css";
-import { Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight, LockKeyhole } from "lucide-react";
+
+const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
+
+/** Этапы на линии маршрута. До анкеты есть только первый этап; остальные
+    показываются закрытыми — те самые, что откроются после анкеты (у локального
+    кабинета свои фазы). Заглушки никогда не попадают в прогресс и хранилище. */
+export function portalRoadStages(data: PortalData): { stages: PortalStage[]; awaitingProfile: boolean } {
+  const realStages = data.roadmap.filter(row => row.tasks.length);
+  const awaitingProfile = !data.done.profile && realStages.length === 1 && realStages[0].tasks.some(task => task.id === "profile");
+  if (!awaitingProfile) return { stages: realStages, awaitingProfile };
+  const ahead = realStages[0].id.startsWith("workspace-phase-") ? WORKSPACE_PHASES.slice(1) : PREVIEW_STAGES.slice(1);
+  return { stages: [realStages[0], ...ahead.map((title, index) => ({ id: `preview-stage-${index + 1}`, title, tasks: [] }))], awaitingProfile };
+}
 
 export type RoadTravel = { fromDone: number; id: number };
 
@@ -134,7 +148,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     seenTravel.current = null;
   }, []);
 
-  const stages = data.roadmap.filter(row => row.tasks.length);
+  const { stages, awaitingProfile } = portalRoadStages(data);
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
     const target = nav.current?.querySelector<HTMLElement>('[data-stage-selected="true"]') || nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
@@ -186,6 +200,10 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">
         <span className={styles.routeLine} aria-hidden="true"><span className={styles.routeFill} data-route-fill /></span>
         {stages.map((row, index) => {
+          if (!row.tasks.length) return <span key={row.id} className={styles.lockedStage} data-road-locked aria-disabled="true" aria-label={`${index + 1}. ${row.title}. После анкеты`}>
+            <span className={styles.checkpoint} aria-hidden="true">{index + 1}</span>
+            <span className={styles.stageCopy}><span>{row.title}</span><small><LockKeyhole size={11} aria-hidden="true" />после анкеты</small></span>
+          </span>;
           const next = row.id === stage?.id && current ? current : row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
           const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
           const opened = progress.stages.find(item => item.id === row.id)?.open;
@@ -198,7 +216,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
             aria-current={isRouteCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); if (onSelectStage) onSelectStage(row.id); else onOpenTask(next);
-            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов<span className={styles.stageState} data-stage-ahead={!opened && stageDone > 0 || undefined}>{isRouteCurrent ? "сейчас" : !opened && stageDone > 0 ? "заранее" : ""}</span></small></span></a>;
+            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов<span className={styles.stageState} data-stage-ahead={!opened && stageDone > 0 || undefined}>{isRouteCurrent ? "сейчас" : !opened && stageDone > 0 ? "заранее" : ""}</span></small></span></a>;
         })}
       </nav>
       <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />

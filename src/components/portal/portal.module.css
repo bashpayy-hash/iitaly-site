@@ -1,28 +1,25 @@
 .portal {
-  /* Кабинет в стиле zhol: тёплая бумага, коричневый текст, один терракотовый
-     акцент для штампов, ярлыков и цифр. Кнопки — тёмная пилюля, как на сайте.
-     Шрифт — тот же, что у сайта (SF Pro / Inter Tight), без засечек. */
-  --i-signal: #e63946;
-  --portal-canvas: #F7F4EA;
-  --portal-surface: #FBF9F3;
-  --portal-surface-soft: #EFE7D8;
-  --portal-border: #DCD3C3;
-  --portal-muted: #5C6056;
-  --portal-ash: #6E685D;
-  --portal-ink: #352B28;
-  --portal-ink-strong: #2A211D;
-  --portal-accent: #352B28;
-  --portal-accent-deep: #2A211D;
-  --portal-signal: #B83A27;
-  --portal-signal-text: #A33421;
-  --portal-green: #356450;
-  --portal-warn: #8A5A12;
-  /* Ошибка документа — глубокий красный сайта, не терракота штампов. */
+  /* Кабинет в стиле zhol: значения — в portal-paper.module.css (набор владельца).
+     Терракота — штампы, ярлыки, цифры и главное действие. */
+  --i-signal: var(--accent);
+  --portal-canvas: var(--paper);
+  --portal-surface: var(--card);
+  --portal-surface-soft: var(--beige);
+  --portal-border: var(--border);
+  --portal-muted: var(--quiet);
+  --portal-ash: var(--quiet);
+  --portal-ink: var(--ink);
+  --portal-ink-strong: var(--ink-strong);
+  --portal-accent: var(--accent);
+  --portal-accent-deep: var(--accent-text);
+  --portal-signal: var(--accent);
+  --portal-signal-text: var(--accent-text);
+  --portal-heading-font: var(--font-sans);
+  --font-apple-display: var(--font-sans);
+  --font-apple-text: var(--font-sans);
+  --portal-green: var(--status-green);
+  --portal-warn: var(--color-warn);
   --portal-danger: var(--color-red-deep);
-  --portal-heading-font: var(--font-apple-display);
-  --font-sans: var(--font-apple-text);
-  --font-display: var(--font-apple-display);
-  --font-editorial: var(--font-apple-display);
   /* Тактильное зерно — встроенный SVG-шум (без внешних картинок): серый, с непрозрачной
      альфой (feTurbulence шумит и в ней) и поднятым контрастом, иначе при 6–8%
      его не видно. Прозрачность
@@ -43,7 +40,7 @@
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
-.portal ::selection { color: var(--portal-ink); background: #f8d6de; }
+.portal ::selection { color: var(--portal-ink); background: var(--beige); }
 .portal :where(input, textarea) { caret-color: var(--portal-accent); }
 .portal :is([id], [tabindex], a, button, input, textarea, select, summary) { scroll-margin-top: calc(var(--portal-chrome-height, 64px) + 16px); scroll-margin-bottom: 76px; }
 
@@ -747,7 +744,7 @@
 
 .loginPage {
   --portal-canvas: #f8f5ef;
-  --portal-surface: #fffdf9;
+  --portal-surface: var(--card);
   --portal-border: #ded8cf;
   --portal-muted: #5f5a54;
   --portal-ash: #5f5a54;
@@ -1220,6 +1217,7 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
+  --portal-danger: var(--portal-ink);
   min-height: calc(100svh - 64px);
   padding: 32px 24px 64px;
   font-family: var(--font-apple-text);

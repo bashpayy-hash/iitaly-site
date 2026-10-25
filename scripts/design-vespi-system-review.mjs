@@ -178,7 +178,8 @@ async function checkWordmark(page) {
   assert.equal(await wordmark.locator('[data-brand-word]').innerText(), 'iItaly');
   assert.equal((await wordmark.innerText()).replace(/\s+/g, ''), 'iItaly', 'The shared wordmark has no trailing dot');
   assert.equal(await wordmark.getAttribute('data-brand-version'), 'low-arc', 'Every header uses the approved Low Arc mark');
-  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), 'rgb(20, 20, 19)', 'The new wordmark is monochrome; UI signal colors stay unchanged');
+  const ink = await page.locator('[data-portal-header]').count() ? 'rgb(53, 43, 40)' : 'rgb(20, 20, 19)';
+  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), ink, 'The shared wordmark inherits the active surface ink');
   assert.equal(await wordmark.locator('[data-brand-mark] path').count(), 2, 'The shared mark retains its two open shapes at every size');
 }
 
@@ -361,8 +362,8 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    // User request 2026-10-25 supersedes the serif headline: one site face in the cabinet.
-    if (!baseline) { const face = await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily); assert.match(face, /Inter Tight/, 'Portal headline uses the site display face'); assert.doesNotMatch(face, /Spectral|Charter|Georgia/); }
+    // Owner's zhol kit, 2026-10-25: the cabinet uses the kit's self-hosted Inter Tight, no serif.
+    if (!baseline) { const face = await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily); assert.match(face, /Inter Tight/, 'Portal headline uses the supplied Cyrillic Inter Tight family'); assert.doesNotMatch(face, /Spectral|Charter|Georgia/); }
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
