@@ -72,7 +72,7 @@
    широкой пустой карточки. */
 .journey[data-road-few] .nav { display:flex; flex-wrap:wrap; gap:10px; padding-top:4px; }
 .journey[data-road-few] .routeLine { display:none; }
-.journey[data-road-few] .nav a { flex:0 1 auto; flex-direction:row; align-items:center; min-width:0; min-height:60px; gap:12px; padding:8px 16px 8px 10px; border:1px solid var(--portal-border); border-radius:12px; background:var(--portal-surface-soft); text-align:left; }
+.journey[data-road-few] .nav a { flex:0 1 auto; flex-direction:row; align-items:center; min-width:0; min-height:60px; gap:12px; padding:8px 16px 8px 10px; border:1px solid var(--portal-border); border-radius:12px; background:var(--portal-surface-soft); color:var(--quiet); text-align:left; }
 .journey[data-road-few] .stageCopy { width:auto; gap:2px; }
 .journey[data-road-few] .stageCopy>span { justify-content:flex-start; min-height:0; font-size:14px; }
 .journey[data-road-few] .stageState { display:inline; min-height:0; margin-left:6px; }
