@@ -85,7 +85,10 @@ try {
       assert.deepEqual(calls,[],'Choosing file does not start checking');
       await form.getByRole('button',{name:'Проверить документ',exact:true}).click();await form.locator('[data-document-operation=checking]').waitFor();
       assert(await form.locator('[data-document-operation=checking]').isVisible());
-      finishCheck();await page.waitForFunction(()=>!document.querySelector('[data-document-operation=checking]'));assert.deepEqual(calls,['check','save']);
+      finishCheck();await page.waitForFunction(()=>!document.querySelector('[data-document-operation=checking]'));
+      // The save request follows the check; wait for it instead of racing it.
+      for(let i=0;i<60&&calls.length<2;i++)await page.waitForTimeout(50);
+      assert.deepEqual(calls,['check','save']);
       assert.match(await report.innerText(),/Нужно уточнить/,'Acknowledging a saved report never changes its verdict');
       assert.deepEqual(await summary(page),progress,'Saving clarification leaves completion unchanged');
       await layout(page,'saved '+width);
