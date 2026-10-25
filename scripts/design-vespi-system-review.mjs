@@ -361,7 +361,8 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    if (!baseline) assert.match(await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily), /Spectral/, 'Portal headline uses the explicitly requested Cyrillic editorial serif');
+    // User request 2026-10-25 supersedes the serif headline: one site face in the cabinet.
+    if (!baseline) { const face = await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily); assert.match(face, /Inter Tight/, 'Portal headline uses the site display face'); assert.doesNotMatch(face, /Spectral|Charter|Georgia/); }
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);

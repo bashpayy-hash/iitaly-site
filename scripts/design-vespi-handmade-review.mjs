@@ -63,7 +63,8 @@ try {
     await page.getByRole('button',{name:'Войти в кабинет',exact:true}).click();
     await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
     const progress=await summary(page);await layout(page,'overview '+width);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1,'One welcome pose sits above the route card');
+    // User request 2026-10-25: the Now plate wears the current stage costume.
+    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene^=stage-]').count(),1,'One stage costume sits in the Now plate');
     await page.clock.fastForward(45_100);
     assert.deepEqual(await summary(page),progress);assert.equal(JSON.stringify(data),before);assert.deepEqual(calls,[],'Idle display sends no mutation or AI request');
     await capture(page,'overview-'+width);
@@ -105,7 +106,7 @@ try {
     await context.route('**/*',r=>{const u=new URL(r.request().url());if(u.pathname==='/api/event'||u.pathname==='/health/ai')return r.fulfill({json:{ok:true}});return u.origin===origin?r.continue():r.abort();});
     const page=await context.newPage();page.setDefaultTimeout(15000);
     await page.goto(origin,{waitUntil:'networkidle'});await page.locator('[data-vespi-editorial]').scrollIntoViewIfNeeded();await decoded(page,'peek');await layout(page,'home '+width);await capture(page,'home-peek-'+width);
-    await page.goto(origin+'/guides#education',{waitUntil:'networkidle'});await page.locator('[data-guide-invite]').scrollIntoViewIfNeeded();await decoded(page,'peek');await layout(page,'guide '+width);await capture(page,'guide-peek-'+width);
+    await page.goto(origin+'/guides#education',{waitUntil:'networkidle'});await page.locator('[data-guide-invite]').scrollIntoViewIfNeeded();await decoded(page,'reading');await layout(page,'guide '+width);await capture(page,'guide-peek-'+width);
     await context.close();
   }
   assert.deepEqual(errors,[]);await writeFile(resolve(output,'results.json'),JSON.stringify({results,errors},null,2));console.log(JSON.stringify({results,errors},null,2));

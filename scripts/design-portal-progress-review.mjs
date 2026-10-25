@@ -104,7 +104,7 @@ async function railContract(page,data,compact){
 async function arrivalOrder(page,data) {
   const welcome=page.locator('[data-portal-welcome]');
   assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
-  assert.equal(await page.locator('[data-portal-now] [data-vespi-scene=welcome]').count(),1,'Vespi belongs to the Now column');
+  assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').count(),1,'Vespi belongs to the Now column');
   assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
   const progressBox=await road(page).getByRole('progressbar').boundingBox();

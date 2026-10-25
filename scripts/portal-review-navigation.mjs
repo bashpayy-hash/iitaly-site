@@ -4,7 +4,9 @@ export async function portalDestination(page, name) {
   if (name === 'Документы') {
     await page.locator('[data-portal-documents]').click();
   } else {
-    await page.locator('[data-road-stage][aria-current="step"]').click();
+    // A completed route has no current stage; the plan then opens the last one.
+    const current = page.locator('[data-road-stage][aria-current="step"]');
+    await (await current.count() ? current : page.locator('[data-road-stage]').last()).click();
     await page.locator('[data-portal-focus]').waitFor();
   }
 }

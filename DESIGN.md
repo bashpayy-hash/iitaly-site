@@ -119,7 +119,7 @@ The full requested Web Audio synthesis is in playDopamineSound: sine notes 587.3
 
 The latest user request supersedes earlier cabinet rules on the welcome pose, the green plan accent and the editorial serif headline. The cabinet turns the route into one small step at a time and rewards each saved step.
 
-**One step in focus.** The dark «Сейчас» plate (zhol dark plate `#352B28`, labels `#F29A89`, text `#FAF9F3`) names the stage («Этап 2 из 7 · Документы»), the next step and its orientir. On phones the order is greeting → plate → current stage tasks → route map, so the action comes before the overview of everything.
+**One step in focus.** The dark «Сейчас» plate (zhol dark plate `#352B28`, labels `#F29A89`, text `#FAF9F3`) names the stage («Этап 2 из 7 · Документы»), the next step and its orientir. On phones the order is greeting → plate → route progress → current stage tasks, so progress stays in the first viewport.
 
 **Stamps and souvenirs.** A saved task becomes a terracotta stamp (`#B83A27`, ring rotated −8°) instead of a green check. Each stage shows its stamps and the risograph souvenir it awards: map, diploma, folder with seal, envelope, coin jar, passport, keys (`src/components/portal/portalStageArt.ts`). The souvenir is grey and translucent until every step of the stage is saved. A saved step shows the reward card «Штамп получен» with the stamping Vespi; the last step of a stage shows «Этап пройден» with the jumping Vespi and the souvenir. Rewards come only from `usePortalFeedback.confirm` after a real save, never on login, reload, navigation, undo or an uncertain document. The route count, progress formula and document verdicts are unchanged.
 

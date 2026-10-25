@@ -17,6 +17,8 @@
   --portal-signal-text: #A33421;
   --portal-green: #356450;
   --portal-warn: #8A5A12;
+  /* Ошибка документа — глубокий красный сайта, не терракота штампов. */
+  --portal-danger: var(--color-red-deep);
   --portal-heading-font: var(--font-apple-display);
   --font-sans: var(--font-apple-text);
   --font-display: var(--font-apple-display);

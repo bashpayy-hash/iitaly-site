@@ -77,7 +77,9 @@ try {
     assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.equal(await page.locator('[data-portal-welcome] a,[data-portal-welcome] button').count(),0,'Greeting metadata is plain text');
-    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene=welcome]').count(),1,'Vespi lives in the Now column');
+    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').count(),1,'Vespi lives in the Now column');
+    // User request 2026-10-25: the Now plate wears the current stage costume.
+    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').getAttribute('data-vespi-scene'),'stage-'+(await page.locator('[data-portal-now]').getAttribute('data-now-stage')).replace('education12','education'));
     assert.match(await page.locator('[data-now-deadline]').innerText(),/98\s*дней до ориентира/);
     assert.equal(await page.locator('[data-now-ahead] li').count(),2);
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1,'Only the current task expands');
@@ -89,20 +91,21 @@ try {
       const task=style('[data-focus-task=translate]');
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
         greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>span').fontFamily,countWeight:style('[data-road-count]>span').fontWeight,
-        paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
+        paper:style('[data-portal-editorial]').backgroundColor,texture:style('[data-portal-editorial]').backgroundImage,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
-    assert.match(editorial.greeting,/Charter, Georgia, serif/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Onest/);
-    assert.equal(editorial.greetingWeight,'400');assert.equal(editorial.countWeight,'600');
+    // User request 2026-10-25: the cabinet uses the site faces, no serif headline.
+    assert.match(editorial.greeting,/Inter Tight/);assert.doesNotMatch(editorial.greeting,/Charter|Georgia|Spectral/);assert.match(editorial.title,/Inter Tight/);assert.match(editorial.count,/Inter Tight/);
+    assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
     assert.equal(await page.locator('[data-focus-row] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
     assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the checkpoint route remains');
     assert.equal(await page.getByRole('progressbar',{name:'Выполненные шаги маршрута'}).count(),1);
     assert.equal(await page.locator('[data-portal-overview] [data-higgsfield-visual],[data-portal-overview] [data-micro-steps],[data-portal-rubric]').count(),0,'Preview contains no illustration, microsteps or rubric');
     if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
     else { await page.getByLabel('Открыть меню',{exact:true}).click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).getByRole('link',{name:'Гайды и виза'}).isVisible());await page.getByLabel('Открыть меню',{exact:true}).press('Escape'); }
-    assert.equal(editorial.paper,'rgb(246, 243, 236)');assert.equal(editorial.noise,'0.035');assert.equal(editorial.noisePointer,'none');
-    assert.equal(editorial.left,'1px');assert.equal(editorial.leftColor,'rgb(230, 226, 218)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(250, 248, 245)');
-    assert.equal(await page.locator('[data-portal-grain] feTurbulence').getAttribute('baseFrequency'),'0.75');
+    assert.equal(editorial.paper,'rgb(247, 244, 234)');assert.match(editorial.texture,/zhol-paper\.webp/,'zhol paper texture');
+    assert.equal(editorial.left,'1px');assert.equal(editorial.leftColor,'rgb(220, 211, 195)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(239, 231, 216)');
+    assert.equal(await page.locator('[data-portal-grain],feTurbulence').count(),0,'Paper is a cached image, not a live full-screen SVG filter');
     assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
     const fill=await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')));
@@ -129,28 +132,28 @@ try {
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
     if(width>600){assert(card.height<=180,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+19);}
     else {assert(Math.abs(openButton.width-(card.width-26))<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
-    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(8, 124, 85)');
+    assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(53, 43, 40)','Primary action is the dark pill shared with the site');
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
-    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),24);
+    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),28);
     assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
+    assert.equal(await page.locator('main [data-vespi-scene]').count(),1,'One mascot on the overview');
     await noOverflow(page);await axe(page,`Modular ${width}`);
     await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1);assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
-    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Onest/);
+    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Inter Tight/);
     assert.equal(await page.locator('[data-step-detail=translate] [data-micro-steps] li').count(),3,'Detailed instructions remain inside the breakdown');
     await noOverflow(page);await page.screenshot({path:resolve(output,`task-${width}.png`),fullPage:true,animations:'disabled'});
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').isVisible(),false,'Overview mascot retires behind the route');
+    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').isVisible(),false,'Overview mascot retires behind the route');
     assert.equal(await page.locator('[data-vespi-scene=chat]').count(),1);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').evaluate(el=>getComputedStyle(el).transform),'matrix(1, 0, 0, 1, 0, 20)');
+    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').evaluate(el=>getComputedStyle(el).transform),'matrix(1, 0, 0, 1, 0, 20)');
     const panel=await page.locator('[data-portal-chat=true]').boundingBox();
     if(width<=1100)assert.equal(Math.round(panel.width),width);else{const main=await page.locator('[data-portal-design]').boundingBox();assert(main.x+main.width<=panel.x);}
     await page.screenshot({path:resolve(output,`chat-${width}.png`),animations:'disabled'});
@@ -176,7 +179,7 @@ try {
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
     const order=await page.locator('[data-focus-row]').evaluateAll(nodes=>nodes.map(el=>el.dataset.focusRow));
     assert.deepEqual(order,['translate','apostille','notary','cimea','checkDocs'],'Completed tasks precede current and future, preserving chronology within groups');
-    const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(120, 113, 108)');
+    const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(92, 96, 86)');
     assert.equal(calls.length,failTask?2:1);
     await page.locator('[data-task-ready=apostille]').press('Space');
     await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='5');

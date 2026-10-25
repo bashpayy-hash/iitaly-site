@@ -1,4 +1,2 @@
-.paper { min-width:0; min-height:100svh; background:#F6F3EC; }
-/* Overlay layer: above surfaces, below focus/dialog chrome; never captures input. */
-.grain { position:fixed; inset:0; z-index:60; pointer-events:none; opacity:0.035; mix-blend-mode:multiply; }
-@media(forced-colors:active) { .grain { display:none; } }
+.paper { min-width:0; min-height:100svh; background:#F7F4EA url("/textures/zhol-paper.webp") repeat 0 0 / 640px 640px; }
+@media(forced-colors:active) { .paper { background:Canvas; } }
