@@ -190,7 +190,11 @@ const approvedLaunchPaths = new Set([
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
-assert.match(pricing, /PRICE_MAIN = 667;/);
+assert.match(pricing, /PRICE_MAIN = 10990;/);
+// User-approved launch price: only the main amount may change; the optional
+// review price, package contents and formatting contract remain protected.
+const withoutLaunchPrice = source => source.replace(/PRICE_MAIN = (?:667|10990);/, 'PRICE_MAIN = APPROVED;');
+assert.equal(withoutLaunchPrice(pricing), withoutLaunchPrice(execFileSync('git', ['show', `${base}:src/data/pricing.ts`], {encoding:'utf8'})), 'Only the approved launch price may change in pricing.ts');
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');
 assert.equal((wizard.match(/    id: /g) || []).length, 10, 'The quiz includes intake, age, residence and DSU scope.');
 const baseItaly = execFileSync('git', ['show', `${base}:src/data/italy.ts`], {encoding:'utf8'});
@@ -207,7 +211,7 @@ console.log('Approved presentation paths passed; map geometry, comparison model,
 
 // The current request changes presentation only, not stored data or service contracts.
 for (const path of [
-  'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
+  'src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
   'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts','src/lib/chat.ts',
   'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts',
   'src/lib/usePlanDraft.ts',

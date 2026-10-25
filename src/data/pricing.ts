@@ -11,7 +11,7 @@
    «ЦЕНА» в system-prompt.txt бэкенда: чат берёт цену оттуда, а не
    отсюда, и второй источник правды никуда не делся. Держи их рядом в
    одном коммите. */
-export const PRICE_MAIN = 667;
+export const PRICE_MAIN = 10990;
 export const PRICE_EXPRESS_CHECK = 16900;
 
 /** 667 → «25 000» */

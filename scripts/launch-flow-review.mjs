@@ -88,8 +88,10 @@ try {
   for (const width of [390, 1440]) {
     const { context, page, calls } = await makePage(width);
     await page.goto(`${origin}/prices`, { waitUntil: 'networkidle' });
+    assert.match(await page.locator('h1').innerText(), /10\s*990\s*₸/, 'The page shows the approved launch price');
     await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
     const dialog = page.getByRole('dialog');
+    assert.match(await dialog.innerText(), /10\s*990\s*₸/, 'The purchase dialog agrees with the public price');
     await dialog.getByLabel('Имя', { exact: true }).fill('Demo');
     await dialog.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await dialog.getByLabel('Телефон', { exact: true }).fill('+7 700 000 00 00');
