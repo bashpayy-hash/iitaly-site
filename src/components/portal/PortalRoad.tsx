@@ -168,7 +168,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
 
   return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100, "--stage-count": stages.length || 1 } as CSSProperties}
-    data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
+    data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined} data-road-few={stages.length <= 2 ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
     data-road-static={currentOpen || navigationOnly ? "true" : undefined}
     data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}

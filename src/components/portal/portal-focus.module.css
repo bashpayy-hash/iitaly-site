@@ -7,10 +7,17 @@
 .portalRoot .localFrame { padding-bottom:28px; }
 .portalRoot .localLayout { display:block; margin-top:0; }
 .canvas { --plan-green:var(--portal-green); display:grid; grid-template-columns:minmax(0,1fr) 300px; grid-template-areas:"welcome welcome" "route now" "tasks now"; gap:20px 24px; max-width:1296px; margin:24px auto 20px; min-width:0; color:var(--portal-ink); font-family:var(--font-sans); }
-.welcome { grid-area:welcome; padding:0 0 4px; min-width:0; }
+.welcome { grid-area:welcome; position:relative; isolation:isolate; padding:0 0 4px; min-width:0; }
+/* Картографическая сетка точек вокруг приветствия, тает к краям. */
+.welcome::before { content:""; position:absolute; z-index:-1; inset:-28px 0 -16px 0; pointer-events:none; background:radial-gradient(#D5CFC4 1px,transparent 1px) 0 0 / 24px 24px; opacity:.35; -webkit-mask-image:radial-gradient(ellipse 60% 100% at 18% 45%,#000 35%,transparent 80%); mask-image:radial-gradient(ellipse 60% 100% at 18% 45%,#000 35%,transparent 80%); }
 .welcomeCopy { min-width:0; }
 .welcome h1 { margin:0 0 10px; color:var(--portal-ink-strong); font:600 clamp(32px,3.4vw,44px)/1.1 var(--font-apple-display); letter-spacing:-.025em; }
 .welcomeMeta { margin:0; color:var(--portal-muted); font-size:14px; line-height:1.6; }
+.lockedStages { margin-top:10px; }
+.lockedStages ul { display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none; }
+.lockedStages li { display:inline-flex; align-items:center; gap:7px; min-height:40px; padding:8px 12px; border:1.5px dashed #CFC5B4; border-radius:12px; color:var(--portal-muted); font-size:13px; line-height:1.3; }
+.lockedStages li svg { flex-shrink:0; color:#A49D93; }
+.lockedStages p { margin:10px 0 0; color:var(--portal-muted); font-size:13px; line-height:1.5; }
 .routeCard,.stageBody { min-width:0; border:1px solid var(--portal-border); border-radius:16px; background:var(--portal-surface); }
 .routeCard { grid-area:route; padding:20px 20px 12px; }
 .stageBody { grid-area:tasks; padding:18px 16px 6px; }
@@ -34,7 +41,9 @@
 .taskList { display:grid; gap:0; }
 .task { position:relative; min-width:0; min-height:64px; padding:0 8px; border-bottom:1px solid #E9E2D5; }
 .task:last-child { border-bottom:0; }
-.task[data-expanded=true] { display:flex; justify-content:space-between; align-items:center; gap:20px; min-height:132px; padding:16px 16px 16px 8px; margin-block:6px; border:1px solid var(--portal-border); border-radius:12px; background:var(--portal-surface-soft); }
+/* Активный шаг — плотный крафтовый картон: зерно, диагональный микроградиент
+   и тонкая внутренняя кромка света, чтобы он отличался от гладкой карточки. */
+.task[data-expanded=true] { display:flex; justify-content:space-between; align-items:center; gap:20px; min-height:132px; padding:16px 16px 16px 8px; margin-block:6px; border:1px solid var(--portal-border); border-radius:12px; background:var(--grain-kraft) 0 0 / 340px 340px,linear-gradient(135deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,0) 42%,rgba(122,92,58,.06) 100%),#EFE7D8; background-blend-mode:multiply,normal,normal; box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(20,20,19,.03); }
 .taskDetails { flex:1; min-width:0; }
 .taskHeading { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:64px; padding-left:44px; }
 .task[data-expanded=true] .taskHeading { min-height:0; }
@@ -76,7 +85,11 @@
 @keyframes stampPress { from { opacity:0; transform:scale(1.4) rotate(-16deg); } to { opacity:1; transform:scale(1) rotate(-8deg); } }
 
 /* «Сейчас» — тёмная плашка zhol: одна мысль, костюм Веспи этапа. */
-.nowCard { grid-area:now; position:relative; min-width:0; display:flex; flex-direction:column; gap:20px; padding:22px 20px 0; overflow:hidden; border-radius:16px; background:#352B28; color:#FAF9F3; }
+/* Плашка обнимает содержимое (без пустой середины) и на широком экране
+   остаётся рядом при прокрутке. Матовое зерно и тёплое свечение из-за Веспи. */
+.nowCard { --glow-at:50% 82%; grid-area:now; align-self:start; position:relative; isolation:isolate; min-width:0; display:flex; flex-direction:column; gap:20px; padding:22px 20px 0; overflow:hidden; border-radius:16px; background:radial-gradient(circle at var(--glow-at),rgba(200,75,49,.22),transparent 70%),#352B28; color:#FAF9F3; }
+.nowCard::after { content:""; position:absolute; z-index:-1; inset:0; pointer-events:none; background:var(--grain-raw) 0 0 / 360px 360px; opacity:.08; mix-blend-mode:overlay; }
+@media(min-width:1101px) { .nowCard { position:sticky; top:calc(var(--portal-chrome-height,64px) + 16px); } }
 .stageLabel { margin:0 0 -12px; color:#F29A89; font-size:12px; font-weight:600; letter-spacing:.1em; line-height:1.4; text-transform:uppercase; }
 .nowCard h2 { margin:0; color:#FAF9F3; font:600 22px/1.25 var(--font-apple-display); letter-spacing:-.015em; }
 .nowLabel { margin:0; color:#C9CFC4; font-size:13px; line-height:1.5; }
@@ -92,7 +105,7 @@
 .nowAhead ul { display:grid; gap:10px; margin:0; padding:0; list-style:none; }
 .nowAhead li { display:flex; align-items:flex-start; gap:8px; color:#C9CFC4; font-size:13px; line-height:1.5; }
 .nowAhead li svg { flex-shrink:0; margin-top:2px; color:#F29A89; }
-.mascotWindow { display:flex; justify-content:center; align-items:flex-end; min-height:200px; height:auto; flex:1; margin:auto -20px 0; overflow:hidden; pointer-events:none; background:radial-gradient(60% 70% at 50% 100%,rgba(250,249,243,.12),transparent 70%); }
+.mascotWindow { display:flex; justify-content:center; align-items:flex-end; height:220px; margin:-4px -20px 0; overflow:hidden; pointer-events:none; }
 .welcomeScene { width:260px; height:208px; transition:transform var(--portal-base) var(--portal-ease),opacity var(--portal-fast) var(--portal-ease); }
 .welcomeScene img { display:block; width:100%; height:100%; object-fit:contain; object-position:center bottom; }
 :global(body:has([data-portal-chat="true"])) .welcomeScene { transform:translateY(20px); opacity:0; pointer-events:none; visibility:hidden; transition:transform var(--portal-base) var(--portal-ease),opacity var(--portal-fast) var(--portal-ease),visibility 0s var(--portal-base); }
@@ -110,7 +123,7 @@
 @media(max-width:600px) {
  .portalRoot .shell { padding-inline:12px; }.portalRoot .shell[data-focus-layout=detail] { padding:16px 12px; }.portalRoot .localFrame { padding:8px 12px 20px; }
  .canvas { gap:16px; margin:20px auto 12px; }.welcome h1 { font-size:32px; margin-bottom:8px; }.welcomeMeta { font-size:13px; }
- .nowCard { display:block; padding:16px 16px 14px; border-radius:16px; }.stageLabel { margin:0 108px 8px 0; font-size:11px; }.nowCard h2 { margin:0 104px 12px 0; font-size:19px; }.nowNext,.nowDeadline { padding-right:100px; }.nowTitle { font-size:16px; }.nowDeadline { margin-top:12px; }.dayCount strong { font-size:36px; }.nowAhead { margin-top:14px; }.nowAhead ul { grid-template-columns:1fr; gap:8px; }
+ .nowCard { --glow-at:86% 18%; display:block; padding:16px 16px 14px; border-radius:16px; }.stageLabel { margin:0 108px 8px 0; font-size:11px; }.nowCard h2 { margin:0 104px 12px 0; font-size:19px; }.nowNext,.nowDeadline { padding-right:100px; }.nowTitle { font-size:16px; }.nowDeadline { margin-top:12px; }.dayCount strong { font-size:36px; }.nowAhead { margin-top:14px; }.nowAhead ul { grid-template-columns:1fr; gap:8px; }
  .mascotWindow { position:absolute; top:10px; right:6px; width:108px; height:96px; margin:0; background:none; }.welcomeScene { width:118px; height:96px; flex-shrink:0; }
  .routeCard { padding:16px 12px 12px; }.stageBody { padding:14px 8px 4px; }.stageHeading { flex-wrap:wrap; gap:10px; padding:0 4px 12px; }.stageHeading h2 { font-size:18px; }.souvenir { max-width:none; }.souvenirArt { width:52px; }
  .task { padding-inline:4px; }.taskHeading { flex-wrap:wrap; gap:0; padding:12px 4px 12px 44px; }.headingCopy { width:100%; font-size:15px; }.rowMeta { padding-bottom:2px; font-size:12px; }.rowMeta time { max-width:none; text-align:left; }.rowMeta svg { display:none; }

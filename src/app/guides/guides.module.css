@@ -12,7 +12,9 @@
 .badge { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 5px 13px; border-radius: 999px; border: 1px solid #dad6d0; background: #ffffffa6; color: #57514b; font-size: 13px; }
 .reviewBadge { display:flex; align-items:center; gap:6px; width:fit-content; min-height:32px; margin-top:8px; color:var(--color-cloud-body); font-size:13px; line-height:1.4; }
 .shell .hero h1 { font: 700 clamp(46px, 5.3vw, 76px)/1.02 var(--font-apple-display); letter-spacing: -.04em; margin: 22px 0 24px; color: #141413; }
-.hero h1 > span { color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+/* Градиент заливает только рамку span, а при трекинге −0.04em хвост последней
+   буквы («ю») выходит за неё и срезается. Запас справа гасится полем. */
+.hero h1 > span { color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; padding-inline-end: .08em; margin-inline-end: -.08em; }
 .subtitle { max-width: 55ch; font-size: 17px; line-height: 1.65; color: #57514b; }
 .alert { display: inline-flex; align-items: center; gap: 10px; max-width: 55ch; min-height: 44px; margin-top: 18px; padding-block: 7px; font-size: 14px; line-height: 1.5; color: #3f3933; text-decoration: underline; text-underline-offset: 4px; }
 .alert svg { flex-shrink: 0; }

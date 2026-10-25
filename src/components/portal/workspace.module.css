@@ -1,4 +1,4 @@
-.workspace { --color-cloud-white:var(--portal-ink); --color-cloud-body:var(--portal-muted); --color-cloud-meta:var(--portal-muted); min-height:100svh; background:var(--color-cream); color:var(--color-ink); padding-bottom:90px; }
+.workspace { --color-cloud-white:var(--portal-ink); --color-cloud-body:var(--portal-muted); --color-cloud-meta:var(--portal-muted); min-height:100svh; color:var(--color-ink); padding-bottom:90px; }
 .header {
   composes: chrome from "../marketing/surface-depth.module.css"; position:sticky; top:0; z-index:50; }
 .header > header { position:static; background:transparent; box-shadow:none; border-bottom:1px solid transparent; -webkit-backdrop-filter:none; backdrop-filter:none; }

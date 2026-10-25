@@ -125,7 +125,11 @@ try {
     assert(Math.abs(work.y-route.y-route.height-(width<=600?16:20))<1,'Route and checklist share a compact grid');
     const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
     const now=await page.locator('[data-portal-now]').boundingBox();
-    if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);assert(Math.abs(now.y+now.height-work.y-work.height)<1,'Now column fills the route/checklist height');}
+    if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);
+      // User request 2026-10-25: the dark plate hugs its content, no empty middle.
+      assert(now.height<=route.height+work.height+20,'Now plate is not stretched beyond the work area');
+      const gap=await page.locator('[data-portal-now]').evaluate(el=>{const pic=el.querySelector('[data-vespi-scene]').getBoundingClientRect();const text=[...el.children].filter(c=>!c.contains(el.querySelector('[data-vespi-scene]'))).map(c=>c.getBoundingClientRect().bottom);return pic.top-Math.max(...text);});
+      assert(gap<48,`No hole between the text and Vespi (${Math.round(gap)}px)`);}
     else assert(now.y+now.height<=route.y,'Now column moves above the route');
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate]').boundingBox();
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();

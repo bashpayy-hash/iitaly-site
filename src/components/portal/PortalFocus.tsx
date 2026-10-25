@@ -8,6 +8,8 @@ import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigatio
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
+import { WORKSPACE_PHASES } from "@/lib/localWorkspace";
+import { Lock } from "lucide-react";
 import { VespiPose } from "@/components/mascot/VespiPose";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { RisoArtImage } from "./RisoArtImage";
@@ -67,6 +69,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const nowPose = progress.total === 0 ? "first-plan" : allDone ? "encourage" : routeArt.pose;
   const selectedArt = STAGE_ART[stageKey(selected?.id)];
   const stageComplete = ordered.length > 0 && completed.length === ordered.length;
+  // Гостевой профиль до анкеты знает только первый этап. Остальные показываем
+  // закрытыми «уровнями впереди»: они правда появятся после анкеты.
+  const profileTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "profile");
+  const lockedPhases = stages.length > 0 && stages.every(stage => stage.id.startsWith("workspace-phase-")) && profileTask && !portalTaskDone(data, profileTask)
+    ? WORKSPACE_PHASES.filter((_, index) => !stages.some(stage => stage.id === `workspace-phase-${index}`)) : [];
 
   function check(row: PortalTask) {
     if (busy || portalTaskDone(savedData, row)) return;
@@ -86,7 +93,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       </div>
     </div>
     <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now data-now-stage={stageKey(routeStage?.id)}>
-      {routeStage && <p className={styles.stageLabel} data-now-stage-label>{allDone ? "Маршрут пройден" : `Этап ${stages.findIndex(stage => stage.id === routeStage.id) + 1} из ${stages.length} · ${routeStage.title}`}</p>}
+      {routeStage && <p className={styles.stageLabel} data-now-stage-label>{allDone ? "Маршрут пройден" : `Этап ${stages.findIndex(stage => stage.id === routeStage.id) + 1} из ${stages.length + lockedPhases.length} · ${routeStage.title}`}</p>}
       <h2 id="portal-now-heading">Сейчас</h2>
       <div className={styles.nowNext}>
         <p className={styles.nowLabel}>Следующий шаг</p>
@@ -106,6 +113,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     </aside>
     <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
+      {lockedPhases.length > 0 && <div className={styles.lockedStages} data-locked-stages>
+        <ul aria-label="Этапы впереди">{lockedPhases.map(title => <li key={title}><Lock size={14} strokeWidth={1.75} aria-hidden="true" /><span>{title}</span></li>)}</ul>
+        <p>Откроются после анкеты: по ответам соберём шаги для каждого этапа.</p>
+      </div>}
     </div>
     <div className={styles.stageBody} data-portal-overview>
       <div className={styles.stageHeading} data-stage-reward={stageComplete ? "earned" : "locked"}>

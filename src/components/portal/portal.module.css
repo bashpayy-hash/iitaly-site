@@ -23,6 +23,13 @@
   --font-sans: var(--font-apple-text);
   --font-display: var(--font-apple-display);
   --font-editorial: var(--font-apple-display);
+  /* Тактильное зерно — встроенный SVG-шум (без внешних картинок): серый, с непрозрачной
+     альфой (feTurbulence шумит и в ней) и поднятым контрастом, иначе при 6–8%
+     его не видно. Прозрачность
+     зашита в слой, чтобы класть его прямо в background. */
+  --grain-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  --grain-kraft: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  --grain-raw: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   /* Одно движение на весь кабинет: только transform и opacity, без пружин. */
   --portal-ease: cubic-bezier(.2, .8, .2, 1);
   --portal-fast: 160ms;
@@ -1492,7 +1499,17 @@
 @media (max-width: 480px) { .onboardingAvatar { width: 48px; height: 48px; } .onboardingGreeting { gap: 12px; } }
 
 /* Functional workspace retains its compact navigation and single next action. */
-.portal { background: radial-gradient(ellipse at 12% 0%, rgba(253,238,228,.45), transparent 42%), var(--portal-canvas); }
+/* Фон кабинета: зерно (multiply) поверх бумаги zhol и тёплого света сверху.
+   Слои фона, а не фиксированный оверлей: на недорогих Android смешивание
+   фиксированного слоя пересчитывается на каждом кадре прокрутки. */
+.portal {
+  background:
+    var(--grain-paper) 0 0 / 360px 360px,
+    radial-gradient(ellipse at 12% 0%, rgba(253,238,228,.45), transparent 42%),
+    url("/textures/zhol-paper.webp") 0 0 / 640px 640px,
+    var(--portal-canvas);
+  background-blend-mode: multiply, normal, normal, normal;
+}
 .card { background: #fff; border-radius: 28px;  }
 
 /* Explicit local workspace entry, user request 2026-10-18. */
