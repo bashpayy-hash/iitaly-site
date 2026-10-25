@@ -80,10 +80,7 @@ try {
     assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
     assert.equal(await page.locator('[data-stamp-count]').innerText(),'0 / 2');
     assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
-    await page.locator('[data-stage-souvenir] img').scrollIntoViewIfNeeded();
-    await page.waitForFunction(()=>{const img=document.querySelector('[data-stage-souvenir] img');return img.complete&&img.naturalWidth>0;});
-    assert.equal(await page.locator('[data-stage-souvenir]').getAttribute('data-earned'),'false');
-    assert.notEqual(await page.locator('[data-stage-souvenir]').evaluate(el=>getComputedStyle(el).boxShadow),'none');
+    assert.equal(await page.locator('[data-stage-souvenir],[data-portal-overview] img[data-riso-art]').count(),0,'Owner 2026-10-25: no stage souvenir');
     // Owner 2026-10-25: gradients only for the terracotta glow behind Vespi and the current step's kraft.
     assert.deepEqual(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).map(node=>node.hasAttribute('data-portal-now')?'now':node.hasAttribute('data-focus-task')?'step':node.tagName)),['now','step']);
     await page.evaluate(()=>document.fonts.load('500 16px "Inter Tight"','Привет, Қазақстан!'));
@@ -176,6 +173,11 @@ try {
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('main [data-vespi-scene]').count(),1,'One mascot on the overview');
+    // Owner 2026-10-25: step rings line up with the stage heading and, on phones, with the card text.
+    const edges=await page.evaluate(()=>{const left=q=>document.querySelector(q).getBoundingClientRect().left;const ring=b=>b.getBoundingClientRect().left+parseFloat(getComputedStyle(b,'::before').left);
+      return {heading:left('[data-portal-overview] h2'),rows:[...document.querySelectorAll('[data-portal-overview] article:not([data-expanded=true]) [data-task-check]')].map(ring),current:ring(document.querySelector('[data-focus-task=translate] [data-task-check]')),explainer:left('[data-focus-task=translate] [data-step-short-explainer]')};});
+    assert(edges.rows.length>0&&edges.rows.every(x=>Math.abs(x-edges.heading)<1.5),`Step rings share the heading edge (${JSON.stringify(edges)})`);
+    if(width<=600)assert(Math.abs(edges.current-edges.explainer)<1.5,'Current step ring lines up with its explanation');
     await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
     assert.equal(await page.locator('[data-step-detail=notary] [data-higgsfield-visual]').count(),0,'Notary instructions have no unrelated folder illustration');
@@ -217,6 +219,9 @@ try {
     assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
     assert.equal(await page.locator('[data-stamp=translate]').getAttribute('data-stamped'),'true');
+    const settled=el=>Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{}))).then(()=>getComputedStyle(el).transform);
+    assert.equal(await page.locator('[data-stamp=translate]').evaluate(settled),'none','Stamps stand straight');
+    assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(settled),'none','Checks stand straight');
     assert.equal(await page.locator('[data-stamp-count]').innerText(),'1 / 5');
     const order=await page.locator('[data-focus-row]').evaluateAll(nodes=>nodes.map(el=>el.dataset.focusRow));
     assert.deepEqual(order,['translate','apostille','notary','cimea','checkDocs'],'Completed tasks precede current and future, preserving chronology within groups');

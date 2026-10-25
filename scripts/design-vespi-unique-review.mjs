@@ -8,8 +8,9 @@ import { fixture, upstreamProgress } from './portal-review-fixtures.mjs';
 
 // User request 2026-10-25: Vespi never repeats. Each situational pose belongs
 // to exactly one place, a screen never shows the same pose twice, and the
-// cabinet rewards a saved step with a stamp and a finished stage with its
-// souvenir. The round chat avatar is the assistant's identity, not a pose.
+// cabinet rewards a saved step with a stamp and a finished stage with «Этап
+// пройден» (owner removed the stage souvenir the same evening). The round chat
+// avatar is the assistant's identity, not a pose.
 const require = createRequire(import.meta.url);
 const { chromium } = require(resolve(process.env.REVIEW_TOOLS, 'playwright'));
 const output = resolve('design-review/vespi-unique');
@@ -114,7 +115,7 @@ try {
       assert.match(await page.locator('[data-now-stage-label]').textContent(), /^Этап \d+ из \d+ · /, 'The plate names one stage of the route');
       const tally = page.locator('[data-stage-stamps]');
       assert.match(await tally.innerText(), /Штампы: \d+ \/ \d+/);
-      assert.equal(await page.locator('[data-stage-souvenir] img[data-riso-art]').count(), 1, 'The stage shows the souvenir it awards');
+      assert.equal(await page.locator('[data-stage-souvenir],[data-portal-overview] img[data-riso-art]').count(), 0, 'No stage souvenir: the owner removed it');
       assert.equal(await page.locator('main img[data-vespi-pose]').count(), 1, 'One mascot on the overview');
       await mascots(page, `overview ${width}`);
       await page.screenshot({ path: resolve(output, `overview-${width}.png`) });
@@ -144,7 +145,7 @@ try {
       await context.close();
     }
 
-    // The last step of a stage awards the stage souvenir.
+    // The last step of a stage completes it: celebrate pose, every stamp collected.
     {
       const { page, context } = await portal(viewport, 'last');
       await page.locator('[data-task-ready="manual-task"]').click();
@@ -152,10 +153,9 @@ try {
       await reward.waitFor();
       assert.equal(await reward.getAttribute('data-reward'), 'stage');
       assert.equal(await reward.locator('img[data-vespi-pose=celebrate]').count(), 1);
-      assert.equal(await reward.locator('img[data-riso-art=keys]').count(), 1, 'The arrival stage awards its keys');
+      assert.equal(await reward.locator('img[data-riso-art]').count(), 0, 'No souvenir in the stage reward');
+      assert.match(await reward.locator('[data-reward-tally]').innerText(), /^Все штампы этапа: (\d+) из \1$/);
       assert.match(await reward.textContent(), /Этап пройден/);
-      await page.waitForTimeout(500);
-      assert.equal(await page.locator('[data-stage-reward=earned]').count(), 1, 'The souvenir unlocks in the stage');
       await decoded(page);
       await mascots(page, `stage reward ${width}`);
       await page.screenshot({ path: resolve(output, `reward-stage-${width}.png`) });
@@ -170,7 +170,7 @@ try {
       await mascots(page, `onboarding ${width}`);
       await context.close();
     }
-    results.push({ test: `${width}px: unique poses, stage costume, step stamp and stage souvenir`, passed: true });
+    results.push({ test: `${width}px: unique poses, stage costume, step stamp and stage reward`, passed: true });
   }
 
   for (const [pose, places] of placements) {

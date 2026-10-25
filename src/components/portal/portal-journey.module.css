@@ -27,14 +27,13 @@
 .nav a[aria-current=step] .checkpoint { border:2px solid var(--portal-ink); color:var(--portal-ink); }
 .nav a[aria-current=step] .stageCopy>span { color:var(--ink-strong); font-weight:600; }
 .nav a[data-road-stage-state=done] .checkpoint { border:2px solid var(--route-green); background:var(--card); color:var(--route-green); }
-/* Штамп наклонён внутри кольца: сами кольца остаются на одной оси. */
-.nav a[data-road-stage-state=done] .checkpoint svg { transform:rotate(-8deg); }
 .stageCopy { display:grid; gap:4px; width:100%; }
-.stageCopy>span { display:flex; justify-content:center; align-items:flex-start; min-height:34px; font-size:13px; line-height:1.4; }
+/* Две строки под любое название: счётчики шагов всех этапов стоят на одной линии. */
+.stageCopy>span { display:flex; justify-content:center; align-items:flex-start; min-height:2.8em; font-size:13px; line-height:1.4; }
 .stageCopy small { color:var(--portal-muted); font-size:12px; font-weight:400; font-variant-numeric:tabular-nums; }
 .stageState { display:block; min-height:14px; font-size:11px; line-height:1.4; }
 .stageCopy small[data-current-stage] .stageState { color:var(--accent-text); font-weight:600; }
-.aheadReason { max-width:240px; margin-top:4px; color:var(--quiet); font-size:12px; line-height:1.4; }
+.aheadReason { max-width:240px; margin-top:4px; color:var(--quiet); font-size:12px; line-height:1.4; text-wrap:balance; }
 .goalDeadline { display:block; font-size:12px; font-weight:400; margin-top:4px; color:var(--portal-muted); letter-spacing:0; text-transform:none; }
 .ahead { display:inline; margin-left:12px; font-size:12px; font-weight:400; color:var(--portal-muted); }
 .accessibleProgress { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }

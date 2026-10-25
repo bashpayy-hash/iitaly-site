@@ -12,7 +12,6 @@ import { selectedUniversities } from "@/lib/portalShortlist";
 import { VespiPose } from "@/components/mascot/VespiPose";
 import { WIZ } from "@/data/wizard";
 import { PortalRoad, portalRoadStages, type RoadTravel } from "./PortalRoad";
-import { RisoArtImage } from "./RisoArtImage";
 import { STAGE_ART, stageKey } from "./portalStageArt";
 import styles from "./portal-focus.module.css";
 
@@ -63,14 +62,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const introduction = position.task?.id === "profile";
   const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
     .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
-  // Один костюм Веспи на текущий этап маршрута; сувенир — у выбранного этапа.
+  // Один костюм Веспи на текущий этап маршрута.
   const stages = data.roadmap.filter(stage => stage.tasks.length);
   const routeStage = position.stage || stages[0];
   const allDone = progress.total > 0 && progress.done === progress.total;
   const routeArt = STAGE_ART[stageKey(routeStage?.id)];
   const nowPose = progress.total === 0 ? "first-plan" : allDone ? "encourage" : routeArt.pose;
-  const selectedArt = STAGE_ART[stageKey(selected?.id)];
-  const stageComplete = ordered.length > 0 && savedStampCount === ordered.length;
   // Счёт этапов совпадает с линией маршрута, включая закрытые до анкеты.
   const roadStages = portalRoadStages(data).stages;
   const routeIndex = Math.max(0, roadStages.findIndex(stage => stage.id === routeStage?.id));
@@ -121,7 +118,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
     </div>
     <div className={styles.stageBody} data-portal-overview>
-      <div className={styles.stageHeading} data-stage-reward={stageComplete ? "earned" : "locked"}>
+      <div className={styles.stageHeading}>
         <div className={styles.stageTitle}>
           <h2>{selected?.title}</h2>
           <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
@@ -132,10 +129,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             })}</span>
           </div>
         </div>
-        <figure className={styles.souvenir} data-stage-souvenir={selectedArt.souvenir} data-earned={stageComplete}>
-          <RisoArtImage art={selectedArt.souvenir} locked={!stageComplete} sizes="(max-width: 600px) 86px, 104px" className={styles.souvenirArt} />
-          <figcaption><span>{stageComplete ? "Сувенир получен" : "Сувенир за этап"}</span><strong>{selectedArt.prize}</strong></figcaption>
-        </figure>
       </div>
       <div className={styles.taskList} aria-label="Задачи этапа">
         {visibleTasks.map(row => {
@@ -151,7 +144,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           };
           return <article key={row.id} className={styles.task} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" pathLength="100" /></svg>
             </button>
             <span className={styles.stepIndex} aria-hidden="true">{String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0")}</span>
             <div className={styles.taskDetails} data-focus-row={row.id}>

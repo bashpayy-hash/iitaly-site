@@ -1,5 +1,5 @@
 /* Обзор кабинета в стиле zhol: текущий шаг — карточка-сообщение на крафте,
-   маршрут, штампы и сувенир этапа показывают реальный прогресс. Тёмная
+   маршрут и штампы этапа показывают реальный прогресс. Тёмная
    плашка «Сейчас» несёт одну мысль и костюм Веспи текущего этапа. */
 .portalRoot.portalRoot { padding-bottom:0; }
 /* Липкая шапка непрозрачна и несёт ту же бумагу и зерно, что и страница. */
@@ -20,7 +20,7 @@
 .routeCard { grid-area:route; min-width:0; padding:20px 22px 12px; border:1px solid var(--border); border-radius:16px; background:var(--card); }
 .stageBody { grid-area:tasks; min-width:0; padding:22px 18px 8px; border:1px solid var(--border); border-radius:16px; background:var(--card); }
 
-/* Заголовок этапа: штампы за шаги и сувенир, который этап принесёт. */
+/* Заголовок этапа: название и штампы за шаги. */
 .stageHeading { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:0 4px 20px; }
 .stageTitle { min-width:0; }
 .stageTitle::before { content:""; display:block; width:30px; height:4px; margin-bottom:8px; background:var(--accent); }
@@ -29,18 +29,9 @@
 .stamps [data-stamp-count] { color:var(--accent-text); font-weight:600; }
 .stampTrack { display:flex; flex-wrap:wrap; gap:5px; }
 .stamp { display:grid; place-items:center; width:25px; height:25px; border:1px dashed var(--border); border-radius:50%; color:var(--tracker-off); font-size:9px; }
-/* Штамп — терракотовая печать с двойной кромкой, чуть повёрнутая, как на бумаге. */
-.stamp[data-stamped=true] { transform:rotate(-8deg); border:2px solid var(--accent); background:rgba(184,58,39,.06); box-shadow:inset 0 0 0 2px var(--card),inset 0 0 0 3px rgba(184,58,39,.55); color:var(--accent); }
+/* Штамп — терракотовая печать с двойной кромкой. */
+.stamp[data-stamped=true] { border:2px solid var(--accent); background:rgba(184,58,39,.06); box-shadow:inset 0 0 0 2px var(--card),inset 0 0 0 3px rgba(184,58,39,.55); color:var(--accent); }
 .stamp[data-just-stamped=true] { animation:stampPress var(--portal-slow,360ms) var(--portal-ease,cubic-bezier(.2,.8,.2,1)) both; }
-/* Сувенир — вырезка, приколотая к этапу; серый, пока этап не пройден. */
-.canvas .souvenir { display:flex; align-items:center; gap:10px; flex:0 0 230px; margin:0 3px 0 0; padding:10px 12px; background:#F3EDE1; border:1px solid var(--border); border-radius:4px; box-shadow:0 10px 28px rgba(0,0,0,.14); transform:rotate(-1.2deg); transition:transform var(--portal-base,240ms) var(--portal-ease,ease); }
-.souvenirArt { display:block; width:104px; height:73px; object-fit:contain; transition:filter var(--portal-slow,360ms) var(--portal-ease,ease),opacity var(--portal-slow,360ms) var(--portal-ease,ease); }
-.souvenirArt[data-riso-locked] { filter:grayscale(1) contrast(.85); opacity:.45; }
-.souvenir figcaption { display:grid; gap:5px; }
-.souvenir figcaption>span { color:var(--quiet); font-size:10px; font-weight:600; line-height:1.5; letter-spacing:1.5px; text-transform:uppercase; }
-.souvenir[data-earned=true] figcaption>span { color:var(--accent-text); }
-.souvenir strong { color:var(--ink-strong); font-size:14px; font-weight:600; line-height:1.3; }
-@media(hover:hover) { .canvas .souvenir:hover { transform:rotate(0) scale(1.03); } }
 
 .taskList { display:grid; gap:0; }
 .task { position:relative; display:flex; align-items:center; gap:12px; min-width:0; min-height:72px; padding:12px 4px; border-bottom:1px solid var(--border); }
@@ -75,15 +66,16 @@
 .markReady:disabled { opacity:.65; cursor:wait; }
 
 /* Отметка шага = штамп. Пустая — пунктир, текущая — тёмное кольцо,
-   выполненная — терракотовая печать. */
-.roundCheck { position:relative; align-self:flex-start; flex:0 0 44px; width:44px; height:44px; padding:9px; border:0; background:transparent; color:var(--accent); cursor:pointer; }
+   выполненная — терракотовая печать. Кнопка 44px, а видимое кольцо стоит
+   на одной линии с заголовком этапа и текстом карточки. */
+.roundCheck { position:relative; align-self:flex-start; flex:0 0 44px; width:44px; height:44px; margin-left:-9px; padding:9px; border:0; background:transparent; color:var(--accent); cursor:pointer; }
 .roundCheck::before { content:""; position:absolute; inset:9px; border:1.5px dashed #C9BFAE; border-radius:50%; }
 .roundCheck[data-current=true]::before { border:2px solid var(--ink); }
 .roundCheck svg { position:relative; width:26px; height:26px; padding:4px; opacity:0; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
 .stepIndex { flex:0 0 26px; align-self:flex-start; margin-top:10px; color:var(--accent-text); font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .task[data-expanded=true] .stepIndex { font-size:30px; flex-basis:36px; line-height:36px; margin-top:3px; }
-.roundCheck[data-done=true]::before { inset:7px; border:2px solid var(--accent); box-shadow:inset 0 0 0 2px var(--card),inset 0 0 0 3px rgba(184,58,39,.55); background:rgba(184,58,39,.06); transform:rotate(-8deg); }
-.roundCheck[data-done=true] svg { opacity:1; transform:rotate(-8deg); }
+.roundCheck[data-done=true]::before { border:2px solid var(--accent); box-shadow:inset 0 0 0 2px var(--card),inset 0 0 0 3px rgba(184,58,39,.55); background:rgba(184,58,39,.06); }
+.roundCheck[data-done=true] svg { opacity:1; }
 .roundCheck[data-just-saved=true]::before,.roundCheck[data-just-saved=true] svg { animation:stampPress var(--portal-slow,360ms) var(--portal-ease,cubic-bezier(.2,.8,.2,1)) both; }
 .roundCheck:disabled { cursor:wait; opacity:.65; }
 
@@ -117,7 +109,7 @@
 :global(body:has([data-portal-chat="true"])) .welcomeScene { transform:translateY(20px); opacity:0; pointer-events:none; visibility:hidden; transition:transform var(--portal-base,240ms) var(--portal-ease,ease),opacity var(--portal-fast,160ms) var(--portal-ease,ease),visibility 0s var(--portal-base,240ms); }
 .canvas :is(a,button,summary,input):focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 .nowCard :is(a,button):focus-visible { outline-color:var(--on-dark-accent); }
-@keyframes stampPress { from { opacity:0; transform:scale(1.4) rotate(-16deg); } to { opacity:1; transform:scale(1) rotate(-8deg); } }
+@keyframes stampPress { from { opacity:0; transform:scale(1.4); } to { opacity:1; transform:none; } }
 @media(max-width:1100px) {
  .canvas { grid-template-columns:minmax(0,1fr); grid-template-areas:"welcome" "now" "route" "tasks"; grid-template-rows:none; }
  .nowCard { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 180px; gap:12px 24px; padding:22px 24px; }
@@ -139,11 +131,10 @@
  .vespiQuote { grid-column:1 / -1; grid-row:auto; margin:14px 0 0; }.vespiQuote p { font-size:13px; }.vespiQuote cite { margin-top:6px; font-size:11px; }
  .nowAhead { grid-column:1 / -1; margin-top:14px; padding-top:12px; }.nowAhead ul { grid-template-columns:1fr; gap:8px; }
  .mascotWindow { grid-column:2; grid-row:2 / 5; align-self:end; width:108px; height:100px; margin:0; }.welcomeScene { width:125px; height:100px; flex-shrink:0; }
- .routeCard { padding:16px 12px 10px; }.stageBody { padding:18px 10px 4px; }.stageHeading { gap:12px; align-items:flex-start; padding:0 4px 16px; }.stageHeading h2 { font-size:21px; }
- .canvas .souvenir { flex:0 0 112px; display:block; padding:8px; }.souvenirArt { width:86px; height:60px; margin:auto; }.souvenir figcaption { gap:4px; margin-top:4px; }.souvenir figcaption>span { font-size:10px; letter-spacing:1px; }.souvenir strong { font-size:12px; }
+ .routeCard { padding:16px 12px 10px; }.stageBody { padding:18px 10px 4px; }.stageHeading { gap:12px; align-items:flex-start; padding:0 0 16px; }.stageHeading h2 { font-size:21px; }
  .stamps { gap:8px; margin-top:12px; }.stamp { width:23px; height:23px; }.stampTrack { gap:4px; }
  .task { gap:6px; padding-inline:0; }.taskHeading { flex-wrap:wrap; gap:0; }.headingCopy { width:100%; font-size:14px; }.rowMeta { padding-bottom:2px; font-size:12px; }.rowMeta time { text-align:left; }.rowMeta svg { display:none; }
- .stepIndex { font-size:15px; flex-basis:24px; }.task[data-expanded=true] { display:grid; grid-template-columns:44px 32px minmax(0,1fr); gap:8px; padding:14px 12px; }.task[data-expanded=true] .stepIndex { margin-top:5px; font-size:26px; }
+ .stepIndex { font-size:15px; flex-basis:24px; }.task[data-expanded=true] { display:grid; grid-template-columns:35px 32px minmax(0,1fr); gap:8px; padding:14px 12px; }.task[data-expanded=true] .stepIndex { margin-top:5px; font-size:26px; }
  .task[data-expanded=true] .taskDetails { display:contents; }.task[data-expanded=true] .taskHeading { align-self:center; }.taskBody { grid-column:1 / -1; }.metaBadges { gap:4px 10px; }.metaBadges>:not(:first-child)::before { margin-right:10px; }
  .taskActions { grid-column:1 / -1; width:100%; margin-top:4px; }.primary,.markReady { width:100%; min-height:44px; font-size:13px; }
 }
@@ -160,7 +151,6 @@
 .confirmationBody strong { display:block; color:var(--ink-strong,#2A211D); font-size:16px; line-height:1.3; }
 .confirmationBody span { display:block; margin-top:2px; color:var(--quiet,#5C6056); font-size:13px; line-height:1.4; }
 .confirmationBody .rewardTally { margin-top:6px; color:var(--ink,#352B28); font-weight:500; }
-.rewardSouvenir { display:block; flex-shrink:0; width:64px; height:auto; }
 @keyframes rewardIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
-@media(prefers-reduced-motion:reduce) { .welcomeScene,.primary,.primary span,.souvenir,.souvenirArt { transition:none!important; }.canvas .souvenir:hover { transform:rotate(-1.2deg); }.roundCheck[data-just-saved=true]::before,.roundCheck[data-just-saved=true] svg,.stamp[data-just-stamped=true],.confirmationBody { animation:none; } }
+@media(prefers-reduced-motion:reduce) { .welcomeScene,.primary,.primary span { transition:none!important; }.roundCheck[data-just-saved=true]::before,.roundCheck[data-just-saved=true] svg,.stamp[data-just-stamped=true],.confirmationBody { animation:none; } }
 @media(forced-colors:active) { .darkGrain { display:none; }.nowCard { background:Canvas; color:CanvasText; }.roundCheck[data-done=true]::before { border-color:CanvasText; background:none; }.stamp[data-stamped=true] { border-color:CanvasText; background:none; color:CanvasText; } }

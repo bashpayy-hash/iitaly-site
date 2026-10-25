@@ -1,21 +1,20 @@
 import type { VespiPoseName } from "@/components/mascot/VespiPose";
 
-/* Этап маршрута = костюм Веспи + сувенир в технике ризографии (стиль zhol).
-   Сувенир — награда за пройденный этап, показывается только когда все шаги
-   этапа сохранены. Локальный кабинет делит путь на свои пять фаз, они
-   сводятся к тем же этапам. */
+/* Этап маршрута = костюм Веспи в плашке «Сейчас». Локальный кабинет делит
+   путь на свои пять фаз, они сводятся к тем же этапам. Ризограф-предметы
+   остаются иллюстрациями шагов (RisoArtImage, higgsfieldVisuals). */
 
 export type PortalStageKey = "start" | "education12" | "docs" | "apply" | "dsu" | "visa" | "arrival";
 export type RisoArt = "map" | "diploma" | "folder" | "envelope" | "coins" | "passport" | "keys";
 
-export const STAGE_ART: Record<PortalStageKey, { pose: VespiPoseName; souvenir: RisoArt; prize: string }> = {
-  start: { pose: "stage-start", souvenir: "map", prize: "Карта маршрута" },
-  education12: { pose: "stage-education", souvenir: "diploma", prize: "Свиток 12 лет" },
-  docs: { pose: "stage-docs", souvenir: "folder", prize: "Папка с печатью" },
-  apply: { pose: "stage-apply", souvenir: "envelope", prize: "Письмо из вуза" },
-  dsu: { pose: "stage-dsu", souvenir: "coins", prize: "Копилка DSU" },
-  visa: { pose: "stage-visa", souvenir: "passport", prize: "Паспорт со штампом" },
-  arrival: { pose: "stage-arrival", souvenir: "keys", prize: "Ключи от нового дома" },
+export const STAGE_ART: Record<PortalStageKey, { pose: VespiPoseName }> = {
+  start: { pose: "stage-start" },
+  education12: { pose: "stage-education" },
+  docs: { pose: "stage-docs" },
+  apply: { pose: "stage-apply" },
+  dsu: { pose: "stage-dsu" },
+  visa: { pose: "stage-visa" },
+  arrival: { pose: "stage-arrival" },
 };
 
 const LOCAL_PHASES: PortalStageKey[] = ["start", "apply", "docs", "dsu", "visa"];
