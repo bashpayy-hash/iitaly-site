@@ -7,6 +7,7 @@ import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalPosition, portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
+import { portalTaskDone } from "@/lib/portalProgress";
 import { PortalArtwork } from "./PortalArtwork";
 import { PortalStageIcon } from "./PortalStageIcon";
 import styles from "./portal-plan.module.css";
@@ -44,9 +45,8 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
     <div className={styles.plan}>
       <div className={styles.intro}>
         <div className={styles.titleRow}>
+          <div className={styles.introCopy}>
           <h2 className={styles.heading}>План поступления</h2>
-          <PortalArtwork placement="plan" />
-        </div>
         <details className={rules.disclosure} data-portal-rules-disclosure onToggle={event => setRulesOpen(event.currentTarget.open)}>
           <summary>Правила сверены 9 октября 2026</summary>
           {rulesOpen && <PortalRules />}
@@ -57,8 +57,11 @@ export function PlanSection({ data, onOpenTask }: PlanActions & { data: PortalDa
             }}>открой оценку ситуации</a>.
           </p>}
         </details>
+          <p className={styles.pathHint}>Текущий шаг выделен. Сохранённые документы можно открыть снова, будущие задачи можно изучить заранее.</p>
+          </div>
+          <PortalArtwork placement="plan" />
+        </div>
       </div>
-      <p className={styles.pathHint}>Один шаг за раз. К сделанному можно вернуться, а будущие шаги — изучить заранее.</p>
       {!position.stage && <p className={styles.complete}>{hasTasks ? "Все шаги маршрута отмечены. Сохранённые документы и инструкции остаются доступны." : "Маршрут пока не появился. Проверь, сохранены ли образование и цель в настройках."}</p>}
       {position.stage && renderStage(position.stage)}
       {nextStage && renderStage(nextStage)}
@@ -81,7 +84,7 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask }: Plan
   next: boolean;
 }) {
   const [open, setOpen] = useState(current);
-  const completed = stage.tasks.filter(task => data.done[task.id]).length;
+  const completed = stage.tasks.filter(task => portalTaskDone(data, task)).length;
 
   return (
     <details
@@ -104,7 +107,7 @@ function StageView({ stage, data, currentTask, current, next, onOpenTask }: Plan
           task={task}
           index={index}
           href={portalTaskHref(data, task)}
-          done={Boolean(data.done[task.id])}
+          done={portalTaskDone(data, task)}
           doc={data.docs?.[task.id]}
           current={task.id === currentTask}
           onOpenTask={onOpenTask}
@@ -150,8 +153,9 @@ function TaskRow({ task, index, href, done, doc, current, onOpenTask }: PlanActi
           <span className={styles.taskTitle}>{taskTitle(task)}</span>
           {date && <span className={styles.meta}>{date}</span>}
           {outcome && <span className={styles.documentStatus} data-outcome={outcome.kind}>{outcome.label}</span>}
+          {outcome && doc && outcome.action && <span className={styles.meta}>{outcome.action}</span>}
         </span>
-        <span className={styles.phase}>{done ? "Сделано" : current ? "Начать" : "Позже"}</span>
+        <span className={styles.phase}>{done ? "Сделано" : doc ? "Разбор" : current ? "Продолжить" : "Посмотреть"}</span>
       </a>
     </li>
   );

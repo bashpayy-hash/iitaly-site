@@ -22,6 +22,8 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   // Existing palette/fonts stay unchanged outside the logo's requested weight.
   'src/components/brand/BrandLogo.tsx',
   'src/components/brand/brand-logo.module.css',
+  // 2026-10-24: user-supplied Low Arc identity; UI tokens and product logic stay fixed.
+  'src/components/brand/BrandMark.tsx', 'src/components/brand/mark.json',
   'src/app/icon.svg', 'src/app/apple-icon.png',
   // User request 2026-10-17: Lucide icons for the Meta-inspired /guides redesign.
   // Only the lucide-react dependency is added; existing runtime versions stay fixed.
@@ -48,6 +50,25 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // 2026-10-25: shared type, editorial task layout and optional Higgsfield media.
+  'src/data/higgsfieldVisuals.ts',
+  'src/components/portal/HiggsfieldVisual.tsx', 'src/components/portal/higgsfield-visual.module.css',
+  'src/components/portal/PortalMicroSteps.tsx', 'src/components/portal/portal-micro-steps.module.css',
+  'src/components/portal/PortalTaskIntro.tsx', 'src/components/portal/PortalRouteVespi.tsx',
+  // 2026-10-24: single chat mascot and saved-only microfeedback.
+  'src/components/mascot/VespiVideoAvatar.tsx', 'src/components/mascot/vespi-video-avatar.module.css',
+  // 2026-10-24: stage-only portal canvas and feedback after confirmed completion.
+  'src/components/portal/PortalFocus.tsx', 'src/components/portal/PortalCompletion.tsx',
+  'src/components/portal/usePortalFeedback.ts', 'src/components/portal/portal-focus.module.css',
+  'src/components/mascot/VespiOutline.tsx',
+  // 2026-10-24: explicit file selection, review operation feedback and saved-report hierarchy.
+  'src/components/portal/PortalDocumentUpload.tsx',
+  // User request 2026-10-23: honest progress, step explanations, profile
+  // persistence and contextual assistant. Existing unrelated contracts stay fixed.
+  'src/lib/portalProgress.ts', 'src/lib/portalStepCopy.ts', 'src/data/portal-step-copy.json',
+  'src/components/portal/PortalUniversitySummary.tsx', 'src/components/portal/SavedProfileAnswers.tsx',
+  'src/components/portal/PortalStepInstructions.tsx',
+  'src/lib/useDraggableHeader.ts',
   // User request 2026-10-20: a personal greeting before the existing route.
   // This is presentation only; profile and task data contracts stay protected.
   'src/components/portal/PortalWelcome.tsx',
@@ -77,6 +98,10 @@ const approvedReminderUiPaths = new Set([
   // User request 2026-10-17: shared contextual Vespi across public pages and
   // portal, preserving each surface's existing palette and product contracts.
   'src/components/mascot/Vespi.tsx',
+  // User request 2026-10-24: handmade spatial scenes and decorative idle pose.
+  // These two presentation files cannot change route, document or API contracts.
+  'src/components/mascot/VespiScene.tsx',
+  'src/components/mascot/vespi-scene.module.css',
   'src/components/mascot/VespiAssistant.tsx',
   'src/components/mascot/vespi-assistant.module.css',
   'src/components/mascot/useVespiPresence.ts',
@@ -165,7 +190,11 @@ const approvedLaunchPaths = new Set([
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
-assert.match(pricing, /PRICE_MAIN = 667;/);
+assert.match(pricing, /PRICE_MAIN = 10990;/);
+// User-approved launch price: only the main amount may change; the optional
+// review price, package contents and formatting contract remain protected.
+const withoutLaunchPrice = source => source.replace(/PRICE_MAIN = (?:667|10990);/, 'PRICE_MAIN = APPROVED;');
+assert.equal(withoutLaunchPrice(pricing), withoutLaunchPrice(execFileSync('git', ['show', `${base}:src/data/pricing.ts`], {encoding:'utf8'})), 'Only the approved launch price may change in pricing.ts');
 const wizard = readFileSync('src/data/wizard.ts', 'utf8');
 assert.equal((wizard.match(/    id: /g) || []).length, 10, 'The quiz includes intake, age, residence and DSU scope.');
 const baseItaly = execFileSync('git', ['show', `${base}:src/data/italy.ts`], {encoding:'utf8'});
@@ -182,17 +211,20 @@ console.log('Approved presentation paths passed; map geometry, comparison model,
 
 // The current request changes presentation only, not stored data or service contracts.
 for (const path of [
-  'src/data/pricing.ts','src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
+  'src/data/admissions.ts','src/data/wizard.ts','src/data/italy.ts',
   'src/lib/payment.ts','src/lib/paymentMode.ts','src/lib/checkDocument.ts','src/lib/chat.ts',
-  'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts','src/lib/portalApi.ts',
-  'src/lib/localWorkspace.ts','src/lib/usePlanDraft.ts','src/lib/portalShortlist.ts',
+  'src/lib/lead.ts','src/lib/phone.ts','src/lib/backend.ts',
+  'src/lib/usePlanDraft.ts',
   'src/components/universities/comparison-model.ts',
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
   'src/components/guides/permesso/permessoData.ts',
   'src/components/guides/permesso/permessoTransferModel.ts',
-  'src/app/globals.css','src/components/brand/BrandLogo.tsx','src/components/brand/brand-logo.module.css',
   'package.json','package-lock.json','next.config.ts','netlify.toml',
 ]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
+// The shared Modulo 1 serif stack may be extracted into exactly one token;
+// every existing global rule and palette token remains byte-for-byte unchanged.
+const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '');
+assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial font token may change in globals');
 assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');
 assert(!/HowItWorks/.test(readFileSync('src/app/page.tsx','utf8')),'Do not restore the removed home section');
 for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBand.tsx']) {
@@ -200,3 +232,19 @@ for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBan
 }
 assert(!/VespiIntroSection/.test(readFileSync('src/app/guides/page.tsx','utf8')),'Guides do not repeat the home introduction');
 assert(!/useVespiPresence|<Vespi\b/.test(readFileSync('src/components/chat/ChatLauncher.tsx','utf8')),'Floating help is a quiet icon entry');
+
+// User request 2026-10-20: direct task copy and no owner-role division.
+// Allow only those exact template edits; IDs, persistence and completion logic stay fixed.
+const localTaskPresentation = source => source
+  .replace('import { taskShortExplainer } from "./portalStepCopy";\n', '')
+  .replace('if (!draft.complete) tasks.push', 'tasks.push')
+  .replace('.map(task => ({ ...task, short_explainer: taskShortExplainer(task) }))', '')
+  .replace(/, owner: \/финанс\|запас до выплаты\/\.test\(step\.t\) \? "Родители" : "Ты"/g, '')
+  .replace(/, owner: "(?:Ты|Родители)"/g, '')
+  .replace('Попросить родителей собрать семейные справки', 'Собрать справки о составе и доходах семьи для DSU')
+  .replace('Попросить родителей подготовить банковские выписки', 'Подготовить банковские выписки');
+assert.equal(localTaskPresentation(readFileSync('src/lib/localWorkspace.ts', 'utf8')), localTaskPresentation(execFileSync('git', ['show', `${base}:src/lib/localWorkspace.ts`], { encoding: 'utf8' })), 'Local task IDs and workspace logic unchanged');
+
+// Only the explicitly requested optional profile/copy fields extend this contract.
+const withoutPortalFields = source => source.split('\n').filter(line => !/^\s*(universityIds|short_explainer|instruction_title|assistant_question|routeAcademicYear)\?:/.test(line)).join('\n');
+assert.equal(withoutPortalFields(readFileSync('src/lib/portalApi.ts','utf8')), withoutPortalFields(execFileSync('git',['show',`${base}:src/lib/portalApi.ts`],{encoding:'utf8'})), 'Portal endpoint/authentication implementations unchanged');

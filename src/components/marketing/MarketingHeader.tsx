@@ -13,10 +13,11 @@ const links = [
   { href: "/guides", label: "Гайды и виза" },
 ];
 
-/** Shared site chrome; the portal keeps its three task destinations below. */
-export function MarketingHeader({ variant = "public", actions, onHome }: { variant?: "public" | "portal"; actions?: ReactNode; onHome?: () => void }) {
+/** Shared site chrome. The brand always returns to the public home page. */
+export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
+  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices") : links;
 
   useEffect(() => {
     function closeOutside(event: PointerEvent) {
@@ -29,19 +30,13 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
   return (
     <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
       <div className={styles.navInner}>
-        <Link href={variant === "portal" ? "/portal" : "/"} className={styles.wordmark}
-          aria-label={variant === "portal" ? "IITALY — личный кабинет" : "IITALY — главная"}
-          onClick={event => {
-            if (!onHome || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            event.preventDefault(); onHome();
-          }}><BrandLogo /></Link>
-        {variant === "portal" ? actions : <>
+        <Link href="/" className={`${styles.wordmark} logo-link`} aria-label="IITALY — главная"><BrandLogo /></Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
-          {links.map(({ href, label }) => (
+          {visibleLinks.map(({ href, label }) => (
             <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
-        <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>
+        {variant === "portal" ? actions : <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>}
         <details ref={menuRef} key={pathname} className={styles.mobileMenu} onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.currentTarget.open = false;
@@ -55,14 +50,13 @@ export function MarketingHeader({ variant = "public", actions, onHome }: { varia
               if (details) details.open = false;
             }
           }}>
-            {links.map(({ href, label }) => (
+            {visibleLinks.map(({ href, label }) => (
               <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}<span aria-hidden>↗</span></Link>
             ))}
-            <Link href="/portal">Личный кабинет <span aria-hidden>↗</span></Link>
-            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button>
+            {variant === "public" && <><Link href="/portal">Личный кабинет <span aria-hidden>↗</span></Link>
+            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button></>}
           </nav>
         </details>
-        </>}
       </div>
     </header>
   );

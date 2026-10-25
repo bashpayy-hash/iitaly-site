@@ -12,7 +12,7 @@ const UniversitiesExplorer = dynamic(() => import("@/components/universities/Uni
   loading: () => <p role="status" className={styles.loading}>Загружаю карту и сравнение…</p>,
 });
 
-export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, backHref, onSave, onReopen }: {
+export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, backHref, onSave, onReopen, localOnly = false }: {
   data: PortalData;
   task: PortalTask;
   selectedIds: string[];
@@ -21,6 +21,7 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
   backHref: string;
   onSave: (ids: string[]) => Promise<boolean>;
   onReopen: () => void;
+  localOnly?: boolean;
 }) {
   const [draft, setDraft] = useState(() => validShortlist(selectedIds));
   const date = taskDate(task);
@@ -41,10 +42,10 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
         event.preventDefault(); onBack();
       }}>Назад</a>
       <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
-      <p className={styles.meta}>{[stage?.title, task.time || "15 мин", task.owner || "Ты"].filter(Boolean).join(" · ")}</p>
+      <p className={styles.meta}>{[stage?.title, task.time || "15 мин"].filter(Boolean).join(" · ")}</p>
       {date && <p className={styles.meta}>{date} — это не срок конкретного вуза.</p>}
       <p id="portal-step-action-hint" className={styles.hint} data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
-      <p id="portal-shortlist-storage" className={styles.meta}>Список сохраняется только в этом браузере.</p>
+      <p id="portal-shortlist-storage" className={styles.meta}>{localOnly ? "Список сохраняется на этом устройстве." : "Список сохраняется в профиле."}</p>
       <details className={styles.help} data-step-help>
         <summary>Как выполнить этот шаг</summary>
         <p>Отметка «В мой список» добавляет вуз в список. Затем нажми «Сохранить». Сравнение — отдельный инструмент: можно сопоставить до трёх вузов, не добавляя их в список.</p>

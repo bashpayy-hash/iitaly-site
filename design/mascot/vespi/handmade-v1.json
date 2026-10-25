@@ -1,0 +1,162 @@
+{
+  "created": "2026-10-24",
+  "provider": "Higgsfield",
+  "model": "gpt_image_2_5",
+  "variant": "flare",
+  "referenceIds": [
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+  ],
+  "direction": "Almost smooth cotton with fine fibers and a few loose seam threads, satin red helmet, embroidered dot eyes. Half-body spatial scenes, no chunky crochet.",
+  "source": {
+    "format": "PNG",
+    "width": 1024,
+    "height": 1024,
+    "background": "transparent"
+  },
+  "generation": [
+    {
+      "name": "welcome",
+      "id": "ab833075-dfc7-4e28-824c-7e299aad556c",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235828_ab833075-dfc7-4e28-824c-7e299aad556c.png"
+    },
+    {
+      "name": "route",
+      "id": "79d86740-8083-4d51-b019-8ff2eb158b39",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235829_79d86740-8083-4d51-b019-8ff2eb158b39.png"
+    },
+    {
+      "name": "documents",
+      "id": "854a13a8-9f45-4304-b989-93856a831fd6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235828_854a13a8-9f45-4304-b989-93856a831fd6.png"
+    },
+    {
+      "name": "checking",
+      "id": "c28b8175-ad3e-4c78-a89d-66113e2be5f1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235828_c28b8175-ad3e-4c78-a89d-66113e2be5f1.png"
+    },
+    {
+      "name": "clarify",
+      "id": "94c75b13-f48b-4a82-bb3e-a208dedcb39e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235828_94c75b13-f48b-4a82-bb3e-a208dedcb39e.png"
+    },
+    {
+      "name": "saved",
+      "id": "48892023-5e51-4c0a-98c4-a81a8eb298cd",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235828_48892023-5e51-4c0a-98c4-a81a8eb298cd.png"
+    },
+    {
+      "name": "peek",
+      "id": "fb0f0ebd-29d7-482b-a176-c63e0264ac99",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235840_fb0f0ebd-29d7-482b-a176-c63e0264ac99.png"
+    },
+    {
+      "name": "rest",
+      "id": "de13f1ee-2e89-4298-b947-aa3634b04bd5",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261023_235840_de13f1ee-2e89-4298-b947-aa3634b04bd5.png"
+    }
+  ],
+  "production": [
+    {
+      "file": "public/mascot/handmade-v1/avatar-192.webp",
+      "bytes": 13774,
+      "sha256": "bf721aa4e2cf9ce3b0221031077fbeabcdb0a83c3f5625a94ae757d2a0fca3f5"
+    },
+    {
+      "file": "public/mascot/handmade-v1/avatar-96.webp",
+      "bytes": 5406,
+      "sha256": "d6a04cb3e32a602b5c7a93bc058232d73b044306950eb137ef8ab8bc4f471009"
+    },
+    {
+      "file": "public/mascot/handmade-v1/checking-320.webp",
+      "bytes": 17032,
+      "sha256": "e890fe013f10bb64fc4c5fde98b290dacb0aa6b08d971aa197ba256662ab0ccc"
+    },
+    {
+      "file": "public/mascot/handmade-v1/checking-640.webp",
+      "bytes": 47882,
+      "sha256": "abf394505048f0dae0cdffd453463ab72fa115aa0455c641ebaf9350a65eb2a1"
+    },
+    {
+      "file": "public/mascot/handmade-v1/clarify-320.webp",
+      "bytes": 12462,
+      "sha256": "0cbbf18b8c28ec0879b36c3802d2b18678ed5d028426edfceaac5a9d68b86dae"
+    },
+    {
+      "file": "public/mascot/handmade-v1/clarify-640.webp",
+      "bytes": 33184,
+      "sha256": "af7b04e44d0bf3c562407a7dd0afcbb57212a6df48a8154e4c9b25a440da0773"
+    },
+    {
+      "file": "public/mascot/handmade-v1/documents-320.webp",
+      "bytes": 12036,
+      "sha256": "08ebde7237998e978f8b8d7e7eb556a51baab2a53338e5a3c186e6f61ae62c85"
+    },
+    {
+      "file": "public/mascot/handmade-v1/documents-640.webp",
+      "bytes": 32238,
+      "sha256": "0e7b94e136f066fbed5b919cd2a3c90deb7399a29d80ef0e7d84630e925b62d7"
+    },
+    {
+      "file": "public/mascot/handmade-v1/peek-320.webp",
+      "bytes": 13092,
+      "sha256": "57ec56cf27795bc64760f8d7419d8bf6f331a2df618cec3e0781655a69beb9ee"
+    },
+    {
+      "file": "public/mascot/handmade-v1/peek-640.webp",
+      "bytes": 38780,
+      "sha256": "ca55e4559751cc305e222fbda48cb5d8b0d986d917915dbf69dcf47144a1eda6"
+    },
+    {
+      "file": "public/mascot/handmade-v1/rest-320.webp",
+      "bytes": 16788,
+      "sha256": "5b3d012eb0c497d5b043f1d0d2af12f4e63deb8a4d0ba53f0c5b651eb225c396"
+    },
+    {
+      "file": "public/mascot/handmade-v1/rest-640.webp",
+      "bytes": 54584,
+      "sha256": "7b66624ed13526722b0e5f089b7840e10fe36ff38c8d462cb41b064121f48694"
+    },
+    {
+      "file": "public/mascot/handmade-v1/route-320.webp",
+      "bytes": 16150,
+      "sha256": "cf4300919cb4c7700e014479ed189b478f07cf7c2c146f1921349be675453797"
+    },
+    {
+      "file": "public/mascot/handmade-v1/route-640.webp",
+      "bytes": 44636,
+      "sha256": "9ba2a47abc4dbae4db611eb711188703bc8dc6d4d53e2894f435b92e3e7c8c0e"
+    },
+    {
+      "file": "public/mascot/handmade-v1/saved-320.webp",
+      "bytes": 17828,
+      "sha256": "699d00668b20b816bfa436d011774fc89e00dc4caa76023a933345088d9eab2b"
+    },
+    {
+      "file": "public/mascot/handmade-v1/saved-640.webp",
+      "bytes": 54622,
+      "sha256": "2f3aecd146ebb1a641dd54e69296db3fbacb254b1a53adad325c626d88a830be"
+    },
+    {
+      "file": "public/mascot/handmade-v1/welcome-320.webp",
+      "bytes": 19488,
+      "sha256": "dd952c546c88b5f71c03c8ab23a7ec587b91be6601ce9d91ddeb94898491bc09"
+    },
+    {
+      "file": "public/mascot/handmade-v1/welcome-640.webp",
+      "bytes": 65650,
+      "sha256": "34576c4701eebab844101319ebb3f80fc77a4d21a05817f6aa35760b01ec56f8"
+    }
+  ],
+  "processing": "Alpha-bound crop with 14px padding, contain within 5:4 transparent canvas. 320/640px WebP at quality 88, alpha quality 100. Peek aligns right. Avatar 96/192px from canonical master. No creative image retouching.",
+  "usage": {
+    "welcome": "Overview arrival; resting after 45 seconds idle in viewport. No user state changes.",
+    "route": "Plan introduction, folded route map.",
+    "documents": "Document vault and file preparation.",
+    "checking": "Only operation.phase=checking while busy.",
+    "clarify": "Clarification and error, never a running process.",
+    "saved": "Saved operation or existing approved internal review; no external admission claim.",
+    "peek": "Home introduction and guide edge invitation.",
+    "rest": "Decorative rest only. A small unraveling hem, no guilt or negative student status."
+  }
+}

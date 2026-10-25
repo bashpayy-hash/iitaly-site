@@ -1,7 +1,9 @@
 .plan { min-width: 0; width: 100%; }
 .intro { margin-bottom: 12px; }
 .titleRow { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
-.titleRow > [data-portal-art] { width: 72px; height: 54px; }
+.introCopy { min-width:0; flex:1; }
+.introCopy > details { margin-top:16px; }
+.titleRow > [data-portal-art] { width:216px; align-self:flex-start; margin-top:-8px; }
 .heading { margin: 0; font-family: var(--font-apple-display); font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
 .rules { margin: 0; color: var(--portal-muted); font-size: 14px; line-height: 1.55; }
 .rules summary { position: relative; min-height: 44px; padding: 12px 30px 12px 0; cursor: pointer; list-style: none; }
@@ -51,7 +53,7 @@
 @media (max-width: 480px) {
   .intro { margin-bottom: 8px; }
   .titleRow { min-height: 48px; gap: 12px; }
-  .titleRow > [data-portal-art] { width: 52px; height: 39px; }
+  .titleRow > [data-portal-art] { width:88px; margin-top:0; }
   .heading { font-size: 26px; }
   .stageHeading { gap: 10px; }
   .stageTitle { font-size: 16px; }
@@ -64,11 +66,13 @@
 
 /* A readable task path: saved, current and later nodes retain real statuses. */
 .pathHint { max-width:65ch; margin:12px 0 24px; color:var(--portal-muted); font-size:14px; line-height:1.6; }
+.introCopy .pathHint { margin-bottom:8px; }
+@media(max-width:600px) { .titleRow { position:relative; display:block; } .titleRow > [data-portal-art] { position:absolute; top:-6px; right:0; width:88px; } .heading { min-height:64px; padding-right:96px; display:flex; align-items:center; } .introCopy > details { margin-top:6px; } }
 .stage { margin-top:12px; border:1px solid var(--portal-border); border-radius:24px; background:var(--portal-surface); overflow:hidden; }
 .stageHeading { padding:18px 20px; }
 .stage[data-current] { border-color:var(--color-red); }
 .stage[data-stage-complete] .stageIcon { color:#1F7A68; }
-.nextLabel { display:block; margin-bottom:3px; font-size:11px; text-transform:uppercase; letter-spacing:.055em; }
+.nextLabel { display:block; margin-bottom:3px; font-size:13px; text-transform:none; letter-spacing:.055em; }
 .tasks { padding:4px 20px 18px; }
 .task { position:relative; }
 .task + .task { border-top:0; }
@@ -85,5 +89,5 @@
 .phase { max-width:none; font-size:12px; }
 .fullRoute { border-top:0; margin-top:12px; }
 .fullRoute > .routeHeading { padding-inline:4px; }
-@media(max-width:600px) { .stageHeading { padding:16px; } .tasks { padding:0 16px 12px; } .taskLink { grid-template-columns:40px minmax(0,1fr); gap:12px; } .point { width:40px; height:40px; } .task:not(:last-child)::before { left:19px; } .phase { grid-column:2; justify-self:start; text-align:left; margin-top:-8px; } .taskTitle { font-size:15px; } .taskLink[data-current-task] .phase { font-size:11px; } }
+@media(max-width:600px) { .stageHeading { padding:16px; } .tasks { padding:0 16px 12px; } .taskLink { grid-template-columns:40px minmax(0,1fr); gap:12px; } .point { width:40px; height:40px; } .task:not(:last-child)::before { left:19px; } .phase { grid-column:2; justify-self:start; text-align:left; margin-top:-8px; } .taskTitle { font-size:16px; } .taskLink[data-current-task] .phase { font-size:14px; } }
 @media(prefers-reduced-motion:reduce) { .point { transition:none; } .taskLink:hover .point { transform:none; } }

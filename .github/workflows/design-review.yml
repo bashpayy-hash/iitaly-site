@@ -15,6 +15,7 @@ on:
       - "src/lib/usePlanDraft.ts"
       - "src/lib/localWorkspace.ts"
       - "src/components/portal/**"
+      - "src/app/portal/**"
       - "src/lib/checkDocument.ts"
       - "src/components/Header.tsx"
       - "src/components/Footer.tsx"
@@ -91,10 +92,19 @@ jobs:
           /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
       - name: Review paper transfer, explicit acknowledgements and date boundaries
         run: node scripts/design-permesso-transfer-review.mjs
+      - name: Review shared Low Arc identity, icons and responsive placements
+        run: node scripts/design-brand-review.mjs
       - name: Review admissions quiz, source links and annual visa calculator
         run: node scripts/admissions-browser-review.mjs
       - name: Review shared questionnaire, local workspace and existing cloud boundary
         run: node scripts/design-workspace-review.mjs
+      - name: Review stage focus, saved-only feedback, audio and assistant drawer
+        run: node scripts/design-portal-focus-review.mjs
+      - name: Review honest progress, document states and profile persistence
+        run: |
+          node scripts/portal-targeted-model-review.mjs
+          node scripts/design-portal-targeted-review.mjs
+          node scripts/design-portal-document-clarity-review.mjs
       - name: Review student journey, error recovery and accessibility
         run: node scripts/design-ux-review.mjs
       - name: Review Vespi guide context, quiz continuity and explicit AI requests
@@ -103,6 +113,8 @@ jobs:
         run: node scripts/design-warm-palette-review.mjs
       - name: Review shared Vespi roles, typography and single visible mascot
         run: node scripts/design-vespi-system-review.mjs
+      - name: Review spatial Vespi, decorative idle and actual checking states
+        run: node scripts/design-vespi-handmade-review.mjs
       - name: Review launch document retry, long filenames and modal focus
         run: node scripts/launch-document-review.mjs
       - name: Review launch chat, contact recovery and free-plan access

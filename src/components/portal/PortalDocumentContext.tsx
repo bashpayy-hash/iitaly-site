@@ -8,7 +8,7 @@ export function PortalDocumentContext({ value, onChange, disabled }: {
   onChange: (value: DocumentReviewContext) => void;
   disabled: boolean;
 }) {
-  return <details className={styles.context}>
+  return <details className={styles.context} open>
     <summary>Параметры следующей проверки</summary>
     <fieldset disabled={disabled}>
       <legend>Для какой заявки?</legend>
@@ -36,7 +36,7 @@ export function PortalDocumentContext({ value, onChange, disabled }: {
           onChange={e => onChange({ ...value, applicantScope: e.target.checked ? "kz-family-abroad" : "unspecified" })} />
         <span>Я гражданин Казахстана, подаю сведения о семейных доходах и имуществе за пределами Италии и не заявляю финансовую независимость.</span>
       </label>}
-      <p className={styles.meta}>Выбери параметры до загрузки файла. Изменение этих полей не меняет уже сохранённый результат. Применённые правила и их актуальность будут указаны в новом разборе.</p>
+      <p className={styles.meta}>Выбери параметры до запуска проверки. Изменение этих полей не меняет уже сохранённый результат. Применённые правила и их актуальность будут указаны в новом разборе.</p>
     </fieldset>
   </details>;
 }

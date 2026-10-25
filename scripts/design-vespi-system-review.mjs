@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
@@ -125,18 +126,9 @@ async function noLegacyPortraits(container, where) {
 async function documentCoach(page, where) {
   const coach=page.locator('[data-portal-document-coach]');
   assert.equal(await coach.count(),1, `${where}: one contextual document coach`);
-  const image=coach.locator('img');
-  assert.equal(await image.getAttribute('src'),'/mascot/vespi-document-coach.webp');
+  assert.equal(await coach.locator('img').count(),0, `${where}: no duplicate mascot outside chat`);
   await coach.scrollIntoViewIfNeeded();
-  if (await image.isVisible()) {
-    await page.waitForFunction(() => {
-      const image=document.querySelector('[data-portal-document-coach] img');
-      return image?.complete && image.naturalWidth > 0;
-    }, null, { timeout: 10000 });
-  } else {
-    assert(page.viewportSize().width <= 380, `${where}: only narrow screens omit the decorative pose`);
-    assert(await coach.getByRole('heading', {name:'Подготовим файл к разбору'}).isVisible(), `${where}: the preparation guidance stays visible`);
-  }
+  assert(await coach.getByRole('heading',{name:'Подготовим файл к разбору'}).isVisible(),`${where}: preparation guidance remains visible`);
 }
 
 async function roleAssetBudget() {
@@ -185,7 +177,9 @@ async function checkWordmark(page) {
   assert.equal(await wordmark.locator('[data-brand-initial]').innerText(), 'i');
   assert.equal(await wordmark.locator('[data-brand-word]').innerText(), 'iItaly');
   assert.equal((await wordmark.innerText()).replace(/\s+/g, ''), 'iItaly', 'The shared wordmark has no trailing dot');
-  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), 'rgb(230, 57, 70)', 'The initial uses the shared coral signal on every surface');
+  assert.equal(await wordmark.getAttribute('data-brand-version'), 'low-arc', 'Every header uses the approved Low Arc mark');
+  assert.equal(await wordmark.locator('[data-brand-initial]').evaluate(element => getComputedStyle(element).color), 'rgb(20, 20, 19)', 'The new wordmark is monochrome; UI signal colors stay unchanged');
+  assert.equal(await wordmark.locator('[data-brand-mark] path').count(), 2, 'The shared mark retains its two open shapes at every size');
 }
 
 try {
@@ -224,7 +218,7 @@ try {
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${where}: no horizontal scrolling`);
       await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
       const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
-      assert.deepEqual(violations, [], `${where}: accessibility`);
+      assert.deepEqual(await editorialContrastFindings(page, violations), [], `${where}: accessibility`);
     }
     for (const [path, name] of [['/', 'home'], ['/prices', 'prices'], ['/universities', 'universities'], ['/plan', 'plan'], ['/guides', 'guides']]) {
       if (reportOnly) continue;
@@ -367,12 +361,13 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    if (!baseline && beforeBrands[`portal-${width}`]) assert.deepEqual(preservedBrand(brands[`portal-${width}`]), preservedBrand(beforeBrands[`portal-${width}`]), `portal ${width}: preserve typography while applying the authorized warm palette`);
+    if (!baseline) assert.match(await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily), /Spectral/, 'Portal headline uses the explicitly requested Cyrillic editorial serif');
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
       assert.equal(await page.locator('[data-portal-road] img').count(),0,'Progress has no mascot image');
-      assert.equal(await page.locator('[data-portal-overview] button').count(), 0, 'Overview adds no competing action buttons');
+      assert(await page.locator('[data-portal-overview] [data-road-open]').isVisible(),'Overview exposes the active breakdown action');
+      assert.equal(await page.locator('[data-task-check=shortlist]').count(),1,'University selection keeps its check and opens the actual selection flow');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
       await noLegacyPortraits(page.locator('[data-portal-road]'), `portal focus ${width}`);
@@ -410,9 +405,9 @@ try {
     await visit('/portal?view=docs&doc=statements');
     const report = page.getByRole('region', { name: 'Разбор документа', exact: true });
     await report.waitFor();
-    assert(await report.getByRole('heading', { name: 'Нужно уточнить', exact: true }).isVisible(), 'Missing application context keeps the clarification status');
+    assert(await report.getByText(baseline ? 'На проверке' : 'Нужно уточнить', {exact:true}).isVisible(), 'Finished uncertain reports explain that clarification is needed');
     assert(await report.getByText(data.docs.statements.result.summary, { exact: true }).isVisible(), 'The saved summary is shown verbatim');
-    assert(await report.getByText('Выбери программу и учебный год.', { exact: true }).isVisible(), 'The saved next action stays visible');
+    assert(await report.getByText('Выбери программу и учебный год.', { exact: true }).first().isVisible(), 'The saved next action stays visible');
     if (!baseline) {
       assert(await page.locator('[data-portal-document-inspector]').isVisible(), 'The saved report decision remains readable');
       await noLegacyPortraits(page.locator('[data-portal-document-inspector]'), `saved report ${width}`);

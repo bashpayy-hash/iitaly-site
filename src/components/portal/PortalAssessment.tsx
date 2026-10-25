@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef } from "react";
-import { SourceRefs } from "@/components/SourceRefs";
+import { AssessmentRoadmap } from "@/components/plan/AssessmentRoadmap";
+import { AssessmentTransition, useAssessmentTransition } from "@/components/plan/AssessmentTransition";
 import { WIZ } from "@/data/wizard";
 import { buildPlan } from "@/lib/planBuilder";
 import type { PlanDraft } from "@/lib/usePlanDraft";
@@ -16,6 +17,7 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
   hasRetry?: boolean;
 }) {
   const questionId = useId();
+  const { preparing, begin, finish } = useAssessmentTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const stepChanged = useRef(false);
   // Accept only the supplied, enumerated answers. A stale draft must not skip
@@ -32,43 +34,26 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
   const result = useMemo(() => finished ? buildPlan(answers) : null, [finished, answers]);
 
   useEffect(() => {
-    if (!stepChanged.current) return;
+    if (!stepChanged.current || preparing) return;
     headingRef.current?.focus({ preventScroll: true });
     headingRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
     stepChanged.current = false;
-  }, [step]);
+  }, [step, preparing]);
 
   function moveTo(nextStep: number) {
     if (busy) return;
     stepChanged.current = true;
+    if (nextStep === WIZ.length) begin();
+    else finish();
     onDraftChange({ answers, step: nextStep, complete: nextStep === WIZ.length });
   }
 
   return <div className={styles.assessment} data-portal-assessment aria-busy={busy || undefined}>
-    {result ? <div data-assessment-result>
-      <h3 ref={headingRef} tabIndex={-1} className={styles.heading}>По твоим ответам</h3>
+    {preparing ? <AssessmentTransition onSkip={finish} /> : result ? <div data-assessment-result>
+      <h3 ref={headingRef} tabIndex={-1} className={styles.heading}>Твой маршрут: начни с первого шага</h3>
+      <p className={styles.hint}>Мы собрали порядок действий по твоим ответам. Это отправная точка: допуск подтвердит выбранный вуз.</p>
       <p className={styles.meta}>Набор: {result.intake} · Правила сверены {result.reviewed}</p>
-      <p className={styles.hint}>Допуск подтверждает выбранный вуз.</p>
-      <div className={styles.results}>
-        {result.steps.map((item, index) => <details key={item.t} className={styles.detail} open={index === 0}>
-          <summary><span>{item.t}</span></summary>
-          <p className={styles.explanation}>{item.p}</p>
-          {item.sources && item.sources.length > 0 && <details className={styles.sources}>
-            <summary>Источники</summary>
-            <SourceRefs ids={item.sources} />
-          </details>}
-        </details>)}
-        <details className={styles.detail}>
-          <summary><span>Документы · {result.docs.length}</span></summary>
-          <p className={styles.hint}>Это чек-лист, а не результат проверки файла.</p>
-          <ul className={styles.documents}>
-            {result.docs.map(doc => <li key={doc.n}>
-              <strong>{doc.n}</strong>
-              <p>{doc.d}</p>
-            </li>)}
-          </ul>
-        </details>
-      </div>
+      <AssessmentRoadmap plan={result} />
       <div className={styles.actions}>
         <button type="button" className={styles.back} disabled={busy} onClick={() => moveTo(0)}>Изменить ответы</button>
         {!hasRetry && <button type="button" className={portal.primaryButton} data-primary-action data-assessment-complete

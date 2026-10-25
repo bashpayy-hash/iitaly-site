@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 // User-requested regression review: choose universities inside the existing
 // portal step, keep the complete map/comparison, and continue the real route.
 import assert from 'node:assert/strict';
@@ -64,6 +65,14 @@ async function setup(width, { failSave = false, blockedStorage = false, height =
       assert.equal(body.surname, accounts[body.code]);
       lookups.push(body);
       return json(data[body.code]);
+    }
+    const profile = url.pathname.match(/^\/api\/portal\/(TEST-0[12])\/profile$/);
+    if (profile) {
+      const code=profile[1], body=request.postDataJSON();
+      assert.equal(body.surname,accounts[code]);
+      assert(Array.isArray(body.universityIds));
+      data[code].client.profile.universityIds=body.universityIds;
+      return json(data[code]);
     }
     const match = url.pathname.match(/^\/api\/portal\/(TEST-0[12])\/task$/);
     if (match) {
@@ -157,7 +166,7 @@ try {
     await assertNoOverflow(page, `Embedded map/comparison at ${width}px`);
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[data-portal-universities]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
-    assert.deepEqual(violations, [], `Embedded selection accessibility ${width}px`);
+    assert.deepEqual(await editorialContrastFindings(page, violations), [], `Embedded selection accessibility ${width}px`);
     await page.screenshot({ path: resolve(output, `selection-comparison-${width}.png`), fullPage: true });
     await save(page).click();
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
@@ -216,13 +225,19 @@ try {
     await chooseMilan(page);
     await select(page, 'bocconi').check();
     await save(page).click();
+    if(failure==='storage') {
+      await page.locator('[data-portal-overview]').waitFor();
+      assert.deepEqual(data['TEST-01'].client.profile.universityIds,['bocconi'],'Backend persistence works even if the local fallback is unavailable');
+      assert.equal(data['TEST-01'].done.shortlist,true);
+      assert.equal(calls.length,1);
+      results.push({failure,backendPersistence:true});
+      await context.close();continue;
+    }
     await page.locator('#portal-panel [role=alert]').waitFor();
     assert.equal(data['TEST-01'].done.shortlist, undefined, 'A failed save never completes the step');
     assert.equal(await select(page, 'bocconi').isChecked(), true, 'A failed save preserves the selected draft');
     assert.equal(await page.locator('[data-portal-road]').getAttribute('data-current-step'), 'shortlist');
-    if (failure === 'storage') {
-      assert.equal(calls.length, 0, 'Unavailable local storage prevents a misleading successful completion request');
-    } else {
+    {
       assert.equal(calls.length, 1);
       await page.reload({ waitUntil: 'networkidle' });
       await picker(page).waitFor();

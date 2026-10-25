@@ -17,10 +17,11 @@ import { demoReply } from "@/data/chatDemo";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { useDraggableHeader } from "@/lib/useDraggableHeader";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { ChatLauncher } from "./ChatLauncher";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
-import { VESPI_NAME } from "@/components/mascot/Vespi";
+import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
+import { VespiVideoAvatar } from "@/components/mascot/VespiVideoAvatar";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import placement from "./chat-placement.module.css";
 
@@ -35,7 +36,11 @@ interface PortalChatContext {
   taskTitle?: string;
   taskOwner?: string;
   taskContext?: string;
+  taskDone?: boolean;
+  questions?: string[];
   guideId?: GuideId;
+  instruction?: string[];
+  instructionHref?: string;
 }
 
 function visibleGuideContext(): PortalChatContext {
@@ -95,6 +100,7 @@ export function ChatWidget() {
   const stepContext = useRef<PortalChatContext>({});
   const [displayContext, setDisplayContext] = useState<PortalChatContext>({});
   const [open, setOpen] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     {
       who: "ai",
@@ -102,6 +108,14 @@ export function ChatWidget() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [celebrating,setCelebrating]=useState(false);
+  useEffect(()=>{
+    let timer:ReturnType<typeof setTimeout>;
+    if(!open||!portalMode){timer=setTimeout(()=>setCelebrating(false),0);return()=>clearTimeout(timer);}
+    const saved=()=>{setCelebrating(true);clearTimeout(timer);timer=setTimeout(()=>setCelebrating(false),3000);};
+    window.addEventListener("iitaly:task-saved",saved);
+    return()=>{clearTimeout(timer);window.removeEventListener("iitaly:task-saved",saved);};
+  },[open,portalMode]);
   const [busy, setBusy] = useState(false);
   const [typing, setTyping] = useState(false);
   const [showLead, setShowLead] = useState(false);
@@ -117,23 +131,43 @@ export function ChatWidget() {
   const guide = displayContext.guideId ? GUIDE_HELP[displayContext.guideId] : null;
   const questions = guidesMode
     ? guide ? [guide.question, "Что уточнить в моём случае?"] : ["С чего начать поступление?", "Как найти нужную тему в справочнике?"]
+    : displayContext.taskDone ? ["Что дальше?", "Нужно ли обновить сведения по этому шагу?"]
+    : displayContext.questions?.length ? displayContext.questions
+    : displayContext.taskId === "apostille" ? ["Что такое апостиль и где его поставить в Казахстане?", "Что нужно подготовить?"]
     : displayContext.taskId === "shortlist"
     ? ["Как выбрать программы?", "Что сравнить у программ?"]
     : displayContext.taskId
-      ? /родител/i.test(displayContext.taskOwner || "")
-        ? ["Что попросить у родителей?", "Что подготовить вместе?"]
-        : ["С чего начать этот шаг?", "Что нужно подготовить?"]
+      ? ["С чего начать этот шаг?", "Что нужно подготовить?"]
       : ["С чего начать поступление?", "Как пользоваться маршрутом?"];
-  const portalHint = displayContext.taskId === "shortlist"
+  const portalHint = displayContext.taskDone ? "Этот шаг выполнен. Помогу разобраться, что делать дальше." : displayContext.taskId === "shortlist"
     ? "Помогу разобраться, что сравнить при выборе программ."
     : displayContext.taskId
-      ? /родител/i.test(displayContext.taskOwner || "")
-        ? "Разберём, что подготовить вместе с родителями."
-        : "Разберём, с чего начать и что подготовить для этого шага."
+      ? "Разберём, с чего начать и что подготовить для этого шага."
       : "Открой шаг, чтобы обсудить его детали. Или спроси про поступление здесь.";
   const helperHint = guidesMode ? "Выбери вопрос или напиши свой. Отправлю его только по твоему нажатию." : portalHint;
 
-  useDraggableHeader(panelRef, headRef, open);
+  useDraggableHeader(panelRef, headRef, open && !portalMode);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1100px)");
+    const update = () => setFullscreen(portalMode && query.matches);
+    update(); query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, [portalMode]);
+
+  useEffect(() => {
+    if (!open || !portalMode) return;
+    const panel = panelRef.current;
+    // A previously dragged marketing chat must not retain manual coordinates.
+    for (const property of ["left", "right", "top", "bottom"]) panel?.style.removeProperty(property);
+    if (!fullscreen) return;
+    const workspace = document.querySelector<HTMLElement>("[data-portal-design]");
+    const wasInert = workspace?.inert;
+    const overflow = document.body.style.overflow;
+    if (workspace) workspace.inert = true;
+    document.body.style.overflow = "hidden";
+    return () => { if (workspace) workspace.inert = Boolean(wasInert); document.body.style.overflow = overflow; };
+  }, [open, portalMode, fullscreen]);
 
   // Keeps the mount-only event listener below calling the current render's
   // `send` (which closes over up-to-date `input`/`busy` state) instead of
@@ -168,10 +202,10 @@ export function ChatWidget() {
 
   useEffect(() => {
     function onOpenRequest(e: Event) {
-      const detail = (e as CustomEvent<{ prefill?: string; source?: string; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string; guideId?: string }>)
+      const detail = (e as CustomEvent<{ prefill?: string; source?: string; taskId?: string; taskTitle?: string; taskOwner?: string; taskContext?: string; taskDone?: boolean; questions?: string[]; instruction?: string[]; instructionHref?:string; guideId?: string }>)
         .detail;
       const nextContext: PortalChatContext = detail?.source === "portal-header" ? {
-        portal: true, taskId: detail.taskId, taskTitle: detail.taskTitle, taskOwner: detail.taskOwner, taskContext: detail.taskContext,
+        portal: true, taskId: detail.taskId, taskTitle: detail.taskTitle, taskOwner: detail.taskOwner, taskContext: detail.taskContext, taskDone: detail.taskDone, questions: detail.questions, instruction: detail.instruction, instructionHref: detail.instructionHref,
       } : detail?.source === "guides"
         ? isGuideId(detail.guideId) ? { guideId: detail.guideId } : {}
         : visibleGuideContext();
@@ -267,7 +301,7 @@ export function ChatWidget() {
 
     const context = stepContext.current;
     const scopedText = context.taskId
-      ? `[Открытый шаг IITALY: ${context.taskId}; название: ${context.taskTitle || ""}; кто делает: ${context.taskOwner || "Ты"}. ${context.taskContext || ""}]\n${text}`
+      ? `[Открытый шаг IITALY: ${context.taskId}; название: ${context.taskTitle || ""}. ${context.taskContext || ""}]\n${text}`
       : context.portal ? `[Личный кабинет IITALY: шаг сейчас не открыт.]\n${text}`
       : context.guideId ? `[Открытая тема справочника IITALY: ${context.guideId}; название: ${GUIDE_HELP[context.guideId].title}. Чтение темы не подтверждает образование, выбранную программу или требования к документу пользователя.]\n${text}` : text;
     const nextHistory: ChatMessage[] = [
@@ -330,15 +364,22 @@ export function ChatWidget() {
             key="panel"
             ref={panelRef}
             role="dialog"
-            aria-modal="false"
+            aria-modal={portalMode && fullscreen ? "true" : "false"}
+            data-portal-chat={portalMode ? "true" : undefined}
             aria-label="ИИ-консультант"
             onKeyDown={(event) => {
+              if (portalMode && fullscreen && event.key === "Tab") {
+                const controls = Array.from(panelRef.current?.querySelectorAll<HTMLElement>('a[href],button:not(:disabled),input:not(:disabled),[tabindex="0"]') || []).filter(node => node.getClientRects().length);
+                const first = controls[0], last = controls.at(-1);
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+              }
               if (event.key === "Escape") {
                 event.stopPropagation();
                 setOpen(false);
               }
             }}
-            className={`fixed right-4 ${placement.aboveBadge} ${placement.panel} ${calmMode ? `${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} rounded-[24px] border border-[#e7e4df] bg-white font-[family-name:var(--font-apple-text)] text-[#141413] shadow-[0_12px_36px_rgba(33, 29, 23,0.12)]` : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper shadow-float"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
+            className={`fixed right-4 ${placement.aboveBadge} ${placement.panel} ${portalMode ? placement.portalPanel : ""} ${calmMode ? `${portalMode ? "bottom-[calc(68px+env(safe-area-inset-bottom,0px))] min-[901px]:bottom-4" : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))]"} rounded-[24px] border border-[#e7e4df] bg-white font-[family-name:var(--font-apple-text)] text-[#141413] shadow-[0_12px_36px_rgba(33, 29, 23,0.12)]` : "bottom-[max(1rem,env(safe-area-inset-bottom,0px))] rounded-xl border-2 border-ink bg-paper shadow-float"} z-[90] flex h-[min(560px,80vh)] w-[min(380px,calc(100vw-2rem))] origin-bottom-right flex-col overflow-hidden`}
             initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, y: 4, transition: reducedMotion ? { duration: 0 } : PANEL_EXIT }}
@@ -348,22 +389,20 @@ export function ChatWidget() {
               ref={headRef}
               className={`flex shrink-0 cursor-grab touch-none items-center gap-2 px-4 py-3 select-none active:cursor-grabbing ${calmMode ? "border-b border-[#e7e4df] bg-white text-[#141413]" : "border-b-2 border-ink bg-ink text-cream"}`}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
-                <MessageCircle size={22} strokeWidth={1.8} aria-hidden="true" />
-              </span>
+              {portalMode ? <VespiVideoAvatar state={celebrating ? "celebrate" : input.trim() || busy ? "thinking" : "idle"} /> : <VespiAvatar size={40} />}
               <div className="min-w-0 flex-1">
                 <b className="block text-[14px] leading-tight">{VESPI_NAME}</b>
                 <span className={`block mt-1 text-[13px] leading-tight ${calmMode ? "text-[#6c6862]" : "text-cream/75"}`}>ИИ-помощник · правила 2026/27</span>
               </div>
               {portalMode ? (
-              <a
-                href="#main"
+              <button
+                type="button"
                 aria-label="Закрыть чат"
                 onClick={event => { event.preventDefault(); setOpen(false); }}
                 className="chp-close ml-auto -mr-2 flex size-11 shrink-0 items-center justify-center rounded-pill text-[#6c6862] hover:text-[#141413] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413]"
               >
                 <CloseIcon />
-              </a>
+              </button>
               ) : (
               <button
                 type="button"
@@ -398,6 +437,8 @@ export function ChatWidget() {
               aria-live="polite"
               className="flex-1 space-y-3 overflow-y-auto px-4 py-4"
             >
+              {portalMode && celebrating && <p role="status" className="text-sm leading-6">Отличная работа! Шаг закрыт, двигаемся дальше.</p>}
+              {portalMode && displayContext.instruction?.length && <section data-chat-step-guide className="text-sm leading-6"><h3 className="font-semibold text-base">{displayContext.taskTitle}</h3><ol className="mt-3 list-decimal pl-5 space-y-3">{displayContext.instruction.map((text,index)=><li key={index}>{text}</li>)}</ol></section>}
               {calmMode && !hasConversation && !showLead && (
                 <div className="text-sm leading-6">
                   <p>{helperHint}</p>
@@ -426,6 +467,7 @@ export function ChatWidget() {
                       : "bg-cream text-ink"
                   }`}
                 >
+
                   {m.text}
                 </div>
               ))}
@@ -463,7 +505,7 @@ export function ChatWidget() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") send();
                 }}
-                placeholder={guidesMode ? "Спроси про эту тему…" : portalMode && displayContext.taskId ? "Спроси про этот шаг…" : "Спроси про поступление…"}
+                placeholder={guidesMode ? "Спроси про эту тему…" : portalMode ? "Твой вопрос…" : "Спроси про поступление…"}
                 className={`h-11 min-w-0 flex-1 px-3 text-base outline-none focus-visible:outline-2 focus-visible:outline-offset-2 ${calmMode ? "rounded-xl border border-[#e7e4df] bg-white focus-visible:outline-[#141413]" : "rounded-md border-2 border-ink bg-cream focus-visible:outline-red"}`}
               />
               <button

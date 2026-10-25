@@ -3,19 +3,13 @@
 import { useState } from "react";
 import type { PortalData } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
-import { documentOutcome, type DocumentOutcomeKind } from "@/lib/portalDocument";
+import { documentOutcome, DocumentStatus, DOCUMENT_STATUS_LABELS, type DocumentOutcomeKind } from "@/lib/portalDocument";
 import { taskBlockedReason, taskDate } from "@/lib/portalNavigation";
 import { PortalArtwork } from "./PortalArtwork";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./portal-documents.module.css";
 
-const GROUPS: { kind: DocumentOutcomeKind; label: string }[] = [
-  { kind: "approved", label: "Проверка пройдена" },
-  { kind: "fix", label: "Нужно исправить" },
-  { kind: "clarify", label: "Нужно уточнить" },
-  { kind: "unreadable", label: "Нужна читаемая копия" },
-  { kind: "missing", label: "Не загружен" },
-];
+const GROUPS = Object.values(DocumentStatus).map(status => ({ status, label: DOCUMENT_STATUS_LABELS[status] }));
 const ORDER = { fix: 0, clarify: 1, unreadable: 2, missing: 3, approved: 4 };
 
 function StatusMark({ kind }: { kind: DocumentOutcomeKind }) {
@@ -32,20 +26,22 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
 }) {
   const [purpose, setPurpose] = useState("all");
   const purposeOf = (id: string) => ["familyDocs", "iseeu"].includes(id) ? "dsu" : ["statements", "insurance", "housing", "universitaly"].includes(id) ? "visa" : "uni";
-  const [filter, setFilter] = useState<DocumentOutcomeKind | "all">("all");
+  const [filter, setFilter] = useState<DocumentStatus | "all">("all");
   const rows = data.roadmap.flatMap(stage => stage.tasks.filter(task => DOC_TASKS[task.id]))
     .map(task => ({ ...task, title: DOC_TASKS[task.id], doc: data.docs?.[task.id], outcome: documentOutcome(data.docs?.[task.id]) }))
     .sort((a, b) => Number(b.id === currentTaskId) - Number(a.id === currentTaskId) || ORDER[a.outcome.kind] - ORDER[b.outcome.kind]);
-  const groups = GROUPS.map(group => ({ ...group, count: rows.filter(row => row.outcome.kind === group.kind).length })).filter(group => group.count > 0);
-  const visible = rows.filter(row => (filter === "all" || row.outcome.kind === filter) && (purpose === "all" || purposeOf(row.id) === purpose));
+  const groups = GROUPS.map(group => ({ ...group, count: rows.filter(row => row.outcome.status === group.status).length })).filter(group => group.count > 0);
+  const visible = rows.filter(row => (filter === "all" || row.outcome.status === filter) && (purpose === "all" || purposeOf(row.id) === purpose));
 
   return <section className={styles.documents} aria-labelledby="portal-documents-heading">
     {!embedded && <header className={styles.heading}>
       <div className={styles.titleRow}>
-        <h2 id="portal-documents-heading">Проверяй документы без лимита</h2>
+        <div className={styles.headingCopy}>
+        <h2 id="portal-documents-heading">Твои документы</h2>
+        <p>Здесь видны результаты проверки и то, что нужно подготовить. «Готово» означает проверку IITALY, а не принятие документа вузом.</p>
+        </div>
         <PortalArtwork placement="documents" />
       </div>
-      <p>Загружай исправленные версии — получай итог, причину и следующий шаг.</p>
     </header>}
     {embedded && <h3 id="portal-documents-heading" className={styles.embeddedTitle}>Документы твоего маршрута</h3>}
     {rows.length > 0 && <fieldset className={styles.purposes}>
@@ -54,8 +50,8 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
     </fieldset>}
     {rows.length > 0 && <fieldset className={styles.filters}>
       <legend className="sr-only">Статус проверки</legend>
-      {[{ kind: "all" as const, label: "Все", count: rows.length }, ...groups].map(group => <label key={group.kind} className={styles.filter} data-document-filter={group.kind} data-selected={filter === group.kind}>
-        <input type="radio" name="document-status" value={group.kind} checked={filter === group.kind} onChange={() => setFilter(group.kind)} />
+      {[{ status: "all" as const, label: "Все", count: rows.length }, ...groups].map(group => <label key={group.status} className={styles.filter} data-document-filter={group.status} data-selected={filter === group.status}>
+        <input type="radio" name="document-status" value={group.status} checked={filter === group.status} onChange={() => setFilter(group.status)} />
         <span>{group.label} <span className={styles.count}>{group.count}</span></span>
       </label>)}
     </fieldset>}
@@ -68,16 +64,17 @@ export function DocsSection({ data, onOpenDoc, currentTaskId, embedded = false }
           event.preventDefault(); onOpenDoc(row.id);
         }}
         id={`portal-doc-action-${row.id}`} className={styles.row} data-document={row.id}
-        data-document-outcome={row.outcome.kind} data-current-file={row.id === currentTaskId || undefined}
+        data-document-outcome={row.outcome.kind} data-document-status={row.outcome.status} data-current-file={row.id === currentTaskId || undefined}
         data-blocked={row.available === false || undefined}
       >
         <div className={styles.file}>
           <h3>{row.title}</h3>
-          <p className={styles.meta}>{[row.owner || "Ты", taskDate(row), row.doc?.fileName].filter(Boolean).join(" · ")}</p>
+          <span className={styles.status} data-outcome={row.outcome.kind}><StatusMark kind={row.outcome.kind} />{row.outcome.label}</span>
+          {row.outcome.action && <p className={styles.nextAction}>Что сделать: {row.outcome.action}</p>}
+          <p className={styles.meta}>{[taskDate(row), row.doc?.fileName].filter(Boolean).join(" · ")}</p>
           {row.available === false && !row.doc && <p className={styles.meta}>{taskBlockedReason(row)}</p>}
         </div>
         <div className={styles.rowFooter}>
-          <span className={styles.status} data-outcome={row.outcome.kind}><StatusMark kind={row.outcome.kind} />{row.outcome.label}</span>
           <span className={styles.rowAction}>{row.doc ? "Разбор" : row.id === currentTaskId && row.available !== false ? "Приложить файл" : "Подробнее"}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg></span>
         </div>
       </a>)}

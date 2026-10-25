@@ -1,3 +1,4 @@
+import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -109,7 +110,7 @@ async function reportActionLimit(page, label) {
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
   // User-requested drop zone adds a visible hint and decorative arrow. Its
   // accessible action name and the one-action limit remain unchanged.
-  if (await buttons.count()) assert.equal(await buttons.getAttribute('aria-label'), 'Проверить новую версию', 'The only saved-report action explicitly starts another file check');
+  if (await buttons.count()) assert.equal(await page.locator('[data-document-prepare]').count(), 1, 'The only initial report action prepares an explicit new check');
   assert.doesNotMatch(await report(page).innerText(), /Спросить про этот шаг|Продолжить маршрут|Открыть разбор/);
 }
 
@@ -155,14 +156,14 @@ try {
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
     await page.locator('[data-document-list]').waitFor();
-    assert.match(await page.locator('main').innerText(), /без лимита/i, 'The document screen makes repeat checking discoverable');
+    assert.match(await page.locator('main').innerText(), /Твои документы/, 'The cabinet uses a functional heading');
     assert.equal(await page.locator('[data-document]').count(), 6, 'All required documents are visible without opening status groups');
-    assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'approved', 'fix', 'clarify', 'unreadable', 'missing']);
+    assert.deepEqual(await page.locator('[data-document-filter]').evaluateAll(elements => elements.map(element => element.dataset.documentFilter)), ['all', 'not_started', 'reviewing', 'needs_fix', 'ready']);
     assert.deepEqual(await page.locator('[data-document]').evaluateAll(elements => elements.map(element => element.dataset.document)), ['statements', 'apostille', 'cimea', 'familyDocs', 'insurance', 'translate'], 'Current file first, then documents needing action, then approved');
     assert.match(await page.locator('[data-document-filter=all]').innerText(), /Все 6/);
-    assert.match(await page.locator('[data-document-filter=missing]').innerText(), /Не загружен 2/);
-    await page.locator('[data-document-filter=fix]').click();
-    assert.equal(await page.locator('[data-document]').count(), 1);
+    assert.match(await page.locator('[data-document-filter=not_started]').innerText(), /Не начато 2/);
+    await page.locator('[data-document-filter=needs_fix]').click();
+    assert.equal(await page.locator('[data-document]').count(), 2);
     assert.equal(await row(page, 'apostille').isVisible(), true);
     await page.locator('[data-document-filter=all]').click();
     await noListButtons(page, `Document list ${width}px`);
@@ -170,16 +171,17 @@ try {
     await page.locator('[data-step-detail=statements]').waitFor();
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
     assert.equal(await page.locator('button').count(), 1, 'Current document exposes only file selection');
-    await page.getByText('Параметры следующей проверки', { exact: true }).click();
     assert.equal(await page.getByRole('combobox', { name: /^Стипендиальная программа/ }).inputValue(), 'general');
     assert.equal(await page.getByRole('combobox', { name: /^Учебный год заявки/ }).inputValue(), 'unspecified');
-    await page.getByText('Параметры следующей проверки', { exact: true }).click();
-    await page.getByRole('button', { name: 'Приложить файл', exact: true }).click();
+    await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles({ name: 'test-bank-statement-' + 'long-filename-'.repeat(12) + '.txt', mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC DOCUMENT: bank balance is zero KZT on 31 December 2025. Test fixture without personal data.') });
+    await page.getByRole('button', {name:'Проверить документ',exact:true}).click();
     await report(page).waitFor();
     await reportHeadingVisible(page, 'Uploaded clarification');
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements', 'The saved result opens automatically and has an address');
     assert.match(await report(page).innerText(), /Нужно уточнить/);
+    assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
+    await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.doesNotMatch(await report(page).innerText(), /Нужно исправить|Критических ошибок:/);
@@ -189,6 +191,8 @@ try {
     await page.reload({ waitUntil: 'networkidle' });
     await report(page).waitFor();
     await reportHeadingVisible(page, 'Reloaded clarification');
+    assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
+    await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
@@ -197,8 +201,8 @@ try {
     const clarifyColor = await page.locator('[data-document=statements] [data-outcome=clarify]').evaluate(element => getComputedStyle(element).color);
     const fixColor = await page.locator('[data-document=apostille] [data-outcome=fix]').evaluate(element => getComputedStyle(element).color);
     assert.notEqual(clarifyColor, fixColor, 'Clarification is not coloured as a document error');
-    assert.match(await page.locator('[data-document-filter=clarify]').innerText(), /Нужно уточнить 2/);
-    assert.match(await page.locator('[data-document-filter=missing]').innerText(), /Не загружен 1/);
+    assert.match(await page.locator('[data-document-filter=reviewing]').innerText(), /Нужно уточнить 2/);
+    assert.match(await page.locator('[data-document-filter=not_started]').innerText(), /Не начато 1/);
     assert.equal(await row(page, 'translate').isVisible(), true, 'Approved files stay discoverable in the complete list');
     await noListButtons(page, `Document list ${width}px`);
     await noOverflow(page, `Document list ${width}px`);
@@ -217,7 +221,7 @@ try {
     const sources = report(page).locator('details').filter({ hasText: 'Источники и дата сверки правил' });
     assert.equal(await sources.evaluate(element => element.open), false, 'Sources remain available in a closed disclosure');
     const nextStep = report(page).getByRole('heading', { name: 'Следующий шаг', exact: true });
-    const checks = report(page).getByRole('heading', { name: 'Что проверено', exact: true });
+    const checks = report(page).getByText('Что проверено: полный разбор', {exact:true});
     assert((await nextStep.boundingBox()).y < (await checks.boundingBox()).y, 'The next action is shown before supporting checks');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[aria-label="Разбор документа"]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(v => ['serious', 'critical'].includes(v.impact)).map(v => ({ id: v.id, nodes: v.nodes.map(n => ({ target: n.target, failureSummary: n.failureSummary })) })));
@@ -232,27 +236,27 @@ try {
       }
       if (task === 'familyDocs') {
         assert.match(await report(page).innerText(), /Загрузи чёткий скан всех страниц/);
-        assert.equal(await page.locator('button').count(), 0, 'Parent-owned reports contain no student action');
+        assert.equal(await page.locator('button').count(), 0, 'Future read-only reports contain no action');
       }
       if (task === 'cimea') {
-        await report(page).getByRole('heading', { name: 'Для полного разбора нужна новая проверка', exact: true }).waitFor();
-        assert.match(await report(page).innerText(), /От этой проверки сохранился только краткий итог\./);
+        await report(page).getByText('От прошлой проверки остался только краткий итог. Подробности старого разбора восстановить нельзя.', {exact:true}).waitFor();
+        assert.match(await report(page).innerText(), /От прошлой проверки остался только краткий итог\./);
       }
       await noOverflow(page, `${task} ${width}px`);
       await reportActionLimit(page, `${task} report ${width}px`);
       await backToList(page);
     }
-    await page.getByRole('link', { name: 'Обзор', exact: true }).filter({ visible: true }).click();
+    await portalDestination(page, 'Обзор');
     assert.equal(await page.getByText(/^Проверены:/).count(), 0, 'Overview no longer repeats document aggregate counters');
     const overview = page.locator('[data-portal-overview]');
-    assert.match(await overview.innerText(), /Нужно уточнить/);
-    assert.match(await overview.innerText(), /Банковские выписки/, 'Overview identifies the document rather than an opaque filename');
-    assert((await overview.innerText()).includes(data.docs.statements.summary), 'Overview includes the saved review reason');
+    assert.doesNotMatch(await overview.innerText(), /Нужно уточнить/,'Review detail is not repeated in the checklist');
+    assert.match(await overview.innerText(), /Банковские выписки|Подготовить банковские выписки/, 'Overview identifies the document rather than an opaque filename');
+    assert.equal((await overview.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),'Открыть разбор →');
     await noOverflow(page, `Document summary ${width}px`);
-    await page.getByRole('link', { name: 'План', exact: true }).filter({ visible: true }).click();
-    const plan = page.locator('#portal-stage-documents');
-    assert.match(await plan.innerText(), /Нужно уточнить/);
-    assert.equal(await page.locator('button').count(), 0, 'Plan has no action buttons');
+    await portalDestination(page, 'План');
+    const plan = page.locator('[data-portal-focus]');
+    assert.doesNotMatch(await plan.innerText(), /Нужно уточнить/);
+    assert.equal(await page.locator('[data-task-check=statements]').count(),1,'Manual task acknowledgement remains distinct from the saved review');
     const statement = plan.locator('[data-portal-task=statements]');
     await (await statement.evaluate(element => element.tagName === 'A') ? statement : statement.getByRole('link')).click();
     await report(page).waitFor();
@@ -263,11 +267,12 @@ try {
     // file repeatedly. This must not require a self-report or reopen future steps.
     for (let repeat = 1; repeat <= 2; repeat += 1) {
       nextCheckResult = repeat === 1 ? clarify : approved;
-      await page.getByRole('link', { name: 'Документы', exact: true }).filter({ visible: true }).click();
+      await portalDestination(page, 'Документы');
       await openReport(page, 'translate');
-      await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).click();
+      await page.locator('[data-document-prepare]').click();
       const saved = page.waitForResponse(response => new URL(response.url()).pathname === '/api/portal/TEST-01/doc');
       await page.locator('input[type=file]').setInputFiles({ name: `synthetic-approved-recheck-${repeat}.txt`, mimeType: 'text/plain', buffer: Buffer.from('SYNTHETIC TRANSLATION. No personal data.') });
+      await page.getByRole('button', {name:'Проверить документ',exact:true}).click();
       await saved;
       await page.waitForLoadState('networkidle');
       assert.deepEqual(calls, { check: 1 + repeat, save: 1 + repeat }, 'Each explicit recheck calls check and save exactly once');
@@ -276,7 +281,7 @@ try {
       await page.reload({ waitUntil: 'networkidle' });
       assert.deepEqual(calls, { check: 1 + repeat, save: 1 + repeat }, 'Reloading never spends another document check');
     }
-    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fiveExactOutcomes: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, completedFileRecheckedTwice: true, unsuccessfulReplacementRemainsRecheckable: true, rechecksRequireExplicitUpload: true, overflow: false, seriousAxe: violations });
+    results.push({ width, fullReportAndReload: true, autoFocusedHeadingBelowProgress: true, clarificationIsNotAnError: true, fourUnifiedStatuses: true, visibleListAndCountedFilters: true, consistentStatus: true, listsHaveZeroButtons: true, reportHasAtMostOneFileAction: true, planReopensReport: true, completedFileRecheckedTwice: true, unsuccessfulReplacementRemainsRecheckable: true, rechecksRequireExplicitUpload: true, overflow: false, seriousAxe: violations });
     await context.close();
   }
   assert.deepEqual(errors, []);

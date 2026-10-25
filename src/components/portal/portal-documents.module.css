@@ -1,7 +1,8 @@
 .documents { min-width: 0; width: 100%; }
 .heading { margin-bottom: 16px; }
 .titleRow { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px; }
-.titleRow > [data-portal-art] { width: 64px; height: 64px; }
+.headingCopy { min-width:0; flex:1; }
+.titleRow > [data-portal-art] { width:184px; margin-top:-12px; }
 .heading h2 { margin: 0; max-width: 24ch; font-family: var(--font-apple-display); font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -.03em; }
 .heading p { max-width: 65ch; margin-top: 8px; color: var(--portal-muted); font-size: 16px; line-height: 1.55; }
 .serviceNote { max-width: 62ch; margin-top: 16px; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
@@ -30,7 +31,9 @@
 @media(max-width:540px) {
   .heading h2 { font-size: 26px; }
   .titleRow { gap: 12px; }
-  .titleRow > [data-portal-art] { width: 48px; height: 48px; }
+  .titleRow { position:relative; display:block; }
+  .heading h2 { min-height:64px; padding-right:96px; display:flex; align-items:center; }
+  .titleRow > [data-portal-art] { position:absolute; top:-6px; right:0; width:88px; margin:0; }
   .row { padding: 18px 0; }
   .rowFooter { flex-wrap: wrap; }
 }
@@ -48,3 +51,8 @@
 .rowFooter { margin-top:20px; flex-wrap:wrap; }
 .status[data-outcome=approved] { color:#1F7A68; background:#E6F4F1; padding:5px 9px; border-radius:999px; }
 @media(max-width:600px) { .list { grid-template-columns:1fr; } .row { padding:20px; min-height:160px; } }
+
+.file .status { margin-top:10px; font-size:14px; }
+.nextAction { margin-top:12px; font-size:16px; line-height:1.6; }
+.rowFooter { margin-top:16px; }
+.rowAction { font-size:15px; }

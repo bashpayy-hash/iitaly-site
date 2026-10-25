@@ -1,3 +1,5 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
+import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -48,11 +50,11 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`${name}: no overflow`);
       await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
       const issues=await page.evaluate(async()=> (await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.filter(v=>['serious','critical'].includes(v.impact)).map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-      assert.deepEqual(issues,[],`${name}: accessibility`);
+      assert.deepEqual(await editorialContrastFindings(page, issues),[],`${name}: accessibility`);
     }
     await visit('/portal?view=plan');
     await page.locator('[data-portal-task=profile]').waitFor();
-    assert.equal(await page.getByRole('checkbox').count(),0,'An empty guest plan only opens tasks');
+    assert.equal(await page.locator('[data-task-check]').count(),2,'Profile and shortlist both have an interactive control');
     assert((await page.locator('main details summary').allTextContents()).every(text=>!/0\s*из\s*0/.test(text)),'Unconfigured stages are never labelled completed');
     for(const path of ['/plan','/guides','/universities','/portal']) {
       await visit(path); if(path==='/portal')await page.locator('[data-local-workspace]').waitFor();
@@ -81,7 +83,7 @@ try {
     const peer=await context.newPage();await peer.goto(origin+'/portal',{waitUntil:'networkidle'});
     await peer.locator('[data-local-workspace]').waitFor();
     assert.match(await peer.locator('main').innerText(),/сентябрь 2027/,'Selected year appears in another tab');
-    await peer.locator('[data-local-workspace] section[aria-label="Твой следующий шаг"] a').click();
+    await peer.locator('[data-road-open]').click();
     await peer.getByRole('heading',{name:'Что заканчиваешь?',exact:true}).waitFor();
     await peer.close();
     for(const title of ['11 классов','4,7 и выше','Бакалавриат','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Другой регион / пока не знаю']) {
@@ -91,7 +93,7 @@ try {
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
     await page.getByRole('link',{name:'Продолжить в личном кабинете ↗',exact:true}).click();
     await page.locator('[data-local-workspace]').waitFor();
-    await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+    await page.locator('[data-road-open]').first().click();
     await page.locator('[data-portal-universities]').waitFor();
     await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
     await page.locator('[data-university-select="bocconi"]').check();
@@ -100,51 +102,53 @@ try {
     assert.equal(await page.locator('[data-university-comparison] [data-comparison-row]').count(),12,'Existing comparison stays intact in the guest portal');
     await capture('portal-selection');
     await page.locator('[data-shortlist-save]').click();
-    await page.getByRole('heading',{name:'Твои университеты',exact:true}).waitFor();
+    await page.locator('[data-saved-universities]').waitFor();
     await page.reload({waitUntil:'networkidle'});
     assert.match(await page.locator('main').innerText(),/Bocconi/,'Saved university survives reload');
     const local=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.deepEqual(local.selectedIds,['bocconi']);assert.equal(local.done.shortlist,true);
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
-    await page.getByRole('link',{name:'План',exact:true}).click();
+    await portalDestination(page, 'План');
     assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
-    assert.equal(await checks.count(),0,'Plan rows only open steps; self-report has one path');
+    assert(await checks.count()>0,'The checklist exposes completion controls');
     await page.locator('[data-portal-task][data-current-task=true]').click();
     await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
-    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await portalDestination(page, 'Документы');
     await page.locator('[data-document="apostille"]').click();
     assert.equal(await page.getByLabel('Выбрать документ для проверки').count(),0,'Future file step cannot upload');
     assert.match(await page.locator('main').innerText(),/Сначала:/);
     await capture('portal-future');
-    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await portalDestination(page, 'Документы');
     await capture('portal-documents');await audit('guest document vault');
     await page.getByRole('radio',{name:'Для DSU',exact:true}).check();
     assert.equal(await page.locator('[data-document="familyDocs"]').count(),1);
     assert.equal(await page.locator('[data-document="apostille"]').count(),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await capture('portal-settings');await audit('guest settings');
-    await page.getByRole('link',{name:'Обзор',exact:true}).click();
+    await portalDestination(page, 'Обзор');
     for(let step=0;step<12;step++) {
-      await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+      await page.locator('[data-road-open]').first().click();
       if(await page.getByLabel('Выбрать документ для проверки').count())break;
       await page.getByRole('button',{name:'Готово',exact:true}).click();
     }
     const upload=page.getByLabel('Выбрать документ для проверки');
     await upload.waitFor();
-    const currentDoc=new URL(page.url()).searchParams.get('doc');
+    const currentDoc=new URL(page.url()).searchParams.get('doc') || new URL(page.url()).searchParams.get('task');
     const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
     async function review(result) {
       reviewResult=result;
+      const prepare=page.locator('[data-document-prepare]');
+      if(await prepare.count())await prepare.click();
       await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);
       await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
       await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
-      await page.getByRole('link',{name:'План',exact:true}).waitFor();
-      await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc'));
+      await page.locator('[data-portal-focus]').waitFor();
+      await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc')&&!new URLSearchParams(location.search).has('task'));
     }
     await review(fixtureReview('warn','2027/28','unspecified'));
     let storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
@@ -152,18 +156,19 @@ try {
     assert.equal(storedState.reviews[currentDoc],'clarify');
     assert.doesNotMatch(JSON.stringify(storedState),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
     await page.reload({waitUntil:'networkidle'});
-    await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+    await page.locator('[data-road-open]').first().click();
     await review(fixtureReview('ok','2026/27','verified'));
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],false,'A verified review from another intake cannot close this route task');
     assert.equal(storedState.reviews[currentDoc],'clarify');
-    await page.locator('section[aria-label="Твой следующий шаг"] a').click();
+    await page.locator('[data-road-open]').first().click();
     await review(fixtureReview('ok','2027/28','verified'));
     storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
     assert.equal(storedState.done[currentDoc],true,'Only an applicable passed review closes the file task');
     assert.equal(storedState.reviews[currentDoc],'approved');
-    await page.getByRole('link',{name:'Документы',exact:true}).click();
+    await portalDestination(page, 'Документы');
     await page.locator(`[data-document="${currentDoc}"]`).click();
+    await page.locator('[data-document-prepare]').click();
     assert.equal(await page.locator('[data-portal-inspector]').count(),1,'The saved file keeps its inspector when reopened for a new version');
     assert.equal(await page.locator('section[aria-label="Твой следующий шаг"] [data-vespi]').count(),0,'The route yields its portrait while the saved file owns the inspector');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');

@@ -1,0 +1,7 @@
+.scene { position:relative; isolation:isolate; width:100%; aspect-ratio:5 / 4; min-width:0; user-select:none; pointer-events:none; }
+.scene img { display:block; width:100%; height:100%; object-fit:contain; object-position:center bottom; transition:opacity 220ms ease; }
+.awake { opacity:1; }
+.rest { position:absolute; inset:0; opacity:0; }
+.scene[data-vespi-resting] .awake { opacity:0; }
+.scene[data-vespi-resting] .rest { opacity:1; }
+@media(prefers-reduced-motion:reduce) { .scene img { transition:none !important; } }

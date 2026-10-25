@@ -3,7 +3,7 @@
 /* Шапка в две колонки: слева задача и что подготовить, справа — оговорка
    и ссылки на оригинал PDF и справочник под бланком. */
 .heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,400px); gap:14px 48px; align-items:end; margin:0 auto 22px; }
-.heading h1 { margin:0; font:400 32px/1.2 Charter,Georgia,serif; color:#242321; }
+.heading h1 { margin:0; font:400 32px/1.2 var(--font-editorial); color:#242321; }
 .heading p { margin:8px 0 0; color:#66635d; font-size:14px; line-height:1.5; }
 .heading .prep { margin-top:14px; color:#45413b; font-size:13px; }
 .prep span { display:block; margin-bottom:2px; color:#776f65; font-size:12px; }

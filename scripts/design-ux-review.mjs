@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir } from 'node:fs/promises';
@@ -59,7 +60,7 @@ try {
     async function checkA11y(where) {
       await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
       const violations = await page.evaluate(async()=> (await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-      assert.deepEqual(violations,[],where+' accessibility');
+      assert.deepEqual(await editorialContrastFindings(page, violations),[],where+' accessibility');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where+' overflow');
     }
     await visit('/plan');
@@ -116,12 +117,19 @@ try {
     await page.getByText('Оставить номер для связи',{exact:true}).click();
     await page.getByRole('textbox',{name:'Номер телефона для WhatsApp'}).fill('+77001234567');
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
-    const steps=page.locator('#questionnaire details').filter({has:page.locator('summary > span')});
-    assert.equal(await steps.evaluateAll(nodes=>nodes.filter(n=>n.open).length),1,'Only the first action is expanded');
+    const firstAction=page.locator('#questionnaire [data-assessment-next-action]');
+    assert(await firstAction.isVisible(),'The first action is visible without opening a disclosure');
+    assert((await firstAction.locator('p').allTextContents()).every(text=>text.trim().length>0),'The first action includes a readable explanation and concrete action');
+    assert(await firstAction.locator('p').filter({visible:true}).count()>=2,'The explanation and action are both immediately visible');
+    const laterSteps=page.locator('#questionnaire [data-assessment-route] details');
+    assert(await laterSteps.count()>0,'The remaining route stays available');
+    assert.equal(await laterSteps.evaluateAll(nodes=>nodes.filter(node=>node.open).length),0,'Later steps start closed');
     await checkA11y('plan result '+width);
     await page.screenshot({path:resolve(output,`plan-${width}.png`)});
-    await page.getByRole('link',{name:'Открыть разбор аттестата и диплома'}).click();
-    await page.waitForURL('**/guides#education');
+    const firstSources=firstAction.locator('details');
+    await firstSources.locator(':scope > summary').click();
+    assert.equal(await firstSources.getAttribute('open')!==null,true,'Official conditions can be opened from the first action');
+    assert(await firstSources.locator('a[href^="https://"]').filter({visible:true}).count()>0,'The full requirements retain official source links');
     await visit('/plan');
     await page.getByRole('heading',{name:'С чего начать'}).waitFor();
     const draft=await page.evaluate(()=>sessionStorage.getItem('iitaly_plan_draft_v1'));

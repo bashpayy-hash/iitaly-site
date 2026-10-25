@@ -17,7 +17,10 @@ export function fixture(mode = 'partial') {
   if (mode === 'zero') data.done = {};
   if (mode === 'onboarding') { data.client.onboardingComplete = false; data.client.profile = {}; data.done = {}; }
   if (mode === 'profile') { data.client.profile.education = 'НИШ / 12 лет'; delete data.client.profile.educationPath; }
-  if (mode === 'complete') data.done = Object.fromEntries([...ids, 'obsolete-task'].map(id => [id, true]));
+  if (mode === 'complete') {
+    data.done = Object.fromEntries([...ids, 'obsolete-task'].map(id => [id, true]));
+    data.docs = { statements: { verdict: 'ok' }, familyDocs: { verdict: 'ok' } };
+  }
   if (mode === 'empty') { data.roadmap = []; data.done = {}; }
   if (mode === 'blocked') data.roadmap.forEach(stage => stage.tasks.forEach(task => { task.available = false; }));
   if (mode === 'near') data.roadmap[0].tasks[1].daysLeft = 3;
@@ -35,7 +38,7 @@ export function fixture(mode = 'partial') {
     task.warn = task.note;
   }
   if (mode === 'parents') data.done.shortlist = true;
-  if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Собрать семейные справки', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
+  if (mode === 'parent-file') { data.roadmap = [{ id: 'documents', title: 'Документы', tasks: [{ id: 'familyDocs', t: 'Попросить родителей собрать семейные справки', explain: 'Попроси родителей собрать справки по требованиям конкурса.', owner: 'родители', available: true }, { id: 'insurance', t: 'Подготовить страховку', owner: 'Ты', available: true }] }]; data.done = {}; }
   if (mode === 'manual') { data.roadmap[0].tasks[1] = { id: 'manual-task', t: 'Подготовить сведения', explain: 'Подготовь сведения для выбранной программы.', available: true, owner: 'Ты' }; }
   if (mode === 'last') { data.roadmap = [{ id: 'arrival', title: 'Переезд', tasks: [{ id: 'manual-task', t: 'Подготовить сведения', available: true, owner: 'Ты' }] }]; data.done = {}; }
   if (mode === 'full-route' || mode === 'screenshot-parent') {
@@ -57,7 +60,7 @@ export function fixture(mode = 'partial') {
     // make overall progress differ from progress inside the current stage.
     data.roadmap = data.roadmap.filter(stage => stage.id !== 'education12');
     Object.assign(data.roadmap[0].tasks.find(task => task.id === 'chances'), {
-      t: 'Оценить шансы на стипендию', owner: 'Ты + родители', time: '10 мин',
+      t: 'Попросить родителей оценить шансы на стипендию', owner: 'Ты + родители', time: '10 мин',
     });
     data.done = { profile: true, shortlist: true, apostille: true, translate: true, 'obsolete-task': true };
   }
@@ -70,6 +73,7 @@ export function fixture(mode = 'partial') {
       { id: 'statements', t: 'Подготовить банковскую выписку', available: true, owner: 'Ты', time: '10 мин' },
     ] }, ...structuredClone(roadmap.slice(2))];
     data.done = { apostille: true, translate: true, notary: true, cimea: true, 'obsolete-task': true };
+    data.docs = Object.fromEntries(['apostille', 'translate', 'notary', 'cimea'].map(id => [id, { verdict: 'ok' }]));
   }
   return data;
 }

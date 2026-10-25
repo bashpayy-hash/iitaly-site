@@ -88,7 +88,7 @@ try {
     await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
     const avatar = page.locator('#guide-command [data-vespi-search-avatar]');
     assert.equal(await avatar.count(), 1, 'Search has one deliberate compact avatar');
-    assert.equal(await avatar.getAttribute('src'), '/mascot/vespi-search-avatar.webp');
+    assert.equal(await avatar.getAttribute('src'), '/mascot/handmade-v1/avatar-96.webp');
     await avatar.evaluate(image => image.decode());
     assert.equal(await page.locator('[data-vespi-intro="guides"]').count(), 0, 'Guides have no duplicated promotional introduction');
     assert.equal(await page.locator('#chat-launcher img').count(), 0, 'Floating help remains a text-and-icon entry');
@@ -109,9 +109,14 @@ try {
     const timeline = page.locator('[data-guide-timeline]');
     const stageLinks = timeline.locator('a[aria-controls="guide-reading-content"]');
     assert.equal(await stageLinks.count(), 3, 'Three real route stages remain directly available');
-    const timelineBox = await timeline.boundingBox();
-    const panelBox = await page.locator('[data-guide-panel="education"]').boundingBox();
-    assert(timelineBox.y + timelineBox.height <= panelBox.y + 1, 'Stage selection is above the reading panel, never a left sidebar');
+    // The topic heading scrolls into view on the next frame. Read both rects
+    // together so a scroll between two protocol calls cannot change one origin.
+    const stageAbovePanel = await page.evaluate(() => {
+      const timeline = document.querySelector('[data-guide-timeline]').getBoundingClientRect();
+      const panel = document.querySelector('[data-guide-panel="education"]').getBoundingClientRect();
+      return timeline.bottom <= panel.top + 1;
+    });
+    assert(stageAbovePanel, 'Stage selection is above the reading panel, never a left sidebar');
     const stageBoxes = await stageLinks.evaluateAll(links => links.map(link => { const rect=link.getBoundingClientRect(); return {x:rect.x,y:rect.y,width:rect.width,height:rect.height}; }));
     assert(stageBoxes.every(box => Math.abs(box.y-stageBoxes[0].y)<1), 'The stage checkpoints share a horizontal row');
     assert(stageBoxes.every((box,index) => !index || box.x>=stageBoxes[index-1].x+stageBoxes[index-1].width-1), 'Stages follow readable left-to-right order');
@@ -273,7 +278,7 @@ try {
     }
     const invite = page.locator('[data-guide-invite]');
     assert.equal(await invite.count(),1,'One contextual invitation replaces the promotional banner');
-    assert.equal(await invite.locator('[data-vespi-guide-peek]').getAttribute('src'),'/mascot/vespi-guide-peek.webp');
+    assert.equal(await invite.locator('[data-vespi-guide-peek] img').getAttribute('src'),'/mascot/handmade-v1/peek-640.webp');
     await invite.locator('img').evaluate(image=>image.decode());
     const peekAction=invite.getByRole('button',{name:'Тебе помочь? Открыть чат с Веспи',exact:true});
     const chatsBeforePeek=chats.length;

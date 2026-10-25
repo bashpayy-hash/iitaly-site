@@ -136,6 +136,27 @@ try {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}: horizontal overflow`);
     const accents = page.locator('[data-italian-accent]');
     assert.equal(await accents.count(), 0,'The removed landing pricing section leaves no detached decorative accent');
+    let visible = 0;
+    for (const accent of await accents.all()) {
+      assert.equal(await accent.getAttribute('aria-hidden'), 'true');
+      assert.equal(await accent.locator('img').getAttribute('alt'), '');
+      if (!await accent.isVisible()) continue;
+      visible++;
+      assert.equal(await accent.locator('img').evaluate(img => img.complete && img.naturalWidth > 0), true, 'Visible asset loads');
+      const check = await accent.evaluate(el => {
+        const rect = el.getBoundingClientRect();
+        const section = el.closest('section');
+        const overlaps = [...section.querySelectorAll('h1,h2,h3,p,a,button,summary,input')].filter(node => {
+          const box = node.getBoundingClientRect();
+          return box.width && box.height && rect.left < box.right - 1 && rect.right > box.left + 1 && rect.top < box.bottom - 1 && rect.bottom > box.top + 1;
+        }).map(node => node.textContent?.slice(0, 80));
+        return { kind: el.dataset.italianAccent, width: rect.width, pointerEvents: getComputedStyle(el).pointerEvents, overlaps };
+      });
+      assert(check.width <= 224, 'Only small supplementary illustrations');
+      assert.equal(check.pointerEvents, 'none');
+      assert.deepEqual(check.overlaps, [], `${width}: ${check.kind} must not cover text or controls`);
+    }
+    assert.equal(visible, 0, 'No detached accent remains after removing the landing pricing section');
     if (width === 1440) {
       for (const [name, asset] of Object.entries(manifest)) {
         const alpha = await page.evaluate(async ({ name }) => {
@@ -158,7 +179,7 @@ try {
         await page.locator(`[data-section="${name}"]`).screenshot({ path: resolve(output, `${name}-${width}.png`), animations: 'disabled' });
       }
     }
-    results.push({ test: `${width}px: reviewed hero copy, local campus art, no overflow or illustration overlap`, passed: true, visibleAccents: 0 });
+    results.push({ test: `${width}px: reviewed hero copy, local campus art, no overflow or illustration overlap`, passed: true, visibleAccents: visible });
 
     // Foreground imagery is always confined to an image slot or an empty margin.
     async function inspectArtwork() {
@@ -219,8 +240,8 @@ try {
       const afterText = await textInventory(page);
       if (route === '/prices') {
         assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
-        assert.match(afterText.join('\n'), /Календарь дедлайнов с напоминаниями в Telegram/);
-        assert.doesNotMatch(afterText.join('\n'), /Telegram и на почту/);
+        assert.match(afterText.join(' '), /Календарь дедлайнов с напоминаниями в Telegram/);
+        assert.doesNotMatch(afterText.join(' '), /Telegram и на почту/);
       }
       else if (route === '/plan') {
         assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');

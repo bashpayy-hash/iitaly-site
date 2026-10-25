@@ -11,7 +11,7 @@ export function Footer() {
     <footer className="mt-auto bg-carbon [--color-ash:#bebab4] [--color-cloud-meta:#bebab4] px-5 pt-10 pb-6 text-ash">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-start justify-between gap-6 border-b border-smoke pb-8">
         <div>
-          <span role="img" aria-label="IITALY" className="inline-flex font-apple-text text-frost"><BrandLogo /></span>
+          <span role="img" aria-label="IITALY" className="inline-flex font-apple-text text-frost"><BrandLogo inverse /></span>
           <p className="mt-1 max-w-xs text-[13px] leading-relaxed text-ash">
             ИИ-сервис поступления в университеты Италии · Казахстан
           </p>

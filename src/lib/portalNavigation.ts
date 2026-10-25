@@ -1,37 +1,42 @@
 import type { PortalData, PortalTask } from "./portalApi";
 import { DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
+import { portalProgress, portalTaskDone } from "./portalProgress";
 
 // Display the existing roadmap in its own order; do not add dependencies or dates.
 export function portalPosition(data: PortalData) {
-  let stageIndex = data.roadmap.findIndex(stage => stage.tasks.some(task => !data.done[task.id] && task.available !== false));
-  if (stageIndex < 0) stageIndex = data.roadmap.findIndex(stage => stage.tasks.some(task => !data.done[task.id]));
+  const stageIndex = portalProgress(data).currentIndex;
   const stage = data.roadmap[stageIndex] || null;
-  const task = stage?.tasks.find(task => !data.done[task.id] && task.available !== false) || null;
+  const task = stage?.tasks.find(task => !portalTaskDone(data, task) && task.available !== false) || null;
   const tasks = data.roadmap.flatMap(stage => stage.tasks);
   const taskIndex = task ? tasks.findIndex(row => row.id === task.id) : -1;
-  const next = taskIndex >= 0 ? tasks.slice(taskIndex + 1).find(row => !data.done[row.id]) || null : null;
-  return { stage, stageIndex, task, next, done: stage?.tasks.filter(row => data.done[row.id]).length || 0, total: stage?.tasks.length || 0 };
+  const next = taskIndex >= 0 ? tasks.slice(taskIndex + 1).find(row => !portalTaskDone(data, row)) || null : null;
+  return { stage, stageIndex, task, next, done: stage?.tasks.filter(row => portalTaskDone(data, row)).length || 0, total: stage?.tasks.length || 0 };
+}
+
+// Saved roadmaps may still contain the old delegation copy. Normalize it only
+// for presentation; task IDs, ownership data and availability stay untouched.
+export function directTaskCopy(text: string): string {
+  const direct = text
+    .replace(/попрос(?:ить|и|ите)\s+родител(?:ей|я)\s+/gi, "")
+    .replace(/обсуди(?:ть)? с родителями/gi, "Уточни")
+    .replace(/согласия родителей/gi, "согласия законных представителей")
+    .replace(/родительские согласия/gi, "согласия законных представителей");
+  return direct.charAt(0).toLocaleUpperCase("ru") + direct.slice(1);
 }
 
 export function taskTitle(task: PortalTask): string {
-  const parentTitles: Record<string, string> = {
-    chances: "Попросить родителей оценить шансы на стипендию",
-    familyDocs: "Попросить родителей собрать семейные справки",
-    money: "Попросить родителей подготовить финансовую гарантию",
-    statements: "Попросить родителей подготовить банковские выписки",
-    housing: "Попросить родителей помочь с жильём",
-  };
-  if (/родител/i.test(task.owner || "")) {
-    if (/^Попросить родителей/i.test(task.t)) return task.t;
-    return parentTitles[task.id] || `Попросить родителей ${task.t.charAt(0).toLowerCase()}${task.t.slice(1)}`;
-  }
   const titles: Record<string, string> = {
+    chances: "Рассчитать бюджет и оценить шансы на стипендию DSU",
+    familyDocs: "Собрать справки о составе и доходах семьи для DSU",
+    money: "Подготовить финансовую гарантию",
+    statements: "Подготовить банковские выписки",
+    housing: "Подготовить подтверждение жилья",
     shortlist: "Выбрать университеты",
     universitaly: "Подать предзапись на гос. портале (Universitaly)",
     cimea: "Уточнить подтверждение квалификации (DoV / CIMEA)",
     iseeu: "Подготовить справку о доходах (ISEEU)",
   };
-  return titles[task.id] || task.t;
+  return titles[task.id] || directTaskCopy(task.t);
 }
 
 export function taskAction(task: PortalTask): string {
@@ -60,14 +65,14 @@ export function isManualTask(task: PortalTask): boolean {
 }
 
 export function taskBlockedReason(task: PortalTask): string {
-  return task.timingLabel || "Этот шаг будет доступен позже.";
+  return directTaskCopy(task.timingLabel || "Этот шаг будет доступен позже.");
 }
 
 export function taskExplanation(task: PortalTask): string {
   const explanations: Record<string, string> = {
-    profile: "Укажи образование и цель, чтобы настроить маршрут.",
+    profile: "Этап учёбы, цель и бюджет помогают убрать лишние шаги и расставить задачи по порядку.",
     shortlist: "Посмотри города на карте, сравни вузы и отметь подходящие в свой список.",
-    chances: "Обсуди с родителями, подходит ли вашей семье региональная стипендия.",
+    chances: "Рассчитай бюджет на поступление и проверь условия региональной стипендии DSU для своей ситуации.",
     path12: "Выбери, как дополнить школьное образование для поступления.",
     enroll12: "Подготовь подтверждение дополнительного года обучения.",
     foundation12: "Подготовь подтверждение подготовительной программы.",
@@ -82,7 +87,7 @@ export function taskExplanation(task: PortalTask): string {
     familyDocs: "Собери семейные справки по требованиям выбранной стипендии.",
     iseeu: "Уточни, какие сведения о доходах нужны для стипендии.",
     dsuApply: "Подай заявку по правилам выбранной региональной стипендии.",
-    money: "Обсуди с родителями подтверждение средств для визы.",
+    money: "Подготовь подтверждение средств по требованиям к визовой заявке.",
     statements: "Подготовь банковские выписки по требованиям к твоей заявке.",
     insurance: "Сверь страховку с требованиями для визы.",
     housing: "Подготовь подтверждение проживания для визовой заявки.",
@@ -93,7 +98,7 @@ export function taskExplanation(task: PortalTask): string {
     questura: "Подготовься к визиту в миграционную службу (Questura).",
   };
   const source = task.explain || TASK_META[task.id]?.why || "Открой шаг, чтобы узнать, что подготовить.";
-  return explanations[task.id] || source.split(/(?<=[.!?])\s+(?=[А-ЯЁA-Z])/)[0];
+  return explanations[task.id] || directTaskCopy(source.split(/(?<=[.!?])\s+(?=[А-ЯЁA-Z])/)[0]);
 }
 
 // Describe the existing completion mechanism, never an admission outcome.
@@ -102,7 +107,7 @@ export function taskActionHint(task: PortalTask): string {
   if (task.id === "profile" || task.id === "path12") return "Сохрани ответы в профиле, чтобы обновить маршрут.";
   if (DOC_TASKS[task.id]) return "После загрузки получишь разбор: итог, причина и следующий шаг.";
   if (task.id === "shortlist") return "Сохрани выбранные вузы — кабинет покажет следующий шаг.";
-  if (task.id === "chances") return "Ответь на вопросы здесь и обсуди результат с родителями. Затем отметь шаг как готовый.";
+  if (task.id === "chances") return "Ответь на вопросы, изучи рекомендации и отметь шаг как готовый.";
   if (task.id === "checkDocs") return "Открой документы ниже и сверь сохранённые разборы. Затем нажми «Готово».";
   if (task.id === "kit") return "Заполни тренировочный бланк здесь. Нажми «Готово», когда подготовишь заявление.";
   return "Нажми «Готово», когда выполнишь этот шаг. Это твоя отметка в маршруте.";
@@ -111,14 +116,15 @@ export function taskActionHint(task: PortalTask): string {
 export function taskHelpDetails(task: PortalTask): string[] {
   const explanation = taskExplanation(task).trim();
   return [...new Set([task.explain?.trim(), task.note?.trim(), task.warn?.trim()]
-    .filter((text): text is string => Boolean(text) && text !== explanation))];
+    .filter((text): text is string => Boolean(text)).map(directTaskCopy)
+    .filter(text => text !== explanation))];
 }
 
 // Read-only detail is a presentation rule; the roadmap's availability is unchanged.
 export function taskReadOnlyReason(data: PortalData, task: PortalTask): string {
   const position = portalPosition(data);
-  if (data.done[task.id]) return "Этот шаг уже сделан.";
-  const future = !data.done[task.id] && position.task?.id !== task.id;
+  if (portalTaskDone(data, task)) return "Этот шаг уже сделан.";
+  const future = position.task?.id !== task.id;
   if (future && position.task) return `Сначала: ${taskTitle(position.task)}.${task.available === false ? ` ${taskBlockedReason(task)}` : ""}`;
   if (task.available === false) return taskBlockedReason(task);
   return "";

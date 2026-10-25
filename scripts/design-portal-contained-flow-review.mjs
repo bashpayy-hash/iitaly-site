@@ -1,3 +1,5 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
+import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 // User-requested regression: every IITALY tool stays in the authenticated
 // portal. Official sources and Telegram remain explicit external destinations.
 import assert from 'node:assert/strict';
@@ -126,15 +128,8 @@ async function setup(width, current = 'shortlist') {
   return { page, context, data, calls, profileCalls, contained };
 }
 async function openTask(page, id) {
-  await nav(page, 'План').click();
-  const row = page.locator(`[data-portal-task="${id}"]`);
-  await row.waitFor({ state: 'attached' });
-  const ancestors = row.locator('xpath=ancestor::details');
-  for (let index = 0; index < await ancestors.count(); index += 1) {
-    const ancestor = ancestors.nth(index);
-    if (await ancestor.getAttribute('open') === null) await ancestor.locator(':scope > summary').click();
-  }
-  await row.click();
+  await portalDestination(page, 'План');
+  await portalTask(page, id);
   await page.locator(`[data-step-detail="${id}"]`).waitFor();
 }
 async function checkAndCapture(page, name, width, { axe = true } = {}) {
@@ -144,7 +139,7 @@ async function checkAndCapture(page, name, width, { axe = true } = {}) {
   if (axe) {
     if (!await page.evaluate(() => Boolean(window.axe))) await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
-    assert.deepEqual(violations, [], `${name} accessibility at ${width}px`);
+    assert.deepEqual(await editorialContrastFindings(page, violations), [], `${name} accessibility at ${width}px`);
   }
   // A fixed modal is a viewport surface; a full-document shot would shrink it
   // into the middle of a very long university list and hide the useful review.
@@ -191,28 +186,24 @@ try {
       assert.equal(await page.locator('[data-uni-card="bocconi"]').getByRole('button').first().evaluate(element => document.activeElement === element), true, 'Escape closes the modal and restores its opening control');
       assert.equal(await page.locator('[data-university-select="bocconi"]').isChecked(), true, 'Reading the rules preserves the unsaved shortlist');
       assert.equal(calls.length, 0, 'Reading rules does not save or complete the shortlist');
-      await nav(page, 'IITALY — личный кабинет').click();
+      await page.locator('[data-road-stage][aria-current=step]').click();
       await overview(page).waitFor({ state: 'attached' });
-      assert.equal(new URL(page.url()).search, '', 'The portal logo returns to its own overview');
+      assert.equal(new URL(page.url()).searchParams.get('stage'), 'start', 'The stage pipeline returns to the selected stage');
       await page.goBack();
       await page.locator('[data-portal-universities]').waitFor();
       await page.goForward();
       await overview(page).waitFor({ state: 'attached' });
-      contained('Shortlist, rules, logo and browser history');
-      await nav(page, 'План').click();
-      const planRules = page.locator('[data-portal-rules-disclosure]');
-      await planRules.locator(':scope > summary').click();
-      await planRules.locator('[data-portal-rules]').waitFor();
-      assert.equal(await planRules.getAttribute('open') !== null, true);
-      assert.equal(await planRules.locator('a[href="/changes-2026-27"], a[href="/plan"]').count(), 0);
-      await checkAndCapture(page, 'plan-rules', width);
-      contained('Plan rules');
-      results.push({ width, futureStepsReadOnly: true, universityRulesInline: true, rulesKeyboardFocusTrap: true, unsavedSelectionPreserved: true, logoReturnsOverview: true, browserHistory: true, planRulesInline: true });
+      contained('Shortlist, rules, route and browser history');
+      await portalDestination(page, 'План');
+      assert.equal(await page.locator('[data-portal-focus] [data-portal-rules-disclosure]').count(), 0, 'The task card has no footer rules disclosure; university-specific rules remain in the university dialog');
+      await checkAndCapture(page, 'plan-tasks', width);
+      contained('Plan tasks');
+      results.push({ width, futureStepsReadOnly: true, universityRulesInline: true, rulesKeyboardFocusTrap: true, unsavedSelectionPreserved: true, pipelineReturnsOverview: true, browserHistory: true, noTaskFooter: true });
       await context.close();
     }
     {
       const { page, context, calls, profileCalls, data, contained } = await setup(width, 'chances');
-      await page.locator('[data-portal-road] [data-road-open]').click();
+      await page.locator('[data-road-open]').click();
       const assessment = page.locator('[data-portal-assessment]');
       await assessment.waitFor();
       assert.equal(await assessment.locator('input[type="tel"], a[href="/plan"], a[href="/prices"]').count(), 0, 'The inline assessment has no lead gate or sales detour');
@@ -245,7 +236,7 @@ try {
     }
     {
       const { page, context, calls, contained } = await setup(width, 'checkDocs');
-      await page.locator('[data-portal-road] [data-road-open]').click();
+      await page.locator('[data-road-open]').click();
       await page.locator('[data-step-detail="checkDocs"] [data-document-list]').waitFor();
       await checkAndCapture(page, 'check-documents', width);
       await detail(page).locator('[data-document="apostille"]').click();
@@ -255,9 +246,11 @@ try {
       await page.getByRole('region', { name: 'Разбор документа', exact: true }).getByRole('link', { name: 'Назад', exact: true }).click();
       await page.locator('[data-step-detail="checkDocs"]').waitFor();
       assert.equal(new URL(page.url()).searchParams.get('task'), 'checkDocs', 'Report Back returns to the exact checkDocs task');
-      await page.goBack();
-      await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      // The document's Back action now traverses history instead of appending
+      // another task entry. Forward reopens the report; Back returns to its task.
       await page.goForward();
+      await page.getByRole('region', { name: 'Разбор документа', exact: true }).waitFor();
+      await page.goBack();
       await page.locator('[data-step-detail="checkDocs"]').waitFor();
       assert.equal(calls.length, 0, 'Opening and reviewing saved files never completes a task');
       await detail(page).getByRole('button', { name: 'Готово', exact: true }).click();
@@ -269,7 +262,7 @@ try {
     }
     {
       const { page, context, calls, contained } = await setup(width, 'kit');
-      await page.locator('[data-portal-road] [data-road-open]').click();
+      await page.locator('[data-road-open]').click();
       const trainer = page.locator('[data-portal-permesso] [data-permesso-editor]');
       await trainer.waitFor();
       await trainer.getByRole('button', { name: 'Продление Rinnovo · карточка уже есть', exact: true }).click();

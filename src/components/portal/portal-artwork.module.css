@@ -3,6 +3,8 @@
   pointer-events: none;
   user-select: none;
 }
+.spatial { flex:none; width:216px; align-self:center; pointer-events:none; user-select:none; }
+@media(max-width:600px) { .spatial { width:88px; align-self:start; } }
 
 .artwork img {
   display: block;

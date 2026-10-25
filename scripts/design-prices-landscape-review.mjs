@@ -59,23 +59,25 @@ async function layout(page) {
 }
 async function preservedPricingCopy(base, head) {
   const before=await textInventory(base), after=await textInventory(head);
+  const basePrice=(await base.locator('[data-section="prices-header"] h1 .warm-highlight').innerText()).replace(/\s+/g,' ').trim();
+  assert(['667 ₸','10 990 ₸'].includes(basePrice),'Baseline has an approved main price');
   const packageBefore=await textInventory(base, '#main-package');
   // The user removed this package's repeated pricing header only. Remove one
   // occurrence from the multiset, not every price/term elsewhere on the page.
   if(packageBefore.includes('Поступление под ключ')) {
-    for(const value of ['Поступление под ключ','Один платёж','Всё, что делает система, входит в цену','667 ₸','разово · без подписки и доплат']) {
+    for(const value of ['Поступление под ключ','Один платёж','Всё, что делает система, входит в цену',basePrice,'разово · без подписки и доплат']) {
       assert.equal(packageBefore.filter(item=>item===value).length,1,`Approved package removal is exact: ${value}`);
       const index=before.indexOf(value);
       assert(index>=0);
       before.splice(index,1);
     }
   }
-  assertContentPreserved(before,after,'Pricing copy outside the approved repeated header');
+  assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')),after,'Pricing copy outside the approved repeated header and launch price');
   const packageCard=head.locator('#main-package');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);
   assert.equal(await packageCard.getByText('Весь маршрут поступления в одном кабинете',{exact:true}).count(),1);
-  assert.doesNotMatch(await packageCard.innerText(),/667\s*₸/,'The contents card does not repeat the price');
-  assert.match(await head.locator('[data-section="prices-header"] h1').innerText(),/667\s*₸/,'The actual price remains in the hero');
+  assert.doesNotMatch(await packageCard.innerText(),/10\s*990\s*₸/,'The contents card does not repeat the price');
+  assert.match(await head.locator('[data-section="prices-header"] h1').innerText(),/10\s*990\s*₸/,'The launch price remains in the hero');
 }
 try {
   const dense=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:3,reducedMotion:'reduce'});
@@ -112,14 +114,14 @@ try {
     }
     for(const image of await canvas.locator('img').all()) assert(await image.evaluate(i=>i.complete&&i.naturalWidth>0),'All scene images decode locally');
     const protectedCopy=head.locator('[data-protected-typography]');
-    const leaves=protectedCopy.locator('[data-price-leaf]');
-    assert.equal(await leaves.count(),2,'Exactly two painted leaves overlap the banner');
+    const leaves=protectedCopy.locator('[data-price-petal]');
+    assert.equal(await leaves.count(),3,'Three detached painted petals overlap the banner');
     for(const leaf of await leaves.all()) {
       assert.equal(await leaf.getAttribute('aria-hidden'),'true');
-      assert.equal(await leaf.evaluate(el=>getComputedStyle(el).pointerEvents),'none','Leaves cannot intercept a control');
-      assert(await leaf.locator('img').evaluate(img=>img.complete&&img.naturalWidth>0),'The existing botanical artwork decodes');
+      assert.equal(await leaf.evaluate(el=>getComputedStyle(el).pointerEvents),'none','Petals cannot intercept a control');
+      assert(await leaf.locator('img').evaluate(img=>img.complete&&img.naturalWidth>0),'The transparent petal artwork decodes');
       const leafBox=await leaf.boundingBox(), copyBox=await protectedCopy.boundingBox();
-      assert(leafBox.y<copyBox.y && leafBox.y+leafBox.height>copyBox.y,'A leaf crosses the top edge of the banner');
+      assert(leafBox.y<copyBox.y && leafBox.y+leafBox.height>copyBox.y,'A petal crosses the top edge of the banner');
     }
     assert.match(await protectedCopy.evaluate(el=>getComputedStyle(el,'::before').backgroundImage),/radial-gradient/,'Text has a cream matte above the paint');
     const type=page=>page.locator('[data-section=prices-header] h1').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','color'].map(k=>s[k]);});
