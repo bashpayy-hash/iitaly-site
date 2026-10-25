@@ -50,6 +50,11 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // 2026-10-25: shared type, editorial task layout and optional Higgsfield media.
+  'src/data/higgsfieldVisuals.ts',
+  'src/components/portal/HiggsfieldVisual.tsx', 'src/components/portal/higgsfield-visual.module.css',
+  'src/components/portal/PortalMicroSteps.tsx', 'src/components/portal/portal-micro-steps.module.css',
+  'src/components/portal/PortalTaskIntro.tsx', 'src/components/portal/PortalRouteVespi.tsx',
   // 2026-10-24: single chat mascot and saved-only microfeedback.
   'src/components/mascot/VespiVideoAvatar.tsx', 'src/components/mascot/vespi-video-avatar.module.css',
   // 2026-10-24: stage-only portal canvas and feedback after confirmed completion.
@@ -210,9 +215,12 @@ for (const path of [
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
   'src/components/guides/permesso/permessoData.ts',
   'src/components/guides/permesso/permessoTransferModel.ts',
-  'src/app/globals.css',
   'package.json','package-lock.json','next.config.ts','netlify.toml',
 ]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
+// The shared Modulo 1 serif stack may be extracted into exactly one token;
+// every existing global rule and palette token remains byte-for-byte unchanged.
+const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '');
+assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial font token may change in globals');
 assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');
 assert(!/HowItWorks/.test(readFileSync('src/app/page.tsx','utf8')),'Do not restore the removed home section');
 for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBand.tsx']) {

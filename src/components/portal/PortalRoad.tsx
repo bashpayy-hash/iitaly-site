@@ -8,7 +8,6 @@ import { documentOutcome } from "@/lib/portalDocument";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
-import { PortalStageIcon } from "./PortalStageIcon";
 import { Check, ChevronRight } from "lucide-react";
 
 export type RoadTravel = { fromDone: number; id: number };
@@ -191,20 +190,16 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
           const complete = Boolean(opened && stageDone === row.tasks.length);
           const isCurrent = row.id === (activeStageId || stage?.id);
           const isRouteCurrent = row.id === stage?.id;
-          return <a key={row.id} href={onSelectStage ? `/portal?stage=${encodeURIComponent(row.id)}` : portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
+          const segmentFill = opened ? stageDone / row.tasks.length : 0;
+          return <a style={{ "--stage-fill": segmentFill } as CSSProperties} key={row.id} href={onSelectStage ? `/portal?stage=${encodeURIComponent(row.id)}` : portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
             data-road-stage-state={complete ? "done" : isCurrent ? "current" : "future"}
             aria-current={isCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); if (onSelectStage) onSelectStage(row.id); else onOpenTask(next);
-            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : isCurrent ? <PortalStageIcon id={row.id} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов{isRouteCurrent ? " · сейчас" : ""}</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
+            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов{isRouteCurrent ? " · сейчас" : ""}</small></span><span className={styles.stageNumber} aria-hidden="true">{String(index + 1).padStart(2, "0")}</span></a>;
         })}
       </nav>
-      <div className={styles.track} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`}><span className={styles.fill} data-road-fill style={{ transform:`scaleX(${motion.position / 100})` }} />
-        <span className={styles.marker} data-road-scooter data-road-location style={{ transform:`translateX(${motion.position}%)` }} onTransitionEnd={event => {
-          if (event.target !== event.currentTarget || event.propertyName !== "transform" || !inFlight.current) return;
-          inFlight.current = false; setMotion(value => ({ ...value, moving:false, arriving:true }));
-        }}><span /></span>
-      </div>
+      <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
     </div>
     {progressFirst && focus}

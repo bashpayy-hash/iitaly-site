@@ -1,0 +1,9 @@
+.visual { position:relative; display:grid; place-items:center; width:100%; min-width:0; min-height:280px; height:100%; margin:0; overflow:hidden; isolation:isolate; border:1px solid #E2DDD3; border-radius:10px; background:#F3EFE6; }
+.poster { display:block; width:100%; height:100%; max-height:440px; object-fit:contain; padding:24px; mix-blend-mode:multiply; }
+.poster[hidden] { display:none; }
+.video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.print { position:absolute; inset:0; pointer-events:none; opacity:.11; mix-blend-mode:multiply; background-image:radial-gradient(#1B5E55 .45px,transparent .7px),url('/textures/paper-grain.svg'); background-size:3px 3px,180px 180px; }
+.control { position:absolute; right:12px; bottom:12px; z-index:2; display:grid; place-items:center; width:44px; height:44px; border:1px solid #D5CFC4; border-radius:50%; color:#1B5E55; background:#FAF8F3; cursor:pointer; }
+.control:focus-visible { outline:2px solid #1B5E55; outline-offset:3px; }
+@media(max-width:700px) { .visual { min-height:190px; max-height:240px; }.poster { height:220px; padding:20px; } }
+@media(forced-colors:active) { .print { display:none; } }

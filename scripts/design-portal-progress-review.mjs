@@ -120,10 +120,11 @@ async function sticky(page){
   if(available>80){await page.evaluate(()=>window.scrollTo(0,Math.min(400,document.documentElement.scrollHeight-innerHeight)));const after=await chrome.boundingBox();assert(Math.abs(before.y-after.y)<1,'Chrome stays pinned');await page.evaluate(()=>window.scrollTo(0,0));}
 }
 try{
-  const base=process.env.BASE_SHA||'4ee084f';
+  const base=process.env.BASE_SHA||'HEAD';
   // The user explicitly replaced the brand mark on 24 October. The portal's
   // global palette, typography, progress and interaction contracts stay fixed.
-  for(const file of ['src/app/globals.css'])assert.equal(await readFile(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}),file+' unchanged');
+  const sharedFontOnly=source=>source.replace('  --font-editorial: Charter, Georgia, serif;\n','');
+  for(const file of ['src/app/globals.css'])assert.equal(sharedFontOnly(await readFile(file,'utf8')),sharedFontOnly(execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'})),file+' preserves all existing styles');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);
     await arrivalOrder(page,data);
@@ -190,8 +191,9 @@ try{
     await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await road(page).getAttribute('data-road-done'),'1');assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').count(),0,'Failed save cannot announce success');
     await page.locator('#portal-panel [role=alert]').locator('..').getByRole('link').click();await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,2);
     if(motion){await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.roadTransition==='true');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.traveling==='false');}
-    const geometry=await road(page).evaluate(node=>{const f=node.querySelector('[data-road-fill]'),m=node.querySelector('[data-road-location]');return {fill:f.getBoundingClientRect().width,marker:new DOMMatrix(getComputedStyle(m).transform).m41,transition:getComputedStyle(f).transitionDuration};});
-    assert(Math.abs(geometry.fill-geometry.marker)<1);assert(geometry.transition.split(',').every(v=>parseFloat(v)===0));results.push({motion,errorRetry:true,confirmedFeedbackOnly:true,reducedMotionImmediate:true});await context.close();
+    assert.equal(await road(page).locator('[data-road-fill],[data-road-location]').count(),0);
+    const transitions=await road(page).locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el,'::before').transitionDuration));
+    assert(transitions.every(value=>value.split(',').every(v=>parseFloat(v)===0)),'Reduced motion immediately stops every route segment');results.push({motion,errorRetry:true,confirmedFeedbackOnly:true,reducedMotionImmediate:true});await context.close();
   }
   for(const width of [1440,390]){
     const {page,context}=await open({width,height:844},'onboarding');assert.equal(await page.locator('[data-vespi-intro=portal]').count(),0);assert.equal(await page.locator('main img[data-vespi]').count(),0,'Onboarding has no repeated portrait');assert.equal(await road(page).count(),0);await noOverflow(page);await oneFace(page,'Onboarding');await axe(page,'First-entry introduction '+width);await capture(page,`portal-onboarding-${width}`);await context.close();

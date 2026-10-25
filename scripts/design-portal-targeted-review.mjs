@@ -83,8 +83,10 @@ try {
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.match(await road(page).locator('[data-road-count]').innerText(),/заранее: 2/);
     assert.equal(await road(page).locator('[data-road-stage="arrival"] svg').count(),0,'Future stages use an ordinal, never a lock');
-    const transform=await road(page).locator('[data-road-fill]').evaluate(el=>new DOMMatrix(getComputedStyle(el).transform).a);
-    assert(Math.abs(transform-3/total)<.001,'Progress position uses actual eligible fraction');
+    const progressbar=road(page).getByRole('progressbar');
+    assert.equal(await progressbar.getAttribute('aria-valuenow'),'3');assert.equal(await progressbar.getAttribute('aria-valuemax'),String(total));
+    const segments=await road(page).locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>Number(el.style.getPropertyValue('--stage-fill'))));
+    assert.deepEqual(segments,[1,0,0,0,0,0],'Only eligible saved stage work fills the route');
     assert.match(await page.locator('[data-portal-welcome] [data-saved-universities]').innerText(),/Bocconi/);
     assert.doesNotMatch(await page.locator('main').innerText(),/Выбраны в этом браузере|До подачи в/);
     const instruction=page.locator('[data-road-open]');

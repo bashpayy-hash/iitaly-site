@@ -22,7 +22,7 @@ const server=createServer(async(req,res)=>{
   }catch{res.writeHead(500).end();}
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
-const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch();
+const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[],errors=[],unexpected=[];let activePage;
 const road=page=>page.locator('[data-portal-road]');
 
@@ -84,7 +84,14 @@ try {
         paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
-    assert.match(editorial.greeting,/Spectral/);assert.match(editorial.title,/Spectral/);
+    assert.match(editorial.greeting,/Charter, Georgia, serif/);assert.match(editorial.title,/Onest/);
+    assert.equal(await page.locator('[data-focus-row] summary strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
+    assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the checkpoint route remains');
+    assert.equal(await page.getByRole('progressbar',{name:'Выполненные шаги маршрута'}).count(),1);
+    assert.equal(await page.locator('[data-higgsfield-visual=docs]').count(),1);
+    assert.equal(await page.locator('[data-focus-task=apostille] [data-micro-steps] li').count(),3);
+    if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
+    else { await page.getByLabel('Открыть меню',{exact:true}).click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).getByRole('link',{name:'Гайды и виза'}).isVisible());await page.getByLabel('Открыть меню',{exact:true}).press('Escape'); }
     assert.equal(editorial.paper,'rgb(246, 243, 236)');assert.equal(editorial.noise,'0.035');assert.equal(editorial.noisePointer,'none');
     assert.equal(editorial.left,'4px');assert.equal(editorial.leftColor,'rgb(200, 75, 49)');assert.equal(editorial.radius,'12px');assert.equal(editorial.background,'rgb(250, 248, 243)');
     assert.equal(await page.locator('[data-portal-grain] feTurbulence').getAttribute('baseFrequency'),'0.75');
@@ -101,17 +108,19 @@ try {
     const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
     assert(Math.abs(work.y-route.y-route.height-20)<1,'The two white cards are separated by 20px');
     const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
-    const copy=await page.locator('[data-focus-row=apostille]').boundingBox(),cta=await page.locator('[data-road-open]').boundingBox();
-    if(width>700){assert(cta.x>=copy.x+copy.width,'Main action is opposite the left text');assert(cta.y>=copy.y&&cta.y<copy.y+copy.height);}
+    const copy=await page.locator('[data-focus-row=apostille]').boundingBox(),art=await page.locator('[data-higgsfield-visual=docs]').boundingBox();
+    if(width>700){assert(Math.abs(art.x-copy.x-copy.width-24)<2,'Editorial columns have a 24px gap');assert(Math.abs(copy.width/art.width-1.4)<0.02,'Editorial columns use a 1.4:1 ratio');}else assert(art.y>=copy.y+copy.height,'Art stacks below the action on mobile');
     assert.equal(await page.locator('[data-task-check=apostille] svg').evaluate(el=>el.getBoundingClientRect().width),28);
     assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),22);
-    if(width>=1024)assert.equal(Math.round((await page.locator('[data-focus-row=translate]').boundingBox()).height),62);
+    if(width>=1024)assert.equal(Math.round((await page.locator('[data-focus-row=translate]').boundingBox()).height),64);
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
     await noOverflow(page);await axe(page,`Modular ${width}`);
     await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});
     await page.locator('[data-focus-row=translate] summary').click();assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
+    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Onest/);
+    await noOverflow(page);await page.screenshot({path:resolve(output,`task-${width}.png`),fullPage:true,animations:'disabled'});
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').isVisible(),false,'Overview mascot retires behind the route');
@@ -129,7 +138,7 @@ try {
         assert.equal(await page.locator('[data-road-count]').innerText(),'3 из 26 шагов');
       }
     }
-    assert.equal(calls.length,0);results.push({width,modular:true,checkboxes:5,rightAction:true,singleVisibleMascot:true,editorial:true,axeOtherRules:true,knownRubricContrastException:true});await context.close();
+    assert.equal(calls.length,0);results.push({width,modular:true,checkboxes:5,editorialGrid:true,singleVisibleMascot:true,editorial:true,axeOtherRules:true,consistentFonts:true});await context.close();
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
@@ -140,6 +149,9 @@ try {
     await page.waitForFunction(()=>window.__notes===3);
     assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
+    const order=await page.locator('[data-focus-row]').evaluateAll(nodes=>nodes.map(el=>el.dataset.focusRow));
+    assert.deepEqual(order,['translate','apostille','notary','cimea','checkDocs'],'Completed tasks precede current and future, preserving chronology within groups');
+    const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('summary strong').evaluate(el=>getComputedStyle(el).color),'rgb(120, 113, 108)');
     assert.equal(calls.length,failTask?2:1);
     await page.locator('[data-task-ready=apostille]').press('Space');
     await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='5');

@@ -17,6 +17,7 @@ const links = [
 export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
+  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices") : links;
 
   useEffect(() => {
     function closeOutside(event: PointerEvent) {
@@ -30,13 +31,12 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
     <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
       <div className={styles.navInner}>
         <Link href="/" className={`${styles.wordmark} logo-link`} aria-label="IITALY — главная"><BrandLogo /></Link>
-        {variant === "portal" ? actions : <>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
-          {links.map(({ href, label }) => (
+          {visibleLinks.map(({ href, label }) => (
             <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
-        <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>
+        {variant === "portal" ? actions : <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>}
         <details ref={menuRef} key={pathname} className={styles.mobileMenu} onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.currentTarget.open = false;
@@ -50,14 +50,13 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
               if (details) details.open = false;
             }
           }}>
-            {links.map(({ href, label }) => (
+            {visibleLinks.map(({ href, label }) => (
               <Link key={href} href={href} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}<span aria-hidden>↗</span></Link>
             ))}
-            <Link href="/portal">Личный кабинет <span aria-hidden>↗</span></Link>
-            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button>
+            {variant === "public" && <><Link href="/portal">Личный кабинет <span aria-hidden>↗</span></Link>
+            <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button></>}
           </nav>
         </details>
-        </>}
       </div>
     </header>
   );
