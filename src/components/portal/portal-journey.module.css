@@ -44,6 +44,15 @@
 .compact:not(.embedded) .nav a,.compact:not(.embedded) .lockedStage { min-height:100px; gap:6px; }
 
 .compact:not(.embedded) .countNumbers { font-size:26px; }
+/* Internal reports need a condensed rail so their next action stays in view. */
+@media(min-width:601px) {
+ .compact:not(.embedded) .summary { padding-top:8px; margin-bottom:4px; }
+ .compact:not(.embedded) .count { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:4px 12px; }
+ .compact:not(.embedded) .countNumbers { font-size:22px; }
+ .compact:not(.embedded) .aheadReason { margin-top:0; }
+ .compact:not(.embedded) .nav a { min-height:84px; }
+ .compact:not(.embedded) .stageCopy>span { min-height:0; }
+}
 .journey a:focus-visible { outline:2px solid var(--route-green); outline-offset:2px; }
 .journey[data-road-feedback-active=true] .count { animation:savedStep 450ms ease-out; }
 @keyframes savedStep { from { transform:translateY(4px); } to { transform:translateY(0); } }
