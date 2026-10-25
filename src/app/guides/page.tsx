@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { VespiScene } from "@/components/mascot/VespiScene";
+import { VespiPose } from "@/components/mascot/VespiPose";
 import { ArrowRight, ArrowUpRight, BookOpen, Check, Search, X } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
@@ -202,7 +202,7 @@ export default function GuidesPage() {
                 track("guide_helper_opened", { topic: currentId || "overview", source: "edge-invite" });
                 openGuideHelper(currentId);
               }} aria-label="Тебе помочь? Открыть чат с Веспи">Тебе помочь?<ArrowUpRight size={16} aria-hidden="true" /></button>
-              <div className={ui.peekPose} data-vespi-guide-peek><VespiScene pose="peek" sizes="(max-width: 600px) 114px, 168px" /></div>
+              <div className={ui.peekPose} data-vespi-guide-peek data-vespi-scene="reading"><VespiPose pose="reading" sizes="(max-width: 600px) 114px, 168px" /></div>
             </div>
           </div>
 

@@ -105,7 +105,9 @@
 .eyebrow { display: inline-flex; align-items: center; min-height: 32px; padding: 5px 13px; border: 1px solid var(--color-warm-line); border-radius: 999px; background: #fff; color: #655b52; font-size: 13px; font-weight: 500; letter-spacing: 0; text-transform: none; }
 .signal { display: inline-block; width: 7px; height: 7px; margin-right: 9px; border-radius: 50%; background: var(--i-signal); vertical-align: 1px; }
 .heroTitle { max-width: 720px; margin: 20px 0 0; font-family: var(--font-apple-display); font-size: clamp(44px, 4.8vw, 70px); font-weight: 600; line-height: 1.08; letter-spacing: -.035em; text-wrap: initial; }
-.heroTitle span { color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+/* Запас справа: при отрицательном трекинге градиент иначе срезает хвост
+   последней буквы (например «ю» в «ситуацию»). */
+.heroTitle span { padding-inline-end: .08em; margin-inline-end: -.08em; color: #d92b38; background: var(--brand-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .heroDescription { max-width: 540px; margin: 24px 0 0; color: #56524c; font-size: 20px; line-height: 1.5; letter-spacing: -.025em; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; margin-top: 28px; }
 .heroNote { margin-top: 20px; max-width: 500px; color: #6b6761; font-size: 13px; line-height: 1.6; }

@@ -7,10 +7,22 @@ import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
 import { documentOutcome } from "@/lib/portalDocument";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
+import { WORKSPACE_PHASES } from "@/lib/localWorkspace";
 import styles from "./portal-journey.module.css";
 import { Check, ChevronRight, LockKeyhole } from "lucide-react";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
+
+/** Этапы на линии маршрута. До анкеты есть только первый этап; остальные
+    показываются закрытыми — те самые, что откроются после анкеты (у локального
+    кабинета свои фазы). Заглушки никогда не попадают в прогресс и хранилище. */
+export function portalRoadStages(data: PortalData): { stages: PortalStage[]; awaitingProfile: boolean } {
+  const realStages = data.roadmap.filter(row => row.tasks.length);
+  const awaitingProfile = !data.done.profile && realStages.length === 1 && realStages[0].tasks.some(task => task.id === "profile");
+  if (!awaitingProfile) return { stages: realStages, awaitingProfile };
+  const ahead = realStages[0].id.startsWith("workspace-phase-") ? WORKSPACE_PHASES.slice(1) : PREVIEW_STAGES.slice(1);
+  return { stages: [realStages[0], ...ahead.map((title, index) => ({ id: `preview-stage-${index + 1}`, title, tasks: [] }))], awaitingProfile };
+}
 
 export type RoadTravel = { fromDone: number; id: number };
 
@@ -136,10 +148,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     seenTravel.current = null;
   }, []);
 
-  const realStages = data.roadmap.filter(row => row.tasks.length);
-  const awaitingProfile = !data.done.profile && realStages.length === 1 && realStages[0].tasks.some(task => task.id === "profile");
-  // An orientation preview only: placeholders never enter progress or storage.
-  const stages = awaitingProfile ? [realStages[0], ...PREVIEW_STAGES.slice(1).map((title, index) => ({ id: `preview-stage-${index + 1}`, title, tasks: [] }))] : realStages;
+  const { stages, awaitingProfile } = portalRoadStages(data);
   const nav = useRef<HTMLElement>(null);
   useEffect(() => {
     const target = nav.current?.querySelector<HTMLElement>('[data-stage-selected="true"]') || nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
@@ -173,7 +182,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
 
   return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100, "--stage-count": stages.length || 1 } as CSSProperties}
-    data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
+    data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined} data-road-few={stages.length <= 2 ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
     data-road-static={currentOpen || navigationOnly ? "true" : undefined}
     data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}

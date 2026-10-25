@@ -1,8 +1,12 @@
-.journey { --route-green:var(--status-green); display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); align-items:center; gap:28px; width:100%; padding:20px 24px; border:1px solid var(--portal-border); border-radius:16px; background:var(--portal-surface); color:var(--portal-ink); }
+/* Линия этапов. Прогресс и пройденные этапы — терракотовые, как штампы;
+   текущий этап — тёмное кольцо, закрытые до анкеты — бледные с замком.
+   В подробных экранах (задача, документ) линия складывается в одну строку,
+   чтобы главное действие оставалось на первом экране. */
+.journey { --route-green:var(--accent); display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); align-items:center; gap:28px; width:100%; padding:20px 24px; border:1px solid var(--portal-border); border-radius:16px; background:var(--portal-surface); color:var(--portal-ink); }
 .compact { display:block; padding:12px 16px; }
 .focus,.nextAction,.route { min-width:0; }
-.route { overflow:hidden; padding:0 2px 4px; }
-.focus h2 { font:600 22px/1.2 var(--font-sans); letter-spacing:-.025em; margin:0; overflow-wrap:anywhere; }
+.route { position:relative; overflow:hidden; padding:0 2px 4px; }
+.focus h2 { font:600 22px/1.2 var(--font-sans); letter-spacing:-.02em; margin:0; overflow-wrap:anywhere; }
 .eyebrow { margin:0 0 7px; color:var(--portal-muted); font-size:12px; }
 .meta { margin-top:8px; color:var(--portal-muted); font-size:16px; line-height:1.5; }
 .action { display:inline-flex; align-items:center; justify-content:center; gap:14px; min-height:44px; margin-top:12px; padding:10px 20px; border-radius:12px; background:var(--accent); color:var(--on-dark); font-size:14px; font-weight:500; text-decoration:none; }
@@ -10,61 +14,87 @@
 .summary>span:first-child { padding-top:5px; color:var(--accent-text); font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
 .count { position:relative; display:grid; text-align:right; }
 .countNumbers { font:600 36px/1.1 var(--font-sans); letter-spacing:-.03em; color:var(--accent-text); }
-.feedback { position:absolute; inset:auto 0 -18px auto; color:var(--route-green); font-size:11px; font-weight:600; white-space:nowrap; }
+.feedback { position:absolute; inset:auto 0 -18px auto; color:var(--accent-text); font-size:12px; font-weight:600; white-space:nowrap; }
 .feedback:empty { display:none; }
 .nav { position:relative; display:grid; grid-template-columns:repeat(var(--stage-count),minmax(0,1fr)); gap:0; padding:12px 0 0; overflow:hidden; }
 .nav a,.lockedStage { position:relative; display:flex; min-width:0; min-height:116px; flex-direction:column; align-items:center; gap:10px; padding:0 6px 6px; color:var(--tracker-off); font:400 12px/1.4 var(--font-sans); text-align:center; text-decoration:none; }
 /* One rail, scaled by ordered progress only: ahead work never fills it. */
-.routeLine { position:absolute; left:calc(50% / var(--stage-count)); right:calc(50% / var(--stage-count)); top:27px; height:2px; border-top:2px solid var(--border); pointer-events:none; }
-.routeFill { position:absolute; left:0; top:-2px; width:100%; height:2px; background:var(--route-green); transform:scaleX(var(--route-fill,0)); transform-origin:left; transition:transform var(--road-travel-duration) cubic-bezier(.22,1,.36,1); }
+.routeLine { position:absolute; left:calc(50% / var(--stage-count)); right:calc(50% / var(--stage-count)); top:27px; height:2px; border-top:2px dashed #CFC5B4; pointer-events:none; }
+.routeFill { position:absolute; left:0; top:-2px; width:100%; height:2px; background:var(--route-green); transform:scaleX(var(--route-fill,0)); transform-origin:left; transition:transform var(--road-travel-duration) var(--portal-ease,cubic-bezier(.2,.8,.2,1)); }
 .nav a:hover .stageCopy>span { color:var(--portal-ink); text-decoration:underline; text-underline-offset:3px; }
 .nav a[data-stage-selected=true]:not([aria-current=step]) .stageCopy>span { text-decoration:underline; text-underline-offset:4px; }
-.checkpoint { position:relative; z-index:1; display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border:1px solid var(--border); border-radius:50%; background:var(--card); color:var(--tracker-off); font-variant-numeric:tabular-nums; }
-.nav a[aria-current=step] .checkpoint { border:2px solid var(--accent); color:var(--accent-text); }
-.nav a[aria-current=step] .stageCopy>span { color:var(--portal-ink); font-weight:600; }
-.nav a[data-road-stage-state=done] .checkpoint { background:var(--route-green); border-color:var(--route-green); color:white; }
+.checkpoint { position:relative; z-index:1; display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border:1.5px dashed #C9BFAE; border-radius:50%; background:var(--card); color:var(--tracker-off); font-variant-numeric:tabular-nums; }
+.nav a[aria-current=step] .checkpoint { border:2px solid var(--portal-ink); color:var(--portal-ink); }
+.nav a[aria-current=step] .stageCopy>span { color:var(--ink-strong); font-weight:600; }
+.nav a[data-road-stage-state=done] .checkpoint { border:2px solid var(--route-green); background:var(--card); color:var(--route-green); }
 .stageCopy { display:grid; gap:4px; width:100%; }
-.stageCopy>span { display:flex; justify-content:center; align-items:flex-start; min-height:34px; font-size:12px; line-height:1.4; }
-.stageCopy small { color:var(--portal-muted); font-size:11px; font-weight:400; font-variant-numeric:tabular-nums; }
-.stageState { display:block; min-height:14px; font-size:10px; line-height:1.4; }
-.stageCopy small[data-current-stage] .stageState { color:var(--accent-text); }
-.aheadReason { max-width:240px; margin-top:4px; color:var(--quiet); font-size:11px; line-height:1.4; }
-.goalDeadline { display:block; font-size:12px; font-weight:400; margin-top:4px; color:var(--portal-muted); }
-.ahead { display:inline; margin-left:12px; font-size:11px; font-weight:400; color:var(--portal-muted); }
+/* Две строки под любое название: счётчики шагов всех этапов стоят на одной линии. */
+.stageCopy>span { display:flex; justify-content:center; align-items:flex-start; min-height:2.8em; font-size:13px; line-height:1.4; }
+.stageCopy small { color:var(--portal-muted); font-size:12px; font-weight:400; font-variant-numeric:tabular-nums; }
+.stageState { display:block; min-height:14px; font-size:11px; line-height:1.4; }
+.stageCopy small[data-current-stage] .stageState { color:var(--accent-text); font-weight:600; }
+.aheadReason { max-width:240px; margin-top:4px; color:var(--quiet); font-size:12px; line-height:1.4; text-wrap:balance; }
+.goalDeadline { display:block; font-size:12px; font-weight:400; margin-top:4px; color:var(--portal-muted); letter-spacing:0; text-transform:none; }
+.ahead { display:inline; margin-left:12px; font-size:12px; font-weight:400; color:var(--portal-muted); }
 .accessibleProgress { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.routeNote { display:flex; gap:5px; margin-top:12px; color:var(--portal-muted); font-size:12px; line-height:1.5; }
+.routeNote { display:flex; gap:5px; margin-top:12px; color:var(--portal-muted); font-size:13px; line-height:1.5; }
 .routeNote svg { flex-shrink:0; margin-top:2px; }
 .uploadLink { display:inline-flex; align-items:center; min-height:44px; margin-top:4px; font-size:14px; text-decoration:underline; text-underline-offset:4px; }
 .stacked { grid-template-columns:minmax(0,1fr); gap:20px; }.stacked .focus { border-top:1px solid var(--portal-border); padding-top:20px; }
-.lockedStage { color:var(--tracker-off); opacity:.55; }
-.lockedStage small { display:flex; justify-content:center; align-items:center; gap:4px; color:var(--tracker-off); }
+.lockedStage { opacity:.55; }
+.lockedStage small { display:flex; justify-content:center; align-items:center; gap:4px; color:var(--tracker-off); font-size:12px; }
 .journey.embedded { padding:0; border:0; border-radius:0; box-shadow:none; background:transparent; }
 .embedded::after,.embedded::before { display:none; }
 .embedded .route { padding-inline:0; }
-.compact:not(.embedded) .nav a,.compact:not(.embedded) .lockedStage { min-height:100px; gap:6px; }
+.journey a:focus-visible { outline:2px solid var(--portal-ink); outline-offset:2px; }
+.journey[data-road-feedback-active=true] .count { animation:savedStep var(--portal-base,240ms) var(--portal-ease,ease-out); }
+@keyframes savedStep { from { opacity:.4; transform:translateY(4px); } to { opacity:1; transform:none; } }
 
-.compact:not(.embedded) .countNumbers { font-size:26px; }
-/* Internal reports need a condensed rail so their next action stays in view. */
+/* Подробные экраны: одна строка «счёт · этапы», рельс прогресса снизу. */
 @media(min-width:601px) {
- .compact:not(.embedded) .summary { padding-top:8px; margin-bottom:4px; }
- .compact:not(.embedded) .count { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:4px 12px; }
- .compact:not(.embedded) .countNumbers { font-size:22px; }
- .compact:not(.embedded) .aheadReason { margin-top:0; }
- .compact:not(.embedded) .nav a { min-height:84px; }
- .compact:not(.embedded) .stageCopy>span { min-height:0; }
+ .compact:not(.embedded) .route { display:grid; grid-template-columns:minmax(150px,auto) minmax(0,1fr); align-items:center; gap:4px 20px; padding-bottom:6px; }
+ .compact:not(.embedded) .summary { flex-direction:column; gap:2px; margin:0; padding-top:8px; }
+ .compact:not(.embedded) .count { text-align:left; }
+ .compact:not(.embedded) .countNumbers { font-size:20px; }
+ .compact:not(.embedded) .aheadReason { display:none; }
+ .compact:not(.embedded) .feedback { inset:auto auto -16px 0; }
+ .compact:not(.embedded) .nav { padding:0 0 4px; }
+ .compact:not(.embedded) :is(.nav a,.lockedStage) { flex-direction:row; align-items:center; min-height:52px; gap:8px; padding:4px 6px; text-align:left; }
+ .compact:not(.embedded) .checkpoint { width:26px; height:26px; flex-basis:26px; font-size:12px; }
+ .compact:not(.embedded) .stageCopy { gap:0; }
+ .compact:not(.embedded) .stageCopy>span { display:block; justify-content:flex-start; min-height:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+ .compact:not(.embedded) .stageState { display:inline; min-height:0; margin-left:5px; }
+ .compact:not(.embedded) .lockedStage small { justify-content:flex-start; }
+ .compact:not(.embedded) .routeLine { top:auto; bottom:0; left:0; right:0; }
 }
-.journey a:focus-visible { outline:2px solid var(--route-green); outline-offset:2px; }
-.journey[data-road-feedback-active=true] .count { animation:savedStep 450ms ease-out; }
-@keyframes savedStep { from { transform:translateY(4px); } to { transform:translateY(0); } }
+/* Один-два этапа: компактные фишки слева вместо одинокого кружка посреди
+   широкой пустой карточки. */
+.journey[data-road-few] .nav { display:flex; flex-wrap:wrap; gap:10px; padding-top:4px; }
+.journey[data-road-few] .routeLine { display:none; }
+.journey[data-road-few] .nav a { flex:0 1 auto; flex-direction:row; align-items:center; min-width:0; min-height:60px; gap:12px; padding:8px 16px 8px 10px; border:1px solid var(--portal-border); border-radius:12px; background:var(--portal-surface-soft); color:var(--quiet); text-align:left; }
+.journey[data-road-few] .stageCopy { width:auto; gap:2px; }
+.journey[data-road-few] .stageCopy>span { justify-content:flex-start; min-height:0; font-size:14px; }
+.journey[data-road-few] .stageState { display:inline; min-height:0; margin-left:6px; }
 @media(max-width:1000px) { .journey { grid-template-columns:minmax(0,1fr); gap:14px; } }
 @media(max-width:600px) {
- .journey { padding:14px; }.summary { gap:8px; }.countNumbers { font-size:25px; }.aheadReason { max-width:170px; font-size:10px; }.routeNote { display:none; }
+ .journey { padding:14px; }.summary { gap:8px; }.countNumbers { font-size:25px; }.aheadReason { max-width:170px; font-size:11px; }.routeNote { display:none; }
  .ahead { display:block; margin:2px 0 0; }
- .nav { display:flex; overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:thin; scrollbar-color:var(--border) transparent; gap:8px; padding:6px 2px 8px; scroll-padding-inline:2px; }
+ .nav { display:flex; overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:thin; scrollbar-color:#CFC5B4 transparent; gap:8px; padding:6px 2px 8px; scroll-padding-inline:2px; }
  .routeLine { display:none; }
- .nav a,.lockedStage,.compact:not(.embedded) .nav a { display:flex; flex-direction:row; flex:0 0 auto; align-items:center; min-width:156px; min-height:64px; gap:10px; padding:8px 12px; border:1px solid var(--border); border-radius:10px; text-align:left; }
- .checkpoint { width:24px; height:24px; flex-basis:24px; font-size:11px; }.checkpoint svg { width:14px; height:14px; }
- .stageCopy { width:auto; gap:3px; }.stageCopy>span { display:block; min-height:0; white-space:nowrap; }.stageCopy small { font-size:10px; }.stageState { display:inline; margin-left:5px; }
+ .nav a,.lockedStage,.compact:not(.embedded) .nav a { display:flex; flex-direction:row; flex:0 0 auto; align-items:center; min-width:156px; min-height:64px; gap:10px; padding:8px 12px; border:1px solid var(--portal-border); border-radius:10px; background:var(--portal-surface); text-align:left; }
+ .checkpoint { width:24px; height:24px; flex-basis:24px; font-size:12px; }.checkpoint svg { width:14px; height:14px; }
+ .stageCopy { width:auto; gap:3px; }.stageCopy>span { display:block; min-height:0; white-space:nowrap; }.stageCopy small { font-size:11px; }.stageState { display:inline; margin-left:5px; }
+ .lockedStage small { justify-content:flex-start; }
+}
+/* На телефоне закреплённая полоса подробных экранов — не выше ~120px. */
+@media(max-width:600px) {
+ .compact:not(.embedded) { padding:8px 10px 6px; }
+ .compact:not(.embedded) .summary { align-items:center; margin-bottom:4px; padding-top:6px; }
+ .compact:not(.embedded) .countNumbers { font-size:18px; }
+ .compact:not(.embedded) .ahead { display:inline; margin-left:8px; }
+ .compact:not(.embedded) .aheadReason { display:none; }
+ .compact:not(.embedded) .nav { padding:2px 2px 4px; }
+ .compact:not(.embedded) :is(.nav a,.lockedStage) { min-width:140px; min-height:48px; padding:6px 10px; }
 }
 @media(prefers-reduced-motion:reduce) { .journey .routeFill { transition:none!important; }.journey[data-road-feedback-active=true] .count { animation:none; } }
 @media(forced-colors:active) { .nav a[aria-current=step] { outline:2px solid Highlight; }.routeLine { border-color:CanvasText; }.routeFill { background:Highlight; } }

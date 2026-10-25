@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable @next/next/no-img-element -- Supplied local risograph assets, with explicit responsive dimensions. */
+/* eslint-disable @next/next/no-img-element -- Supplied local zhol icon with explicit dimensions. */
 
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
@@ -9,9 +9,10 @@ import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigatio
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
-import { PortalRouteVespi } from "./PortalRouteVespi";
-import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import { VespiPose } from "@/components/mascot/VespiPose";
 import { WIZ } from "@/data/wizard";
+import { PortalRoad, portalRoadStages, type RoadTravel } from "./PortalRoad";
+import { STAGE_ART, stageKey } from "./portalStageArt";
 import styles from "./portal-focus.module.css";
 
 type Props = {
@@ -57,12 +58,19 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const universities = selectedUniversities(shortlist);
   const firstName = data.client.name?.trim().split(/\s+/)[0];
   const days = daysTo(position.task);
-  const stageIndex = data.roadmap.filter(stage => stage.tasks.length).findIndex(stage => stage.id === position.stage?.id);
-  const stageTotal = data.roadmap.filter(stage => stage.tasks.length).length;
   const savedStampCount = rows.filter(row => portalTaskDone(savedData, row)).length;
   const introduction = position.task?.id === "profile";
   const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
     .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
+  // Один костюм Веспи на текущий этап маршрута.
+  const stages = data.roadmap.filter(stage => stage.tasks.length);
+  const routeStage = position.stage || stages[0];
+  const allDone = progress.total > 0 && progress.done === progress.total;
+  const routeArt = STAGE_ART[stageKey(routeStage?.id)];
+  const nowPose = progress.total === 0 ? "first-plan" : allDone ? "encourage" : routeArt.pose;
+  // Счёт этапов совпадает с линией маршрута, включая закрытые до анкеты.
+  const roadStages = portalRoadStages(data).stages;
+  const routeIndex = Math.max(0, roadStages.findIndex(stage => stage.id === routeStage?.id));
 
   function check(row: PortalTask) {
     if (busy || portalTaskDone(savedData, row)) return;
@@ -81,12 +89,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         </p>
       </div>
     </div>
-    <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+    <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now data-now-stage={stageKey(routeStage?.id)}>
       <svg className={styles.darkGrain} data-dark-grain aria-hidden="true" focusable="false" width="100%" height="100%">
         <filter id="portal-dark-grain"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" /></filter>
         <rect width="100%" height="100%" filter="url(#portal-dark-grain)" />
       </svg>
-      <p className={styles.nowRubric}>Этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
+      <p className={styles.nowRubric} data-now-stage-label>{allDone ? "Маршрут пройден" : `Этап ${routeIndex + 1} из ${roadStages.length || 1} · ${routeStage?.title || "Твой маршрут"}`}</p>
       <h2 id="portal-now-heading">Сейчас</h2>
       <div className={styles.nowNext}>
         <p className={styles.nowLabel}>Следующий шаг</p>
@@ -104,7 +112,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
         <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
       </div>}
-      <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
+      <div className={styles.mascotWindow}><div className={styles.welcomeScene} data-vespi-scene={nowPose} aria-hidden="true"><VespiPose pose={nowPose} priority sizes="(max-width: 600px) 110px, (max-width: 1100px) 160px, 220px" /></div></div>
     </aside>
     <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
@@ -121,10 +129,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             })}</span>
           </div>
         </div>
-        <figure className={styles.souvenir} data-stage-souvenir data-earned={savedStampCount === ordered.length && ordered.length > 0}>
-          <img src="/zhol/map-pencil-320.webp" srcSet="/zhol/map-pencil-320.webp 320w, /zhol/map-pencil-640.webp 640w" sizes="(max-width:600px) 86px, 104px" width="104" height="73" alt="" />
-          <figcaption><span>Сувенир за этап</span><strong>Карта маршрута</strong></figcaption>
-        </figure>
       </div>
       <div className={styles.taskList} aria-label="Задачи этапа">
         {visibleTasks.map(row => {
@@ -140,7 +144,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           };
           return <article key={row.id} className={styles.task} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" pathLength="100" /></svg>
             </button>
             <span className={styles.stepIndex} aria-hidden="true">{String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0")}</span>
             <div className={styles.taskDetails} data-focus-row={row.id}>

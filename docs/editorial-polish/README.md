@@ -8,7 +8,7 @@ The guide illustration is 27.1% larger at 1440px and 35% larger at 390px. The pu
 
 - [Shared depth and chrome](../../src/components/marketing/surface-depth.module.css), [paper grain](../../public/textures/paper-grain.svg).
 - [Guide composition](../../src/app/guides/guides.module.css).
-- [Large Vespi scene](../../src/components/home/VespiEditorialBreak.tsx), [scene CSS](../../src/components/home/vespi-editorial.module.css).
+- [Large Vespi scene](../../src/components/mascot/VespiIntroSection.tsx), [scene CSS](../../src/components/mascot/vespi-intro.module.css).
 - [Cloud portal shell](../../src/components/portal/portal-navigation.module.css), [local portal shell](../../src/components/portal/workspace.module.css).
 - [Contextual stage portrait](../../src/components/portal/PlanSection.tsx), [portal task](../../src/components/portal/PortalTaskDetail.tsx), [saved report](../../src/components/portal/PortalDocumentReport.tsx).
 - [One accessible upload/drop action](../../src/components/portal/PortalUploadZone.tsx), [upload CSS](../../src/components/portal/portal-upload.module.css), [existing pipeline integration](../../src/components/portal/PortalExplorer.tsx).

@@ -1,4 +1,6 @@
 .portal {
+  /* Кабинет в стиле zhol: значения — в portal-paper.module.css (набор владельца).
+     Терракота — штампы, ярлыки, цифры и главное действие. */
   --i-signal: var(--accent);
   --portal-canvas: var(--paper);
   --portal-surface: var(--card);
@@ -7,17 +9,32 @@
   --portal-muted: var(--quiet);
   --portal-ash: var(--quiet);
   --portal-ink: var(--ink);
+  --portal-ink-strong: var(--ink-strong);
   --portal-accent: var(--accent);
   --portal-accent-deep: var(--accent-text);
+  --portal-signal: var(--accent);
+  --portal-signal-text: var(--accent-text);
   --portal-heading-font: var(--font-sans);
   --font-apple-display: var(--font-sans);
   --font-apple-text: var(--font-sans);
   --portal-green: var(--status-green);
   --portal-warn: var(--color-warn);
   --portal-danger: var(--color-red-deep);
+  /* Тактильное зерно — встроенный SVG-шум (без внешних картинок): серый, с непрозрачной
+     альфой (feTurbulence шумит и в ней) и поднятым контрастом, иначе при 6–8%
+     его не видно. Прозрачность
+     зашита в слой, чтобы класть его прямо в background. */
+  --grain-paper: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  --grain-kraft: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  --grain-raw: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Одно движение на весь кабинет: только transform и opacity, без пружин. */
+  --portal-ease: cubic-bezier(.2, .8, .2, 1);
+  --portal-fast: 160ms;
+  --portal-base: 240ms;
+  --portal-slow: 360ms;
   min-height: 100vh;
   min-height: 100svh;
-  background: var(--portal-canvas);
+  background: var(--portal-canvas) url("/textures/zhol-paper.webp") repeat 0 0 / 640px 640px;
   color: var(--portal-ink);
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -267,7 +284,8 @@
   height: 100%;
   border-radius: inherit;
   background: var(--portal-accent);
-  transition: width 320ms ease;
+  transform-origin: left;
+  transition: transform var(--portal-base) var(--portal-ease);
 }
 
 .statusBadge {
@@ -1199,28 +1217,19 @@
 
 /* First-run: no wall of zeroes before the route knows who the student is. */
 .onboardingPage {
-  --portal-canvas: var(--paper);
-  --portal-surface: var(--card);
-  --portal-border: var(--border);
-  --portal-muted: var(--quiet);
-  --portal-ash: var(--quiet);
-  --portal-ink: var(--ink);
-  --portal-accent: var(--accent);
-  --portal-accent-deep: var(--accent-text);
-  --portal-green: var(--status-green);
   --portal-danger: var(--portal-ink);
   min-height: calc(100svh - 64px);
   padding: 32px 24px 64px;
   font-family: var(--font-apple-text);
   line-height: 1.5;
-  background: var(--portal-canvas);
+  background: transparent;
   color: var(--portal-ink);
 }
 .onboardingShell { max-width: 760px; margin: 0 auto; }
 .onboardingTop { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 44px; color: var(--portal-muted); font-size: 13px; }
 .onboardingTop .portalBrand { margin: 0; }
 .onboardingProgress { height: 3px; margin: 10px 0 26px; overflow: hidden; border-radius: 999px; background: #e1dacf; }
-.onboardingProgress span { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transition: width 240ms ease; }
+.onboardingProgress span { display: block; height: 100%; border-radius: inherit; background: var(--portal-accent); transform-origin: left; transition: transform var(--portal-base) var(--portal-ease); }
 .onboardingCard { padding: 24px; border: 1px solid var(--portal-border); border-radius: 24px; background: var(--portal-surface); }
 .onboardingTitle { max-width: 650px; margin: 4px 0 0; font-family: var(--font-apple-display); font-size: clamp(28px,4vw,36px); font-weight: 600; line-height: 1.08; letter-spacing: -.03em; }
 .onboardingLead { max-width: 620px; margin: 10px 0 0; color: var(--portal-muted); font-size: 16px; line-height: 1.5; }
@@ -1488,7 +1497,17 @@
 @media (max-width: 480px) { .onboardingAvatar { width: 48px; height: 48px; } .onboardingGreeting { gap: 12px; } }
 
 /* Functional workspace retains its compact navigation and single next action. */
-.portal { background: radial-gradient(ellipse at 12% 0%, rgba(253,238,228,.45), transparent 42%), var(--portal-canvas); }
+/* Фон кабинета: зерно (multiply) поверх бумаги zhol и тёплого света сверху.
+   Слои фона, а не фиксированный оверлей: на недорогих Android смешивание
+   фиксированного слоя пересчитывается на каждом кадре прокрутки. */
+.portal {
+  background:
+    var(--grain-paper) 0 0 / 360px 360px,
+    radial-gradient(ellipse at 12% 0%, rgba(253,238,228,.45), transparent 42%),
+    url("/textures/zhol-paper.webp") 0 0 / 640px 640px,
+    var(--portal-canvas);
+  background-blend-mode: multiply, normal, normal, normal;
+}
 .card { background: #fff; border-radius: 28px;  }
 
 /* Explicit local workspace entry, user request 2026-10-18. */

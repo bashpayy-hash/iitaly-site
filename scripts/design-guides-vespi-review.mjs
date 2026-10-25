@@ -278,7 +278,8 @@ try {
     }
     const invite = page.locator('[data-guide-invite]');
     assert.equal(await invite.count(),1,'One contextual invitation replaces the promotional banner');
-    assert.equal(await invite.locator('[data-vespi-guide-peek] img').getAttribute('src'),'/mascot/handmade-v1/peek-640.webp');
+    // User request 2026-10-25: Vespi never repeats; the home intro keeps the peek pose.
+    assert.equal(await invite.locator('[data-vespi-guide-peek] img').getAttribute('src'),'/mascot/handmade-v2/reading-280.webp');
     await invite.locator('img').evaluate(image=>image.decode());
     const peekAction=invite.getByRole('button',{name:'Тебе помочь? Открыть чат с Веспи',exact:true});
     const chatsBeforePeek=chats.length;

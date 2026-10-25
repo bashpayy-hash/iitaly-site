@@ -123,6 +123,30 @@ The two-column workspace has route and stage on the left, and a dark Now/Vespi p
 
 An unanswered local questionnaire previews all six route labels, with five disabled, locked placeholders. They never enter the progress data: the count remains the real 0/2. Existing full plans retain their own stages and ordered/ahead counts, including 4/26 plus 2 ahead. Stamps read saved completion and animate only on a newly confirmed save. The quote derives its question count from WIZ (currently 10), rather than promising four questions while displaying ten. The actual form, reports, stored answers, APIs, payment logic and progress formula are unchanged. Vespi retires when the assistant opens. Motion and sound preferences remain respected.
 
+## Gamified cabinet in zhol style · 25 October 2026
+
+Built on the official zhol kit above. The owner's later requests (one rewarded step at a time, visible tactile texture) supersede it on these points:
+
+- **Stamps are terracotta**, like an ink stamp: task marks, the stage stamp track and finished route stages. Green `#356450` stays for status text such as «Выполнено».
+- **Exactly two gradients**, both asked for by the owner: a terracotta glow behind Vespi on the Now plate and a diagonal micro-gradient on the current step. A faint dot grid sits behind the greeting.
+- **Paper grain is a background layer**, not a fixed overlay: inline SVG noise at 6% multiply on the cabinet and its sticky header, matte noise at 8% overlay on the Now plate, kraft noise at 7% on the current step. Blending a fixed full-screen layer repaints on every scroll frame on cheap Androids. The paper is a 640px tile cut from the kit's `bg_cream.jpg` (13 KB instead of 250 KB).
+- **The Now plate hugs its content** and stays beside the list while scrolling on desktop. Stretched to the column height it left an empty hole between the text and Vespi.
+- **Locked preview stages are the ones that will really open.** The local workspace previews its own phases (four locked after «Выбор программы»); a server plan previews the six stage names.
+- **No stage souvenir.** The owner removed it on review (25 October, evening): it left an empty block beside the stamps. The kit's map illustration is not used either; it shows a logistics brand's trucks and ships.
+- **Stamps and checks stand upright.** A tilted check read as crooked; the stamp is the terracotta double ring, not a rotation. Step rings line up with the stage heading and, on phones, with the text of the current card.
+
+The cabinet turns the route into one small step at a time and rewards each saved step.
+
+**One step in focus.** The dark «Сейчас» plate (kit `bg_dark.jpg` over `#392A22`, labels `#F29A89`, text `#FAF9F3`) names the stage («Этап 2 из 7 · Документы»), the next step, its orientir and Vespi's quote. On phones the order is greeting → plate → route progress → current stage tasks, so progress stays in the first viewport.
+
+**Stamps.** A saved task becomes a terracotta stamp (`#B83A27`, upright double ring). Each stage shows its stamp track. A saved step shows the reward card «Штамп получен» with the stamping Vespi; the last step of a stage shows «Этап пройден» with the jumping Vespi and «Все штампы этапа: N из N». Rewards come only from `usePortalFeedback.confirm` after a real save, never on login, reload, navigation, undo or an uncertain document. The route count, progress formula and document verdicts are unchanged.
+
+**Vespi never repeats.** Situational poses live in `src/components/mascot/VespiPose.tsx`; each has exactly one owner: a costume per stage in the Now plate, stamp and celebrate in rewards, oops on a failed action outside the overview, thinking in the first-run questionnaire, first-plan for an empty route, encourage when the route is complete, reading on /guides (the home intro keeps the peek pose). The round chat avatar is the assistant's identity and the only image allowed in more than one entry point. `scripts/design-vespi-unique-review.mjs` enforces this. Provenance: `design/mascot/vespi/handmade-v2.json`.
+
+**zhol inside the cabinet only.** Tokens live in `src/app/portal/portal-paper.module.css` and are mapped to `--portal-*` in `portal.module.css`. Brand green `#087C55` belongs to the logo only. Stage illustrations in task pages are single risograph objects on a beige plate. Public pages keep their own palette.
+
+**One type and motion system.** The cabinet uses the kit's self-hosted Inter Tight for headings and text; no serif headline. Motion uses `--portal-fast` 160ms, `--portal-base` 240ms, `--portal-slow` 360ms with `cubic-bezier(.2,.8,.2,1)`, transform and opacity only, no spring overshoot; reduced motion removes it. On task and document pages the route collapses into a single-line tracker so the main action stays in the first viewport.
+
 ## University selection and notary correction, 25 October 2026
 
 In the existing portal catalogue, put “Выбрать университет” directly below each university name. Preserve its checkbox semantics and show “Университет выбран” after selection. The single “Сохранить выбор” action remains visible at the viewport bottom, including before a choice; it is disabled for an empty or unchanged saved list. Reserve space after the catalogue and beside the desktop assistant so the action cannot cover content or the chat. Selection still saves through the existing explicit operation; checking a card never completes the task automatically.

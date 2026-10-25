@@ -13,7 +13,8 @@
   --color-warn:var(--status-amber); --color-red-deep:var(--accent-text); --color-green:var(--status-green);
   --depth-ambient:none; --depth-contact:none; --depth-highlight:none;
   min-width:0; min-height:100svh; color:var(--ink); font-family:var(--font-sans); font-synthesis:none;
-  background:var(--paper) url('/zhol/bg_cream.jpg') center top / 1440px auto repeat;
+  /* Тайл 640px из bg_cream.jpg набора (13 КБ вместо 250 КБ) — для недорогих Android. */
+  background:var(--paper) url('/textures/zhol-paper.webp') 0 0 / 640px 640px repeat;
 }
 .paper :is(h1,h2,h3,h4) { font-family:var(--font-sans); font-weight:600; letter-spacing:-.02em; }
 .paper :is(strong,b) { font-weight:600; }
@@ -35,10 +36,9 @@
 .paper :global([data-portal-header]) nav[aria-label="Мобильная навигация"] a[aria-current="page"] { color:var(--accent-text); font-weight:600; }
 .paper :global([data-portal-header]) :global(.logo-link) { color:var(--ink); }
 .paper :global([data-portal-assistant]) { background:var(--card); border:1px solid var(--border); color:var(--ink); }
-.grain { position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.018; mix-blend-mode:multiply; }
 @media(max-width:900px) { .paper :global([data-portal-header]) > div::after { left:20px; right:20px; } }
 @media(max-width:600px) { .paper :global([data-portal-header]) > div { height:64px; min-height:64px; }.paper :global([data-portal-header]) > div::after { left:12px; right:12px; } }
-@media(forced-colors:active) { .grain { display:none; }.paper { background:Canvas; }.paper :global([data-portal-header]) > div::after { background:CanvasText; } }
+@media(forced-colors:active) { .paper { background:Canvas; }.paper :global([data-portal-header]) > div::after { background:CanvasText; } }
 /* The assistant is mounted outside the route wrapper. Theme only its portal variant. */
 :global(body):has(.paper) :global([data-portal-chat="true"]) {
   --font-apple-text:"Inter Tight",sans-serif; --font-apple-display:"Inter Tight",sans-serif;
