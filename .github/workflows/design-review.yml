@@ -15,6 +15,7 @@ on:
       - "src/lib/usePlanDraft.ts"
       - "src/lib/localWorkspace.ts"
       - "src/components/portal/**"
+      - "src/app/portal/**"
       - "src/lib/checkDocument.ts"
       - "src/components/Header.tsx"
       - "src/components/Footer.tsx"

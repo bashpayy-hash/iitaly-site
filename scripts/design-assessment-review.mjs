@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 // Focused regression for the post-questionnaire transition and readable results.
 // All account and service traffic is synthetic; this never contacts a live user.
 import assert from 'node:assert/strict';
@@ -83,7 +84,7 @@ async function capture(page, name, preview = false) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${name}: no horizontal overflow`);
   await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
   const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(item => ['serious', 'critical'].includes(item.impact)).map(item => ({ id: item.id, targets: item.nodes.map(node => node.target) })));
-  assert.deepEqual(violations, [], `${name}: accessibility`);
+  assert.deepEqual(await editorialContrastFindings(page, violations), [], `${name}: accessibility`);
   const target = preview ? page.getByRole('button', { name: 'Открыть мой план', exact: true }) : page.locator('[data-assessment-result]').first();
   // Frame the result below the real sticky chrome, rather than centering a
   // multi-screen section and accidentally photographing only its middle.

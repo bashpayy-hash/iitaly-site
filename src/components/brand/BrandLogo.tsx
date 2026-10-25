@@ -2,7 +2,7 @@ import { BrandMark } from "./BrandMark";
 import styles from "./brand-logo.module.css";
 
 /** Visual wordmark only. Its containing link or labelled element owns the
- * accessible name and navigation, including the portal's in-place home action. */
+ * accessible name and navigation to the site's home page. */
 export function BrandLogo({ className = "", compact = false, inverse = false }: {
   className?: string;
   compact?: boolean;

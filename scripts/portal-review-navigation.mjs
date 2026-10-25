@@ -1,13 +1,11 @@
 // The stage pipeline replaces the old sidebar. Exercise real UI controls,
 // keeping authentication and in-memory document context alive between views.
 export async function portalDestination(page, name) {
-  const home = page.locator('[data-portal-header] a[href="/portal"]');
-  await home.click();
-  await page.locator('[data-portal-focus]').waitFor();
   if (name === 'Документы') {
     await page.locator('[data-portal-documents]').click();
-  } else if (name === 'План') {
+  } else {
     await page.locator('[data-road-stage][aria-current="step"]').click();
+    await page.locator('[data-portal-focus]').waitFor();
   }
 }
 export async function portalTask(page, id) {

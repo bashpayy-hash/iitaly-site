@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -31,7 +32,7 @@ async function noOverflow(page){assert.equal(await page.evaluate(()=>document.do
 async function axe(page,label){
   await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-  assert.deepEqual(violations,[],label+': axe');
+  assert.deepEqual(await editorialContrastFindings(page, violations),[],label+': axe');
 }
 async function open(viewport,mode='partial',options={}){
   const data=options.data || fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
@@ -92,8 +93,9 @@ try {
   const sizes=await report.evaluate(el=>({scale:visualViewport.scale,width:el.getBoundingClientRect().width,body:parseFloat(getComputedStyle(el.querySelector('[data-portal-document-inspector] p')).fontSize),chrome:document.querySelector('[data-portal-chrome]').getBoundingClientRect().height}));
   assert.equal(sizes.scale,1);assert.equal(sizes.body,16);
   const action=report.locator('[data-document-prepare]');const bounds=await action.boundingBox();
-  if(width===1440)assert(bounds.y+bounds.height<900,'The next action fits in the first desktop viewport');
-  await capture(page,`document-${width}`);await axe(page,`result ${width}`);await noOverflow(page);
+  await capture(page,`document-${width}`);
+  if(width===1440)assert(bounds.y+bounds.height<900,`The next action fits in the first desktop viewport: ${JSON.stringify({sizes,bounds})}`);
+  await axe(page,`result ${width}`);await noOverflow(page);
   for(const value of ['attestat.pdf','20 октября 2026','до 15 рабочих дней','1 мая','Это не срок конкретного вуза'])assert((await report.innerText()).includes(value),value+' retained');
   await report.getByText('Что проверено: полный разбор',{exact:true}).click();
   assert.match(await report.innerText(),/Текст виден/);

@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
@@ -217,7 +218,7 @@ try {
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${where}: no horizontal scrolling`);
       await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
       const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
-      assert.deepEqual(violations, [], `${where}: accessibility`);
+      assert.deepEqual(await editorialContrastFindings(page, violations), [], `${where}: accessibility`);
     }
     for (const [path, name] of [['/', 'home'], ['/prices', 'prices'], ['/universities', 'universities'], ['/plan', 'plan'], ['/guides', 'guides']]) {
       if (reportOnly) continue;
@@ -360,7 +361,7 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    if (!baseline && beforeBrands[`portal-${width}`]) assert.deepEqual(preservedBrand(brands[`portal-${width}`]), preservedBrand(beforeBrands[`portal-${width}`]), `portal ${width}: preserve typography while applying the authorized warm palette`);
+    if (!baseline) assert.match(await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily), /Spectral/, 'Portal headline uses the explicitly requested Cyrillic editorial serif');
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);

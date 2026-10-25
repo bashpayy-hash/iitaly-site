@@ -1,3 +1,4 @@
+import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import { portalDestination, portalTask } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -32,7 +33,7 @@ async function noOverflow(page){assert.equal(await page.evaluate(()=>document.do
 async function axe(page,label){
   await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
-  assert.deepEqual(violations,[],label+': axe');
+  assert.deepEqual(await editorialContrastFindings(page, violations),[],label+': axe');
 }
 async function open(viewport,mode='partial',options={}){
   const data=options.data || fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);

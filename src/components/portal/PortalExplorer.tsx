@@ -735,10 +735,7 @@ export function PortalExplorer() {
     return (
       <div className={styles.portal}>
       <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
-      <MarketingHeader variant="portal" onHome={() => {
-        if (!editingProfile) return;
-        profileFromTask.current = false; setEditingProfile(false); changeSection("today");
-      }} />
+      <MarketingHeader variant="portal" />
       {editingProfile && data.client.onboardingComplete && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
         <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen navigationOnly />
       </section>}
@@ -774,7 +771,7 @@ export function PortalExplorer() {
   return (
     <div className={`${styles.portal} ${focusStyles.portalRoot}`} data-portal-navigation data-portal-design="shared-site">
     <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
-    <MarketingHeader variant="portal" onHome={() => changeSection("today")} actions={
+    <MarketingHeader variant="portal" actions={
       <div className={navigation.headerLinks}>
         <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={assistantTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiOutline /><span>Помощник</span></a>
         <a href="/portal?view=docs" aria-label="Документы" title="Документы" data-portal-documents className={navigation.settingsButton} onClick={event => { if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();changeSection("docs"); }}><FileText size={18} strokeWidth={1.5} aria-hidden="true" /></a>

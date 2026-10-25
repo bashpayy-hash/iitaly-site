@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META, fmtDate } from "@/lib/portalMeta";
 import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigation";
@@ -74,13 +74,15 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           const time = row.time || TASK_META[row.id]?.min;
           const description = row.id === "apostille" ? "Уточнить требования выбранного вуза и поставить штамп в ЦОНе" : taskShortExplainer(row);
           const href = data.docs[row.id] ? portalTaskHref(data, row) : `/portal?view=plan&task=${encodeURIComponent(row.id)}`;
+          const ordinal = String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0");
+          const rubric = `Шаг ${ordinal} из ${String(ordered.length).padStart(2, "0")}${isCurrent ? " · Текущий фокус" : ""}`;
           return <article key={row.id} className={styles.task} data-expanded={open} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
             </button>
             <details className={styles.taskDetails} data-focus-row={row.id} open={open}>
-              <summary onClick={event => { event.preventDefault(); setDisclosure({ scope, id: open ? null : row.id }); }}>
-                <strong data-road-step-title={isCurrent || undefined}>{taskTitle(row)}</strong>
+              <summary aria-label={open ? `${rubric}. ${taskTitle(row)}` : undefined} onClick={event => { event.preventDefault(); setDisclosure({ scope, id: open ? null : row.id }); }}>
+                <span className={styles.headingCopy}>{open && <span className={styles.rubric} data-portal-rubric aria-hidden="true">{rubric}</span>}<strong data-road-step-title={isCurrent || undefined}>{taskTitle(row)}</strong></span>
                 <span className={styles.rowMeta}>{date && <span className={styles.dateBadge}>До {date}</span>}<ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" /></span>
               </summary>
               <div className={styles.taskBody}>
@@ -92,7 +94,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
                 </div>
               </div>
             </details>
-            <a hidden={!open} className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined); }}>Открыть разбор <span aria-hidden="true">→</span></a>
+            <div className={styles.taskActions} hidden={!open}>
+              <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined); }}>Открыть разбор <span aria-hidden="true">→</span></a>
+              {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым <Check size={16} strokeWidth={1.5} aria-hidden="true" /></button>}
+            </div>
           </article>;
         })}
       </div>

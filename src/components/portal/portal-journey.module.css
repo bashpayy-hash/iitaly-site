@@ -88,3 +88,28 @@
 .embedded .summary { margin-bottom:6px; }
 .embedded .feedback { position:absolute; inset:auto 0 -16px auto; font-size:11px; }
 @media(max-width:600px) { .compact .nav a { min-width:156px; } }
+
+/* Route points share a single uninterrupted line above the labels. */
+.nav { position:relative; gap:8px; padding:8px 2px 12px; }
+.nav a,.compact .nav a { flex:1 0 154px; min-width:154px; min-height:112px; flex-direction:column; align-items:center; justify-content:flex-start; gap:10px; padding:12px 8px 10px; border-radius:12px; text-align:center; }
+.nav a::after,.compact .nav a::after { display:block; left:50%; right:auto; top:26px; width:calc(100% + 10px); height:2px; border-top:2px dashed #D5CFC4; background:transparent; z-index:1; }
+.nav a:last-child::after { display:none; }
+.nav a[data-road-stage-state=done]::after { border-top:2px solid #1B5E55; }
+.nav a[aria-current=step] { background:#FAF8F3; border:1px solid #DFD9CE; }
+.checkpoint,.compact .checkpoint { position:relative; z-index:2; flex:0 0 30px; width:30px; height:30px; border:1px solid #D5CFC4; background:#FFFFFF; color:#615D57; }
+.nav a[aria-current=step] .checkpoint { background:#C84B31; color:#FFFFFF; border-color:#C84B31; box-shadow:0 0 0 5px rgba(200,75,49,.15); }
+.nav a[aria-current=step] .checkpoint::before { content:""; position:absolute; inset:-5px; border-radius:50%; background:rgba(200,75,49,.15); z-index:-1; animation:mapPulse 2.4s ease-in-out infinite; }
+.nav a[data-road-stage-state=done] .checkpoint { background:#1B5E55; border-color:#1B5E55; color:#FFFFFF; }
+.stageCopy,.nav a[aria-current=step] .stageCopy { background:transparent; z-index:2; gap:3px; padding:0; }
+.stageCopy>span { font-size:13px; line-height:1.4; }.stageCopy small { font-size:12px; }
+.fill { background:#1B5E55; }.marker>span { border-color:#1B5E55; }.feedback { color:#1B5E55; }
+.countNumbers { font:600 34px/1.15 var(--portal-serif); letter-spacing:-.02em; color:#1B5E55; }
+.summary { align-items:center; }.embedded .summary { margin-bottom:8px; }
+@keyframes mapPulse { 0%,100% { transform:scale(1); opacity:.4; } 50% { transform:scale(1.18); opacity:1; } }
+@media(max-width:600px) { .countNumbers { font-size:28px; }.nav a,.compact .nav a { flex-basis:150px; min-width:150px; } }
+@media(prefers-reduced-motion:reduce) { .nav a[aria-current=step] .checkpoint::before { animation:none; } }
+
+/* Detail pages keep the map compact so the document action stays in view. */
+.compact:not(.embedded) .nav a { min-height:90px; padding:8px 8px 6px; gap:6px; }
+.compact:not(.embedded) .nav a::after { top:22px; }
+.compact:not(.embedded) .countNumbers { font-size:26px; }
