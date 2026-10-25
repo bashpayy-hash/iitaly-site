@@ -160,6 +160,10 @@ try {
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
     await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
+    assert.equal(await page.locator('[data-step-detail=notary] [data-higgsfield-visual]').count(),0,'Notary instructions have no unrelated folder illustration');
+    assert.equal(await page.locator('[data-step-detail=notary] [data-micro-steps] li').count(),3,'Removing decoration preserves all notary microsteps');
+    await noOverflow(page);
+    if(width===1440||width===390)await page.screenshot({path:resolve(output,`notary-${width}.png`),fullPage:true,animations:'disabled'});
     await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1);assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();

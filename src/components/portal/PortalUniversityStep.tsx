@@ -6,7 +6,6 @@ import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { taskDate, taskHelpDetails, taskTitle } from "@/lib/portalNavigation";
 import { shortlistNames, validShortlist } from "@/lib/portalShortlist";
 import styles from "./portal-universities.module.css";
-import portal from "./portal.module.css";
 
 const UniversitiesExplorer = dynamic(() => import("@/components/universities/UniversitiesExplorer").then(module => module.UniversitiesExplorer), {
   loading: () => <p role="status" className={styles.loading}>Загружаю карту и сравнение…</p>,
@@ -45,10 +44,10 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
       <p className={styles.meta}>{[stage?.title, task.time || "15 мин"].filter(Boolean).join(" · ")}</p>
       {date && <p className={styles.meta}>{date} — это не срок конкретного вуза.</p>}
       <p id="portal-step-action-hint" className={styles.hint} data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
-      <p id="portal-shortlist-storage" className={styles.meta}>{localOnly ? "Список сохраняется на этом устройстве." : "Список сохраняется в профиле."}</p>
       <details className={styles.help} data-step-help>
         <summary>Как выполнить этот шаг</summary>
-        <p>Отметка «В мой список» добавляет вуз в список. Затем нажми «Сохранить». Сравнение — отдельный инструмент: можно сопоставить до трёх вузов, не добавляя их в список.</p>
+        <p>Нажми «Выбрать университет» в карточке вуза, затем «Сохранить выбор» внизу экрана. Сравнение — отдельный инструмент: можно сопоставить до трёх вузов, не добавляя их в список.</p>
+        <p id="portal-shortlist-storage">{localOnly ? "Список сохраняется на этом устройстве." : "Список сохраняется в профиле."}</p>
         <p>Выбор вуза не определяет требования программы. До подачи сверь программу, экзамены и сроки на её официальной странице.</p>
         {taskHelpDetails(task).map(text => <p key={text}>{text}</p>)}
         {done && <a href="#portal-step-heading" className={styles.back} aria-disabled={busy} onClick={event => {
@@ -64,10 +63,10 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
         <span>{names.length ? `В твоём списке: ${names.length}` : "Выбери хотя бы один вуз"}</span>
         {names.length > 0 && <p>{names.join(" · ")}</p>}
       </div>
-      <button type="button" className={portal.primaryButton} data-shortlist-save data-primary-action
+      <button type="button" className={styles.saveButton} data-shortlist-save data-primary-action
         disabled={busy || !draft.length || (done && unchanged)} aria-describedby="portal-step-action-hint portal-shortlist-storage"
         onClick={() => { if (!busy && draft.length) void onSave(draft); }}>
-        {busy ? "Сохраняю…" : "Сохранить"}
+        {busy ? "Сохраняю…" : done && unchanged ? "Выбор сохранён" : "Сохранить выбор"}
       </button>
     </div>
   </section>;

@@ -230,3 +230,28 @@
 .page { background: var(--color-alabaster); }
 .heroArt { overflow: hidden; border-radius: 28px 64px 28px 28px; }
 .filterWorkspace, .uniCard, .modal { background: #fff; border-color: var(--color-warm-line); border-radius: 28px;  }
+
+/* The portal has one explicit shortlist action; comparison remains independent. */
+.embedded { --i-signal:var(--accent); --i-action:var(--accent); --i-link:var(--accent-text); --u-ink:var(--ink); --u-body:var(--quiet); --u-meta:var(--quiet); --u-line:var(--border); }
+.embedded .cityPanel,.embedded .cityHeader,.embedded .uniCard { background:var(--card); border-color:var(--border); }
+.embedded .cityPanel { border-radius:16px; }.embedded .uniCard { border-radius:12px; }
+.embedded .cityFacts { background:var(--beige); }
+.embedded .cityFact { display:grid; grid-template-columns:24px minmax(0,1fr); align-items:start; gap:10px; line-height:1.5; }
+.embedded .factNumber { margin:0; font-size:13px; line-height:1.5; }
+.embedded .uniOpen { align-self:start; min-height:44px; }
+.embedded .uniName { margin:0; font-size:20px; line-height:1.25; letter-spacing:-.02em; }
+.embedded .uniType { margin:6px 0 0; }
+.embedded .uniDetails { margin-top:0; padding-top:14px; border-color:var(--border); }
+.embedded .uniDetails dd { margin:3px 0 0; font-size:14px; line-height:1.5; }
+.embedded .cardActions { margin-top:0; padding-top:4px; align-self:end; }
+.embedded .shortlistToggle { width:100%; margin:0; border-color:var(--accent); background:var(--card); color:var(--accent-text); font-weight:600; line-height:1.4; }
+.embedded .shortlistToggle:hover { background:var(--beige); }
+.embedded .shortlistToggle:has(:checked) { border-color:var(--status-green); color:var(--status-green); background:var(--card); }
+.embedded .shortlistToggle:has(:focus-visible) { outline:2px solid var(--accent); outline-offset:3px; }
+.embedded .shortlistToggle input { accent-color:var(--status-green); }
+.embedded .compareToggle:has(:checked) { background:var(--beige); border-color:var(--border); color:var(--ink); }
+@supports(grid-template-rows:subgrid) {
+ .embedded .uniCard[data-has-shortlist=true] { display:grid; grid-template-rows:subgrid; grid-row:span 6; gap:14px; }
+ .embedded .uniDetails { grid-row:span 3; grid-template-rows:subgrid; }
+}
+@supports not (grid-template-rows:subgrid) { .embedded .uniCard>.shortlistToggle { margin-block:14px; } }

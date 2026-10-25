@@ -39,6 +39,7 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
           </div>
           <LemonPostcard />
         </div>}
+        {embedded && <h3 className={styles.embeddedHeading}>Сравнение университетов</h3>}
         <div className={styles.selectors}>
           {[0, 1, 2].map(index => <div key={index} className={styles.selector}>
             <label>
@@ -49,13 +50,13 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
               </select>
             </label>
             {portalSelection && compareIds[index] && <label className={styles.shortlistChoice}>
-              <input type="checkbox" checked={portalSelection.selectedIds.includes(compareIds[index])} onChange={() => portalSelection.onToggle(compareIds[index])} aria-label={`В мой список: ${UNIS.find(uni => uni.id === compareIds[index])?.name || compareIds[index]}`} />
-              В мой список
+              <input type="checkbox" checked={portalSelection.selectedIds.includes(compareIds[index])} onChange={() => portalSelection.onToggle(compareIds[index])} aria-label={`Выбрать университет: ${UNIS.find(uni => uni.id === compareIds[index])?.name || compareIds[index]}`} />
+              {portalSelection.selectedIds.includes(compareIds[index]) ? "Университет выбран" : "Выбрать университет"}
             </label>}
           </div>)}
         </div>
         <div className={styles.selectionActions}>
-          <p role="status">Выбрано {universities.length} из 3</p>
+          <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
           {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
           {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне ↗</button>}
         </div>

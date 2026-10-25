@@ -9,7 +9,8 @@ export function PortalTaskIntro({ task, stage, done, pageHeading = false }: { ta
   const Heading = pageHeading ? "h1" : "h2";
   const date = taskDate(task);
   const time = task.time || TASK_META[task.id]?.min;
-  return <div className={styles.editorialHero} data-task-editorial-hero>
+  const showVisual = task.id !== "notary";
+  return <div className={styles.editorialHero} data-task-editorial-hero data-has-visual={showVisual}>
     <div>
       {stage && <p className={styles.rubric}>{stage.title} · Шаг {String(stage.tasks.findIndex(item => item.id === task.id) + 1).padStart(2, "0")} из {String(stage.tasks.length).padStart(2, "0")}</p>}
       <Heading id="portal-step-heading" className={styles.detailTitle} tabIndex={-1}>{taskTitle(task)}</Heading>
@@ -18,6 +19,6 @@ export function PortalTaskIntro({ task, stage, done, pageHeading = false }: { ta
       <div className={styles.detailMeta}>{done ? <span>Выполнено</span> : <>{date && <span>{date}</span>}{time && <span>Срок: {time}</span>}</>}</div>
       {!done && date && <p className={styles.meta}>Ориентир подготовки, не срок конкретного вуза.</p>}
     </div>
-    <HiggsfieldVisual stage={stage?.id} task={task} />
+    {showVisual && <HiggsfieldVisual stage={stage?.id} task={task} />}
   </div>;
 }
