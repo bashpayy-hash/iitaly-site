@@ -46,6 +46,7 @@
 .contentPage .main [data-section="prices-header"] h1 { max-width: 680px; }
 .contentPage .main [role="dialog"] { background: #fff; }
 .header {
+  font-family:var(--font-apple-text);
   composes: chrome from "./surface-depth.module.css"; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid color-mix(in srgb, var(--color-warm-line) 45%, transparent); }
 .navInner { display: flex; align-items: center; justify-content: space-between; gap: 32px; max-width: 1280px; height: 64px; margin: auto; padding: 0 32px; }
 .wordmark { display: inline-flex; align-items: center; min-height: 44px; color: #141413; font-size: 24px; font-weight: 650; letter-spacing: -.07em; text-decoration: none; white-space: nowrap; }
@@ -259,3 +260,23 @@
 
 .summaryCard {
   composes: paper from "./surface-depth.module.css"; background: #fff; color: #141413; border: 1px solid var(--color-warm-line); border-radius: 28px;  }
+
+/* The portal reuses the public navigation, alongside its contextual controls. */
+.header[data-portal-header=true] .navInner { gap:20px; }
+.header[data-portal-header=true] .desktopNav { margin-inline:auto; gap:24px; }
+@media(max-width:1100px) {
+  .header[data-portal-header=true] .desktopNav { display:none; }
+  .header[data-portal-header=true] .mobileMenu { display:block; }
+  .header[data-portal-header=true] .navInner > div { margin-left:auto; }
+}
+@media(max-width:600px) {
+  .header[data-portal-header=true] .navInner { padding-inline:12px; gap:8px; }
+  .header[data-portal-header=true] .navInner > div { gap:0; }
+  .header[data-portal-header=true] [data-portal-assistant] { min-width:44px; padding:8px; }
+  .header[data-portal-header=true] [data-portal-assistant] span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+}
+
+.header[data-portal-header=true] .mobileMenu summary { display:flex; align-items:center; min-height:44px; gap:8px; cursor:pointer; font-size:13px; list-style:none; }
+.header[data-portal-header=true] .mobileMenu summary::-webkit-details-marker { display:none; }
+.header[data-portal-header=true] .mobileMenu nav { position:absolute; top:100%; inset-inline:0; display:grid; padding:12px 24px 24px; background:#FEFAF4; border-bottom:1px solid #E2DDD3; }
+.header[data-portal-header=true] .mobileMenu nav a { display:flex; justify-content:space-between; min-height:44px; padding:15px 0; border-bottom:1px solid #E2DDD3; font-size:18px; }

@@ -21,6 +21,7 @@ import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { PortalStepInstructions } from "./PortalStepInstructions";
+import { PortalTaskIntro } from "./PortalTaskIntro";
 import { SavedProfileAnswers } from "./SavedProfileAnswers";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
@@ -173,7 +174,7 @@ export function LocalWorkspace() {
                 uploadSlot={<><button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
                   <DocCheck portalInspector initialContext={existing.result?.review} academicYear={applicationYear} onComplete={(result, fileName) => onReview(active, result, fileName)} />
                 </>} />
-              : <><h1 className={styles.heading}>{taskTitle(active)}</h1><p className={styles.intro}>{active.time || "По ситуации"}</p><p className={styles.intro}>{active.explain}</p>
+              : <><PortalTaskIntro task={active} stage={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))} done={portalTaskDone(data, active)} pageHeading /><p className={styles.intro}>{active.explain}</p>
                 <PortalStepInstructions taskId={active.id} />
                 {readOnly && <p className={styles.readOnly}>{readOnly}</p>}
                 {existing && !existing.result && <p className={styles.readOnly}>{existing.summary}</p>}

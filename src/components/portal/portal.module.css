@@ -9,8 +9,8 @@
   --portal-ink: #141413;
   --portal-accent: #141413;
   --portal-accent-deep: #141413;
-  --portal-heading-font: var(--font-apple-display);
-  --portal-serif: var(--font-portal-editorial), Georgia, serif;
+  --portal-heading-font: var(--font-sans);
+  --portal-serif: var(--font-editorial);
   --portal-green: #1B5E55;
   --portal-warn: var(--color-warn);
   --portal-danger: var(--color-red-deep);
@@ -18,7 +18,7 @@
   min-height: 100svh;
   background: var(--portal-canvas);
   color: var(--portal-ink);
-  font-family: var(--font-apple-text);
+  font-family: var(--font-sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }

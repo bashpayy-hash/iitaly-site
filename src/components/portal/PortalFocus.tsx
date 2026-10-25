@@ -8,7 +8,9 @@ import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigatio
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
-import { VespiScene } from "@/components/mascot/VespiScene";
+import { PortalRouteVespi } from "./PortalRouteVespi";
+import { HiggsfieldVisual } from "./HiggsfieldVisual";
+import { PortalMicroSteps } from "./PortalMicroSteps";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import styles from "./portal-focus.module.css";
 
@@ -33,11 +35,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const position = portalPosition(data);
   const selected = data.roadmap.find(stage => stage.id === selectedStageId) || position.stage || data.roadmap[0];
   const rows = [...(selected?.tasks || [])];
-  const dated = rows.filter(row => row.deadline).sort((a, b) => a.deadline!.localeCompare(b.deadline!));
-  let dateIndex = 0;
-  const ordered = rows.map(row => row.deadline ? dated[dateIndex++] : row);
-  const current = ordered.find(row => !portalTaskDone(data, row) && row.available !== false) || ordered.find(row => !portalTaskDone(data, row));
-  const visibleTasks = current ? [current, ...ordered.filter(row => row.id !== current.id)] : ordered;
+  // Keep the server's chronology within each group; dates never reorder steps.
+  const ordered = rows;
+  const completed = ordered.filter(row => portalTaskDone(data, row));
+  const pending = ordered.filter(row => !portalTaskDone(data, row));
+  const current = pending.find(row => row.available !== false) || pending[0];
+  const visibleTasks = [...completed, ...(current ? [current] : []), ...pending.filter(row => row.id !== current?.id)];
   const scope = `${selected?.id}:${current?.id}`;
   const [disclosure, setDisclosure] = useState<{ scope: string; id: string | null }>({ scope: "", id: null });
   const openId = disclosure.scope === scope ? disclosure.id : current?.id;
@@ -60,7 +63,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           <div data-saved-universities>{universities.map(university => <a key={university.id} className={styles.pill} href="/portal?view=plan&task=shortlist" onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); if (universityTask) onOpenTask(universityTask); }}>{university.name}</a>)}</div>
         </div>
       </div>
-      <div className={styles.mascotWindow}><VespiScene pose="welcome" priority className={styles.welcomeScene} sizes="(max-width:600px) 112px, 192px" /></div>
+      <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
     </div>
     <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
@@ -76,28 +79,30 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           const href = data.docs[row.id] ? portalTaskHref(data, row) : `/portal?view=plan&task=${encodeURIComponent(row.id)}`;
           const ordinal = String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0");
           const rubric = `Шаг ${ordinal} из ${String(ordered.length).padStart(2, "0")}${isCurrent ? " · Текущий фокус" : ""}`;
-          return <article key={row.id} className={styles.task} data-expanded={open} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
+          return <article key={row.id} className={styles.task} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
             </button>
             <details className={styles.taskDetails} data-focus-row={row.id} open={open}>
               <summary aria-label={open ? `${rubric}. ${taskTitle(row)}` : undefined} onClick={event => { event.preventDefault(); setDisclosure({ scope, id: open ? null : row.id }); }}>
                 <span className={styles.headingCopy}>{open && <span className={styles.rubric} data-portal-rubric aria-hidden="true">{rubric}</span>}<strong data-road-step-title={isCurrent || undefined}>{taskTitle(row)}</strong></span>
-                <span className={styles.rowMeta}>{date && <span className={styles.dateBadge}>До {date}</span>}<ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" /></span>
+                <span className={styles.rowMeta}>{done ? <span className={styles.doneBadge}>Выполнено <Check size={13} aria-hidden="true" /></span> : date && <span className={styles.dateBadge}>Ориентир: {date}</span>}<ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" /></span>
               </summary>
               <div className={styles.taskBody}>
                 {description && <p className={styles.explainer} data-step-short-explainer>{description}</p>}
+                <PortalMicroSteps task={row} />
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {date && <span>Ориентир: {date}</span>}
-                  {time && <span>Срок: {time}</span>}
+                  {done ? <span className={styles.doneBadge}>Выполнено <Check size={13} aria-hidden="true" /></span> : date && <span>Ориентир: {date}</span>}
+                  {!done && time && <span>Срок: {time}</span>}
                   {row.id === "apostille" && <span>Визит в ЦОН</span>}
                 </div>
               </div>
-            </details>
-            <div className={styles.taskActions} hidden={!open}>
+            <div className={styles.taskActions}>
               <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined); }}>Открыть разбор <span aria-hidden="true">→</span></a>
               {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым <Check size={16} strokeWidth={1.5} aria-hidden="true" /></button>}
             </div>
+            </details>
+            {open && <HiggsfieldVisual stage={selected?.id} task={row} />}
           </article>;
         })}
       </div>
