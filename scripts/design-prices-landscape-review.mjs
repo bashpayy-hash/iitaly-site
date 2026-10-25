@@ -59,23 +59,25 @@ async function layout(page) {
 }
 async function preservedPricingCopy(base, head) {
   const before=await textInventory(base), after=await textInventory(head);
+  const basePrice=(await base.locator('[data-section="prices-header"] h1 .warm-highlight').innerText()).replace(/\s+/g,' ').trim();
+  assert(['667 ₸','10 990 ₸'].includes(basePrice),'Baseline has an approved main price');
   const packageBefore=await textInventory(base, '#main-package');
   // The user removed this package's repeated pricing header only. Remove one
   // occurrence from the multiset, not every price/term elsewhere on the page.
   if(packageBefore.includes('Поступление под ключ')) {
-    for(const value of ['Поступление под ключ','Один платёж','Всё, что делает система, входит в цену','667 ₸','разово · без подписки и доплат']) {
+    for(const value of ['Поступление под ключ','Один платёж','Всё, что делает система, входит в цену',basePrice,'разово · без подписки и доплат']) {
       assert.equal(packageBefore.filter(item=>item===value).length,1,`Approved package removal is exact: ${value}`);
       const index=before.indexOf(value);
       assert(index>=0);
       before.splice(index,1);
     }
   }
-  assertContentPreserved(before,after,'Pricing copy outside the approved repeated header');
+  assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')),after,'Pricing copy outside the approved repeated header and launch price');
   const packageCard=head.locator('#main-package');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);
   assert.equal(await packageCard.getByText('Весь маршрут поступления в одном кабинете',{exact:true}).count(),1);
-  assert.doesNotMatch(await packageCard.innerText(),/667\s*₸/,'The contents card does not repeat the price');
-  assert.match(await head.locator('[data-section="prices-header"] h1').innerText(),/667\s*₸/,'The actual price remains in the hero');
+  assert.doesNotMatch(await packageCard.innerText(),/10\s*990\s*₸/,'The contents card does not repeat the price');
+  assert.match(await head.locator('[data-section="prices-header"] h1').innerText(),/10\s*990\s*₸/,'The launch price remains in the hero');
 }
 try {
   const dense=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:3,reducedMotion:'reduce'});
