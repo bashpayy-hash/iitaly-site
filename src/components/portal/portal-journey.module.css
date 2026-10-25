@@ -113,3 +113,8 @@
 .compact:not(.embedded) .nav a { min-height:90px; padding:8px 8px 6px; gap:6px; }
 .compact:not(.embedded) .nav a::after { top:22px; }
 .compact:not(.embedded) .countNumbers { font-size:26px; }
+@media(max-width:600px) {
+  .compact:not(.embedded) .nav { padding-bottom:4px; }
+  .compact:not(.embedded) .nav a { min-height:82px; padding:6px 8px 4px; gap:4px; }
+  .compact:not(.embedded) .nav a::after { top:20px; }
+}
