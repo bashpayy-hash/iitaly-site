@@ -4,11 +4,11 @@
 .pills :is(a,button):hover { background:#EFE7D8; color:var(--story-ink, #352B28); }
 .pills [aria-current],.pills [aria-selected=true] { border-color:var(--story-ink, #352B28); background:var(--story-ink, #352B28); color:#FAF9F3; }
 .position { margin:18px 0 12px; color:var(--story-quiet); font-size:13px; line-height:1.5; font-variant-numeric:tabular-nums; }
-.frame { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(180px,.8fr); align-items:center; gap:36px; min-height:300px; padding:24px 0 36px; opacity:1; transform:translateY(0); transition:opacity .4s ease,transform .4s cubic-bezier(.16,1,.3,1); animation:pointEnter .4s cubic-bezier(.16,1,.3,1) both; }
+.frame { display:grid; grid-template-columns:minmax(0,1fr); align-items:center; gap:36px; min-height:180px; padding:20px 0 28px; opacity:1; transform:translateY(0); transition:opacity .4s ease,transform .4s cubic-bezier(.16,1,.3,1); animation:pointEnter .4s cubic-bezier(.16,1,.3,1) both; }
 .copy { min-width:0; }
-.copy :is(h1,h2,h3) { max-width:22ch; margin:0 0 20px; color:var(--story-ink); font-size:clamp(30px,3.7vw,48px); font-weight:600; line-height:1.08; letter-spacing:-.02em; text-wrap:balance; overflow-wrap:anywhere; }
+.copy :is(h1,h2,h3) { max-width:22ch; margin:0 0 20px; color:var(--story-ink); font-size:clamp(26px,2.8vw,36px); font-weight:600; line-height:1.08; letter-spacing:-.02em; text-wrap:balance; overflow-wrap:anywhere; }
 .copy :is(h1,h2,h3):focus { outline:none; }
-.copy > p { max-width:54ch; margin:0; color:var(--story-quiet); font-size:18px; line-height:1.6; }
+.copy > p { max-width:68ch; margin:0; color:var(--story-quiet); font-size:18px; line-height:1.6; }
 .copy > p strong { color:var(--story-ink); font-weight:600; }
 .artwork { display:grid; place-items:center; width:100%; max-width:320px; aspect-ratio:1; justify-self:center; pointer-events:none; user-select:none; }
 .artwork img { display:block; width:100%; height:100%; object-fit:contain; }

@@ -123,8 +123,8 @@ try {
   const page = await makePage(1440);
   await visit(page, '/plan');
   const quizBox = await page.locator('#questionnaire').boundingBox();
-  const documentBox = await page.locator('#document-check').boundingBox();
-  assert(quizBox && documentBox && quizBox.y < documentBox.y, 'Free plan starts before the separate document tool');
+  assert(quizBox && quizBox.width > 1000, 'Plan uses a wide workspace');
+  assert.equal(await page.locator('#document-check').isVisible(), false, 'Document checking is a separate tool');
   assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
   const fileInput = page.getByLabel('Выбрать документ для проверки');
   await fileInput.focus();

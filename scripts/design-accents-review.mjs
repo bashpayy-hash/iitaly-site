@@ -254,13 +254,7 @@ try {
       await inspectArtwork();
       assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).filter), 'none', 'Blur never affects the heading');
       if (route === '/plan') {
-        const wash = page.locator('[data-editorial-atmosphere]');
-        assert.equal(await wash.isVisible(), width >= 1280);
-        if (width >= 1280) {
-          assert.equal(await wash.evaluate(el => getComputedStyle(el).pointerEvents), 'none');
-          assert.match(await wash.locator('img').evaluate(el => getComputedStyle(el).filter), /blur/);
-          assert(Number(await wash.locator('img').evaluate(el => getComputedStyle(el).opacity)) <= .3);
-        }
+        assert.equal(await page.locator('[data-editorial-atmosphere]').count(), 0, 'Plan has no corner watermark');
       }
       if ([1440,390].includes(width)) {
         await page.screenshot({path:resolve(output, `${route.slice(1)}-${width}.png`), animations:'disabled'});

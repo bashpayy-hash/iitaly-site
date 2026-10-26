@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { usePortalPart, navigatePortal } from "@/components/portal/PortalPageNavigation";
 import { CITIES, UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
@@ -13,7 +14,7 @@ import { CompareModal } from "./CompareModal";
 import { ComparisonSection } from "./ComparisonSection";
 import { CityMatch } from "./CityMatch";
 import { track } from "@/lib/track";
-import { UniversityArtwork } from "./UniversityArtwork";
+import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
@@ -40,7 +41,11 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
   const [openUniId, setOpenUniId] = useState<string | null>(null);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const choice = useUniversityChoice();
+  const [portalCompareIds, setPortalCompareIds] = useState<string[]>([]);
+  const compareIds = portalSelection ? portalCompareIds : choice.comparedIds;
+  const setCompareIds = portalSelection ? setPortalCompareIds : choice.setCompared;
+  const selection = portalSelection ? undefined : { primaryId: choice.primaryId, onSelect: choice.choose };
   const [compareOpen, setCompareOpen] = useState(false);
 
   // City matching only highlights the map; filters remain independent.
@@ -105,11 +110,8 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   }
 
   function toggleCompare(id: string) {
-    setCompareIds((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 3) return prev;
-      return [...prev, id];
-    });
+    if (compareIds.includes(id)) setCompareIds(compareIds.filter(value => value !== id));
+    else if (compareIds.length < 3) setCompareIds([...compareIds, id]);
   }
 
   const cityShortcut = (
@@ -135,7 +137,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
               жизни там. Можно сравнить до трёх университетов.
             </p>
           </div>
-          <UniversityArtwork variant="balcony" />
+          <LemonPostcard />
         </div>
       </section>}
 
@@ -222,7 +224,6 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 />
               ) : (
                 <div className={ui.emptyCity} data-city-empty>
-                  {!portalSelection && <UniversityArtwork variant="paperwork" />}
                   <p className={ui.emptyTitle}>Выберите город</p>
                   <p className={ui.emptyDescription}>
                     Нажмите на любую точку на карте, чтобы увидеть университеты,
@@ -246,6 +247,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         onOpen={() => setCompareOpen(true)}
         embedded={Boolean(portalSelection)}
         portalSelection={portalSelection}
+        selection={selection}
       />
 
       </div>
@@ -283,6 +285,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       />
 
       <CompareModal
+        selection={selection}
         open={compareOpen}
         compareIds={compareIds}
         onClose={() => setCompareOpen(false)}

@@ -1,7 +1,8 @@
 "use client";
 
-import { PaperTexture } from "@/components/marketing/PublicPaper";
-import paper from "@/components/marketing/public-paper.module.css";
+import { useSyncExternalStore } from "react";
+import Link from "next/link";
+import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { WIZ, type WizAnswers } from "@/data/wizard";
 import { buildPlan } from "@/lib/planBuilder";
 import { EMPTY_PLAN_DRAFT, usePlanDraft } from "@/lib/usePlanDraft";
@@ -9,14 +10,21 @@ import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
-import { StudyAtmosphere } from "@/components/marketing/EditorialArtwork";
-import art from "@/components/marketing/editorial-art.module.css";
 import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import workspace from "./plan-workspace.module.css";
 
+const subscribeTool = (listener: () => void) => {
+  window.addEventListener("hashchange", listener);
+  window.addEventListener("popstate", listener);
+  return () => { window.removeEventListener("hashchange", listener); window.removeEventListener("popstate", listener); };
+};
+const currentTool = () => window.location.hash === "#document-check" ? "document-check" : "questionnaire";
+
 export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
+  const { primary } = useUniversityChoice();
+  const tool = useSyncExternalStore(subscribeTool, currentTool, () => "questionnaire");
   const plan = draft.complete ? buildPlan(draft.answers) : null;
 
   function focusPlan() {
@@ -34,8 +42,7 @@ export function PlanExplorer() {
 
   return (
     <>
-      <section data-section="plan-header" className={`${art.headerHost} px-5 pt-9 pb-6 text-center sm:pt-14 sm:pb-9`}>
-        <StudyAtmosphere />
+      <section data-section="plan-header" className="px-5 pt-9 pb-6 text-center sm:pt-14 sm:pb-9">
         <div data-role="heading">
           <AppleCaption as="p" className="warm-badge">Персональный маршрут</AppleCaption>
           <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
@@ -46,16 +53,19 @@ export function PlanExplorer() {
           {WIZ.length} вопросов, затем понятные шаги и список документов.
           Бесплатно, без регистрации. Проверка файла доступна отдельно.
         </p>
-        <nav className={styles.taskLinks} aria-label="Бесплатные инструменты">
-          <a href="#questionnaire">Составить план</a>
-          <a href="#document-check">Проверить документ</a>
-        </nav>
       </section>
 
-      <section className={`${workspace.tools} ${paper.surface}`} data-public-paper-zone="plan-tools">
-        <PaperTexture />
+      <section className={workspace.tools} data-public-paper-zone="plan-tools">
+        {primary && <div className={workspace.universityChoice} data-plan-university={primary.id}>
+          <p><span>Основной вуз</span><strong>{primary.name}</strong></p>
+          <Link href="/universities#compare-universities">Изменить выбор</Link>
+        </div>}
+        <nav className={workspace.toolNav} aria-label="Бесплатные инструменты">
+          <a href="#questionnaire" aria-current={tool === "questionnaire" ? "page" : undefined}>Составить план</a>
+          <a href="#document-check" aria-current={tool === "document-check" ? "page" : undefined}>Проверить документ</a>
+        </nav>
         <div className={styles.planWorkspace}>
-          <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
+          <div id="questionnaire" hidden={tool !== "questionnaire"} tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />
             <div className={workspace.heading}>
               <h2>Твой план поступления</h2>
@@ -71,7 +81,7 @@ export function PlanExplorer() {
               {Object.keys(draft.answers).length > 0 && <button type="button" className="min-h-11 underline underline-offset-4" onClick={() => { updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }}>Начать заново</button>}
             </div>
           </div>
-          <div id="document-check" className={workspace.document}>
+          <div id="document-check" hidden={tool !== "document-check"} className={workspace.document}>
             <GuidePlanContext target="document" />
             <DocCheck />
           </div>

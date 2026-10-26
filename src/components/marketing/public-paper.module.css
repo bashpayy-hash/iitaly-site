@@ -3,7 +3,7 @@
 .texture { position:absolute; inset:0; z-index:-1; border-radius:inherit; background-image:url('/illustrations/public-paper/cream-texture.webp'); background-size:1000px auto; background-repeat:repeat; opacity:.38; pointer-events:none; user-select:none; }
 .darkTexture { background-image:url('/illustrations/public-paper/dark-texture.webp'); opacity:.35; }
 .guideIntro { position:relative; isolation:isolate; }
-.spot { position:absolute; display:block; width:160px; height:160px; pointer-events:none; user-select:none; }
+.spot { position:absolute; display:block; width:72px; height:72px; pointer-events:none; user-select:none; }
 .spot img { display:block; width:100%; height:100%; object-fit:contain; }
 .guide { right:24px; top:16px; }
 .faq { left:calc(50% - 600px); top:160px; }
@@ -19,3 +19,13 @@
 .grain { position:relative; isolation:isolate; }
 @media(max-width:600px) { .noise,.grain::before { opacity:.07; } }
 @media print { .noise,.grain::before { display:none; } }
+
+/* One continuous material at the root, behind text and interactive surfaces. */
+.canvas { position:relative; isolation:isolate; background:#F7F4EA; }
+.canvas::before,.canvas::after { content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; }
+.canvas::before { background:url('/illustrations/public-paper/cream-texture.webp') repeat; background-size:1000px auto; opacity:.38; }
+.canvas::after { background:url('/textures/paper-grain.svg') repeat; opacity:.08; }
+.chrome.chrome { isolation:isolate; background:#F7F4EA; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:none; }
+.chrome.chrome::after { display:none; }
+@media(max-width:600px) { .canvas::before { opacity:.32; } }
+@media(prefers-contrast:more),(forced-colors:active),print { .canvas::before,.canvas::after { display:none; } }

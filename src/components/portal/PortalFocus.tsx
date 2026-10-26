@@ -16,7 +16,6 @@ import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 
 import { StoryPills } from "@/components/story/MediaSwitcher";
-import { StoryArtwork, taskArtwork } from "@/components/story/StoryArtwork";
 
 type Props = {
   data: PortalData; selectedStageId?: string; shortlist: string[]; busy: boolean;
@@ -168,7 +167,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
                 </div>
               </div>}
             </div>
-            {stagePage && <StoryArtwork subject={taskArtwork(row.id, selected?.id)} />}
             {open && <div className={styles.taskActions}>
               <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
               {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
