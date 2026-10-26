@@ -3,7 +3,7 @@ import { taskExplanation } from "@/lib/portalNavigation";
 import styles from "./portal-micro-steps.module.css";
 
 type Step = { title: string; text: string };
-const steps: Record<string, Step[]> = {
+export const taskMicroSteps: Record<string, Step[]> = {
   apostille: [
     { title: "Сверь требования", text: "Уточни у получателя нужный документ и приложение." },
     { title: "Выбери услугу", text: "Найди на eGov или в ЦОНе услугу для своего документа." },
@@ -33,8 +33,8 @@ const steps: Record<string, Step[]> = {
 
 /** Navigation copy only; full maintained rules and sources stay in the detail. */
 export function PortalMicroSteps({ task, authoredOnly = false }: { task: PortalTask; authoredOnly?: boolean }) {
-  if (authoredOnly && !steps[task.id]) return null;
-  const items = steps[task.id] || [
+  if (authoredOnly && !taskMicroSteps[task.id]) return null;
+  const items = taskMicroSteps[task.id] || [
     { title: "Уточни задачу", text: taskExplanation(task) },
     { title: "Открой разбор", text: "Сверь требования и подготовь сведения для своего случая." },
     { title: "Сохрани результат", text: "Заверши действие в разборе или отметь выполненный шаг." },

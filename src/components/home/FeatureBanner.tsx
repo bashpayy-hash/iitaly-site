@@ -1,3 +1,5 @@
+import { PaperTexture } from "@/components/marketing/PublicPaper";
+import paper from "@/components/marketing/public-paper.module.css";
 import styles from "@/components/marketing/marketing.module.css";
 import art from "@/components/marketing/editorial-art.module.css";
 import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
@@ -7,7 +9,8 @@ import { AppleButtonLink } from "@/components/apple/Button";
 /** The approved balcony occupies the existing image slot; copy and controls stay intact. */
 export function FeatureBanner() {
   return (
-    <section data-section="feature" className={`${styles.feature} grid grid-cols-1 lg:grid-cols-2`}>
+    <section data-section="feature" className={`${styles.feature} ${paper.surface} grid grid-cols-1 lg:grid-cols-2`}>
+      <PaperTexture />
       <div className="order-2 flex flex-col justify-center px-5 py-20 sm:py-28 lg:order-1 lg:px-16">
         <div className="mx-auto max-w-md lg:mx-0">
           <AppleCaption as="p">После прилёта</AppleCaption>

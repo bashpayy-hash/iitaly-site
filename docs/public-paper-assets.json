@@ -3,11 +3,13 @@
   "texture": {
     "source": "zhol-style-kit(2).zip/assets/bg_cream.jpg",
     "opacity": {
-      "homeFAQ": 0.12,
-      "planTools": 0.12,
-      "guidesIntro": 0.1,
-      "mobile": 0.08
-    }
+      "publicCanvas": 0.38,
+      "homeSections": 0.38,
+      "planTools": 0.38,
+      "mobile": 0.28,
+      "darkSection": 0.35
+    },
+    "darkSource": "zhol-style-kit(2).zip/assets/bg_dark.jpg"
   },
   "illustrations": {
     "provider": "Higgsfield",
@@ -17,10 +19,14 @@
     "referenceMedia": "29d330e9-2830-414f-9ce8-fa54c1c8c049",
     "jobs": {
       "folder": "4a1607c9-7245-4add-8332-089b35f14e3f",
-      "map": "c9ca065d-fe91-4616-8702-4f922e23a92e"
+      "map": "c9ca065d-fe91-4616-8702-4f922e23a92e",
+      "calendar": "bc1ca400-6f3b-4741-b304-243a61e4f82c",
+      "envelope": "bc31f672-173b-4ca3-aaff-7451d16c272a",
+      "key": "132eb0f6-b9a3-44d3-b935-18a156285980"
     },
     "renderedSize": 160,
-    "meaning": "Decorative objects, not official documents or geographic data"
+    "meaning": "Decorative objects, not official documents or geographic data",
+    "placements": "Existing FAQ and guide-index fields, plus topic and category margins: calendar for tests, envelope for documents, key for arrival. No illustration in portal task pages."
   },
   "assets": [
     {
@@ -37,6 +43,26 @@
       "path": "public/illustrations/public-paper/map-320.webp",
       "bytes": 23090,
       "sha256": "da5f53a6432e2fc7ed0bb58eed717ee7d6a19d37bb75fbafec2aa7cbb3159d8d"
+    },
+    {
+      "path": "public/illustrations/public-paper/calendar-320.webp",
+      "bytes": 30710,
+      "sha256": "c86b8197bcc9a41a59b5a9f02f6aac9c57aac3069e010f0f7761b4b225cb2a28"
+    },
+    {
+      "path": "public/illustrations/public-paper/envelope-320.webp",
+      "bytes": 20772,
+      "sha256": "0e733ffad38c8622ce06ad9e6d820bd9868ac78e8cc84d3c310d00a4c59b8a38"
+    },
+    {
+      "path": "public/illustrations/public-paper/key-320.webp",
+      "bytes": 20768,
+      "sha256": "1e6ed8b75174bb4778db1acebe9a5dfc57dda96688fe9b9a237a395ecf91574c"
+    },
+    {
+      "path": "public/illustrations/public-paper/dark-texture.webp",
+      "bytes": 49776,
+      "sha256": "1754f9a435cfc82dce52338c2f3349939e617ca73c4024967d9eef7ae5a3b747"
     }
   ]
 }
