@@ -14,6 +14,7 @@ import { CompareModal } from "./CompareModal";
 import { ComparisonSection } from "./ComparisonSection";
 import { CityMatch } from "./CityMatch";
 import { track } from "@/lib/track";
+import { Check, Plus } from "lucide-react";
 import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
@@ -173,6 +174,11 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             {!portalSelection && cityShortcut}
           </div>
 
+          <div className={ui.quickUniversities} aria-label="Быстро добавить университет в сравнение">
+            <span>В сравнение</span>
+            {(activeCity ? cityUnis : filteredUnis.filter(university=>["unipd","unibo","polimi"].includes(university.id))).map(university=><button key={university.id} type="button" data-quick-compare={university.id} aria-pressed={compareIds.includes(university.id)} disabled={compareIds.length===3 && !compareIds.includes(university.id)} onClick={()=>toggleCompare(university.id)}>{compareIds.includes(university.id)?<Check size={15} aria-hidden="true" />:<Plus size={15} aria-hidden="true" />}{university.name}</button>)}
+            {compareIds.length>0 && <a href="#compare-universities" onClick={event=>{if(portalSelection){event.preventDefault();navigatePortal("/portal?view=plan&task=shortlist&part=compare");}}}>Сравнить {compareIds.length} из 3 <span aria-hidden="true">→</span></a>}
+          </div>
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
               <div className={ui.mapFrame} data-map-frame>

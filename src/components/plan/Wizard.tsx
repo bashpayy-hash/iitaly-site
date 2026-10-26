@@ -10,6 +10,7 @@ import { AppleButton } from "@/components/apple/Button";
 import type { PlanDraft } from "@/lib/usePlanDraft";
 import { CalendarDays, Timer, Compass, GraduationCap, BookOpen, Wallet, Languages, MapPin, Users, FileCheck2, type LucideIcon } from "lucide-react";
 import styles from "./plan-workspace.module.css";
+import { FlightPlan } from "@/components/journey/FlightPlan";
 
 /** UI explanations only: the questions, answer values and plan builder stay
  * unchanged. Grades describe the profile; they are not an admissions score. */
@@ -109,14 +110,11 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
 
   return (
     <div className={styles.wizard} data-plan-wizard>
-      <div className={styles.progress}>
-        <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className={styles.segments}>
-          {WIZ.map((q, i) => <span key={q.id} className={styles.segment} data-complete={i < step} data-active={i === step} aria-hidden="true"><span /></span>)}
-        </div>
-        <span className="shrink-0 text-apple-caption text-cloud-meta">
-          {finished ? "Готово" : `${Math.min(step + 1, WIZ.length)} из ${WIZ.length}`}
-        </span>
-      </div>
+      <FlightPlan compact currentLabel="Сейчас" label="Вопросы для маршрута" index={Math.min(step, WIZ.length - 1)} stops={WIZ.map((question, index) => ({
+        id: question.id, title: ({intake:"Набор",education:"Образование",grades:"Оценки",goal:"Цель",budget:"Бюджет",field:"Направление",lang:"Язык",age:"Возраст",residence:"Проживание",dsuRegion:"Стипендия"} as Record<string,string>)[question.id] || question.q,
+        meta: `${String(index + 1).padStart(2, "0")} / ${WIZ.length}`, state: index < step ? "done" : index === step ? "current" : "future", locked: index > step && !answers[question.id],
+      }))} onSelect={next => { finishTransition(); onDraftChange({ ...draft, step: next }); }} />
+      <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
 
       <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="mt-6 rounded-apple-card">
         {preparing ? <AssessmentTransition onSkip={finishTransition} /> : finished ? (

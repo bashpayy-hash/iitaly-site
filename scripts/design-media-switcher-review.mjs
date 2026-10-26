@@ -57,13 +57,13 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           // All real questions remain one at a time; no fixture changes to the builder.
           for (let question = 0; question < 10; question++) {
             assert.equal(await page.locator('[data-plan-question]').count(), 1);
-            await page.locator('[data-plan-wizard] button[aria-pressed]').first().click();
+            await page.locator('[data-plan-question] + div button[aria-pressed]').first().click();
           }
           const skip = page.getByRole('button', { name:/Показать|Пропустить/ });
           if (await skip.count()) await skip.first().click();
           await page.getByRole('button', { name:'Открыть мой план', exact:true }).click();
           assert.equal(await page.locator('[data-assessment-route] [data-instruction-point]').count(), 1);
-          assert((await page.locator('[data-assessment-route] [data-story-pill]').count()) > 5);
+          assert((await page.locator('[data-assessment-route] [data-flight-stop]').count()) > 5);
           await page.locator('[data-assessment-route] [data-instruction-next]').click();
           assert.equal(new URL(page.url()).searchParams.get('step'), '2');
           await page.reload({ waitUntil:'networkidle' });
@@ -76,15 +76,17 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await page.reload({ waitUntil:'networkidle' });
           const comparison = page.locator('#compare-universities');
           assert.equal(await page.locator('[data-university-page]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgba(0, 0, 0, 0)');
-          assert.equal(await comparison.getByRole('button', { name:'Выбрать этот университет', exact:true }).isDisabled(), true);
+          assert.equal(await comparison.getByRole('button', { name:'Выбрать этот университет', exact:true }).first().isDisabled(), true);
           await comparison.getByLabel('Университет 1', { exact:true }).selectOption('unipd');
-          await comparison.locator('[data-university-decision]').getByRole('button', { name:/Выбрать этот университет/ }).click();
+          await comparison.locator('[data-deck-choose=unipd]').click();
           assert.match(await comparison.locator('[data-university-decision]').innerText(), /Основной вуз.*Padova/s);
           await comparison.getByLabel('Университет 2', { exact:true }).selectOption('unibo');
+          await comparison.getByRole('button', { name:'Таблица', exact:true }).click();
           await comparison.locator('tfoot').getByRole('button', { name:/Bologna/ }).click();
           assert.equal(await comparison.locator('thead [data-primary=true]').count(), 1);
           assert.match(await comparison.locator('thead [data-primary=true]').innerText(), /Bologna.*Выбран основной вуз/s);
           await page.reload({ waitUntil:'networkidle' });
+          await comparison.getByRole('button', { name:'Таблица', exact:true }).click();
           await page.locator('thead [data-primary=true]').waitFor();
           assert.equal(await comparison.getByLabel('Университет 1', { exact:true }).inputValue(), 'unipd');
           assert.equal(await comparison.getByLabel('Университет 2', { exact:true }).inputValue(), 'unibo');
@@ -99,7 +101,7 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await page.locator('[data-plan-university=unipd]').waitFor();
           assert.equal(new URL(page.url()).pathname, '/plan');
           await page.goto(origin + '/universities', { waitUntil:'networkidle' });
-          assert.equal(await page.locator('thead [data-primary=true]').count(), 1);
+          assert.equal(await page.locator('[data-deck-university][data-primary=true]').count(), 1);
         }
         if (route === '/guides/tests') {
           const switcher = page.locator('[data-media-switcher]');

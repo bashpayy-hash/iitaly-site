@@ -67,3 +67,6 @@
 .universityChoice a { display:inline-flex; align-items:center; min-height:44px; color:#A33421; font-size:14px; text-decoration:underline; text-underline-offset:4px; }
 @media(min-width:900px) { .question { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); gap:40px; align-items:start; }.question .options { margin-top:0; }.questionReason { max-width:42ch; } }
 @media(max-width:600px) { .toolNav { gap:22px; }.toolNav a { font-size:15px; }.universityChoice { align-items:flex-start; flex-direction:column; gap:4px; } }
+
+.selectedContext{margin:-12px 0 24px;color:#352B28}.selectedContext summary{cursor:pointer;min-height:44px;padding:10px 0;font-size:14px}.selectedContext dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:18px 0;border-top:1px solid #DCD3C3}.selectedContext dt{font-size:12px;color:#5C6056;margin-bottom:8px}.selectedContext dd{font-size:15px;line-height:1.5;margin:0}.selectedContext p{max-width:80ch;font-size:12px;color:#5C6056;line-height:1.6}.selectedContext summary:focus-visible{outline:2px solid #A33421;outline-offset:3px}
+@media(max-width:600px){.selectedContext dl{grid-template-columns:1fr;gap:16px}}
