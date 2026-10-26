@@ -162,9 +162,11 @@ try {
     await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
     await page.getByRole('link',{name:'Все шаги этапа'}).click();
     assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
-    assert.equal(await page.locator('[data-task-check]').count(),5);
+    assert.equal(await page.locator('[data-task-check]').count(),1);
+    assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),5);
+    await page.locator('[data-stage-switcher] [data-story-pill="2"]').click();
     assert.equal(await page.locator('[data-portal-now]').count(),0,'Stage pages focus on their own tasks');
-    assert.match(await page.locator('article').filter({has:page.locator('[data-focus-row=notary]')}).innerText(),/03/);
+    assert.equal(await page.locator('[data-focus-row=notary]').count(),1);
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
     assert.equal(await page.locator('[data-step-detail=notary] [data-higgsfield-visual]').count(),0,'Notary instructions have no unrelated folder illustration');
     assert.equal(await page.locator('[data-micro-steps]').count(),0,'Brief does not repeat the full instruction');

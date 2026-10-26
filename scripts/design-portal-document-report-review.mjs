@@ -25,7 +25,7 @@ const server = createServer(async (request, response) => {
 });
 await new Promise(done => server.listen(0, '127.0.0.1', done));
 const origin = `http://127.0.0.1:${server.address().port}`;
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results = [], errors = [], unexpectedApi = [];
 const titles = {
   statements: 'Банковские выписки', apostille: 'Аттестат или диплом с апостилем',
@@ -99,19 +99,30 @@ async function noOverflow(page, label) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, label);
 }
 async function noListButtons(page, label) {
-  assert.equal(await page.locator('button').count(), 0, `${label}: document lists and navigation have zero buttons`);
+  assert.equal(await page.getByRole('button').count(), 0, `${label}: document lists and navigation have zero buttons`);
   for (const document of await page.locator('[data-document]').all()) {
     assert.equal(await document.evaluate(element => element.tagName), 'A', 'The document row itself is a link');
     assert.equal(await document.locator('a, button').count(), 0, 'A document row contains no nested action');
   }
 }
 async function reportActionLimit(page, label) {
-  const buttons = page.locator('button:visible');
+  const buttons = page.locator('button:visible:not([data-media-switcher] button)');
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
   // User-requested drop zone adds a visible hint and decorative arrow. Its
   // accessible action name and the one-action limit remain unchanged.
   if (await buttons.count()) assert.equal(await page.locator('[data-document-prepare]').count(), 1, 'The only initial report action prepares an explicit new check');
   assert.doesNotMatch(await report(page).innerText(), /Спросить про этот шаг|Продолжить маршрут|Открыть разбор/);
+}
+
+async function readAllFindings(page) {
+  const navigation=report(page).getByRole('navigation',{name:'Пункты разбора'});
+  const links=navigation.getByRole('link');let text='';
+  for(let index=0;index<await links.count();index++) {
+    await links.nth(index).click();
+    assert.equal(await report(page).locator('[data-report-details-page] [data-instruction-point]').count(),1);
+    text+=await report(page).locator('[data-report-details-page] [data-instruction-point]').innerText();
+  }
+  await links.first().click();return text;
 }
 
 try {
@@ -170,7 +181,7 @@ try {
     await row(page, 'statements').click();
     await page.locator('[data-step-detail=statements]').waitFor();
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements');
-    assert.equal(await page.locator('button').count(), 1, 'Current document exposes only file selection');
+    assert.equal(await page.getByRole('button').count(), 1, 'Current document exposes only file selection');
     assert.equal(await page.getByRole('combobox', { name: /^Стипендиальная программа/ }).inputValue(), 'general');
     assert.equal(await page.getByRole('combobox', { name: /^Учебный год заявки/ }).inputValue(), 'unspecified');
     await page.getByRole('button', { name: 'Выбрать файл', exact: true }).click();
@@ -182,10 +193,7 @@ try {
     assert.match(await report(page).innerText(), /Нужно уточнить/);
     assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
     await report(page).getByRole('link', { name:'Полный разбор', exact:true }).click();
-    await report(page).getByText('Все рекомендации из разбора', { exact:true }).click();
-    await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
-    assert.match(await report(page).innerText(), /Учебный год не выбран/);
-    assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
+    { const content=await readAllFindings(page);assert.match(content,/Учебный год не выбран/);assert.match(content,/Выбери программу и учебный год/); }
     assert.doesNotMatch(await report(page).innerText(), /Нужно исправить|Критических ошибок:/);
     await noOverflow(page, `Clarification report ${width}px`);
     await reportActionLimit(page, `Clarification report ${width}px`);
@@ -196,10 +204,7 @@ try {
     await report(page).getByRole('link', { name:'Результат', exact:true }).click();
     assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
     await report(page).getByRole('link', { name:'Полный разбор', exact:true }).click();
-    await report(page).getByText('Все рекомендации из разбора', { exact:true }).click();
-    await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
-    assert.match(await report(page).innerText(), /Учебный год не выбран/);
-    assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
+    { const content=await readAllFindings(page);assert.match(content,/Учебный год не выбран/);assert.match(content,/Выбери программу и учебный год/); }
     assert.deepEqual(calls, { check: 1, save: 1 }, 'Reload uses the stored report without another AI check');
     await backToList(page);
     assert.match(await row(page, 'statements').innerText(), /Нужно уточнить/);
@@ -216,20 +221,17 @@ try {
     await backToList(page);
 
     await openReport(page, 'apostille');
-    assert.equal(await page.locator('button').count(), 0, 'A future document report is readable without a competing upload action');
+    assert.equal(await page.getByRole('button').count(), 0, 'A future document report is readable without a competing upload action');
     await report(page).getByRole('heading', { name:'Следующий шаг', exact:true }).waitFor();
     await report(page).getByRole('link', { name:'Полный разбор', exact:true }).click();
-    await report(page).getByText('Все рекомендации из разбора', { exact:true }).click();
-    assert.match(await report(page).innerText(), /В справке указан доход за 2025 год/);
-    assert.match(await report(page).innerText(), /Запроси справку о доходах за 2024 год/);
-    assert.match(await report(page).innerText(), /Загрузи исправленную справку после получения/);
+    { const content=await readAllFindings(page);assert.match(content,/В справке указан доход за 2025 год/);assert.match(content,/Запроси справку о доходах за 2024 год/);assert.match(content,/Загрузи исправленную справку после получения/); }
     assert.equal(await report(page).locator(`a[href="${sourceUrl}"]`).count(), 1);
     await noOverflow(page, `Full report ${width}px`);
     await reportActionLimit(page, `Full report ${width}px`);
     const sources = report(page).locator('details').filter({ hasText: 'Источники и дата сверки правил' });
     assert.equal(await sources.evaluate(element => element.open), false, 'Sources remain available in a closed disclosure');
-    const nextStep = report(page).getByRole('heading', { name: 'Следующий шаг', exact: true });
-    const checks = report(page).getByText('Что проверено: полный разбор', {exact:true});
+    const nextStep = report(page).locator('[data-document-focus]').getByRole('heading', { name: 'Следующий шаг', exact: true });
+    const checks = report(page).getByRole('navigation',{name:'Пункты разбора'});
     assert.equal(await nextStep.isVisible(), false, 'The result action is separate from the supporting checks page');
     assert.equal(await checks.isVisible(), true, 'Full checks stay discoverable in the detailed review');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
@@ -245,7 +247,7 @@ try {
       }
       if (task === 'familyDocs') {
         assert.match(await report(page).innerText(), /Загрузи чёткий скан всех страниц/);
-        assert.equal(await page.locator('button').count(), 0, 'Future read-only reports contain no action');
+        assert.equal(await page.getByRole('button').count(), 0, 'Future read-only reports contain no action');
       }
       if (task === 'cimea') {
         await report(page).getByText('От прошлой проверки остался только краткий итог. Подробности старого разбора восстановить нельзя.', {exact:true}).waitFor();

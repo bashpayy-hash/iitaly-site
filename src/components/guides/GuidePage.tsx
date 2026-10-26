@@ -7,7 +7,8 @@ import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
 import { GUIDE_TOPICS, VISA_PARTS, guideHref, guideStageHref, stageForGuide, type VisaPart } from "./guideCatalogue";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { VisaSection } from "./VisaSection";
-import { RisoSpot } from "@/components/marketing/PublicPaper";
+import { StoryArtwork } from "@/components/story/StoryArtwork";
+import { GuidePointSwitcher } from "./GuidePointSwitcher";
 import ui from "./guide-pages.module.css";
 
 export function GuideFrame({ children, narrow = false }: { children: ReactNode; narrow?: boolean }) {
@@ -33,9 +34,9 @@ function GuideSources({ ids }: { ids: readonly SourceId[] }) {
 }
 
 export function GuideTopicLinks({ ids }: { ids: readonly string[] }) {
-  return <ul className={ui.topicList}>{ids.map(id => {
+  return <ul className={`${ui.topicList} ${ui.topicBento}`}>{ids.map(id => {
     const guide = GUIDE_TOPICS.find(topic => topic.id === id)!;
-    return <li key={id}><Link href={guideHref(id)} data-guide-select={id}><span><strong>{guide.title}</strong><span>{guide.teaser}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>;
+    return <li key={id}><Link href={guideHref(id)} data-guide-select={id}><StoryArtwork subject={id === "tests" ? "calendar" : stageForGuide(id)?.id === "arrival" ? "key" : "folder"} /><span><strong>{guide.title}</strong><span>{guide.teaser}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>;
   })}</ul>;
 }
 
@@ -52,7 +53,6 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
     <GuideReadingContext id={helpId} />
     <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, ...(part ? [{title:guide.title,href:guideHref(id)},{title:part.title}] : [{title:guide.title}])]} />
     <article className={ui.article} data-guide-panel={id} data-guide-current={id} data-guide-part={visaPart} aria-labelledby="guide-title">
-      <RisoSpot subject={id === "tests" ? "calendar" : stage.id === "choose" ? "map" : stage.id === "arrival" ? "key" : "envelope"} placement="article" />
       <header className={ui.articleHeader}>
         <h1 id="guide-title" tabIndex={-1}>{part?.title || guide.title}</h1>
         <p className={ui.intro}>{part?.description || guide.teaser}</p>
@@ -61,7 +61,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
       <div className={ui.readingBody}>
         {id === "visa" ? <VisaSection part={visaPart} /> : <>
           {guide.lead && <p className={ui.lead}>{guide.lead}</p>}
-          <dl className={ui.facts}>{guide.rows.map(row => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>
+          <GuidePointSwitcher rows={guide.rows} subject={id === "tests" ? "calendar" : stage.id === "arrival" ? "key" : stage.id === "choose" ? "map" : "folder"} endAction={helpId ? <GuideActionLink id={helpId} /> : undefined} />
         </>}
         {id === "permesso" && <section className={ui.note}>
           <h2>Актуальная ремарка к тренажёру</h2>
@@ -72,7 +72,6 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         <GuideSources ids={guide.sources} />
         {action && helpId && id !== "visa" && <section className={ui.nextAction} data-guide-next={id} aria-label="Что сделать по этой теме">
           {!note && <p>{GUIDE_HELP[helpId].next}</p>}
-          <GuideActionLink id={helpId} />
           <p className={ui.actionNote}>{action.note}</p>
         </section>}
       </div>

@@ -8,16 +8,19 @@ import { ADMISSION_SOURCES } from "@/data/admissions";
 import { VG_PER_YEAR, VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/data/guides";
 import { VISA_PARTS, type VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
+import { GuidePointSwitcher } from "./GuidePointSwitcher";
+import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitcher";
+import { StoryArtwork } from "@/components/story/StoryArtwork";
 
 export function VisaSection({ part }: { part?: VisaPart }) {
   if (part === "funds") return <GuaranteeCalculator />;
   if (part === "documents") return <VisaChecklist />;
-  if (part === "timeline") return <ol className={ui.visaTimeline}>{VISA_TIMELINE.map(step => <li key={step.t}><div><h2>{step.t}</h2><p>{step.p}</p></div></li>)}</ol>;
-  if (part === "before-application") return <ul className={ui.checkBefore}>{VISA_REJECT_REASONS.map(reason => <li key={reason}>{reason}</li>)}</ul>;
+  if (part === "timeline") return <GuidePointSwitcher rows={VISA_TIMELINE.map(step => ({ label:step.t, value:step.p }))} subject="calendar" />;
+  if (part === "before-application") return <GuidePointSwitcher rows={VISA_REJECT_REASONS.map((reason, index) => ({ label:`Перед подачей · ${index + 1}`, value:reason }))} subject="envelope" />;
   return <>
     <a className={ui.textLink} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer">Официальный VFS для Италии в Казахстане</a>
     <dl className={ui.visaFacts}>{VISA_KEY_FACTS.map(fact=><div key={fact.label}><dt>{fact.value}</dt><dd>{fact.label}</dd></div>)}</dl>
-    <nav aria-label="Вопросы о визе D"><ul className={ui.topicList}>{VISA_PARTS.map(item=><li key={item.id}><Link href={`/guides/visa/${item.id}`} data-visa-part={item.id}><span><strong>{item.title}</strong><span>{item.description}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul></nav>
+    <nav aria-label="Вопросы о визе D"><ul className={`${ui.topicList} ${ui.topicBento}`}>{VISA_PARTS.map(item=><li key={item.id}><Link href={`/guides/visa/${item.id}`} data-visa-part={item.id}><StoryArtwork subject={item.id === "timeline" ? "calendar" : item.id === "documents" ? "folder" : "envelope"} /><span><strong>{item.title}</strong><span>{item.description}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul></nav>
   </>;
 }
 
@@ -42,6 +45,7 @@ function GuaranteeCalculator() {
 
 function VisaChecklist() {
   const [done, setDone] = useState<Set<number>>(new Set());
+  const { index, href, select } = useStoryLocation("point", VISA_DOCS.length);
 
   function toggle(i: number) {
     setDone((prev) => {
@@ -66,35 +70,8 @@ function VisaChecklist() {
         />
       </div>
       <p className="mt-3 text-[13px] leading-5 text-stone-600">Отметки помогают собрать пакет и не являются решением о готовности к визе. Последний пункт применяется только к несовершеннолетним.</p>
-      <div className="mt-3 space-y-2">
-        {VISA_DOCS.map((d, i) => {
-          const isDone = done.has(i);
-          return (
-            <button
-              key={d.title}
-              type="button"
-              onClick={() => toggle(i)}
-              aria-pressed={isDone}
-              className={`flex min-h-11 w-full items-start gap-3 rounded-xl border px-5 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413] ${
-                isDone ? "border-red-200 bg-red-50/80" : "border-stone-200 bg-white hover:bg-stone-50"
-              }`}
-            >
-              <span
-                aria-hidden="true"
-                className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[13px] font-bold ${
-                  isDone ? "border-[#141413] bg-[#141413] text-white" : "border-stone-300"
-                }`}
-              >
-                {isDone ? <Check size={13} aria-hidden="true" /> : null}
-              </span>
-              <span>
-                <b className="block text-[14px] leading-6 text-stone-950">{d.title}</b>
-                <span className="text-[13px] leading-5 text-stone-600">{d.desc}</span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      <MediaSwitcher items={VISA_DOCS.map((document, position) => ({ id:String(position), title:document.title, text:document.desc, subject:"folder", label:String(position + 1).padStart(2, "0"), content:<button type="button" aria-pressed={done.has(position)} className={ui.checkItem} onClick={() => toggle(position)}><Check size={18} aria-hidden="true" />{done.has(position) ? "Собрано — снять отметку" : "Отметить собранным"}</button> }))} index={index} onSelect={select} href={href} label="Документы визового пакета" progressLabel="Документ" lastAction={<Link href="/guides/visa">К вопросам о визе</Link>} />
+
     </div>
   );
 }

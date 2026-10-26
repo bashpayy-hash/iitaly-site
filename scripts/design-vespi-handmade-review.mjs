@@ -105,7 +105,7 @@ try {
     const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
     await context.route('**/*',r=>{const u=new URL(r.request().url());if(u.pathname==='/api/event'||u.pathname==='/health/ai')return r.fulfill({json:{ok:true}});return u.origin===origin?r.continue():r.abort();});
     const page=await context.newPage();page.setDefaultTimeout(15000);
-    await page.goto(origin,{waitUntil:'networkidle'});await page.locator('[data-vespi-editorial]').scrollIntoViewIfNeeded();await decoded(page,'peek');await layout(page,'home '+width);await capture(page,'home-peek-'+width);
+    await page.goto(origin,{waitUntil:'networkidle'});await page.locator('[data-vespi-intro=home]').scrollIntoViewIfNeeded();await page.locator('[data-vespi-intro=home] img').evaluate(image=>image.decode());await layout(page,'home '+width);await capture(page,'home-peek-'+width);
     await page.goto(origin+'/guides/education',{waitUntil:'networkidle'});await page.locator('[data-guide-panel=education]').waitFor();assert.equal(await page.locator('[data-guide-invite] img').count(),0,'Reading has no decorative mascot invitation');await page.getByRole('button',{name:'Есть вопрос? Спроси Веспи',exact:true}).click();await page.locator('#iitaly-chat [data-vespi-assistant-avatar]').evaluate(img=>img.decode());assert.equal(await page.locator('#iitaly-chat [data-vespi-assistant-avatar]').count(),1);await layout(page,'guide helper '+width);await capture(page,'guide-helper-'+width);
 
     await context.close();

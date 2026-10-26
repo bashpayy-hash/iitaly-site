@@ -52,7 +52,9 @@ export function PortalPageNavigation({ items, active, label = "Разделы з
 export function usePortalPageFocus(title: string, key: string, target = "portal-step-heading") {
   useEffect(() => {
     document.title = `${title} — iItaly`;
-    const frame = requestAnimationFrame(() => document.getElementById(target)?.focus({ preventScroll: true }));
+    const frame = requestAnimationFrame(() => {
+      if (!document.activeElement?.closest("[data-story-pill]")) document.getElementById(target)?.focus({ preventScroll: true });
+    });
     return () => cancelAnimationFrame(frame);
   }, [title, key, target]);
 }

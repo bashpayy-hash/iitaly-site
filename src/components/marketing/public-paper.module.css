@@ -12,3 +12,10 @@
 @media(max-width:1099px) { .guide { display:none; } }
 @media(max-width:600px) { .texture { opacity:.28; } }
 @media print { .texture,.spot { display:none; } }
+
+/* The requested material layer: real scan plus a visible, inert paper grain. */
+.surface[data-public-paper-canvas] { background-color:#F7F4EA; }
+.noise,.grain::before { content:""; position:absolute; inset:0; z-index:-1; border-radius:inherit; pointer-events:none; user-select:none; opacity:.08; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='1'/%3E%3C/svg%3E"); }
+.grain { position:relative; isolation:isolate; }
+@media(max-width:600px) { .noise,.grain::before { opacity:.07; } }
+@media print { .noise,.grain::before { display:none; } }

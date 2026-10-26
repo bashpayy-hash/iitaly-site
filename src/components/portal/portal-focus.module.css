@@ -137,3 +137,31 @@
 .stagePagination a { max-width:48%; }
 .emptyStage { margin:12px 4px 24px; color:var(--quiet); font-size:15px; line-height:1.6; }
 @media(max-width:600px) { .canvas[data-portal-page=overview] .stageHeading { align-items:flex-start; flex-direction:column; gap:6px; }.canvas[data-portal-page=stage] .welcome h1 { font-size:28px; }.stagePagination { flex-direction:column; }.stagePagination a { max-width:100%; } }
+
+/* One task per stage screen; pills navigate saved tasks without completing them. */
+.canvas[data-portal-page=stage] .welcome h1 { font-size:18px; color:var(--quiet); }
+.canvas[data-portal-page=stage] .stageHeading { margin-bottom:12px; }
+.canvas[data-portal-page=stage] .stageTitle h2,.canvas[data-portal-page=stage] .stampTrack { display:none; }
+.stageSwitcher { min-width:0; }
+.stagePosition { color:var(--quiet); font-size:13px; margin:12px 0; font-variant-numeric:tabular-nums; }
+.task.stageScreen { display:grid; grid-template-columns:26px minmax(0,1.3fr) minmax(180px,.8fr); column-gap:22px; padding:28px 0; background:transparent; border:0; border-radius:0; box-shadow:none; animation:stagePoint .4s cubic-bezier(.16,1,.3,1) both; }
+.stageScreen .stepIndex { display:none; }
+.stageScreen .roundCheck { grid-column:1; grid-row:1; align-self:start; margin-top:8px; }
+.stageScreen .taskDetails { grid-column:2; grid-row:1; }
+.stageScreen .headingCopy { font-size:32px; line-height:1.15; letter-spacing:-.02em; }
+.stageScreen .taskBody { padding:0; background:transparent; }
+.stageScreen .explainer { max-width:52ch; margin:20px 0 16px; color:var(--quiet); font-size:17px; line-height:1.6; background:transparent; padding:0; }
+.stageScreen .explainer img { display:none; }
+.stageScreen [data-story-art] { grid-column:3; grid-row:1/3; align-self:center; }
+.stageScreen .taskActions { grid-column:2; grid-row:2; align-items:flex-start; margin-top:24px; }
+.stepPagination { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 0 0; border-top:1px solid var(--border); }
+.stepPagination a { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:10px 20px; border:1px solid var(--border); border-radius:999px; color:var(--ink); font-size:14px; }
+@keyframes stagePoint { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@media(max-width:700px) { .task.stageScreen { grid-template-columns:26px minmax(0,1fr); padding:20px 0; gap:16px; }.stageScreen .headingCopy { font-size:27px; }.stageScreen [data-story-art] { grid-column:1/-1; grid-row:2; max-width:200px; }.stageScreen .taskActions { grid-column:1/-1; grid-row:3; width:100%; margin:0; }.stageScreen .taskActions a { width:100%; }.stageScreen .explainer { font-size:16px; } }
+@media(prefers-reduced-motion:reduce) { .task.stageScreen { animation:none; } }
+
+.canvas[data-portal-page=stage] :is(h1,h3,p,article) { transition:none; }
+.task.stageScreen .taskDetails { display:block; }
+.task.stageScreen .taskActions { margin-left:0; }
+.task.stageScreen .taskBody { padding:0; background:transparent; }
+@media(max-width:700px) { .task.stageScreen .taskDetails { grid-column:2; grid-row:1; }.task.stageScreen .taskHeading { display:block; }.task.stageScreen .taskActions { grid-column:1/-1; grid-row:3; } }

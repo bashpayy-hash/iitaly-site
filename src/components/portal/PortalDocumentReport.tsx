@@ -5,10 +5,11 @@ import type { PortalDoc } from "@/lib/portalApi";
 import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
-import { PortalDocumentCoach } from "./PortalDocumentCoach";
+import { MediaSwitcher, type StoryItem } from "@/components/story/MediaSwitcher";
+import { instructionIndex } from "./portalInstructionPages";
 import styles from "./portal-document.module.css";
 import pages from "./portal-pages.module.css";
-import { PortalPageLink, PortalPageNavigation, usePortalPart, usePortalPageFocus } from "./PortalPageNavigation";
+import { PortalPageLink, PortalPageNavigation, usePortalPart, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 
 const CHECK_LABEL = { ok: "В порядке", warn: "Нужно уточнить", error: "Несоответствие", unknown: "Не подтверждено" };
 function dateLabel(value?: string) {
@@ -40,6 +41,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
   reviewExtra?: ReactNode;
   storage?: "cloud" | "local";
 }) {
+  const findingParameter = usePortalParameter("finding", "1");
   const heading = useRef<HTMLHeadingElement>(null);
   const requestedPart = usePortalPart("result");
   const part = ["result", "review", "action"].includes(requestedPart) ? requestedPart : "result";
@@ -82,6 +84,19 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
     review.academicYear === "unspecified" && "Не указан учебный год заявки.",
     review.profile !== "general" && review.applicantScope === "unspecified" && "Не подтверждена ситуация заявителя.",
   ].filter(Boolean) : [];
+  const findingPages: StoryItem[] = [
+    ...problems.map((problem, index): StoryItem => ({
+      id:`problem-${index}`, label:`Замечание ${index + 1}`, title:problem.text || "Найдено несоответствие",
+      text:problem.fix || "Уточни способ исправления у учреждения, которое выдало документ.", subject:"folder",
+      content:<>{problem.observed && <p className={styles.meta}><b>В документе:</b> {problem.observed}</p>}{problem.sourceId && review?.sources.find(source => source.id === problem.sourceId) && <p className={styles.meta}>Основание: {review.sources.find(source => source.id === problem.sourceId)?.label}</p>}</>,
+    })),
+    ...checks.map((check, index): StoryItem => ({ id:`check-${index}`, label:`Проверка ${index + 1}`, title:check.label || "Проверка сведений", text:check.note || "Отдельное пояснение к этому пункту не указано.", subject:"folder", content:<span className={styles.checkStatus} data-status={check.status || "unknown"}>{CHECK_LABEL[check.status || "unknown"]}</span> })),
+    ...nextSteps.map((step, index): StoryItem => ({ id:`next-${index}`, label:`Действие ${index + 1}`, title:"Следующий шаг", text:step, subject:"envelope" })),
+    ...(review ? [{ id:"context", label:"Контекст", title:review.profileLabel, text:`${review.academicYear !== "unspecified" ? review.academicYear : "Учебный год не указан"}. ${review.notice || "Эти сведения относятся к уже выполненной проверке."}`, subject:"calendar" as const, content:<><p className={styles.meta}>Эти сведения относятся к уже выполненной проверке. Подтверждение требований и решение вуза не являются одним событием.</p>{review.referenceYear !== null && <p className={styles.meta}>Год доходов в выбранном профиле: {review.referenceYear}.</p>}</> }] : []),
+  ];
+  if (!findingPages.length) findingPages.push({ id:"summary", title:"Итог проверки", text:summary || "Отдельные пункты проверки в этом результате не указаны. Ориентируйся на итог и ограничения разбора.", subject:"folder" });
+  const findingIndex = instructionIndex(findingParameter, findingPages.length);
+  const findingHref = (index: number) => `${href("review")}&finding=${index + 1}`;
   const toDocuments = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (!onDocuments || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault(); onDocuments();
@@ -138,10 +153,10 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
       </div>}
     </div>
     <div hidden={part !== "review"} data-report-details-page>
-    <PortalDocumentCoach />
-    {reviewExtra}
-    <section className={styles.fileDetails} aria-label="Файл и сроки">
-      <h3>Файл и сроки</h3>
+    <MediaSwitcher items={findingPages} index={findingIndex} onSelect={index => navigatePortal(findingHref(index))} href={findingHref} label="Пункты разбора" progressLabel="Пункт" lastAction={<PortalPageLink href={href(canUpload ? "action" : "result")}>{canUpload ? "Новая проверка" : "К результату"}</PortalPageLink>} />
+    {reviewExtra && <details className={styles.sources}><summary>Дополнительные сведения</summary>{reviewExtra}</details>}
+    <details className={styles.sources}>
+      <summary>Файл и сроки</summary>
       <dl>
         {doc.fileName && <div><dt>Имя файла в разборе</dt><dd>{doc.fileName}</dd></div>}
         {checked && <div><dt>Дата проверки</dt><dd>{checked}</dd></div>}
@@ -150,40 +165,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
         {orientir && <div><dt>Плановый ориентир</dt><dd>{orientir.replace(/^Ориентир: /, "")}<small>Это не срок конкретного вуза.</small></dd></div>}
       </dl>
       <p className={styles.meta}>{storage === "local" ? "Полный разбор доступен в этой вкладке. В локальном профиле остаётся только краткий итог, без файла." : "В кабинете сохраняется последний разбор и имя файла. Копия самого документа не сохраняется."}</p>
-    </section>
-    {result && <>
-      {nextSteps.length > 0 && <details className={styles.sources}>
-        <summary>Все рекомендации из разбора</summary>
-        <ol className={styles.steps}>{nextSteps.map((step, index) => <li key={index}>{step}</li>)}</ol>
-      </details>}
-      {problems.length > 0 && <div className={styles.block}>
-        <h3>Что исправить</h3>
-        <ol className={styles.findings}>
-          {problems.map((problem, index) => <li key={index}>
-            <strong>{problem.text || "Найдено несоответствие"}</strong>
-            {problem.observed && <p><b>В документе:</b> {problem.observed}</p>}
-            <p><b>Что сделать:</b> {problem.fix || "Уточни способ исправления у учреждения, которое выдало документ."}</p>
-            {problem.sourceId && review?.sources.find(source => source.id === problem.sourceId) && <p className={styles.meta}>Основание: {review.sources.find(source => source.id === problem.sourceId)?.label}</p>}
-          </li>)}
-        </ol>
-      </div>}
-      <details className={styles.sources}>
-        <summary>Что проверено: полный разбор</summary>
-        {checks.length ? <ul className={styles.checks}>
-          {checks.map((check, index) => <li key={index}>
-            <span className={styles.checkStatus} data-status={check.status || "unknown"}>{CHECK_LABEL[check.status || "unknown"]}</span>
-            <div><strong>{check.label || "Проверка сведений"}</strong>{check.note && <p>{check.note}</p>}</div>
-          </li>)}
-        </ul> : <p>Отдельные пункты проверки в этом результате не указаны. Ориентируйся на итог и ограничения разбора.</p>}
-      </details>
-      {review && <div className={styles.block}>
-        <h3>Контекст сохранённой проверки</h3>
-        <p><strong>{review.profileLabel}{review.academicYear !== "unspecified" ? ` · ${review.academicYear}` : " · учебный год не указан"}</strong></p>
-        {review.rulesStatus === "verified" && <p>{review.notice}</p>}
-        <p className={styles.meta}>Эти сведения относятся к уже выполненной проверке. Подтверждение требований и решение вуза не являются одним событием.</p>
-        {review.referenceYear !== null && <p>Год доходов в выбранном профиле: {review.referenceYear}.</p>}
-      </div>}
-    </>}
+    </details>
     {review && <details className={styles.sources}>
       <summary>Источники и дата сверки правил</summary>
       <p className={styles.meta}>База сверена {dateLabel(review.verifiedOn) || review.verifiedOn}. Это дата проверки базы; сайты учреждений не просматриваются заново при каждом разборе.</p>

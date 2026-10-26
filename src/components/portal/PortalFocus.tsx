@@ -13,7 +13,10 @@ import { PortalRouteVespi } from "./PortalRouteVespi";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
-import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus } from "./PortalPageNavigation";
+import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
+
+import { StoryPills } from "@/components/story/MediaSwitcher";
+import { StoryArtwork, taskArtwork } from "@/components/story/StoryArtwork";
 
 type Props = {
   data: PortalData; selectedStageId?: string; shortlist: string[]; busy: boolean;
@@ -49,7 +52,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const progress = portalProgress(data);
   const selected = data.roadmap.find(stage => stage.id === selectedStageId) || position.stage || data.roadmap[0];
   const stagePage = Boolean(selectedStageId && selected?.id === selectedStageId);
-  usePortalPageFocus(stagePage ? selected.title : "Мой план", stagePage ? selected.id : "overview", "portal-overview-heading");
   const rows = [...(selected?.tasks || [])];
   // Keep the server's chronology within each group; dates never reorder steps.
   const ordered = rows;
@@ -57,6 +59,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const pending = ordered.filter(row => !portalTaskDone(data, row));
   const current = selected?.id === position.stage?.id ? position.task : null;
   const visibleTasks = [...completed, ...(current ? [current] : []), ...pending.filter(row => row.id !== current?.id)];
+  const selectedTaskId = usePortalParameter("step", current?.id || visibleTasks[0]?.id || "");
+  const selectedTaskIndex = Math.max(0, visibleTasks.findIndex(task => task.id === selectedTaskId));
+  const selectedTask = visibleTasks[selectedTaskIndex];
+  const stageHref = (index: number) => `/portal?stage=${encodeURIComponent(selected.id)}&step=${encodeURIComponent(visibleTasks[index].id)}`;
+  usePortalPageFocus(stagePage ? `${selected.title} · ${selectedTask ? taskTitle(selectedTask) : "Шаги"}` : "Мой план", stagePage ? `${selected.id}:${selectedTask?.id}` : "overview", "portal-overview-heading");
   const universities = selectedUniversities(shortlist);
   const firstName = data.client.name?.trim().split(/\s+/)[0];
   const days = daysTo(position.task);
@@ -127,10 +134,14 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         </div>
         {!stagePage && selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Все шаги этапа <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
       </div>
+      {stagePage && selectedTask && <div className={styles.stageSwitcher} data-stage-switcher>
+        <StoryPills items={visibleTasks.map((row, index) => ({ id:row.id, title:taskTitle(row), label:String(index + 1).padStart(2, "0") }))} index={selectedTaskIndex} onSelect={index => navigatePortal(stageHref(index))} href={stageHref} label="Шаги этапа" />
+        <p className={styles.stagePosition}>Шаг {selectedTaskIndex + 1} из {visibleTasks.length}</p>
+      </div>}
       <div className={styles.taskList} aria-label="Задачи этапа">
-        {(stagePage ? visibleTasks : current ? [current] : []).map(row => {
+        {(stagePage ? selectedTask ? [selectedTask] : [] : current ? [current] : []).map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
-          const isCurrent = current?.id === row.id, open = isCurrent;
+          const isCurrent = current?.id === row.id, open = stagePage || isCurrent;
           const date = row.deadline && /^\d{4}-\d{2}-\d{2}$/.test(row.deadline) ? fmtDate(row.deadline) : "";
           const time = row.time || TASK_META[row.id]?.min;
           const description = row.id === "translate" ? "Получателю может понадобиться перевод документа и его приложений." : row.id === "apostille" ? "Уточнить требования выбранного вуза и поставить штамп в ЦОНе" : taskShortExplainer(row);
@@ -139,7 +150,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined);
           };
-          return <article key={row.id} className={styles.task} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
+          return <article key={row.id} className={`${styles.task} ${stagePage ? styles.stageScreen : ""}`} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
             </button>
@@ -152,11 +163,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
               {open && <div className={styles.taskBody}>
                 {description && <p className={styles.explainer} data-step-short-explainer><img src="/zhol/icon-msg.webp" width="18" height="18" alt="" />{description}</p>}
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}
+                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}
                   {!done && time && <span>Срок: {time}</span>}
                 </div>
               </div>}
             </div>
+            {stagePage && <StoryArtwork subject={taskArtwork(row.id, selected?.id)} />}
             {open && <div className={styles.taskActions}>
               <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
               {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
@@ -165,6 +177,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         })}
       </div>
       {!stagePage && !current && <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
+      {stagePage && selectedTask && <nav className={styles.stepPagination} aria-label="Переход между шагами этапа">
+        {selectedTaskIndex > 0 ? <PortalPageLink href={stageHref(selectedTaskIndex - 1)}>Назад</PortalPageLink> : <span />}
+        {selectedTaskIndex < visibleTasks.length - 1 ? <PortalPageLink href={stageHref(selectedTaskIndex + 1)}>Далее <ChevronRight size={16} aria-hidden="true" /></PortalPageLink> : <PortalPageLink href="/portal">К моему плану <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
+      </nav>}
       {stagePage && <nav className={styles.stagePagination} aria-label="Соседние этапы">
         {data.roadmap[data.roadmap.indexOf(selected) - 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)-1].id)}`}>Предыдущий этап: {data.roadmap[data.roadmap.indexOf(selected)-1].title}</PortalPageLink>}
         {data.roadmap[data.roadmap.indexOf(selected) + 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)+1].id)}`}>Следующий этап: {data.roadmap[data.roadmap.indexOf(selected)+1].title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
