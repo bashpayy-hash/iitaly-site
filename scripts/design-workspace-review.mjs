@@ -115,7 +115,7 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
     await portalDestination(page, 'План');
-    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
+    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),0,'The local stage page has no global roadmap');
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert(await checks.count()>0,'The checklist exposes completion controls');

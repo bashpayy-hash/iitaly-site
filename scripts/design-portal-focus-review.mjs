@@ -1,3 +1,4 @@
+import { portalDestination, portalRoadState } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -198,9 +199,9 @@ try {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
     await page.getByRole('link',{name:'Все шаги этапа'}).click();
     await page.locator('[data-task-check=translate]').click();
-    if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal(await road(page).getAttribute('data-road-done'),'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}
+    if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal((await portalRoadState(page)).done,'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}
     await page.waitForFunction(()=>document.querySelector('[data-task-check=translate]')?.getAttribute('aria-checked')==='true');
-    await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='4');
+    assert.equal((await portalRoadState(page,'4')).done,'4');
     await page.waitForFunction(()=>window.__notes===3);
     assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
@@ -211,12 +212,12 @@ try {
     const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(92, 96, 86)');
     assert.equal(calls.length,failTask?2:1);
     await page.locator('[data-task-ready=apostille]').press('Space');
-    await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='5');
+    await page.waitForFunction(()=>document.querySelector('[data-task-check=apostille]')?.getAttribute('aria-checked')==='true');assert.equal((await portalRoadState(page,'5')).done,'5');
     assert.equal(data.docs.apostille,undefined);
-    await page.reload({waitUntil:'networkidle'});assert.equal(await road(page).getAttribute('data-road-done'),'5');assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(),0);assert.equal(await page.evaluate(()=>window.__notes),0);
+    await page.reload({waitUntil:'networkidle'});assert.equal((await portalRoadState(page,'5')).done,'5');assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(),0);assert.equal(await page.evaluate(()=>window.__notes),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();await page.getByLabel('Звук при выполнении шага').uncheck();
-    await page.locator('[data-road-stage][aria-current="step"]').click();
-    await page.locator('[data-task-check=notary]').click();await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='6');
+    await portalDestination(page,'План');
+    await page.locator('[data-task-check=notary]').click();await page.waitForFunction(()=>document.querySelector('[data-task-check=notary]')?.getAttribute('aria-checked')==='true');assert.equal((await portalRoadState(page,'6')).done,'6');
     assert.equal(await page.evaluate(()=>window.__notes),0);
     results.push({failTask,savedOnly:true,fileOutcomeIndependent:true,keyboard:true,sound:true,reloadQuiet:true,mute:true});await context.close();
   }

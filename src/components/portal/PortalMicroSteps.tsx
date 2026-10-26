@@ -32,7 +32,8 @@ const steps: Record<string, Step[]> = {
 };
 
 /** Navigation copy only; full maintained rules and sources stay in the detail. */
-export function PortalMicroSteps({ task }: { task: PortalTask }) {
+export function PortalMicroSteps({ task, authoredOnly = false }: { task: PortalTask; authoredOnly?: boolean }) {
+  if (authoredOnly && !steps[task.id]) return null;
   const items = steps[task.id] || [
     { title: "Уточни задачу", text: taskExplanation(task) },
     { title: "Открой разбор", text: "Сверь требования и подготовь сведения для своего случая." },

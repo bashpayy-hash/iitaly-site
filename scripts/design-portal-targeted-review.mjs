@@ -1,5 +1,5 @@
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
-import { portalDestination, portalTask } from './portal-review-navigation.mjs';
+import { portalDestination, portalTask, portalStage, portalRoadState } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -115,10 +115,10 @@ try {
     await noOverflow(page);await axe(page,`chat ${width}`);await capture(page,`chat-${width}`);
     await chat.getByRole('button',{name:'Закрыть чат',exact:true}).click();await chat.waitFor({state:'hidden'});
     assert.equal(await page.locator('[data-portal-design]').evaluate(el=>el.inert),false);
-    await road(page).locator('[data-road-stage="start"]').click();await portalTask(page,'profile');await page.locator('[data-saved-profile]').waitFor();
+    await portalStage(page,'start');await portalTask(page,'profile');await page.locator('[data-saved-profile]').waitFor();
     assert.match(await page.locator('[data-saved-profile]').innerText(),/Этап учёбы|Бакалавриат|До 3 млн/);
     assert(await page.locator('[data-saved-profile]').getByRole('link',{name:'Изменить',exact:true}).isVisible());
-    assert.equal(await road(page).locator('[aria-current="step"]').getAttribute('data-road-stage'),'docs','Reading an earlier stage does not move the current stage');
+    assert.equal((await portalRoadState(page)).stage,'docs','Reading an earlier stage does not move the current stage');
     assert.equal(await page.locator('aside').count(),0,'The pipeline is the only stage navigation');
     await page.locator('[data-portal-assistant]').click();await chat.waitFor();
     await chat.getByRole('link',{name:'Что дальше?',exact:true}).waitFor();
@@ -126,7 +126,7 @@ try {
     await chat.getByRole('button',{name:'Закрыть чат',exact:true}).click();await chat.waitFor({state:'hidden'});
     await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link').last().click();
     await page.locator('[data-portal-focus][data-selected-stage=start]').waitFor();
-    await road(page).locator('[data-road-stage="arrival"]').click();await portalTask(page,'questura');await detail(page).waitFor();
+    await portalStage(page,'arrival');await portalTask(page,'questura');await detail(page).waitFor();
     assert.equal(await detail(page).getByRole('button').count(),0,'Future stage is a read-only preview');
     data.docs.apostille={verdict:'ok',fileName:'synthetic.txt'};
     data.docs.translate={verdict:'warn',summary:'Требования заявки не подтверждены.'};

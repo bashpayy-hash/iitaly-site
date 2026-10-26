@@ -177,7 +177,7 @@ try {
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false, 'Outside tap closes mobile navigation');
   await visit(mobile, '/guides#visa');
   await mobile.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });
-  assert.equal(await mobile.locator('[data-guide-select="visa"]').getAttribute('aria-expanded'), 'true', 'Mobile visa deep link selects and opens its topic');
+  assert.equal(new URL(mobile.url()).pathname,'/guides/visa','Mobile legacy link opens the dedicated visa page');
   await shot(mobile, 'guide-visa-mobile');
   results.push({ test: 'Mobile menu closes on Escape/outside tap; guide deep links open the correct topic', passed: true });
   await mobile.context().close();

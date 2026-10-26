@@ -110,9 +110,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       </div>}
       <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
     </aside>}
-    <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded condensed={stagePage} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
-    </div>
+    {!stagePage && <div className={styles.routeCard} data-route-card>
+      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
+    </div>}
     <div className={styles.stageBody} data-portal-overview>
       <div className={styles.stageHeading}>
         <div className={styles.stageTitle}>

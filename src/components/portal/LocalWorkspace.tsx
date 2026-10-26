@@ -13,11 +13,10 @@ import { portalPosition, taskReadOnlyReason, taskTitle } from "@/lib/portalNavig
 import { DOC_TASKS } from "@/lib/portalMeta";
 import type { PortalDoc, PortalTask } from "@/lib/portalApi";
 import type { DocCheckResult } from "@/lib/checkDocument";
-import { nearestUniversityDeadline } from "@/lib/portalShortlist";
 import { Wizard } from "@/components/plan/Wizard";
 import { DocCheck } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
-import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import type { RoadTravel } from "./PortalRoad";
 import { PortalDocumentReport } from "./PortalDocumentReport";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { PortalTaskPages } from "./PortalTaskPages";
@@ -151,7 +150,7 @@ export function LocalWorkspace() {
       <a href="#iitaly-chat" data-portal-assistant data-step-id={assistantTask?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: assistantTask?.id, taskTitle: assistantTask ? taskTitle(assistantTask) : undefined, taskContext: assistantTask?.explain, taskDone: assistantTask ? portalTaskDone(data, assistantTask) : false, questions: assistantTask ? taskQuestions(assistantTask, portalTaskDone(data, assistantTask)) : undefined } })); }}><VespiOutline /><span>Помощник</span></a>
       <a href="/portal?view=docs" aria-label="Документы" title="Документы" data-portal-documents onClick={event => link(event, { view: "docs", task: null, doc: null })}><FileText size={18} strokeWidth={1.5} aria-hidden="true" /></a>
       <a href="/portal?view=settings" aria-label="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
-    </div>} />{!wizardOpen && !showFocus && <div className={styles.routeShell}><PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={active ? data.roadmap.find(row => row.tasks.some(task => task.id === active.id))?.id : undefined} deadline={nearestUniversityDeadline(local.selectedIds)} onSelectStage={selectStage} onOpenTask={openTask} navigationOnly condensed travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} /></div>}</div>
+    </div>} /></div>
     <main id="main" className={`${styles.frame} ${focusStyles.localFrame}`} onClickCapture={event => { if ((event.target as Element).closest("button")) feedback.prime(); }}>
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗</a></div>
       {storageError && <p role="alert" className={styles.readOnly}>{storageError}</p>}

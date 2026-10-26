@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { portalDestination } from './portal-review-navigation.mjs';
+import { portalDestination, portalStage } from './portal-review-navigation.mjs';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
@@ -78,18 +78,19 @@ try {
   await noOverflow(page);await axe(page,`Overview ${width}`);
   await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true});
   for(const stage of data.roadmap) {
-   await page.locator(`[data-road-stage="${stage.id}"]`).click();
+   await portalStage(page,stage.id);
    await page.locator('[data-portal-page=stage]').waitFor();
    assert.equal(new URL(page.url()).searchParams.get('stage'),stage.id);
    assert.equal(await page.locator('#portal-overview-heading').innerText(),stage.title);
    assert.equal(await page.locator('[data-task-check]').count(),stage.tasks.length);
-   assert.equal(await page.locator('[data-portal-now]').count(),0);
+   assert.equal(await page.locator('[data-portal-now],[data-portal-road]').count(),0);
    await noOverflow(page);
   }
-  await page.locator('[data-road-stage=docs]').click();
+  await portalStage(page,'docs');
   await page.screenshot({path:resolve(output,`stage-${width}.png`),fullPage:true});await axe(page,`Stage ${width}`);
   await page.locator('[data-portal-task=translate]').click();
   await page.locator('[data-task-page=overview]').waitFor();
+  assert.equal(await page.locator('[data-portal-road]').count(),0,'One task at a time, no repeated route');
   assert.equal(await page.locator('[data-micro-steps] li').count(),3);
   assert.equal(await page.locator('[data-step-instructions]').count(),0);
   assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false);
@@ -124,17 +125,22 @@ try {
   await crumbs(page).getByRole('link',{name:'Мой план',exact:true}).click();
   await page.locator('[data-portal-page=overview]').waitFor();
   assert.equal(await page.locator('[data-task-check]').count(),1);assert.equal(calls.length,0);
-  await page.locator('[data-road-stage=docs]').click();
+  await portalStage(page,'docs');
   await portalDestination(page,'Обзор');
   assert.equal(new URL(page.url()).search,'','The main menu returns to the overview URL and view together');
   assert.equal(await page.locator('[data-task-check]').count(),1);
   await page.goto(guideUrl,{waitUntil:'networkidle'});await page.locator('[data-task-page=guide]').waitFor();
   await portalDestination(page,'Обзор');
-  assert.equal(new URL(page.url()).search,'','The compact route never covers the open mobile menu');
+  assert.equal(new URL(page.url()).search,'','The main menu remains reachable on inner pages');
   results.push({width,allStages:6,directLinks:true,backForward:true,mainMenuReturnsHome:true,selectedFilePreserved:true,noFalseCompletion:true});await context.close();
  }
  for(const width of [1440,390]) {
-  const {page,context,fileCalls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true,report:true});
+  const {page,context,data,fileCalls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true,report:true});
+  data.done.translate=true;data.done.notary=true;
+  await page.goto(origin+'/portal?view=plan&task=cimea',{waitUntil:'networkidle'});await page.locator('[data-task-page=overview]').waitFor();
+  assert.equal(await page.locator('[data-portal-road],[data-micro-steps]').count(),0,'The CIMEA brief has no global plan or generic repeated instructions');
+  assert((await page.locator('[data-task-page=overview]').boundingBox()).width<=880);await noOverflow(page);await axe(page,`CIMEA ${width}`);
+  await page.screenshot({path:resolve(output,`cimea-${width}.png`),fullPage:true});
   await page.goto(origin+'/portal?view=docs&doc=translate',{waitUntil:'networkidle'});
   const report=page.getByRole('region',{name:'Разбор документа',exact:true});await report.waitFor();
   const navigation=page.getByRole('navigation',{name:'Разделы разбора документа'});

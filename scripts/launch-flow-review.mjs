@@ -1,4 +1,4 @@
-import { portalDestination, portalTask } from './portal-review-navigation.mjs';
+import { portalDestination, portalTask, portalStage } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
@@ -172,9 +172,9 @@ try {
     await report.waitFor();
     await report.getByText('Готово', {exact:true}).waitFor();
     // The owner requested unlimited explicit rechecks, including approved files.
-    assert.equal(await page.locator('button').count(), 1, 'An approved document has one explicit new-version action');
-    assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1);
-    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-secondary'), 'true', 'Rechecking a previous file keeps the road secondary');
+    assert.equal(await report.locator('[data-document-prepare]').count(),1,'An approved document has one explicit new-version link');
+    assert(await report.locator('[data-document-prepare]').isVisible());assert.match(await report.locator('[data-document-prepare]').innerText(),/Проверить новую версию/);
+    assert.equal(await page.locator('[data-portal-road]').count(),0,'The saved report concentrates on one file');
     assert.equal(calls.check, 2, 'Opening the saved report never starts another check');
     assert.match(await report.innerText(), /Тестовый результат: видимых ошибок нет\./);
     await portalDestination(page, 'Документы');
@@ -185,7 +185,7 @@ try {
     await portalDestination(page, 'План');
     assert.equal(calls.task, 0, 'File check and upload close the document step without a separate self-report');
     assert.equal(await page.locator('[data-task-check=test-task]').count(),1);
-    await page.locator('[data-portal-task="test-task"]').click();
+    await portalTask(page,'test-task');
     const detail = page.locator('[data-step-detail="test-task"]');
     await detail.waitFor();
     assert.equal(await page.locator('button').count(), 1);
@@ -199,7 +199,7 @@ try {
     assert.equal(await completedRoad.getAttribute('data-road-done'), await completedRoad.getAttribute('data-road-total'), 'The terminal label requires every real route task to be completed');
     assert.equal(await completedRoad.locator('[data-road-open]').count(), 0, 'A completed route has no next-action link');
     assert.equal(await page.locator('[data-task-check][aria-checked=false]:enabled,[data-road-open]').count(),0,'The completed route has no executable completion or invented next action');
-    await portalDestination(page, 'План');
+    await portalStage(page,'documents');
     await page.locator('[data-task-check="test-task"][data-done=true]').waitFor({ state: 'attached' });
     assert.equal(calls.task, 2);
     results.push({ test: 'Portal exposes file, check, storage and task errors with precise recovery; saved result retry does not recheck', passed: true });

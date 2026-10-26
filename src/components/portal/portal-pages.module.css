@@ -4,6 +4,7 @@
 .breadcrumbs li+li::before { content:"/"; color:var(--tracker-off); }
 .breadcrumbs a { display:inline-flex; align-items:center; min-height:44px; text-decoration:underline; text-underline-offset:4px; }
 .page { min-width:0; padding:28px 32px; background:var(--card); border:1px solid var(--border); border-radius:16px; }
+.page[data-task-page="overview"], .page[data-task-page="guide"] { width:100%; max-width:880px; margin-inline:auto; }
 .heading { max-width:36ch; margin:0 0 14px; color:var(--ink-strong); font:600 32px/1.2 var(--font-sans); letter-spacing:-.02em; overflow-wrap:anywhere; }
 .meta { display:flex; flex-wrap:wrap; gap:6px 16px; margin:0; color:var(--quiet); font-size:13px; line-height:1.5; font-variant-numeric:tabular-nums; }
 .sections { display:flex; flex-wrap:wrap; gap:0 24px; margin:22px 0 28px; border-bottom:1px solid var(--border); }

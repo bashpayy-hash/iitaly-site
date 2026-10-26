@@ -1,115 +1,24 @@
 "use client";
 
-import { useId, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowRight, Check } from "lucide-react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
 import { ADMISSION_SOURCES } from "@/data/admissions";
-import {
-  VG_PER_YEAR,
-  VISA_DOCS,
-  VISA_KEY_FACTS,
-  VISA_REJECT_REASONS,
-  VISA_TIMELINE,
-} from "@/data/guides";
+import { VG_PER_YEAR, VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/data/guides";
+import { VISA_PARTS, type VisaPart } from "./guideCatalogue";
+import ui from "./guide-pages.module.css";
 
-function VisaAccordion({
-  summary,
-  defaultOpen = false,
-  children,
-}: {
-  summary: React.ReactNode;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}) {
-  const id = useId();
-  const [open, setOpen] = useState(defaultOpen);
-  const triggerId = `${id}-trigger`;
-  const panelId = `${id}-panel`;
-
-  return (
-    <section className="rounded-[24px] border border-stone-200/80 bg-white/70 p-1.5">
-      <button
-        id={triggerId}
-        type="button"
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((value) => !value)}
-        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-full px-4 py-3 text-left text-[14px] leading-6 text-stone-950 hover:bg-stone-100/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413]"
-      >
-        {summary}
-        <ChevronDown
-          aria-hidden="true"
-          size={20}
-          className={`shrink-0 text-stone-500 transition-transform duration-200 motion-reduce:transition-none ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      <div
-        id={panelId}
-        role="region"
-        aria-labelledby={triggerId}
-        hidden={!open}
-        className="mx-2 border-t border-stone-200/80 px-2 pt-4 pb-4"
-      >
-        {children}
-      </div>
-    </section>
-  );
-}
-
-export function VisaSection() {
-  return (
-    <div>
-      <p className="text-[14px] leading-6 text-stone-700">
-        <span className="text-stone-600">Где подавать: </span>
-        <a href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex min-h-11 max-w-full items-center rounded-full bg-stone-100 px-4 py-2 text-[14px] font-medium leading-5 text-stone-700 hover:bg-stone-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413]">Официальный VFS для Италии в Казахстане</a>
-      </p>
-
-      <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
-        {VISA_KEY_FACTS.map((f) => (
-          <div key={f.label} className="rounded-[20px] border border-stone-200/80 bg-stone-50/80 px-3 py-4 text-center">
-            <b className="block font-apple-display text-[20px] leading-7 font-semibold tracking-tight text-stone-950">{f.value}</b>
-            <span className="text-[13px] leading-5 text-stone-600">{f.label}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-4 space-y-2.5">
-        <VisaAccordion defaultOpen summary={<b className="font-semibold">Таймлайн подачи: когда что делать</b>}>
-          <div className="space-y-3">
-            {VISA_TIMELINE.map((s, i) => (
-              <div key={i} className="flex gap-3">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-50 text-[13px] font-semibold text-[#141413]">
-                  {i + 1}
-                </div>
-                <div>
-                  <b className="text-[14px] leading-6 text-stone-950">{s.t}</b>
-                  <p className="mt-1 text-[14px] leading-6 text-stone-600">{s.p}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </VisaAccordion>
-
-        <VisaAccordion summary={<b className="font-semibold">Годовой минимум и пересчёт в тенге</b>}>
-          <GuaranteeCalculator />
-        </VisaAccordion>
-
-        <VisaAccordion summary={<b className="font-semibold">Чек-лист документов</b>}>
-          <VisaChecklist />
-        </VisaAccordion>
-
-        <VisaAccordion summary={<b className="font-semibold">Что проверить перед подачей</b>}>
-          <div className="space-y-2">
-            {VISA_REJECT_REASONS.map((r, i) => (
-              <div key={i} className="rounded-[18px] border border-amber-200/80 bg-amber-50/70 px-4 py-3 text-[14px] leading-6 text-stone-700">
-                {r}
-              </div>
-            ))}
-          </div>
-        </VisaAccordion>
-      </div>
-    </div>
-  );
+export function VisaSection({ part }: { part?: VisaPart }) {
+  if (part === "funds") return <GuaranteeCalculator />;
+  if (part === "documents") return <VisaChecklist />;
+  if (part === "timeline") return <ol className={ui.visaTimeline}>{VISA_TIMELINE.map(step => <li key={step.t}><div><h2>{step.t}</h2><p>{step.p}</p></div></li>)}</ol>;
+  if (part === "before-application") return <ul className={ui.checkBefore}>{VISA_REJECT_REASONS.map(reason => <li key={reason}>{reason}</li>)}</ul>;
+  return <>
+    <a className={ui.textLink} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer">Официальный VFS для Италии в Казахстане</a>
+    <dl className={ui.visaFacts}>{VISA_KEY_FACTS.map(fact=><div key={fact.label}><dt>{fact.value}</dt><dd>{fact.label}</dd></div>)}</dl>
+    <nav aria-label="Вопросы о визе D"><ul className={ui.topicList}>{VISA_PARTS.map(item=><li key={item.id}><Link href={`/guides/visa/${item.id}`} data-visa-part={item.id}><span><strong>{item.title}</strong><span>{item.description}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul></nav>
+  </>;
 }
 
 function GuaranteeCalculator() {
@@ -166,7 +75,7 @@ function VisaChecklist() {
               type="button"
               onClick={() => toggle(i)}
               aria-pressed={isDone}
-              className={`flex min-h-11 w-full items-start gap-3 rounded-full border px-5 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413] ${
+              className={`flex min-h-11 w-full items-start gap-3 rounded-xl border px-5 py-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#141413] ${
                 isDone ? "border-red-200 bg-red-50/80" : "border-stone-200 bg-white hover:bg-stone-50"
               }`}
             >

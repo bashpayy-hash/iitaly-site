@@ -49,21 +49,6 @@ try {
       const violations = await page.evaluate(async () => (await window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a','wcag2aa','wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
       assert.deepEqual(violations, [], `${where}: accessibility`);
     }
-    function currentNext(id) { return page.locator(`[data-guide-next="${id}"]`).filter({ visible: true }); }
-    async function readingSurfaceContrast() {
-      // An unresolved surface token silently makes these controls transparent.
-      // Verify the painted number, not its intentionally transparent stage link.
-      const stageNumber = page.locator('[data-guide-timeline] a[aria-current="step"] > span[aria-hidden="true"]');
-      const nextTopic = page.locator('[data-guide-next-topic]').filter({ visible: true });
-      for (const [label, control] of [['Current stage number', stageNumber], ['Next topic', nextTopic]]) {
-        assert.equal(await control.count(), 1, `${label}: one active control`);
-        const colors = await control.evaluate(element => {
-          const style = getComputedStyle(element);
-          return { background: style.backgroundColor, text: style.color };
-        });
-        assert.deepEqual(colors, { background: 'rgb(20, 20, 19)', text: 'rgb(255, 255, 255)' }, `${label}: opaque ink surface preserves readable white text`);
-      }
-    }
     async function addProviderBadge() {
       await page.evaluate(() => {
         const badge = document.createElement('iframe');
@@ -85,216 +70,119 @@ try {
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');
-    await page.locator('[data-section="guides-header"] [data-editorial-art] img').evaluate(img => img.decode());
-    const avatar = page.locator('#guide-command [data-vespi-search-avatar]');
-    assert.equal(await avatar.count(), 1, 'Search has one deliberate compact avatar');
-    assert.equal(await avatar.getAttribute('src'), '/mascot/handmade-v1/avatar-96.webp');
-    await avatar.evaluate(image => image.decode());
-    assert.equal(await page.locator('[data-vespi-intro="guides"]').count(), 0, 'Guides have no duplicated promotional introduction');
-    assert.equal(await page.locator('#chat-launcher img').count(), 0, 'Floating help remains a text-and-icon entry');
-    assert.equal(await page.locator('main time').count(),1,'The common rule-verification date appears once');
-    assert.equal(await page.locator('[data-guide-sticky]').count(), 0, 'Reading has no competing floating sales offer');
-    assert.equal(await page.locator('[data-guide-current] [data-vespi]').count(), 0, 'Stage navigation remains text-only');
-    assert(await page.locator('#guide-search').evaluate(input => input.getBoundingClientRect().height >= 44), 'The search field has a 44px touch target');
-    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0,'A fresh visit asks for a starting point before opening an article');
-    assert.equal(await page.locator('[data-guide-empty]').count(),1,'The initial route choice has a clear instruction');
-    await screenshot('guides-top');
-    await page.locator('[data-guide-select="education"]').click();
-    assert.equal(new URL(page.url()).hash, '#education');
-    assert.equal(await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('[aria-current="step"]').getAttribute('href'), '#education');
-    assert.match(await page.locator('[data-vespi-tip]').filter({ visible: true }).innerText(), /Foundation не заменяет выпускной аттестат/);
-    assert.equal(await page.locator('[data-vespi-tip]').filter({ visible: true }).locator('img').count(), 0, 'Action advice is readable without a repeated mascot');
-    assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'Only the selected topic is expanded');
-    assert.equal(await page.locator('[data-guide-select="education"]').getAttribute('aria-expanded'), 'true');
-    const timeline = page.locator('[data-guide-timeline]');
-    const stageLinks = timeline.locator('a[aria-controls="guide-reading-content"]');
-    assert.equal(await stageLinks.count(), 3, 'Three real route stages remain directly available');
-    // The topic heading scrolls into view on the next frame. Read both rects
-    // together so a scroll between two protocol calls cannot change one origin.
-    const stageAbovePanel = await page.evaluate(() => {
-      const timeline = document.querySelector('[data-guide-timeline]').getBoundingClientRect();
-      const panel = document.querySelector('[data-guide-panel="education"]').getBoundingClientRect();
-      return timeline.bottom <= panel.top + 1;
-    });
-    assert(stageAbovePanel, 'Stage selection is above the reading panel, never a left sidebar');
-    const stageBoxes = await stageLinks.evaluateAll(links => links.map(link => { const rect=link.getBoundingClientRect(); return {x:rect.x,y:rect.y,width:rect.width,height:rect.height}; }));
-    assert(stageBoxes.every(box => Math.abs(box.y-stageBoxes[0].y)<1), 'The stage checkpoints share a horizontal row');
-    assert(stageBoxes.every((box,index) => !index || box.x>=stageBoxes[index-1].x+stageBoxes[index-1].width-1), 'Stages follow readable left-to-right order');
-    await page.locator('[data-guide-invite]').evaluate(element => {
-      const clearance=(document.querySelector('header')?.getBoundingClientRect().bottom||0)+20;
-      window.scrollBy({top:element.getBoundingClientRect().top-clearance,behavior:'instant'});
-    });
-    await screenshot('guides-invitation-and-top-route');
-    await readingSurfaceContrast();
-    assert(await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).isVisible());
-    await currentNext('education').getByRole('link', { name: 'Разобраться с моим аттестатом', exact: true }).click();
-    await page.locator('[data-guide-origin="education"]').waitFor();
-    await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
-    assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Guide context cannot rewrite quiz answers');
+    assert.equal(await page.locator('[data-guide-panel], [data-guide-timeline], [data-guide-sticky]').count(),0,'The directory contains no mounted articles, timeline or sales bar');
+    assert.equal(await page.locator('[data-guide-stage]').count(),3);
+    assert.equal(await page.locator('main time').count(),1);
+    assert(await page.locator('#guide-search').evaluate(input=>input.getBoundingClientRect().height>=44));
+    await audit('directory '+width);await screenshot('guides-top');
+    await page.locator('[data-guide-stage=choose]').click();
+    await page.waitForURL('**/guides/stages/choose');
+    assert.equal(await page.locator('[data-guide-select]').count(),2);
+    await page.locator('[data-guide-select=education]').click();
+    await page.waitForURL('**/guides/education');
+    assert.match(await page.locator('main').innerText(),/Foundation не заменяет выпускной аттестат/);
+    assert.equal(await page.locator('[data-guide-panel]').count(),1);
+    assert.equal(await page.locator('[data-guide-stage],[data-guide-select],[data-guide-timeline]').count(),0,'Reading shows only the current question, with breadcrumbs');
+    await page.locator('[data-guide-inline-action]').click();
+    await page.locator('[data-guide-origin=education]').waitFor();
+    await page.getByRole('heading',{name:'Какой средний балл?',exact:true}).waitFor();
+    assert.equal(await page.evaluate(()=>sessionStorage.getItem('iitaly_plan_draft_v1')),draft);
     await screenshot('plan-continuation');
 
+    // Old shared hashes resolve to durable pages, including on first load.
     await visit('/guides#apostille');
-    await page.locator('[data-guide-panel="apostille"]').waitFor();
-    await page.waitForFunction(() => {
-      const heading = document.querySelector('[data-guide-panel="apostille"] #active-guide-title');
-      if (!heading) return false;
-      const rect = heading.getBoundingClientRect();
-      return rect.top >= 0 && rect.bottom <= innerHeight;
-    });
-    const refs = page.locator('a[target="_blank"]').filter({ visible: true });
-    assert(await refs.count() > 1, 'Official sources remain immediately available');
-    for (const ref of await refs.all()) assert.match(await ref.getAttribute('rel'), /noopener/);
-    await audit('guide chapter ' + width);
-    await screenshot('guides-apostille');
-    const inlineAdvice = page.locator('[data-vespi-tip]').filter({ visible: true });
-    await inlineAdvice.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
-    await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
-    assert.equal(await page.locator('#chat-launcher img').count(), 0, 'The helper launcher never repeats a head');
-    assert.equal(await inlineAdvice.getAttribute('data-guide-next'), 'apostille', 'Document advice stays tied to the selected topic');
-    assert(await page.locator('img[data-vespi]').evaluateAll(images => images.filter(image => {
-      const rect = image.getBoundingClientRect();
-      return image.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
-        && rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight && rect.right > 0 && rect.left < innerWidth;
-    }).length <= 1), 'Visible contextual advice does not compete with another Vespi portrait');
-    const documentAction = currentNext('apostille').locator('[data-guide-inline-action]');
-    await documentAction.evaluate(action => action.scrollIntoView({ block: 'center', behavior: 'instant' }));
-    await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
-    assert(await documentAction.evaluate(action => {
-      const rect = action.getBoundingClientRect();
-      return rect.left >= 0 && rect.right <= innerWidth && rect.top >= 0 && rect.bottom <= innerHeight
-        && rect.width >= 44 && rect.height >= 44
-        && action.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
-    }), 'The inline document action is fully visible, reachable, and replaces the sticky offer');
-    await screenshot('guides-next-action');
-    await documentAction.click();
-    await page.locator('[data-guide-origin="apostille"]').waitFor();
-    assert.equal(await page.getByRole('combobox', { name: 'Программа', exact: true }).inputValue(), 'general');
-    assert.equal(await page.getByRole('combobox', { name: 'Учебный год заявки', exact: true }).inputValue(), 'unspecified');
-    assert.equal(unexpected.length, 0, 'Reading and navigating do not upload, pay or mutate an account');
-    await screenshot('document-continuation');
+    await page.waitForURL('**/guides/apostille');
+    await page.locator('[data-guide-panel=apostille]').waitFor();
+    await page.getByText('Официальные источники',{exact:true}).click();
+    const refs=page.locator('main a[target=_blank]').filter({visible:true});
+    assert(await refs.count()>0);
+    for(const ref of await refs.all())assert.match(await ref.getAttribute('rel'),/noopener/);
+    await audit('article '+width);await screenshot('guides-apostille');
+    const documentAction=page.locator('[data-guide-inline-action]');
+    await documentAction.scrollIntoViewIfNeeded();
+    assert(await documentAction.evaluate(action=>{
+      const r=action.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.left>=0&&r.right<=innerWidth&&action.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
+    }),'The main action is visible and reachable');
+    await documentAction.click();await page.locator('[data-guide-origin=apostille]').waitFor();
+    assert.equal(await page.getByRole('combobox',{name:'Программа',exact:true}).inputValue(),'general');
+    assert.equal(await page.getByRole('combobox',{name:'Учебный год заявки',exact:true}).inputValue(),'unspecified');
+    await page.getByRole('link',{name:'Вернуться к теме',exact:true}).click();
+    await page.waitForURL('**/guides/apostille');
 
-    await visit('/guides#translation');
-    await openHelper();
-    assert.equal(await page.locator('[data-guide-sticky]').count(), 0, 'No sales bar is mounted behind the open helper');
-    const question = page.getByRole('textbox', { name: 'Вопрос ИИ-консультанту' });
-    assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'), 'translation');
-    await page.getByRole('link', { name: 'Что проверить в переводе для вуза и для визы?', exact: true }).click();
-    assert.equal(chats.length, 0, 'A suggested question is a draft, not an automatic AI request');
-    assert.equal(await question.inputValue(), 'Что проверить в переводе для вуза и для визы?');
-    await audit('contextual helper ' + width);
-    await screenshot('guides-helper');
-    // The hosting badge exists only on production; reproduce its observed frame.
+    await visit('/guides/translation');await openHelper();
+    const question=page.getByRole('textbox',{name:'Вопрос ИИ-консультанту'});
+    assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'),'translation');
+    await page.getByRole('link',{name:'Что проверить в переводе для вуза и для визы?',exact:true}).click();
+    assert.equal(chats.length,0,'Reading and suggested questions never start an AI request');
+    assert.equal(await question.inputValue(),'Что проверить в переводе для вуза и для визы?');
+    await audit('contextual helper '+width);await screenshot('guides-helper');
     await addProviderBadge();
-    assert(await page.getByRole('button', { name: 'Отправить', exact: true }).evaluate(button => {
-      const rect = button.getBoundingClientRect();
-      return button.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
-    }), 'The provider badge cannot intercept Send');
-    await screenshot('guides-helper-with-provider');
-    if (width === 390) {
-      await page.setViewportSize({ width, height:390 });
-      assert(await page.getByRole('button', { name:'Отправить', exact:true }).evaluate(button => {
-        const rect=button.getBoundingClientRect();
-        return rect.top >= 0 && rect.bottom <= innerHeight && button.contains(document.elementFromPoint(rect.x+rect.width/2, rect.y+rect.height/2));
-      }), 'Send remains reachable in a short viewport');
-      await page.setViewportSize({ width, height:844 });
-    }
-    await page.getByRole('button', { name: 'Отправить', exact: true }).click();
-    await page.getByText('Синтетический ответ 1.', { exact: true }).waitFor();
-    assert.match(chats[0].messages.at(-1).content, /Открытая тема справочника IITALY: translation/);
-    assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_asked')), '1');
-    await question.fill('Мой незаконченный вопрос');
-    await page.keyboard.press('Escape');
-    await page.getByRole('dialog').waitFor({ state: 'hidden' });
-    const launcher = page.locator('#chat-launcher');
-    assert(await launcher.evaluate(button => button.getBoundingClientRect().bottom < document.getElementById('nl-badge-frame').getBoundingClientRect().top), 'The launcher also stays above the badge');
-    await page.locator('#nl-badge-frame').evaluate(badge => badge.remove());
-    // A topic change updates helper context but preserves the user's draft.
-    await page.getByRole('navigation', { name: 'Этапы справочника' }).locator('a[href="#permesso"]').click();
-    await openHelper();
-    assert.equal(await question.inputValue(), 'Мой незаконченный вопрос');
-    assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'), 'permesso');
-    await page.keyboard.press('Escape');
-    await page.getByRole('dialog').waitFor({ state: 'hidden' });
-    assert.equal(await currentNext('permesso').getByRole('link', { name: 'Открыть тренажёр Modulo 1', exact: true }).getAttribute('href'), '/guides/permesso-modulo-1');
-    assert.equal(await page.locator('[data-guide-panel]').filter({ visible: true }).count(), 1, 'One expanded topic at every viewport');
-    assert.equal(await page.locator('[data-guide-select][aria-expanded="true"]').count(), 1);
-    assert(await page.locator('[data-guide-select], [data-guide-panel], [data-guide-sticky]').evaluateAll(elements => elements.every(element => {
-      const style = getComputedStyle(element);
-      return [style.transitionDuration, style.animationDuration].every(value => value.split(',').every(duration => parseFloat(duration) <= 0.01));
-    })), 'Reduced motion removes card and conversion-bar movement');
-    assert.equal(await page.locator('[data-guide-current]').getAttribute('data-guide-current'), 'permesso', 'The chapter indicator tracks the selected topic');
-
-    const search = page.getByRole('searchbox', { name: 'Найти тему' });
+    assert(await page.getByRole('button',{name:'Отправить',exact:true}).evaluate(button=>{const r=button.getBoundingClientRect();return button.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));}),'The hosting badge cannot intercept Send');
+    if(width===390){await page.setViewportSize({width,height:390});assert(await page.getByRole('button',{name:'Отправить',exact:true}).evaluate(button=>{const r=button.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&button.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));}));await page.setViewportSize({width,height:844});}
+    await page.getByRole('button',{name:'Отправить',exact:true}).click();
+    await page.getByText('Синтетический ответ 1.',{exact:true}).waitFor();
+    assert.match(chats[0].messages.at(-1).content,/Открытая тема справочника IITALY: translation/);
+    assert.equal(await page.evaluate(()=>sessionStorage.getItem('iitaly_asked')),'1');
+    await question.fill('Мой незаконченный вопрос');await page.keyboard.press('Escape');
+    await page.getByRole('dialog').waitFor({state:'hidden'});
+    assert(await page.locator('#chat-launcher').evaluate(button=>button.getBoundingClientRect().bottom<document.getElementById('nl-badge-frame').getBoundingClientRect().top));
+    await page.locator('#nl-badge-frame').evaluate(badge=>badge.remove());
+    // Native links keep the global assistant draft; the topic context changes.
+    await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
+    await page.locator('[data-guide-stage=arrival]').click();
+    await page.locator('[data-guide-select=permesso]').click();await openHelper();
+    assert.equal(await question.inputValue(),'Мой незаконченный вопрос');
+    assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'),'permesso');
+    await page.keyboard.press('Escape');await page.getByRole('dialog').waitFor({state:'hidden'});
+    assert.equal(await page.locator('[data-guide-inline-action]').getAttribute('href'),'/guides/permesso-modulo-1');
+    await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
+    const search=page.getByRole('searchbox',{name:'Найти тему'});
     await search.fill('вопрос-без-совпадения-123');
-    await page.getByRole('button', { name: 'Спросить Веспи', exact: true }).click();
-    // Opening focuses the field in rAF. A preserved value can be read earlier;
-    // wait for the real keyboard target before testing Escape.
-    await page.waitForFunction(() => document.activeElement === document.getElementById('chat-input'));
-    assert.equal(chats.length, 1, 'Empty-search help does not consume a question');
-    assert.equal(await question.inputValue(), 'Мой незаконченный вопрос', 'An empty search cannot replace an existing chat draft');
-    await page.keyboard.press('Escape');
-    await page.getByRole('dialog').waitFor({ state: 'hidden' });
-    await page.getByRole('button', { name: 'Сбросить поиск', exact: true }).click();
-    // Timeline stages intentionally filter 2 / 8 / 3 cards instead of listing all
-    // thirteen native disclosures at once. Search still spans every stage.
-    const stageNavigation = page.getByRole('navigation', { name: 'Этапы справочника' });
-    assert.equal(await page.locator('[data-guide-select]').count(), 2, 'Reset returns to the first stage');
-    const chapterIds = new Set();
-    for (const [stageLabel, expected] of [['education', 2], ['apostille', 8], ['permesso', 3]]) {
-      await stageNavigation.locator(`a[href="#${stageLabel}"]`).click();
-      const cards = page.locator('[data-guide-select]');
-      assert.equal(await cards.count(), expected, stageLabel + ': correct chapter count');
-      for (const id of await cards.evaluateAll(nodes => nodes.map(node => node.dataset.guideSelect))) chapterIds.add(id);
-      assert.equal(await stageNavigation.locator('[aria-current="step"]').getAttribute('href'), '#'+stageLabel);
-      await readingSurfaceContrast();
-    }
-    assert.equal(chapterIds.size, 13, 'All reviewed topics remain available across the three stages');
-    assert(chapterIds.has('visa') && chapterIds.has('permesso'), 'Visa and the original trainer entry remain available');
-    await search.fill('CIMEA');
-    assert(await page.locator('[data-guide-select="cimea"]').isVisible(), 'Search finds topics outside the selected stage');
-    await page.locator('[data-guide-select="cimea"]').click();
-    await page.waitForFunction(() => document.activeElement?.id === 'active-guide-title');
-    assert.equal(await page.locator('#active-guide-title').evaluate(el => document.activeElement === el), true, 'Selecting a topic moves keyboard focus to its heading');
-    await search.fill('CIMEA');
-    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0,'Searching suspends reading without duplicated content');
-    await page.getByRole('button',{name:'Сбросить поиск',exact:true}).click();
-    assert.equal(await search.evaluate(el=>document.activeElement===el),true,'Reset returns focus to search');
-    await page.locator('[data-guide-panel="education"]').waitFor();
-    await visit('/guides#visa');
-    await search.fill('CIMEA');
-    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0);
-    await search.fill('');
-    await page.locator('[data-guide-panel="visa"]').waitFor();
-    assert.equal(new URL(page.url()).hash,'#visa','Erasing search restores the same reading topic');
-    // The timeline's next action traverses all reviewed chapters, including stage boundaries.
-    await visit('/guides#education');
-    const orderedTopics = ['education','tests','apostille','translation','cimea','con','iseeu','visa','minors','military','permesso','codice','health-travel'];
-    for (let index = 0; index < orderedTopics.length; index++) {
-      const id = orderedTopics[index];
-      await page.locator(`[data-guide-panel="${id}"]`).filter({visible:true}).waitFor();
-      assert.equal(new URL(page.url()).hash, '#'+id);
-      assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),1);
-      if (index < orderedTopics.length-1) await page.locator('[data-guide-next-topic]').filter({visible:true}).click();
-    }
-    const invite = page.locator('[data-guide-invite]');
-    assert.equal(await invite.count(),1,'One contextual invitation replaces the promotional banner');
-    assert.equal(await invite.locator('[data-vespi-guide-peek] img').getAttribute('src'),'/mascot/handmade-v1/peek-640.webp');
-    await invite.locator('img').evaluate(image=>image.decode());
-    const peekAction=invite.getByRole('button',{name:'Тебе помочь? Открыть чат с Веспи',exact:true});
-    const chatsBeforePeek=chats.length;
-    await peekAction.click();
-    await page.getByRole('dialog',{name:'ИИ-консультант',exact:true}).waitFor();
+    await page.getByRole('button',{name:'Спросить Веспи',exact:true}).click();
     await page.waitForFunction(()=>document.activeElement===document.getElementById('chat-input'));
-    assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'),'health-travel','The edge invitation opens help for the selected topic');
-    assert.equal(chats.length,chatsBeforePeek,'Opening the edge invitation cannot send a paid AI request');
-    await page.keyboard.press('Escape');
-    await page.getByRole('dialog',{name:'ИИ-консультант',exact:true}).waitFor({state:'hidden'});
-    assert.equal(await page.locator('[data-guide-sticky]').count(),0);
-    assert(events.some(e => e.event === 'guide_next_action' && e.props.topic === 'apostille'));
-    assert(!events.some(e => JSON.stringify(e).includes('вопрос-без-совпадения')), 'Search text is not sent to analytics');
-    assert.deepEqual(errors, []);
-    assert.deepEqual(unexpected, []);
-    results.push({ width, stageFiltering:true, timelineNextAcrossStages:true, oneExpandedCard:true, contextualInsight:true, inlineActionVisibleAndReachable:true, draftPreserved:true, reviewContextUnchanged:true, guideAwareChat:true, noAutomaticQuestion:true, thirteenTopics:true, officialSourcesVisible:true, reducedMotion:true, providerBadgeSafe:true, noFloatingSalesOffer:true, a11y:true, overflow:false });
+    assert.equal(chats.length,1);assert.equal(await question.inputValue(),'Мой незаконченный вопрос');
+    await page.keyboard.press('Escape');await page.getByRole('dialog').waitFor({state:'hidden'});
+    await page.getByRole('button',{name:'Сбросить поиск',exact:true}).click();
+    assert(await search.evaluate(el=>document.activeElement===el));
+    await search.fill('CIMEA');assert(await page.locator('[data-guide-select=cimea]').isVisible());
+    await page.locator('[data-guide-select=cimea]').click();await page.waitForURL('**/guides/cimea');
+    await page.goBack();await search.waitFor();assert.equal(await search.inputValue(),'CIMEA','Back restores the directory query');
+    await page.goForward();await page.locator('[data-guide-panel=cimea]').waitFor();
+    await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('[data-guide-panel]').count(),1);
+
+    // Every topic has a shareable page, its own sources/date, and no full route.
+    const chapterIds=new Set();
+    for(const [stage,expected] of [['choose',2],['prepare',8],['arrival',3]]){
+      await visit('/guides/stages/'+stage);assert.equal(await page.locator('[data-guide-select]').count(),expected);
+      const ids=await page.locator('[data-guide-select]').evaluateAll(nodes=>nodes.map(n=>n.dataset.guideSelect));
+      for(const id of ids){
+        chapterIds.add(id);await page.locator('[data-guide-select="'+id+'"]').click();await page.locator('[data-guide-panel="'+id+'"]').waitFor();
+        assert.equal(new URL(page.url()).pathname,'/guides/'+id);
+        assert.match(await page.locator('link[rel=canonical]').getAttribute('href'),new RegExp('/guides/'+id+'$'));
+        assert.equal(await page.locator('main time').getAttribute('datetime'),'2026-10-09');
+        assert.equal(await page.locator('[data-guide-select],[data-guide-stage],[data-guide-timeline]').count(),0);
+        assert(await page.locator('main details a[href^="https://"]').count()>0);
+        await audit('topic '+id+' '+width);
+        if(id==='con')await screenshot('guides-family');
+        await page.goBack();await page.locator('[data-guide-select]').first().waitFor();
+      }
+    }
+    assert.equal(chapterIds.size,13);
+    await visit('/guides/visa');await screenshot('guides-visa');
+    assert.equal(await page.locator('[data-visa-part]').count(),4);
+    for(const part of ['timeline','funds','documents','before-application']){
+      await page.locator('[data-visa-part="'+part+'"]').click();await page.locator('[data-guide-part="'+part+'"]').waitFor();
+      assert.equal(await page.locator('[data-visa-part]').count(),0,'A visa detail shows one question at a time');
+      if(part==='documents'){
+        const item=page.locator('[data-guide-part=documents] button[aria-pressed]').first();await item.click();assert.equal(await item.getAttribute('aria-pressed'),'true');await item.click();assert.equal(await item.getAttribute('aria-pressed'),'false');
+      }
+      await audit('visa '+part+' '+width);await page.reload({waitUntil:'networkidle'});await page.locator('[data-guide-part="'+part+'"]').waitFor();
+      await page.getByRole('link',{name:'К вопросам о визе',exact:true}).click();
+    }
+    assert(events.some(e=>e.event==='guide_next_action'&&e.props.topic==='apostille'));
+    assert(!events.some(e=>JSON.stringify(e).includes('вопрос-без-совпадения')));
+    assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);
+    results.push({width,categoryPages:3,topicPages:13,visaParts:4,legacyLinks:true,backForward:true,draftPreserved:true,explicitAIOnly:true,sources:true,a11y:true,overflow:false});
     await context.close();
   }
   await writeFile(resolve(output, 'results.json'), JSON.stringify(results, null, 2));

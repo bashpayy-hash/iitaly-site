@@ -20,7 +20,6 @@ import { HelpSection } from "./HelpSection";
 import { ProfileSection } from "./ProfileSection";
 import { VESPI_NAME } from "@/components/mascot/Vespi";
 import { VespiOutline } from "@/components/mascot/VespiOutline";
-import { PortalRoad } from "./PortalRoad";
 import styles from "./portal.module.css";
 import navigation from "./portal-navigation.module.css";
 import {
@@ -39,7 +38,7 @@ import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewC
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
-import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending, nearestUniversityDeadline } from "@/lib/portalShortlist";
+import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending } from "@/lib/portalShortlist";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
 import { WIZ } from "@/data/wizard";
@@ -736,9 +735,6 @@ export function PortalExplorer() {
       <div className={styles.portal}>
       <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
       <MarketingHeader variant="portal" />
-      {editingProfile && data.client.onboardingComplete && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
-        <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen navigationOnly condensed />
-      </section>}
       </div>
       <main id="main">
       <PortalOnboarding
@@ -781,14 +777,6 @@ export function PortalExplorer() {
         }} aria-current={section === "settings" ? "page" : undefined} className={navigation.settingsButton + " " + navigation.settingsLink}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z" /><circle cx="12" cy="12" r="3" /></svg><span>Настройки</span></a>
       </div>
     } />
-    {!showFocus && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
-      <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
-        activeStageId={activeTask ? data.roadmap.find(row => row.tasks.some(task => task.id === activeTask.id))?.id : undefined}
-        deadline={nearestUniversityDeadline(shortlist)} navigationOnly condensed onSelectStage={selectStage}
-        currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
-        secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
-        onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
-    </section>}
     </div>
     <main id="main">
       <div className={`${styles.shell} ${focusStyles.shell}`} data-focus-layout={showFocus ? "stage" : "detail"}>
