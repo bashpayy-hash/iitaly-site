@@ -130,3 +130,7 @@ In the existing portal catalogue, put “Выбрать университет�
 Align the neighbouring cards' name, selection and detail rows with CSS subgrid, retain a one-column mobile layout, and use the portal's existing zhol tokens. Label the independent comparison section clearly. Preserve the map, filters, factual university data and comparison model.
 
 The notary breakdown omits the generic documents illustration. Its original explanation and three preparation steps occupy one readable column; dates are quiet text, and detailed instruction indices align on a consistent grid. Other tasks keep their existing visual slots. No copy about legal requirements, progress logic or review outcomes changes.
+
+## Remove stage souvenir, 26 October 2026
+
+The latest explicit user correction removes the decorative “Сувенир за этап / Карта маршрута” clipping from every portal stage. Stage headers contain only the title and real completion stamps. Remove its reserved layout and hover styles; progress, task text, mascot and completion feedback remain unchanged.
