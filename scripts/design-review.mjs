@@ -137,7 +137,7 @@ try {
   await shot(page, 'plan-complete', true);
   results.push({ test: 'Ten-question quiz completes without contact submission', passed: true });
   await visit(page, '/prices');
-  await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
+  await page.locator('[data-pricing-buy="hero"]').click();
   assert.equal(await page.getByRole('dialog').isVisible(), true);
   await page.getByRole('textbox', { name: 'Фамилия', exact: true }).pressSequentially('Тестов');
   assert.equal(await page.getByRole('textbox', { name: 'Фамилия', exact: true }).inputValue(), 'Тестов');
@@ -148,7 +148,7 @@ try {
   await shot(page, 'checkout-open');
   await page.keyboard.press('Escape');
   assert.equal(await page.getByRole('dialog').count(), 0);
-  assert.equal(await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).evaluate(el => document.activeElement === el), true, 'Closing restores focus to the purchase button');
+  assert.equal(await page.locator('[data-pricing-buy="hero"]').evaluate(el => document.activeElement === el), true, 'Closing restores focus to the purchase button');
   results.push({ test: 'Checkout retains typing focus, validates locally, and restores focus on Escape; no order submitted', passed: true });
   await visit(page, '/guides#visa');
   await page.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });

@@ -146,3 +146,9 @@ Use standard links, descriptive breadcrumbs, current-page state, browser Back/Fo
 The latest user correction removes the full route, including its compact variant, from every portal page except the overview. Stage, task, document, university and settings screens keep the site header and contextual return links. A task brief omits generic filler microsteps when there are no task-specific ones; maintained instructions and original task copy remain available.
 
 Guides use a short index, three category pages and separate static pages for all thirteen existing topics. Visa D has separate timeline, funds calculator, document checklist and pre-submission pages. Topic pages show only their own content, sources, contextual action and a quiet return or adjacent-topic link. Old /guides#topic links resolve to the new page. Preserve all existing admissions copy, source dates, calculations, trainer geometry and questionnaire state. Search stays local and does not trigger the assistant. Warm public typography and surfaces remain; no persistent reading timeline or large decorative hero.
+
+## Purchase visibility and small polish, 26 October 2026
+
+Preserve refinement: variance 3, motion 2, density 4. Keep the approved public fonts, warm watercolor artwork, logo, copy and pricing. The prices hero has a visible black “Купить за 10 990 ₸” action before the quieter section links; the same label ends the package contents. Both open the existing product modal and preserve analytics and payment-mode behavior. Do not add a second large pricing header to the contents card.
+
+Comparison cards align; narrow layouts give actions room and stack optional-service prices. Shared navigation identifies the current section with weight and its existing red rule. Invalid fields use the existing error token. Purchase feedback uses the existing icon system, transfer details wrap safely, and keyboard focus remains inside dialogs when request states replace the form.

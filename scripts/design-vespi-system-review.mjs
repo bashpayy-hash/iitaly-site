@@ -251,7 +251,7 @@ try {
           await faq.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
           await capture('home-faq');
         } else if (name === 'prices') {
-          const target = page.locator('#main-package').getByRole('button', { name: 'Оформить и оплатить', exact: true });
+          const target = page.locator('#main-package').getByRole('button', { name: /Оформить и оплатить|Купить за/ });
           await target.evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
           if (!baseline) {
             await noLegacyPortraits(page.locator('main'),'pricing');

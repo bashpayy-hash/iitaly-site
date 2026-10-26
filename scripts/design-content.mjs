@@ -5,6 +5,8 @@ import assert from 'node:assert/strict';
 // other pricing text, amounts and product conditions still match the base.
 const approvedRemovedUiLabels = new Set(['Веспи · сверим до подачи']);
 const approvedUiCopyChanges = new Map([
+  // 2026-10-26: make purchasing explicit at both pricing entry points.
+  ['Оформить и оплатить', 'Купить за'],
   ['AI-сверка без лимита помогает найти замечания до подачи. Загрузи исправленную версию — повторная проверка входит в цену. Решение о приёме документа остаётся за вузом или консульством.',
     'Проверяй документы и исправленные версии без доплаты. Решение о приёме принимает вуз или консульство.'],
 ]);
