@@ -10,7 +10,7 @@ export async function portalDestination(page, name) {
     await page.locator('[data-portal-page=overview]').waitFor();
   } else {
     if (!await page.locator('[data-road-stage]').count()) await portalDestination(page, 'Обзор');
-    await page.locator('[data-road-stage][aria-current="step"]').click();
+    await page.getByRole('link', { name: 'Все шаги этапа' }).click();
     await page.locator('[data-portal-focus]').waitFor();
   }
 }
@@ -33,7 +33,22 @@ export async function portalTask(page, id, part = "action") {
 
 export async function portalStage(page, stage) {
   if (!await page.locator('[data-road-stage]').count()) await portalDestination(page, 'Обзор');
-  await page.locator(`[data-road-stage="${stage}"]`).click();
+  const destination = page.locator(`[data-road-stage="${stage}"]`);
+  if (await destination.isVisible()) await destination.click();
+  else {
+    const stages = await page.locator('[data-road-stage]').evaluateAll(nodes => nodes.map(n => n.dataset.roadStage));
+    const target = stages.indexOf(stage);
+    if (target < 0) throw new Error(`Unknown stage: ${stage}`);
+    await page.getByRole('link', { name: 'Все шаги этапа' }).click();
+    for (let count = 0; count < stages.length; count++) {
+      const selected = await page.locator('[data-portal-focus]').getAttribute('data-selected-stage');
+      if (selected === stage) break;
+      const current = stages.indexOf(selected);
+      await page.getByRole('navigation', { name: 'Соседние этапы' }).getByRole('link', {
+        name: target > current ? /^Следующий этап:/ : /^Предыдущий этап:/,
+      }).click();
+    }
+  }
   await page.locator('[data-portal-page=stage]').waitFor();
 }
 

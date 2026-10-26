@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Upload } from "lucide-react";
 import styles from "./portal-upload.module.css";
 
 /** One keyboard/touch action and one drop target, using the existing check path. */
-export function PortalUploadZone({ busy, onChoose, onFileDrop, label = "Приложить файл", hint, describedBy, secondary = false }: {
+export function PortalUploadZone({ busy, onChoose, onFileDrop, label = "Приложить файл", describedBy, secondary = false }: {
   busy: boolean;
   onChoose: () => void;
   onFileDrop?: (file: File) => void;
   label?: string;
-  hint: string;
   describedBy?: string;
   secondary?: boolean;
 }) {
@@ -30,8 +28,6 @@ export function PortalUploadZone({ busy, onChoose, onFileDrop, label = "Прил
       const file = event.dataTransfer.files[0];
       if (!busy && file) onFileDrop(file);
     }}>
-    <Upload aria-hidden="true" />
-    <span><strong>{label}</strong><small>{hint}</small></span>
-    <span className={styles.arrow} aria-hidden="true">→</span>
+    {label}
   </button>;
 }

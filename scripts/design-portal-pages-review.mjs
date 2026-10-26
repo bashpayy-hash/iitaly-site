@@ -102,7 +102,7 @@ try {
   assert.match(await page.title(),/Инструкция/);
   assert.equal(await page.locator('[data-step-instructions]').isVisible(),true);
   assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false);
-  assert.equal(await page.evaluate(()=>document.activeElement?.id),'portal-step-heading');
+  await page.waitForFunction(()=>document.activeElement?.id==='portal-step-heading');
   const guideUrl=page.url();
   await page.screenshot({path:resolve(output,`guide-${width}.png`),fullPage:true});await axe(page,`Guide ${width}`);
   await taskNav(page).getByRole('link',{name:'Проверка документа',exact:true}).click();

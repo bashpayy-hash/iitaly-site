@@ -6,7 +6,6 @@ import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import { isManualTask, taskActionHint, taskReadOnlyReason } from "@/lib/portalNavigation";
 import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
-import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { portalTaskDone, portalProgress } from "@/lib/portalProgress";
 import { PortalTaskPages } from "./PortalTaskPages";
 import { SavedProfileAnswers } from "./SavedProfileAnswers";
@@ -41,7 +40,7 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
 
   return <PortalTaskPages task={task} stage={stage} done={done} readOnly={readOnly} defaultPart={defaultPart} action={<>
     {readOnly && <p className={styles.reason}>{readOnly}</p>}
-    {!readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
+    {!needDoc && !readOnly && !hasRetry && <p id="portal-step-action-hint" className={styles.actionHint} data-step-action-hint>{taskActionHint(task)}</p>}
     {done && (task.id === "profile" || task.id === "path12") && <SavedProfileAnswers profile={data.client.profile || {}} onEdit={onEditProfile} />}
     {readOnly ? <>
       {done && manual && !hasRetry && portalProgress(data).stages.find(row => row.id === stage?.id)?.open && <a className={styles.link} href="#portal-step-heading" aria-disabled={busy} onClick={event => {
@@ -53,10 +52,8 @@ export function PortalTaskDetail({ data, task, busy, hasRetry, context, onContex
         event.preventDefault(); onEditProfile();
       }}>Заполнить профиль</a>
       : needDoc ? <>
-        <PortalDocumentCoach illustrated={false} />
         {onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
           operation={operation} error={error} onResetError={onResetError} />}
-        <p className={styles.meta}>Шаг закроется, если проверка пройдена. Это не означает принятие документа вузом.</p>
       </> : <>
         {children}
         {manual && !managesCompletion && <form className={styles.selfReport} onSubmit={event => { event.preventDefault(); if (!busy) onToggle(true); }}>

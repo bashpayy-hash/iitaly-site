@@ -12,7 +12,7 @@
 .welcome h1 { margin:0 0 12px; font:600 clamp(32px,3.2vw,44px)/1.12 var(--font-sans); letter-spacing:-.02em; }
 .welcomeMeta { margin:0; color:var(--quiet); font-size:13px; line-height:1.6; }
 .welcomeMeta:empty { display:none; }
-.routeCard { grid-area:route; min-width:0; padding:20px 22px 12px; border:1px solid var(--border); border-radius:16px; background:var(--card); }
+.routeCard { grid-area:route; min-width:0; padding:8px 0 0; border:0; border-radius:0; background:transparent; box-shadow:none; }
 .stageBody { grid-area:tasks; min-width:0; padding:22px 18px 8px; border:1px solid var(--border); border-radius:16px; background:var(--card); }
 .stageHeading { display:block; padding:0 4px 20px; }
 .stageTitle { min-width:0; }
@@ -107,7 +107,7 @@
  .nowAhead { margin-top:16px; padding-bottom:14px; }.nowAhead ul { grid-template-columns:1fr; gap:8px; }
  .mascotWindow { position:absolute; right:6px; bottom:0; width:106px; height:120px; margin:0; }.welcomeScene { width:150px; height:120px; flex-shrink:0; }
  .nowCard:has(.nowAhead) .vespiQuote { width:100%; min-height:0; }.nowAhead { padding-right:100px; min-height:120px; }
- .routeCard { padding:16px 12px 10px; }.stageBody { padding:18px 10px 4px; }.stageHeading { gap:12px; align-items:flex-start; padding:0 4px 16px; }.stageHeading h2 { font-size:21px; }
+ .routeCard { padding:8px 0 0; }.stageBody { padding:18px 10px 4px; }.stageHeading { gap:12px; align-items:flex-start; padding:0 4px 16px; }.stageHeading h2 { font-size:21px; }
  .stamps { gap:8px; margin-top:12px; }.stamp { width:23px; height:23px; }.stampTrack { gap:4px; }
  .task { gap:6px; padding-inline:0; }.taskHeading { flex-wrap:wrap; gap:0; }.headingCopy { width:100%; font-size:14px; }.rowMeta { padding-bottom:2px; font-size:11px; }.rowMeta time { text-align:left; }.rowMeta svg { display:none; }
  .stepIndex { font-size:15px; flex-basis:24px; }.task[data-expanded=true] { display:grid; grid-template-columns:44px 32px minmax(0,1fr); gap:8px; padding:14px 12px; }.task[data-expanded=true] .stepIndex { margin-top:5px; font-size:26px; }

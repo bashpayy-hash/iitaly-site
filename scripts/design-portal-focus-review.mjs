@@ -109,14 +109,14 @@ try {
       const style=q=>getComputedStyle(document.querySelector(q));
       const task=style('[data-focus-task=translate]');
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
-        greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>span').fontFamily,countWeight:style('[data-road-count]>span').fontWeight,
+        greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
     assert.match(editorial.greeting,/Inter Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
     assert.equal(await page.locator('[data-focus-row] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
-    assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the checkpoint route remains');
+    assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the single route rule remains');
     assert.equal(await page.getByRole('progressbar',{name:'Выполненные шаги маршрута'}).count(),1);
     assert.equal(await page.locator('[data-portal-overview] [data-higgsfield-visual],[data-portal-overview] [data-micro-steps],[data-portal-rubric]').count(),0,'Preview contains no illustration, microsteps or rubric');
     if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
@@ -131,11 +131,11 @@ try {
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
     assert.equal(await page.locator('[data-focus-row=notary]').count(),0,'Future tasks live on their stage page');
-    if(width>600){
+    if(width>760){
       const points=await page.locator('[data-road-stage]>span:first-child').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
-      assert(Math.max(...points)-Math.min(...points)<1,'Every checkpoint uses the same axis');
+      assert(Math.max(...points)-Math.min(...points)<1,'Stage labels use the same axis');
       assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no box');
-    }else assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута'}).evaluate(el=>el.scrollWidth>el.clientWidth),true,'Only the mobile stage chips scroll horizontally');
+    }else { assert.equal(await page.locator('[aria-label="Этапы маршрута"]').isVisible(),false);assert.equal(await page.locator('[data-route-current-name]').innerText(),'Документы'); }
 
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');

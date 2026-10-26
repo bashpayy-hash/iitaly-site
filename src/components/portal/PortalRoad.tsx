@@ -8,7 +8,7 @@ import { documentOutcome } from "@/lib/portalDocument";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
-import { Check, ChevronRight, LockKeyhole } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
 
@@ -147,6 +147,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     if (target && nav.current) nav.current.scrollLeft = Math.max(0, target.getBoundingClientRect().left - nav.current.getBoundingClientRect().left + nav.current.scrollLeft - 8);
   }, [stage?.id, activeStageId]);
   const allComplete = total > 0 && done === total;
+  const currentStageIndex = Math.max(0, stage ? stages.findIndex(row => row.id === stage.id) : allComplete ? stages.length - 1 : 0);
+  const currentStageTitle = awaitingProfile ? PREVIEW_STAGES[0] : stages[currentStageIndex]?.title;
   const title = current ? taskTitle(current) : allComplete ? "Все шаги отмечены" : "Следующий шаг пока недоступен";
   const orientir = current ? taskDate(current) : "";
   const savedDocument = current && DOC_TASKS[current.id] ? data.docs[current.id] : undefined;
@@ -184,17 +186,22 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
     <div className={styles.route}>
-      <div className={styles.summary}><span>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</span><span className={styles.count}>
-        <span data-road-count><span className={styles.countNumbers}>{done} из {total}</span> шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
-        {progress.ahead > 0 && <span className={styles.aheadReason}>Будущие этапы пока не входят в счёт.</span>}
+      <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>
+      <div className={styles.summary}>
+        <div className={styles.stageMarker}>
+          <span className={styles.stageLabel}>Этап</span>
+          <strong className={styles.stageNumber} data-route-stage-number>{String(currentStageIndex + 1).padStart(2, "0")}</strong>
+          <span className={styles.currentStageName} data-route-current-name>{currentStageTitle}</span>
+        </div>
+        <span className={styles.count}>
+        <span data-road-count><strong className={styles.countNumbers}>{done}</strong> из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
+      <span className={styles.routeLine} aria-hidden="true"><span className={styles.routeFill} data-route-fill /></span>
       <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">
-        <span className={styles.routeLine} aria-hidden="true"><span className={styles.routeFill} data-route-fill /></span>
         {stages.map((row, index) => {
           if (!row.tasks.length) return <span key={row.id} className={styles.lockedStage} data-road-locked aria-disabled="true" aria-label={`${index + 1}. ${row.title}. После анкеты`}>
-            <span className={styles.checkpoint} aria-hidden="true">{index + 1}</span>
-            <span className={styles.stageCopy}><span>{row.title}</span><small><LockKeyhole size={11} aria-hidden="true" />после анкеты</small></span>
+            <span className={styles.stageCopy}><span>{row.title}</span><small>после анкеты</small></span>
           </span>;
           const next = row.id === stage?.id && current ? current : row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
           const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
@@ -208,7 +215,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
             aria-current={isRouteCurrent ? "step" : undefined} onClick={event => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); if (onSelectStage) onSelectStage(row.id); else onOpenTask(next);
-            }}><span className={styles.checkpoint} aria-hidden="true">{complete ? <Check size={18} /> : <span>{index + 1}</span>}</span><span className={styles.stageCopy}><span>{awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов<span className={styles.stageState} data-stage-ahead={!opened && stageDone > 0 || undefined}>{isRouteCurrent ? "сейчас" : !opened && stageDone > 0 ? "заранее" : ""}</span></small></span></a>;
+            }}><span className={styles.stageCopy}><span>{awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов<span className={styles.stageState} data-stage-ahead={!opened && stageDone > 0 || undefined}>{isRouteCurrent ? "сейчас" : !opened && stageDone > 0 ? "заранее" : ""}</span></small></span></a>;
         })}
       </nav>
       <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />

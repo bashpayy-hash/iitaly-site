@@ -18,7 +18,6 @@ import { DocCheck } from "@/components/plan/DocCheck";
 import { PortalUniversityStep } from "./PortalUniversityStep";
 import type { RoadTravel } from "./PortalRoad";
 import { PortalDocumentReport } from "./PortalDocumentReport";
-import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { PortalTaskPages } from "./PortalTaskPages";
 import { SavedProfileAnswers } from "./SavedProfileAnswers";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
@@ -144,6 +143,7 @@ export function LocalWorkspace() {
   const intake = draft.answers.intake === "2027/28" ? "сентябрь 2027" : draft.answers.intake === "2026/27" ? "2026/27" : "год ещё не выбран";
   const showFocus = location.view === "today" || (location.view === "plan" && !showDetail);
   const selectStage = (stage: string) => navigate({ view: "today", task: null, doc: null, stage });
+  const collectingControl = active && documentInspectorOpen && <button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>;
 
   return <div className={`${portal.portal} ${styles.workspace} ${focusStyles.portalRoot}`} data-local-workspace data-portal-design="shared-site">
     <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" actions={<div className={styles.headerActions}>
@@ -169,16 +169,15 @@ export function LocalWorkspace() {
                 onDocuments={() => navigate({ view: "docs", task: null, doc: null })} onUpload={() => {}}
                 canUpload={documentInspectorOpen} readOnlyReason={readOnly} preparationTime={active.time || undefined}
                 stepMeta={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))?.title}
-                uploadSlot={<><button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
+                reviewExtra={collectingControl}
+                uploadSlot={<>
                   <DocCheck portalInspector initialContext={existing.result?.review} academicYear={applicationYear} onComplete={(result, fileName) => onReview(active, result, fileName)} />
                 </>} />
-              : <PortalTaskPages task={active} stage={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))} done={portalTaskDone(data, active)} readOnly={readOnly} defaultPart={location.doc ? "action" : "overview"} action={<>
+              : <PortalTaskPages task={active} stage={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))} done={portalTaskDone(data, active)} readOnly={readOnly} guideExtra={collectingControl} defaultPart={location.doc ? "action" : "overview"} action={<>
                 {readOnly && <p className={styles.readOnly}>{readOnly}</p>}
                 {existing && !existing.result && <p className={styles.readOnly}>{existing.summary}</p>}
                 {existing?.result?.review && existing.result.review.academicYear !== applicationYear && <p className={styles.readOnly}>Нужно уточнить: разбор относится к {existing.result.review.academicYear}, а в маршруте выбран {applicationYear}. Это не ошибка файла. Сверь заявку перед подачей.</p>}
                 {documentInspectorOpen && <>
-                  <PortalDocumentCoach illustrated={false} />
-                  <button type="button" className={styles.textLink} aria-pressed={Boolean(local.collecting[active.id])} onClick={() => updateLocal({ ...local, collecting: { ...local.collecting, [active.id]: !local.collecting[active.id] } })}>{local.collecting[active.id] ? "Собираю документ · снять отметку" : "Отметить: собираю документ"}</button>
                   <DocCheck portalInspector key={active.id} academicYear={draft.answers.intake === "2027/28" || draft.answers.intake === "2026/27" ? draft.answers.intake : "unspecified"} onComplete={(result, fileName) => onReview(active, result, fileName)}/>
                 </>}
                 {!DOC_TASKS[active.id] && (!readOnly || Boolean(existing && data.done[active.id])) && <>{active.id === "kit" && <PortalPermessoStep/>}<button className={styles.primary} type="button" onClick={() => complete(active)}>Готово</button></>}

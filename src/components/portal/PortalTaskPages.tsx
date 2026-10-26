@@ -2,15 +2,16 @@
 
 import type { ReactNode } from "react";
 import type { PortalStage, PortalTask } from "@/lib/portalApi";
-import { taskDate, taskExplanation, taskHelpDetails, taskTitle } from "@/lib/portalNavigation";
+import { taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskTitle } from "@/lib/portalNavigation";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { PortalMicroSteps } from "./PortalMicroSteps";
 import { PortalStepInstructions } from "./PortalStepInstructions";
+import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import { PortalBreadcrumbs, PortalPageLink, PortalPageNavigation, usePortalPageFocus, usePortalPart } from "./PortalPageNavigation";
 import styles from "./portal-pages.module.css";
 
-export function PortalTaskPages({ task, stage, done, readOnly, action, defaultPart = "overview" }: {
-  task: PortalTask; stage?: PortalStage; done: boolean; readOnly?: string; action: ReactNode; defaultPart?: "overview" | "action";
+export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtra, defaultPart = "overview" }: {
+  task: PortalTask; stage?: PortalStage; done: boolean; readOnly?: string; action: ReactNode; guideExtra?: ReactNode; defaultPart?: "overview" | "action";
 }) {
   const requested = usePortalPart(defaultPart);
   const part = ["overview", "guide", "action"].includes(requested) ? requested : defaultPart;
@@ -33,15 +34,17 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, defaultPa
         <PortalPageLink className={styles.quietLink} href={href("action")}>{DOC_TASKS[task.id] ? "Документ уже готов — проверить" : "Перейти к действию"}</PortalPageLink></div>
     </div>}
     {part === "guide" && <div className={styles.body} data-portal-step-guide>
-      <h2>Как выполнить этот шаг</h2>
       <PortalStepInstructions taskId={task.id} fallback={!help.length ? <PortalMicroSteps task={task} /> : null} />
       {help.map(text => <p className={styles.note} key={text}>{text}</p>)}
       {readOnly && <p className={styles.note}>{readOnly}</p>}
+      {DOC_TASKS[task.id] && <PortalDocumentCoach />}
+      {guideExtra}
       <div className={styles.next}><PortalPageLink className={styles.primary} href={href("action")}>{DOC_TASKS[task.id] ? "Перейти к проверке" : "Перейти к действию"}<span aria-hidden="true">→</span></PortalPageLink></div>
     </div>}
     {/* Keep the mounted action while reading: selected files and form answers stay intact. */}
     <div hidden={part !== "action"} data-task-action-page>
-      <h2 className={styles.explanation}>{actionLabel}</h2>{action}
+      {DOC_TASKS[task.id] && !readOnly && <p id="portal-step-action-hint" className={styles.actionOutcome} data-step-action-hint>{taskActionHint(task)}</p>}
+      {action}
     </div>
   </section>;
 }

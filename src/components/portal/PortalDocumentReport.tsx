@@ -16,7 +16,7 @@ function dateLabel(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value));
 }
 
-export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/portal?view=docs", onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, preparationTime, orientir, onDocuments, operation, error, onResetError, uploadSlot, storage = "cloud" }: {
+export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/portal?view=docs", onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, preparationTime, orientir, onDocuments, operation, error, onResetError, uploadSlot, reviewExtra, storage = "cloud" }: {
   taskId: string;
   title: string;
   doc: PortalDoc;
@@ -37,6 +37,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
   error?: DocumentActionError | null;
   onResetError?: () => void;
   uploadSlot?: ReactNode;
+  reviewExtra?: ReactNode;
   storage?: "cloud" | "local";
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
@@ -85,7 +86,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
     if (!onDocuments || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault(); onDocuments();
   };
-  return <section role="region" aria-label="Разбор документа" className={styles.report}>
+  return <section role="region" aria-label="Разбор документа" className={styles.report} data-document-page={part}>
     <nav className={styles.breadcrumbs} aria-label="Навигация документа">
       <a href="/portal?view=docs" className={styles.textAction} onClick={toDocuments}>К документам</a>
       <a href={backHref} className={styles.textAction} onClick={event => {
@@ -129,15 +130,16 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
 
     </div>
     <div hidden={part !== "action"} data-report-upload-page>
-      <h2 className={pages.explanation}>Новая проверка документа</h2>
+      <p className={pages.actionOutcome}>После загрузки получишь разбор: итог, причина и следующий шаг.</p>
       {!canUpload && <p className={styles.readOnly}>{readOnlyReason || "Повторная проверка сейчас недоступна."}</p>}
       {canUpload && <div data-fab-yield>
-        <PortalDocumentCoach illustrated={false} />
         {uploadSlot || (onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
           replacing operation={operation} error={error} onResetError={onResetError} />)}
       </div>}
     </div>
     <div hidden={part !== "review"} data-report-details-page>
+    <PortalDocumentCoach />
+    {reviewExtra}
     <section className={styles.fileDetails} aria-label="Файл и сроки">
       <h3>Файл и сроки</h3>
       <dl>

@@ -144,7 +144,7 @@ try {
       await page.getByRole('button',{name:'Готово',exact:true}).click();
     }
     const upload=page.getByLabel('Выбрать документ для проверки');
-    await upload.waitFor();
+    await upload.waitFor({state:'attached'});assert(await page.getByRole('button',{name:'Выбрать файл',exact:true}).isVisible());
     const currentDoc=new URL(page.url()).searchParams.get('doc') || new URL(page.url()).searchParams.get('task');
     const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
     async function review(result) {

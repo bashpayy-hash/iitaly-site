@@ -395,8 +395,9 @@ try {
       await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить',exact:true}).click();
       assert(await page.locator('[data-step-detail] [data-portal-step-guide]').isVisible(), 'Instructions have their own reading page');
       await noLegacyPortraits(page.locator('[data-step-detail] [data-portal-step-guide]'), `portal upload ${width}`);
+      await documentCoach(page, `portal instructions ${width}`);
       await page.getByRole('navigation',{name:'Разделы задачи'}).locator('a[href$="part=action"]').click();
-      await documentCoach(page, `portal upload ${width}`);
+      assert.equal(await page.locator('[data-task-action-page] [data-portal-document-coach]').count(),0,'The action contains only the necessary form and upload control');
       await noDuplicatePortraits(page, `portal upload ${width}`);
       await audit(`portal upload ${width}`);
     }
