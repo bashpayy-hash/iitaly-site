@@ -1,4 +1,4 @@
-/* The current task is the message; route, stamps and souvenir describe real progress. */
+/* The current task is the message; route and stamps describe real progress. */
 .portalRoot.portalRoot { background:transparent; padding-bottom:0; }
 .portalRoot > :first-child { background:var(--paper) url('/zhol/bg_cream.jpg') center top / 1440px auto; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; }
 .portalRoot > :first-child::after { display:none; }
@@ -14,7 +14,7 @@
 .welcomeMeta:empty { display:none; }
 .routeCard { grid-area:route; min-width:0; padding:20px 22px 12px; border:1px solid var(--border); border-radius:16px; background:var(--card); }
 .stageBody { grid-area:tasks; min-width:0; padding:22px 18px 8px; border:1px solid var(--border); border-radius:16px; background:var(--card); }
-.stageHeading { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:0 4px 20px; }
+.stageHeading { display:block; padding:0 4px 20px; }
 .stageTitle { min-width:0; }
 .stageTitle::before { content:""; display:block; width:30px; height:4px; margin-bottom:8px; background:var(--accent); }
 .stageHeading h2 { margin:0; font:600 24px/1.2 var(--font-sans); letter-spacing:-.02em; }
@@ -23,12 +23,6 @@
 .stamp { display:grid; place-items:center; width:25px; height:25px; border:1px dashed var(--border); border-radius:50%; color:var(--tracker-off); font-size:9px; }
 .stamp[data-stamped=true] { transform:rotate(-8deg); background:var(--status-green); border:1px solid var(--status-green); color:var(--on-dark); }
 .stamp[data-just-stamped=true] { animation:stampPrint .4s cubic-bezier(.34,1.56,.64,1); }
-.canvas .souvenir { display:flex; align-items:center; gap:10px; flex:0 0 230px; margin:0 3px 0 0; padding:10px 12px; background:#F3EDE1; border:1px solid var(--border); border-radius:4px; box-shadow:0 10px 28px rgba(0,0,0,.14); transform:rotate(-1.2deg); transition:transform .22s ease; }
-.souvenir img { display:block; width:104px; height:73px; object-fit:contain; }
-.souvenir figcaption { display:grid; gap:5px; }
-.souvenir figcaption>span { color:var(--accent-text); font-size:10px; font-weight:600; line-height:1.5; letter-spacing:1.5px; text-transform:uppercase; }
-.souvenir strong { color:var(--ink-strong); font-size:14px; font-weight:600; line-height:1.3; }
-@media(hover:hover) { .canvas .souvenir:hover { transform:rotate(0) scale(1.03); } }
 .taskList { display:grid; gap:0; }
 .task { position:relative; display:flex; align-items:center; gap:12px; min-width:0; min-height:72px; padding:12px 4px; border-bottom:1px solid var(--border); }
 .task:last-child { border-bottom:0; }
@@ -114,7 +108,6 @@
  .mascotWindow { position:absolute; right:6px; bottom:0; width:106px; height:120px; margin:0; }.welcomeScene { width:150px; height:120px; flex-shrink:0; }
  .nowCard:has(.nowAhead) .vespiQuote { width:100%; min-height:0; }.nowAhead { padding-right:100px; min-height:120px; }
  .routeCard { padding:16px 12px 10px; }.stageBody { padding:18px 10px 4px; }.stageHeading { gap:12px; align-items:flex-start; padding:0 4px 16px; }.stageHeading h2 { font-size:21px; }
- .canvas .souvenir { flex:0 0 112px; display:block; padding:8px; }.souvenir img { width:86px; height:60px; margin:auto; }.souvenir figcaption { gap:4px; margin-top:4px; }.souvenir figcaption>span { font-size:10px; letter-spacing:1px; }.souvenir strong { font-size:12px; }
  .stamps { gap:8px; margin-top:12px; }.stamp { width:23px; height:23px; }.stampTrack { gap:4px; }
  .task { gap:6px; padding-inline:0; }.taskHeading { flex-wrap:wrap; gap:0; }.headingCopy { width:100%; font-size:14px; }.rowMeta { padding-bottom:2px; font-size:11px; }.rowMeta time { text-align:left; }.rowMeta svg { display:none; }
  .stepIndex { font-size:15px; flex-basis:24px; }.task[data-expanded=true] { display:grid; grid-template-columns:44px 32px minmax(0,1fr); gap:8px; padding:14px 12px; }.task[data-expanded=true] .stepIndex { margin-top:5px; font-size:26px; }
@@ -128,5 +121,5 @@
 .successIcon { flex-shrink:0; stroke:var(--status-green); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
 .successIcon circle,.successIcon path { stroke-dasharray:100; stroke-dashoffset:100; animation:drawSuccess .4s ease forwards; }.successIcon path { animation-delay:.18s; }
 @keyframes drawSuccess { to { stroke-dashoffset:0; } }@keyframes confirmationIn { from { opacity:0; transform:translateY(-5px); }to { opacity:1; transform:translateY(0); } }
-@media(prefers-reduced-motion:reduce) { .welcomeScene,.primary span,.souvenir { transition:none!important; }.canvas .souvenir:hover { transform:rotate(-1.2deg); }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.stamp[data-just-stamped=true],.confirmationBody,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
+@media(prefers-reduced-motion:reduce) { .welcomeScene,.primary span { transition:none!important; }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.stamp[data-just-stamped=true],.confirmationBody,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
 @media(forced-colors:active) { .darkGrain { display:none; }.nowCard { background:Canvas; color:CanvasText; }.roundCheck[data-done=true]::before,.stamp[data-stamped=true] { background:Highlight; }.roundCheck[data-done=true],.stamp[data-stamped=true] { color:HighlightText; } }

@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable @next/next/no-img-element -- Supplied local risograph assets, with explicit responsive dimensions. */
+/* eslint-disable @next/next/no-img-element -- Local task artwork with explicit dimensions. */
 
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronRight } from "lucide-react";
@@ -121,10 +121,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             })}</span>
           </div>
         </div>
-        <figure className={styles.souvenir} data-stage-souvenir data-earned={savedStampCount === ordered.length && ordered.length > 0}>
-          <img src="/zhol/map-pencil-320.webp" srcSet="/zhol/map-pencil-320.webp 320w, /zhol/map-pencil-640.webp 640w" sizes="(max-width:600px) 86px, 104px" width="104" height="73" alt="" />
-          <figcaption><span>Сувенир за этап</span><strong>Карта маршрута</strong></figcaption>
-        </figure>
       </div>
       <div className={styles.taskList} aria-label="Задачи этапа">
         {visibleTasks.map(row => {

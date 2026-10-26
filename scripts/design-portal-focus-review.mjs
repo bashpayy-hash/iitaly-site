@@ -78,8 +78,7 @@ try {
     assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
     assert.equal(await page.locator('[data-stamp-count]').innerText(),'0 / 2');
     assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
-    assert.equal(await page.locator('[data-stage-souvenir] img').evaluate(img=>img.complete&&img.naturalWidth>0),true);
-    assert.notEqual(await page.locator('[data-stage-souvenir]').evaluate(el=>getComputedStyle(el).boxShadow),'none');
+    assert.equal(await page.locator('[data-stage-souvenir]').count(),0,'Stage headers contain no decorative souvenir');
     assert.equal(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).length),0);
     await page.evaluate(()=>document.fonts.load('500 16px "Inter Tight"','Привет, Қазақстан!'));
     assert.equal(await page.evaluate(()=>document.fonts.check('500 16px "Inter Tight"','Привет, Қазақстан!')),true);
