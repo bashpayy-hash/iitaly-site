@@ -8,11 +8,7 @@ export function PortalDocumentContext({ value, onChange, disabled }: {
   onChange: (value: DocumentReviewContext) => void;
   disabled: boolean;
 }) {
-  return <details className={styles.context} open>
-    <summary>Параметры следующей проверки</summary>
-    <fieldset disabled={disabled}>
-      <legend>Для какой заявки?</legend>
-      <p>Эти параметры уточняют проверку документов для стипендии. Для визы и поступления проверяем видимое содержание файла; требования учреждения нужно сверить отдельно.</p>
+  return <fieldset className={styles.context} disabled={disabled} aria-label="Параметры проверки">
       <div className={styles.contextFields}>
         <label>Стипендиальная программа
           <select value={value.profile} onChange={e => onChange({ ...value, profile: e.target.value as DocumentReviewContext["profile"] })}>
@@ -31,12 +27,10 @@ export function PortalDocumentContext({ value, onChange, disabled }: {
           </select>
         </label>
       </div>
-      {value.profile !== "general" && <label className={styles.scopeChoice}>
+      {value.profile !== "general" && <label className={styles.scopeChoice} title="Я гражданин Казахстана, подаю сведения о семейных доходах и имуществе за пределами Италии и не заявляю финансовую независимость.">
         <input type="checkbox" checked={value.applicantScope === "kz-family-abroad"}
           onChange={e => onChange({ ...value, applicantScope: e.target.checked ? "kz-family-abroad" : "unspecified" })} />
-        <span>Я гражданин Казахстана, подаю сведения о семейных доходах и имуществе за пределами Италии и не заявляю финансовую независимость.</span>
+        <span>Моя ситуация: Казахстан, семья за рубежом</span>
       </label>}
-      <p className={styles.meta}>Выбери параметры до запуска проверки. Изменение этих полей не меняет уже сохранённый результат. Применённые правила и их актуальность будут указаны в новом разборе.</p>
-    </fieldset>
-  </details>;
+  </fieldset>;
 }

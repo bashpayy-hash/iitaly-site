@@ -105,7 +105,7 @@ try {
   await report.getByText('Все рекомендации из разбора',{exact:true}).click();
   assert.match(await report.innerText(),/Уточни требования выбранного вуза и повтори проверку/);
   await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Новая проверка',exact:true}).click();const form=page.locator('[data-document-upload-form]');await form.waitFor();
-  assert(await form.locator('details').evaluate(el=>el.open),'Context is open before starting');
+  assert.equal(await form.locator('details').count(),0,'Context fields are never hidden in an accordion');assert(await form.getByRole('combobox').first().isVisible());
   const programme=form.getByRole('combobox',{name:'Стипендиальная программа'}),year=form.getByRole('combobox',{name:'Учебный год заявки'});
   await programme.selectOption('piemonte');await year.selectOption('2026/27');await form.getByRole('checkbox').check();
   await report.getByRole('link',{name:'К документам',exact:true}).click();await page.locator('[data-document=apostille]').click();await action.click();

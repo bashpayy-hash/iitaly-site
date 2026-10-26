@@ -8,6 +8,10 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { AppleButton } from "@/components/apple/Button";
+import { PortalDocumentContext } from "@/components/portal/PortalDocumentContext";
+import { PortalDocumentNotes } from "@/components/portal/PortalDocumentUpload";
+import { PortalUploadZone } from "@/components/portal/PortalUploadZone";
+import portalStyles from "@/components/portal/portal-document.module.css";
 import { ScanLine, ShieldCheck, Files, Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
 
@@ -56,6 +60,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       ? { step: "ready", file: current.file, payload: current.payload } : current);
   }
   const inputRef = useRef<HTMLInputElement>(null);
+  const uploadId = useId();
   const [dragOver, setDragOver] = useState(false);
   const [showExample, setShowExample] = useState(false);
   const [availability, setAvailability] = useState<DocumentAvailability | null>(null);
@@ -143,6 +148,39 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
           ? "DOC"
           : "TXT"
         : null;
+
+  if (portalInspector) {
+    const working = state.step === "reading" || state.step === "checking";
+    const hasFile = "file" in state;
+    return <div className={portalStyles.uploadForm} data-document-workbench data-portal-inspector data-inspector-state={state.step}>
+      <PortalDocumentContext value={context} onChange={updateContext} disabled={working} />
+      <PortalUploadZone busy={working || unavailable || availabilityPending} onChoose={() => inputRef.current?.click()} onFileDrop={accept}
+        label={hasFile ? "Выбрать другой файл" : "Выбрать файл"} secondary={hasFile} describedBy={uploadId + "-limits"} />
+      <input ref={inputRef} type="file" hidden aria-label="Выбрать документ для проверки" accept="image/*,application/pdf,.pdf,.doc,.docx,.txt,.rtf"
+        disabled={working || unavailable || availabilityPending} onChange={event => { void accept(event.target.files?.[0]); event.target.value = ""; }} />
+      {hasFile && <div className={portalStyles.selectedFile} data-selected-document>
+        <p><strong>{state.file.name}</strong><span>{new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 1 }).format(state.file.size / 1024)} КБ · выбран в этой вкладке</span></p>
+        <button type="button" className={portalStyles.fileArea} data-primary-action onClick={run} disabled={working || unavailable || availabilityPending}>
+          {state.step === "checking" ? "Проверяю…" : state.step === "retry" ? "Повторить проверку" : state.step === "done" ? "Проверить ещё раз" : "Проверить документ"}
+        </button>
+      </div>}
+      <PortalDocumentNotes id={uploadId + "-limits"} />
+      {initialContext && hasFile && <p className={portalStyles.replacement}>Новая проверка заменит текущий разбор.</p>}
+      {hasFile && <p className={portalStyles.meta}>
+        После нажатия «Проверить документ» файл передаётся в Anthropic для ИИ-анализа.{" "}
+        <a href="/privacy" className={portalStyles.textAction}>Как обрабатываются данные</a>
+      </p>}
+      {(availabilityPending || unavailable) && <div role="status" className={portalStyles.operation}>
+        <p>{availabilityPending ? "Проверяем доступность ИИ…" : availability?.error}</p>
+        {unavailable && <button type="button" className={portalStyles.textAction} onClick={refreshAvailability} disabled={availabilityPending}>Проверить доступность</button>}
+      </div>}
+      {(state.step === "error" || state.step === "retry") && !unavailable && <p role="alert" className={portalStyles.operationError}>{state.message}</p>}
+      {working && <div role="status" className={portalStyles.operation} data-document-review-pending>
+        <p>{state.step === "reading" ? "Готовлю файл к проверке…" : "Проверка идёт. Результат появится здесь."}</p>
+      </div>}
+      {state.step === "done" && <DocResult result={state.result} portalStatus />}
+    </div>;
+  }
 
   return (
     <div className={styles.workbench} data-document-workbench>

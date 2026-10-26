@@ -9,6 +9,13 @@ import styles from "./portal-document.module.css";
 export type DocumentOperation = { taskId: string; fileName: string; phase: "preparing" | "checking" | "saving" | "saved" | "error" };
 export type DocumentActionError = { retryKind?: "check" | "save"; message: string; retryLabel?: string; retry?: () => void };
 
+export function PortalDocumentNotes({ id }: { id: string }) {
+  return <div className={styles.uploadNotes}>
+    <p id={id}>PDF, DOCX, TXT, RTF · до 5 МБ · до 12 проверок за 5 минут.</p>
+    <p>Шаг закроется, если проверка пройдена. Это не значит, что вуз принял документ.</p>
+  </div>;
+}
+
 /** Selection is not upload or approval. File bytes stay in this mounted form. */
 export function PortalDocumentUpload({ busy, context, onContextChange, onCheck, replacing = false, operation, error, onResetError }: {
   busy: boolean;
@@ -36,12 +43,9 @@ export function PortalDocumentUpload({ busy, context, onContextChange, onCheck, 
   }
   return <div className={styles.uploadForm} data-document-upload-form>
     <PortalDocumentContext value={context} onChange={onContextChange} disabled={busy || pendingSave} />
-    <p className={styles.meta} id={id + "-limits"}>PDF, DOCX, TXT и RTF до 5 МБ. Фото сжимаются автоматически до 1600 пикселей по длинной стороне. До 12 проверок за 5 минут.</p>
-    {replacing && <p className={styles.replacement} id={id + "-replace"}>Новая проверка заменит текущий разбор.</p>}
     <PortalUploadZone busy={busy || pendingSave} onChoose={() => input.current?.click()} onFileDrop={choose}
-      label={file ? "Выбрать другой файл" : replacing ? "Загрузить файл для повторной проверки" : "Выбрать файл"}
-      hint="Выбери файл или перетащи его сюда. Проверка начнётся после подтверждения."
-      secondary={Boolean(file)} describedBy={id + "-limits" + (replacing ? " " + id + "-replace" : "")} />
+      label={file ? "Выбрать другой файл" : "Выбрать файл"}
+      secondary={Boolean(file)} describedBy={id + "-limits"} />
     <input ref={input} type="file" hidden aria-label="Файл для проверки" accept="image/*,application/pdf,.pdf,.docx,.txt,.rtf"
       onChange={event => { choose(event.target.files?.[0]); event.target.value = ""; }} />
     {file && <div className={styles.selectedFile} data-selected-document>
@@ -50,6 +54,8 @@ export function PortalDocumentUpload({ busy, context, onContextChange, onCheck, 
         {busy ? phase === "saving" ? "Сохраняем разбор…" : phase === "preparing" ? "Подготавливаем файл…" : "Проверка выполняется…" : "Проверить документ"}
       </button>}
     </div>}
+    <PortalDocumentNotes id={id + "-limits"} />
+    {replacing && file && <p className={styles.replacement}>Новая проверка заменит текущий разбор.</p>}
     {busy && <div className={styles.operation} role="status" aria-live="polite" data-document-operation={phase}>
       <progress aria-label="Операция с документом" />
       <p>{operation?.fileName && <strong>{operation.fileName}<br /></strong>}{operationText || "Проверяем документ…"}</p>

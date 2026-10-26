@@ -152,3 +152,10 @@ Guides use a short index, three category pages and separate static pages for all
 Preserve refinement: variance 3, motion 2, density 4. Keep the approved public fonts, warm watercolor artwork, logo, copy and pricing. The prices hero has a visible black “Купить за 10 990 ₸” action before the quieter section links; the same label ends the package contents. Both open the existing product modal and preserve analytics and payment-mode behavior. Do not add a second large pricing header to the contents card.
 
 Comparison cards align; narrow layouts give actions room and stack optional-service prices. Shared navigation identifies the current section with weight and its existing red rule. Invalid fields use the existing error token. Purchase feedback uses the existing icon system, transfer details wrap safely, and keyboard focus remains inside dialogs when request states replace the form.
+
+
+## Minimal route and document action, 26 October 2026
+
+Only the portal route and step execution surfaces change. Keep the current font, paper, terracotta tokens, task copy and ordered/ahead progress calculation. The overview route is unboxed: its title, a 40px two-digit current stage number, the existing counts, and one 2px rule. Only ordered completed tasks fill the rule. Desktop stage names use the header’s active underline; below 761px only the current stage name remains. Preserve native stage links and accessible progress metadata; adjacent-stage navigation remains available on stage pages.
+
+Document actions use one readable column: the existing task title and tabs, one outcome sentence, two context fields in one row, the conditional citizenship checkbox, a content-width file button, and two quiet 13px notes. The preparation checklist belongs to the instruction view; context fields stay visible. Do not add illustrations or decorative containers. File selection, confirmation, retries, API requests, status semantics and persistence are unchanged in both local and cloud workspaces. Keep the mounted action when switching tabs. The Now panel retains its existing salmon day count and sole mascot.

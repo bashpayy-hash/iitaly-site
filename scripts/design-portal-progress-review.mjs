@@ -1,5 +1,5 @@
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
-import { portalDestination, portalTask, portalRoadState } from './portal-review-navigation.mjs';
+import { portalDestination, portalTask, portalStage, portalRoadState } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -78,7 +78,7 @@ async function railContract(page,data,compact){
     await noOverflow(page);await portalDestination(page,'Обзор');await railContract(page,data,false);await page.goBack();return;
   }
   assert.equal(await road(page).count(),1,'Exactly one global route');
-  assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута',exact:true}).count(),1,'One actual-stage navigator');
+  assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1,'One actual-stage navigator');
   assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0,'No second taxonomy/ring');
   assert.equal(await page.locator('main [data-portal-road]').count(),compact?0:1,'The overview route follows the greeting; other views keep one compact chrome route');
   assert.equal(await page.locator('[data-portal-welcome]').count(),compact?0:1,'The personal welcome appears only on the overview');
@@ -99,9 +99,9 @@ async function railContract(page,data,compact){
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
     const stageDone=stage.tasks.filter(complete).length;
-    assert((await link.innerText()).includes(`${stageDone} / ${stage.tasks.length} шагов`),'Each stage shows its own real completed/total count');
+    assert((await link.textContent()).includes(`${stageDone} / ${stage.tasks.length} шагов`),'Each stage shows its own real completed/total count');
     assert.equal(await link.getAttribute('data-road-stage-state'),openStages.includes(stage)&&stageDone===stage.tasks.length?'done':await link.getAttribute('aria-current')==='step'?'current':'future');
-    assert.equal(await link.evaluate(n=>n.tagName),'A');assert(await link.evaluate(n=>n.getBoundingClientRect().height>=44),'Touchable stage link');assert.match(await link.getAttribute('href'),/^\/portal\?stage=/);
+    assert.equal(await link.evaluate(n=>n.tagName),'A');if(await link.isVisible())assert(await link.evaluate(n=>n.getBoundingClientRect().height>=44),'Touchable stage link');assert.match(await link.getAttribute('href'),/^\/portal\?stage=/);
   }
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}
   await noOverflow(page);await oneFace(page,'Route');
@@ -150,7 +150,7 @@ try{
       await page.keyboard.press('Tab');
       assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage')),'documents','Stage links follow native keyboard order');
       await page.keyboard.press('Enter');
-    }else await road(page).locator('[data-road-stage="documents"]').click();
+    }else await portalStage(page,'documents');
     await page.locator('[data-portal-focus][data-selected-stage=documents]').waitFor();
     await portalTask(page,'statements');
     await detail(page).waitFor();await railContract(page,data,true);
