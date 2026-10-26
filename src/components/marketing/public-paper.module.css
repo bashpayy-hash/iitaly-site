@@ -1,0 +1,13 @@
+/* Scanned paper from the supplied zhol kit, deliberately quieter than /portal. */
+.surface { position:relative; isolation:isolate; }
+.texture { position:absolute; inset:0; z-index:-1; border-radius:inherit; background-image:url('/illustrations/public-paper/cream-texture.webp'); background-size:1200px auto; background-repeat:repeat; opacity:.12; pointer-events:none; user-select:none; }
+.guideIntro { position:relative; isolation:isolate; }
+.guideIntro > .texture { inset:-20px -32px -16px; opacity:.1; }
+.spot { position:absolute; display:block; width:160px; height:160px; pointer-events:none; user-select:none; }
+.spot img { display:block; width:100%; height:100%; object-fit:contain; }
+.guide { right:24px; top:16px; }
+.faq { left:calc(50% - 600px); top:160px; }
+@media(max-width:1279px) { .faq { display:none; } }
+@media(max-width:1099px) { .guide { display:none; } }
+@media(max-width:600px) { .texture { opacity:.08; }.guideIntro > .texture { inset:-8px -20px -16px; opacity:.08; } }
+@media print { .texture,.spot { display:none; } }
