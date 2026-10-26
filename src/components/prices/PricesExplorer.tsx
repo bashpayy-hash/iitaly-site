@@ -52,18 +52,18 @@ export function PricesExplorer() {
 
   return (
     <>
-      <PricesHero />
+      <PricesHero onBuy={() => openBuy("Поступление под ключ", PRICE_MAIN)} />
 
       <section className={`${heroArt.packages} px-5 py-10`}>
         <div className="mx-auto max-w-[900px]">
-          <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
+          <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row">
             <div className={`${styles.summaryCard} flex-1 p-5`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
                 ИИ оценит шансы, покажет риски и назовёт следующий шаг
               </span>
             </div>
-            <span aria-hidden className="hidden text-2xl text-cloud-meta sm:block">
+            <span aria-hidden className="hidden self-center text-2xl text-cloud-meta sm:block">
               →
             </span>
             <div className={`${styles.summaryCard} flex-1 p-5`}>
@@ -74,15 +74,15 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 sm:flex-row sm:items-center`}>
-            <div>
+          <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 md:flex-row md:items-center`}>
+            <div className="min-w-0">
               <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы — это бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
                 Расскажи о себе, и ИИ скажет, реально ли поступить и на что
                 рассчитывать. Платить, чтобы это узнать, не нужно.
               </span>
             </div>
-            <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan")} className="shrink-0">
+            <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan")} className="w-full shrink-0 md:w-auto">
               Проверить шансы
             </AppleButton>
           </div>
@@ -131,9 +131,11 @@ export function PricesExplorer() {
               type="button"
               variant="filled"
               onClick={() => openBuy("Поступление под ключ", PRICE_MAIN)}
+              aria-haspopup="dialog"
+              data-pricing-buy="package"
               className="mt-4 w-full sm:w-auto"
             >
-              Оформить и оплатить
+              Купить за {priceLabel(PRICE_MAIN)}
             </AppleButton>
           </div>
 
@@ -194,7 +196,8 @@ export function PricesExplorer() {
                 key={m.name}
                 type="button"
                 onClick={() => openBuy(m.name, m.price)}
-                className={`${styles.optionalService} flex w-full items-center justify-between gap-4 border border-white/15 p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson`}
+                aria-haspopup="dialog"
+                className={`${styles.optionalService} flex w-full flex-col items-start justify-between gap-3 border border-white/15 p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson sm:flex-row sm:items-center sm:gap-4`}
               >
                 <div>
                   <b className="block text-apple-body-sm font-semibold text-cloud-white">{m.name}</b>

@@ -51,6 +51,13 @@ export function AppleModal({
       if (items.length === 0) return;
       const first = items[0];
       const last = items[items.length - 1];
+      // A form can unmount while its request is pending. The browser then
+      // returns focus to body; the next Tab must stay in the open dialog.
+      if (!panel.contains(document.activeElement) || document.activeElement === panel) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+        return;
+      }
       if (e.shiftKey && document.activeElement === first) {
         e.preventDefault();
         last.focus();

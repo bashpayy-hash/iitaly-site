@@ -89,7 +89,7 @@ try {
     const { context, page, calls } = await makePage(width);
     await page.goto(`${origin}/prices`, { waitUntil: 'networkidle' });
     assert.match(await page.locator('h1').innerText(), /10\s*990\s*₸/, 'The page shows the approved launch price');
-    await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
+    await page.locator('[data-pricing-buy="hero"]').click();
     const dialog = page.getByRole('dialog');
     assert.match(await dialog.innerText(), /10\s*990\s*₸/, 'The purchase dialog agrees with the public price');
     await dialog.getByLabel('Имя', { exact: true }).fill('Demo');

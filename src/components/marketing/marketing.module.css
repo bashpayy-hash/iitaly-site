@@ -57,6 +57,7 @@
 .desktopNav { display: flex; align-items: center; gap: 32px; height: 100%; }
 .desktopNav a { position: relative; display: flex; align-items: center; height: 100%; font-size: 14px; color: #56524c; }
 .desktopNav a:hover, .desktopNav a[aria-current="page"] { color: #141413; }
+.desktopNav a[aria-current="page"] { font-weight:600; }
 .desktopNav a[aria-current="page"]::after { content: ""; position: absolute; inset: auto 0 0; height: 2px; background: var(--i-signal); }
 .portalLink { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: #141413; white-space: nowrap; }
 .portalLink span { margin-left: 6px; color: #75716b; }
@@ -75,7 +76,7 @@
 .button:disabled { opacity: .65; pointer-events: none; }
 .buttonSmall { min-height: 44px; padding: 10px 20px; font-size: 15px; }
 .filled { background: var(--i-action, #141413); color: #fff; border: 1px solid transparent; }
-.filled:hover { background: #141413; }
+.filled:hover { background: #33312e; }
 .outlined { background: transparent; color: var(--i-link, #141413); border: 1px solid currentColor; }
 .outlined:hover { background: color-mix(in srgb, var(--i-link, #141413) 6%, transparent); }
 .ghost { min-height: 44px; padding: 8px 0; color: var(--i-link, #141413); font-size: 16px; }
@@ -173,7 +174,7 @@
 .fieldLabel { display: block; margin-bottom: 7px; color: var(--color-cloud-white); font-size: 14px; font-weight: 500; }
 .formInput { display: block; width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid #bebab4; border-radius: 8px; background: #fefaf4; color: var(--color-cloud-white); font-size: 16px; line-height: 1.5; }
 .formInput::placeholder { color: #6b6761; }
-.formInput[aria-invalid="true"] { border-color: #141413; }
+.formInput[aria-invalid="true"] { border-color: var(--color-red); }
 .guideTopics nav button[aria-current] { border-radius: 8px; background: #fff0f3; padding-inline: 12px; }
 .guideTopics summary:hover { background: #fefaf4; }
 .offerCard {
@@ -205,7 +206,7 @@
   .mobileMenu[open] summary span { transform: rotate(45deg); }
   .mobileMenu nav { position: absolute; top: 100%; inset-inline: 0; display: grid; padding: 12px 24px 24px; background: #fefaf4; border-bottom: 1px solid var(--i-line); }
   .mobileMenu nav a { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--i-line); font-size: 18px; }
-  .mobileMenu nav [aria-current="page"] { color: var(--i-link); }
+  .mobileMenu nav [aria-current="page"] { color: var(--i-link); font-weight:600; border-bottom-color:var(--i-signal); }
   .mobileMenu nav button { min-height: 44px; margin-top: 16px; color: var(--i-link); text-align: left; }
   .heroIntro { grid-template-columns: 1fr; gap: 16px; padding: 40px 20px 0; }
   .heroCopy { text-align: center; padding: 0; }
