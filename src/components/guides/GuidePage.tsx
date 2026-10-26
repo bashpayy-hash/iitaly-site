@@ -7,6 +7,7 @@ import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
 import { GUIDE_TOPICS, VISA_PARTS, guideHref, guideStageHref, stageForGuide, type VisaPart } from "./guideCatalogue";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { VisaSection } from "./VisaSection";
+import { RisoSpot } from "@/components/marketing/PublicPaper";
 import ui from "./guide-pages.module.css";
 
 export function GuideFrame({ children, narrow = false }: { children: ReactNode; narrow?: boolean }) {
@@ -50,7 +51,8 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
   return <GuideFrame narrow>
     <GuideReadingContext id={helpId} />
     <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, ...(part ? [{title:guide.title,href:guideHref(id)},{title:part.title}] : [{title:guide.title}])]} />
-    <article data-guide-panel={id} data-guide-current={id} data-guide-part={visaPart} aria-labelledby="guide-title">
+    <article className={ui.article} data-guide-panel={id} data-guide-current={id} data-guide-part={visaPart} aria-labelledby="guide-title">
+      <RisoSpot subject={id === "tests" ? "calendar" : stage.id === "choose" ? "map" : stage.id === "arrival" ? "key" : "envelope"} placement="article" />
       <header className={ui.articleHeader}>
         <h1 id="guide-title" tabIndex={-1}>{part?.title || guide.title}</h1>
         <p className={ui.intro}>{part?.description || guide.teaser}</p>

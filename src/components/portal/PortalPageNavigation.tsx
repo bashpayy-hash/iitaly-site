@@ -12,8 +12,12 @@ const serverSnapshot = () => "";
 
 /** URL-backed sections work with reloads, browser history and copied links. */
 export function usePortalPart(fallback: string) {
+  return usePortalParameter("part", fallback);
+}
+
+export function usePortalParameter(name: string, fallback: string) {
   const search = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
-  return new URLSearchParams(search).get("part") || fallback;
+  return new URLSearchParams(search).get(name) || fallback;
 }
 
 export function navigatePortal(href: string) {

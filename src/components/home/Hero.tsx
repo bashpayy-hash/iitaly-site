@@ -1,3 +1,5 @@
+import { PaperTexture } from "@/components/marketing/PublicPaper";
+import paper from "@/components/marketing/public-paper.module.css";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import styles from "@/components/marketing/marketing.module.css";
@@ -10,7 +12,8 @@ import assistant from "./home-assistant.module.css";
 export function Hero() {
   return (
     <section data-section="hero" className={styles.hero}>
-      <div className={`${styles.heroIntro} ${assistant.heroIntro}`}>
+      <div className={`${styles.heroIntro} ${assistant.heroIntro} ${paper.surface}`}>
+        <PaperTexture />
         <div className={`${styles.heroCopy} ${assistant.heroCopy}`}>
           <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>

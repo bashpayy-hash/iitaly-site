@@ -91,7 +91,7 @@ try {
   await page.locator('[data-portal-task=translate]').click();
   await page.locator('[data-task-page=overview]').waitFor();
   assert.equal(await page.locator('[data-portal-road]').count(),0,'One task at a time, no repeated route');
-  assert.equal(await page.locator('[data-micro-steps] li').count(),3);
+  assert.equal(await page.locator('[data-micro-steps] li').count(),0,'The brief does not repeat the instruction');
   assert.equal(await page.locator('[data-step-instructions]').count(),0);
   assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false);
   assert.equal(await page.locator('[data-higgsfield-visual]').count(),0);
@@ -99,10 +99,16 @@ try {
   await page.screenshot({path:resolve(output,`brief-${width}.png`),fullPage:true});
   await taskNav(page).getByRole('link',{name:'Как выполнить',exact:true}).click();
   await page.locator('[data-task-page=guide]').waitFor();
-  assert.match(await page.title(),/Инструкция/);
-  assert.equal(await page.locator('[data-step-instructions]').isVisible(),true);
+  assert.match(await page.title(),/Собери оригиналы/);
+  assert.equal(await page.locator('[data-instruction-point]').count(),1,'Only one instruction point is rendered');
   assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false);
-  await page.waitForFunction(()=>document.activeElement?.id==='portal-step-heading');
+  await page.waitForFunction(()=>document.activeElement?.id==='portal-instruction-heading');
+  await page.locator('[data-instruction-next]').click();
+  assert.equal(new URL(page.url()).searchParams.get('item'),'2');
+  assert.equal(await page.locator('#portal-instruction-heading').innerText(),'Передай переводчику');
+  await page.goBack();await page.locator('[data-instruction-point="1"]').waitFor();
+  await page.goForward();await page.locator('[data-instruction-point="2"]').waitFor();
+  assert.equal(await page.locator('[data-instruction-point]').count(),1);
   const guideUrl=page.url();
   await page.screenshot({path:resolve(output,`guide-${width}.png`),fullPage:true});await axe(page,`Guide ${width}`);
   await taskNav(page).getByRole('link',{name:'Проверка документа',exact:true}).click();
@@ -119,6 +125,7 @@ try {
   await noOverflow(page);await axe(page,`Action ${width}`);
   await page.screenshot({path:resolve(output,`action-${width}.png`),fullPage:true});
   await page.goto(guideUrl,{waitUntil:'networkidle'});await page.locator('[data-task-page=guide]').waitFor();
+  assert.equal(await page.locator('#portal-instruction-heading').innerText(),'Передай переводчику','A copied point URL restores the same content');
   assert.equal(await taskNav(page).getByRole('link',{name:'Как выполнить',exact:true}).getAttribute('aria-current'),'page');
   await crumbs(page).getByRole('link',{name:'Документы',exact:true}).click();
   await page.locator('[data-portal-page=stage]').waitFor();

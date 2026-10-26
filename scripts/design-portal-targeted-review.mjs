@@ -99,7 +99,7 @@ try {
     assert.equal(new URL(page.url()).searchParams.get('view'),'plan');
     assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false);
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить',exact:true}).click();
-    assert(await page.locator('[data-step-instructions]').isVisible());
+    assert(await page.locator('[data-instruction-point]').isVisible());
     assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false,'Instructions have a separate page from file upload');
     await page.locator('[data-portal-assistant]').click();
     const chat=page.locator('#iitaly-chat');await chat.waitFor();

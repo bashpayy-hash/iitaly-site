@@ -22,7 +22,7 @@ const server=createServer(async(req,res)=>{
   }catch{res.writeHead(500).end();}
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
-const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch();
+const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[],errors=[],unexpected=[];let activePage;
 const road=page=>page.locator('[data-portal-road]');
 async function capture(page,name){await sharp(await page.screenshot({animations:'disabled'})).webp({quality:82}).toFile(resolve(output,name+'.webp'));}
@@ -118,6 +118,9 @@ try {
     await action.locator('input[type=file]').setInputFiles({name:'fixture.txt',mimeType:'text/plain',buffer:Buffer.from('Synthetic test document. No personal data.')});
     await action.locator('[data-selected-document]').waitFor();assert.equal(fileCalls.length,0);
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить'}).click();
+    assert.equal(await page.locator('[data-instruction-point]').count(),1,'One reading point per page');
+    await page.getByText('Все пункты',{exact:true}).click();
+    await page.getByRole('link',{name:'Проверь читаемость файла',exact:true}).click();
     assert.equal(await page.locator('[data-portal-step-guide] [data-portal-document-coach]').count(),1);
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Проверка документа'}).click();
     assert.match(await action.locator('[data-selected-document]').innerText(),/fixture.txt/);
