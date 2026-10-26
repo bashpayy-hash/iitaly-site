@@ -1,5 +1,7 @@
 "use client";
 
+import { PaperTexture, RisoSpot } from "@/components/marketing/PublicPaper";
+import paper from "@/components/marketing/public-paper.module.css";
 import styles from "@/components/marketing/marketing.module.css";
 
 import { AppleCaption, AppleHeading, AppleBody } from "@/components/apple/Typography";
@@ -37,7 +39,9 @@ const FAQ = [
 
 export function TrustFAQ() {
   return (
-    <section className={`${styles.faq} px-5 py-20 sm:py-28`}>
+    <section data-public-paper-zone="home-faq" className={`${styles.faq} ${paper.surface} px-5 py-20 sm:py-28`}>
+      <PaperTexture />
+      <RisoSpot subject="map" placement="faq" />
       <div className="mx-auto max-w-[760px]">
         <AppleCaption as="p" className="text-center">Прежде чем платить</AppleCaption>
         <AppleHeading as="h2" className="mt-3 text-center">

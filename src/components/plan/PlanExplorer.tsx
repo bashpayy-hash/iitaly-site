@@ -1,5 +1,7 @@
 "use client";
 
+import { PaperTexture } from "@/components/marketing/PublicPaper";
+import paper from "@/components/marketing/public-paper.module.css";
 import { WIZ, type WizAnswers } from "@/data/wizard";
 import { buildPlan } from "@/lib/planBuilder";
 import { EMPTY_PLAN_DRAFT, usePlanDraft } from "@/lib/usePlanDraft";
@@ -50,7 +52,8 @@ export function PlanExplorer() {
         </nav>
       </section>
 
-      <section className={workspace.tools}>
+      <section className={`${workspace.tools} ${paper.surface}`} data-public-paper-zone="plan-tools">
+        <PaperTexture />
         <div className={styles.planWorkspace}>
           <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />

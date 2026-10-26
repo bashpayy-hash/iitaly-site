@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-26",
+  "texture": {
+    "source": "zhol-style-kit(2).zip/assets/bg_cream.jpg",
+    "opacity": {
+      "homeFAQ": 0.12,
+      "planTools": 0.12,
+      "guidesIntro": 0.1,
+      "mobile": 0.08
+    }
+  },
+  "illustrations": {
+    "provider": "Higgsfield",
+    "model": "gpt_image_2_5",
+    "quality": "medium",
+    "background": "transparent",
+    "referenceMedia": "29d330e9-2830-414f-9ce8-fa54c1c8c049",
+    "jobs": {
+      "folder": "4a1607c9-7245-4add-8332-089b35f14e3f",
+      "map": "c9ca065d-fe91-4616-8702-4f922e23a92e"
+    },
+    "renderedSize": 160,
+    "meaning": "Decorative objects, not official documents or geographic data"
+  },
+  "assets": [
+    {
+      "path": "public/illustrations/public-paper/cream-texture.webp",
+      "bytes": 25016,
+      "sha256": "ba0736543c727d7cbcce1ffd08fb510836b0dff0ac5efa99c99b044e8677d3cb"
+    },
+    {
+      "path": "public/illustrations/public-paper/folder-320.webp",
+      "bytes": 18268,
+      "sha256": "577db795e86a54682b04e135ca289feffe4e3bcaf43206b33d68c4f545e1f305"
+    },
+    {
+      "path": "public/illustrations/public-paper/map-320.webp",
+      "bytes": 23090,
+      "sha256": "da5f53a6432e2fc7ed0bb58eed717ee7d6a19d37bb75fbafec2aa7cbb3159d8d"
+    }
+  ]
+}
