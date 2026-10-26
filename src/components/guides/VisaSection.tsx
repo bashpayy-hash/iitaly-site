@@ -10,7 +10,6 @@ import { VISA_PARTS, type VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
 import { GuidePointSwitcher } from "./GuidePointSwitcher";
 import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitcher";
-import { StoryArtwork } from "@/components/story/StoryArtwork";
 
 export function VisaSection({ part }: { part?: VisaPart }) {
   if (part === "funds") return <GuaranteeCalculator />;
@@ -20,7 +19,7 @@ export function VisaSection({ part }: { part?: VisaPart }) {
   return <>
     <a className={ui.textLink} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer">Официальный VFS для Италии в Казахстане</a>
     <dl className={ui.visaFacts}>{VISA_KEY_FACTS.map(fact=><div key={fact.label}><dt>{fact.value}</dt><dd>{fact.label}</dd></div>)}</dl>
-    <nav aria-label="Вопросы о визе D"><ul className={`${ui.topicList} ${ui.topicBento}`}>{VISA_PARTS.map(item=><li key={item.id}><Link href={`/guides/visa/${item.id}`} data-visa-part={item.id}><StoryArtwork subject={item.id === "timeline" ? "calendar" : item.id === "documents" ? "folder" : "envelope"} /><span><strong>{item.title}</strong><span>{item.description}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul></nav>
+    <nav aria-label="Вопросы о визе D"><ul className={ui.topicList}>{VISA_PARTS.map(item=><li key={item.id}><Link href={`/guides/visa/${item.id}`} data-visa-part={item.id}><span><strong>{item.title}</strong><span>{item.description}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul></nav>
   </>;
 }
 

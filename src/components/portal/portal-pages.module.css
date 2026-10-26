@@ -54,7 +54,7 @@
 .page[data-task-page=guide] .body { max-width:none; }
 .taskContext { max-width:70ch; margin:0 0 12px; color:var(--quiet); font:500 16px/1.5 var(--font-sans); letter-spacing:0; }
 .taskContext:focus { outline:none; }
-.overviewStory { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(180px,.7fr); align-items:center; gap:32px; }
+.overviewStory { display:grid; grid-template-columns:minmax(0,1fr); align-items:center; gap:32px; }
 .sections { border:0; gap:8px; }
 .sections a { min-height:44px; padding:10px 18px; border:1px solid var(--border); border-radius:999px; background:var(--card); }
 .sections a[aria-current=page] { color:var(--on-dark); background:var(--ink); border-color:var(--ink); }

@@ -2,10 +2,10 @@
 
 import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { StoryArtwork, type StorySubject } from "./StoryArtwork";
+import { type StorySubject } from "./StoryArtwork";
 import styles from "./story.module.css";
 
-export type StoryItem = { id: string; title: string; text: string; subject: StorySubject; label?: string; content?: ReactNode };
+export type StoryItem = { id: string; title: string; text: string; subject?: StorySubject; label?: string; content?: ReactNode };
 const subscribe = (callback: () => void) => {
   window.addEventListener("popstate", callback);
   return () => window.removeEventListener("popstate", callback);
@@ -77,7 +77,6 @@ export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAct
         <p>{item.text}</p>
         {item.content}
       </div>
-      <StoryArtwork subject={item.subject} eager />
     </section>
     <nav className={styles.navigation} data-fab-yield aria-label="Переход между пунктами">
       {index > 0 ? <button type="button" className={styles.back} onClick={() => onSelect(index - 1)}><ArrowLeft size={18} aria-hidden="true" />Назад</button> : firstAction || <button type="button" className={styles.back} disabled><ArrowLeft size={18} aria-hidden="true" />Назад</button>}

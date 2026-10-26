@@ -32,10 +32,10 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       </div>
       <AssessmentRoadmap plan={plan} />
 
-      <section aria-labelledby="plan-reminders-heading" className="mt-6 rounded-apple-card border border-white/15 p-5">
-        <h2 id="plan-reminders-heading" className="text-apple-body font-semibold text-cloud-white">
+      <details className={styles.reminders}>
+        <summary>
           Напоминания на телефоне
-        </h2>
+        </summary>
         <p className="mt-2 text-apple-body-sm text-cloud-body">
           Подключи Telegram в личном кабинете для напоминаний по сохранённому
           маршруту. Сам по себе этот бесплатный квиз не включает рассылку.
@@ -49,7 +49,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
           Для подключения понадобится активированный личный кабинет. Telegram
           получит одноразовую ссылку, а не код доступа к кабинету.
         </p>
-      </section>
+      </details>
 
       <div className="mt-6 flex flex-wrap gap-3">
         <AppleButton type="button" variant="filled" size="sm" onClick={() => router.push("/prices")}>

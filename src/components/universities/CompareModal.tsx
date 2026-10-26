@@ -2,11 +2,13 @@
 
 import { UNIS, type University } from "@/data/italy";
 import { Modal } from "@/components/Modal";
+import type { UniversitySelection } from "./UniversityDecision";
 import { ComparisonTable } from "./ComparisonTable";
 import styles from "./comparison.module.css";
 import ui from "./university-ui.module.css";
 
-export function CompareModal({ open, compareIds, onClose, embedded = false }: {
+export function CompareModal({ open, compareIds, onClose, embedded = false, selection }: {
+  selection?: UniversitySelection;
   open: boolean;
   compareIds: string[];
   onClose: () => void;
@@ -20,7 +22,7 @@ export function CompareModal({ open, compareIds, onClose, embedded = false }: {
           <h3 id="compare-modal-title">Сравнение университетов</h3>
           <button type="button" onClick={onClose} className={styles.close} aria-label="Закрыть сравнение">×</button>
         </div>
-        <ComparisonTable universities={universities} />
+        <ComparisonTable universities={universities} selection={selection} />
       </div>
     </Modal>
   );

@@ -8,14 +8,14 @@
   --u-body: #56524c;
   --u-meta: #6b6761;
   --u-line: #e7e4df;
-  width: 100%; min-height: 100vh; background: #fff; color: var(--u-ink);
+  width: 100%; min-height: 100vh; background: transparent; color: var(--u-ink);
   font-family: var(--font-apple-text); line-height: 1.5;
 }
 .main { min-height: 65vh; }
 .page :where(button, a, select, input, summary):focus-visible {
   outline: 2px solid var(--i-link); outline-offset: 4px;
 }
-.hero { position: relative; overflow: hidden; background: radial-gradient(ellipse at 14% 20%, rgba(253,238,228,.7), transparent 56%), #faf8f5; border-bottom: 1px solid var(--color-warm-line); }
+.hero { position: relative; overflow: hidden; background: transparent; border-bottom: 1px solid var(--color-warm-line); }
 .heroInner { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 224px; align-items: center; gap: 64px; max-width: 1200px; margin: auto; padding: 56px 0 48px; }
 .heroCopy { position: relative; z-index: 1; }
 .eyebrow { display: inline-flex; align-items: center; min-height: 32px; padding: 5px 13px; border: 1px solid var(--color-warm-line); border-radius: 999px; background: #fff; color: var(--u-meta); font-size: 13px; font-weight: 500; letter-spacing: 0; }
@@ -27,7 +27,7 @@
 .heroArt img, .emptyArt img { position: relative; display: block; width: 100%; height: auto; z-index: 1; }
 .heroArt::before, .emptyArt::before { content: ""; position: absolute; inset: 12% -15%; z-index: 0; border-radius: 50%; background: radial-gradient(ellipse, #f7f3ed 0%, #fbf4e6 43%, transparent 72%); filter: blur(18px); opacity: .8; }
 /* Actual paper texture is in the cutout; only the wash is blurred. */
-.explorer { padding: 32px 24px 64px; background: #faf8f5; }
+.explorer { padding: 32px 24px 64px; background: transparent; }
 .container { max-width: 1200px; margin: auto; }
 /* User-requested visible navigator: part of the working filters, not a
    promotional card above them. Reuse this page's existing surface tokens. */
@@ -227,7 +227,7 @@
 }
 @media (prefers-reduced-motion: reduce) { .embedded :where(button, a) { transition: none; } }
 
-.page { background: var(--color-alabaster); }
+.page { background: transparent; }
 .heroArt { overflow: hidden; border-radius: 28px 64px 28px 28px; }
 .filterWorkspace, .uniCard, .modal { background: #fff; border-color: var(--color-warm-line); border-radius: 28px;  }
 
@@ -257,3 +257,6 @@
 @supports not (grid-template-rows:subgrid) { .embedded .uniCard>.shortlistToggle { margin-block:14px; } }
 
 .embedded [hidden] { display:none!important; }
+
+.heroInner [data-selected-accent] { width:100px; justify-self:end; margin-right:40px; }
+@media(max-width:767px) { .heroInner [data-selected-accent] { display:none; } }

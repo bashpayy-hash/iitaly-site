@@ -7,7 +7,6 @@ import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
 import { GUIDE_TOPICS, VISA_PARTS, guideHref, guideStageHref, stageForGuide, type VisaPart } from "./guideCatalogue";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { VisaSection } from "./VisaSection";
-import { StoryArtwork } from "@/components/story/StoryArtwork";
 import { GuidePointSwitcher } from "./GuidePointSwitcher";
 import ui from "./guide-pages.module.css";
 
@@ -34,9 +33,9 @@ function GuideSources({ ids }: { ids: readonly SourceId[] }) {
 }
 
 export function GuideTopicLinks({ ids }: { ids: readonly string[] }) {
-  return <ul className={`${ui.topicList} ${ui.topicBento}`}>{ids.map(id => {
+  return <ul className={ui.topicList}>{ids.map(id => {
     const guide = GUIDE_TOPICS.find(topic => topic.id === id)!;
-    return <li key={id}><Link href={guideHref(id)} data-guide-select={id}><StoryArtwork subject={id === "tests" ? "calendar" : stageForGuide(id)?.id === "arrival" ? "key" : "folder"} /><span><strong>{guide.title}</strong><span>{guide.teaser}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>;
+    return <li key={id}><Link href={guideHref(id)} data-guide-select={id}><span><strong>{guide.title}</strong><span>{guide.teaser}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>;
   })}</ul>;
 }
 

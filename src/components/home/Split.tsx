@@ -1,14 +1,18 @@
-import Link from "next/link";
-import { EditorialHeading } from "@/components/marketing/EditorialSection";
-import { UniversitySpotlight } from "./UniversitySpotlight";
-import { UNIS, CITIES } from "@/data/italy";
-import styles from "@/components/marketing/editorial-sections.module.css";
+import { PaperTexture } from "@/components/marketing/PublicPaper";
+import paper from "@/components/marketing/public-paper.module.css";
+import { AppleButtonLink } from "@/components/apple/Button";
+import styles from "@/components/marketing/marketing.module.css";
 
+/** An entry point, not a reimplementation of the protected university map. */
 export function Split() {
-  const universities = ["unipd", "unibo", "luiss"].map(id => UNIS.find(item => item.id === id)!).filter(Boolean).map(item => ({ id:item.id, name:item.name, type:item.tp, city:CITIES[item.city].name }));
-  return <section data-section="split" className={styles.section} aria-labelledby="university-title">
-    <EditorialHeading id="university-title" eyebrow="Университеты" title="Одна Италия. Твой выбор."><strong>Начни с того, что интересно тебе.</strong> Сравни университеты, затем открой карту и требования к программе.</EditorialHeading>
-    <UniversitySpotlight universities={universities} />
-    <div className={styles.universityFooter}><span>43 университета · 30 городов</span><Link href="/universities">Все университеты на карте <span aria-hidden="true">↗</span></Link></div>
-  </section>;
+  return (
+    <section data-section="split" className={`${styles.university} ${paper.surface}`}>
+      <PaperTexture dark />
+      <span className={styles.eyebrow}>Интерактивная карта</span>
+      <h2 className={styles.universityTitle}>Одна Италия.<br /><span>Твой собственный выбор.</span></h2>
+      <p>Найди свой университет: цены по ISEE, тесты, дедлайны и стипендия региона.</p>
+      <div className={styles.universityNumbers}><div><b>43</b><small>университета</small></div><div><b>30</b><small>городов</small></div></div>
+      <div className={styles.actions}><AppleButtonLink href="/universities" variant="outlined">Открыть карту Италии <span aria-hidden>↗</span></AppleButtonLink></div>
+    </section>
+  );
 }

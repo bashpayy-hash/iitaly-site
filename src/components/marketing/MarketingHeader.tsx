@@ -5,6 +5,8 @@ import { navigatePortal } from "@/components/portal/PortalPageNavigation";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./marketing.module.css";
+import { PaperTexture } from "./PublicPaper";
+import paper from "./public-paper.module.css";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const links = [
@@ -29,7 +31,8 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
     return () => document.removeEventListener("pointerdown", closeOutside);
   }, []);
   return (
-    <header className={styles.header} data-portal-header={variant === "portal" ? "true" : undefined}>
+    <header className={`${styles.header} ${variant === "public" ? paper.chrome : ""}`} data-portal-header={variant === "portal" ? "true" : undefined}>
+      {variant === "public" && <PaperTexture />}
       <div className={styles.navInner}>
         <Link href="/" className={`${styles.wordmark} logo-link`} aria-label="IITALY — главная"><BrandLogo /></Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">

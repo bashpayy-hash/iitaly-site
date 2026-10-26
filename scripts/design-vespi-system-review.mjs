@@ -346,6 +346,7 @@ try {
     await page.locator('[data-guide-inline-action]').filter({ visible: true }).click();
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Assistant context preserves the quiz draft');
+    await page.getByRole('link', {name:'Проверить документ',exact:true}).click();
     await page.locator('#document-check').scrollIntoViewIfNeeded();
     if (!baseline) assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'No repeated portrait in the document workbench or report');
     await capture('plan-document');

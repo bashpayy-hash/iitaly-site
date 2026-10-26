@@ -144,11 +144,11 @@
 .canvas[data-portal-page=stage] .stageTitle h2,.canvas[data-portal-page=stage] .stampTrack { display:none; }
 .stageSwitcher { min-width:0; }
 .stagePosition { color:var(--quiet); font-size:13px; margin:12px 0; font-variant-numeric:tabular-nums; }
-.task.stageScreen { display:grid; grid-template-columns:26px minmax(0,1.3fr) minmax(180px,.8fr); column-gap:22px; padding:28px 0; background:transparent; border:0; border-radius:0; box-shadow:none; animation:stagePoint .4s cubic-bezier(.16,1,.3,1) both; }
+.task.stageScreen { display:grid; grid-template-columns:26px minmax(0,1fr); column-gap:22px; padding:28px 0; background:transparent; border:0; border-radius:0; box-shadow:none; animation:stagePoint .4s cubic-bezier(.16,1,.3,1) both; }
 .stageScreen .stepIndex { display:none; }
 .stageScreen .roundCheck { grid-column:1; grid-row:1; align-self:start; margin-top:8px; }
 .stageScreen .taskDetails { grid-column:2; grid-row:1; }
-.stageScreen .headingCopy { font-size:32px; line-height:1.15; letter-spacing:-.02em; }
+.stageScreen .headingCopy { font-size:28px; line-height:1.15; letter-spacing:-.02em; }
 .stageScreen .taskBody { padding:0; background:transparent; }
 .stageScreen .explainer { max-width:52ch; margin:20px 0 16px; color:var(--quiet); font-size:17px; line-height:1.6; background:transparent; padding:0; }
 .stageScreen .explainer img { display:none; }

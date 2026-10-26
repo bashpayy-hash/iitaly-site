@@ -1,16 +1,33 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { EditorialHeading } from "@/components/marketing/EditorialSection";
-import { StoryArtwork } from "@/components/story/StoryArtwork";
-import styles from "@/components/marketing/editorial-sections.module.css";
+import paper from "@/components/marketing/public-paper.module.css";
+import styles from "@/components/marketing/marketing.module.css";
+import art from "@/components/marketing/editorial-art.module.css";
+import { EditorialArtwork } from "@/components/marketing/EditorialArtwork";
+import { AppleHeading, AppleBody, AppleCaption } from "@/components/apple/Typography";
+import { AppleButtonLink } from "@/components/apple/Button";
 
+/** The approved balcony occupies the existing image slot; copy and controls stay intact. */
 export function FeatureBanner() {
-  return <section data-section="feature" className={styles.section} aria-labelledby="arrival-title">
-    <EditorialHeading id="arrival-title" eyebrow="После прилёта" title="Виза — ещё не финал."><strong>Первые недели тоже по плану.</strong> Codice fiscale, kit giallo и приём в Questura — каждый вопрос в своём гайде.</EditorialHeading>
-    <div className={`${styles.bento} ${styles.arrival}`}>
-      <article className={styles.card}><h3>Первые недели в Италии</h3><StoryArtwork subject="key" /><Link className={styles.cardLink} href="/guides/stages/arrival">Открыть раздел<ArrowUpRight size={18} aria-hidden="true" /></Link></article>
-      <article className={styles.card}><h3>Permesso di soggiorno</h3><StoryArtwork subject="envelope" /><Link className={styles.cardLink} href="/guides/permesso">Подготовить kit<ArrowUpRight size={18} aria-hidden="true" /></Link></article>
-      <article className={styles.card}><h3>Codice fiscale</h3><StoryArtwork subject="folder" /><Link className={styles.cardLink} href="/guides/codice">Получить налоговый код<ArrowUpRight size={18} aria-hidden="true" /></Link></article>
-    </div>
-  </section>;
+  return (
+    <section data-section="feature" className={`${styles.feature} ${paper.surface} grid grid-cols-1 lg:grid-cols-2`}>
+      <div className="order-2 flex flex-col justify-center px-5 py-20 sm:py-28 lg:order-1 lg:px-16">
+        <div className="mx-auto max-w-md lg:mx-0">
+          <AppleCaption as="p">После прилёта</AppleCaption>
+          <AppleHeading as="h2" className="mt-3">
+            Кабинет ведёт и после визы
+          </AppleHeading>
+          <AppleBody as="p" className="mt-4">
+            Виза — не финал. Кабинет держит порядок первых недель в новом
+            городе: codice fiscale, kit giallo, приём в Questura — что,
+            когда и к какому сроку.
+          </AppleBody>
+          <AppleButtonLink href="/guides" variant="outlined" className="mt-6">
+            Смотреть гайды по визе
+          </AppleButtonLink>
+        </div>
+      </div>
+      <div data-role="image" className={`${art.arrivalPanel} order-1 lg:order-2`}>
+        <EditorialArtwork scene="balcony-scene" />
+      </div>
+    </section>
+  );
 }

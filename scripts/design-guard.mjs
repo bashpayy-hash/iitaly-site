@@ -6,7 +6,11 @@ const base = process.argv[2];
 assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
-const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+const approvedPresentationPaths = new Set([
+  // 2026-10-26: continuous root paper and persisted public comparison winner.
+  'src/app/layout.tsx', 'src/lib/useUniversityChoice.ts',
+  'src/components/universities/UniversityDecision.tsx',
+'src/app/universities/page.tsx',
   // 2026-10-26: paginate existing guidance, without changing task or review data.
   'src/components/portal/portalInstructionPages.ts',
   // User request 2026-10-18: one watercolor pricing scene and a labelled

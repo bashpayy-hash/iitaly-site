@@ -9,7 +9,7 @@ import { instructionIndex, portalInstructionPages } from "./portalInstructionPag
 import { PortalBreadcrumbs, PortalPageLink, PortalPageNavigation, usePortalPageFocus, usePortalPart, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import styles from "./portal-pages.module.css";
 import { MediaSwitcher } from "@/components/story/MediaSwitcher";
-import { StoryArtwork, taskArtwork } from "@/components/story/StoryArtwork";
+import { taskArtwork } from "@/components/story/StoryArtwork";
 
 export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtra, defaultPart = "overview" }: {
   task: PortalTask; stage?: PortalStage; done: boolean; readOnly?: string; action: ReactNode; guideExtra?: ReactNode; defaultPart?: "overview" | "action";
@@ -36,7 +36,6 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
       {!done && taskDate(task) && <p className={styles.note}>Ориентир подготовки, не срок конкретного вуза.</p>}
       <div className={styles.next}><PortalPageLink className={styles.primary} href={readingHref(0)}>Как выполнить <span aria-hidden="true">→</span></PortalPageLink>
         <PortalPageLink className={styles.quietLink} href={href("action")}>{DOC_TASKS[task.id] ? "Документ уже готов — проверить" : "Перейти к действию"}</PortalPageLink></div></div>
-      <StoryArtwork subject={taskArtwork(task.id, stage?.id)} />
     </div>}
     {part === "guide" && <div className={styles.body} data-portal-step-guide>
       <MediaSwitcher

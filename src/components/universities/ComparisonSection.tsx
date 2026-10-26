@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { CITIES, UNIS, type University } from "@/data/italy";
-import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
+import { UniversityDecision, type UniversitySelection } from "./UniversityDecision";
 import { ComparisonTable } from "./ComparisonTable";
 import styles from "./comparison.module.css";
 
@@ -13,7 +13,8 @@ const serverSnapshot = () => false;
 
 const options = [...UNIS].sort((a, b) => CITIES[a.city].name.localeCompare(CITIES[b.city].name, "ru") || a.name.localeCompare(b.name));
 
-export function ComparisonSection({ compareIds, onChange, onOpen, embedded = false, portalSelection }: {
+export function ComparisonSection({ compareIds, onChange, onOpen, embedded = false, portalSelection, selection }: {
+  selection?: UniversitySelection;
   compareIds: string[];
   onChange: (ids: string[]) => void;
   onOpen: () => void;
@@ -37,7 +38,6 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
             <h2 id="comparison-heading">Сравни не только название.</h2>
             <p className={styles.description}>Город, программы, экзамены, сроки, стоимость и поддержка — рядом, в одной таблице. Добавь два или три вуза здесь или через карточки на карте.</p>
           </div>
-          <LemonPostcard />
         </div>}
         {embedded && <h3 className={styles.embeddedHeading}>Сравнение университетов</h3>}
         <div className={styles.selectors}>
@@ -60,11 +60,12 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
           {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
           {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне ↗</button>}
         </div>
-        {universities.length >= 2 ? <ComparisonTable universities={universities} /> : <div className={styles.empty}>
+        {universities.length >= 2 ? <ComparisonTable universities={universities} selection={selection} /> : <div className={styles.empty}>
           <span aria-hidden="true">01 / 02 / 03</span>
           <p>{universities.length === 1 ? "Добавь ещё один вуз для сравнения." : "Два вуза — уже начало выбора."}</p>
           <small>12 параметров · только различия · бюджет на 10 или 12 месяцев</small>
         </div>}
+        {selection && universities.length < 2 && <UniversityDecision universities={universities} selection={selection} />}
       </div>
     </section>
   );
