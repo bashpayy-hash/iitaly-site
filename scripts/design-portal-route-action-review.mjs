@@ -119,9 +119,8 @@ try {
     await action.locator('[data-selected-document]').waitFor();assert.equal(fileCalls.length,0);
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить'}).click();
     assert.equal(await page.locator('[data-instruction-point]').count(),1,'One reading point per page');
-    await page.getByText('Все пункты',{exact:true}).click();
-    await page.getByRole('link',{name:'Проверь читаемость файла',exact:true}).click();
-    assert.equal(await page.locator('[data-portal-step-guide] [data-portal-document-coach]').count(),1);
+    await page.getByRole('navigation',{name:'Пункты инструкции'}).getByRole('link',{name:/Проверь читаемость файла/}).click();
+    assert.equal(await page.locator('#portal-instruction-heading').innerText(),'Проверь читаемость файла');
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Проверка документа'}).click();
     assert.match(await action.locator('[data-selected-document]').innerText(),/fixture.txt/);
     assert.equal(await action.getByRole('combobox',{name:'Стипендиальная программа',exact:true}).inputValue(),'bocconi');

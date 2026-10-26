@@ -23,7 +23,7 @@ const server=createServer(async(req,res)=>{
   }catch{res.writeHead(500).end();}
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
-const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch();
+const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[],errors=[],unexpected=[];
 const road=page=>page.locator('[data-portal-road]');
 async function go(page,name){await portalDestination(page,name);}
@@ -97,12 +97,13 @@ try {
   if(width===1440)assert(bounds.y+bounds.height<900,`The next action fits in the first desktop viewport: ${JSON.stringify({sizes,bounds})}`);
   await axe(page,`result ${width}`);await noOverflow(page);
   await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Полный разбор',exact:true}).click();
+  await report.getByText('Файл и сроки',{exact:true}).click();
   for(const value of ['attestat.pdf','20 октября 2026','до 15 рабочих дней','1 мая','Это не срок конкретного вуза'])assert((await report.innerText()).includes(value),value+' retained');
-  await report.getByText('Что проверено: полный разбор',{exact:true}).click();
+  await report.getByRole('navigation',{name:'Пункты разбора'}).getByRole('link').filter({hasText:'Проверка 1'}).click();
   assert.match(await report.innerText(),/Текст виден/);
   await report.getByText('Источники и дата сверки правил',{exact:true}).click();
   assert.equal(await report.locator('a[href="https://www.universitaly.it/studenti-stranieri"]').count(),1);
-  await report.getByText('Все рекомендации из разбора',{exact:true}).click();
+  await report.getByRole('navigation',{name:'Пункты разбора'}).getByRole('link').filter({hasText:'Действие 1'}).click();
   assert.match(await report.innerText(),/Уточни требования выбранного вуза и повтори проверку/);
   await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Новая проверка',exact:true}).click();const form=page.locator('[data-document-upload-form]');await form.waitFor();
   assert.equal(await form.locator('details').count(),0,'Context fields are never hidden in an accordion');assert(await form.getByRole('combobox').first().isVisible());
@@ -136,12 +137,12 @@ try {
   assert.match(await report.locator('[data-report-details-page]').textContent(),/attestat.pdf/,'Existing saved report survives the failure');
   assert.equal(checks,1);assert.equal(saves,1);
   await form.getByRole('button',{name:'Сохранить результат',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('[aria-label="Файл и сроки"]')?.textContent.includes('synthetic-attestat.txt'));
+  await page.waitForFunction(()=>document.querySelector('[data-report-details-page]')?.textContent.includes('synthetic-attestat.txt'));
   assert.equal(checks,1,'Retry saves the result without another AI charge');assert.equal(saves,2);
   assert.equal(await page.locator('[data-document-operation-error]').count(),0,'Saved result has no stale error');
   assert.equal((await portalRoadState(page)).done,'3','Clarification does not change progress');
   await page.reload({waitUntil:'networkidle'});await report.waitFor();assert.equal(checks,1);
-  await report.getByRole('link',{name:'Полный разбор',exact:true}).click();assert.match(await report.innerText(),/synthetic-attestat.txt/);
+  await report.getByRole('link',{name:'Полный разбор',exact:true}).click();await report.getByText('Файл и сроки',{exact:true}).click();assert.match(await report.innerText(),/synthetic-attestat.txt/);
   await report.getByRole('link',{name:'К документам',exact:true}).click();
   data.docs.apostille={verdict:'warn',summary:'Сохранённый краткий итог без полного отчёта.'};
   await page.reload({waitUntil:'networkidle'});await page.locator('[data-document=apostille]').click();

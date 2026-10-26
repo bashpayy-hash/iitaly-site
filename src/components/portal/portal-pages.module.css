@@ -48,3 +48,16 @@
  .readingPoint { margin:22px 0 28px; min-height:140px; }.readingPoint h2 { font-size:23px; }.readingPoint p { font-size:17px; }
  .readingNavigation { flex-wrap:wrap; gap:8px; }.readingForward { order:-1; width:100%; max-width:none; }.readingNavigation .quietLink { width:100%; justify-content:center; }.nextPoint { text-align:left; }
 }
+
+/* Reading is a single illustrated point. The task name is quiet context. */
+.page[data-task-page=guide],.page[data-task-page=overview] { max-width:1040px; }
+.page[data-task-page=guide] .body { max-width:none; }
+.taskContext { max-width:70ch; margin:0 0 12px; color:var(--quiet); font:500 16px/1.5 var(--font-sans); letter-spacing:0; }
+.taskContext:focus { outline:none; }
+.overviewStory { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(180px,.7fr); align-items:center; gap:32px; }
+.sections { border:0; gap:8px; }
+.sections a { min-height:44px; padding:10px 18px; border:1px solid var(--border); border-radius:999px; background:var(--card); }
+.sections a[aria-current=page] { color:var(--on-dark); background:var(--ink); border-color:var(--ink); }
+@media(max-width:700px) { .overviewStory { grid-template-columns:minmax(0,1fr); gap:16px; }.taskContext { font-size:14px; }.sections { flex-wrap:wrap; overflow:visible; padding:4px 3px 10px; }.sections a { flex:none; white-space:nowrap; font-size:13px; padding-inline:14px; } }
+
+.page .sections a { transition:none; }

@@ -8,6 +8,7 @@ import { ADMISSION_SOURCES } from "@/data/admissions";
 import { GUIDE_STAGES, GUIDE_TOPICS, guideHref, guideStageHref } from "./guideCatalogue";
 import { isGuideId, openGuideHelper } from "./guideJourney";
 import ui from "./guide-pages.module.css";
+import { StoryArtwork } from "@/components/story/StoryArtwork";
 
 const normalize = (value: string) => value.toLocaleLowerCase("ru").replaceAll("ё", "е");
 export function GuideDirectory() {
@@ -46,7 +47,7 @@ export function GuideDirectory() {
       {matches.length ? <ul className={ui.topicList}>{matches.map(guide=><li key={guide.id}><Link href={guideHref(guide.id)} data-guide-select={guide.id}><span><strong>{guide.title}</strong><span>{guide.teaser}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul>
         : <><p>Попробуй другое слово, например «перевод» или «стипендия».</p><button className={ui.textLink} type="button" onClick={()=>openGuideHelper(undefined,query)}>Спросить Веспи<ArrowRight size={17} aria-hidden="true" /></button></>}
     </section> : <nav className={ui.directory} aria-label="Разделы справочника">
-      <ul className={ui.stageList}>{GUIDE_STAGES.map(stage=><li key={stage.id}><Link href={guideStageHref(stage.id)} data-guide-stage={stage.id}><span><strong>{stage.title}</strong><span>{stage.description}</span></span><ArrowRight size={24} aria-hidden="true" /></Link></li>)}</ul>
+      <ul className={ui.stageList}>{GUIDE_STAGES.map(stage=><li key={stage.id}><Link href={guideStageHref(stage.id)} data-guide-stage={stage.id}><StoryArtwork subject={stage.id === "choose" ? "calendar" : stage.id === "arrival" ? "key" : "envelope"} /><span><strong>{stage.title}</strong><span>{stage.description}</span></span><ArrowRight size={24} aria-hidden="true" /></Link></li>)}</ul>
     </nav>}
   </>;
 }

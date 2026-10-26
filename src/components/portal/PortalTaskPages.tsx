@@ -6,8 +6,10 @@ import { taskActionHint, taskDate, taskExplanation, taskTitle } from "@/lib/port
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { ADMISSION_SOURCES } from "@/data/admissions";
 import { instructionIndex, portalInstructionPages } from "./portalInstructionPages";
-import { PortalBreadcrumbs, PortalPageLink, PortalPageNavigation, usePortalPageFocus, usePortalPart, usePortalParameter } from "./PortalPageNavigation";
+import { PortalBreadcrumbs, PortalPageLink, PortalPageNavigation, usePortalPageFocus, usePortalPart, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import styles from "./portal-pages.module.css";
+import { MediaSwitcher } from "@/components/story/MediaSwitcher";
+import { StoryArtwork, taskArtwork } from "@/components/story/StoryArtwork";
 
 export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtra, defaultPart = "overview" }: {
   task: PortalTask; stage?: PortalStage; done: boolean; readOnly?: string; action: ReactNode; guideExtra?: ReactNode; defaultPart?: "overview" | "action";
@@ -25,36 +27,26 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
   usePortalPageFocus(`${taskTitle(task)} · ${part === "guide" ? page.title : part === "action" ? actionLabel : "Кратко"}`, `${part}:${item}`, part === "guide" ? "portal-instruction-heading" : "portal-step-heading");
   return <section className={styles.page} data-step-detail={task.id} data-task-page={part} aria-labelledby="portal-step-heading">
     <PortalBreadcrumbs stage={stage} current={part === "guide" ? "Инструкция" : part === "action" ? actionLabel : "Кратко"} />
-    <h1 id="portal-step-heading" className={styles.heading} tabIndex={-1}>{taskTitle(task)}</h1>
+    <h1 id="portal-step-heading" className={part === "guide" ? styles.taskContext : styles.heading} tabIndex={-1}>{taskTitle(task)}</h1>
     <p className={styles.meta}>{done && <span>Выполнено</span>}{!done && taskDate(task) && <span>{taskDate(task)}</span>}{(task.time || TASK_META[task.id]?.min) && <span>Срок: {task.time || TASK_META[task.id]?.min}</span>}</p>
     <PortalPageNavigation active={part} items={[{ id:"overview",label:"Кратко",href:href("overview") },{ id:"guide",label:"Как выполнить",href:href("guide") },{ id:"action",label:actionLabel,href:href("action") }]} />
-    {part === "overview" && <div className={styles.body}>
-      <p className={styles.explanation}>{taskExplanation(task)}</p>
+    {part === "overview" && <div className={styles.overviewStory}>
+      <div><p className={styles.explanation}>{taskExplanation(task)}</p>
       {readOnly && <p className={styles.note}>{readOnly}</p>}
       {!done && taskDate(task) && <p className={styles.note}>Ориентир подготовки, не срок конкретного вуза.</p>}
       <div className={styles.next}><PortalPageLink className={styles.primary} href={readingHref(0)}>Как выполнить <span aria-hidden="true">→</span></PortalPageLink>
-        <PortalPageLink className={styles.quietLink} href={href("action")}>{DOC_TASKS[task.id] ? "Документ уже готов — проверить" : "Перейти к действию"}</PortalPageLink></div>
+        <PortalPageLink className={styles.quietLink} href={href("action")}>{DOC_TASKS[task.id] ? "Документ уже готов — проверить" : "Перейти к действию"}</PortalPageLink></div></div>
+      <StoryArtwork subject={taskArtwork(task.id, stage?.id)} />
     </div>}
     {part === "guide" && <div className={styles.body} data-portal-step-guide>
-      <div className={styles.readingPosition}>
-        <span>Пункт {item + 1} из {pages.length}</span>
-        <details className={styles.contents} key={`${task.id}:${item}`}>
-          <summary>Все пункты</summary>
-          <nav aria-label="Пункты инструкции"><ol>{pages.map((entry, index) => <li key={index}><PortalPageLink href={readingHref(index)} aria-current={item === index ? "page" : undefined}>{entry.title}</PortalPageLink></li>)}</ol></nav>
-        </details>
-      </div>
-      <section className={styles.readingPoint} data-instruction-point={item + 1} data-portal-document-coach={page.preparation || undefined} aria-labelledby="portal-instruction-heading">
-        <h2 id="portal-instruction-heading" tabIndex={-1}>{page.title}</h2>
-        <p>{page.text}</p>
-      </section>
+      <MediaSwitcher
+        items={pages.map((entry, index) => ({ id:`${task.id}-${index}`, title:entry.title, text:entry.text, subject:entry.preparation ? "folder" : taskArtwork(task.id, stage?.id), label:String(index + 1).padStart(2, "0") + " · " + entry.title }))}
+        index={item} onSelect={index => navigatePortal(readingHref(index))} href={readingHref}
+        headingId="portal-instruction-heading"
+        firstAction={<PortalPageLink href={href("overview")}>Кратко</PortalPageLink>}
+        lastAction={<PortalPageLink data-instruction-next href={href("action")}>{DOC_TASKS[task.id] ? "Перейти к проверке" : "Перейти к действию"}<span aria-hidden="true">→</span></PortalPageLink>}
+      />
       {last && guideExtra}
-      <nav className={styles.readingNavigation} aria-label="Переход между пунктами">
-        <PortalPageLink className={styles.quietLink} href={item ? readingHref(item - 1) : href("overview")}>Назад</PortalPageLink>
-        <div className={styles.readingForward}>
-        <PortalPageLink className={styles.primary} data-instruction-next href={last ? href("action") : readingHref(item + 1)}>{last ? DOC_TASKS[task.id] ? "Перейти к проверке" : "Перейти к действию" : "Далее"}<span aria-hidden="true">→</span></PortalPageLink>
-        {!last && <p className={styles.nextPoint}>Далее: {pages[item + 1].title}</p>}
-        </div>
-      </nav>
       {sources.length > 0 && <details className={styles.readingSources}><summary>Официальные источники</summary><ul>{sources.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label} ↗</a></li>)}</ul></details>}
     </div>}
     {/* Keep the mounted action while reading: selected files and form answers stay intact. */}

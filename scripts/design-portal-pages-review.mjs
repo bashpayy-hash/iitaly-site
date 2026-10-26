@@ -82,7 +82,9 @@ try {
    await page.locator('[data-portal-page=stage]').waitFor();
    assert.equal(new URL(page.url()).searchParams.get('stage'),stage.id);
    assert.equal(await page.locator('#portal-overview-heading').innerText(),stage.title);
-   assert.equal(await page.locator('[data-task-check]').count(),stage.tasks.length);
+   assert.equal(await page.locator('[data-task-check]').count(),1);
+   assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),stage.tasks.length);
+   if(stage.tasks.length>1){await page.locator('[data-stage-switcher] [data-story-pill]').last().click();assert.equal(new URL(page.url()).searchParams.get('step'),stage.tasks.at(-1).id);assert.equal(await page.locator('[data-task-check]').count(),1);}
    assert.equal(await page.locator('[data-portal-now],[data-portal-road]').count(),0);
    await noOverflow(page);
   }
@@ -146,7 +148,7 @@ try {
   data.done.translate=true;data.done.notary=true;
   await page.goto(origin+'/portal?view=plan&task=cimea',{waitUntil:'networkidle'});await page.locator('[data-task-page=overview]').waitFor();
   assert.equal(await page.locator('[data-portal-road],[data-micro-steps]').count(),0,'The CIMEA brief has no global plan or generic repeated instructions');
-  assert((await page.locator('[data-task-page=overview]').boundingBox()).width<=880);await noOverflow(page);await axe(page,`CIMEA ${width}`);
+  assert((await page.locator('[data-task-page=overview]').boundingBox()).width<=1040);await noOverflow(page);await axe(page,`CIMEA ${width}`);
   await page.screenshot({path:resolve(output,`cimea-${width}.png`),fullPage:true});
   await page.goto(origin+'/portal?view=docs&doc=translate',{waitUntil:'networkidle'});
   const report=page.getByRole('region',{name:'Разбор документа',exact:true});await report.waitFor();
@@ -156,7 +158,11 @@ try {
   assert.match(await report.innerText(),/Нужно уточнить/);
   await noOverflow(page);await axe(page,`Report summary ${width}`);await page.screenshot({path:resolve(output,`result-${width}.png`),fullPage:true});
   await navigation.getByRole('link',{name:'Полный разбор',exact:true}).click();
-  assert.match(await report.innerText(),/translation.txt/);assert.match(await report.innerText(),/Уточнить у получателя/);
+  assert.match(await report.innerText(),/Уточнить у получателя/);
+  assert.equal(await report.locator('[data-report-details-page] [data-instruction-point]').count(),1);
+  await report.getByText('Файл и сроки',{exact:true}).click();assert.match(await report.innerText(),/translation.txt/);
+  await report.locator('[data-instruction-next]').click();assert.equal(new URL(page.url()).searchParams.get('finding'),'2');
+  assert.match(await report.locator('[data-report-details-page]').innerText(),/Заверение/);
   await page.reload({waitUntil:'networkidle'});assert.equal(await report.locator('[data-report-details-page]').isVisible(),true);
   await navigation.getByRole('link',{name:'Новая проверка',exact:true}).click();
   const form=report.locator('[data-document-upload-form]');await form.waitFor();

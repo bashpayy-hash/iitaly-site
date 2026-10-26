@@ -1,4 +1,3 @@
-import { RisoSpot } from "@/components/marketing/PublicPaper";
 import paper from "@/components/marketing/public-paper.module.css";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -11,10 +10,9 @@ export default function GuidesPage() {
   return <GuideFrame>
     <GuideReadingContext />
     <div className={paper.guideIntro} data-public-paper-zone="guides-intro">
-    <RisoSpot subject="folder" placement="guide" />
     <header className={ui.indexHeader}>
-      <h1>Гайды и виза</h1>
-      <p className={ui.intro}>Выбери вопрос, который решаешь сейчас. Документы, поступление и жизнь в Италии — по одной теме за раз.</p>
+      <p className={ui.eyebrow}>Гайды и виза</p><h1>Один вопрос. Понятный ответ.</h1>
+      <p className={ui.intro}><strong>Выбери вопрос, который решаешь сейчас.</strong> Документы, поступление и жизнь в Италии — по одной теме за раз.</p>
       <GuideReviewed />
     </header>
     </div>

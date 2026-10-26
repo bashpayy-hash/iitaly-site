@@ -2,7 +2,7 @@ import styles from "./public-paper.module.css";
 
 /** Opt-in material only. Never wraps text, controls, or the portal. */
 export function PaperTexture({ dark = false }: { dark?: boolean }) {
-  return <span className={`${styles.texture} ${dark ? styles.darkTexture : ""}`} aria-hidden="true" data-public-paper />;
+  return <><span className={`${styles.texture} ${dark ? styles.darkTexture : ""}`} aria-hidden="true" data-public-paper /><span className={styles.noise} aria-hidden="true" data-paper-grain /></>;
 }
 
 export type RisoSubject = "folder" | "map" | "calendar" | "envelope" | "key";

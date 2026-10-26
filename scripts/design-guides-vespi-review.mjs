@@ -83,6 +83,7 @@ try {
     assert.match(await page.locator('main').innerText(),/Foundation не заменяет выпускной аттестат/);
     assert.equal(await page.locator('[data-guide-panel]').count(),1);
     assert.equal(await page.locator('[data-guide-stage],[data-guide-select],[data-guide-timeline]').count(),0,'Reading shows only the current question, with breadcrumbs');
+    if(await page.locator('[data-media-switcher]').count())await page.locator('[data-story-pill]').last().click();
     await page.locator('[data-guide-inline-action]').click();
     await page.locator('[data-guide-origin=education]').waitFor();
     await page.getByRole('heading',{name:'Какой средний балл?',exact:true}).waitFor();
