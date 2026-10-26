@@ -44,6 +44,10 @@ try {
       return url.origin===origin?route.continue():route.abort();
     });
     const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
+    async function actionPage() {
+      const sections=page.getByRole('navigation',{name:'Разделы задачи',exact:true});
+      if(await sections.count())await sections.locator('a[href$="part=action"]').click();
+    }
     async function visit(path) {await page.goto(origin+path,{waitUntil:'networkidle'});await page.evaluate(()=>document.fonts.ready);}
     async function capture(name) {await page.screenshot({path:resolve(output,`after-${name}-${width}.png`),animations:'disabled'});}
     async function audit(name) {
@@ -54,7 +58,7 @@ try {
     }
     await visit('/portal?view=plan');
     await page.locator('[data-portal-task=profile]').waitFor();
-    assert.equal(await page.locator('[data-task-check]').count(),2,'Profile and shortlist both have an interactive control');
+    assert.equal(await page.locator('[data-task-check]').count(),1,'Overview presents the questionnaire first');
     assert((await page.locator('main details summary').allTextContents()).every(text=>!/0\s*из\s*0/.test(text)),'Unconfigured stages are never labelled completed');
     for(const path of ['/plan','/guides','/universities','/portal']) {
       await visit(path); if(path==='/portal')await page.locator('[data-local-workspace]').waitFor();
@@ -97,6 +101,7 @@ try {
     await page.locator('[data-portal-universities]').waitFor();
     await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
     await page.locator('[data-university-select="bocconi"]').check();
+    await page.getByRole('navigation',{name:'Выбор университетов'}).getByRole('link',{name:'Сравнение',exact:true}).click();
     await page.getByRole('combobox',{name:'Университет 1',exact:true}).selectOption('bocconi');
     await page.getByRole('combobox',{name:'Университет 2',exact:true}).selectOption('polimi');
     assert.equal(await page.locator('[data-university-comparison] [data-comparison-row]').count(),12,'Existing comparison stays intact in the guest portal');
@@ -115,6 +120,7 @@ try {
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert(await checks.count()>0,'The checklist exposes completion controls');
     await page.locator('[data-portal-task][data-current-task=true]').click();
+    await actionPage();
     await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
@@ -133,6 +139,7 @@ try {
     await portalDestination(page, 'Обзор');
     for(let step=0;step<12;step++) {
       await page.locator('[data-road-open]').first().click();
+      await actionPage();
       if(await page.getByLabel('Выбрать документ для проверки').count())break;
       await page.getByRole('button',{name:'Готово',exact:true}).click();
     }
@@ -142,6 +149,7 @@ try {
     const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
     async function review(result) {
       reviewResult=result;
+      await actionPage();
       const prepare=page.locator('[data-document-prepare]');
       if(await prepare.count())await prepare.click();
       await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);

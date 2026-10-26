@@ -59,7 +59,7 @@ function fixture() {
 const report = page => page.getByRole('region', { name: 'Разбор документа', exact: true });
 const row = (page, task) => page.locator(`[data-document="${task}"]`);
 async function backToList(page) {
-  await page.getByRole('link', { name: 'Назад', exact: true }).click();
+  await page.getByRole('link', { name: 'К документам', exact: true }).click();
   await report(page).waitFor({ state: 'hidden' });
   assert.equal(new URL(page.url()).searchParams.get('doc'), null);
 }
@@ -70,7 +70,7 @@ async function openReport(page, task) {
   await link.click();
   await report(page).waitFor();
   assert.equal(new URL(page.url()).searchParams.get('doc'), task);
-  assert.equal(await report(page).getByRole('heading', { level: 2 }).count(), 1);
+  assert.equal(await report(page).getByRole('heading', { level: 1 }).count(), 1);
   await reportHeadingVisible(page, task);
 }
 async function reportHeadingVisible(page, label) {
@@ -78,7 +78,7 @@ async function reportHeadingVisible(page, label) {
   // The persistent route chrome must not cover that target; do not manually
   // scroll the page here, which would hide a broken automatic offset.
   await page.waitForFunction(() => {
-    const heading = document.querySelector('[aria-label="Разбор документа"] h2');
+    const heading = document.querySelector('[aria-label="Разбор документа"] h1');
     return heading && document.activeElement === heading;
   });
   await page.evaluate(async () => {
@@ -86,7 +86,7 @@ async function reportHeadingVisible(page, label) {
     await new Promise(requestAnimationFrame);
     await new Promise(requestAnimationFrame);
   });
-  const bounds = await report(page).getByRole('heading', { level: 2 }).evaluate(element => {
+  const bounds = await report(page).getByRole('heading', { level: 1 }).evaluate(element => {
     const box = element.getBoundingClientRect();
     const chrome = document.querySelector('[data-portal-chrome]')?.getBoundingClientRect();
     return { top: box.top, bottom: box.bottom, chromeBottom: chrome?.bottom, viewportHeight: innerHeight };
@@ -106,7 +106,7 @@ async function noListButtons(page, label) {
   }
 }
 async function reportActionLimit(page, label) {
-  const buttons = page.locator('button');
+  const buttons = page.locator('button:visible');
   assert((await buttons.count()) <= 1, `${label}: a report has at most one button`);
   // User-requested drop zone adds a visible hint and decorative arrow. Its
   // accessible action name and the one-action limit remain unchanged.
@@ -181,6 +181,8 @@ try {
     assert.equal(new URL(page.url()).searchParams.get('doc'), 'statements', 'The saved result opens automatically and has an address');
     assert.match(await report(page).innerText(), /Нужно уточнить/);
     assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
+    await report(page).getByRole('link', { name:'Полный разбор', exact:true }).click();
+    await report(page).getByText('Все рекомендации из разбора', { exact:true }).click();
     await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
@@ -191,7 +193,10 @@ try {
     await page.reload({ waitUntil: 'networkidle' });
     await report(page).waitFor();
     await reportHeadingVisible(page, 'Reloaded clarification');
+    await report(page).getByRole('link', { name:'Результат', exact:true }).click();
     assert.match(await report(page).innerText(), /Не указан учебный год заявки/);
+    await report(page).getByRole('link', { name:'Полный разбор', exact:true }).click();
+    await report(page).getByText('Все рекомендации из разбора', { exact:true }).click();
     await report(page).getByText('Что проверено: полный разбор', { exact:true }).click();
     assert.match(await report(page).innerText(), /Учебный год не выбран/);
     assert.match(await report(page).innerText(), /Выбери программу и учебный год/);
@@ -212,6 +217,9 @@ try {
 
     await openReport(page, 'apostille');
     assert.equal(await page.locator('button').count(), 0, 'A future document report is readable without a competing upload action');
+    await report(page).getByRole('heading', { name:'Следующий шаг', exact:true }).waitFor();
+    await report(page).getByRole('link', { name:'Полный разбор', exact:true }).click();
+    await report(page).getByText('Все рекомендации из разбора', { exact:true }).click();
     assert.match(await report(page).innerText(), /В справке указан доход за 2025 год/);
     assert.match(await report(page).innerText(), /Запроси справку о доходах за 2024 год/);
     assert.match(await report(page).innerText(), /Загрузи исправленную справку после получения/);
@@ -222,7 +230,8 @@ try {
     assert.equal(await sources.evaluate(element => element.open), false, 'Sources remain available in a closed disclosure');
     const nextStep = report(page).getByRole('heading', { name: 'Следующий шаг', exact: true });
     const checks = report(page).getByText('Что проверено: полный разбор', {exact:true});
-    assert((await nextStep.boundingBox()).y < (await checks.boundingBox()).y, 'The next action is shown before supporting checks');
+    assert.equal(await nextStep.isVisible(), false, 'The result action is separate from the supporting checks page');
+    assert.equal(await checks.isVisible(), true, 'Full checks stay discoverable in the detailed review');
     await page.addScriptTag({ path: resolve(process.env.REVIEW_TOOLS, 'axe-core/axe.min.js') });
     const violations = await page.evaluate(async () => (await window.axe.run(document.querySelector('[aria-label="Разбор документа"]'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } })).violations.filter(v => ['serious', 'critical'].includes(v.impact)).map(v => ({ id: v.id, nodes: v.nodes.map(n => ({ target: n.target, failureSummary: n.failureSummary })) })));
     await page.screenshot({ path: resolve(output, `portal-document-report-${width}.png`), fullPage: true });
@@ -232,7 +241,7 @@ try {
       assert((await report(page).innerText()).includes(summary));
       if (task === 'translate') {
         assert.doesNotMatch(await report(page).innerText(), /Нужно исправить/);
-        assert.equal(await page.getByRole('button', { name: 'Проверить новую версию', exact: true }).count(), 1, 'A completed document remains available for another check through its single file action');
+        assert.equal(await page.getByRole('link', { name: /^Проверить новую версию/ }).count(), 1, 'A completed document remains available for another check through its single file action');
       }
       if (task === 'familyDocs') {
         assert.match(await report(page).innerText(), /Загрузи чёткий скан всех страниц/);

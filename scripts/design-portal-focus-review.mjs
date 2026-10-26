@@ -76,7 +76,7 @@ try {
     assert.equal(await page.locator('[data-road-count]').innerText(),'0 из 2 шагов');
     assert.equal(await page.locator('[data-road-locked]').count(),5);
     assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
-    assert.equal(await page.locator('[data-stamp-count]').innerText(),'0 / 2');
+    assert.equal(await page.locator('[data-stamp-count]').count(),0,'Overview leaves detailed stamps on the stage page');
     assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
     assert.equal(await page.locator('[data-stage-souvenir]').count(),0,'Stage headers contain no decorative souvenir');
     assert.equal(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).length),0);
@@ -102,7 +102,7 @@ try {
     assert.equal(await page.locator('[data-now-ahead] li').count(),2);
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1,'Only the current task expands');
     assert.equal(await page.locator('[data-road-stage]').count(),6);
-    assert.equal(await page.locator('[data-task-check]').count(),5);
+    assert.equal(await page.locator('[data-task-check]').count(),1,'Overview only shows the next task');
     assert.equal(await page.locator('[data-task-check]:disabled').count(),0);
     const editorial=await page.evaluate(()=>{
       const style=q=>getComputedStyle(document.querySelector(q));
@@ -129,7 +129,7 @@ try {
     assert(Math.abs(fill-4/26)<0.0001,'Visible rail excludes the two tasks completed ahead');
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
-    assert.match(await page.locator('article').filter({has:page.locator('[data-focus-row=notary]')}).innerText(),/03/,'Future task retains its chronological index');
+    assert.equal(await page.locator('[data-focus-row=notary]').count(),0,'Future tasks live on their stage page');
     if(width>600){
       const points=await page.locator('[data-road-stage]>span:first-child').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
       assert(Math.max(...points)-Math.min(...points)<1,'Every checkpoint uses the same axis');
@@ -142,9 +142,10 @@ try {
     assert(Math.abs(work.y-route.y-route.height-(width<=600?16:20))<1,'Route and checklist share a compact grid');
     const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
     const now=await page.locator('[data-portal-now]').boundingBox();
-    if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);assert(Math.abs(now.y+now.height-work.y-work.height)<1,'Now column fills the route/checklist height');}
+    if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);assert(work.y+work.height<=now.y+now.height+1,'The overview task card does not stretch to fill the taller assistant column');}
     else assert(now.y+now.height<=route.y,'Now column moves above the route');
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
+    assert(work.y+work.height-card.y-card.height<=20,'The overview card ends after its current task without an empty white area');
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
     if(width>600){assert(card.height<=220,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+10);}
@@ -158,18 +159,23 @@ try {
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
     await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
+    await page.getByRole('link',{name:'Все шаги этапа'}).click();
+    assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
+    assert.equal(await page.locator('[data-task-check]').count(),5);
+    assert.equal(await page.locator('[data-portal-now]').count(),0,'Stage pages focus on their own tasks');
+    assert.match(await page.locator('article').filter({has:page.locator('[data-focus-row=notary]')}).innerText(),/03/);
     await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
     assert.equal(await page.locator('[data-step-detail=notary] [data-higgsfield-visual]').count(),0,'Notary instructions have no unrelated folder illustration');
     assert.equal(await page.locator('[data-step-detail=notary] [data-micro-steps] li').count(),3,'Removing decoration preserves all notary microsteps');
     await noOverflow(page);
     if(width===1440||width===390)await page.screenshot({path:resolve(output,`notary-${width}.png`),fullPage:true,animations:'disabled'});
-    await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
+    await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link',{name:'Документы',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1);assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
     assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Inter Tight/);
     assert.equal(await page.locator('[data-step-detail=translate] [data-micro-steps] li').count(),3,'Detailed instructions remain inside the breakdown');
     await noOverflow(page);await page.screenshot({path:resolve(output,`task-${width}.png`),fullPage:true,animations:'disabled'});
-    await page.getByRole('link',{name:'Назад',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
+    await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link',{name:'Мой план',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').isVisible(),false,'Overview mascot retires behind the route');
     assert.equal(await page.locator('[data-vespi-scene=chat]').count(),1);
@@ -190,6 +196,7 @@ try {
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
+    await page.getByRole('link',{name:'Все шаги этапа'}).click();
     await page.locator('[data-task-check=translate]').click();
     if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal(await road(page).getAttribute('data-road-done'),'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}
     await page.waitForFunction(()=>document.querySelector('[data-task-check=translate]')?.getAttribute('aria-checked')==='true');

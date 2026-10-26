@@ -50,6 +50,9 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // 2026-10-26: user-requested progressive portal pages and URL navigation.
+  'src/components/portal/PortalPageNavigation.tsx', 'src/components/portal/PortalTaskPages.tsx',
+  'src/components/portal/portal-pages.module.css',
   // 2026-10-25: shared type, editorial task layout and optional Higgsfield media.
   'src/data/higgsfieldVisuals.ts',
   'src/components/portal/HiggsfieldVisual.tsx', 'src/components/portal/higgsfield-visual.module.css',

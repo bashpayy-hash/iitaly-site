@@ -97,10 +97,10 @@ try {
     await capture(page,`overview-${width}`);
     await instruction.click();await detail(page).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('view'),'plan');
+    assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false);
+    await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить',exact:true}).click();
     assert(await page.locator('[data-step-instructions]').isVisible());
-    const guideBox=await page.locator('[data-step-instructions]').boundingBox();
-    const uploadBox=await page.locator('[data-portal-upload-zone]').boundingBox();
-    assert(guideBox.y<uploadBox.y,'Instructions precede file upload');
+    assert.equal(await page.locator('[data-document-upload-form]').isVisible(),false,'Instructions have a separate page from file upload');
     await page.locator('[data-portal-assistant]').click();
     const chat=page.locator('#iitaly-chat');await chat.waitFor();
     await chat.getByRole('link',{name:'Что такое апостиль и где его поставить в Казахстане?',exact:true}).waitFor();
@@ -124,7 +124,7 @@ try {
     await chat.getByRole('link',{name:'Что дальше?',exact:true}).waitFor();
     assert.equal(await chat.getByRole('link',{name:'С чего начать этот шаг?',exact:true}).count(),0);
     await chat.getByRole('button',{name:'Закрыть чат',exact:true}).click();await chat.waitFor({state:'hidden'});
-    await detail(page).getByRole('link',{name:'Назад',exact:true}).click();
+    await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link').last().click();
     await page.locator('[data-portal-focus][data-selected-stage=start]').waitFor();
     await road(page).locator('[data-road-stage="arrival"]').click();await portalTask(page,'questura');await detail(page).waitFor();
     assert.equal(await detail(page).getByRole('button').count(),0,'Future stage is a read-only preview');

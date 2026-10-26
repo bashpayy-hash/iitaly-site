@@ -134,3 +134,9 @@ The notary breakdown omits the generic documents illustration. Its original expl
 ## Remove stage souvenir, 26 October 2026
 
 The latest explicit user correction removes the decorative “Сувенир за этап / Карта маршрута” clipping from every portal stage. Stage headers contain only the title and real completion stamps. Remove its reserved layout and hover styles; progress, task text, mascot and completion feedback remain unchanged.
+
+## Progressive portal pages, 26 October 2026
+
+The user's Apple reference authorizes a clearer hierarchy of separate URL-addressable views while preserving the existing zhol identity. The overview shows the real route and one current task. Each stage link opens that stage's full checklist, without a duplicate welcome or Now panel. Task pages separate the short overview, complete instructions and actual action. University selection separates the map/catalogue from the full comparison; document results separate the verdict, full analysis and a new check.
+
+Use standard links, descriptive breadcrumbs, current-page state, browser Back/Forward, page titles and heading focus. Existing query URLs remain valid in the static export. Keep selected files, form answers and shortlist selections mounted while switching sections; reading content never saves or completes a step. The parent stage and overview remain one click away. Detail navigation uses a compact route, not the full overview header. Keep all existing rules, sources, original task copy, API boundaries, status semantics and saved progress.

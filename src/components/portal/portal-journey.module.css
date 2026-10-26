@@ -68,3 +68,20 @@
 }
 @media(prefers-reduced-motion:reduce) { .journey .routeFill { transition:none!important; }.journey[data-road-feedback-active=true] .count { animation:none; } }
 @media(forced-colors:active) { .nav a[aria-current=step] { outline:2px solid Highlight; }.routeLine { border-color:CanvasText; }.routeFill { background:Highlight; } }
+
+/* Detail pages keep orientation without repeating the full overview road. */
+.journey[data-condensed] { padding:8px 12px; }
+.journey[data-condensed] .summary { padding-top:0; border-top:0; margin-bottom:6px; align-items:center; }
+.journey[data-condensed] .summary>span:first-child { font-size:11px; letter-spacing:1px; padding:0; }
+.journey[data-condensed] .count { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:4px 12px; }
+.journey[data-condensed] .countNumbers { font-size:20px; }
+.journey[data-condensed] .aheadReason { margin:0; font-size:11px; }
+.journey[data-condensed] .nav { display:flex; gap:6px; padding:3px 2px 6px; overflow-x:auto; scrollbar-width:thin; scrollbar-color:var(--border) transparent; }
+.journey[data-condensed] .routeLine { display:none; }
+.journey[data-condensed] .nav a,.journey[data-condensed] .lockedStage { flex:1 0 auto; flex-direction:row; min-height:44px; min-width:0; align-items:center; gap:8px; padding:6px 10px; text-align:left; border:1px solid var(--border); border-radius:8px; }
+.journey[data-condensed] .checkpoint { width:24px; height:24px; flex-basis:24px; font-size:11px; }
+.journey[data-condensed] .stageCopy { width:auto; gap:2px; }
+.journey[data-condensed] .stageCopy>span { display:block; min-height:0; max-width:155px; font-size:11px; }
+.journey[data-condensed] .stageCopy small { font-size:10px; }
+.journey[data-condensed] .stageState { display:inline; margin-left:5px; }
+@media(max-width:600px) { .journey[data-condensed] .aheadReason { display:none; }.journey[data-condensed] .nav a { min-width:150px; }.journey[data-condensed] .stageCopy>span { white-space:normal; } }

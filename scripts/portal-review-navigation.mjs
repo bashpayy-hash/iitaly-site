@@ -3,12 +3,17 @@
 export async function portalDestination(page, name) {
   if (name === 'Документы') {
     await page.locator('[data-portal-documents]').click();
+  } else if (name === 'Обзор') {
+    const header=page.locator('[data-portal-header]');
+    if(!await header.locator('a[href="/portal"]:visible').count())await header.getByLabel('Открыть меню').click();
+    await header.locator('a[href="/portal"]:visible').click();
+    await page.locator('[data-portal-page=overview]').waitFor();
   } else {
     await page.locator('[data-road-stage][aria-current="step"]').click();
     await page.locator('[data-portal-focus]').waitFor();
   }
 }
-export async function portalTask(page, id) {
+export async function portalTask(page, id, part = "action") {
   if(!await page.locator(`[data-focus-row="${id}"],[data-portal-task="${id}"]`).count()) {
     const stages=await page.locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('data-road-stage')));
     for(const stage of stages) {
@@ -20,4 +25,6 @@ export async function portalTask(page, id) {
   const action=page.locator(`[data-portal-task="${id}"]`);
   if(await action.count())await action.click();
   else await row.getByRole('link').click();
+  const sections=page.getByRole('navigation',{name:'Разделы задачи',exact:true});
+  if(await sections.count())await sections.locator(`a[href$="part=${part}"]`).click();
 }

@@ -123,3 +123,17 @@
 @keyframes drawSuccess { to { stroke-dashoffset:0; } }@keyframes confirmationIn { from { opacity:0; transform:translateY(-5px); }to { opacity:1; transform:translateY(0); } }
 @media(prefers-reduced-motion:reduce) { .welcomeScene,.primary span { transition:none!important; }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.stamp[data-just-stamped=true],.confirmationBody,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
 @media(forced-colors:active) { .darkGrain { display:none; }.nowCard { background:Canvas; color:CanvasText; }.roundCheck[data-done=true]::before,.stamp[data-stamped=true] { background:Highlight; }.roundCheck[data-done=true],.stamp[data-stamped=true] { color:HighlightText; } }
+
+/* Overview shows one next task; each stage has a separate reading surface. */
+.canvas[data-portal-page=stage] { grid-template-columns:minmax(0,1fr); grid-template-areas:"welcome" "route" "tasks"; }
+.canvas[data-portal-page=stage] .welcome { padding:0; }
+.canvas[data-portal-page=stage] .welcome h1 { font-size:32px; margin:0; }
+.canvas[data-portal-page=stage] .stageBody { padding-bottom:16px; }
+.canvas[data-portal-page=overview] .stageHeading { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.canvas[data-portal-page=overview] .stageBody { align-self:start; }
+.stageLink,.stagePagination a { display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--ink); font-size:14px; text-decoration:underline; text-underline-offset:4px; }
+.stageLink { flex-shrink:0; }
+.stagePagination { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; padding:20px 4px 0; border-top:1px solid var(--border); margin-top:12px; }
+.stagePagination a { max-width:48%; }
+.emptyStage { margin:12px 4px 24px; color:var(--quiet); font-size:15px; line-height:1.6; }
+@media(max-width:600px) { .canvas[data-portal-page=overview] .stageHeading { align-items:flex-start; flex-direction:column; gap:6px; }.canvas[data-portal-page=stage] .welcome h1 { font-size:28px; }.stagePagination { flex-direction:column; }.stagePagination a { max-width:100%; } }

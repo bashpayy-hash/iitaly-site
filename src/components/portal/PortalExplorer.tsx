@@ -401,7 +401,7 @@ export function PortalExplorer() {
         completionFocusPending.current = true;
         setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
       } else setRoadTravel(undefined);
-      changeSection("today");
+      if (selectedStageId) selectStage(selectedStageId); else changeSection("today");
       track("portal_task", { done: value });
       return true;
     } catch (error) {
@@ -737,7 +737,7 @@ export function PortalExplorer() {
       <div ref={chromeRef} className={navigation.chrome} data-portal-chrome>
       <MarketingHeader variant="portal" />
       {editingProfile && data.client.onboardingComplete && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
-        <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen navigationOnly />
+        <PortalRoad data={data} current={currentTask} stage={position?.stage || null} onOpenTask={openTask} currentOpen navigationOnly condensed />
       </section>}
       </div>
       <main id="main">
@@ -784,7 +784,7 @@ export function PortalExplorer() {
     {!showFocus && <section className={navigation.progressShell} data-portal-progress-shell aria-label="Прогресс поступления">
       <PortalRoad data={data} current={currentTask} stage={position?.stage || null}
         activeStageId={activeTask ? data.roadmap.find(row => row.tasks.some(task => task.id === activeTask.id))?.id : undefined}
-        deadline={nearestUniversityDeadline(shortlist)} navigationOnly onSelectStage={selectStage}
+        deadline={nearestUniversityDeadline(shortlist)} navigationOnly condensed onSelectStage={selectStage}
         currentOpen={Boolean(currentTask && activeTask?.id === currentTask.id)}
         secondaryAction={section === "settings" || Boolean(activeTask && currentTask && activeTask.id !== currentTask.id && (shortlistEditable || canRecheckDocument))}
         onOpenTask={openTask} travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} />
@@ -793,7 +793,7 @@ export function PortalExplorer() {
     <main id="main">
       <div className={`${styles.shell} ${focusStyles.shell}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div className={styles.main}>
-          {!showFocus && <h1 className="sr-only">Личный кабинет: {activeTask ? taskTitle(activeTask) : section === "docs" ? "документы" : "настройки"}</h1>}
+          {!showFocus && !activeTask && <h1 className="sr-only">Личный кабинет: {activeTask ? taskTitle(activeTask) : section === "docs" ? "документы" : "настройки"}</h1>}
           <div id="portal-panel" className={styles.panel}>
             {shortlistNotice && <p role="status" className={styles.muted}>{shortlistNotice} <button type="button" className={styles.textLink} disabled={Boolean(busyTask)} onClick={() => { void handleSaveUniversities(shortlist); }}>Повторить синхронизацию</button></p>}
             {actionError && !documentError && (
@@ -825,7 +825,7 @@ export function PortalExplorer() {
               {activeTask.id === "kit" && <PortalPermessoStep />}
             </PortalTaskDetail> : null)}
             {section === "docs" && (openDocument && activeTask ? data.docs?.[openDocument] ? (
-              <PortalDocumentReport key={openDocument} title={openDocument === "familyDocs" ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
+              <PortalDocumentReport taskId={openDocument} key={openDocument} title={openDocument === "familyDocs" ? taskTitle(activeTask) : DOC_TASKS[openDocument]} doc={data.docs[openDocument]}
                 stepMeta={data.roadmap.find(stage => stage.tasks.some(task => task.id === activeTask.id))?.title}
                 preparationTime={activeTask.time || TASK_META[activeTask.id]?.min}
                 onDocuments={() => changeSection("docs")} operation={activeOperation} error={documentError}
@@ -835,7 +835,7 @@ export function PortalExplorer() {
                 canUpload={!readOnlyReason || canRecheckDocument} readOnlyReason={readOnlyReason}
                 context={reviewContext} onContextChange={updateReviewContext} />
             ) : <PortalTaskDetail
-              key={activeTask.id + ":file"} data={data} task={activeTask} busy={busyTask !== null}
+              defaultPart="action" key={activeTask.id + ":file"} data={data} task={activeTask} busy={busyTask !== null}
               hasRetry={Boolean(actionError?.retry)} context={reviewContext} onContextChange={updateReviewContext}
               operation={activeOperation} error={documentError} onResetError={() => { setActionError(null); setDocumentOperation(undefined); }}
               onBack={closeDocument} backHref={documentBackHref} onUpload={() => requestUpload(activeTask.id)} onFileDrop={file => { if (!busyTask) void handleFileChosen(file, activeTask.id); }}

@@ -263,6 +263,7 @@
 
 /* The portal reuses the public navigation, alongside its contextual controls. */
 .header[data-portal-header=true] .navInner { gap:20px; }
+.header[data-portal-header=true] { position:relative; z-index:2; }
 .header[data-portal-header=true] .desktopNav { margin-inline:auto; gap:24px; }
 @media(max-width:1100px) {
   .header[data-portal-header=true] .desktopNav { display:none; }
