@@ -20,7 +20,7 @@ export function GuidePlanContext({ target }: { target: "plan" | "document" }) {
     <div>
       <p>Продолжаем: <strong>{GUIDE_HELP[id].title}</strong></p>
       <p>{target === "document" ? "Выбери контекст проверки ниже. Тема справочника не задаёт требования к файлу." : "Ответь на вопросы ниже. Если ты уже начал, твои ответы остались на месте."}</p>
-      <Link href={`/guides#${id}`}>Вернуться к теме</Link>
+      <Link href={`/guides/${id}`}>Вернуться к теме</Link>
     </div>
   </div>;
 }

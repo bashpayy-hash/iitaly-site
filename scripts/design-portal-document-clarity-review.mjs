@@ -1,5 +1,5 @@
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
-import { portalDestination } from './portal-review-navigation.mjs';
+import { portalDestination, portalStage, portalRoadState } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -80,7 +80,7 @@ try {
   Object.assign(task,{t:'Поставить апостиль на аттестат или диплом',time:'до 15 рабочих дней',deadline:'2027-05-01',deadlineKind:'Ориентир',daysLeft:189});
   data.docs.apostille={verdict:'warn',fileName:'attestat.pdf',checkedAt:'2026-10-20T10:00:00Z',result:structuredClone(original)};
   const {page,context}=await open({width,height:900},'partial',{data});
-  assert.equal(await road(page).getAttribute('data-road-done'),'3');assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
+  assert.equal((await portalRoadState(page)).done,'3');assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
   assert.match((await page.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),/Открыть разбор/);
   await capture(page,`overview-${width}`);
   await go(page,'План');await noOverflow(page);await capture(page,`plan-${width}`);
@@ -139,7 +139,7 @@ try {
   await page.waitForFunction(()=>document.querySelector('[aria-label="Файл и сроки"]')?.textContent.includes('synthetic-attestat.txt'));
   assert.equal(checks,1,'Retry saves the result without another AI charge');assert.equal(saves,2);
   assert.equal(await page.locator('[data-document-operation-error]').count(),0,'Saved result has no stale error');
-  assert.equal(await road(page).getAttribute('data-road-done'),'3','Clarification does not change progress');
+  assert.equal((await portalRoadState(page)).done,'3','Clarification does not change progress');
   await page.reload({waitUntil:'networkidle'});await report.waitFor();assert.equal(checks,1);
   await report.getByRole('link',{name:'Полный разбор',exact:true}).click();assert.match(await report.innerText(),/synthetic-attestat.txt/);
   await report.getByRole('link',{name:'К документам',exact:true}).click();
@@ -147,7 +147,7 @@ try {
   await page.reload({waitUntil:'networkidle'});await page.locator('[data-document=apostille]').click();
   assert.match(await report.innerText(),/Подробности старого разбора восстановить нельзя/);
   assert.match(await report.innerText(),/Исходный файл не хранится/);
-  await road(page).locator('[data-road-stage=arrival]').click();assert.equal(await page.locator('[data-document-upload-form]').count(),0);
+  await portalStage(page,'arrival');assert.equal(await page.locator('[data-document-upload-form]').count(),0);
   results.push({width,sizes,sourceDataPreserved:true,progressUnchanged:true,contextRetained:true,selectionRequiresConfirmation:true,saveOnlyRetry:true,legacyLimitHonest:true});
   await context.close();
  }

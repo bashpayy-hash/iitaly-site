@@ -1,3 +1,4 @@
+import { portalRoadState } from './portal-review-navigation.mjs';
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 // User-requested regression review: choose universities inside the existing
 // portal step, keep the complete map/comparison, and continue the real route.
@@ -192,14 +193,14 @@ try {
     await save(page).click();
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     assert.equal(new URL(page.url()).pathname, '/portal', 'Save continues inside the portal');
-    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-current-step'), 'family-budget', 'The next real route step appears after server confirmation');
+    assert.equal((await portalRoadState(page)).current, 'family-budget', 'The next real route step appears after server confirmation');
     assert.equal(calls.length, 1);
     assert.equal(data['TEST-01'].done.shortlist, true);
     await page.screenshot({ path: resolve(output, `next-step-${width}.png`), fullPage: true });
     await openPicker(page);
     await chooseMilan(page);
     assert.equal(await select(page, 'bocconi').isChecked(), true, 'Completed shortlist remains editable');
-    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-secondary'), 'true', 'Editing an earlier selection leaves Save as the only filled action, while the road still links to the current step');
+    assert.equal(await page.locator('[data-portal-road]').count(),0,'University selection has no global route');
     assert.equal(await save(page).isDisabled(), true, 'An unchanged completed list cannot trigger a redundant save');
     assert.equal(await select(page, 'polimi').isChecked(), false, 'Comparison is never promoted to selection');
     await select(page, 'polimi').check();
@@ -258,7 +259,7 @@ try {
     await page.locator('#portal-panel [role=alert]').waitFor();
     assert.equal(data['TEST-01'].done.shortlist, undefined, 'A failed save never completes the step');
     assert.equal(await select(page, 'bocconi').isChecked(), true, 'A failed save preserves the selected draft');
-    assert.equal(await page.locator('[data-portal-road]').getAttribute('data-current-step'), 'shortlist');
+    assert.equal((await portalRoadState(page)).current, 'shortlist');
     {
       assert.equal(calls.length, 1);
       await page.reload({ waitUntil: 'networkidle' });
@@ -268,7 +269,7 @@ try {
       await save(page).click();
       await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
       assert.equal(calls.length, 2, 'An explicit retry alone repeats the completion request');
-      assert.equal(await page.locator('[data-portal-road]').getAttribute('data-current-step'), 'family-budget');
+      assert.equal((await portalRoadState(page)).current, 'family-budget');
     }
     results.push({ failure, noFalseCompletion: true, selectedDraftPreserved: true, explicitRetryOnly: true });
     await context.close();

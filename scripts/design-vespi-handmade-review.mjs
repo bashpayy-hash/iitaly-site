@@ -1,3 +1,4 @@
+import { portalRoadState } from './portal-review-navigation.mjs';
 import { portalDestination } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -25,7 +26,7 @@ await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch(),results=[],errors=[];
 const scene=(page,pose)=>page.locator(`[data-vespi-scene=${pose}]`);
 const capture=async(page,name)=>sharp(await page.screenshot({animations:'disabled'})).webp({quality:85}).toFile(resolve(output,name+'.webp'));
-const summary=page=>page.locator('[data-portal-road]').evaluate(el=>({done:el.dataset.roadDone,ahead:el.dataset.roadAhead,total:el.querySelector('[role=progressbar]')?.getAttribute('aria-valuemax'),value:el.querySelector('[role=progressbar]')?.getAttribute('aria-valuenow')}));
+const summary=async page=>{const s=await portalRoadState(page);return {done:s.done,ahead:s.ahead,total:s.total,value:s.done};};
 async function decoded(page,pose){const img=scene(page,pose).locator('img').first();await img.evaluate(e=>e.decode());assert(await img.evaluate(e=>e.complete&&e.naturalWidth>0));}
 async function layout(page,label){
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,label+': no horizontal overflow');
@@ -105,7 +106,8 @@ try {
     await context.route('**/*',r=>{const u=new URL(r.request().url());if(u.pathname==='/api/event'||u.pathname==='/health/ai')return r.fulfill({json:{ok:true}});return u.origin===origin?r.continue():r.abort();});
     const page=await context.newPage();page.setDefaultTimeout(15000);
     await page.goto(origin,{waitUntil:'networkidle'});await page.locator('[data-vespi-editorial]').scrollIntoViewIfNeeded();await decoded(page,'peek');await layout(page,'home '+width);await capture(page,'home-peek-'+width);
-    await page.goto(origin+'/guides#education',{waitUntil:'networkidle'});await page.locator('[data-guide-invite]').scrollIntoViewIfNeeded();await decoded(page,'peek');await layout(page,'guide '+width);await capture(page,'guide-peek-'+width);
+    await page.goto(origin+'/guides/education',{waitUntil:'networkidle'});await page.locator('[data-guide-panel=education]').waitFor();assert.equal(await page.locator('[data-guide-invite] img').count(),0,'Reading has no decorative mascot invitation');await page.getByRole('button',{name:'Есть вопрос? Спроси Веспи',exact:true}).click();await page.locator('#iitaly-chat [data-vespi-assistant-avatar]').evaluate(img=>img.decode());assert.equal(await page.locator('#iitaly-chat [data-vespi-assistant-avatar]').count(),1);await layout(page,'guide helper '+width);await capture(page,'guide-helper-'+width);
+
     await context.close();
   }
   assert.deepEqual(errors,[]);await writeFile(resolve(output,'results.json'),JSON.stringify({results,errors},null,2));console.log(JSON.stringify({results,errors},null,2));

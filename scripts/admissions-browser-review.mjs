@@ -61,9 +61,9 @@ try {
       await body.waitFor({state:'visible'});
       const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
       await body.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
-      assert.equal(await page.locator(`[data-guide-select="${id}"]`).getAttribute('aria-expanded'),'true','Deep link selects '+id);
+      assert.equal(await page.locator('[data-guide-timeline],[data-guide-select]').count(),0,'Reading has no repeated topic directory');
       assert.equal(await page.locator('[data-guide-panel]').count(),1,'One selected topic is shared across viewports');
-      assert.equal(new URL(page.url()).hash,'#'+id);
+      assert.equal(new URL(page.url()).pathname,'/guides/'+id);
       // User request 2026-10-18: one shared rules date in the guide header,
       // rather than a duplicate inside every selected article. Each article
       // must still expose its own real official sources below.
@@ -75,7 +75,7 @@ try {
       if (id==='visa') {
         // User-requested card UI has one topic body, so there is no hidden
         // mobile disclosure whose delayed toggle can overwrite the deep link.
-        await body.getByRole('button',{name:'Годовой минимум и пересчёт в тенге',exact:true}).click();
+        await page.locator('[data-visa-part=funds]').click();await page.locator('[data-guide-part=funds]').waitFor();
         const rate = body.getByLabel('Твой курс банка: тенге за €1');
         assert.equal(await rate.inputValue(),'');
         await rate.fill('550');

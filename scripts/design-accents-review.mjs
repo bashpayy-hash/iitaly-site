@@ -247,7 +247,7 @@ try {
         assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
         assert(await page.getByRole('heading', {name: 'Когда хочешь начать учёбу?'}).isVisible());
       } else {
-        assert.match(await page.locator('main').innerText(), /Аттестат и 12 лет/);
+        assert.match(await page.locator('main').innerText(), /Выбрать маршрут/);
         assert.match(await page.locator('main').innerText(), /2026/);
       }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${route} overflow at ${width}`);
@@ -264,14 +264,14 @@ try {
       }
       if ([1440,390].includes(width)) {
         await page.screenshot({path:resolve(output, `${route.slice(1)}-${width}.png`), animations:'disabled'});
-        await page.locator(route === '/guides' ? '[data-section="guides-header"]' : 'main > section').first().screenshot({path:resolve(output, `${route.slice(1)}-header-${width}.png`), animations:'disabled'});
+        await page.locator(route === '/guides' ? '[data-guides-pages] main header' : 'main > section').first().screenshot({path:resolve(output, `${route.slice(1)}-header-${width}.png`), animations:'disabled'});
       }
       if (route === '/guides') {
         // The requested Bento UI shares selectable topic cards on all widths.
-        await page.getByRole('navigation', {name:'Этапы справочника'}).locator('a[href="#apostille"]').click();
+        await page.locator('[data-guide-stage=prepare]').click();
         await page.locator('[data-guide-select="cimea"]').click();
         await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
-        assert.equal(await page.locator('[data-guide-select="cimea"]').getAttribute('aria-expanded'),'true');
+        assert.equal(new URL(page.url()).pathname,'/guides/cimea');
       }
       results.push({test:`${route} ${width}px: reviewed copy, loaded art, no overlap/overflow`,passed:true});
     }

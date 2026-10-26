@@ -100,14 +100,10 @@ try {
       const cold=snapshot.values.filter(item=>coldColors(item.colors).length);
       assert.deepEqual(cold,[],`${path} ${width}: no cold computed text, surfaces, borders, glows or SVG`);
       if(path==='/guides'){
-        assert.match(await page.locator('h1 > span').evaluate(e=>getComputedStyle(e).backgroundImage),/217, 43, 56/);
-        const avatar=page.locator('[data-vespi-search-avatar]');
-        assert.equal(await avatar.count(),1,'The search uses one contextual avatar');
-        assert.equal(await avatar.getAttribute('src'),'/mascot/handmade-v1/avatar-96.webp');
-        assert(await avatar.evaluate(e=>e.complete&&e.naturalWidth>0),'The new search avatar loads');
-        assert.equal(await page.locator('[data-guide-timeline] a[aria-current="step"]').count(),0,'A fresh guide visit waits for a route choice');
-        await page.locator('[data-guide-select="education"]').click();
-        assert.equal(await page.locator('[data-guide-timeline] a[aria-current="step"] > span').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgb(20, 20, 19)','The current timeline stage uses the existing warm ink');
+        assert.equal(await page.locator('[data-guide-stage]').count(),3);
+        assert.equal(await page.locator('[data-guide-timeline],[data-editorial-art]').count(),0,'The directory is a concise entry, not a large illustrated overview');
+        assert.equal(await page.locator('h1').evaluate(e=>getComputedStyle(e).color),'rgb(20, 20, 19)','The title uses the shared warm ink');
+
       }
       await page.addScriptTag({content:axe.source});
       const accessibility=await page.evaluate(()=>window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}));

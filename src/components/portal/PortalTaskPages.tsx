@@ -26,7 +26,7 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, defaultPa
     <PortalPageNavigation active={part} items={[{ id:"overview",label:"Кратко",href:href("overview") },{ id:"guide",label:"Как выполнить",href:href("guide") },{ id:"action",label:actionLabel,href:href("action") }]} />
     {part === "overview" && <div className={styles.body}>
       <p className={styles.explanation}>{taskExplanation(task)}</p>
-      <PortalMicroSteps task={task} />
+      <PortalMicroSteps task={task} authoredOnly />
       {readOnly && <p className={styles.note}>{readOnly}</p>}
       {!done && taskDate(task) && <p className={styles.note}>Ориентир подготовки, не срок конкретного вуза.</p>}
       <div className={styles.next}><PortalPageLink className={styles.primary} href={href("guide")}>Как выполнить <span aria-hidden="true">→</span></PortalPageLink>

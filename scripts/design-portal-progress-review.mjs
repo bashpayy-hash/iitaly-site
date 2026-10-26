@@ -1,5 +1,5 @@
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
-import { portalDestination, portalTask } from './portal-review-navigation.mjs';
+import { portalDestination, portalTask, portalRoadState } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -72,6 +72,11 @@ async function open(viewport,mode='partial',options={}){
   await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls};
 }
 async function railContract(page,data,compact){
+  if(!await page.locator('[data-portal-page=overview]').count()){
+    assert.equal(await road(page).count(),0,'Inner pages concentrate on their own task');
+    assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута',exact:true}).count(),0);
+    await noOverflow(page);await portalDestination(page,'Обзор');await railContract(page,data,false);await page.goBack();return;
+  }
   assert.equal(await road(page).count(),1,'Exactly one global route');
   assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута',exact:true}).count(),1,'One actual-stage navigator');
   assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0,'No second taxonomy/ring');
@@ -113,7 +118,9 @@ async function arrivalOrder(page,data) {
   assert(greetingBox.y+greetingBox.height<=roadBox.y+1,'Welcome precedes the route');
   assert(progressBox.y+progressBox.height<=nextBox.y+1,'Progress precedes the current task details');
   assert(roadBox.y+roadBox.height<=detailsBox.y+1,'Overview details follow the route');
-  assert(greetingBox.y>=0 && progressBox.y+progressBox.height<=await page.evaluate(()=>innerHeight),'Greeting and progress remain in the first viewport');
+  assert(greetingBox.y>=0&&greetingBox.y+greetingBox.height<=await page.evaluate(()=>innerHeight),'The greeting remains in the first viewport');
+  if(await page.evaluate(()=>innerWidth)>1100)assert(progressBox.y+progressBox.height<=await page.evaluate(()=>innerHeight),'Desktop progress fits the first viewport');
+  else {const now=await page.locator('[data-portal-now]').boundingBox();assert(now.y+now.height<=roadBox.y,'On mobile the current problem comes before the global route');}
 }
 async function sticky(page){
   const chrome=page.locator('[data-portal-chrome]'),before=await chrome.boundingBox(),available=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight);
@@ -133,11 +140,11 @@ try{
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-overview-${viewport.width}`);
     await go(page,'План');await page.locator('[data-portal-task="shortlist"]').waitFor();await railContract(page,data,false);
     assert.equal(await page.locator('[data-portal-task="shortlist"]').count(),1,'Current task written once');
-    assert.equal(await page.locator('main [data-vespi-scene]').count(),1,'The greeting owns the single overview mascot');
+    assert.equal(await page.locator('main [data-vespi-scene]').count(),0,'The stage page has no overview mascot');
     assert.equal(await page.locator('[data-portal-task] img[data-vespi], [data-road-stage] img').count(),0,'Tasks and stage navigation never repeat a mascot');assert.equal(await page.locator('[data-task-check]').count(),data.roadmap[0].tasks.length,'Each task keeps a check control');
     assert.equal(await page.locator('[data-portal-focus]').getAttribute('data-selected-stage'),'start','Current stage opens');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-plan-${viewport.width}`);
-    await sticky(page);await axe(page,'Plan '+viewport.width);
+    await sticky(page);await axe(page,'Plan '+viewport.width);await portalDestination(page,'Обзор');
     if(viewport.width===1440){
       await road(page).locator('[aria-current=step]').focus();
       await page.keyboard.press('Tab');
@@ -150,7 +157,7 @@ try{
     assert.equal(await detail(page).getAttribute('data-step-detail'),'statements');assert.match(await detail(page).innerText(),/Сначала:/);
     assert.equal(await detail(page).locator('button,[data-portal-upload-zone]').count(),0,'Future document cannot upload/complete');
     await page.locator('[data-portal-assistant]').click();assert.equal(await page.evaluate(()=>window.__portalEvent.taskId),'statements','Assistant receives open task ID');assert.equal(calls.length,0,'Navigation/helper never complete tasks');
-    await page.goBack();await page.locator('[data-portal-focus][data-selected-stage=documents]').waitFor();
+    await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link').last().click();await page.locator('[data-portal-focus][data-selected-stage=documents]').waitFor();
     await go(page,'Обзор');await page.locator('[data-portal-overview]').waitFor({state:'attached'});
     await page.getByRole('link',{name:'Настройки',exact:true}).click();await page.getByRole('heading',{name:'Данные для маршрута',exact:true}).waitFor();await railContract(page,data,true);
     assert.equal(await page.getByRole('link',{name:'Настройки',exact:true}).getAttribute('aria-current'),'page');assert(await page.locator('[data-settings-back]').isVisible());
@@ -164,14 +171,14 @@ try{
     if(['near','dates'].includes(mode))assert.doesNotMatch(await road(page).innerText(),/Дедлайн:/);
     if(mode==='blocked'){assert.equal(await page.locator('[data-expanded=true]').count(),0,'No unavailable step is presented as the current focus');await portalTask(page,'shortlist');await detail(page).waitFor();assert.equal(await detail(page).locator('button').count(),0);assert.match(await detail(page).innerText(),/Сначала|появ|рано|услов|программ|позже/i);}
     if(['manual','last'].includes(mode)){
-      await page.locator('[data-road-open]').click();await detail(page).waitFor();assert.equal(await detail(page).locator('button').count(),1);await page.getByRole('button',{name:'Готово',exact:true}).click();
+      await page.locator('[data-road-open]').click();await detail(page).waitFor();await page.getByRole('navigation',{name:'Разделы задачи'}).locator('a[href$="part=action"]').click();assert.equal(await detail(page).locator('button').count(),1);await page.getByRole('button',{name:'Готово',exact:true}).click();
       await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,1);assert.equal(calls[0].value,true);
       assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').innerText(),mode==='last'?'Все шаги сохранены':'Шаг сохранён');assert.equal(await road(page).getAttribute('data-road-done'),mode==='manual'?'2':'1');
       await page.reload({waitUntil:'networkidle'});assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').count(),0,'Reload announces no fresh completion');
     }
     if(['parent-file','late-current'].includes(mode)){
-      await page.locator('[data-road-open]').click();await detail(page).waitFor();assert.equal(await detail(page).locator('button[data-primary-action]').count(),1,'Current file has one action');
-      if(mode==='parent-file')assert.equal(await detail(page).locator('h2').innerText(),'Собрать справки о составе и доходах семьи для DSU');
+      await page.locator('[data-road-open]').click();await detail(page).waitFor();await page.getByRole('navigation',{name:'Разделы задачи'}).locator('a[href$="part=action"]').click();assert.equal(await detail(page).locator('button[data-primary-action]').count(),1,'Current file has one action');
+      if(mode==='parent-file')assert.equal(await detail(page).locator('h1').innerText(),'Собрать справки о составе и доходах семьи для DSU');
       await oneFace(page,'File inspector');await axe(page,'File '+mode+' '+width);
       if(mode==='parent-file'){
         const transfer=await page.evaluateHandle(()=>{const d=new DataTransfer();d.items.add(new File(['SYNTHETIC DOCUMENT ONLY. NO PERSONAL DATA.'],'synthetic-review.txt',{type:'text/plain'}));return d;});
@@ -187,8 +194,8 @@ try{
     await noOverflow(page);results.push({width,mode,passed:true});await context.close();
   }
   for(const motion of [false,true]){
-    const {page,context,calls}=await open({width:390,height:844},'manual',{motion,failTask:true});await page.locator('[data-road-open]').click();await detail(page).waitFor();await page.getByRole('button',{name:'Готово',exact:true}).click();
-    await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await road(page).getAttribute('data-road-done'),'1');assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').count(),0,'Failed save cannot announce success');
+    const {page,context,calls}=await open({width:390,height:844},'manual',{motion,failTask:true});await page.locator('[data-road-open]').click();await detail(page).waitFor();await page.getByRole('navigation',{name:'Разделы задачи'}).locator('a[href$="part=action"]').click();await page.getByRole('button',{name:'Готово',exact:true}).click();
+    await page.locator('#portal-panel [role=alert]').waitFor();assert.equal((await portalRoadState(page)).done,'1');assert.equal(await road(page).locator('[data-road-feedback][data-visible=true]').count(),0,'Failed save cannot announce success');
     await page.locator('#portal-panel [role=alert]').locator('..').getByRole('link').click();await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,2);
     if(motion){await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.roadTransition==='true');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.traveling==='false');}
     assert.equal(await road(page).locator('[data-road-fill],[data-road-location]').count(),0);
