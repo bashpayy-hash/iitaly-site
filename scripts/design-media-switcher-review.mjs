@@ -1,9 +1,10 @@
-const assert = require('node:assert/strict');
-const { createServer } = require('node:http');
-const fs = require('node:fs/promises');
-const path = require('node:path');
+import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 const tools = process.env.REVIEW_TOOLS;
-const { chromium } = require(path.join(tools, 'playwright'));
+const { chromium } = await import(pathToFileURL(path.join(tools, 'playwright/index.mjs')).href);
 const out = path.resolve('out'), destination = path.resolve('design-review/media-switcher');
 const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.webp':'image/webp', '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2', '.jpg':'image/jpeg' };
 (async () => {

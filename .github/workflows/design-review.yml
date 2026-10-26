@@ -105,7 +105,7 @@ jobs:
       - name: Review progressive portal pages, history and selected-file continuity
         run: node scripts/design-portal-pages-review.mjs
       - name: Illustrated media switchers and public bento
-        run: node scripts/design-media-switcher-review.cjs
+        run: node scripts/design-media-switcher-review.mjs
       - name: Review honest progress, document states and profile persistence
         run: |
           node scripts/portal-targeted-model-review.mjs
