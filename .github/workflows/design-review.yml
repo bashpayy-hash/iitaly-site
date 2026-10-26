@@ -100,6 +100,8 @@ jobs:
         run: node scripts/design-workspace-review.mjs
       - name: Review stage focus, saved-only feedback, audio and assistant drawer
         run: node scripts/design-portal-focus-review.mjs
+      - name: Review progressive portal pages, history and selected-file continuity
+        run: node scripts/design-portal-pages-review.mjs
       - name: Review honest progress, document states and profile persistence
         run: |
           node scripts/portal-targeted-model-review.mjs

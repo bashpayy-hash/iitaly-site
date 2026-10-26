@@ -13,6 +13,7 @@ import { PortalRouteVespi } from "./PortalRouteVespi";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
+import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus } from "./PortalPageNavigation";
 
 type Props = {
   data: PortalData; selectedStageId?: string; shortlist: string[]; busy: boolean;
@@ -47,6 +48,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const position = portalPosition(data);
   const progress = portalProgress(data);
   const selected = data.roadmap.find(stage => stage.id === selectedStageId) || position.stage || data.roadmap[0];
+  const stagePage = Boolean(selectedStageId && selected?.id === selectedStageId);
+  usePortalPageFocus(stagePage ? selected.title : "Мой план", stagePage ? selected.id : "overview", "portal-overview-heading");
   const rows = [...(selected?.tasks || [])];
   // Keep the server's chronology within each group; dates never reorder steps.
   const ordered = rows;
@@ -70,18 +73,19 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     if (["profile", "shortlist", "path12", "chances"].includes(row.id)) { onOpenTask(row, "instruction"); return; }
     onComplete(row);
   }
-  return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id}>
+  return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
     <div className={styles.welcome} data-portal-welcome>
       <div className={styles.welcomeCopy}>
-        <h1>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
-        <p className={styles.welcomeMeta}>
+        {stagePage && <PortalBreadcrumbs stage={selected} />}
+        <h1 id="portal-overview-heading" tabIndex={-1}>{stagePage ? selected?.title : firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
+        {!stagePage && <p className={styles.welcomeMeta}>
           {data.client.intakeYear && <span>Поступление: сентябрь {data.client.intakeYear}</span>}
           {data.client.intakeYear && universities.length > 0 && <span aria-hidden="true"> · </span>}
           <span data-saved-universities>{universities.map(university => university.name).join(" · ")}</span>
-        </p>
+        </p>}
       </div>
     </div>
-    <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+    {!stagePage && <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
       <svg className={styles.darkGrain} data-dark-grain aria-hidden="true" focusable="false" width="100%" height="100%">
         <filter id="portal-dark-grain"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" /></filter>
         <rect width="100%" height="100%" filter="url(#portal-dark-grain)" />
@@ -105,25 +109,26 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
       </div>}
       <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
-    </aside>
+    </aside>}
     <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
+      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} navigationOnly embedded condensed={stagePage} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
     </div>
     <div className={styles.stageBody} data-portal-overview>
       <div className={styles.stageHeading}>
         <div className={styles.stageTitle}>
-          <h2>{selected?.title}</h2>
-          <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
+          <h2>{stagePage ? "Шаги этапа" : selected?.title}</h2>
+          {stagePage && <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
             <span>Штампы: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
             <span className={styles.stampTrack} aria-hidden="true">{ordered.map((row, index) => {
               const saved = portalTaskDone(savedData, row), before = portalTaskDone(data, row);
               return <span key={row.id} className={styles.stamp} data-stamp={row.id} data-stamped={saved} data-just-stamped={saved && !before}>{saved ? <Check size={14} strokeWidth={2} /> : <span>{String(index + 1).padStart(2, "0")}</span>}</span>;
             })}</span>
-          </div>
+          </div>}
         </div>
+        {!stagePage && selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Все шаги этапа <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
       </div>
       <div className={styles.taskList} aria-label="Задачи этапа">
-        {visibleTasks.map(row => {
+        {(stagePage ? visibleTasks : current ? [current] : []).map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
           const isCurrent = current?.id === row.id, open = isCurrent;
           const date = row.deadline && /^\d{4}-\d{2}-\d{2}$/.test(row.deadline) ? fmtDate(row.deadline) : "";
@@ -159,6 +164,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           </article>;
         })}
       </div>
+      {!stagePage && !current && <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
+      {stagePage && <nav className={styles.stagePagination} aria-label="Соседние этапы">
+        {data.roadmap[data.roadmap.indexOf(selected) - 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)-1].id)}`}>Предыдущий этап: {data.roadmap[data.roadmap.indexOf(selected)-1].title}</PortalPageLink>}
+        {data.roadmap[data.roadmap.indexOf(selected) + 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)+1].id)}`}>Следующий этап: {data.roadmap[data.roadmap.indexOf(selected)+1].title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
+      </nav>}
     </div>
   </section>;
 }

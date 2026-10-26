@@ -21,13 +21,14 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline }: {
+export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
   onOpenTask: (task: PortalTask, intent?: "instruction" | "upload") => void;
   onSelectStage?: (stageId: string) => void;
   embedded?: boolean;
+  condensed?: boolean;
   activeStageId?: string;
   deadline?: string;
   travel?: RoadTravel;
@@ -173,7 +174,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
 
   return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100, "--stage-count": stages.length || 1 } as CSSProperties}
-    data-portal-road tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
+    data-portal-road data-condensed={condensed || undefined} tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
     data-road-static={currentOpen || navigationOnly ? "true" : undefined}
     data-road-current-open={currentOpen ? "true" : undefined} data-road-secondary={secondaryAction ? "true" : undefined}

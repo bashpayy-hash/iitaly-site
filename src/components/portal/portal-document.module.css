@@ -65,3 +65,5 @@
 .report :is(button,a,summary,select,input,h2):focus-visible,.uploadForm :is(button,a,summary,select,input):focus-visible { outline:2px solid var(--portal-ink); outline-offset:4px; }
 @media(max-width:900px) { .report { padding:20px; } .heading h2 { font-size:28px; } }
 @media(max-width:540px) { .fileDetails dl,.contextFields { grid-template-columns:1fr; } .checks li { grid-template-columns:1fr; gap:4px; } .fileArea { width:100%; } .heading h2 { font-size:26px; } }
+
+.report [hidden] { display:none!important; }

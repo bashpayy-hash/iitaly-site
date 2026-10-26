@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { PortalDoc } from "@/lib/portalApi";
 import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
 import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
 import { PortalDocumentCoach } from "./PortalDocumentCoach";
 import styles from "./portal-document.module.css";
+import pages from "./portal-pages.module.css";
+import { PortalPageLink, PortalPageNavigation, usePortalPart, usePortalPageFocus } from "./PortalPageNavigation";
 
 const CHECK_LABEL = { ok: "В порядке", warn: "Нужно уточнить", error: "Несоответствие", unknown: "Не подтверждено" };
 function dateLabel(value?: string) {
@@ -14,7 +16,8 @@ function dateLabel(value?: string) {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(value));
 }
 
-export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?view=docs", onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, preparationTime, orientir, onDocuments, operation, error, onResetError, uploadSlot, storage = "cloud" }: {
+export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/portal?view=docs", onFileDrop, busy, context, onContextChange, canUpload = true, readOnlyReason, stepMeta, preparationTime, orientir, onDocuments, operation, error, onResetError, uploadSlot, storage = "cloud" }: {
+  taskId: string;
   title: string;
   doc: PortalDoc;
   onBack: () => void;
@@ -37,8 +40,10 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
   storage?: "cloud" | "local";
 }) {
   const heading = useRef<HTMLHeadingElement>(null);
-  const [uploadOpen, setUploadOpen] = useState(false);
-  const uploadVisible = uploadOpen || busy || Boolean(error);
+  const requestedPart = usePortalPart("result");
+  const part = ["result", "review", "action"].includes(requestedPart) ? requestedPart : "result";
+  const href = (value: string) => `/portal?view=docs&doc=${encodeURIComponent(taskId)}&part=${value}`;
+  usePortalPageFocus(`${title} · ${part === "review" ? "Полный разбор" : part === "action" ? "Новая проверка" : "Результат"}`, part, "portal-report-heading");
   useEffect(() => {
     let cancelled = false;
     let frame = 0;
@@ -88,12 +93,14 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
         event.preventDefault(); onBack();
       }}>Назад</a>
     </nav>
-    <div className={styles.focusArea} data-document-focus>
-    <div className={styles.focusCopy}>
     <header className={styles.heading}>
-      <h2 ref={heading} tabIndex={-1}>{title}</h2>
+      <h1 id="portal-report-heading" ref={heading} className={pages.heading} tabIndex={-1}>{title}</h1>
       <span className={styles.statusBadge} data-outcome={outcome.kind}>{outcome.label}</span>
     </header>
+    <PortalPageNavigation active={part} label="Разделы разбора документа" items={[{ id:"result",label:"Результат",href:href("result") },{ id:"review",label:"Полный разбор",href:href("review") },...(canUpload ? [{ id:"action",label:"Новая проверка",href:href("action") }] : [])]} />
+    <div hidden={part !== "result"}>
+    <div className={styles.focusArea} data-document-focus>
+    <div className={styles.focusCopy}>
     <div className={styles.decision} data-outcome={outcome.kind}>
       <div className={styles.inspector} data-portal-document-inspector>
         {summary && <p className={styles.resultSummary}>{summary}</p>}
@@ -109,22 +116,28 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
     <section className={styles.nextStep} aria-label="Следующее действие с документом">
       <h3>Следующий шаг</h3>
       <p>{nextSteps[0] || outcome.action || "Продолжай маршрут. Сохранённый разбор останется доступен в документах."}</p>
-      {problems.length > 0 && <ul className={styles.steps}>{problems.map((problem, index) => <li key={index}>{problem.text}{problem.fix ? ` ${problem.fix}` : ""}</li>)}</ul>}
+      {problems.length > 0 && <p className={styles.meta}>Замечаний в разборе: {problems.length}. <PortalPageLink href={href("review")} className={styles.textAction}>Посмотреть, что исправить</PortalPageLink></p>}
       {!result && <p className={styles.meta}>От прошлой проверки остался только краткий итог. Подробности старого разбора восстановить нельзя.</p>}
       {canUpload && <p className={styles.meta}>Исходный файл не хранится в {storage === "local" ? "локальном профиле" : "кабинете"}. Для новой проверки выбери его на устройстве или загрузи исправленную версию.</p>}
-      {outcome.kind === "approved" && !uploadVisible && <a href="/portal?view=docs" className={styles.fileArea} onClick={toDocuments}>Продолжить в документах</a>}
-      {canUpload && !uploadVisible && <button type="button" className={outcome.kind === "approved" ? styles.textAction : styles.fileArea} data-document-prepare
-        onClick={() => setUploadOpen(true)}>{outcome.kind === "approved" ? "Проверить новую версию" : outcome.kind === "fix" || outcome.kind === "unreadable" ? "Загрузить исправленный файл" : "Уточнить параметры и загрузить файл"}<span aria-hidden="true"> →</span></button>}
+      {outcome.kind === "approved" && <a href="/portal?view=docs" className={styles.fileArea} onClick={toDocuments}>Продолжить в документах</a>}
+      {canUpload && <PortalPageLink href={href("action")} className={outcome.kind === "approved" ? styles.textAction : styles.fileArea} data-document-prepare>{outcome.kind === "approved" ? "Проверить новую версию" : outcome.kind === "fix" || outcome.kind === "unreadable" ? "Загрузить исправленный файл" : "Уточнить параметры и загрузить файл"}<span aria-hidden="true"> →</span></PortalPageLink>}
       {!canUpload && readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
-      {canUpload && uploadVisible && <div data-fab-yield>
-        <PortalDocumentCoach illustrated={false} />
-        {uploadSlot || (onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
-          replacing operation={operation} error={error} onResetError={onResetError} />)}
-      </div>}
+
     </section>
     </div>
     </div>
 
+    </div>
+    <div hidden={part !== "action"} data-report-upload-page>
+      <h2 className={pages.explanation}>Новая проверка документа</h2>
+      {!canUpload && <p className={styles.readOnly}>{readOnlyReason || "Повторная проверка сейчас недоступна."}</p>}
+      {canUpload && <div data-fab-yield>
+        <PortalDocumentCoach illustrated={false} />
+        {uploadSlot || (onFileDrop && <PortalDocumentUpload busy={busy} context={context} onContextChange={onContextChange} onCheck={onFileDrop}
+          replacing operation={operation} error={error} onResetError={onResetError} />)}
+      </div>}
+    </div>
+    <div hidden={part !== "review"} data-report-details-page>
     <section className={styles.fileDetails} aria-label="Файл и сроки">
       <h3>Файл и сроки</h3>
       <dl>
@@ -174,5 +187,6 @@ export function PortalDocumentReport({ title, doc, onBack, backHref = "/portal?v
       <p className={styles.meta}>База сверена {dateLabel(review.verifiedOn) || review.verifiedOn}. Это дата проверки базы; сайты учреждений не просматриваются заново при каждом разборе.</p>
       <ul>{review.sources.filter(source => /^https:\/\//.test(source.url)).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}</a></li>)}</ul>
     </details>}
+    </div>
   </section>;
 }

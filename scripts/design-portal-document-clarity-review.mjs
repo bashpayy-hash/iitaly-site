@@ -96,6 +96,7 @@ try {
   await capture(page,`document-${width}`);
   if(width===1440)assert(bounds.y+bounds.height<900,`The next action fits in the first desktop viewport: ${JSON.stringify({sizes,bounds})}`);
   await axe(page,`result ${width}`);await noOverflow(page);
+  await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Полный разбор',exact:true}).click();
   for(const value of ['attestat.pdf','20 октября 2026','до 15 рабочих дней','1 мая','Это не срок конкретного вуза'])assert((await report.innerText()).includes(value),value+' retained');
   await report.getByText('Что проверено: полный разбор',{exact:true}).click();
   assert.match(await report.innerText(),/Текст виден/);
@@ -103,7 +104,7 @@ try {
   assert.equal(await report.locator('a[href="https://www.universitaly.it/studenti-stranieri"]').count(),1);
   await report.getByText('Все рекомендации из разбора',{exact:true}).click();
   assert.match(await report.innerText(),/Уточни требования выбранного вуза и повтори проверку/);
-  await action.click();const form=page.locator('[data-document-upload-form]');await form.waitFor();
+  await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Новая проверка',exact:true}).click();const form=page.locator('[data-document-upload-form]');await form.waitFor();
   assert(await form.locator('details').evaluate(el=>el.open),'Context is open before starting');
   const programme=form.getByRole('combobox',{name:'Стипендиальная программа'}),year=form.getByRole('combobox',{name:'Учебный год заявки'});
   await programme.selectOption('piemonte');await year.selectOption('2026/27');await form.getByRole('checkbox').check();
@@ -111,7 +112,7 @@ try {
   assert.equal(await programme.inputValue(),'piemonte','Unsubmitted context survives view navigation');
   assert.equal(await year.inputValue(),'2026/27');assert(await form.getByRole('checkbox').isChecked());
   await report.getByRole('link',{name:'К документам',exact:true}).click();
-  await page.goBack();await report.waitFor();await action.click();
+  await page.goBack();await report.waitFor();await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Новая проверка',exact:true}).click();
   assert.equal(await programme.inputValue(),'piemonte','Browser Back preserves the draft context');
   assert.equal(await year.inputValue(),'2026/27');
   let checks=0,saves=0;
@@ -132,14 +133,15 @@ try {
   await form.getByRole('button',{name:'Проверить документ',exact:true}).click();
   await form.locator('[data-document-operation=checking]').waitFor();assert.match(await form.innerText(),/На проверке/);
   await form.getByRole('alert').waitFor();assert.match(await form.getByRole('alert').innerText(),/проверка завершена, но результат не сохранён/);
-  assert.match(await report.innerText(),/attestat.pdf/,'Existing saved report survives the failure');
+  assert.match(await report.locator('[data-report-details-page]').textContent(),/attestat.pdf/,'Existing saved report survives the failure');
   assert.equal(checks,1);assert.equal(saves,1);
   await form.getByRole('button',{name:'Сохранить результат',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('[aria-label="Файл и сроки"]')?.textContent.includes('synthetic-attestat.txt'));
   assert.equal(checks,1,'Retry saves the result without another AI charge');assert.equal(saves,2);
   assert.equal(await page.locator('[data-document-operation-error]').count(),0,'Saved result has no stale error');
   assert.equal(await road(page).getAttribute('data-road-done'),'3','Clarification does not change progress');
-  await page.reload({waitUntil:'networkidle'});await report.waitFor();assert.equal(checks,1);assert.match(await report.innerText(),/synthetic-attestat.txt/);
+  await page.reload({waitUntil:'networkidle'});await report.waitFor();assert.equal(checks,1);
+  await report.getByRole('link',{name:'Полный разбор',exact:true}).click();assert.match(await report.innerText(),/synthetic-attestat.txt/);
   await report.getByRole('link',{name:'К документам',exact:true}).click();
   data.docs.apostille={verdict:'warn',summary:'Сохранённый краткий итог без полного отчёта.'};
   await page.reload({waitUntil:'networkidle'});await page.locator('[data-document=apostille]').click();

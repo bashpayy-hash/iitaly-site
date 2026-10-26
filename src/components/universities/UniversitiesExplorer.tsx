@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { usePortalPart, navigatePortal } from "@/components/portal/PortalPageNavigation";
 import { CITIES, UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
@@ -33,6 +34,8 @@ export type PortalUniversitySelection = {
 };
 
 export function UniversitiesExplorer({ portalSelection }: { portalSelection?: PortalUniversitySelection } = {}) {
+  const pagePart = usePortalPart("catalogue");
+  const comparePage = Boolean(portalSelection && pagePart === "compare");
   const [activeCity, setActiveCity] = useState<CityId | null>(null);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
@@ -136,7 +139,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         </div>
       </section>}
 
-      <section className={ui.explorer} aria-label="Карта и каталог университетов">
+      <section hidden={comparePage} className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
             {!portalSelection && <VespiAssistant
@@ -236,6 +239,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         </div>
       </section>
 
+      <div hidden={Boolean(portalSelection && !comparePage)}>
       <ComparisonSection
         compareIds={compareIds}
         onChange={setCompareIds}
@@ -243,6 +247,8 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         embedded={Boolean(portalSelection)}
         portalSelection={portalSelection}
       />
+
+      </div>
 
       <CityMatch
         open={matchOpen}
@@ -257,12 +263,12 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         }}
       />
 
-      <CompareBar
+      {!comparePage && <CompareBar
         compareIds={compareIds}
         onRemove={toggleCompare}
-        onOpenCompare={() => setCompareOpen(true)}
+        onOpenCompare={() => portalSelection ? navigatePortal("/portal?view=plan&task=shortlist&part=compare") : setCompareOpen(true)}
         embedded={Boolean(portalSelection)}
-      />
+      />}
 
       <UniModal
         uni={openUni}

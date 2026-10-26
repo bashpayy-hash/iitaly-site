@@ -170,6 +170,7 @@ try {
     await page.screenshot({ path: resolve(output, `selection-chosen-${width}.png`), fullPage: false });
     assert.equal(await save(page).isEnabled(), true);
     assert.equal(calls.length, 0, 'Selecting a city or university never silently completes the step');
+    await picker(page).getByRole('navigation', { name: 'Выбор университетов' }).getByRole('link', { name: 'Сравнение', exact: true }).click();
     await picker(page).getByRole('combobox', { name: 'Университет 1', exact: true }).selectOption('bocconi');
     await picker(page).getByRole('combobox', { name: 'Университет 2', exact: true }).selectOption('polimi');
     const table = picker(page).locator('[data-university-comparison]');
