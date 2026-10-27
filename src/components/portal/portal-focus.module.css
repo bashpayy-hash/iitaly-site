@@ -125,7 +125,7 @@
 @media(forced-colors:active) { .darkGrain { display:none; }.nowCard { background:Canvas; color:CanvasText; }.roundCheck[data-done=true]::before,.stamp[data-stamped=true] { background:Highlight; }.roundCheck[data-done=true],.stamp[data-stamped=true] { color:HighlightText; } }
 
 /* Overview shows one next task; each stage has a separate reading surface. */
-.canvas[data-portal-page=stage] { grid-template-columns:minmax(0,1fr); grid-template-areas:"welcome" "tasks"; grid-template-rows:auto auto; }
+.canvas[data-portal-page=stage] { grid-template-columns:minmax(0,1fr); grid-template-areas:"welcome" "route" "tasks"; grid-template-rows:auto auto auto; }
 .canvas[data-portal-page=stage] .welcome { padding:0; }
 .canvas[data-portal-page=stage] .welcome h1 { font-size:32px; margin:0; }
 .canvas[data-portal-page=stage] .stageBody { padding-bottom:16px; }
@@ -165,3 +165,7 @@
 .task.stageScreen .taskActions { margin-left:0; }
 .task.stageScreen .taskBody { padding:0; background:transparent; }
 @media(max-width:700px) { .task.stageScreen .taskDetails { grid-column:2; grid-row:1; }.task.stageScreen .taskHeading { display:block; }.task.stageScreen .taskActions { grid-column:1/-1; grid-row:3; } }
+
+.canvas .routeCard{padding:32px;border:1px solid var(--border);border-radius:32px;background:rgba(237,232,222,.8)}
+.canvas[data-portal-page=stage] .routeCard{margin-bottom:24px;padding:20px 0;border:0;border-radius:0;background:transparent}
+@media(max-width:760px){.canvas .routeCard{padding:22px;border-radius:28px}}

@@ -75,6 +75,12 @@ try {
   const {page,context,data,calls,fileCalls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true});
   assert.equal(await page.locator('[data-task-check]').count(),1);
   assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
+  const initialCount = await page.locator('[data-road-count]').innerText();
+  await page.locator('[data-road-stage=arrival]').click();
+  await page.locator('[data-flight-stage-preview=arrival]').waitFor();
+  assert.equal(await page.locator('[data-road-count]').innerText(), initialCount, 'Preview does not change completion');
+  assert.equal(calls.length, 0, 'Preview never writes a task');
+  await page.locator('[data-road-stage=docs]').click();
   await noOverflow(page);await axe(page,`Overview ${width}`);
   await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true});
   for(const stage of data.roadmap) {
@@ -85,7 +91,8 @@ try {
    assert.equal(await page.locator('[data-task-check]').count(),1);
    assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),stage.tasks.length);
    if(stage.tasks.length>1){await page.locator('[data-stage-switcher] [data-story-pill]').last().click();assert.equal(new URL(page.url()).searchParams.get('step'),stage.tasks.at(-1).id);assert.equal(await page.locator('[data-task-check]').count(),1);}
-   assert.equal(await page.locator('[data-portal-now],[data-portal-road]').count(),0);
+   assert.equal(await page.locator('[data-portal-now]').count(),0);
+   assert.equal(await page.locator('[data-portal-road] [data-flight-plan][data-compact=true]').count(),1);
    await noOverflow(page);
   }
   await portalStage(page,'docs');

@@ -80,22 +80,20 @@ try {
     assert.equal(await page.locator('[data-route-stage-number]').innerText(),'02');
     assert.doesNotMatch(await road(page).innerText(),/Будущие этапы пока/);
     const design=await road(page).evaluate(el=>{
-      const marker=el.querySelector('[data-route-stage-number]'), fill=el.querySelector('[data-route-fill]');
-      const s=getComputedStyle(marker), line=getComputedStyle(fill.parentElement), card=getComputedStyle(el.closest('[data-route-card]'));
-      return {size:s.fontSize,weight:s.fontWeight,accent:s.color,line:line.height,fill:getComputedStyle(fill).backgroundColor,background:card.backgroundColor,border:card.borderWidth,radius:card.borderRadius,shadow:card.boxShadow,ratio:Number(el.style.getPropertyValue('--route-fill'))};
+      const marker=el.querySelector('[data-route-stage-number]');
+      const style=getComputedStyle(marker);
+      return {size:style.fontSize,weight:style.fontWeight,accent:style.color,ratio:Number(el.style.getPropertyValue('--route-fill'))};
     });
-    assert.deepEqual({...design,ratio:0},{size:'40px',weight:'600',accent:'rgb(163, 52, 33)',line:'2px',fill:'rgb(184, 58, 39)',background:'rgba(0, 0, 0, 0)',border:'0px',radius:'0px',shadow:'none',ratio:0});
-    assert(Math.abs(design.ratio-6/26)<.00001);
+    assert.deepEqual({...design,ratio:0},{size:'40px',weight:'600',accent:'rgb(163, 52, 33)',ratio:0});
+    assert(Math.abs(design.ratio-6/26)<.00001,'Ahead tasks do not enter ordered progress');
     assert.equal(await page.locator('[data-portal-now] strong').first().evaluate(el=>getComputedStyle(el).color),'rgb(242, 154, 137)');
-    assert.equal(await road(page).locator('[class*=checkpoint]').count(),0);
-    const nav=page.locator('[aria-label="Этапы маршрута"]');
-    assert.equal(await nav.isVisible(),width>760);
-    if(width>760){
-      const links=await nav.locator('a').evaluateAll(nodes=>nodes.map(el=>({y:el.getBoundingClientRect().y,font:getComputedStyle(el).fontSize,current:el.getAttribute('aria-current'),rule:getComputedStyle(el).borderBottomColor})));
-      assert.equal(links.length,6);assert(links.every(l=>l.font==='13px'));
-      assert(Math.max(...links.map(l=>l.y))-Math.min(...links.map(l=>l.y))<1);
-      assert.equal(links.find(l=>l.current)?.rule,'rgb(184, 58, 39)');
-    }else assert.equal(await page.locator('[data-route-current-name]').innerText(),'Документы');
+    const nav=page.getByRole('navigation',{name:'Этапы маршрута',exact:true});
+    assert(await nav.isVisible());assert.equal(await nav.locator('[data-flight-stop]').count(),6);
+    assert.equal(await nav.locator('[data-flight-plane]').count(),1);
+    await nav.locator('[data-road-stage=arrival]').click();
+    await page.locator('[data-flight-stage-preview=arrival]').waitFor();
+    assert.equal(await road(page).getAttribute('data-road-done'),'6','Previewing ahead never completes a task');
+    await nav.locator('[data-road-stage=docs]').click();
     await noOverflow(page);
     if([1440,390].includes(width)){await axe(page,'Route '+width);await capture(page,'route-'+width);}
     await page.locator('[data-portal-task=cimea]').click();

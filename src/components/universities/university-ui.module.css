@@ -260,3 +260,5 @@
 
 .heroInner [data-selected-accent] { width:100px; justify-self:end; margin-right:40px; }
 @media(max-width:767px) { .heroInner [data-selected-accent] { display:none; } }
+
+.quickUniversities{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0 24px}.quickUniversities>span{margin-right:8px;color:#5C6056;font:400 10px/1.5 var(--font-space-mono),monospace;text-transform:uppercase;letter-spacing:.05em}.quickUniversities button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid #DCD3C3;border-radius:999px;background:#FBF9F3;color:#352B28;font-size:13px}.quickUniversities button[aria-pressed=true]{border-color:#B83A27;background:#EEDDD3;color:#A33421}.quickUniversities button:disabled{opacity:.5;cursor:not-allowed}.quickUniversities a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 8px;font-size:13px;color:#A33421;text-decoration:underline;text-underline-offset:4px}.quickUniversities :is(button,a):focus-visible{outline:2px solid #B83A27;outline-offset:3px}

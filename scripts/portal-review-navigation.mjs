@@ -34,7 +34,11 @@ export async function portalTask(page, id, part = "action") {
 export async function portalStage(page, stage) {
   if (!await page.locator('[data-road-stage]').count()) await portalDestination(page, 'Обзор');
   const destination = page.locator(`[data-road-stage="${stage}"]`);
-  if (await destination.isVisible()) await destination.click();
+  if (await destination.isVisible()) {
+    await destination.click();
+    const preview = page.locator('[data-flight-stage-preview]');
+    if (await preview.count()) await preview.getByRole('link', { name: 'Открыть этап' }).click();
+  }
   else {
     const stages = await page.locator('[data-road-stage]').evaluateAll(nodes => nodes.map(n => n.dataset.roadStage));
     const target = stages.indexOf(stage);

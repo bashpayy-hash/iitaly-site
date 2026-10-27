@@ -60,6 +60,11 @@ export function PlanExplorer() {
           <p><span>Основной вуз</span><strong>{primary.name}</strong></p>
           <Link href="/universities#compare-universities">Изменить выбор</Link>
         </div>}
+        {primary && <details className={workspace.selectedContext} data-plan-university-context>
+          <summary>Условия {primary.name}</summary>
+          <dl><div><dt>Экзамен / отбор</dt><dd>{primary.test}</dd></div><div><dt>Подача · по базе</dt><dd>{primary.dl}</dd></div><div><dt>Стоимость в год</dt><dd>{primary.tu}</dd></div></dl>
+          <p>Это контекст выбранного вуза. Персональные шаги ниже формируются по твоим ответам; условия конкретной программы нужно сверить.</p>
+        </details>}
         <nav className={workspace.toolNav} aria-label="Бесплатные инструменты">
           <a href="#questionnaire" aria-current={tool === "questionnaire" ? "page" : undefined}>Составить план</a>
           <a href="#document-check" aria-current={tool === "document-check" ? "page" : undefined}>Проверить документ</a>

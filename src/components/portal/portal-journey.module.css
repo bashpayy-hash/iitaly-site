@@ -46,3 +46,15 @@
 }
 @media(prefers-reduced-motion:reduce) { .journey .routeFill { transition:none!important; }.journey[data-road-feedback-active=true] .count { animation:none; } }
 @media(forced-colors:active) { .routeLine { background:CanvasText; }.routeFill { background:Highlight; }.nav a[aria-current=step] { border-color:Highlight; } }
+
+/* Flight Plan: the instrument describes real progress; selection only previews. */
+.flightWindow{display:flex;flex-direction:column;min-height:300px;padding:24px;border:1px solid #5A4A40;border-radius:20px;background:#352B28;color:#FAF9F3}
+.windowTop{display:flex;justify-content:space-between;gap:12px;font:400 10px/1.5 var(--font-space-mono),monospace;letter-spacing:.04em;color:#C9CFC4}
+.flightWindow h3{margin:26px 0 18px;font:500 clamp(22px,2.3vw,30px)/1.12 var(--font-sans);letter-spacing:-.03em}
+.stageStat{display:flex;align-items:center;gap:12px;margin:0}.stageStat strong{font-size:54px;font-weight:500;line-height:1;letter-spacing:-.03em;color:#F29A89}.stageStat span{color:#C9CFC4;font-size:12px;line-height:1.5}
+.stageMeter{height:2px;margin:20px 0 22px;background:#6E6054}.stageMeter span{display:block;height:100%;background:#F29A89;transition:width .6s ease}
+.flightWindow a{display:flex;justify-content:space-between;align-items:center;min-height:44px;margin-top:auto;color:#FAF9F3;font-size:14px;text-decoration:none;border-top:1px solid #5A4A40;padding-top:12px}
+@media(max-width:760px){.flightWindow{min-height:240px;padding:22px}.flightWindow h3{margin:20px 0 16px}.stageStat strong{font-size:44px}}
+@media(prefers-reduced-motion:reduce){.stageMeter span{transition:none}}
+
+.journey[data-condensed=true] .summary{justify-content:flex-end;margin-bottom:12px}.journey[data-condensed=true] .countNumbers{font-size:16px}.journey[data-condensed=true] .count{font-size:12px}.journey[data-condensed=true] .ahead{display:inline;margin-left:10px;font-size:12px}

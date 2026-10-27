@@ -89,6 +89,7 @@ try {
       }, { index, id });
     }
     results.push({ test: `${width}px: all three selections committed`, passed: true });
+    await workbench.getByRole('button', {name:'Таблица',exact:true}).click();
     assert.equal(await workbench.locator('[data-comparison-row]').count(), 12);
     // isDisabled() retargets an option inside a wrapping label to the enabled select.
     // Inspect the native option property instead; the duplicate must remain disabled.

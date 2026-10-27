@@ -8,7 +8,8 @@ import { documentOutcome } from "@/lib/portalDocument";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowUpRight } from "lucide-react";
+import { FlightPlan, type FlightStop } from "@/components/journey/FlightPlan";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
 
@@ -141,11 +142,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   const awaitingProfile = !data.done.profile && realStages.length === 1 && realStages[0].tasks.some(task => task.id === "profile");
   // An orientation preview only: placeholders never enter progress or storage.
   const stages = awaitingProfile ? [realStages[0], ...PREVIEW_STAGES.slice(1).map((title, index) => ({ id: `preview-stage-${index + 1}`, title, tasks: [] }))] : realStages;
-  const nav = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const target = nav.current?.querySelector<HTMLElement>('[data-stage-selected="true"]') || nav.current?.querySelector<HTMLElement>('[aria-current="step"]');
-    if (target && nav.current) nav.current.scrollLeft = Math.max(0, target.getBoundingClientRect().left - nav.current.getBoundingClientRect().left + nav.current.scrollLeft - 8);
-  }, [stage?.id, activeStageId]);
+  const [previewId, setPreviewId] = useState<string | null>(null);
   const allComplete = total > 0 && done === total;
   const currentStageIndex = Math.max(0, stage ? stages.findIndex(row => row.id === stage.id) : allComplete ? stages.length - 1 : 0);
   const currentStageTitle = awaitingProfile ? PREVIEW_STAGES[0] : stages[currentStageIndex]?.title;
@@ -155,6 +152,29 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   const instruction = current && !savedDocument ? taskInstructionTitle(current) : "";
   const explainer = savedDocument ? documentOutcome(savedDocument).action : current ? taskShortExplainer(current) : "";
   const action = (savedDocument ? "Открыть разбор" : instruction) || (current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг");
+
+  const previewIndex = Math.max(0, stages.findIndex(row => row.id === (condensed ? activeStageId || stage?.id : previewId || activeStageId || stage?.id)));
+  const previewStage = stages[previewIndex];
+  const previewDone = previewStage?.tasks.filter(task => portalTaskDone(data, task)).length || 0;
+  const stops: FlightStop[] = stages.map((row, index) => {
+    const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
+    const opened = progress.stages.find(item => item.id === row.id)?.open;
+    const next = row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
+    const date = next ? taskDate(next) : "";
+    return {
+      id: row.id, title: awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title,
+      locked: !row.tasks.length,
+      meta: !row.tasks.length ? "после анкеты" : [date, `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
+      ahead: !opened && stageDone > 0,
+      state: opened && stageDone === row.tasks.length ? "done" : row.id === stage?.id ? "current" : "future",
+      href: `/portal?stage=${encodeURIComponent(row.id)}`,
+    };
+  });
+  function openPreview() {
+    if (!previewStage?.tasks.length) return;
+    if (onSelectStage) onSelectStage(previewStage.id);
+    else onOpenTask(previewStage.tasks.find(task => !portalTaskDone(data, task)) || previewStage.tasks[0]);
+  }
 
   const focus = !navigationOnly && <div className={styles.focus} data-road-next aria-live="polite" aria-atomic="true">
       <div className={styles.nextAction}>
@@ -186,38 +206,32 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
     <div className={styles.route}>
-      <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>
+      {!condensed && <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>}
       <div className={styles.summary}>
-        <div className={styles.stageMarker}>
+        {!condensed && <div className={styles.stageMarker}>
           <span className={styles.stageLabel}>Этап</span>
           <strong className={styles.stageNumber} data-route-stage-number>{String(currentStageIndex + 1).padStart(2, "0")}</strong>
           <span className={styles.currentStageName} data-route-current-name>{currentStageTitle}</span>
-        </div>
+        </div>}
         <span className={styles.count}>
         <span data-road-count><strong className={styles.countNumbers}>{done}</strong> из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
-      <span className={styles.routeLine} aria-hidden="true"><span className={styles.routeFill} data-route-fill /></span>
-      <nav ref={nav} className={styles.nav} aria-label="Этапы маршрута">
-        {stages.map((row, index) => {
-          if (!row.tasks.length) return <span key={row.id} className={styles.lockedStage} data-road-locked aria-disabled="true" aria-label={`${index + 1}. ${row.title}. После анкеты`}>
-            <span className={styles.stageCopy}><span>{row.title}</span><small>после анкеты</small></span>
-          </span>;
-          const next = row.id === stage?.id && current ? current : row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
-          const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
-          const opened = progress.stages.find(item => item.id === row.id)?.open;
-          const complete = Boolean(opened && stageDone === row.tasks.length);
-          const isCurrent = row.id === (activeStageId || stage?.id);
-          const isRouteCurrent = row.id === stage?.id;
-          const segmentFill = opened ? stageDone / row.tasks.length : 0;
-          return <a style={{ "--stage-fill": segmentFill } as CSSProperties} key={row.id} href={onSelectStage ? `/portal?stage=${encodeURIComponent(row.id)}` : portalTaskHref(data, next)} data-road-stage={row.id} aria-label={`Этап: ${row.title}. ${stageDone} из ${row.tasks.length} шагов. ${complete ? "Пройден" : isRouteCurrent ? "Текущий" : "Впереди"}${isCurrent && !isRouteCurrent ? ". Открыт для просмотра" : ""}` }
-            data-road-stage-state={complete ? "done" : isRouteCurrent ? "current" : "future"} data-stage-selected={isCurrent || undefined}
-            aria-current={isRouteCurrent ? "step" : undefined} onClick={event => {
-              if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-              event.preventDefault(); if (onSelectStage) onSelectStage(row.id); else onOpenTask(next);
-            }}><span className={styles.stageCopy}><span>{awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title}</span><small data-current-stage={isRouteCurrent || undefined}>{stageDone} / {row.tasks.length} шагов<span className={styles.stageState} data-stage-ahead={!opened && stageDone > 0 || undefined}>{isRouteCurrent ? "сейчас" : !opened && stageDone > 0 ? "заранее" : ""}</span></small></span></a>;
-        })}
-      </nav>
+      <FlightPlan stops={stops} index={previewIndex} compact={condensed} onSelect={index => {
+        setPreviewId(stages[index].id);
+        if (condensed && onSelectStage) onSelectStage(stages[index].id);
+      }}>
+        {!condensed && previewStage && <div className={styles.flightWindow} data-flight-stage-preview={previewStage.id}>
+          <div className={styles.windowTop}><span>ЭТАП {String(previewIndex + 1).padStart(2, "0")}</span><span>{stops[previewIndex].state === "done" ? "ПРОЙДЕН" : previewStage.id === stage?.id ? "СЕЙЧАС" : "ОБЗОР"}</span></div>
+          <h3>{stops[previewIndex].title}</h3>
+          <p className={styles.stageStat}><strong>{previewDone}</strong><span>из {previewStage.tasks.length}<br />шагов выполнено</span></p>
+          <div className={styles.stageMeter} aria-hidden="true"><span style={{ width: `${previewStage.tasks.length ? previewDone / previewStage.tasks.length * 100 : 0}%` }} /></div>
+          <a href={`/portal?stage=${encodeURIComponent(previewStage.id)}`} onClick={event => {
+            if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault(); openPreview();
+          }}>Открыть этап<ArrowUpRight size={18} aria-hidden="true" /></a>
+        </div>}
+      </FlightPlan>
       <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
     </div>

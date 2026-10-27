@@ -1,4 +1,4 @@
-import { portalDestination, portalRoadState } from './portal-review-navigation.mjs';
+import { portalDestination, portalRoadState, portalStage } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -131,11 +131,11 @@ try {
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
     assert.equal(await page.locator('[data-focus-row=notary]').count(),0,'Future tasks live on their stage page');
-    if(width>760){
-      const points=await page.locator('[data-road-stage]>span:first-child').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
-      assert(Math.max(...points)-Math.min(...points)<1,'Stage labels use the same axis');
-      assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no box');
-    }else { assert.equal(await page.locator('[aria-label="Этапы маршрута"]').isVisible(),false);assert.equal(await page.locator('[data-route-current-name]').innerText(),'Документы'); }
+    const points=await page.locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
+    assert(points.every((value,index)=>index===0 || value>points[index-1]),'Flight stops follow one vertical route');
+    assert(await page.locator('[aria-label="Этапы маршрута"]').isVisible());
+    assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no separate box');
+
 
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
@@ -206,26 +206,35 @@ try {
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
     await page.getByRole('link',{name:'Все шаги этапа'}).click();
+    await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
     await page.locator('[data-task-check=translate]').click();
     if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal((await portalRoadState(page)).done,'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}
-    await page.waitForFunction(()=>document.querySelector('[data-task-check=translate]')?.getAttribute('aria-checked')==='true');
     assert.equal((await portalRoadState(page,'4')).done,'4');
+    await portalStage(page,'docs');
+    await page.locator('[data-stage-switcher] [data-story-pill="0"]').click();
+    assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'true');
     await page.waitForFunction(()=>window.__notes===3);
     assert.deepEqual(await page.evaluate(()=>window.__frequencies),[587.33,880,1174.66]);
     assert.equal(data.docs.translate,undefined,'A manual task mark does not manufacture a reviewed document');
     assert.equal(await page.locator('[data-stamp=translate]').getAttribute('data-stamped'),'true');
     assert.equal(await page.locator('[data-stamp-count]').innerText(),'1 / 5');
-    const order=await page.locator('[data-focus-row]').evaluateAll(nodes=>nodes.map(el=>el.dataset.focusRow));
-    assert.deepEqual(order,['translate','apostille','notary','cimea','checkDocs'],'Completed tasks precede current and future, preserving chronology within groups');
+    assert.equal(await page.locator('[data-focus-row]').count(),1,'Only the selected task is expanded');
+    assert.match(await page.locator('[data-stage-switcher] [data-story-pill]').first().getAttribute('title'),/перевод/,'Completed task leads the stage navigation');
     const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(92, 96, 86)');
     assert.equal(calls.length,failTask?2:1);
+    await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
     await page.locator('[data-task-ready=apostille]').press('Space');
-    await page.waitForFunction(()=>document.querySelector('[data-task-check=apostille]')?.getAttribute('aria-checked')==='true');assert.equal((await portalRoadState(page,'5')).done,'5');
+    assert.equal((await portalRoadState(page,'5')).done,'5');
+    await portalStage(page,'docs');
+    await page.locator('[data-stage-switcher] [data-story-pill="0"]').click();
+    assert.equal(await page.locator('[data-task-check=apostille]').getAttribute('aria-checked'),'true');
     assert.equal(data.docs.apostille,undefined);
     await page.reload({waitUntil:'networkidle'});assert.equal((await portalRoadState(page,'5')).done,'5');assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(),0);assert.equal(await page.evaluate(()=>window.__notes),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();await page.getByLabel('Звук при выполнении шага').uncheck();
     await portalDestination(page,'План');
-    await page.locator('[data-task-check=notary]').click();await page.waitForFunction(()=>document.querySelector('[data-task-check=notary]')?.getAttribute('aria-checked')==='true');assert.equal((await portalRoadState(page,'6')).done,'6');
+    await page.locator('[data-stage-switcher] [data-story-pill="2"]').click();
+    await page.locator('[data-task-check=notary]').click();assert.equal((await portalRoadState(page,'6')).done,'6');
+    assert.equal(data.done.notary,true);
     assert.equal(await page.evaluate(()=>window.__notes),0);
     results.push({failTask,savedOnly:true,fileOutcomeIndependent:true,keyboard:true,sound:true,reloadQuiet:true,mute:true});await context.close();
   }
