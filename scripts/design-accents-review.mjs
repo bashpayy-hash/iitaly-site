@@ -74,7 +74,7 @@ function serve(root, port) {
   return new Promise(done => server.listen(port, '127.0.0.1', () => done(server)));
 }
 const servers = [await serve('out', 4175), await serve(process.env.BASELINE_OUT, 4176)];
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 async function settle(page, port, route = '/') {
   const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: 'networkidle' });
   assert.equal(response.status(), 200);
@@ -265,6 +265,7 @@ try {
         // The requested Bento UI shares selectable topic cards on all widths.
         await openGuideStage(page,'prepare');
         await openGuideTopic(page,'cimea');
+        await page.locator('[data-story-pill]').filter({hasText:'CIMEA Verification'}).click();
         await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
         assert.equal(new URL(page.url()).pathname,'/guides/cimea');
       }

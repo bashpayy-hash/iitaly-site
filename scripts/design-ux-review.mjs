@@ -118,7 +118,10 @@ try {
     const firstAction=page.locator('#questionnaire [data-assessment-next-action]');
     assert(await firstAction.isVisible(),'The first action is visible without opening a disclosure');
     assert((await firstAction.locator('p').allTextContents()).every(text=>text.trim().length>0),'The first action includes a readable explanation and concrete action');
-    assert(await firstAction.locator('p').filter({visible:true}).count()>=2,'The explanation and action are both immediately visible');
+    const activePoint=page.locator('#questionnaire [data-instruction-point]');
+    assert.equal(await activePoint.count(),1,'Only one route point is shown at a time');
+    assert(await activePoint.locator('p').filter({visible:true}).count()>=3,'Position, explanation and action are immediately visible');
+    assert(await firstAction.locator('p').filter({visible:true}).count()>=1,'The concrete action is visible without expanding its source notes');
     const laterSteps=page.locator('#questionnaire [data-assessment-route] details');
     assert(await laterSteps.count()>0,'The remaining route stays available');
     assert.equal(await laterSteps.evaluateAll(nodes=>nodes.filter(node=>node.open).length),0,'Later steps start closed');
@@ -137,6 +140,7 @@ try {
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'true');
     await page.getByRole('button',{name:'Начать заново',exact:true}).click();
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
+    await page.getByRole('navigation',{name:'Бесплатные инструменты'}).getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'example.txt',mimeType:'text/plain',buffer:Buffer.from('Синтетический тест: доход семьи за указанный год.')});
     const doc=page.locator('#document-check');
     await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();
