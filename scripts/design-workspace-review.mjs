@@ -19,7 +19,7 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`;
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[], errors=[];
 let activePage;
 try {
@@ -74,13 +74,15 @@ try {
     await page.locator('[data-plan-wizard]').waitFor();
     const geometry=await page.locator('#questionnaire').evaluate(el=>({top:el.getBoundingClientRect().top,header:document.querySelector('header').getBoundingClientRect().bottom}));
     assert(geometry.top>=geometry.header,`Questionnaire heading clears the header: ${JSON.stringify(geometry)}`);
-    assert.equal(await page.locator('[data-plan-wizard] [role=progressbar] > span').count(),10);
+    assert.equal(await page.locator('[data-plan-wizard] [data-flight-stop]').count(),10);
     assert.equal(await page.locator('#document-check [data-vespi]').count(),0,'Single mascot anchor: utility/report have no repeated portrait');
+    await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.getByRole('button',{name:'Проверить пример справки',exact:true}).click();
     await page.locator('[data-document-example]').waitFor();
     assert.match(await page.locator('[data-document-example]').innerText(),/Демонстрация интерфейса.*вымышленный пример/s);
     assert.equal(calls.length,0,'Example never calls AI or creates a review');
     await capture('workbench-example');
+    await page.getByRole('link',{name:'Составить план',exact:true}).click();
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')));
     assert.equal(stored.answers.intake,'2027/28');assert.equal(stored.step,1);
@@ -104,6 +106,7 @@ try {
     await page.getByRole('navigation',{name:'Выбор университетов'}).getByRole('link',{name:'Сравнение',exact:true}).click();
     await page.getByRole('combobox',{name:'Университет 1',exact:true}).selectOption('bocconi');
     await page.getByRole('combobox',{name:'Университет 2',exact:true}).selectOption('polimi');
+    await page.getByRole('button',{name:'Таблица',exact:true}).click();
     assert.equal(await page.locator('[data-university-comparison] [data-comparison-row]').count(),12,'Existing comparison stays intact in the guest portal');
     await capture('portal-selection');
     await page.locator('[data-shortlist-save]').click();
@@ -115,7 +118,7 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
     await portalDestination(page, 'План');
-    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),0,'The local stage page has no global roadmap');
+    assert.equal(await page.locator('[data-flight-plan][data-compact=true]').count(),1,'The local stage page has one compact Flight Plan');
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert(await checks.count()>0,'The checklist exposes completion controls');

@@ -6,7 +6,7 @@ import styles from "./flight-plan.module.css";
 
 export type FlightStop = {
   id: string; title: string; meta?: string; href?: string;
-  state?: "done" | "current" | "future"; locked?: boolean;
+  state?: "done" | "current" | "future"; locked?: boolean; ahead?: boolean;
 };
 
 /** Browsing a stop is deliberately separate from saving/completing a task. */
@@ -64,7 +64,7 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
           <span className={styles.plane} data-flight-plane><Plane size={19} strokeWidth={1.7} /></span>
         </div>
         {stops.map((stop, position) => {
-          const content = <><span className={styles.node} aria-hidden="true" /><span className={styles.stopCopy}><span className={styles.stopTitle}>{stop.title}</span><span className={styles.stopDetail}><span>{stop.meta}</span>{stop.state === "current" && <b>{currentLabel}</b>}</span></span></>;
+          const content = <><span className={styles.node} aria-hidden="true" /><span className={styles.stopCopy}><span className={styles.stopTitle}>{stop.title}</span><span className={styles.stopDetail}><span>{stop.meta}</span>{stop.ahead && <span data-stage-ahead>заранее</span>}{stop.state === "current" && <b>{currentLabel}</b>}</span></span></>;
           const attrs = {
             className: styles.stop,
             "data-flight-stop": position,
@@ -78,7 +78,7 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
           return stop.href ? <a key={stop.id} {...attrs} href={stop.href} onClick={event => {
             if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault(); onSelect(position);
-          }}>{content}</a> : <button key={stop.id} type="button" {...attrs} onClick={() => onSelect(position)} aria-pressed={position === safeIndex}>{content}</button>;
+          }}>{content}</a> : <button key={stop.id} type="button" {...attrs} onClick={() => onSelect(position)}>{content}</button>;
         })}
       </nav>
       {children && <div className={styles.scene} key={stops[safeIndex]?.id}>{children}</div>}

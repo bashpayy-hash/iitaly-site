@@ -6,6 +6,7 @@ on:
     paths:
       - "src/components/marketing/**"
       - "src/components/home/**"
+      - "src/components/journey/**"
       - "src/components/universities/**"
       - "src/app/universities/**"
       - "src/components/PaperOverlayGate.tsx"
@@ -102,6 +103,8 @@ jobs:
         run: node scripts/design-portal-focus-review.mjs
       - name: Review minimal route and document action across responsive boundaries
         run: node scripts/design-portal-route-action-review.mjs
+      - name: Review Flight Plan, guide inspector and comparison deck
+        run: node scripts/design-flight-explorers-review.mjs
       - name: Review progressive portal pages, history and selected-file continuity
         run: node scripts/design-portal-pages-review.mjs
       - name: Compact pages, continuous paper and saved university choice

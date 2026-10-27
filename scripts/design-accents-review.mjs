@@ -1,3 +1,4 @@
+import { openGuideStage, openGuideTopic } from "./guide-review-navigation.mjs";
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
@@ -262,8 +263,8 @@ try {
       }
       if (route === '/guides') {
         // The requested Bento UI shares selectable topic cards on all widths.
-        await page.locator('[data-guide-stage=prepare]').click();
-        await page.locator('[data-guide-select="cimea"]').click();
+        await openGuideStage(page,'prepare');
+        await openGuideTopic(page,'cimea');
         await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
         assert.equal(new URL(page.url()).pathname,'/guides/cimea');
       }

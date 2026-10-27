@@ -1,3 +1,4 @@
+import { openGuideStage, openGuideTopic } from "./guide-review-navigation.mjs";
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -26,7 +27,7 @@ const server = createServer(async (req,res) => {
 });
 await new Promise(done => server.listen(0,'127.0.0.1',done));
 const origin = `http://127.0.0.1:${server.address().port}`;
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const errors = [];
 try {
   for (const width of [1440,768,390,320]) {
@@ -64,12 +65,14 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where+' overflow');
     }
     await visit('/plan');
+    await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.getByText('Проверка документов пока недоступна',{exact:true}).waitFor();
     assert(await page.getByLabel('Выбрать документ для проверки').isDisabled());
     assert.equal(documentRequests.length,0,'No document is sent while provider credentials are invalid');
     aiAvailable = true;
     await page.getByRole('button',{name:'Проверить доступность',exact:true}).click();
     await page.waitForFunction(()=>!document.querySelector('input[type="file"]').disabled);
+    await page.getByRole('link',{name:'Составить план',exact:true}).click();
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     await page.getByRole('button').filter({hasText:'11 классов'}).click();
     await visit('/guides');
@@ -81,24 +84,24 @@ try {
     await search.fill('несуществующая-тема-123');
     assert(await page.getByRole('heading',{name:'Такой темы не нашли'}).isVisible());
     await page.getByRole('button',{name:'Сбросить поиск'}).click();
-    assert.equal(await page.locator('[data-guide-stage]').count(),3,'Reset restores the three category links');
+    assert.equal(await page.locator('[data-guide-category]:not([data-guide-category=all])').count(),3,'Reset restores the three category links');
     const chapterIds=new Set();
     for(const [stage,count] of [['choose',2],['prepare',8],['arrival',3]]){
-      await page.locator('[data-guide-stage="'+stage+'"]').click();
+      await openGuideStage(page,stage);
       await page.locator('[data-guide-select]').first().waitFor();
       assert.equal(await results.count(),count);
       for(const id of await results.evaluateAll(nodes=>nodes.map(node=>node.dataset.guideSelect)))chapterIds.add(id);
       await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
     }
     assert.equal(chapterIds.size,13);
-    await search.fill('CIMEA');await page.locator('[data-guide-select=cimea]').click();
+    await search.fill('CIMEA');await openGuideTopic(page,'cimea');
     await page.locator('#guide-title').waitFor();
     assert.equal(await page.locator('[data-guide-panel]').count(),1);
     assert.equal(await page.locator('[data-guide-select],[data-guide-timeline]').count(),0);
     await page.goBack();await search.waitFor();assert.equal(await search.inputValue(),'CIMEA');
     await page.getByRole('button',{name:'Сбросить поиск',exact:true}).click();
     assert(await search.evaluate(el=>document.activeElement===el));
-    await search.fill('CIMEA');await page.locator('[data-guide-select=cimea]').click();
+    await search.fill('CIMEA');await openGuideTopic(page,'cimea');
     await page.locator('#guide-title').waitFor();
     await checkA11y('guides '+width);
     await page.screenshot({path:resolve(output,`guides-${width}.png`)});

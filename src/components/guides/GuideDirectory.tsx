@@ -62,7 +62,7 @@ export function GuideDirectory() {
       <div className={ui.searchField}><Search size={20} aria-hidden="true" /><input ref={inputRef} id="guide-search" type="search" value={query} onChange={event=>{setQuery(event.target.value);location("q",event.target.value);}} placeholder="Аттестат, перевод, виза, DSU…" autoComplete="off" />{query && <button type="button" aria-label="Сбросить поиск" onClick={()=>{setQuery("");location("q","");inputRef.current?.focus();}}><X size={18} aria-hidden="true" /></button>}</div>
     </search>
     <div className={styles.categories} aria-label="Фильтр тем">
-      {[{id:"all",title:"Все темы"},...GUIDE_STAGES].map(item=><button type="button" key={item.id} aria-pressed={category===item.id} onClick={()=>{setCategory(item.id);location("category",item.id);}}>{item.title}</button>)}
+      {[{id:"all",title:"Все темы"},...GUIDE_STAGES].map(item=><button type="button" key={item.id} data-guide-category={item.id} aria-pressed={category===item.id} onClick={()=>{setCategory(item.id);location("category",item.id);}}>{item.title}</button>)}
     </div>
     <p className={styles.resultCount} role="status">{terms.length ? `Найдено тем: ${matches.length}` : "Выбери тему — разбор появится справа"}</p>
     {guide ? <section className={styles.explorer} aria-label="Выбор темы и превью" data-guide-explorer>

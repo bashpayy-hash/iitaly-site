@@ -164,7 +164,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     return {
       id: row.id, title: awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title,
       locked: !row.tasks.length,
-      meta: !row.tasks.length ? "после анкеты" : [date, `${stageDone}/${row.tasks.length}`, !opened && stageDone > 0 ? "заранее" : ""].filter(Boolean).join(" · "),
+      meta: !row.tasks.length ? "после анкеты" : [date, `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
+      ahead: !opened && stageDone > 0,
       state: opened && stageDone === row.tasks.length ? "done" : row.id === stage?.id ? "current" : "future",
       href: `/portal?stage=${encodeURIComponent(row.id)}`,
     };

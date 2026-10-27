@@ -1,3 +1,4 @@
+import { openGuideStage, openGuideTopic } from "./guide-review-navigation.mjs";
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -24,7 +25,7 @@ const server = createServer(async (req, res) => {
 });
 await new Promise(done => server.listen(0, '127.0.0.1', done));
 const origin = `http://127.0.0.1:${server.address().port}`;
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results = [];
 let activePage;
 try {
@@ -71,11 +72,11 @@ try {
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');
     assert.equal(await page.locator('[data-guide-panel], [data-guide-timeline], [data-guide-sticky]').count(),0,'The directory contains no mounted articles, timeline or sales bar');
-    assert.equal(await page.locator('[data-guide-stage]').count(),3);
+    assert.equal(await page.locator('[data-guide-category]:not([data-guide-category=all])').count(),3);
     assert.equal(await page.locator('main time').count(),1);
     assert(await page.locator('#guide-search').evaluate(input=>input.getBoundingClientRect().height>=44));
     await audit('directory '+width);await screenshot('guides-top');
-    await page.locator('[data-guide-stage=choose]').click();
+    await openGuideStage(page,'choose');
     await page.waitForURL('**/guides/stages/choose');
     assert.equal(await page.locator('[data-guide-select]').count(),2);
     await page.locator('[data-guide-select=education]').click();
@@ -99,6 +100,7 @@ try {
     assert(await refs.count()>0);
     for(const ref of await refs.all())assert.match(await ref.getAttribute('rel'),/noopener/);
     await audit('article '+width);await screenshot('guides-apostille');
+    await page.locator('[data-story-pill]').last().click();
     const documentAction=page.locator('[data-guide-inline-action]');
     await documentAction.scrollIntoViewIfNeeded();
     assert(await documentAction.evaluate(action=>{
@@ -130,7 +132,7 @@ try {
     await page.locator('#nl-badge-frame').evaluate(badge=>badge.remove());
     // Native links keep the global assistant draft; the topic context changes.
     await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
-    await page.locator('[data-guide-stage=arrival]').click();
+    await openGuideStage(page,'arrival');
     await page.locator('[data-guide-select=permesso]').click();await openHelper();
     assert.equal(await question.inputValue(),'Мой незаконченный вопрос');
     assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'),'permesso');
@@ -146,7 +148,7 @@ try {
     await page.getByRole('button',{name:'Сбросить поиск',exact:true}).click();
     assert(await search.evaluate(el=>document.activeElement===el));
     await search.fill('CIMEA');assert(await page.locator('[data-guide-select=cimea]').isVisible());
-    await page.locator('[data-guide-select=cimea]').click();await page.waitForURL('**/guides/cimea');
+    await openGuideTopic(page,'cimea');await page.waitForURL('**/guides/cimea');
     await page.goBack();await search.waitFor();assert.equal(await search.inputValue(),'CIMEA','Back restores the directory query');
     await page.goForward();await page.locator('[data-guide-panel=cimea]').waitFor();
     await page.reload({waitUntil:'networkidle'});assert.equal(await page.locator('[data-guide-panel]').count(),1);

@@ -9,8 +9,8 @@ import { pathToFileURL } from 'node:url';
 // User request 18 October: fail on cold literals, utility classes and inline SVG
 // gradients across production source. Raster editorial artwork is unchanged.
 function coldRgb(r, g, b) {
-  // Explicit success tokens, plus #1B5E55 from the 25 October zhol portal brief.
-  if (["31,122,104", "230,244,241", "27,94,85"].includes([r,g,b].map(Math.round).join(","))) return false;
+  // Explicit success tokens; the 27 October brief also requests a blue aircraft and tinted comparison deck.
+  if (["31,122,104", "230,244,241", "27,94,85", "57,102,166", "45,86,141", "168,201,247", "227,232,234"].includes([r,g,b].map(Math.round).join(","))) return false;
   const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max-min;
   if (d <= 1) return false;
   let h = max === r ? ((g-b)/d)%6 : max === g ? (b-r)/d+2 : (r-g)/d+4;
@@ -67,7 +67,7 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`;
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[];
 try {
   for(const width of [1440,390]){
@@ -95,12 +95,12 @@ try {
         }
         return {body:getComputedStyle(document.body).backgroundColor,overflow:document.documentElement.scrollWidth>innerWidth+1,values};
       });
-      assert.equal(snapshot.body,'rgb(250, 248, 245)',`${path}: shared alabaster body`);
+      assert.equal(snapshot.body,'rgb(247, 244, 234)',`${path}: shared alabaster body`);
       assert.equal(snapshot.overflow,false,`${path} ${width}: no horizontal overflow`);
       const cold=snapshot.values.filter(item=>coldColors(item.colors).length);
       assert.deepEqual(cold,[],`${path} ${width}: no cold computed text, surfaces, borders, glows or SVG`);
       if(path==='/guides'){
-        assert.equal(await page.locator('[data-guide-stage]').count(),3);
+        assert.equal(await page.locator('[data-guide-category]:not([data-guide-category=all])').count(),3);
         assert.equal(await page.locator('[data-guide-timeline],[data-editorial-art]').count(),0,'The directory is a concise entry, not a large illustrated overview');
         assert.equal(await page.locator('h1').evaluate(e=>getComputedStyle(e).color),'rgb(20, 20, 19)','The title uses the shared warm ink');
 
