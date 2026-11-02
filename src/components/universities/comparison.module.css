@@ -105,3 +105,18 @@
 
 .viewModes{display:flex;align-items:center;gap:10px;margin:18px 0 0;color:#6E685D;font:400 11px/1.4 var(--font-space-mono),monospace;text-transform:uppercase;letter-spacing:.06em}
 .viewModes button{min-height:44px;padding:10px 4px;color:#6E685D;background:none;border:0;text-transform:uppercase}.viewModes button[aria-pressed=true]{color:#352B28;border-bottom:2px solid #B83A27}.viewModes button:focus-visible{outline:2px solid #A33421;outline-offset:3px}
+/* Итог выбора: после «Выбрать этот университет» — тёмная плашка у нижнего
+   края экрана с переходом в Мой план. */
+.decision[data-chosen=true] { position:sticky; bottom:16px; z-index:4; margin-top:24px; padding:18px 18px 18px 24px; border:0; border-radius:22px; background:#352B28; color:#FAF9F3; box-shadow:0 22px 48px -24px rgba(42,33,29,.7); animation:decision-in .55s cubic-bezier(.22,1,.36,1) both; }
+.decision[data-chosen=true] .decisionTitle { margin-bottom:4px; color:#FAF9F3; font-size:17px; }
+.decision[data-chosen=true] .decisionTitle svg { color:#F29A89; }
+.decision[data-chosen=true] .decisionCopy p:not(.decisionTitle) { color:#C9CFC4; }
+.decision[data-chosen=true] .planLink { border-color:#FAF9F3; background:#FAF9F3; color:#352B28; }
+.decision[data-chosen=true] .planLink:hover { background:#EFE7D8; }
+.decision[data-chosen=true] .planLink:focus-visible { outline-color:#F29A89; }
+.section { scroll-margin-top:80px; }
+@keyframes decision-in { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+@media(prefers-reduced-motion:reduce) { .decision[data-chosen=true] { animation:none; } }
+.deckBar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 24px; margin:18px 0 22px; padding-bottom:10px; border-bottom:1px solid #DCD3C3; }
+.deckBar .selectionActions { margin:0; }
+.deckBar .viewModes { margin:0; }

@@ -23,7 +23,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
   const step = plan.steps[index];
   return <div className={styles.result} data-assessment-route>
     <div className={styles.flightFrame}>
-      <FlightPlan stops={plan.steps.map((step, position) => ({ id: String(position), title: step.t, meta: plan.intake, href: href(position), state: position === index ? "current" : "future" }))} index={index} onSelect={select} currentLabel="Открыт для чтения" label="Шаги персонального плана" destination={primary ? CITIES[primary.city].name : "Италия"}>
+      <FlightPlan stops={plan.steps.map((step, position) => ({ id: String(position), title: step.t, meta: plan.intake, href: href(position), state: position === index ? "current" : "future" }))} index={index} onSelect={select} currentLabel="Открыт для чтения" label="Шаги персонального плана" destination={primary ? CITIES[primary.city].name : "Италия"} city={primary?.city}>
         <section className={styles.flightStep} data-instruction-point={index + 1} aria-labelledby="plan-reading-heading">
           <p className={styles.flightPosition} role="status">Шаг {index + 1} из {plan.steps.length}</p>
           <h2 id="plan-reading-heading">{step.t}</h2>

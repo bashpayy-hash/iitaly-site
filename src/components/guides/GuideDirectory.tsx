@@ -4,13 +4,40 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight, Search, X, FileText } from "lucide-react";
-import { ADMISSION_SOURCES } from "@/data/admissions";
-import { GUIDE_STAGES, GUIDE_TOPICS, guideHref, guideStageHref, stageForGuide } from "./guideCatalogue";
+import { ADMISSION_SOURCES, PERMESSO_COST_LABEL } from "@/data/admissions";
+import { VISA_KEY_FACTS, type GuideCard } from "@/data/guides";
+import { GUIDE_STAGES, GUIDE_TOPICS, VISA_PARTS, guideHref, guideStageHref, stageForGuide } from "./guideCatalogue";
 import { isGuideId, openGuideHelper } from "./guideJourney";
 import ui from "./guide-pages.module.css";
 import styles from "./guide-explorer.module.css";
 
 const normalize = (value: string) => value.toLocaleLowerCase("ru").replaceAll("ё", "е");
+const plural = (n: number, one: string, few: string, many: string) => n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? few : many;
+
+/* Бейджи инспектора — короткие цитаты из самих гайдов (src/data/guides.ts),
+   сверенные вручную: меняй вместе с текстом гайда. Где в гайде нет срока,
+   цены или дедлайна, бейдж честно говорит «по ситуации», а не придумывает.
+   «Сложность» — сколько пунктов в подробном разборе. */
+const GUIDE_FACTS: Record<string, { duration?: string; cost?: string; deadline?: string }> = {
+  tests: { cost: "€55 за попытку CEnT-S" },
+  apostille: { duration: "до 15 рабочих дней", cost: "0,5 МРП за документ" },
+  cimea: { duration: "Verification: 60 рабочих дней после оплаты", cost: "Verification: €150 за квалификацию" },
+  visa: { duration: `${VISA_KEY_FACTS[2].value} · обычный общий срок`, cost: `${VISA_KEY_FACTS[1].value} · сервисный сбор отдельно`, deadline: "Национальный предел: 30 ноября 2026 для 2026/27" },
+  permesso: { cost: `${PERMESSO_COST_LABEL} для взрослого при сроке свыше 3 месяцев до года`, deadline: "первые восемь рабочих дней после въезда" },
+  codice: { cost: "выдача бесплатна" },
+  "health-travel": { cost: "SSN: от €700 за календарный год" },
+};
+
+function guideFacts(guide: GuideCard) {
+  const known = GUIDE_FACTS[guide.id] || {};
+  const points = guide.id === "visa" ? VISA_PARTS.length : guide.rows.length;
+  return [
+    { label: "Срок оформления", value: known.duration || "по ситуации", known: Boolean(known.duration) },
+    { label: "Стоимость", value: known.cost || "по ситуации", known: Boolean(known.cost) },
+    { label: "Дедлайн", value: known.deadline || "по условиям заявки", known: Boolean(known.deadline) },
+    { label: "Сложность", value: `${points} ${plural(points, "пункт", "пункта", "пунктов")} в разборе`, known: true },
+  ];
+}
 
 export function GuideDirectory() {
   const [query, setQuery] = useState("");
@@ -47,8 +74,7 @@ export function GuideDirectory() {
       indexRef.current.scrollLeft += active.getBoundingClientRect().left - indexRef.current.getBoundingClientRect().left;
     }
   }, [guide?.id]);
-  const cost = guide?.rows.find(row => row.label === "Стоимость")?.value || (guide?.id === "codice" ? "Бесплатно" : guide?.id === "cimea" ? "Verification: €150 за квалификацию" : "Уточнить для своего случая");
-  const duration = guide?.rows.find(row => row.label === "Срок")?.value || (guide?.id === "cimea" ? "Verification: 60 рабочих дней после оплаты и полного комплекта; возможны внешние проверки" : "Зависит от процедуры");
+  const facts = guide ? guideFacts(guide) : [];
   const number = guide ? GUIDE_TOPICS.indexOf(guide) + 1 : 0;
   function location(key: string, value: string, push = false) {
     const url = new URL(window.location.href);
@@ -75,7 +101,7 @@ export function GuideDirectory() {
         indexRef.current?.querySelector<HTMLElement>(`[data-guide-select="${matches[position].id}"]`)?.focus({preventScroll:true});
       }}>
         {matches.map(topic=><button type="button" role="tab" key={topic.id} id={`topic-${topic.id}`} aria-controls="guide-inspector" aria-selected={guide.id===topic.id} tabIndex={guide.id===topic.id?0:-1} className={styles.topic} data-guide-select={topic.id} onClick={()=>select(topic.id)}>
-          <span className={styles.indexNumber}>{String(GUIDE_TOPICS.indexOf(topic)+1).padStart(2,"0")}</span><span>{topic.title}</span><ArrowUpRight size={18} aria-hidden="true" />
+          <span className={styles.indexNumber}>{String(GUIDE_TOPICS.indexOf(topic)+1).padStart(2,"0")}</span><span className={styles.topicTitle}>{topic.title}</span><span className={styles.topicStage} aria-hidden="true">{({choose:"Маршрут",prepare:"До отъезда",arrival:"В Италии"} as Record<string,string>)[stageForGuide(topic.id)?.id || ""]}</span><ArrowUpRight size={18} aria-hidden="true" />
         </button>)}
       </div>
       <div className={styles.inspector} id="guide-inspector" role="tabpanel" aria-labelledby={`topic-${guide.id}`} tabIndex={0}>
@@ -87,11 +113,8 @@ export function GuideDirectory() {
             {guide.lead && <p className={styles.sceneNote}>{guide.lead}</p>}
             <div className={styles.sceneFooter}><span>{stage?.title}</span><span>{guide.sources.length} {guide.sources.length === 1 ? "источник" : guide.sources.length < 5 ? "источника" : "источников"}</span></div>
           </div>
-          <dl className={styles.parameters}>
-            <div><dt>Срок оформления</dt><dd>{duration}</dd></div>
-            <div><dt>Стоимость</dt><dd>{cost}</dd></div>
-            <div><dt>Дедлайн</dt><dd>{guide.id==="permesso" ? guide.teaser : "По условиям заявки"}</dd></div>
-            <div><dt>Сложность</dt><dd>Зависит от комплекта документов</dd></div>
+          <dl className={styles.parameters} data-guide-facts>
+            {facts.map(fact=><div key={fact.label} data-known={fact.known}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
           </dl>
           <Link className={styles.open} href={guideHref(guide.id)}>Открыть подробный наглядный разбор<ArrowRight size={18} aria-hidden="true" /></Link>
           {stage && <Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Другие темы: {stage.title}</Link>}

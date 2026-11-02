@@ -56,7 +56,7 @@
 @media(max-width:480px) { .next { padding: 18px; } .nextHeading, .steps > li { gap: 10px; } .next h4 { font-size: 18px; } .transition h3 { font-size: 22px; } }
 @media(prefers-reduced-motion:reduce) { .result, .stepBody, .transitionTrack i::after { animation: none; } .result summary > svg:last-child { transition: none; } }
 
-.flightFrame{padding:32px;border:1px solid #DCD3C3;border-radius:32px;background:rgba(237,232,222,.8)}
+.flightFrame{--flight-surface:#EEE8DD;padding:40px;border:1px solid rgba(53,43,40,.09);border-radius:32px;background:rgba(237,232,222,.8)}
 .flightStep{padding:28px;border-radius:20px;background:#352B28;color:#FAF9F3;min-width:0}
 .flightPosition{margin:0 0 24px;font:400 11px/1.5 var(--font-space-mono),monospace;text-transform:uppercase;letter-spacing:.04em;color:#F29A89}
 .flightStep h2{font-size:clamp(26px,3vw,36px);line-height:1.1;letter-spacing:-.03em;font-weight:500;margin:0}

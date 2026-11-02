@@ -112,7 +112,11 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
 
   function toggleCompare(id: string) {
     if (compareIds.includes(id)) setCompareIds(compareIds.filter(value => value !== id));
-    else if (compareIds.length < 3) setCompareIds([...compareIds, id]);
+    else if (compareIds.length < 3) {
+      setCompareIds([...compareIds, id]);
+      // Третий вуз собирает колоду: показываем ряд карточек сразу, а не под картой.
+      if (!portalSelection && compareIds.length === 2) requestAnimationFrame(() => document.getElementById("compare-universities")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }));
+    }
   }
 
   const cityShortcut = (

@@ -9,7 +9,9 @@ import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
 import { ChevronRight, ArrowUpRight } from "lucide-react";
-import { FlightPlan, type FlightStop } from "@/components/journey/FlightPlan";
+import { FlightPlan, flightWhen, type FlightStop } from "@/components/journey/FlightPlan";
+import { CITIES, UNIS } from "@/data/italy";
+import { useUniversityChoice } from "@/lib/useUniversityChoice";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
 
@@ -42,6 +44,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
+  const { primary: primaryChoice } = useUniversityChoice();
   const destination = roadPosition(done, total);
   const [motion, setMotion] = useState(() => ({
     position: roadPosition(typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? done : travel?.fromDone ?? done, total),
@@ -153,6 +156,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   const explainer = savedDocument ? documentOutcome(savedDocument).action : current ? taskShortExplainer(current) : "";
   const action = (savedDocument ? "Открыть разбор" : instruction) || (current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг");
 
+  // Destination on the instrument: the locally chosen main university, else the first saved one.
+  const flightDestination = UNIS.find(university => university.id === (primaryChoice?.id || data.client.profile?.universityIds?.[0]));
   const previewIndex = Math.max(0, stages.findIndex(row => row.id === (condensed ? activeStageId || stage?.id : previewId || activeStageId || stage?.id)));
   const previewStage = stages[previewIndex];
   const previewDone = previewStage?.tasks.filter(task => portalTaskDone(data, task)).length || 0;
@@ -160,11 +165,12 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
     const opened = progress.stages.find(item => item.id === row.id)?.open;
     const next = row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
-    const date = next ? taskDate(next) : "";
+    const when = flightWhen(next?.deadline);
     return {
       id: row.id, title: awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title,
-      locked: !row.tasks.length,
-      meta: !row.tasks.length ? "после анкеты" : [date, `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
+      locked: !row.tasks.length, when,
+      // The month sits on the left margin; the stop keeps the exact count.
+      meta: !row.tasks.length ? "после анкеты" : [when ? "" : next ? taskDate(next) : "", `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
       ahead: !opened && stageDone > 0,
       state: opened && stageDone === row.tasks.length ? "done" : row.id === stage?.id ? "current" : "future",
       href: `/portal?stage=${encodeURIComponent(row.id)}`,
@@ -217,7 +223,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
         <span data-road-count><strong className={styles.countNumbers}>{done}</strong> из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
-      <FlightPlan stops={stops} index={previewIndex} compact={condensed} onSelect={index => {
+      <FlightPlan stops={stops} index={previewIndex} compact={condensed} city={flightDestination?.city} destination={flightDestination ? CITIES[flightDestination.city].name : undefined} onSelect={index => {
         setPreviewId(stages[index].id);
         if (condensed && onSelectStage) onSelectStage(stages[index].id);
       }}>
