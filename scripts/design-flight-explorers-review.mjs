@@ -50,7 +50,8 @@ try{
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
     for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
     assert.equal(await page.locator('[data-deck-university]').count(),3);
-    const rows=await page.locator('[data-deck-row=life]').evaluateAll(nodes=>nodes.map(n=>Math.round(n.getBoundingClientRect().top)));
+    // Layout rows (offsetTop): the arc tilts side cards on purpose; the rows stay level.
+    const rows=await page.locator('[data-deck-row=life]').evaluateAll(nodes=>nodes.map(n=>n.offsetTop));
     assert(rows.every(value=>value===rows[0]),'Deck metric rows must align');
     assert.equal(await page.locator('[data-comparison-deck] small').filter({hasText:'Ниже диапазон расходов'}).count(),2);
     await page.locator('[data-deck-choose=unibo]').click();

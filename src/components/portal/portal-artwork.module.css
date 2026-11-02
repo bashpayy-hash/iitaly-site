@@ -53,7 +53,7 @@
 }
 
 .documentCopy { min-width: 0; }
-.documents { width: 112px; height: 112px; }
+.documents { width: 140px; height: auto; }
 
 @media (max-width: 1100px) {
   .overviewLayout { grid-template-columns: minmax(0, 1fr) 128px; column-gap: 24px; }
@@ -65,7 +65,7 @@
   .planHeading { gap: 12px; margin-bottom: 8px; }
   .plan { width: 64px; }
   .documentHeading { align-items: flex-start; gap: 12px; }
-  .documents { width: 64px; height: 64px; }
+  .documents { width: 88px; height: auto; }
 }
 
 @media (max-width: 540px) {

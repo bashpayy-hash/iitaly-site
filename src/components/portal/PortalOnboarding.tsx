@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { PortalData, PortalProfile, PortalResult } from "@/lib/portalApi";
 import styles from "./portal.module.css";
 import settings from "./portal-settings.module.css";
+import { VespiPose } from "@/components/mascot/VespiPose";
 
 const EDUCATION = [
   { value: "11 классов", title: "11 классов", note: "обычная школа" },
@@ -109,7 +110,7 @@ export function PortalOnboarding({
               {!editing && !needs12 && <p className={settings.formHint}>3 вопроса · 30 секунд</p>}
               <p className={styles.onboardingLead}>Ответы помогут выбрать шаги маршрута. Даты в нём — ориентиры.</p>
             </div>
-
+            {!editing && <span className={styles.onboardingVespi} data-vespi-scene="thinking" aria-hidden="true"><VespiPose pose="thinking" priority sizes="(max-width: 480px) 88px, 132px" /></span>}
           </div>
 
           <fieldset className={settings.question} disabled={busy}>

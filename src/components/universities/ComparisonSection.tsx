@@ -57,15 +57,18 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
             </label>}
           </div>)}
         </div>
-        <div className={styles.viewModes} aria-label="Вид сравнения">
-          <button type="button" aria-pressed={mode === "grid"} onClick={() => setMode("grid")}>Сетка</button>
-          <span aria-hidden="true">/</span>
-          <button type="button" aria-pressed={mode === "table"} onClick={() => setMode("table")}>Таблица</button>
-        </div>
-        <div className={styles.selectionActions}>
-          <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
-          {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
-          {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне ↗</button>}
+        {/* Строка управления колодой: счёт и действия слева, вид — справа, как LIST/GRID у Fiddle. */}
+        <div className={styles.deckBar}>
+          <div className={styles.selectionActions}>
+            <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
+            {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
+            {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне ↗</button>}
+          </div>
+          <div className={styles.viewModes} aria-label="Вид сравнения">
+            <button type="button" aria-pressed={mode === "grid"} onClick={() => setMode("grid")}>Сетка</button>
+            <span aria-hidden="true">/</span>
+            <button type="button" aria-pressed={mode === "table"} onClick={() => setMode("table")}>Таблица</button>
+          </div>
         </div>
         {mode === "grid" ? <ComparisonDeck universities={universities} selection={selection} portalSelection={portalSelection} onRemove={id => onChange(compareIds.filter(value => value !== id))} /> : universities.length >= 2 ? <ComparisonTable universities={universities} selection={selection} /> : <div className={styles.empty}>
           <span aria-hidden="true">01 / 02 / 03</span>

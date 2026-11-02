@@ -205,6 +205,6 @@ export function LocalWorkspace() {
         </div>
       </div>
     </main>
-    <PortalCompletion feedback={feedback.feedback} />
+    <PortalCompletion feedback={feedback.feedback} data={data} />
   </div>;
 }

@@ -79,7 +79,7 @@ async function railContract(page,data,compact){
     await noOverflow(page);await portalDestination(page,'Обзор');await railContract(page,data,false);await page.goBack();return;
   }
   assert.equal(await road(page).count(),1,'Exactly one global route');
-  assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1,'One actual-stage navigator');
+  assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),data.roadmap.some(stage=>stage.tasks.length)?1:0,'One actual-stage navigator; an empty route has none');
   assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0,'No second taxonomy/ring');
   assert.equal(await page.locator('main [data-portal-road]').count(),compact?0:1,'The overview route follows the greeting; other views keep one compact chrome route');
   assert.equal(await page.locator('[data-portal-welcome]').count(),compact?0:1,'The personal welcome appears only on the overview');
@@ -96,7 +96,7 @@ async function railContract(page,data,compact){
   assert.equal(Number(await progress.getAttribute('aria-valuenow')),done,'Accessible progress counts completed real tasks');
   assert.equal(Number(await progress.getAttribute('aria-valuemax')),tasks.length||1);
   assert.equal(await progress.getAttribute('aria-valuetext'),`${done} из ${tasks.length} шагов`);
-  assert.equal(await road(page).locator('img').count(),0,'Progress is data, not a repeated mascot');
+  assert.equal(await road(page).locator('img:not([data-portal-overview] img)').count(),0,'Progress is data, not a repeated mascot (the opened step keeps its message icon)');
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
     const stageDone=stage.tasks.filter(complete).length;
@@ -110,7 +110,7 @@ async function railContract(page,data,compact){
 async function arrivalOrder(page,data) {
   const welcome=page.locator('[data-portal-welcome]');
   assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
-  assert.equal(await page.locator('[data-portal-now] [data-vespi-scene=welcome]').count(),1,'Vespi belongs to the Now column');
+  assert.equal(await page.locator('[data-portal-cabin] [data-vespi-scene]').count(),1,'Vespi leans on the porthole above the greeting');
   assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
   const progressBox=await road(page).getByRole('progressbar').boundingBox();
@@ -118,7 +118,7 @@ async function arrivalOrder(page,data) {
   const detailsBox=await page.locator('[data-portal-overview]').boundingBox();
   assert(greetingBox.y+greetingBox.height<=roadBox.y+1,'Welcome precedes the route');
   assert(progressBox.y+progressBox.height<=nextBox.y+1,'Progress precedes the current task details');
-  assert(roadBox.y+roadBox.height<=detailsBox.y+1,'Overview details follow the route');
+  assert(detailsBox.y>=roadBox.y&&detailsBox.y+detailsBox.height<=roadBox.y+roadBox.height+1,'The current step opens inside the route, under its stage');
   assert(greetingBox.y>=0&&greetingBox.y+greetingBox.height<=await page.evaluate(()=>innerHeight),'The greeting remains in the first viewport');
   if(await page.evaluate(()=>innerWidth)>1100)assert(progressBox.y+progressBox.height<=await page.evaluate(()=>innerHeight),'Desktop progress fits the first viewport');
   else {const now=await page.locator('[data-portal-now]').boundingBox();assert(now.y+now.height<=roadBox.y,'On mobile the current problem comes before the global route');}
@@ -142,15 +142,23 @@ try{
     await go(page,'План');await page.locator('[data-portal-task="shortlist"]').waitFor();await railContract(page,data,false);
     assert.equal(await page.locator('[data-portal-task="shortlist"]').count(),1,'Current task written once');
     assert.equal(await page.locator('main [data-vespi-scene]').count(),0,'The stage page has no overview mascot');
-    assert.equal(await page.locator('[data-portal-task] img[data-vespi], [data-road-stage] img').count(),0,'Tasks and stage navigation never repeat a mascot');assert.equal(await page.locator('[data-task-check]').count(),data.roadmap[0].tasks.length,'Each task keeps a check control');
+    assert.equal(await page.locator('[data-portal-task] img[data-vespi], [data-road-stage] img').count(),0,'Tasks and stage navigation never repeat a mascot');assert.equal(await page.locator('[data-task-check]').count(),1,'Stage pages show one task at a time with its own check control (progressive portal, 26 October)');assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),data.roadmap[0].tasks.length,'Every task of the stage stays one pill away');
     assert.equal(await page.locator('[data-portal-focus]').getAttribute('data-selected-stage'),'start','Current stage opens');
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-plan-${viewport.width}`);
     await sticky(page);await axe(page,'Plan '+viewport.width);await portalDestination(page,'Обзор');
     if(viewport.width===1440){
       await road(page).locator('[aria-current=step]').focus();
-      await page.keyboard.press('Tab');
-      assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage')),'documents','Stage links follow native keyboard order');
+      // The opened step sits under its stage, so Tab visits it before the next stage.
+      let next=null;
+      for(let i=0;i<12&&!next;i++){
+        await page.keyboard.press('Tab');
+        next=await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage'));
+        if(!next)assert(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-flight-detail]'))),'Between stages focus only visits the opened step');
+      }
+      assert.equal(next,'documents','Stage links follow native keyboard order');
+      // Enter previews the stage under its node; the preview link opens it.
       await page.keyboard.press('Enter');
+      await page.locator('[data-flight-stage-preview=documents]').getByRole('link',{name:'Открыть этап'}).click();
     }else await portalStage(page,'documents');
     await page.locator('[data-portal-focus][data-selected-stage=documents]').waitFor();
     await portalTask(page,'statements');

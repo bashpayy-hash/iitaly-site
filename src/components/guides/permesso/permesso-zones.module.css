@@ -37,7 +37,7 @@
  .zoneButton, .group[data-pinned="true"] .zoneButton { pointer-events:auto; min-height:44px; min-width:44px; top:50%; left:50%; bottom:auto; right:auto; transform:translate(-50%,-50%); }
  .part { pointer-events:none!important; }
 }
-@media (max-width:600px) { .onboarding { font-size:11px; } .quickInspector { padding:14px; } .legend { font-size:10px; gap:7px 12px; } }
+@media (max-width:600px) { .onboarding { font-size:11px; } .quickInspector { padding:14px; } .legend { font-size:11px; gap:7px 12px; } }
 @media (prefers-reduced-motion:reduce) { .group,.zoneButton { scroll-behavior:auto!important; } }
 @media (max-width:900px) { .workspace>aside { order:initial; } }
 .group,.group *,.focusLayer { transition-property:none!important; animation:none!important; }

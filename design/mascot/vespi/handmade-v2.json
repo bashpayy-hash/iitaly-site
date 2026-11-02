@@ -1,0 +1,454 @@
+{
+  "created": "2026-10-25",
+  "provider": "Higgsfield",
+  "model": "gpt_image_2_5",
+  "variant": "flare",
+  "quality": "high",
+  "resolution": "1k",
+  "background": "transparent",
+  "request": "Gamified portal: situational Vespi poses, emotions and costumes that never repeat; zhol risograph objects for stage rewards.",
+  "referenceIds": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+  ],
+  "vespiPrompt": "The exact same handmade toy character as in the reference images (Vespi): almost smooth cream cotton body with fine fibers and a few loose seam threads, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button. [pose]. Soft daylight studio light, gentle contact shadow, isolated on a transparent background. No text, no letters, no logos, no other characters.",
+  "risoPrompt": "Vintage risograph print illustration, slightly isometric view: [one object]. Halftone dot shading, misregistered ink, limited palette of deep teal, cream and tomato red with dark navy outlines, paper grain. A self-contained vignette isolated on a transparent background, no text, no letters, no people.",
+  "generation": [
+    {
+      "name": "stage-start",
+      "id": "1b03686f-e183-4d79-a55b-7efbcfc05482",
+      "kind": "vespi"
+    },
+    {
+      "name": "stage-education",
+      "id": "80d18d26-dea4-4bb1-86fa-4f12ea5d1cc2",
+      "kind": "vespi"
+    },
+    {
+      "name": "stage-docs",
+      "id": "a45dbfc0-222a-45aa-a49d-8b408b3e2b88",
+      "kind": "vespi"
+    },
+    {
+      "name": "stage-apply",
+      "id": "62676c2b-9d94-4ba1-af0d-cc8c3f62c704",
+      "kind": "vespi"
+    },
+    {
+      "name": "stage-dsu",
+      "id": "8e588a76-5058-45b1-9a72-914ccc1f98f4",
+      "kind": "vespi"
+    },
+    {
+      "name": "stage-visa",
+      "id": "99db2833-97d7-429e-9579-f4267a6d12d6",
+      "kind": "vespi"
+    },
+    {
+      "name": "stage-arrival",
+      "id": "011751f5-b8b3-474c-af6b-d4db0ff1e101",
+      "kind": "vespi"
+    },
+    {
+      "name": "celebrate",
+      "id": "4f3d29d3-14ea-436b-83e4-ecb01e234818",
+      "kind": "vespi"
+    },
+    {
+      "name": "stamp",
+      "id": "156fb0ba-3135-427d-ac5c-6cc046c62aaf",
+      "kind": "vespi"
+    },
+    {
+      "name": "thinking",
+      "id": "2e388024-1838-4ec3-9429-b5f0fedaba9f",
+      "kind": "vespi"
+    },
+    {
+      "name": "encourage",
+      "id": "4d1ab540-17b4-441b-a35a-43fc12c22195",
+      "kind": "vespi"
+    },
+    {
+      "name": "oops",
+      "id": "1333c08d-51b9-417c-b937-b326e6b7354a",
+      "kind": "vespi"
+    },
+    {
+      "name": "reading",
+      "id": "9397d197-5ca1-457a-87bc-bcdfce3059b9",
+      "kind": "vespi"
+    },
+    {
+      "name": "first-plan",
+      "id": "19679a7e-dce0-4154-a040-d2b039a0cd74",
+      "kind": "vespi"
+    },
+    {
+      "name": "map",
+      "id": "407cdb2c-dcbc-4826-a11a-7c153f960ac7",
+      "kind": "riso"
+    },
+    {
+      "name": "diploma",
+      "id": "c7cd2e45-4e17-4cc7-809c-4906bbf722f0",
+      "kind": "riso"
+    },
+    {
+      "name": "folder",
+      "id": "8aa8409e-c1ec-4fc3-a13e-277a2b9d5d01",
+      "kind": "riso"
+    },
+    {
+      "name": "envelope",
+      "id": "7f17a198-68d9-4004-bd47-9a6a85d444a8",
+      "kind": "riso"
+    },
+    {
+      "name": "coins",
+      "id": "3154517f-2a5d-44e3-ae76-7c5458182800",
+      "kind": "riso"
+    },
+    {
+      "name": "passport",
+      "id": "1297c1d2-edd1-4483-9d61-e4cbd6642dc3",
+      "kind": "riso"
+    },
+    {
+      "name": "keys",
+      "id": "2a96e435-f8d0-4e70-9c0e-94542f9be748",
+      "kind": "riso"
+    },
+    {
+      "name": "stamp-pad",
+      "id": "74b753df-476c-4707-a450-11393f791089",
+      "kind": "riso"
+    }
+  ],
+  "rejected": [
+    {
+      "name": "travel-journal",
+      "id": "d19528f3-bf02-4e3d-a80a-026f61441a24",
+      "reason": "One stamp shows a pagoda; not Italy-specific."
+    }
+  ],
+  "processing": "Trimmed, resized (Vespi 560px, riso 480px masters), exported as WebP q80 alpha90 at 1x/2x. Paper texture: centre 320px crop of the zhol kit bg_cream.jpg, mirrored into a seamless 640px tile.",
+  "production": [
+    {
+      "file": "public/mascot/handmade-v2/stage-start-280.webp",
+      "width": 280,
+      "height": 223,
+      "bytes": 11922,
+      "sha256": "856495d12757e2f1193d6bcb7871c0c6532a64d1ea71b389d4c79ec638850ca2"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-start-560.webp",
+      "width": 560,
+      "height": 445,
+      "bytes": 24792,
+      "sha256": "02f1c178049301fa1fbf4a3e7a42fce6a079e515f6edc628518a76742fd4806e"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-education-280.webp",
+      "width": 280,
+      "height": 231,
+      "bytes": 11774,
+      "sha256": "6a6c0fad55764bc02926e379dfe25e25c6c7d133acfe1045b1b1c9bad5622d2c"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-education-560.webp",
+      "width": 560,
+      "height": 462,
+      "bytes": 27314,
+      "sha256": "11927aeac2ddf2de3983015b0b3efe61a8aae4dbafe819114429d42d65e68d34"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-docs-280.webp",
+      "width": 280,
+      "height": 221,
+      "bytes": 11016,
+      "sha256": "1c5807912dd424fec3300278593b338a9a8822c1abd4688538831ee87aaf867e"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-docs-560.webp",
+      "width": 560,
+      "height": 442,
+      "bytes": 25696,
+      "sha256": "b146ac3da6e6c2beca8586f4bb0232e1f0aefce2c5349187899f3156580e593d"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-apply-280.webp",
+      "width": 280,
+      "height": 226,
+      "bytes": 14550,
+      "sha256": "2889219b01dc845df0daeff81f3f650e0b7af841ed358aad4067293e64dd1526"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-apply-560.webp",
+      "width": 560,
+      "height": 452,
+      "bytes": 30930,
+      "sha256": "de937ba5e41d4fa58c50547494e4c24c011402fbeffe81b4cd352176e0e20dd1"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-dsu-280.webp",
+      "width": 280,
+      "height": 219,
+      "bytes": 13882,
+      "sha256": "3ba3e0b9eb50788f6ac3732b9474db952c6ef8c5f9eb41841ea79ce1c4f00660"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-dsu-560.webp",
+      "width": 560,
+      "height": 438,
+      "bytes": 32286,
+      "sha256": "0bce9a11e8b00b301fab14b4092db7cf3041aa00c685fe375c5ab874d50c69f4"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-visa-280.webp",
+      "width": 280,
+      "height": 223,
+      "bytes": 11750,
+      "sha256": "290197103180c7f0581c274857a049a97143a57582ab91f5df2adb8642c577e0"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-visa-560.webp",
+      "width": 560,
+      "height": 445,
+      "bytes": 26750,
+      "sha256": "b5233693b6c28006ae1fb483a2d3bde5aeee9af59cf33eb44352be12fa2ad316"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-arrival-280.webp",
+      "width": 280,
+      "height": 235,
+      "bytes": 18344,
+      "sha256": "1001430196f799a1158f27a74ee7cf18573ae7bf86a0bab1a5b4b1dcb5c8fc47"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stage-arrival-560.webp",
+      "width": 560,
+      "height": 470,
+      "bytes": 43844,
+      "sha256": "0342a09f6ebd68f3af205aa4aca89f5ab46d15d2fbe7d3b57e57b955ea0cc0ca"
+    },
+    {
+      "file": "public/mascot/handmade-v2/celebrate-280.webp",
+      "width": 280,
+      "height": 227,
+      "bytes": 14226,
+      "sha256": "f700f695f1d80e5af8da2b3968179e519fc94a17ebc99787e32d11b915ec1da4"
+    },
+    {
+      "file": "public/mascot/handmade-v2/celebrate-560.webp",
+      "width": 560,
+      "height": 454,
+      "bytes": 27734,
+      "sha256": "1608a61d5fa2ba38e260949bc43ac54ba51ac07e264fabe8ff2cb0c563b1618b"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stamp-280.webp",
+      "width": 280,
+      "height": 215,
+      "bytes": 9626,
+      "sha256": "b7c5edfe5d9cff2c1031891740848fb74aee895e8d15de1d9816939477e45d32"
+    },
+    {
+      "file": "public/mascot/handmade-v2/stamp-560.webp",
+      "width": 560,
+      "height": 429,
+      "bytes": 22832,
+      "sha256": "2e92235abe8665dcdf17c58d44d3fed020345d41a98b1127ced80642950c0aff"
+    },
+    {
+      "file": "public/mascot/handmade-v2/thinking-280.webp",
+      "width": 280,
+      "height": 216,
+      "bytes": 9546,
+      "sha256": "0456271e1cae9f55708e76b0f33c5131b7f255277f5a89ffbdd786cd8c37bd6d"
+    },
+    {
+      "file": "public/mascot/handmade-v2/thinking-560.webp",
+      "width": 560,
+      "height": 432,
+      "bytes": 21558,
+      "sha256": "647bd311447106c771360566a8608378278c15769ce6cd1ba13f996b4b487f49"
+    },
+    {
+      "file": "public/mascot/handmade-v2/encourage-280.webp",
+      "width": 280,
+      "height": 224,
+      "bytes": 14872,
+      "sha256": "906200eefd91395e88e1a8894a4d9f78325d73ee7be39a3eeba6229070d14bdd"
+    },
+    {
+      "file": "public/mascot/handmade-v2/encourage-560.webp",
+      "width": 560,
+      "height": 448,
+      "bytes": 30880,
+      "sha256": "eb4d51e0d09bd64f6f18f9844f03ed7169f340e7c06704b64ddb3d7926493ac9"
+    },
+    {
+      "file": "public/mascot/handmade-v2/oops-280.webp",
+      "width": 280,
+      "height": 221,
+      "bytes": 12226,
+      "sha256": "940cc42954872b3ab6f55f099aa9008ef765f36a3b5fa15eb8e1219e6912e5fd"
+    },
+    {
+      "file": "public/mascot/handmade-v2/oops-560.webp",
+      "width": 560,
+      "height": 442,
+      "bytes": 23722,
+      "sha256": "6e62411e6811f83600d797d316fb600b19ef8a57d1b03c0e2dcaaf2bc9a115f4"
+    },
+    {
+      "file": "public/mascot/handmade-v2/reading-280.webp",
+      "width": 280,
+      "height": 225,
+      "bytes": 10636,
+      "sha256": "fedafb1e142957ca56dca94bf95b547123db7aea5ce9e6d9e2e55f056cb0bae1"
+    },
+    {
+      "file": "public/mascot/handmade-v2/reading-560.webp",
+      "width": 560,
+      "height": 449,
+      "bytes": 24676,
+      "sha256": "5527ce04f97c4a8c2677361176231c28fd561e49463297847668bf40b9f14549"
+    },
+    {
+      "file": "public/mascot/handmade-v2/first-plan-280.webp",
+      "width": 280,
+      "height": 222,
+      "bytes": 11186,
+      "sha256": "c618b7dbcf61f2ab2a881220655b34b5beb715b6afd7c2fededea97cfc86c511"
+    },
+    {
+      "file": "public/mascot/handmade-v2/first-plan-560.webp",
+      "width": 560,
+      "height": 443,
+      "bytes": 24974,
+      "sha256": "054e3061409f21bf1f197c4b6090e35692abd1c4ec56087ab71fb7277a02c344"
+    },
+    {
+      "file": "public/illustrations/riso/map-240.webp",
+      "width": 240,
+      "height": 175,
+      "bytes": 16586,
+      "sha256": "9ad426af84c75d7dad82273cd1463dd8d36fb08c95870c343447d30d35b03742"
+    },
+    {
+      "file": "public/illustrations/riso/map-480.webp",
+      "width": 480,
+      "height": 350,
+      "bytes": 47908,
+      "sha256": "138c5fa92e9bc16bbd9795dfc8a64a81f68edae800d269a79a40a242e6e1bb3b"
+    },
+    {
+      "file": "public/illustrations/riso/diploma-240.webp",
+      "width": 240,
+      "height": 179,
+      "bytes": 12200,
+      "sha256": "cf9044272bf52f8743be9d9e7c0940a8c8a01d1c8cdb5f2efc46a654d37b8e8e"
+    },
+    {
+      "file": "public/illustrations/riso/diploma-480.webp",
+      "width": 480,
+      "height": 357,
+      "bytes": 36206,
+      "sha256": "ea04a5da2a7fc650a4c429c655570830f10608383c139e5fa791b61c801f89a9"
+    },
+    {
+      "file": "public/illustrations/riso/folder-240.webp",
+      "width": 240,
+      "height": 170,
+      "bytes": 9364,
+      "sha256": "1cf3f51d281902eafd82c90fb249e332d5d9a86bb78134cafaa44eeaa3ee3f81"
+    },
+    {
+      "file": "public/illustrations/riso/folder-480.webp",
+      "width": 480,
+      "height": 340,
+      "bytes": 34108,
+      "sha256": "2f9f6a8548908d7587557fd90e2b0c16ce831b0439a1589dc86d30755c2b6ed9"
+    },
+    {
+      "file": "public/illustrations/riso/envelope-240.webp",
+      "width": 240,
+      "height": 184,
+      "bytes": 12892,
+      "sha256": "328edf505163949e28f68704b6b00fea933574f8d05eacf0d34598de1baf8702"
+    },
+    {
+      "file": "public/illustrations/riso/envelope-480.webp",
+      "width": 480,
+      "height": 367,
+      "bytes": 36396,
+      "sha256": "9090e47444194625804bb489f40f87a7e468db240638c256b1e5de20f99da3aa"
+    },
+    {
+      "file": "public/illustrations/riso/coins-240.webp",
+      "width": 240,
+      "height": 234,
+      "bytes": 17832,
+      "sha256": "f6cbb2a15fafb09b57a38c15d08a94545edb9c9148346b3e143df69be99a14a2"
+    },
+    {
+      "file": "public/illustrations/riso/coins-480.webp",
+      "width": 480,
+      "height": 467,
+      "bytes": 58932,
+      "sha256": "e4f9771e6935ca1067d5254bcde1fd00b889a0d1ba2dbe180efdda0fa8ad2a51"
+    },
+    {
+      "file": "public/illustrations/riso/passport-240.webp",
+      "width": 240,
+      "height": 175,
+      "bytes": 9598,
+      "sha256": "1d6e209d35396ce0e35d06bb7595556cc02ae6aada283ffe097c0c830a19af3e"
+    },
+    {
+      "file": "public/illustrations/riso/passport-480.webp",
+      "width": 480,
+      "height": 349,
+      "bytes": 33798,
+      "sha256": "7a1d21b23e9f747b247dd70be1a1efaec0e7bba89a6bd22e67ade9abfcc1a346"
+    },
+    {
+      "file": "public/illustrations/riso/keys-240.webp",
+      "width": 240,
+      "height": 181,
+      "bytes": 17434,
+      "sha256": "a41ef580fdb41159857f1b5f6082f09ca41635f4f3938756119505a5c46f3d5c"
+    },
+    {
+      "file": "public/illustrations/riso/keys-480.webp",
+      "width": 480,
+      "height": 362,
+      "bytes": 45362,
+      "sha256": "fc9d1628068d13ff05b98aa0692ac9cf4f82bdfdc7d958c228eb865e45ac87d2"
+    },
+    {
+      "file": "public/illustrations/riso/stamp-pad-240.webp",
+      "width": 240,
+      "height": 179,
+      "bytes": 12564,
+      "sha256": "30c4f9274f444603e8fb05142aed79263ed45428421c4576b71ba79b9d8fd59f"
+    },
+    {
+      "file": "public/illustrations/riso/stamp-pad-480.webp",
+      "width": 480,
+      "height": 357,
+      "bytes": 41358,
+      "sha256": "4d7da99612a2608b65fd9663a0ef7ec32dcfd24cd7befc6e4bcb601fff6e0f90"
+    },
+    {
+      "file": "public/textures/zhol-paper.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 13328,
+      "sha256": "cc06dcbfee103d1735cd17f6811c477351518f2509ef37a9fae1fbe5deefdc63"
+    }
+  ]
+}

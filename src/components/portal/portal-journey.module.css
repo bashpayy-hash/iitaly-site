@@ -58,3 +58,17 @@
 @media(prefers-reduced-motion:reduce){.stageMeter span{transition:none}}
 
 .journey[data-condensed=true] .summary{justify-content:flex-end;margin-bottom:12px}.journey[data-condensed=true] .countNumbers{font-size:16px}.journey[data-condensed=true] .count{font-size:12px}.journey[data-condensed=true] .ahead{display:inline;margin-left:10px;font-size:12px}
+
+/* Таймлайн mikes.cv в обзоре кабинета: строка статуса над маршрутом,
+   текущий шаг раскрыт под своим этапом, просмотр другого этапа — лёгкая
+   карточка-сноска без тёмной плиты. */
+.timeline .summary { align-items:flex-end; margin:0 0 4px; padding-bottom:14px; border-bottom:1px dotted #C9C0B1; }
+.currentStop { display:grid; gap:12px; min-width:0; }
+.stopPreview { display:grid; gap:10px; max-width:420px; padding:18px 20px; border:1px solid #E2DACC; border-radius:18px; background:rgba(251,249,243,.82); }
+.previewTop { display:flex; justify-content:space-between; gap:12px; margin:0; font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#6A6458; }
+.previewStat { margin:0; color:var(--quiet); font-size:13px; line-height:1.5; }
+.previewStat strong { margin-right:4px; color:var(--accent-text); font-size:28px; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+.previewMeter { display:block; height:2px; background:#E2DACC; }
+.previewMeter span { display:block; height:100%; background:var(--accent); transition:width .6s cubic-bezier(.22,1,.36,1); }
+.stopPreview a { display:inline-flex; align-items:center; gap:6px; justify-self:start; min-height:44px; color:var(--ink); font-size:14px; font-weight:500; text-decoration:underline; text-underline-offset:4px; }
+@media(prefers-reduced-motion:reduce){ .previewMeter span { transition:none; } }

@@ -343,6 +343,8 @@ try {
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides#education');
+    // Guides show one point at a time; the next action closes the last point.
+    await page.getByRole('navigation', { name: 'Пункты гайда', exact: true }).locator('[data-story-pill]').last().click();
     await page.locator('[data-guide-inline-action]').filter({ visible: true }).click();
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Assistant context preserves the quiz draft');
@@ -360,11 +362,12 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    if (!baseline) assert.match(await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily), /Inter Tight/, 'Portal headline uses the supplied Cyrillic Inter Tight family');
+    // Owner's zhol kit, 2026-10-25: the cabinet uses the kit's self-hosted Inter Tight, no serif.
+    if (!baseline) { const face = await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily); assert.match(face, /Inter Tight/, 'Portal headline uses the supplied Cyrillic Inter Tight family'); assert.doesNotMatch(face, /Spectral|Charter|Georgia/); }
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
-      assert.equal(await page.locator('[data-portal-road] img').count(),0,'Progress has no mascot image');
+      assert.equal(await page.locator('[data-portal-road] img:not([data-portal-overview] img)').count(),0,'Progress has no mascot image (the opened step keeps its message icon)');assert.equal(await page.locator('[data-portal-road] [data-vespi-scene]').count(),0,'No mascot inside the route');
       assert(await page.locator('[data-portal-overview] [data-road-open]').isVisible(),'Overview exposes the active breakdown action');
       assert.equal(await page.locator('[data-task-check=shortlist]').count(),1,'University selection keeps its check and opens the actual selection flow');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
@@ -397,9 +400,9 @@ try {
       assert(await page.locator('[data-step-detail] [data-portal-step-guide]').isVisible(), 'Instructions have their own reading page');
       await noLegacyPortraits(page.locator('[data-step-detail] [data-portal-step-guide]'), `portal upload ${width}`);
       assert.equal(await page.locator('[data-instruction-point]').count(),1);
-      await page.getByText('Все пункты',{exact:true}).click();
-      await page.getByRole('link',{name:'Проверь читаемость файла',exact:true}).click();
-      assert.equal(await page.locator('[data-portal-document-coach]').count(),1);
+      // Instructions show one point per page; the point pills replace the old «Все пункты» list.
+      await page.locator('[data-portal-step-guide] [data-story-pill][title="Проверь читаемость файла"]').click();
+      assert.equal(await page.locator('[data-portal-step-guide] [data-instruction-point]').count(),1,'The readability check is its own instruction point');
       assert(await page.getByText('Текст читается, края страниц видны.',{exact:true}).isVisible());
       await page.getByRole('navigation',{name:'Разделы задачи'}).locator('a[href$="part=action"]').click();
       assert.equal(await page.locator('[data-task-action-page] [data-portal-document-coach]').count(),0,'The action contains only the necessary form and upload control');

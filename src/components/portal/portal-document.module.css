@@ -6,7 +6,7 @@
 .heading { margin:16px 0 20px; }
 .heading h2 { margin:0 0 14px; max-width:30ch; font-family:var(--portal-heading-font); font-size:32px; line-height:1.18; font-weight:600; letter-spacing:-.025em; scroll-margin-top:88px; }
 .statusBadge { display:inline-flex; padding:5px 11px; border-radius:999px; background:var(--portal-surface-soft); color:var(--portal-ink); font-size:14px; font-weight:600; line-height:1.5; }
-.statusBadge[data-outcome=approved] { background:#E6F4F1; color:#1F7A68; }
+.statusBadge[data-outcome=approved] { background:#E4ECE3; color:var(--portal-green,#356450); }
 .statusBadge[data-outcome=fix],.statusBadge[data-outcome=unreadable] { color:var(--portal-danger); }
 .meta { color:var(--portal-muted); font-size:14px; line-height:1.6; }
 .decision { padding:0; }

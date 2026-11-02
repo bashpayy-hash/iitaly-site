@@ -9,9 +9,10 @@ export async function portalDestination(page, name) {
     await header.locator('a[href="/portal"]:visible').click();
     await page.locator('[data-portal-page=overview]').waitFor();
   } else {
-    if (!await page.locator('[data-road-stage]').count()) await portalDestination(page, 'Обзор');
-    await page.getByRole('link', { name: 'Все шаги этапа' }).click();
-    await page.locator('[data-portal-focus]').waitFor();
+    // «План» is the current stage's page, reached from the step opened on the overview.
+    if (!await page.locator('[data-portal-page=overview]').count()) await portalDestination(page, 'Обзор');
+    await page.locator('[data-portal-overview]').getByRole('link', { name: 'Открыть этап' }).click();
+    await page.locator('[data-portal-page=stage]').waitFor();
   }
 }
 export async function portalTask(page, id, part = "action") {
@@ -21,6 +22,9 @@ export async function portalTask(page, id, part = "action") {
     for(const stage of stages) {
       await portalStage(page, stage);
       if(await page.locator(`[data-focus-row="${id}"],[data-portal-task="${id}"]`).count())break;
+      // Stage pages show one task at a time; later tasks sit behind the step pills.
+      const pill=page.locator(`[data-stage-switcher] [data-story-pill][href*="step=${encodeURIComponent(id)}"]`);
+      if(await pill.count()){await pill.first().click();await page.locator(`[data-focus-row="${id}"]`).waitFor();break;}
     }
   }
   const row=page.locator(`[data-focus-row="${id}"]`);
@@ -43,7 +47,7 @@ export async function portalStage(page, stage) {
     const stages = await page.locator('[data-road-stage]').evaluateAll(nodes => nodes.map(n => n.dataset.roadStage));
     const target = stages.indexOf(stage);
     if (target < 0) throw new Error(`Unknown stage: ${stage}`);
-    await page.getByRole('link', { name: 'Все шаги этапа' }).click();
+    await page.locator('[data-portal-overview]').getByRole('link', { name: 'Открыть этап' }).click();
     for (let count = 0; count < stages.length; count++) {
       const selected = await page.locator('[data-portal-focus]').getAttribute('data-selected-stage');
       if (selected === stage) break;

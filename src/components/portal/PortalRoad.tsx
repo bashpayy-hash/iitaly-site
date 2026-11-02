@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
 import { portalTaskHref, taskDate, taskTitle } from "@/lib/portalNavigation";
@@ -9,7 +9,9 @@ import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskInstructionTitle, taskShortExplainer } from "@/lib/portalStepCopy";
 import styles from "./portal-journey.module.css";
 import { ChevronRight, ArrowUpRight } from "lucide-react";
-import { FlightPlan, type FlightStop } from "@/components/journey/FlightPlan";
+import { FlightPlan, flightWhen, type FlightStop } from "@/components/journey/FlightPlan";
+import { CITIES, UNIS } from "@/data/italy";
+import { useUniversityChoice } from "@/lib/useUniversityChoice";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
 
@@ -22,7 +24,7 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline }: {
+export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -39,9 +41,13 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   showMascot?: boolean;
   navigationOnly?: boolean;
   progressFirst?: boolean;
+  /** Overview as a mikes.cv timeline; the current step opens under its stage. */
+  timeline?: boolean;
+  currentDetail?: ReactNode;
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
+  const { primary: primaryChoice } = useUniversityChoice();
   const destination = roadPosition(done, total);
   const [motion, setMotion] = useState(() => ({
     position: roadPosition(typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? done : travel?.fromDone ?? done, total),
@@ -153,18 +159,23 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   const explainer = savedDocument ? documentOutcome(savedDocument).action : current ? taskShortExplainer(current) : "";
   const action = (savedDocument ? "Открыть разбор" : instruction) || (current?.id === "shortlist" ? "Выбрать университеты" : current && DOC_TASKS[current.id] ? "Приложить файл" : current?.id === "profile" ? "Заполнить профиль" : "Открыть шаг");
 
+  // Destination on the instrument: the locally chosen main university, else the first saved one.
+  const flightDestination = UNIS.find(university => university.id === (primaryChoice?.id || data.client.profile?.universityIds?.[0]));
   const previewIndex = Math.max(0, stages.findIndex(row => row.id === (condensed ? activeStageId || stage?.id : previewId || activeStageId || stage?.id)));
   const previewStage = stages[previewIndex];
   const previewDone = previewStage?.tasks.filter(task => portalTaskDone(data, task)).length || 0;
+  const currentPosition = stage ? stages.findIndex(row => row.id === stage.id) : -1;
   const stops: FlightStop[] = stages.map((row, index) => {
     const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
     const opened = progress.stages.find(item => item.id === row.id)?.open;
     const next = row.tasks.find(task => !portalTaskDone(data, task)) || row.tasks[0];
-    const date = next ? taskDate(next) : "";
+    const when = flightWhen(next?.deadline);
     return {
       id: row.id, title: awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title,
-      locked: !row.tasks.length,
-      meta: !row.tasks.length ? "после анкеты" : [date, `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
+      locked: !row.tasks.length, when,
+      fill: row.tasks.length && opened ? stageDone / row.tasks.length : 0,
+      // The month sits on the left margin; the stop keeps the exact count.
+      meta: !row.tasks.length ? "после анкеты" : [when ? "" : next ? taskDate(next) : "", `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
       ahead: !opened && stageDone > 0,
       state: opened && stageDone === row.tasks.length ? "done" : row.id === stage?.id ? "current" : "future",
       href: `/portal?stage=${encodeURIComponent(row.id)}`,
@@ -194,7 +205,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       </div>
     </div>;
 
-  return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""}`}
+  return <section className={`${styles.journey} ${navigationOnly ? styles.compact : ""} ${progressFirst ? styles.stacked : ""} ${embedded ? styles.embedded : ""} ${timeline && !condensed ? styles.timeline : ""}`}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100, "--stage-count": stages.length || 1 } as CSSProperties}
     data-portal-road data-condensed={condensed || undefined} tabIndex={-1} data-road-navigation-only={navigationOnly ? "true" : undefined}
     data-road-mascot="none" data-road-progress-first={progressFirst ? "true" : undefined}
@@ -206,7 +217,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
     <div className={styles.route}>
-      {!condensed && <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>}
+      {!condensed && !timeline && <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>}
       <div className={styles.summary}>
         {!condensed && <div className={styles.stageMarker}>
           <span className={styles.stageLabel}>Этап</span>
@@ -217,11 +228,31 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
         <span data-road-count><strong className={styles.countNumbers}>{done}</strong> из {total} шагов{progress.ahead > 0 && <small className={styles.ahead}>заранее: {progress.ahead}</small>}</span>
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
-      <FlightPlan stops={stops} index={previewIndex} compact={condensed} onSelect={index => {
+      <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
+      <FlightPlan stops={stops} index={previewIndex} compact={condensed} city={flightDestination?.city} destination={flightDestination ? CITIES[flightDestination.city].name : undefined}
+        variant={timeline && !condensed ? "timeline" : "rail"} instrument={!timeline || condensed}
+        detail={position => {
+          const row = stages[position], previewed = position === previewIndex;
+          // The current step always stays open; browsing opens a second, lighter preview.
+          if (currentDetail && (position === currentPosition || (currentPosition < 0 && previewed))) {
+            return <div className={styles.currentStop} data-flight-stage-preview={previewed ? row.id : undefined}>{currentDetail}</div>;
+          }
+          if (!previewed || !row.tasks.length) return null;
+          return <div className={styles.stopPreview} data-flight-stage-preview={row.id}>
+            <p className={styles.previewTop}><span>Этап {String(position + 1).padStart(2, "0")}</span><span>{stops[position].state === "done" ? "Пройден" : stops[position].ahead ? "Начат заранее" : "Обзор"}</span></p>
+            <p className={styles.previewStat}><strong>{previewDone}</strong> из {row.tasks.length} шагов выполнено</p>
+            <span className={styles.previewMeter} aria-hidden="true"><span style={{ width: `${row.tasks.length ? previewDone / row.tasks.length * 100 : 0}%` }} /></span>
+            <a href={`/portal?stage=${encodeURIComponent(row.id)}`} onClick={event => {
+              if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault(); openPreview();
+            }}>Открыть этап<ArrowUpRight size={16} aria-hidden="true" /></a>
+          </div>;
+        }}
+        onSelect={index => {
         setPreviewId(stages[index].id);
         if (condensed && onSelectStage) onSelectStage(stages[index].id);
       }}>
-        {!condensed && previewStage && <div className={styles.flightWindow} data-flight-stage-preview={previewStage.id}>
+        {!condensed && !timeline && previewStage && <div className={styles.flightWindow} data-flight-stage-preview={previewStage.id}>
           <div className={styles.windowTop}><span>ЭТАП {String(previewIndex + 1).padStart(2, "0")}</span><span>{stops[previewIndex].state === "done" ? "ПРОЙДЕН" : previewStage.id === stage?.id ? "СЕЙЧАС" : "ОБЗОР"}</span></div>
           <h3>{stops[previewIndex].title}</h3>
           <p className={styles.stageStat}><strong>{previewDone}</strong><span>из {previewStage.tasks.length}<br />шагов выполнено</span></p>
@@ -232,7 +263,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
           }}>Открыть этап<ArrowUpRight size={18} aria-hidden="true" /></a>
         </div>}
       </FlightPlan>
-      <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
+      {/* Without stages the timeline has no node to open under: keep the step block. */}
+      {timeline && !condensed && !stops.length && currentDetail}
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
     </div>
     {progressFirst && focus}

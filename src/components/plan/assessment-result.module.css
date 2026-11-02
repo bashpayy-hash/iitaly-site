@@ -56,13 +56,13 @@
 @media(max-width:480px) { .next { padding: 18px; } .nextHeading, .steps > li { gap: 10px; } .next h4 { font-size: 18px; } .transition h3 { font-size: 22px; } }
 @media(prefers-reduced-motion:reduce) { .result, .stepBody, .transitionTrack i::after { animation: none; } .result summary > svg:last-child { transition: none; } }
 
-.flightFrame{padding:32px;border:1px solid #DCD3C3;border-radius:32px;background:rgba(237,232,222,.8)}
-.flightStep{padding:28px;border-radius:20px;background:#352B28;color:#FAF9F3;min-width:0}
-.flightPosition{margin:0 0 24px;font:400 11px/1.5 var(--font-space-mono),monospace;text-transform:uppercase;letter-spacing:.04em;color:#F29A89}
-.flightStep h2{font-size:clamp(26px,3vw,36px);line-height:1.1;letter-spacing:-.03em;font-weight:500;margin:0}
-.flightStep .summary,.flightStep .references p,.flightStep .references a{color:#C9CFC4}.flightStep .action{font-size:15px}.flightStep .references{border-color:#5A4A40}
-.flightActions{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #5A4A40;margin-top:28px;padding-top:16px}
-.flightActions button,.flightActions a{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:10px 16px;font-size:14px;border:0;border-radius:12px;text-decoration:none;background:#FBF9F3;color:#352B28}
-.flightActions button:first-child{background:none;color:#C9CFC4;padding-left:0}.flightActions button:disabled{opacity:.4;cursor:not-allowed}
-.flightFrame :is(button,a):focus-visible{outline:2px solid #F29A89;outline-offset:4px}
-@media(max-width:760px){.flightFrame{padding:20px;border-radius:28px}.flightStep{padding:22px}.flightStep h2{font-size:26px}}
+.flightFrame{--flight-surface:#EEE8DD;padding:40px 40px 28px;border:1px solid rgba(53,43,40,.09);border-radius:32px;background:rgba(237,232,222,.8)}
+.flightStep{max-width:620px;padding:24px 26px;border:2px solid #352B28;border-radius:20px;background:#FBF9F3;color:#352B28;min-width:0;box-shadow:0 8px 32px rgba(53,43,40,.08)}
+.flightPosition{margin:0 0 14px;font:400 10.5px/1.5 var(--font-space-mono),monospace;text-transform:uppercase;letter-spacing:.08em;color:#A33421}
+.flightStep h2{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.flightStep .summary,.flightStep .references p{color:#5C574E}.flightStep .references a{color:#352B28}.flightStep .action{font-size:15px}.flightStep .references{border-color:#E2DACC}
+.flightActions{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #E2DACC;margin-top:20px;padding-top:14px}
+.flightActions button,.flightActions a{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:10px 18px;font-size:14px;font-weight:600;border:0;border-radius:12px;text-decoration:none;background:#B83A27;color:#FAF9F3}
+.flightActions button:first-child{background:none;color:#5C574E;font-weight:400;padding-left:0}.flightActions button:disabled{opacity:.4;cursor:not-allowed}
+.flightFrame :is(button,a):focus-visible{outline:2px solid #A33421;outline-offset:4px}
+@media(max-width:760px){.flightFrame{padding:20px 16px;border-radius:28px}.flightStep{padding:18px}}

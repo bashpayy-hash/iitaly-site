@@ -11,6 +11,10 @@ import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
 import { PortalRouteVespi } from "./PortalRouteVespi";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
+import { Porthole } from "@/components/journey/Porthole";
+import { FlightManifest } from "@/components/journey/FlightManifest";
+import { useUniversityChoice } from "@/lib/useUniversityChoice";
+import { CITIES, UNIS } from "@/data/italy";
 import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
@@ -64,6 +68,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const stageHref = (index: number) => `/portal?stage=${encodeURIComponent(selected.id)}&step=${encodeURIComponent(visibleTasks[index].id)}`;
   usePortalPageFocus(stagePage ? `${selected.title} · ${selectedTask ? taskTitle(selectedTask) : "Шаги"}` : "Мой план", stagePage ? `${selected.id}:${selectedTask?.id}` : "overview", "portal-overview-heading");
   const universities = selectedUniversities(shortlist);
+  const { primary: primaryChoice } = useUniversityChoice();
+  const destination = UNIS.find(university => university.id === (primaryChoice?.id || data.client.profile?.universityIds?.[0]));
   const firstName = data.client.name?.trim().split(/\s+/)[0];
   const days = daysTo(position.task);
   const stageIndex = data.roadmap.filter(stage => stage.tasks.length).findIndex(stage => stage.id === position.stage?.id);
@@ -79,66 +85,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     if (["profile", "shortlist", "path12", "chances"].includes(row.id)) { onOpenTask(row, "instruction"); return; }
     onComplete(row);
   }
-  return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
-    <div className={styles.welcome} data-portal-welcome>
-      <div className={styles.welcomeCopy}>
-        {stagePage && <PortalBreadcrumbs stage={selected} />}
-        <h1 id="portal-overview-heading" tabIndex={-1}>{stagePage ? selected?.title : firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
-        {!stagePage && <p className={styles.welcomeMeta}>
-          {data.client.intakeYear && <span>Поступление: сентябрь {data.client.intakeYear}</span>}
-          {data.client.intakeYear && universities.length > 0 && <span aria-hidden="true"> · </span>}
-          <span data-saved-universities>{universities.map(university => university.name).join(" · ")}</span>
-        </p>}
-      </div>
-    </div>
-    {!stagePage && <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
-      <svg className={styles.darkGrain} data-dark-grain aria-hidden="true" focusable="false" width="100%" height="100%">
-        <filter id="portal-dark-grain"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" /></filter>
-        <rect width="100%" height="100%" filter="url(#portal-dark-grain)" />
-      </svg>
-      <p className={styles.nowRubric}>Этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
-      <h2 id="portal-now-heading">Сейчас</h2>
-      <div className={styles.nowNext}>
-        <p className={styles.nowLabel}>Следующий шаг</p>
-        <p className={styles.nowTitle}>{position.task ? taskTitle(position.task) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
-      </div>
-      {position.task && days !== null && <div className={styles.nowDeadline} data-now-deadline>
-        {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
-        <time dateTime={position.task.deadline || undefined}>{fmtDate(position.task.deadline)}</time>
-      </div>}
-      {position.task && <blockquote className={styles.vespiQuote}>
-        <p>{introduction ? `Ответь на ${WIZ.length} вопросов по бюджету и целям — я уберу лишние шаги и открою полный маршрут.` : taskShortExplainer(position.task)}</p>
-        <cite>Веспи Баурысаков · ИИ-помощник</cite>
-      </blockquote>}
-      {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
-        <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
-        <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
-      </div>}
-      <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
-    </aside>}
-    <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
-    </div>
-    <div className={styles.stageBody} data-portal-overview>
-      <div className={styles.stageHeading}>
-        <div className={styles.stageTitle}>
-          <h2>{stagePage ? "Шаги этапа" : selected?.title}</h2>
-          {stagePage && <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
-            <span>Штампы: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
-            <span className={styles.stampTrack} aria-hidden="true">{ordered.map((row, index) => {
-              const saved = portalTaskDone(savedData, row), before = portalTaskDone(data, row);
-              return <span key={row.id} className={styles.stamp} data-stamp={row.id} data-stamped={saved} data-just-stamped={saved && !before}>{saved ? <Check size={14} strokeWidth={2} /> : <span>{String(index + 1).padStart(2, "0")}</span>}</span>;
-            })}</span>
-          </div>}
-        </div>
-        {!stagePage && selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Все шаги этапа <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
-      </div>
-      {stagePage && selectedTask && <div className={styles.stageSwitcher} data-stage-switcher>
-        <StoryPills items={visibleTasks.map((row, index) => ({ id:row.id, title:taskTitle(row), label:String(index + 1).padStart(2, "0") }))} index={selectedTaskIndex} onSelect={index => navigatePortal(stageHref(index))} href={stageHref} label="Шаги этапа" />
-        <p className={styles.stagePosition}>Шаг {selectedTaskIndex + 1} из {visibleTasks.length}</p>
-      </div>}
-      <div className={styles.taskList} aria-label="Задачи этапа">
-        {(stagePage ? selectedTask ? [selectedTask] : [] : current ? [current] : []).map(row => {
+  const taskList = (list: PortalTask[]) => <div className={styles.taskList} aria-label="Задачи этапа">
+        {list.map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
           const isCurrent = current?.id === row.id, open = stagePage || isCurrent;
           const date = row.deadline && /^\d{4}-\d{2}-\d{2}$/.test(row.deadline) ? fmtDate(row.deadline) : "";
@@ -173,16 +121,82 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             </div>}
           </article>;
         })}
+      </div>;
+
+  const passenger = (firstName || data.client.name?.trim() || "Пассажир").toUpperCase();
+  const overviewDetail = <div className={styles.overviewDetail} data-portal-overview>
+    {current ? taskList([current]) : <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
+    {selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Открыть этап <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
+  </div>;
+
+  return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
+    {!stagePage && <FlightManifest className={styles.manifest} passenger={passenger} destination={destination ? CITIES[destination.city].name : "Италия"} city={destination?.city} />}
+    {!stagePage && <div className={styles.cabin} data-portal-cabin>
+      <Porthole open={progress.total ? progress.done / progress.total : 0}>
+        <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
+      </Porthole>
+    </div>}
+    <div className={styles.welcome} data-portal-welcome>
+      <div className={styles.welcomeCopy}>
+        {stagePage && <PortalBreadcrumbs stage={selected} />}
+        <h1 id="portal-overview-heading" tabIndex={-1}>{stagePage ? selected?.title : firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
+        {!stagePage && <p className={styles.welcomeMeta}>
+          {data.client.intakeYear && <span>Поступление: сентябрь {data.client.intakeYear}</span>}
+          {data.client.intakeYear && universities.length > 0 && <span aria-hidden="true"> · </span>}
+          <span data-saved-universities>{universities.map(university => university.name).join(" · ")}</span>
+        </p>}
       </div>
-      {!stagePage && !current && <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
-      {stagePage && selectedTask && <nav className={styles.stepPagination} aria-label="Переход между шагами этапа">
+    </div>
+    {!stagePage && <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+      <p className={styles.nowRubric}>Этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
+      <h2 id="portal-now-heading">Сейчас</h2>
+      <div className={styles.nowNext}>
+        <p className={styles.nowLabel}>Следующий шаг</p>
+        <p className={styles.nowTitle}>{position.task ? taskTitle(position.task) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
+      </div>
+      {position.task && days !== null && <div className={styles.nowDeadline} data-now-deadline>
+        {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
+        <time dateTime={position.task.deadline || undefined}>{fmtDate(position.task.deadline)}</time>
+      </div>}
+      {position.task && <blockquote className={styles.vespiQuote}>
+        <p>{introduction ? `Ответь на ${WIZ.length} вопросов по бюджету и целям — я уберу лишние шаги и открою полный маршрут.` : taskShortExplainer(position.task)}</p>
+        <cite>Веспи Баурысаков · ИИ-помощник</cite>
+      </blockquote>}
+      {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
+        <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
+        <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
+      </div>}
+    </aside>}
+    <div className={styles.routeCard} data-route-card>
+      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} currentDetail={stagePage ? undefined : overviewDetail} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
+    </div>
+    {!stagePage && <div className={styles.fog} aria-hidden="true" />}
+    {stagePage && <div className={styles.stageBody} data-portal-overview>
+      <div className={styles.stageHeading}>
+        <div className={styles.stageTitle}>
+          <h2>Шаги этапа</h2>
+          <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
+            <span>Штампы: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
+            <span className={styles.stampTrack} aria-hidden="true">{ordered.map((row, index) => {
+              const saved = portalTaskDone(savedData, row), before = portalTaskDone(data, row);
+              return <span key={row.id} className={styles.stamp} data-stamp={row.id} data-stamped={saved} data-just-stamped={saved && !before}>{saved ? <Check size={14} strokeWidth={2} /> : <span>{String(index + 1).padStart(2, "0")}</span>}</span>;
+            })}</span>
+          </div>
+        </div>
+      </div>
+      {selectedTask && <div className={styles.stageSwitcher} data-stage-switcher>
+        <StoryPills items={visibleTasks.map((row, index) => ({ id:row.id, title:taskTitle(row), label:String(index + 1).padStart(2, "0") }))} index={selectedTaskIndex} onSelect={index => navigatePortal(stageHref(index))} href={stageHref} label="Шаги этапа" />
+        <p className={styles.stagePosition}>Шаг {selectedTaskIndex + 1} из {visibleTasks.length}</p>
+      </div>}
+      {taskList(selectedTask ? [selectedTask] : [])}
+      {selectedTask && <nav className={styles.stepPagination} aria-label="Переход между шагами этапа">
         {selectedTaskIndex > 0 ? <PortalPageLink href={stageHref(selectedTaskIndex - 1)}>Назад</PortalPageLink> : <span />}
         {selectedTaskIndex < visibleTasks.length - 1 ? <PortalPageLink href={stageHref(selectedTaskIndex + 1)}>Далее <ChevronRight size={16} aria-hidden="true" /></PortalPageLink> : <PortalPageLink href="/portal">К моему плану <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
       </nav>}
-      {stagePage && <nav className={styles.stagePagination} aria-label="Соседние этапы">
+      <nav className={styles.stagePagination} aria-label="Соседние этапы">
         {data.roadmap[data.roadmap.indexOf(selected) - 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)-1].id)}`}>Предыдущий этап: {data.roadmap[data.roadmap.indexOf(selected)-1].title}</PortalPageLink>}
         {data.roadmap[data.roadmap.indexOf(selected) + 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)+1].id)}`}>Следующий этап: {data.roadmap[data.roadmap.indexOf(selected)+1].title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
-      </nav>}
-    </div>
+      </nav>
+    </div>}
   </section>;
 }

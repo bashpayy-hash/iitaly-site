@@ -1,20 +1,116 @@
-.flight{--flight-blue:#3966A6;--flight-ink:#352B28;--flight-quiet:#5C6056;--flight-line:#DCD3C3;min-width:0;color:var(--flight-ink)}
-.instrument{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;padding-bottom:18px;font:400 10px/1.5 var(--font-space-mono),monospace;letter-spacing:.045em;text-transform:uppercase;color:var(--flight-quiet)}
-.instrumentTitle{margin-left:5px}.layout{display:grid;gap:28px;min-width:0}.layout[data-has-scene=true]{grid-template-columns:minmax(190px,.85fr) minmax(0,1.15fr);align-items:center}
-.rail{position:relative;display:flex;flex-direction:column;min-width:0;max-height:428px;overflow:auto;overscroll-behavior:contain;padding:40px 12px 8px 0;scrollbar-width:thin;scrollbar-color:#DCD3C3 transparent}
-.track{position:absolute;left:10px;top:40px;height:var(--flight-height,calc((var(--flight-count) - 1)*64px + 32px));width:1px;border-left:1.5px dashed #A69E90;pointer-events:none}
-.curve{position:absolute;top:-40px;left:-11px;width:44px;height:44px;overflow:visible}.curve path{stroke:#A69E90;stroke-width:1.5;stroke-dasharray:2 4}
-.plane{position:absolute;top:var(--flight-top,calc(var(--flight-index)*64px + 20px));left:-10px;display:grid;place-items:center;width:20px;height:24px;background:#F2EDE3;color:var(--flight-blue);z-index:2;transition:top .7s cubic-bezier(.22,1,.36,1)}
-.plane svg{transform:rotate(135deg)}
-.stop{position:relative;display:flex;gap:17px;align-items:center;flex:0 0 auto;min-width:0;min-height:64px;padding:6px 0 6px 5px;border:0;background:none;text-align:left;color:var(--flight-ink);text-decoration:none;cursor:pointer}
-.node{flex:0 0 10px;width:10px;height:10px;border:1px solid #8B8171;border-radius:50%;background:#F7F4EA}.stop[data-road-stage-state=done] .node{background:#356450;border-color:#356450}
-.stopCopy{display:block;min-width:0}.stopTitle{display:block;font-size:13px;line-height:1.35;font-weight:500;letter-spacing:-.01em}.stopDetail{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px;color:var(--flight-quiet);font:400 10px/1.4 var(--font-space-mono),monospace;transition:filter .4s,opacity .4s}
-.stopDetail b{font:500 9px/1.4 var(--font-space-mono),monospace;letter-spacing:.025em;text-transform:uppercase;color:#2D568D}
-.stop[data-flight-selected=true] .stopTitle{font-weight:600;color:#A33421}.stop[data-road-stage-state=future]:not([data-flight-selected=true]) .stopDetail{filter:blur(2px);opacity:.45}
-.stop:hover .stopDetail,.stop:focus-visible .stopDetail{filter:none!important;opacity:1!important}.stop:focus-visible{outline:2px solid #3966A6;outline-offset:-2px;border-radius:6px}.stop[aria-disabled=true]{cursor:default}.stop[aria-disabled=true] .stopTitle{color:#6E685D}
-.scene{min-width:0;animation:scene-enter .4s cubic-bezier(.16,1,.3,1)}
-.flight[data-compact=true] .layout{display:block}.flight[data-compact=true] .rail{flex-direction:row;gap:12px;max-height:none;padding:30px 0 8px;overflow-x:auto}.flight[data-compact=true] .stop{flex:1 0 125px;min-height:64px;padding:10px 0;align-items:flex-start}.flight[data-compact=true] .node{display:none}.flight[data-compact=true] .track{left:0;right:0;top:12px;bottom:auto;width:var(--flight-width,100%);height:1px;border-left:0;border-top:1.5px dashed #A69E90}.flight[data-compact=true] .curve{display:none}.flight[data-compact=true] .plane{top:-12px;left:var(--flight-left,calc(var(--flight-index) * (100% / var(--flight-count))));transition:left .7s cubic-bezier(.22,1,.36,1)}.flight[data-compact=true] .plane svg{transform:rotate(45deg)}
-@keyframes scene-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:760px){.instrumentTitle{display:none}.layout[data-has-scene=true]{grid-template-columns:minmax(0,1fr);gap:16px}.rail{max-height:232px}.flight[data-compact=true] .stop{flex-basis:132px}.flight[data-compact=true] .track{width:var(--flight-width,calc(var(--flight-count)*144px - 12px))}.flight[data-compact=true] .plane{left:var(--flight-left,calc(var(--flight-index)*144px))}.stopTitle{font-size:14px}}
-@media(prefers-reduced-motion:reduce){.plane,.stopDetail{transition:none!important}.scene{animation:none}.stop[data-road-stage-state=future] .stopDetail{filter:none!important;opacity:1!important}}
-@media(forced-colors:active){.track,.node{border-color:CanvasText}.plane{color:LinkText}.stop[data-flight-selected=true]{outline:1px solid Highlight}.stopDetail{filter:none!important;opacity:1!important}}
+/* Flight Plan по референсу mikes.cv: тонкий пунктир маршрута с плавной
+   кривой в начале, синий самолётик, моноширинные даты на левом поле и
+   координаты пункта назначения. Сплошная линия — реальный прогресс до
+   текущего этапа, самолётик — то, что открыто для просмотра. */
+.flight { --flight-blue:#3966A6; --flight-ink:#352B28; --flight-quiet:#5C6056; --flight-line:#A69E90; --when:58px; min-width:0; color:var(--flight-ink); }
+
+.instrument { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px 24px; padding-bottom:18px; font:400 10px/1.6 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--flight-quiet); }
+.callsign { display:inline-flex; align-items:center; gap:6px; color:var(--flight-blue); }
+.instrumentTitle { color:var(--flight-quiet); }
+.coordinates { display:grid; justify-items:end; gap:2px; text-align:right; }
+.position { color:var(--flight-ink); }
+
+.layout { display:grid; gap:32px; min-width:0; }
+.layout[data-has-scene=true] { grid-template-columns:minmax(240px,.9fr) minmax(0,1.1fr); align-items:center; }
+
+.rail { position:relative; display:flex; flex-direction:column; min-width:0; max-height:470px; overflow:auto; overscroll-behavior:contain; padding:44px 12px 8px 0; scrollbar-width:thin; scrollbar-color:#DCD3C3 transparent; }
+.track { position:absolute; left:calc(var(--when) + 11px); top:44px; width:0; height:var(--flight-height,calc((var(--flight-count) - 1) * 68px + 34px)); border-left:1.5px dashed var(--flight-line); pointer-events:none; }
+.fill { position:absolute; left:-1.5px; top:0; width:1.5px; height:var(--flight-fill,0); background:var(--flight-blue); transition:height .8s cubic-bezier(.22,1,.36,1); }
+.curve { position:absolute; top:-44px; left:-11px; width:44px; height:44px; overflow:visible; }
+.curve path { stroke:var(--flight-line); stroke-width:1.5; stroke-dasharray:2 4; vector-effect:non-scaling-stroke; }
+.plane { position:absolute; top:calc(var(--flight-top,calc(var(--flight-index) * 68px + 34px)) - 12px); left:-12px; z-index:2; display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--flight-surface,#F2EDE3); color:var(--flight-blue); transition:top .7s cubic-bezier(.22,1,.36,1); }
+.plane svg { transform:rotate(135deg); }
+
+.stop { position:relative; display:grid; grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:center; flex:0 0 auto; min-width:0; min-height:68px; padding:8px 0; border:0; background:none; text-align:left; color:var(--flight-ink); text-decoration:none; cursor:pointer; transition:filter .45s ease,opacity .45s ease; }
+.when { padding-right:12px; text-align:right; font:400 10px/1.3 var(--font-space-mono),monospace; letter-spacing:.04em; color:var(--flight-quiet); white-space:nowrap; }
+.node { position:relative; z-index:1; justify-self:center; width:9px; height:9px; border:1px solid #8B8171; border-radius:50%; background:var(--flight-surface,#F2EDE3); }
+.stop[data-road-stage-state=done] .node { border-color:#356450; background:#356450; }
+.stop[data-road-stage-state=current] .node { width:11px; height:11px; border:2px solid var(--flight-blue); box-shadow:0 0 0 4px rgba(57,102,166,.14); }
+.stopCopy { display:block; min-width:0; padding-left:12px; }
+.stopTitle { display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; font-size:15px; font-weight:500; line-height:1.3; letter-spacing:-.015em; }
+.badge { display:inline-flex; align-items:center; padding:2px 6px; border:1px solid rgba(57,102,166,.45); border-radius:4px; font:500 9px/1.3 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--flight-blue); }
+.stopDetail { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:4px; font:400 10px/1.4 var(--font-space-mono),monospace; color:var(--flight-quiet); }
+.stop[data-flight-selected=true] .stopTitle { font-weight:600; color:#A33421; }
+.stop[aria-disabled=true] { cursor:default; }
+
+/* Глубина резкости: будущие этапы ниже по маршруту слегка размыты, пока
+   до них не доскроллили, не выбрали, не навели курсор и не сфокусировали. */
+.stop:is([data-road-stage-state=future],[data-road-locked]):not([data-flight-focus]) { filter:blur(2px); opacity:.45; }
+.stop:hover,.stop:focus-visible { filter:none!important; opacity:1!important; }
+.stop:focus-visible { outline:2px solid var(--flight-blue); outline-offset:-2px; border-radius:6px; }
+
+.scene { min-width:0; animation:scene-enter .45s cubic-bezier(.16,1,.3,1); }
+
+/* Компактная полоса для шапки подробных экранов и вопросов /plan. */
+.flight[data-compact=true] .layout { display:block; }
+.flight[data-compact=true] .rail { flex-direction:row; gap:12px; max-height:none; padding:30px 0 8px; overflow-x:auto; }
+.flight[data-compact=true] .stop { display:flex; flex-direction:column; align-items:flex-start; flex:1 0 125px; min-height:64px; padding:10px 0; }
+.flight[data-compact=true] :is(.when,.node,.curve) { display:none; }
+.flight[data-compact=true] .stopCopy { padding-left:0; }
+.flight[data-compact=true] .stopTitle { font-size:13px; }
+.flight[data-compact=true] .track { left:0; top:12px; width:var(--flight-width,100%); height:0; border-left:0; border-top:1.5px dashed var(--flight-line); }
+.flight[data-compact=true] .fill { left:0; top:-1.5px; width:var(--flight-fill-x,0); height:1.5px; transition:width .8s cubic-bezier(.22,1,.36,1); }
+.flight[data-compact=true] .plane { top:-12px; left:var(--flight-left,calc(var(--flight-index) * (100% / var(--flight-count)))); transition:left .7s cubic-bezier(.22,1,.36,1); }
+.flight[data-compact=true] .plane svg { transform:rotate(45deg); }
+
+/* Таймлайн mikes.cv: одна колонка по центру страницы. Месяц мелко над
+   годом на левом поле, подпись FLIGHT PLAN у начала кривой, раскрытый этап
+   — прямо под своей точкой. Чем дальше будущий этап от выбранного, тем
+   сильнее он размыт, пока до него не доскроллили. */
+.flight[data-variant=timeline] { --when:72px; --flight-curve:84px; }
+.flight[data-variant=timeline] .rail { max-height:none; overflow:visible; padding:calc(var(--flight-curve) + 34px) 0 12px; }
+.flight[data-variant=timeline] .track { top:calc(var(--flight-curve) + 34px); }
+.flight[data-variant=timeline] .curve { top:calc(var(--flight-curve) * -1); left:-11px; width:118px; height:var(--flight-curve); }
+.origin { position:absolute; top:calc(var(--flight-curve) * -1 - 30px); left:96px; display:grid; gap:3px; white-space:nowrap; font:400 9px/1.3 var(--font-space-mono),monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--flight-quiet); }
+.origin b { font-weight:400; color:var(--flight-blue); }
+.origin::after { content:""; position:absolute; left:6px; bottom:-8px; width:5px; height:5px; border-radius:50%; background:var(--flight-blue); }
+.flight[data-variant=timeline] .stop { grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:start; min-height:0; padding:18px 0; }
+.flight[data-variant=timeline] .when { display:grid; justify-items:end; gap:1px; padding-top:2px; font-size:11px; letter-spacing:.06em; color:var(--flight-ink); }
+.flight[data-variant=timeline] .when small { font-size:8.5px; letter-spacing:.12em; color:var(--flight-quiet); }
+.flight[data-variant=timeline] .node { margin-top:6px; }
+.flight[data-variant=timeline] .stopCopy { padding-left:14px; }
+.flight[data-variant=timeline] .stopTitle { font-size:18px; font-weight:600; letter-spacing:-.02em; }
+.flight[data-variant=timeline] .badge { padding:0; border:0; font-size:9.5px; letter-spacing:.1em; }
+.flight[data-variant=timeline] .stop[data-flight-selected=true] .stopTitle { color:var(--flight-ink); }
+.flight[data-variant=timeline] .stop[data-flight-selected=true] .node { box-shadow:0 0 0 5px rgba(57,102,166,.14); }
+.flight[data-variant=timeline] .stop[data-road-stage-state=done] .stopTitle { color:var(--flight-quiet); }
+.flight[data-variant=timeline] .stop:is([data-road-stage-state=future],[data-road-locked]):not([data-flight-focus])[data-flight-distance="1"] { filter:blur(1px); opacity:.62; }
+.flight[data-variant=timeline] .stop:is([data-road-stage-state=future],[data-road-locked]):not([data-flight-focus])[data-flight-distance="3"] { filter:blur(3px); opacity:.3; }
+.detail { position:relative; z-index:1; min-width:0; margin:-4px 0 22px calc(var(--when) + 22px + 14px); animation:detail-open .55s cubic-bezier(.22,1,.36,1) both; }
+.flight[data-variant=timeline] .plane { background:var(--flight-surface,#F7F4EA); }
+
+@keyframes detail-open { from { opacity:0; transform:translateY(-8px); filter:blur(4px); } to { opacity:1; transform:none; filter:none; } }
+@keyframes scene-enter { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+@media(max-width:760px) {
+  .flight { --when:48px; }
+  .instrumentTitle { display:none; }
+  .coordinates { justify-items:start; text-align:left; }
+  .layout[data-has-scene=true] { grid-template-columns:minmax(0,1fr); gap:16px; }
+  .rail { max-height:244px; }
+  .stopTitle { font-size:14px; }
+  .flight[data-compact=true] .stop { flex-basis:132px; }
+  .flight[data-compact=true] .track { width:var(--flight-width,calc(var(--flight-count) * 144px - 12px)); }
+  .flight[data-compact=true] .plane { left:var(--flight-left,calc(var(--flight-index) * 144px)); }
+  .flight[data-variant=timeline] { --when:44px; --flight-curve:64px; }
+  .flight[data-variant=timeline] .curve { width:86px; }
+  .origin { left:70px; }
+  .flight[data-variant=timeline] .stop { padding:14px 0; }
+  .flight[data-variant=timeline] .stopCopy { padding-left:10px; }
+  .flight[data-variant=timeline] .stopTitle { font-size:16px; }
+  .flight[data-variant=timeline] .when { font-size:10px; }
+  .flight[data-variant=timeline] .when small { font-size:8px; }
+  .detail { margin-left:calc(var(--when) + 22px + 10px); }
+}
+@media(max-width:560px) { .detail { margin-left:0; } }
+@media(prefers-reduced-motion:reduce) {
+  .plane,.fill,.stop { transition:none!important; }
+  .scene,.detail { animation:none; }
+  .stop { filter:none!important; opacity:1!important; }
+}
+@media(forced-colors:active) {
+  .track,.node { border-color:CanvasText; }
+  .fill { background:Highlight; }
+  .plane { color:LinkText; }
+  .stop { filter:none!important; opacity:1!important; }
+  .stop[data-flight-selected=true] { outline:1px solid Highlight; }
+}
