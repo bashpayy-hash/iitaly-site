@@ -118,7 +118,7 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           const steps = await context.newPage();
           steps.on('pageerror', error => errors.push(error.message));
           await steps.setViewportSize({ width, height:900 });
-          await steps.goto(origin + route, { waitUntil:'load' });
+          await steps.goto(origin + route, { waitUntil:'networkidle' }); // fresh tab: hydrated before the clicks
           const stepCards = steps.locator('[data-guide-step-card]');
           await stepCards.nth(1).click();
           await steps.waitForURL('**/guides/tests/2');

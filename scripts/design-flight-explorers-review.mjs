@@ -44,21 +44,27 @@ try{
     await page.getByRole('button',{name:'Сбросить поиск'}).click();
     await page.getByRole('button',{name:'После приезда',exact:true}).click();
     assert.equal(await page.locator('[data-guide-select]').count(),3);
-    await page.locator('[data-guide-select=permesso]').click();
-    await page.waitForURL('**/guides/permesso');
+    // Step pages and old links are walked in a side tab that waits for URLs and
+    // elements: quick in-page navigation leaves Next's background route checks
+    // in flight, and a later network-idle wait on that tab could hang (PR #145).
+    // «Подробнее» leads to the topic page (clicking tiles is covered by the
+    // guides-vespi and UX reviews); the side tab starts there, hydrated.
+    assert.equal(await page.locator('[data-guide-select=permesso]').getAttribute('href'),'/guides/permesso');
+    const nav=await context.newPage();nav.on('pageerror',e=>errors.push(e.message));
+    await nav.goto(origin+'/guides/permesso',{waitUntil:'networkidle'});
     // The topic page is a row of step cards; each step has its own page.
-    const steps=page.locator('[data-guide-step-card]');
+    const steps=nav.locator('[data-guide-step-card]');
+    await steps.first().waitFor();
     assert((await steps.count())>1);
-    await steps.nth(1).click();await page.waitForURL('**/guides/permesso/2');
-    await page.locator('[data-instruction-point="2"]').waitFor();
-    await check(page,'Guide step '+width);
-    await page.locator('[data-guide-step-next]').click();await page.waitForURL('**/guides/permesso/3');
-    await page.locator('[data-guide-step-prev]').click();await page.waitForURL('**/guides/permesso/2');
-    await page.goto(origin+'/guides#con',{waitUntil:'networkidle'});await page.waitForURL('**/guides/con');
-    // Old inspector links redirect after hydration; checked in a side tab that
-    // waits for the target, so no redirect is left in flight on this tab.
-    const legacy=await context.newPage();legacy.on('pageerror',e=>errors.push(e.message));
-    await legacy.goto(origin+'/guides?topic=codice',{waitUntil:'domcontentloaded'});await legacy.waitForURL('**/guides/codice');await legacy.locator('[data-guide-panel=codice]').waitFor();await legacy.close();
+    await steps.nth(1).click();await nav.waitForURL('**/guides/permesso/2');
+    await nav.locator('[data-instruction-point="2"]').waitFor();
+    await check(nav,'Guide step '+width);
+    await nav.locator('[data-guide-step-next]').click();await nav.waitForURL('**/guides/permesso/3');
+    await nav.locator('[data-guide-step-prev]').click();await nav.waitForURL('**/guides/permesso/2');
+    // Old links redirect after hydration: /guides#con and the former inspector's ?topic=.
+    await nav.goto(origin+'/guides#con',{waitUntil:'domcontentloaded'});await nav.waitForURL('**/guides/con');await nav.locator('[data-guide-panel=con]').waitFor();
+    await nav.goto(origin+'/guides?topic=codice',{waitUntil:'domcontentloaded'});await nav.waitForURL('**/guides/codice');await nav.locator('[data-guide-panel=codice]').waitFor();
+    await nav.close();
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
     for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
     assert.equal(await page.locator('[data-deck-university]').count(),3);
