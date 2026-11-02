@@ -231,3 +231,17 @@ The owner re-issued the four-reference brief (Butter, mikes.cv, Fiddle, sebneil)
 **Guides inspector (sebneil).** The numbered index carries a mono stage tag and a sliding terracotta marker. The inspector is a Butter card (40px padding, 32px radius) with the dark document scene, four badges and the deep link. Badges quote the guide's own copy (`GUIDE_FACTS` in `GuideDirectory.tsx`; update together with `src/data/guides.ts`); where a guide states no time, price or deadline, the badge says «по ситуации» / «по условиям заявки» in a dashed outline. «Сложность» counts the points of the detailed page.
 
 **Butter cards.** Scene cards, the guides inspector, the portal route card and the /plan Flight Plan frame share 32px radius and 40px padding (22–24px on phones). The caption tone is rgba(20,20,19,.62): the brief's .5 measures 4.1:1 on this paper, below AA.
+
+## Radical pass: closer to the references · 2 November 2026
+
+The owner judged the second pass "not similar at all" and allowed radical changes. This section supersedes the 2 November details above where they differ.
+
+**Cabinet overview = mikes.cv.** Top-left: a mono manifest with a dotted left rule (`FlightManifest`): passenger first name, «Казахстан → city», destination coordinates, and local times for Almaty and the destination (computed in the browser with `Intl`, dashes before hydration). Centre: a code-drawn porthole (`Porthole`, inline SVG: cream frame, sky over a cloud sea, slow cloud drift, a shade that lifts with real progress). Vespi leans on the porthole sill (the same `PortalRouteVespi`, one per page). Right: the «Сейчас» board in the same mono language (stage rubric, next step, days to the deadline, Vespi's line, ahead-of-time list); no dark plate. Under the porthole the centred greeting. Below: one centred Flight Plan column (`variant="timeline"`): month small over the year on the left margin, «FLIGHT PLAN» label at the start of the curve, the current task card (`data-portal-overview`) opened right under the current stage with «Открыть этап»; browsing another stage opens a light preview under it. Distant future stages blur progressively (1/2/3px) until scrolled into the middle band; a fixed fog with backdrop blur softens the bottom edge. Reduced motion: no drift, no shade lift, no blur.
+
+The SVG porthole uses SVG gradients for sky and frame; CSS gradients stay out of the portal (the fog uses a mask, not a background).
+
+**/plan result.** The same timeline: the reading card opens under the selected step (light, 2px ink border), «Далее» moves the plane down the column.
+
+**Universities = Fiddle arc.** Three vivid poster cards (violet, red, teal) stand on a perspective arc; the focused one is straight and slightly closer. A mono index sits above each card, a vertical giant university code runs along the poster, and the focused code is set huge under the arc with a position scale. The pastel lilac-to-mint section background frames the arc. Rows stay level; the bleed never exceeds the section gutter.
+
+**Guides = sebneil index.** A giant typographic list of topics (28–52px, mono numbers and stage tags); the chosen topic is dark with a terracotta dot, the rest dimmed to a tone that still holds 3:1 for large text. The inspector is a Butter card that slides in from the right and stays sticky; on phones it unfolds right under the chosen topic (CSS `order`, one DOM node). Above the index, two Butter cards (Виза D, Permesso) with dark scenes and tabs; all figures there are the same checked quotes as the inspector badges (`guideFacts.ts`).

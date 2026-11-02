@@ -98,7 +98,7 @@ try {
     assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.equal(await page.locator('[data-portal-welcome] a,[data-portal-welcome] button').count(),0,'Greeting metadata is plain text');
-    assert.equal(await page.locator('[data-portal-now] [data-vespi-scene=welcome]').count(),1,'Vespi lives in the Now column');
+    assert.equal(await page.locator('[data-portal-cabin] [data-porthole] [data-vespi-scene=welcome]').count(),1,'Vespi peeks out by the porthole');
     assert.match(await page.locator('[data-now-deadline]').innerText(),/98\s*дней до ориентира/);
     assert.equal(await page.locator('[data-now-ahead] li').count(),2);
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1,'Only the current task expands');
@@ -141,14 +141,22 @@ try {
 
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
+    // mikes.cv composition: manifest, porthole and the Now board on one band,
+    // greeting under the porthole, then one Flight Plan column whose current
+    // stage opens the next task right under its node.
     const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
-    assert(Math.abs(work.y-route.y-route.height-(width<=600?16:20))<1,'Route and checklist share a compact grid');
+    assert(work.y>=route.y&&work.y+work.height<=route.y+route.height+1,'The current step opens inside the Flight Plan');
+    const stop=await page.locator('[data-road-stage=docs]').boundingBox();assert(work.y>=stop.y+stop.height-6&&work.y-stop.y-stop.height<24,'The step sits right under its stage');
     const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
-    const now=await page.locator('[data-portal-now]').boundingBox();
-    if(width>1100){assert(now.x>=route.x+route.width+23);assert(Math.abs(now.y-route.y)<1);assert(work.y+work.height<=now.y+now.height+1,'The overview task card does not stretch to fill the taller assistant column');}
-    else assert(now.y+now.height<=route.y,'Now column moves above the route');
+    const cabin=await page.locator('[data-portal-cabin]').boundingBox(),manifest=await page.locator('[data-flight-manifest]').boundingBox(),now=await page.locator('[data-portal-now]').boundingBox();
+    assert(cabin.y+cabin.height<=header.y+1,'The porthole sits above the greeting');
+    const centre=await page.locator('[data-portal-focus]').evaluate(el=>{const r=el.getBoundingClientRect();return r.x+r.width/2;});
+    assert(Math.abs(cabin.x+cabin.width/2-centre)<4,'The porthole is centred');
+    if(width>1100){assert(manifest.x+manifest.width<cabin.x&&now.x>cabin.x+cabin.width,'Manifest left and Now board right of the porthole');assert(Math.abs(now.y-manifest.y)<2);}
+    else if(width>640)assert(now.y+now.height<=cabin.y+1&&Math.abs(now.y-manifest.y)<2,'Manifest and Now share the first row');
+    else assert(now.y>=header.y+header.height-1&&now.y+now.height<=route.y+1,'On phones the Now board sits between greeting and route');
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
-    assert(work.y+work.height-card.y-card.height<=20,'The overview card ends after its current task without an empty white area');
+    assert(work.y+work.height-card.y-card.height<=64,'The opened step ends with its stage link, without an empty area');
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
     if(width>600){assert(card.height<=220,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+10);}
@@ -162,7 +170,7 @@ try {
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
     await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
-    await page.getByRole('link',{name:'Все шаги этапа'}).click();
+    await page.locator('[data-portal-overview]').getByRole('link',{name:'Открыть этап'}).click();
     assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
     assert.equal(await page.locator('[data-task-check]').count(),1);
     assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),5);
@@ -207,7 +215,7 @@ try {
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
-    await page.getByRole('link',{name:'Все шаги этапа'}).click();
+    await page.locator('[data-portal-overview]').getByRole('link',{name:'Открыть этап'}).click();
     await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
     await page.locator('[data-task-check=translate]').click();
     if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal((await portalRoadState(page)).done,'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}

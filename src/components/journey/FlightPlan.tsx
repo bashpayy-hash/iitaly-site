@@ -1,6 +1,6 @@
 "use client";
 
-import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from "react";
+import { type CSSProperties, Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 import { Plane } from "lucide-react";
 import type { CityId } from "@/data/italy";
 import { flightCoordinates } from "./flightCoordinates";
@@ -22,11 +22,18 @@ export function flightWhen(date?: string | null) {
   return match ? `${MONTHS[Number(match[2]) - 1]} ${match[1]}` : undefined;
 }
 
-/** Browsing a stop is deliberately separate from saving/completing a task. */
-export function FlightPlan({ stops, index, onSelect, compact = false, children, label = "Этапы маршрута", destination = "Италия", city, currentLabel = "Текущий шаг" }: {
+/** Browsing a stop is deliberately separate from saving/completing a task.
+ *  `timeline` is the mikes.cv layout: one centred column, month over year on
+ *  the left margin and the open stop's content right under its node. */
+export function FlightPlan({ stops, index, onSelect, compact = false, children, label = "Этапы маршрута", destination = "Италия", city, currentLabel = "Текущий шаг", variant = "rail", detail, instrument = true, origin = "Казахстан" }: {
   stops: FlightStop[]; index: number; onSelect: (index: number) => void;
   compact?: boolean; children?: ReactNode; label?: string; destination?: string; city?: CityId | null; currentLabel?: string;
+  variant?: "rail" | "timeline";
+  /** Timeline only: content opened under a stop (null keeps the stop closed). */
+  detail?: (position: number) => ReactNode;
+  instrument?: boolean; origin?: string;
 }) {
+  const timeline = variant === "timeline" && !compact;
   const rail = useRef<HTMLElement>(null);
   const [inFocus, setInFocus] = useState<ReadonlySet<number>>(new Set());
   const safeIndex = Math.max(0, Math.min(index, stops.length - 1));
@@ -72,7 +79,7 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
   useEffect(() => {
     const root = rail.current;
     if (!root || compact || typeof IntersectionObserver === "undefined") return;
-    const scrolls = root.scrollHeight > root.clientHeight + 1;
+    const scrolls = !timeline && root.scrollHeight > root.clientHeight + 1;
     const observer = new IntersectionObserver(entries => setInFocus(previous => {
       const next = new Set(previous);
       entries.forEach(entry => {
@@ -80,21 +87,22 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
         if (entry.isIntersecting) next.add(position); else next.delete(position);
       });
       return next;
-    }), { root: scrolls ? root : null, rootMargin: scrolls ? "0px 0px -35% 0px" : "-20% 0px -38% 0px" });
+    // The timeline blurs only what sits at the bottom edge, under the fog.
+    }), { root: scrolls ? root : null, rootMargin: timeline ? "0px 0px -14% 0px" : scrolls ? "0px 0px -35% 0px" : "-20% 0px -38% 0px" });
     root.querySelectorAll("[data-flight-stop]").forEach(stop => observer.observe(stop));
     return () => observer.disconnect();
-  }, [compact, stops.length]);
+  }, [compact, timeline, stops.length]);
 
   if (!stops.length) return null;
-  return <div className={styles.flight} data-flight-plan data-compact={compact || undefined} style={{ "--flight-index": safeIndex, "--flight-count": stops.length } as CSSProperties}>
-    <div className={styles.instrument}>
+  return <div className={styles.flight} data-flight-plan data-compact={compact || undefined} data-variant={timeline ? "timeline" : undefined} style={{ "--flight-index": safeIndex, "--flight-count": stops.length } as CSSProperties}>
+    {instrument && <div className={styles.instrument}>
       <span className={styles.callsign}><Plane size={13} strokeWidth={1.8} aria-hidden="true" />Flight plan<span className={styles.instrumentTitle}> / Маршрут поступления</span></span>
       <span className={styles.coordinates} data-flight-coordinates>
         <span>Казахстан <span aria-hidden="true">→</span> {destination}</span>
         <span className={styles.position}>{coordinates.label} · {coordinates.place}</span>
       </span>
-    </div>
-    <div className={styles.layout} data-has-scene={Boolean(children)}>
+    </div>}
+    <div className={styles.layout} data-has-scene={Boolean(children) && !timeline}>
       <nav ref={rail} className={styles.rail} aria-label={label} onKeyDown={event => {
         if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
         const target = (event.target as HTMLElement).closest<HTMLElement>("[data-flight-stop]");
@@ -107,14 +115,16 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
         rail.current?.querySelector<HTMLElement>(`[data-flight-stop="${next}"]`)?.focus({ preventScroll: true });
       }}>
         <div className={styles.track} data-flight-track aria-hidden="true">
-          <svg className={styles.curve} viewBox="0 0 44 44" fill="none"><path d="M42 1C42 24 10 16 10 43" /></svg>
+          {timeline && <span className={styles.origin}><b>Flight plan</b>{origin}</span>}
+          <svg className={styles.curve} viewBox="0 0 44 44" fill="none" preserveAspectRatio="none"><path d="M42 1C42 24 10 16 10 43" /></svg>
           <span className={styles.fill} />
           <span className={styles.plane} data-flight-plane><Plane size={20} strokeWidth={1.6} /></span>
         </div>
         {stops.map((stop, position) => {
           const focused = position === safeIndex || inFocus.has(position);
+          const [month, year] = (stop.when || "").split(" ");
           const content = <>
-            <span className={styles.when} aria-hidden="true">{stop.when || String(position + 1).padStart(2, "0")}</span>
+            <span className={styles.when} aria-hidden="true">{timeline && year ? <><small>{month}</small>{year}</> : stop.when || String(position + 1).padStart(2, "0")}</span>
             <span className={styles.node} data-flight-node aria-hidden="true" />
             <span className={styles.stopCopy}>
               <span className={styles.stopTitle}>{stop.title}{stop.state === "current" && <b className={styles.badge}>{currentLabel}</b>}</span>
@@ -127,19 +137,25 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
             "data-flight-stop": position,
             "data-flight-selected": position === safeIndex,
             "data-flight-focus": focused || undefined,
+            "data-flight-distance": Math.min(3, Math.abs(position - safeIndex)),
             "data-road-stage": stop.locked ? undefined : stop.id,
             "data-road-stage-state": stop.state,
             "data-stage-selected": position === safeIndex || undefined,
             "aria-current": stop.state === "current" ? "step" as const : undefined,
           };
-          if (stop.locked) return <span key={stop.id} {...attrs} data-road-locked aria-disabled="true">{content}</span>;
-          return stop.href ? <a key={stop.id} {...attrs} href={stop.href} onClick={event => {
-            if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            event.preventDefault(); onSelect(position);
-          }}>{content}</a> : <button key={stop.id} type="button" {...attrs} onClick={() => onSelect(position)}>{content}</button>;
+          const control = stop.locked ? <span key={stop.id} {...attrs} data-road-locked aria-disabled="true">{content}</span>
+            : stop.href ? <a key={stop.id} {...attrs} href={stop.href} onClick={event => {
+              if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault(); onSelect(position);
+            }}>{content}</a> : <button key={stop.id} type="button" {...attrs} onClick={() => onSelect(position)}>{content}</button>;
+          if (!timeline) return control;
+          // Interactive content cannot live inside the stop's link, so the
+          // opened panel follows it as a sibling on the same column.
+          const opened = detail?.(position);
+          return <Fragment key={stop.id}>{control}{opened && <div className={styles.detail} data-flight-detail={position} data-flight-focus={focused || undefined}>{opened}</div>}</Fragment>;
         })}
       </nav>
-      {children && <div className={styles.scene} key={stops[safeIndex]?.id}>{children}</div>}
+      {children && !timeline && <div className={styles.scene} key={stops[safeIndex]?.id}>{children}</div>}
     </div>
   </div>;
 }

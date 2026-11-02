@@ -174,6 +174,9 @@ try {
     await picker(page).getByRole('navigation', { name: 'Выбор университетов' }).getByRole('link', { name: 'Сравнение', exact: true }).click();
     await picker(page).getByRole('combobox', { name: 'Университет 1', exact: true }).selectOption('bocconi');
     await picker(page).getByRole('combobox', { name: 'Университет 2', exact: true }).selectOption('polimi');
+    // Since the 27 October deck the grid is the default; the full model lives under «Таблица».
+    const tableMode = picker(page).getByRole('button', { name: 'Таблица', exact: true });
+    if (await tableMode.count()) await tableMode.click();
     const table = picker(page).locator('[data-university-comparison]');
     assert.equal(await table.locator('[data-comparison-row]').count(), 12, 'The full existing comparison is retained');
     const budget = table.locator('[data-comparison-row=period]');

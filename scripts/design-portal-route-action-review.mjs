@@ -86,7 +86,7 @@ try {
     });
     assert.deepEqual({...design,ratio:0},{size:'40px',weight:'600',accent:'rgb(163, 52, 33)',ratio:0});
     assert(Math.abs(design.ratio-6/26)<.00001,'Ahead tasks do not enter ordered progress');
-    assert.equal(await page.locator('[data-portal-now] strong').first().evaluate(el=>getComputedStyle(el).color),'rgb(242, 154, 137)');
+    assert.equal(await page.locator('[data-portal-now] strong').first().evaluate(el=>getComputedStyle(el).color),'rgb(163, 52, 33)');
     const nav=page.getByRole('navigation',{name:'Этапы маршрута',exact:true});
     assert(await nav.isVisible());assert.equal(await nav.locator('[data-flight-stop]').count(),6);
     assert.equal(await nav.locator('[data-flight-plane]').count(),1);

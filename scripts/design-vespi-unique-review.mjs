@@ -109,7 +109,7 @@ try {
     {
       const { page, context } = await portal(viewport, 'screenshot-parent');
       await decoded(page);
-      assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').count(), 1, 'Exactly one Vespi in the Now plate');
+      assert.equal(await page.locator('[data-portal-cabin] [data-vespi-scene]').count(), 1, 'Exactly one Vespi, by the porthole');
       assert.equal(await page.locator('main [data-vespi-scene]').count(), 1, 'One mascot on the overview');
       assert.equal(await page.locator('[data-stage-souvenir],[data-portal-overview] img[data-riso-art]').count(), 0, 'No stage souvenir: the owner removed it');
       await mascots(page, `overview ${width}`);
