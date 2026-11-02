@@ -233,6 +233,10 @@ try {
     const completed=page.locator('article[data-completed=true]').first();assert.match(await completed.innerText(),/Выполнено/);assert.doesNotMatch(await completed.innerText(),/31 янв/);assert.equal(await completed.locator('strong').evaluate(el=>getComputedStyle(el).color),'rgb(92, 96, 86)');
     assert.equal(calls.length,failTask?2:1);
     await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
+    // A step change moves focus to its heading on the next frame; let that frame
+    // pass so the keyboard press lands on the button, not between keydown and keyup.
+    await page.locator('[data-task-ready=apostille]').waitFor();
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
     await page.locator('[data-task-ready=apostille]').press('Space');
     assert.equal((await portalRoadState(page,'5')).done,'5');
     await portalStage(page,'docs');
