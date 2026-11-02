@@ -1,0 +1,31 @@
+/* Витрина тем: плитки в две колонки, светлая и тёмная поочерёдно, текст по
+   центру сверху, вещь-иллюстрация снизу. На телефоне — одна колонка. */
+.tiles { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.tile { display:flex; flex-direction:column; align-items:center; min-width:0; min-height:560px; padding:52px 32px 0; overflow:hidden; border-radius:28px; background:#F1ECE3; color:#241F1C; text-align:center; }
+.tile[data-tone=dark] { background:#2A2420; color:#FAF6EE; }
+/* Нечётное число тем: последняя плитка во всю ширину, без пустой ячейки. */
+.tile:last-child:nth-child(odd) { grid-column:1 / -1; }
+.tile h2 { margin:0; font-size:clamp(30px,3.2vw,44px); font-weight:600; line-height:1.06; letter-spacing:-.03em; text-wrap:balance; }
+.tile p { max-width:32ch; margin:10px 0 0; font-size:17px; line-height:1.45; color:#4A443D; text-wrap:balance; }
+.tile[data-tone=dark] p { color:#D9D1C4; }
+.actions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:22px; }
+.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 20px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color .2s ease,color .2s ease; }
+.primary { background:#B83A27; color:#FAF9F3; }
+.primary:hover { background:#A33421; }
+.secondary { border:1px solid #B83A27; color:#A33421; }
+.secondary:hover { background:#B83A27; color:#FAF9F3; }
+.tile[data-tone=dark] .secondary { border-color:#F29A89; color:#F6C2B5; }
+.tile[data-tone=dark] .secondary:hover { background:#F29A89; color:#2A2420; }
+.primary:focus-visible,.secondary:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
+.tile[data-tone=light] .primary:focus-visible { outline-color:#A33421; }
+.art { display:block; width:min(80%,360px); height:auto; margin-top:auto; padding:32px 0 40px; transition:transform .6s cubic-bezier(.22,1,.36,1); }
+.tile:hover .art { transform:translateY(-6px) scale(1.02); }
+@media(max-width:760px) {
+  .tiles { grid-template-columns:minmax(0,1fr); }
+  .tile { min-height:0; padding:40px 20px 0; border-radius:24px; }
+  .tile h2 { font-size:30px; }
+  .tile p { font-size:16px; }
+  .art { width:min(72%,300px); padding:26px 0 30px; }
+}
+@media(prefers-reduced-motion:reduce) { .art,.primary,.secondary { transition:none; } .tile:hover .art { transform:none; } }
+@media(forced-colors:active) { .tile { border:1px solid CanvasText; } }

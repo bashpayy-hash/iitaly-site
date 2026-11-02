@@ -105,21 +105,32 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           assert.equal(await page.locator('[data-deck-university][data-primary=true]').count(), 1);
         }
         if (route === '/guides/tests') {
-          const switcher = page.locator('[data-media-switcher]');
-          assert.equal(await switcher.locator('[data-instruction-point]').count(), 1);
+          // Owner 2 Nov (apple.com «Learn all about»): the topic page is a row of
+          // step cards and every point has its own page; nothing is cut.
+          const cards = page.locator('[data-guide-step-card]');
+          assert.equal(await cards.count(), 3);
+          assert.equal(await page.locator('[data-instruction-point]').count(), 0, 'Step text lives on step pages');
           assert.doesNotMatch(await page.locator('article').innerText(), /Padova|Падов/);
-          await switcher.getByRole('button', { name:'Далее', exact:true }).click();
-          assert.equal(new URL(page.url()).searchParams.get('point'), '2');
-          assert.match(await switcher.locator('[data-instruction-point]').innerText(), /Результат/);
+          await cards.nth(1).click();
+          await page.waitForURL('**/guides/tests/2');
+          const point = page.locator('[data-instruction-point="2"]');
+          assert.match(await point.innerText(), /Результат/);
+          assert.equal(await point.evaluate(element => getComputedStyle(element).animationName), 'none');
           await page.reload({ waitUntil:'networkidle' });
           assert.equal(await page.locator('[data-instruction-point="2"]').count(), 1);
           await page.goBack();
-          await page.locator('[data-instruction-point="1"]').waitFor();
-          const first = page.locator('[data-story-pill="0"]');
-          await first.focus(); await first.press('ArrowRight');
-          await page.locator('[data-instruction-point="2"]').waitFor();
-          assert.equal(await page.evaluate(() => document.activeElement.dataset.storyPill), '1');
-          assert.equal(await page.locator('[data-instruction-point]').evaluate(element => getComputedStyle(element).animationName), 'none');
+          await page.waitForURL(url => url.pathname === '/guides/tests');
+          await cards.first().waitFor();
+          // Keyboard: the cards are plain links in reading order.
+          await cards.first().focus(); await page.keyboard.press('Tab');
+          assert.equal(await page.evaluate(() => document.activeElement.dataset.guideStepCard), '2');
+          await page.keyboard.press('Enter');
+          await page.waitForURL('**/guides/tests/2');
+          // Old inline-switcher links keep working.
+          await page.goto(origin + '/guides/tests?point=3', { waitUntil:'networkidle' });
+          await page.waitForURL('**/guides/tests/3');
+          await page.locator('[data-instruction-point="3"]').waitFor();
+          await page.goto(origin + route, { waitUntil:'networkidle' });
         }
         if (route === '/guides/visa/documents') {
           await page.getByRole('button', { name:'Отметить собранным' }).click();

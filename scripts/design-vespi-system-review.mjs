@@ -343,8 +343,9 @@ try {
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides#education');
-    // Guides show one point at a time; the next action closes the last point.
-    await page.getByRole('navigation', { name: 'Пункты гайда', exact: true }).locator('[data-story-pill]').last().click();
+    // Every point has its own page (owner 2 Nov); the next action closes the last one.
+    await page.locator('[data-guide-step-card]').last().click();
+    await page.waitForURL(/\/guides\/education\/\d+$/);
     await page.locator('[data-guide-inline-action]').filter({ visible: true }).click();
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Assistant context preserves the quiz draft');
@@ -367,7 +368,7 @@ try {
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
-      assert.equal(await page.locator('[data-portal-road] img:not([data-portal-overview] img)').count(),0,'Progress has no mascot image (the opened step keeps its message icon)');assert.equal(await page.locator('[data-portal-road] [data-vespi-scene]').count(),0,'No mascot inside the route');
+      assert.equal(await page.locator('[data-portal-road] img:not([data-portal-overview] img):not([data-stage-lineup] img)').count(),0,'Progress has no mascot image (the opened step keeps its message icon; lineup cards show stage objects)');assert.equal(await page.locator('[data-portal-road] [data-vespi-scene]').count(),0,'No mascot inside the route');
       assert(await page.locator('[data-portal-overview] [data-road-open]').isVisible(),'Overview exposes the active breakdown action');
       assert.equal(await page.locator('[data-task-check=shortlist]').count(),1,'University selection keeps its check and opens the actual selection flow');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');

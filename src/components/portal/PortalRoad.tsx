@@ -12,8 +12,12 @@ import { ChevronRight, ArrowUpRight } from "lucide-react";
 import { FlightPlan, flightWhen, type FlightStop } from "@/components/journey/FlightPlan";
 import { CITIES, UNIS } from "@/data/italy";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
+import { PortalStageLineup, type LineupStage } from "./PortalStageLineup";
+import { stageKey, type PortalStageKey, type RisoArt } from "./portalStageArt";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
+const PREVIEW_ART: RisoArt[] = ["map", "folder", "envelope", "coins", "passport", "keys"];
+const STAGE_RISO: Record<PortalStageKey, RisoArt> = { start: "map", education12: "diploma", docs: "folder", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys" };
 
 export type RoadTravel = { fromDone: number; id: number };
 
@@ -181,6 +185,21 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       href: `/portal?stage=${encodeURIComponent(row.id)}`,
     };
   });
+  // Overview: the line holds the route so far (done stages and the current
+  // one); every stage after it moves into the lineup of cards below.
+  const overview = timeline && !condensed;
+  const splitAt = overview && currentPosition >= 0 ? currentPosition + 1 : stops.length;
+  const routeStops = overview ? stops.slice(0, splitAt) : stops;
+  const lineup: LineupStage[] = overview ? stages.slice(splitAt).map((row, offset) => {
+    const position = splitAt + offset;
+    const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
+    const next = row.tasks.find(task => !portalTaskDone(data, task));
+    return {
+      id: row.id, title: stops[position].title, position, locked: !row.tasks.length, ahead: Boolean(stops[position].ahead), state: stops[position].state || "future",
+      done: stageDone, total: row.tasks.length, next, when: flightWhen(next?.deadline),
+      art: row.id.startsWith("preview-stage-") ? PREVIEW_ART[position] || "envelope" : STAGE_RISO[stageKey(row.id)],
+    };
+  }) : [];
   function openPreview() {
     if (!previewStage?.tasks.length) return;
     if (onSelectStage) onSelectStage(previewStage.id);
@@ -229,7 +248,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
         <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">{completion !== null ? allComplete ? "Все шаги сохранены" : "Шаг сохранён" : ""}</span>
       </span></div>
       <span className={styles.accessibleProgress} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
-      <FlightPlan stops={stops} index={previewIndex} compact={condensed} city={flightDestination?.city} destination={flightDestination ? CITIES[flightDestination.city].name : undefined}
+      <FlightPlan stops={routeStops} index={Math.min(previewIndex, Math.max(0, routeStops.length - 1))} compact={condensed} city={flightDestination?.city} destination={flightDestination ? CITIES[flightDestination.city].name : undefined}
         variant={timeline && !condensed ? "timeline" : "rail"} instrument={!timeline || condensed}
         detail={position => {
           const row = stages[position], previewed = position === previewIndex;
@@ -265,6 +284,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       </FlightPlan>
       {/* Without stages the timeline has no node to open under: keep the step block. */}
       {timeline && !condensed && !stops.length && currentDetail}
+      {overview && <PortalStageLineup stages={lineup} onSelectStage={onSelectStage} onOpenTask={task => onOpenTask(task)} />}
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
     </div>
     {progressFirst && focus}

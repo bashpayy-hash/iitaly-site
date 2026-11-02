@@ -6,11 +6,8 @@ export async function openGuideStage(page, stage) {
   await page.locator(`[data-guide-stage="${stage}"]`).click();
   await page.waitForURL(`**/guides/stages/${stage}`);
 }
+// «Подробнее» on a topic tile opens the topic page.
 export async function openGuideTopic(page, id) {
-  const entry = page.locator(`[data-guide-select="${id}"]`);
-  const inspector = await entry.evaluate(element => element.tagName === "BUTTON");
-  await entry.click();
-  const preview = page.locator(`[data-guide-preview="${id}"]`);
-  if (inspector) await preview.getByRole('link', {name:'Открыть подробный наглядный разбор'}).click();
+  await page.locator(`[data-guide-select="${id}"]`).click();
   await page.waitForURL(`**/guides/${id}`);
 }
