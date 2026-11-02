@@ -63,6 +63,7 @@
 .scale i { position:absolute; top:-3px; left:calc(var(--scale-at,0) * 100%); width:7px; height:7px; border-radius:50%; background:#2A2420; transform:translateX(-50%); transition:left .7s cubic-bezier(.22,1,.36,1); }
 
 .note { max-width:85ch; margin:0 auto 18px; font-size:12px; line-height:1.6; text-align:center; color:#4A4F46; }
+.root > .note { max-width:none; margin-inline:max(var(--deck-bleed), calc((100% - 85ch) / 2)); }
 .scroll:focus-visible,.slot button:focus-visible { outline:2px solid #2D568D; outline-offset:3px; }
 
 @keyframes card-in { from { opacity:0; transform:translateY(70px) rotateX(10deg) scale(.94); } to { opacity:1; transform:none; } }
