@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Check } from "lucide-react";
 import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
@@ -195,7 +196,9 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           {step === "manual" && (
             <div>
               <div className="text-center">
-                <div aria-hidden className="text-4xl">✅</div>
+                <div aria-hidden className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green/10 text-green">
+                  <Check size={26} strokeWidth={2} />
+                </div>
                 <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">
                   Переведи сумму и пришли чек — после подтверждения мы активируем доступ или начнём выполнение услуги.
@@ -206,10 +209,10 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-carbon text-apple-caption font-semibold text-white">1</div>
                 <div className="min-w-0 flex-1">
                   <b className="text-apple-body-sm text-cloud-white">Переведи {fmt(product.price)} ₸</b>
-                  <div className="mt-2 flex items-center justify-between gap-2 border border-white/15 px-3 py-2.5">
-                    <span className="font-apple-display text-apple-subheading font-semibold text-cloud-white">{PAY_PHONE}</span>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/15 px-3 py-2.5">
+                    <span className="font-apple-display text-apple-body-sm font-semibold whitespace-nowrap text-cloud-white tabular-nums">{PAY_PHONE}</span>
                     <button type="button" onClick={copyPhone}
-                      className="shrink-0 rounded-apple-pill border border-white/20 px-3 py-1.5 text-apple-caption font-semibold text-cloud-white">
+                      className="min-h-11 shrink-0 rounded-apple-pill border border-white/20 px-3 py-2 text-apple-caption font-semibold text-cloud-white">
                       {copied ? "Скопировано" : "Копировать"}
                     </button>
                   </div>

@@ -49,7 +49,7 @@ try {
     });
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto(origin + '/plan', { waitUntil: 'networkidle' });
+    await page.goto(origin + '/plan#document-check', { waitUntil: 'networkidle' });
     await page.clock.install();
     const doc = page.locator('#document-check');
     const filename = 'Справка_о_доходах_семьи_длинное_название_с_переводом_и_нотариальным_заверением.txt';

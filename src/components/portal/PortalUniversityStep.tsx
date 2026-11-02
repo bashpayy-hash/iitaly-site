@@ -6,12 +6,13 @@ import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { taskDate, taskHelpDetails, taskTitle } from "@/lib/portalNavigation";
 import { shortlistNames, validShortlist } from "@/lib/portalShortlist";
 import styles from "./portal-universities.module.css";
+import { PortalBreadcrumbs, PortalPageNavigation, usePortalPageFocus, usePortalPart } from "./PortalPageNavigation";
 
 const UniversitiesExplorer = dynamic(() => import("@/components/universities/UniversitiesExplorer").then(module => module.UniversitiesExplorer), {
   loading: () => <p role="status" className={styles.loading}>Загружаю карту и сравнение…</p>,
 });
 
-export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, backHref, onSave, onReopen, localOnly = false }: {
+export function PortalUniversityStep({ data, task, selectedIds, busy, onSave, onReopen, localOnly = false }: {
   data: PortalData;
   task: PortalTask;
   selectedIds: string[];
@@ -22,6 +23,9 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
   onReopen: () => void;
   localOnly?: boolean;
 }) {
+  const requestedPart = usePortalPart("catalogue");
+  const part = requestedPart === "compare" ? "compare" : "catalogue";
+  usePortalPageFocus(part === "compare" ? "Сравнение университетов" : "Выбрать университеты", part);
   const [draft, setDraft] = useState(() => validShortlist(selectedIds));
   const date = taskDate(task);
   const names = shortlistNames(draft);
@@ -36,16 +40,13 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
 
   return <section className={styles.step} data-step-detail="shortlist" data-portal-universities aria-labelledby="portal-step-heading">
     <header className={styles.header}>
-      <a href={backHref} className={styles.back} onClick={event => {
-        if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        event.preventDefault(); onBack();
-      }}>Назад</a>
-      <h2 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h2>
+      <PortalBreadcrumbs stage={stage} current={taskTitle(task)} />
+      <h1 id="portal-step-heading" tabIndex={-1}>{taskTitle(task)}</h1>
       <p className={styles.meta}>{[stage?.title, task.time || "15 мин"].filter(Boolean).join(" · ")}</p>
       {date && <p className={styles.meta}>{date} — это не срок конкретного вуза.</p>}
-      <p id="portal-step-action-hint" className={styles.hint} data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
       <details className={styles.help} data-step-help>
         <summary>Как выполнить этот шаг</summary>
+        <p id="portal-step-action-hint" data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
         <p>Нажми «Выбрать университет» в карточке вуза, затем «Сохранить выбор» внизу экрана. Сравнение — отдельный инструмент: можно сопоставить до трёх вузов, не добавляя их в список.</p>
         <p id="portal-shortlist-storage">{localOnly ? "Список сохраняется на этом устройстве." : "Список сохраняется в профиле."}</p>
         <p>Выбор вуза не определяет требования программы. До подачи сверь программу, экзамены и сроки на её официальной странице.</p>
@@ -56,6 +57,7 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onBack, ba
       </details>
     </header>
 
+    <PortalPageNavigation active={part} label="Выбор университетов" items={[{ id:"catalogue", label:"Карта и вузы", href:"/portal?view=plan&task=shortlist" },{ id:"compare", label:"Сравнение", href:"/portal?view=plan&task=shortlist&part=compare" }]} />
     <UniversitiesExplorer portalSelection={{ selectedIds: draft, onToggle: toggle }} />
 
     <div className={styles.saveBar} data-shortlist-selection data-has-selection={draft.length > 0}>

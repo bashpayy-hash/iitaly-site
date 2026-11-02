@@ -6,7 +6,15 @@ const base = process.argv[2];
 assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
-const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
+const approvedPresentationPaths = new Set([
+  // 2026-10-27: user-requested side-by-side deck; factual comparison model stays fixed.
+  'src/components/universities/ComparisonDeck.tsx', 'src/components/universities/comparison-deck.module.css',
+  // 2026-10-26: continuous root paper and persisted public comparison winner.
+  'src/app/layout.tsx', 'src/lib/useUniversityChoice.ts',
+  'src/components/universities/UniversityDecision.tsx',
+'src/app/universities/page.tsx',
+  // 2026-10-26: paginate existing guidance, without changing task or review data.
+  'src/components/portal/portalInstructionPages.ts',
   // User request 2026-10-18: one watercolor pricing scene and a labelled
   // Vespi launcher on /prices. Existing tokens, logo, type and cards stay fixed.
   'src/components/marketing/BotanicalCanvas.tsx',
@@ -50,6 +58,9 @@ const approvedPresentationPaths = new Set(['src/app/universities/page.tsx',
   'src/components/universities/university-ui.module.css']);
 // Telegram reminder UI is explicitly allowed; API/data contracts remain protected.
 const approvedReminderUiPaths = new Set([
+  // 2026-10-26: user-requested progressive portal pages and URL navigation.
+  'src/components/portal/PortalPageNavigation.tsx', 'src/components/portal/PortalTaskPages.tsx',
+  'src/components/portal/portal-pages.module.css',
   // 2026-10-25: shared type, editorial task layout and optional Higgsfield media.
   'src/data/higgsfieldVisuals.ts',
   'src/components/portal/HiggsfieldVisual.tsx', 'src/components/portal/higgsfield-visual.module.css',

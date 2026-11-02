@@ -1,11 +1,12 @@
 /* eslint-disable @next/next/no-img-element -- Reviewed local artwork supports static export. */
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { AppleButton } from "@/components/apple/Button";
 import { BotanicalCanvas } from "@/components/marketing/BotanicalCanvas";
 import marketing from "@/components/marketing/marketing.module.css";
 import { PricesLandscape } from "./PricesLandscape";
 import styles from "./prices-landscape.module.css";
 
-export function PricesHero() {
+export function PricesHero({ onBuy }: { onBuy: () => void }) {
   return <section data-section="prices-header" className={styles.hero}>
     <BotanicalCanvas connectToCards left={<PricesLandscape />} right={
       <span data-editorial-spot="tomatoes" aria-hidden="true">
@@ -31,7 +32,12 @@ export function PricesHero() {
         за этапы. Работу выполняет система — поэтому это стоит столько, а
         не как в агентстве.
       </p>
-      <nav className={marketing.taskLinks} aria-label="На странице цен">
+      <div className={styles.purchaseActions}>
+        <AppleButton type="button" onClick={onBuy} aria-haspopup="dialog" data-pricing-buy="hero">
+          Купить за {priceLabel(PRICE_MAIN)}
+        </AppleButton>
+      </div>
+      <nav className={`${marketing.taskLinks} ${styles.sectionLinks}`} aria-label="На странице цен">
         <a href="#main-package">Состав пакета</a>
         <a href="#terms-and-refund">Условия и возврат</a>
         <a href="#expert-review">Проверка экспертом</a>

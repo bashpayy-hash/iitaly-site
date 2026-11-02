@@ -123,8 +123,8 @@ try {
   const page = await makePage(1440);
   await visit(page, '/plan');
   const quizBox = await page.locator('#questionnaire').boundingBox();
-  const documentBox = await page.locator('#document-check').boundingBox();
-  assert(quizBox && documentBox && quizBox.y < documentBox.y, 'Free plan starts before the separate document tool');
+  assert(quizBox && quizBox.width > 1000, 'Plan uses a wide workspace');
+  assert.equal(await page.locator('#document-check').isVisible(), false, 'Document checking is a separate tool');
   assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
   const fileInput = page.getByLabel('Выбрать документ для проверки');
   await fileInput.focus();
@@ -137,7 +137,7 @@ try {
   await shot(page, 'plan-complete', true);
   results.push({ test: 'Ten-question quiz completes without contact submission', passed: true });
   await visit(page, '/prices');
-  await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).click();
+  await page.locator('[data-pricing-buy="hero"]').click();
   assert.equal(await page.getByRole('dialog').isVisible(), true);
   await page.getByRole('textbox', { name: 'Фамилия', exact: true }).pressSequentially('Тестов');
   assert.equal(await page.getByRole('textbox', { name: 'Фамилия', exact: true }).inputValue(), 'Тестов');
@@ -148,7 +148,7 @@ try {
   await shot(page, 'checkout-open');
   await page.keyboard.press('Escape');
   assert.equal(await page.getByRole('dialog').count(), 0);
-  assert.equal(await page.getByRole('button', { name: 'Оформить и оплатить', exact: true }).evaluate(el => document.activeElement === el), true, 'Closing restores focus to the purchase button');
+  assert.equal(await page.locator('[data-pricing-buy="hero"]').evaluate(el => document.activeElement === el), true, 'Closing restores focus to the purchase button');
   results.push({ test: 'Checkout retains typing focus, validates locally, and restores focus on Escape; no order submitted', passed: true });
   await visit(page, '/guides#visa');
   await page.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });
@@ -177,7 +177,7 @@ try {
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false, 'Outside tap closes mobile navigation');
   await visit(mobile, '/guides#visa');
   await mobile.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });
-  assert.equal(await mobile.locator('[data-guide-select="visa"]').getAttribute('aria-expanded'), 'true', 'Mobile visa deep link selects and opens its topic');
+  assert.equal(new URL(mobile.url()).pathname,'/guides/visa','Mobile legacy link opens the dedicated visa page');
   await shot(mobile, 'guide-visa-mobile');
   results.push({ test: 'Mobile menu closes on Escape/outside tap; guide deep links open the correct topic', passed: true });
   await mobile.context().close();

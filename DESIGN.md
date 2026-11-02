@@ -154,3 +154,68 @@ In the existing portal catalogue, put “Выбрать университет�
 Align the neighbouring cards' name, selection and detail rows with CSS subgrid, retain a one-column mobile layout, and use the portal's existing zhol tokens. Label the independent comparison section clearly. Preserve the map, filters, factual university data and comparison model.
 
 The notary breakdown omits the generic documents illustration. Its original explanation and three preparation steps occupy one readable column; dates are quiet text, and detailed instruction indices align on a consistent grid. Other tasks keep their existing visual slots. No copy about legal requirements, progress logic or review outcomes changes.
+
+## Remove stage souvenir, 26 October 2026
+
+The latest explicit user correction removes the decorative “Сувенир за этап / Карта маршрута” clipping from every portal stage. Stage headers contain only the title and real completion stamps. Remove its reserved layout and hover styles; progress, task text, mascot and completion feedback remain unchanged.
+
+## Progressive portal pages, 26 October 2026
+
+The user's Apple reference authorizes a clearer hierarchy of separate URL-addressable views while preserving the existing zhol identity. The overview shows the real route and one current task. Each stage link opens that stage's full checklist, without a duplicate welcome or Now panel. Task pages separate the short overview, complete instructions and actual action. University selection separates the map/catalogue from the full comparison; document results separate the verdict, full analysis and a new check.
+
+Use standard links, descriptive breadcrumbs, current-page state, browser Back/Forward, page titles and heading focus. Existing query URLs remain valid in the static export. Keep selected files, form answers and shortlist selections mounted while switching sections; reading content never saves or completes a step. The parent stage and overview remain one click away. Detail navigation uses a compact route, not the full overview header. Keep all existing rules, sources, original task copy, API boundaries, status semantics and saved progress.
+
+## One problem at a time, 26 October 2026
+
+The latest user correction removes the full route, including its compact variant, from every portal page except the overview. Stage, task, document, university and settings screens keep the site header and contextual return links. A task brief omits generic filler microsteps when there are no task-specific ones; maintained instructions and original task copy remain available.
+
+Guides use a short index, three category pages and separate static pages for all thirteen existing topics. Visa D has separate timeline, funds calculator, document checklist and pre-submission pages. Topic pages show only their own content, sources, contextual action and a quiet return or adjacent-topic link. Old /guides#topic links resolve to the new page. Preserve all existing admissions copy, source dates, calculations, trainer geometry and questionnaire state. Search stays local and does not trigger the assistant. Warm public typography and surfaces remain; no persistent reading timeline or large decorative hero.
+
+## Purchase visibility and small polish, 26 October 2026
+
+Preserve refinement: variance 3, motion 2, density 4. Keep the approved public fonts, warm watercolor artwork, logo, copy and pricing. The prices hero has a visible black “Купить за 10 990 ₸” action before the quieter section links; the same label ends the package contents. Both open the existing product modal and preserve analytics and payment-mode behavior. Do not add a second large pricing header to the contents card.
+
+Comparison cards align; narrow layouts give actions room and stack optional-service prices. Shared navigation identifies the current section with weight and its existing red rule. Invalid fields use the existing error token. Purchase feedback uses the existing icon system, transfer details wrap safely, and keyboard focus remains inside dialogs when request states replace the form.
+
+
+## Minimal route and document action, 26 October 2026
+
+Only the portal route and step execution surfaces change. Keep the current font, paper, terracotta tokens, task copy and ordered/ahead progress calculation. The overview route is unboxed: its title, a 40px two-digit current stage number, the existing counts, and one 2px rule. Only ordered completed tasks fill the rule. Desktop stage names use the header’s active underline; below 761px only the current stage name remains. Preserve native stage links and accessible progress metadata; adjacent-stage navigation remains available on stage pages.
+
+Document actions use one readable column: the existing task title and tabs, one outcome sentence, two context fields in one row, the conditional citizenship checkbox, a content-width file button, and two quiet 13px notes. The preparation checklist belongs to the instruction view; context fields stay visible. Do not add illustrations or decorative containers. File selection, confirmation, retries, API requests, status semantics and persistence are unchanged in both local and cloud workspaces. Keep the mounted action when switching tabs. The Now panel retains its existing salmon day count and sole mascot.
+
+
+## Quiet public paper and Higgsfield vignettes, 26 October 2026
+
+Refinement of the main site only, based on the newly supplied zhol kit. Preserve public typography, colors, all text, existing artwork and interactions. Use the kit’s scanned cream paper in the home FAQ, guides directory introduction and plan tool area at 10–12% opacity, reducing to 8% on phones. The scan is an inert isolated background layer; do not texture inputs or add paper to the portal, payment forms, article bodies or Modulo 1.
+
+Two real Higgsfield GPT Image 2.5 illustrations follow the supplied risograph reference: a folded Italy map in the home FAQ’s empty left margin, and a document folder in the guide index’s empty right field. Both use transparent backgrounds at 160px with fixed dimensions, lazy loading and no motion. Hide them when the existing copy leaves insufficient room (FAQ below 1280px, guides below 1100px); do not increase mobile page length to accommodate decoration. Keep the functional university map and every CTA untouched. Source job IDs, texture provenance and final asset hashes are in docs/public-paper-assets.json.
+
+
+## Visible public paper and sequential instructions · 26 October 2026
+
+The latest correction supersedes the barely visible local paper pass. Apply the supplied scanned cream texture to the public marketing canvas, guide reading pages and existing home sections at 38% opacity (28% on phones). Keep it behind content, inputs and dialogs, with no new gradients or overlay over the interface. The Modulo 1 workbench opts out; portal material and typography remain untouched. Existing art stays in place. Three additional real Higgsfield GPT Image 2.5 cutouts — calendar, envelope and key — occupy 160px desktop guide margins. Collapse decoration below 1280px, without consuming mobile reading space.
+
+Remove the isolated Padova admissions-round row and its source from the general tests guide. Other university information, factual rules and copy are unchanged.
+
+Portal instruction views show one existing point at a time at `part=guide&item=N`, with a real URL, previous/next links, an optional table of contents and a direct action tab. The brief contains only its purpose and next link, not a repeated checklist. Authored microsteps, maintained guide rows, warnings and file preparation remain reachable in sequence. Reading never updates task completion, status, ordered/ahead counts or stored answers. Keep upload forms mounted when reading so selected files survive navigation. Focus and document titles identify the current point; browser history, reloads and copied links restore it. No repeated roadmap, illustration or nested card on the task page.
+
+## Illustrated progressive disclosure · 26 October 2026
+
+The latest explicit brief supersedes hidden desktop margin art, unillustrated reading points and full stage task lists. Use only committed images; no image generation. Public sections follow a 14px category, a 32–56px compact heading and a 600px highlight paragraph. Existing facts become textured 28px bento cards with 32px padding, 20px gutters, a subtle inner boundary and soft layered shadow. The user explicitly requests SVG paper grain at .08 over the supplied cream scan (.07 on phones). This is an intentional override of the generic skill's grain/eyebrow/card guidance; keep the site's type and existing factual data.
+
+Home replaces the dense route preview with illustrated topic entries, including one Vespi card. Padova belongs to the shared university tab switcher with Bologna and LUISS; do not restore its isolated admissions-round block. Reuse the calendar, envelope, key, folder, map and approved mascot at readable sizes on mobile too.
+
+Portal stage pages show one actual task at `stage=...&step=taskId`. Instructions retain `part=guide&item=N`, document report findings use `part=review&finding=N`, and public guide points use `point=N`. Pills, previous/next controls and reading-position labels expose the navigation. Only one point is mounted; a 400ms opacity/translate transition respects reduced motion. Reading and navigation never save completion. Upload/action forms remain mounted so files and context survive reading switches. Task titles, statuses, ordered/ahead counters, authored requirements, payment, API and authentication stay intact. Do not illustrate the upload form or repeat the entire roadmap inside reading pages.
+
+
+### Latest correction — 26 October 2026
+Restore the pre-bento public page hierarchy. Paper is a continuous body canvas, including public navigation and hero sections, not a lower-page patch. Retain reading pagination and only one active portal task; remove large decorative images from guide cards and reading screens. The public plan workspace is 1200px wide, with a two-column question/options composition and separate plan/check tools. Public comparison has a locally saved main-university choice, per-column actions and a plan handoff. This preference must not mark tasks complete, change admissions rules or modify cloud review data.
+
+## Flight Plan, scene cards and selection inspectors · 27 October 2026
+
+The latest explicit brief replaces the previous flat route and plain guide directory with four supplied reference mechanisms. Keep the full-page warm paper, existing type and terracotta brand. Use Butter-style self-contained 28–32px containers, heading/44px arrow, an interactive HTML/CSS scene and a quiet caption. Home has two useful topic previews; no new images or generation.
+
+Use a shared Flight Plan instrument on the public questionnaire/result and portal overview, with a compact version on portal stage pages. A blue SVG plane follows the selected stop; the dashed rail and current badge distinguish actual completion from browsing. Dates come from actual tasks. Blur only inactive secondary previews; titles and controls remain legible, keyboard focus clears blur, reduced motion removes it. Never modify ordered/ahead counts, completion or cloud operations. Detail/action pages retain their focused layout without a roadmap.
+
+Guides use a numbered topic index, one inline inspector and existing deep links. Search, category filtering, copied selection URLs and history remain functional. Unknown procedure-specific timing/cost/complexity is explicitly conditional rather than invented. University quick buttons share the map/catalogue comparison state (maximum three). Grid cards use aligned factual rows; table mode retains the existing full model. Only complete comparable living-cost ranges may receive a relative marker. Primary choice persists locally; /plan displays the chosen university context without asserting that it changes eligibility. Portal shortlist continues to use its existing save operation.

@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useUniversityChoice } from "@/lib/useUniversityChoice";
+import { usePortalPart, navigatePortal } from "@/components/portal/PortalPageNavigation";
 import { CITIES, UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
@@ -12,7 +14,8 @@ import { CompareModal } from "./CompareModal";
 import { ComparisonSection } from "./ComparisonSection";
 import { CityMatch } from "./CityMatch";
 import { track } from "@/lib/track";
-import { UniversityArtwork } from "./UniversityArtwork";
+import { Check, Plus } from "lucide-react";
+import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
@@ -33,11 +36,17 @@ export type PortalUniversitySelection = {
 };
 
 export function UniversitiesExplorer({ portalSelection }: { portalSelection?: PortalUniversitySelection } = {}) {
+  const pagePart = usePortalPart("catalogue");
+  const comparePage = Boolean(portalSelection && pagePart === "compare");
   const [activeCity, setActiveCity] = useState<CityId | null>(null);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
   const [openUniId, setOpenUniId] = useState<string | null>(null);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const choice = useUniversityChoice();
+  const [portalCompareIds, setPortalCompareIds] = useState<string[]>([]);
+  const compareIds = portalSelection ? portalCompareIds : choice.comparedIds;
+  const setCompareIds = portalSelection ? setPortalCompareIds : choice.setCompared;
+  const selection = portalSelection ? undefined : { primaryId: choice.primaryId, onSelect: choice.choose };
   const [compareOpen, setCompareOpen] = useState(false);
 
   // City matching only highlights the map; filters remain independent.
@@ -102,11 +111,8 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   }
 
   function toggleCompare(id: string) {
-    setCompareIds((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 3) return prev;
-      return [...prev, id];
-    });
+    if (compareIds.includes(id)) setCompareIds(compareIds.filter(value => value !== id));
+    else if (compareIds.length < 3) setCompareIds([...compareIds, id]);
   }
 
   const cityShortcut = (
@@ -132,11 +138,11 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
               жизни там. Можно сравнить до трёх университетов.
             </p>
           </div>
-          <UniversityArtwork variant="balcony" />
+          <LemonPostcard />
         </div>
       </section>}
 
-      <section className={ui.explorer} aria-label="Карта и каталог университетов">
+      <section hidden={comparePage} className={ui.explorer} aria-label="Карта и каталог университетов">
         <div className={ui.container}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
             {!portalSelection && <VespiAssistant
@@ -168,6 +174,11 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             {!portalSelection && cityShortcut}
           </div>
 
+          <div className={ui.quickUniversities} aria-label="Быстро добавить университет в сравнение">
+            <span>В сравнение</span>
+            {(activeCity ? cityUnis : filteredUnis.filter(university=>["unipd","unibo","polimi"].includes(university.id))).map(university=><button key={university.id} type="button" data-quick-compare={university.id} aria-pressed={compareIds.includes(university.id)} disabled={compareIds.length===3 && !compareIds.includes(university.id)} onClick={()=>toggleCompare(university.id)}>{compareIds.includes(university.id)?<Check size={15} aria-hidden="true" />:<Plus size={15} aria-hidden="true" />}{university.name}</button>)}
+            {compareIds.length>0 && <a href="#compare-universities" onClick={event=>{if(portalSelection){event.preventDefault();navigatePortal("/portal?view=plan&task=shortlist&part=compare");}}}>Сравнить {compareIds.length} из 3 <span aria-hidden="true">→</span></a>}
+          </div>
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
               <div className={ui.mapFrame} data-map-frame>
@@ -219,7 +230,6 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 />
               ) : (
                 <div className={ui.emptyCity} data-city-empty>
-                  {!portalSelection && <UniversityArtwork variant="paperwork" />}
                   <p className={ui.emptyTitle}>Выберите город</p>
                   <p className={ui.emptyDescription}>
                     Нажмите на любую точку на карте, чтобы увидеть университеты,
@@ -236,13 +246,17 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         </div>
       </section>
 
+      <div hidden={Boolean(portalSelection && !comparePage)}>
       <ComparisonSection
         compareIds={compareIds}
         onChange={setCompareIds}
         onOpen={() => setCompareOpen(true)}
         embedded={Boolean(portalSelection)}
         portalSelection={portalSelection}
+        selection={selection}
       />
+
+      </div>
 
       <CityMatch
         open={matchOpen}
@@ -257,12 +271,12 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
         }}
       />
 
-      <CompareBar
+      {!comparePage && <CompareBar
         compareIds={compareIds}
         onRemove={toggleCompare}
-        onOpenCompare={() => setCompareOpen(true)}
+        onOpenCompare={() => portalSelection ? navigatePortal("/portal?view=plan&task=shortlist&part=compare") : setCompareOpen(true)}
         embedded={Boolean(portalSelection)}
-      />
+      />}
 
       <UniModal
         uni={openUni}
@@ -277,6 +291,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       />
 
       <CompareModal
+        selection={selection}
         open={compareOpen}
         compareIds={compareIds}
         onClose={() => setCompareOpen(false)}

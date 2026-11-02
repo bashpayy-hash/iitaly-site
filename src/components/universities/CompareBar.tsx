@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { UNIS } from "@/data/italy";
 import { AppleButton } from "@/components/apple/Button";
 import { CityGlyph } from "./CityGlyph";
@@ -16,7 +17,16 @@ export function CompareBar({
   onOpenCompare: () => void;
   embedded?: boolean;
 }) {
-  if (compareIds.length === 0) return null;
+  const [comparisonVisible, setComparisonVisible] = useState(false);
+  useEffect(() => {
+    if (embedded) return;
+    const comparison = document.getElementById("compare-universities");
+    if (!comparison) return;
+    const observer = new IntersectionObserver(([entry]) => setComparisonVisible(entry.isIntersecting), { rootMargin: "-100px 0px -80px 0px" });
+    observer.observe(comparison);
+    return () => observer.disconnect();
+  }, [embedded]);
+  if (compareIds.length === 0 || comparisonVisible) return null;
   const unis = compareIds.map((id) => UNIS.find((u) => u.id === id)!).filter(Boolean);
 
   return (

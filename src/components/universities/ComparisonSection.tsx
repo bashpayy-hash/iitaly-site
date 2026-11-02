@@ -1,9 +1,10 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { CITIES, UNIS, type University } from "@/data/italy";
-import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
+import { UniversityDecision, type UniversitySelection } from "./UniversityDecision";
 import { ComparisonTable } from "./ComparisonTable";
+import { ComparisonDeck } from "./ComparisonDeck";
 import styles from "./comparison.module.css";
 
 // Server-exported native selects stay disabled until their React handlers exist.
@@ -13,13 +14,15 @@ const serverSnapshot = () => false;
 
 const options = [...UNIS].sort((a, b) => CITIES[a.city].name.localeCompare(CITIES[b.city].name, "ru") || a.name.localeCompare(b.name));
 
-export function ComparisonSection({ compareIds, onChange, onOpen, embedded = false, portalSelection }: {
+export function ComparisonSection({ compareIds, onChange, onOpen, embedded = false, portalSelection, selection }: {
+  selection?: UniversitySelection;
   compareIds: string[];
   onChange: (ids: string[]) => void;
   onOpen: () => void;
   embedded?: boolean;
   portalSelection?: { selectedIds: string[]; onToggle: (id: string) => void };
 }) {
+  const [mode, setMode] = useState<"grid" | "table">("grid");
   const ready = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
   const universities = compareIds.map(id => UNIS.find(u => u.id === id)).filter((u): u is University => Boolean(u));
   function select(index: number, value: string) {
@@ -35,9 +38,8 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
           <div>
             <p className={styles.eyebrow}>Выбирай по тому, что важно тебе</p>
             <h2 id="comparison-heading">Сравни не только название.</h2>
-            <p className={styles.description}>Город, программы, экзамены, сроки, стоимость и поддержка — рядом, в одной таблице. Добавь два или три вуза здесь или через карточки на карте.</p>
+            <p className={styles.description}>Добавь до трёх вузов с карты. Сопоставь условия и выбери, с какого университета начнёшь свой план.</p>
           </div>
-          <LemonPostcard />
         </div>}
         {embedded && <h3 className={styles.embeddedHeading}>Сравнение университетов</h3>}
         <div className={styles.selectors}>
@@ -55,16 +57,22 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
             </label>}
           </div>)}
         </div>
+        <div className={styles.viewModes} aria-label="Вид сравнения">
+          <button type="button" aria-pressed={mode === "grid"} onClick={() => setMode("grid")}>Сетка</button>
+          <span aria-hidden="true">/</span>
+          <button type="button" aria-pressed={mode === "table"} onClick={() => setMode("table")}>Таблица</button>
+        </div>
         <div className={styles.selectionActions}>
           <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
           {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
           {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне ↗</button>}
         </div>
-        {universities.length >= 2 ? <ComparisonTable universities={universities} /> : <div className={styles.empty}>
+        {mode === "grid" ? <ComparisonDeck universities={universities} selection={selection} portalSelection={portalSelection} onRemove={id => onChange(compareIds.filter(value => value !== id))} /> : universities.length >= 2 ? <ComparisonTable universities={universities} selection={selection} /> : <div className={styles.empty}>
           <span aria-hidden="true">01 / 02 / 03</span>
           <p>{universities.length === 1 ? "Добавь ещё один вуз для сравнения." : "Два вуза — уже начало выбора."}</p>
           <small>12 параметров · только различия · бюджет на 10 или 12 месяцев</small>
         </div>}
+        {selection && mode === "table" && universities.length < 2 && <UniversityDecision universities={universities} selection={selection} />}
       </div>
     </section>
   );

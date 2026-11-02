@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PermessoModuloPage() {
   return (
-    <MarketingLayout>
+    <MarketingLayout paper={false}>
       <EditablePermesso />
       <PermessoHelpers />
     </MarketingLayout>

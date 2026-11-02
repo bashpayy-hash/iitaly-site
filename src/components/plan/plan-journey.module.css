@@ -2,3 +2,5 @@
 .routeHeading h2 { font-size: 26px; line-height: 1.2; }
 .routeHeading button { min-height: 44px; color: var(--i-link); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 639px) { .routeHeading h2 { font-size: 24px; } }
+
+.reminders { margin-top:20px; padding-block:8px; border-block:1px solid #DCD3C3; }.reminders summary { min-height:44px; padding-block:10px; font-size:16px; font-weight:500; cursor:pointer; }.reminders[open] { padding-bottom:20px; }

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-// Server metadata is separate from the complete interactive page.tsx.
-// The nested Modulo 1 route overrides these with its own metadata and canonical.
+// Each reading page and the existing trainer provide their own canonical URL.
 export const metadata: Metadata = {
   alternates: { canonical: "/guides" },
   title: "Гайды и виза D — апостиль, CIMEA, ISEEU",

@@ -19,7 +19,7 @@ const server=createServer(async(req,res)=>{
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`;
-const browser=await chromium.launch();
+const browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[], errors=[];
 let activePage;
 try {
@@ -44,6 +44,10 @@ try {
       return url.origin===origin?route.continue():route.abort();
     });
     const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
+    async function actionPage() {
+      const sections=page.getByRole('navigation',{name:'Разделы задачи',exact:true});
+      if(await sections.count())await sections.locator('a[href$="part=action"]').click();
+    }
     async function visit(path) {await page.goto(origin+path,{waitUntil:'networkidle'});await page.evaluate(()=>document.fonts.ready);}
     async function capture(name) {await page.screenshot({path:resolve(output,`after-${name}-${width}.png`),animations:'disabled'});}
     async function audit(name) {
@@ -54,7 +58,7 @@ try {
     }
     await visit('/portal?view=plan');
     await page.locator('[data-portal-task=profile]').waitFor();
-    assert.equal(await page.locator('[data-task-check]').count(),2,'Profile and shortlist both have an interactive control');
+    assert.equal(await page.locator('[data-task-check]').count(),1,'Overview presents the questionnaire first');
     assert((await page.locator('main details summary').allTextContents()).every(text=>!/0\s*из\s*0/.test(text)),'Unconfigured stages are never labelled completed');
     for(const path of ['/plan','/guides','/universities','/portal']) {
       await visit(path); if(path==='/portal')await page.locator('[data-local-workspace]').waitFor();
@@ -70,13 +74,15 @@ try {
     await page.locator('[data-plan-wizard]').waitFor();
     const geometry=await page.locator('#questionnaire').evaluate(el=>({top:el.getBoundingClientRect().top,header:document.querySelector('header').getBoundingClientRect().bottom}));
     assert(geometry.top>=geometry.header,`Questionnaire heading clears the header: ${JSON.stringify(geometry)}`);
-    assert.equal(await page.locator('[data-plan-wizard] [role=progressbar] > span').count(),10);
+    assert.equal(await page.locator('[data-plan-wizard] [data-flight-stop]').count(),10);
     assert.equal(await page.locator('#document-check [data-vespi]').count(),0,'Single mascot anchor: utility/report have no repeated portrait');
+    await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.getByRole('button',{name:'Проверить пример справки',exact:true}).click();
     await page.locator('[data-document-example]').waitFor();
     assert.match(await page.locator('[data-document-example]').innerText(),/Демонстрация интерфейса.*вымышленный пример/s);
     assert.equal(calls.length,0,'Example never calls AI or creates a review');
     await capture('workbench-example');
+    await page.getByRole('link',{name:'Составить план',exact:true}).click();
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')));
     assert.equal(stored.answers.intake,'2027/28');assert.equal(stored.step,1);
@@ -97,8 +103,10 @@ try {
     await page.locator('[data-portal-universities]').waitFor();
     await page.getByRole('group',{name:'Карта Италии с университетами по городам',exact:true}).getByRole('button',{name:'Милан — показать университеты',exact:true}).click();
     await page.locator('[data-university-select="bocconi"]').check();
+    await page.getByRole('navigation',{name:'Выбор университетов'}).getByRole('link',{name:'Сравнение',exact:true}).click();
     await page.getByRole('combobox',{name:'Университет 1',exact:true}).selectOption('bocconi');
     await page.getByRole('combobox',{name:'Университет 2',exact:true}).selectOption('polimi');
+    await page.getByRole('button',{name:'Таблица',exact:true}).click();
     assert.equal(await page.locator('[data-university-comparison] [data-comparison-row]').count(),12,'Existing comparison stays intact in the guest portal');
     await capture('portal-selection');
     await page.locator('[data-shortlist-save]').click();
@@ -110,11 +118,12 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
     await portalDestination(page, 'План');
-    assert.equal(await page.locator('[aria-label="Этапы маршрута"]').count(),1);
+    assert.equal(await page.locator('[data-flight-plan][data-compact=true]').count(),1,'The local stage page has one compact Flight Plan');
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert(await checks.count()>0,'The checklist exposes completion controls');
     await page.locator('[data-portal-task][data-current-task=true]').click();
+    await actionPage();
     await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
@@ -133,15 +142,17 @@ try {
     await portalDestination(page, 'Обзор');
     for(let step=0;step<12;step++) {
       await page.locator('[data-road-open]').first().click();
+      await actionPage();
       if(await page.getByLabel('Выбрать документ для проверки').count())break;
       await page.getByRole('button',{name:'Готово',exact:true}).click();
     }
     const upload=page.getByLabel('Выбрать документ для проверки');
-    await upload.waitFor();
+    await upload.waitFor({state:'attached'});assert(await page.getByRole('button',{name:'Выбрать файл',exact:true}).isVisible());
     const currentDoc=new URL(page.url()).searchParams.get('doc') || new URL(page.url()).searchParams.get('task');
     const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
     async function review(result) {
       reviewResult=result;
+      await actionPage();
       const prepare=page.locator('[data-document-prepare]');
       if(await prepare.count())await prepare.click();
       await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);

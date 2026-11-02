@@ -76,7 +76,7 @@ async function preservedPricingCopy(base, head) {
   const packageCard=head.locator('#main-package');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);
   assert.equal(await packageCard.getByText('Весь маршрут поступления в одном кабинете',{exact:true}).count(),1);
-  assert.doesNotMatch(await packageCard.innerText(),/10\s*990\s*₸/,'The contents card does not repeat the price');
+  assert.doesNotMatch(await packageCard.locator('h2').innerText(),/10\s*990\s*₸/,'The contents heading does not repeat the price; purchase controls state the total');
   assert.match(await head.locator('[data-section="prices-header"] h1').innerText(),/10\s*990\s*₸/,'The launch price remains in the hero');
 }
 try {
@@ -169,7 +169,7 @@ try {
       assert.equal(chatCalls,0,'Opening the assistant never sends an AI request');
       await head.keyboard.press('Escape');await head.getByRole('dialog').waitFor({state:'hidden'});
     }
-    await head.getByRole('button',{name:'Оформить и оплатить',exact:true}).click();
+    await head.locator('[data-pricing-buy="hero"]').click();
     assert(await head.getByRole('dialog').isVisible());
     await head.keyboard.press('Escape'); assert.equal(await head.getByRole('dialog').count(),0);
     await head.emulateMedia({forcedColors:'active'}); assert.equal(await canvas.isVisible(),false);

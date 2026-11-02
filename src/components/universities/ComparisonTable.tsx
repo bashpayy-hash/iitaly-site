@@ -1,5 +1,7 @@
 "use client";
 
+import { Check } from "lucide-react";
+import { UniversityDecision, type UniversitySelection } from "./UniversityDecision";
 import { useId, useState } from "react";
 import { CITIES, type University } from "@/data/italy";
 import { COMPARISON_GROUPS } from "./comparison-model";
@@ -7,7 +9,7 @@ import { CityGlyph } from "./CityGlyph";
 import styles from "./comparison.module.css";
 
 /** Same source-backed comparison on the page and in the existing modal. */
-export function ComparisonTable({ universities }: { universities: University[] }) {
+export function ComparisonTable({ universities, selection }: { universities: University[]; selection?: UniversitySelection }) {
   const [differencesOnly, setDifferencesOnly] = useState(false);
   const [months, setMonths] = useState(12);
   const id = useId();
@@ -41,8 +43,9 @@ export function ComparisonTable({ universities }: { universities: University[] }
           <thead>
             <tr>
               <th scope="col">Что сравниваем</th>
-              {universities.map(u => <th scope="col" key={u.id}>
+              {universities.map(u => <th scope="col" key={u.id} data-primary={selection?.primaryId === u.id || undefined}>
                 <span className={styles.uniName}>{u.name}</span>
+                {selection?.primaryId === u.id && <span className={styles.selectedBadge}><Check size={14} aria-hidden="true" />Выбран основной вуз</span>}
                 <span className={styles.city}><CityGlyph city={u.city} className={styles.cityGlyph} />{CITIES[u.city].name}</span>
               </th>)}
             </tr>
@@ -54,13 +57,19 @@ export function ComparisonTable({ universities }: { universities: University[] }
               const different = new Set(values).size > 1;
               return <tr key={row.id} data-comparison-row={row.id} data-different={different}>
                 <th scope="row">{row.label}{row.id === "period" && <small>{months} месяцев · расчёт</small>}</th>
-                {values.map((value, index) => <td key={universities[index].id}>{value}</td>)}
+                {values.map((value, index) => <td key={universities[index].id} data-primary={selection?.primaryId === universities[index].id || undefined}>{value}</td>)}
               </tr>;
             })}
           </tbody>)}
+          {selection && <tfoot><tr><th scope="row">Твой выбор</th>{universities.map(university => <td key={university.id} data-primary={selection.primaryId === university.id || undefined}>
+            <button type="button" className={styles.chooseButton} aria-label={`Выбрать этот университет: ${university.name}`} aria-pressed={selection.primaryId === university.id} onClick={() => selection.onSelect(university.id)}>
+              {selection.primaryId === university.id && <Check size={16} aria-hidden="true" />}{selection.primaryId === university.id ? "Выбран основной вуз" : "Выбрать этот университет"}
+            </button>
+          </td>)}</tr></tfoot>}
         </table>
       </div>
       {rowCount === 0 && <p className={styles.note}>По выбранным параметрам различий в базе нет.</p>}
+      {selection && <UniversityDecision universities={universities} selection={selection} />}
       <div className={styles.notes}>
         <p><strong>Ориентир, не смета.</strong> Расходы на жизнь за {months} месяцев рассчитаны умножением месячной оценки из базы. Обучение, перелёт, виза, страховка и разовые расходы сюда не включены; стипендия не вычитается.</p>
         <p><strong>Перед подачей проверь условия.</strong> Здесь показаны сведения из текущей базы сайта, а не подтверждение актуального конкурса. Программы, сроки, стоимость и стипендии уточняй у вуза и стипендиального органа. Отсутствие отметки в базе не означает отсутствие программы; поступление и стипендия не гарантируются.</p>

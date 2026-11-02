@@ -251,7 +251,7 @@ try {
           await faq.evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
           await capture('home-faq');
         } else if (name === 'prices') {
-          const target = page.locator('#main-package').getByRole('button', { name: 'Оформить и оплатить', exact: true });
+          const target = page.locator('#main-package').getByRole('button', { name: /Оформить и оплатить|Купить за/ });
           await target.evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
           if (!baseline) {
             await noLegacyPortraits(page.locator('main'),'pricing');
@@ -306,7 +306,7 @@ try {
     }
     await visit('/guides#apostille');
     await page.locator('[data-guide-panel="apostille"]').waitFor();
-    const advice = page.locator('[data-vespi-tip]').filter({ visible: true });
+    const advice = page.locator('[data-guide-next=apostille]').filter({ visible: true });
     await advice.evaluate(element => element.scrollIntoView({ block: 'center', behavior: 'instant' }));
     if (!baseline) {
       await page.locator('[data-guide-sticky]').waitFor({ state: 'hidden' });
@@ -319,13 +319,10 @@ try {
     }
     await capture('guides-insight');
     if (finalCapture) {
-      await visit('/guides#visa');
-      await page.locator('[data-guide-panel="visa"]').waitFor();
-      await page.waitForFunction(() => document.activeElement?.id === 'active-guide-title');
-      const checklist = page.getByRole('button', { name: 'Чек-лист документов', exact: true });
-      if (await checklist.getAttribute('aria-expanded') === 'false') await checklist.click();
-      await page.locator('#active-guide-title').focus();
-      await page.locator('#active-guide-title').evaluate(element => element.scrollIntoView({ block: 'start', behavior: 'instant' }));
+      await visit('/guides/visa/documents');
+      await page.locator('[data-guide-part=documents]').waitFor();
+      await page.locator('#guide-title').focus();
+      await page.locator('#guide-title').evaluate(element=>element.scrollIntoView({block:'start',behavior:'instant'}));
       assert.equal(await page.locator('[data-guide-sticky]').count(),0);
       await capture('guides-reading');
     }
@@ -349,6 +346,7 @@ try {
     await page.locator('[data-guide-inline-action]').filter({ visible: true }).click();
     await page.getByRole('heading', { name: 'Какой средний балл?', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1')), draft, 'Assistant context preserves the quiz draft');
+    await page.getByRole('link', {name:'Проверить документ',exact:true}).click();
     await page.locator('#document-check').scrollIntoViewIfNeeded();
     if (!baseline) assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'No repeated portrait in the document workbench or report');
     await capture('plan-document');
@@ -381,7 +379,7 @@ try {
     assert.equal(await page.locator('[data-step-detail] button').count(), 0, 'Future parent-owned step cannot be completed or uploaded');
     await capture('portal-future');
     if (!baseline) {
-      assert(await page.locator('[data-step-detail] [data-portal-step-guide]').count() > 0, 'Future step explains its dependency in the assistant context');
+      assert.match(await page.locator('[data-step-detail]').innerText(),/Сначала:/,'The brief explains the future step dependency before any action');
       await audit(`portal future ${width}`);
     }
     await visit('/portal?view=docs');
@@ -396,9 +394,16 @@ try {
     await page.locator('[data-step-detail="statements"]').waitFor();
     assert.equal(await page.locator('[data-step-detail] [data-primary-action]').count(), 1, 'Current file step offers exactly one upload action');
     if (!baseline) {
-      assert(await page.locator('[data-step-detail] [data-portal-step-guide]').isVisible(), 'Current file step shows its action instructions');
+      await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить',exact:true}).click();
+      assert(await page.locator('[data-step-detail] [data-portal-step-guide]').isVisible(), 'Instructions have their own reading page');
       await noLegacyPortraits(page.locator('[data-step-detail] [data-portal-step-guide]'), `portal upload ${width}`);
-      await documentCoach(page, `portal upload ${width}`);
+      assert.equal(await page.locator('[data-instruction-point]').count(),1);
+      await page.getByText('Все пункты',{exact:true}).click();
+      await page.getByRole('link',{name:'Проверь читаемость файла',exact:true}).click();
+      assert.equal(await page.locator('[data-portal-document-coach]').count(),1);
+      assert(await page.getByText('Текст читается, края страниц видны.',{exact:true}).isVisible());
+      await page.getByRole('navigation',{name:'Разделы задачи'}).locator('a[href$="part=action"]').click();
+      assert.equal(await page.locator('[data-task-action-page] [data-portal-document-coach]').count(),0,'The action contains only the necessary form and upload control');
       await noDuplicatePortraits(page, `portal upload ${width}`);
       await audit(`portal upload ${width}`);
     }

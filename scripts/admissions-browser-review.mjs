@@ -25,7 +25,7 @@ const server = createServer(async (req,res) => {
 });
 await new Promise(done => server.listen(0,'127.0.0.1',done));
 const origin = `http://127.0.0.1:${server.address().port}`;
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const errors = [];
 try {
   for (const width of [1440,390,320]) {
@@ -47,10 +47,20 @@ try {
       'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
-    const result = await page.locator('main').textContent();
+    const routeStops=page.locator('[data-assessment-route] [data-flight-stop]');
+    await routeStops.first().waitFor();
+    const chapters=[await page.locator('main').textContent()];
+    for (let index=0;index<await routeStops.count();index++) {
+      await routeStops.nth(index).click();
+      const point=page.locator('[data-instruction-point]');
+      assert.equal(await point.count(),1,'Only the selected admission step is rendered');
+      chapters.push(await point.textContent());
+    }
+    const result=chapters.join(' ');
     assert.match(result,/компенсацию 11-летней школы/);
     assert.match(result,/Документы несовершеннолетнего/);
     assert.match(result,/Для 2027\/28 годы справок пока не назначаем/);
+    await routeStops.first().click();
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1),false,'Plan result overflow at '+width);
     await page.screenshot({path:resolve(output,`plan-${width}.png`),fullPage:true});
     for (const id of ['cimea','iseeu','visa']) {
@@ -61,9 +71,9 @@ try {
       await body.waitFor({state:'visible'});
       const titles = {cimea:'DoV, CIMEA и ARDI', iseeu:'DSU и ISEEU', visa:'Виза D'};
       await body.getByRole('heading',{name:titles[id],exact:true}).waitFor({state:'visible'});
-      assert.equal(await page.locator(`[data-guide-select="${id}"]`).getAttribute('aria-expanded'),'true','Deep link selects '+id);
+      assert.equal(await page.locator('[data-guide-timeline],[data-guide-select]').count(),0,'Reading has no repeated topic directory');
       assert.equal(await page.locator('[data-guide-panel]').count(),1,'One selected topic is shared across viewports');
-      assert.equal(new URL(page.url()).hash,'#'+id);
+      assert.equal(new URL(page.url()).pathname,'/guides/'+id);
       // User request 2026-10-18: one shared rules date in the guide header,
       // rather than a duplicate inside every selected article. Each article
       // must still expose its own real official sources below.
@@ -75,7 +85,7 @@ try {
       if (id==='visa') {
         // User-requested card UI has one topic body, so there is no hidden
         // mobile disclosure whose delayed toggle can overwrite the deep link.
-        await body.getByRole('button',{name:'Годовой минимум и пересчёт в тенге',exact:true}).click();
+        await page.locator('[data-visa-part=funds]').click();await page.locator('[data-guide-part=funds]').waitFor();
         const rate = body.getByLabel('Твой курс банка: тенге за €1');
         assert.equal(await rate.inputValue(),'');
         await rate.fill('550');

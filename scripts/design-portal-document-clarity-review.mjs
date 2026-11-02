@@ -1,5 +1,5 @@
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
-import { portalDestination } from './portal-review-navigation.mjs';
+import { portalDestination, portalStage, portalRoadState } from './portal-review-navigation.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
@@ -23,7 +23,7 @@ const server=createServer(async(req,res)=>{
   }catch{res.writeHead(500).end();}
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));
-const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch();
+const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const results=[],errors=[],unexpected=[];
 const road=page=>page.locator('[data-portal-road]');
 async function go(page,name){await portalDestination(page,name);}
@@ -80,7 +80,7 @@ try {
   Object.assign(task,{t:'Поставить апостиль на аттестат или диплом',time:'до 15 рабочих дней',deadline:'2027-05-01',deadlineKind:'Ориентир',daysLeft:189});
   data.docs.apostille={verdict:'warn',fileName:'attestat.pdf',checkedAt:'2026-10-20T10:00:00Z',result:structuredClone(original)};
   const {page,context}=await open({width,height:900},'partial',{data});
-  assert.equal(await road(page).getAttribute('data-road-done'),'3');assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
+  assert.equal((await portalRoadState(page)).done,'3');assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
   assert.match((await page.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),/Открыть разбор/);
   await capture(page,`overview-${width}`);
   await go(page,'План');await noOverflow(page);await capture(page,`plan-${width}`);
@@ -96,22 +96,24 @@ try {
   await capture(page,`document-${width}`);
   if(width===1440)assert(bounds.y+bounds.height<900,`The next action fits in the first desktop viewport: ${JSON.stringify({sizes,bounds})}`);
   await axe(page,`result ${width}`);await noOverflow(page);
+  await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Полный разбор',exact:true}).click();
+  await report.getByText('Файл и сроки',{exact:true}).click();
   for(const value of ['attestat.pdf','20 октября 2026','до 15 рабочих дней','1 мая','Это не срок конкретного вуза'])assert((await report.innerText()).includes(value),value+' retained');
-  await report.getByText('Что проверено: полный разбор',{exact:true}).click();
+  await report.getByRole('navigation',{name:'Пункты разбора'}).getByRole('link').filter({hasText:'Проверка 1'}).click();
   assert.match(await report.innerText(),/Текст виден/);
   await report.getByText('Источники и дата сверки правил',{exact:true}).click();
   assert.equal(await report.locator('a[href="https://www.universitaly.it/studenti-stranieri"]').count(),1);
-  await report.getByText('Все рекомендации из разбора',{exact:true}).click();
+  await report.getByRole('navigation',{name:'Пункты разбора'}).getByRole('link').filter({hasText:'Действие 1'}).click();
   assert.match(await report.innerText(),/Уточни требования выбранного вуза и повтори проверку/);
-  await action.click();const form=page.locator('[data-document-upload-form]');await form.waitFor();
-  assert(await form.locator('details').evaluate(el=>el.open),'Context is open before starting');
+  await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Новая проверка',exact:true}).click();const form=page.locator('[data-document-upload-form]');await form.waitFor();
+  assert.equal(await form.locator('details').count(),0,'Context fields are never hidden in an accordion');assert(await form.getByRole('combobox').first().isVisible());
   const programme=form.getByRole('combobox',{name:'Стипендиальная программа'}),year=form.getByRole('combobox',{name:'Учебный год заявки'});
   await programme.selectOption('piemonte');await year.selectOption('2026/27');await form.getByRole('checkbox').check();
   await report.getByRole('link',{name:'К документам',exact:true}).click();await page.locator('[data-document=apostille]').click();await action.click();
   assert.equal(await programme.inputValue(),'piemonte','Unsubmitted context survives view navigation');
   assert.equal(await year.inputValue(),'2026/27');assert(await form.getByRole('checkbox').isChecked());
   await report.getByRole('link',{name:'К документам',exact:true}).click();
-  await page.goBack();await report.waitFor();await action.click();
+  await page.goBack();await report.waitFor();await page.getByRole('navigation',{name:'Разделы разбора документа'}).getByRole('link',{name:'Новая проверка',exact:true}).click();
   assert.equal(await programme.inputValue(),'piemonte','Browser Back preserves the draft context');
   assert.equal(await year.inputValue(),'2026/27');
   let checks=0,saves=0;
@@ -132,20 +134,21 @@ try {
   await form.getByRole('button',{name:'Проверить документ',exact:true}).click();
   await form.locator('[data-document-operation=checking]').waitFor();assert.match(await form.innerText(),/На проверке/);
   await form.getByRole('alert').waitFor();assert.match(await form.getByRole('alert').innerText(),/проверка завершена, но результат не сохранён/);
-  assert.match(await report.innerText(),/attestat.pdf/,'Existing saved report survives the failure');
+  assert.match(await report.locator('[data-report-details-page]').textContent(),/attestat.pdf/,'Existing saved report survives the failure');
   assert.equal(checks,1);assert.equal(saves,1);
   await form.getByRole('button',{name:'Сохранить результат',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('[aria-label="Файл и сроки"]')?.textContent.includes('synthetic-attestat.txt'));
+  await page.waitForFunction(()=>document.querySelector('[data-report-details-page]')?.textContent.includes('synthetic-attestat.txt'));
   assert.equal(checks,1,'Retry saves the result without another AI charge');assert.equal(saves,2);
   assert.equal(await page.locator('[data-document-operation-error]').count(),0,'Saved result has no stale error');
-  assert.equal(await road(page).getAttribute('data-road-done'),'3','Clarification does not change progress');
-  await page.reload({waitUntil:'networkidle'});await report.waitFor();assert.equal(checks,1);assert.match(await report.innerText(),/synthetic-attestat.txt/);
+  assert.equal((await portalRoadState(page)).done,'3','Clarification does not change progress');
+  await page.reload({waitUntil:'networkidle'});await report.waitFor();assert.equal(checks,1);
+  await report.getByRole('link',{name:'Полный разбор',exact:true}).click();await report.getByText('Файл и сроки',{exact:true}).click();assert.match(await report.innerText(),/synthetic-attestat.txt/);
   await report.getByRole('link',{name:'К документам',exact:true}).click();
   data.docs.apostille={verdict:'warn',summary:'Сохранённый краткий итог без полного отчёта.'};
   await page.reload({waitUntil:'networkidle'});await page.locator('[data-document=apostille]').click();
   assert.match(await report.innerText(),/Подробности старого разбора восстановить нельзя/);
   assert.match(await report.innerText(),/Исходный файл не хранится/);
-  await road(page).locator('[data-road-stage=arrival]').click();assert.equal(await page.locator('[data-document-upload-form]').count(),0);
+  await portalStage(page,'arrival');assert.equal(await page.locator('[data-document-upload-form]').count(),0);
   results.push({width,sizes,sourceDataPreserved:true,progressUnchanged:true,contextRetained:true,selectionRequiresConfirmation:true,saveOnlyRetry:true,legacyLimitHonest:true});
   await context.close();
  }

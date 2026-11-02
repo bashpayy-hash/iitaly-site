@@ -1,3 +1,4 @@
+import { openGuideStage, openGuideTopic } from "./guide-review-navigation.mjs";
 import { editorialContrastFindings } from './portal-editorial-contrast.mjs';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
@@ -26,7 +27,7 @@ const server = createServer(async (req,res) => {
 });
 await new Promise(done => server.listen(0,'127.0.0.1',done));
 const origin = `http://127.0.0.1:${server.address().port}`;
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 const errors = [];
 try {
   for (const width of [1440,768,390,320]) {
@@ -64,12 +65,14 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where+' overflow');
     }
     await visit('/plan');
+    await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.getByText('Проверка документов пока недоступна',{exact:true}).waitFor();
     assert(await page.getByLabel('Выбрать документ для проверки').isDisabled());
     assert.equal(documentRequests.length,0,'No document is sent while provider credentials are invalid');
     aiAvailable = true;
     await page.getByRole('button',{name:'Проверить доступность',exact:true}).click();
     await page.waitForFunction(()=>!document.querySelector('input[type="file"]').disabled);
+    await page.getByRole('link',{name:'Составить план',exact:true}).click();
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     await page.getByRole('button').filter({hasText:'11 классов'}).click();
     await visit('/guides');
@@ -81,30 +84,25 @@ try {
     await search.fill('несуществующая-тема-123');
     assert(await page.getByRole('heading',{name:'Такой темы не нашли'}).isVisible());
     await page.getByRole('button',{name:'Сбросить поиск'}).click();
-    assert.equal(await results.count(),2,'Reset returns to the route stage');
-    // The numbered timeline keeps the same keyboard-operable topics and one
-    // readable article at every viewport.
-    const chapterIds = new Set();
-    const stages = page.getByRole('navigation',{name:'Этапы справочника'});
-    for(const [name,count] of [['education',2],['apostille',8],['permesso',3]]) {
-      await stages.locator(`a[href="#${name}"]`).click();
+    assert.equal(await page.locator('[data-guide-category]:not([data-guide-category=all])').count(),3,'Reset restores the three category links');
+    const chapterIds=new Set();
+    for(const [stage,count] of [['choose',2],['prepare',8],['arrival',3]]){
+      await openGuideStage(page,stage);
+      await page.locator('[data-guide-select]').first().waitFor();
       assert.equal(await results.count(),count);
-      for(const id of await results.evaluateAll(nodes=>nodes.map(node=>node.dataset.guideSelect))) chapterIds.add(id);
+      for(const id of await results.evaluateAll(nodes=>nodes.map(node=>node.dataset.guideSelect)))chapterIds.add(id);
+      await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
     }
-    assert.equal(chapterIds.size,13,'All reviewed chapters remain available across the stage filters');
-    await stages.locator('a[href="#apostille"]').click();
-    await page.locator('[data-guide-select="cimea"]').click();
-    await page.waitForFunction(()=>document.activeElement?.id==='active-guide-title');
-    assert.equal(await page.locator('#active-guide-title').evaluate(el=>document.activeElement===el),true);
-    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),1,'Only one chapter is expanded');
-    assert.equal(await page.locator('[data-guide-select="cimea"]').getAttribute('aria-expanded'),'true');
-    await search.fill('CIMEA');
-    assert.equal(await page.locator('[data-guide-panel]').filter({visible:true}).count(),0,'Search shows results without an obsolete article');
+    assert.equal(chapterIds.size,13);
+    await search.fill('CIMEA');await openGuideTopic(page,'cimea');
+    await page.locator('#guide-title').waitFor();
+    assert.equal(await page.locator('[data-guide-panel]').count(),1);
+    assert.equal(await page.locator('[data-guide-select],[data-guide-timeline]').count(),0);
+    await page.goBack();await search.waitFor();assert.equal(await search.inputValue(),'CIMEA');
     await page.getByRole('button',{name:'Сбросить поиск',exact:true}).click();
-    assert.equal(await search.evaluate(el=>document.activeElement===el),true);
-    await search.fill('CIMEA');
-    await page.locator('[data-guide-select="cimea"]').click();
-    await page.locator('#guide-topics').scrollIntoViewIfNeeded();
+    assert(await search.evaluate(el=>document.activeElement===el));
+    await search.fill('CIMEA');await openGuideTopic(page,'cimea');
+    await page.locator('#guide-title').waitFor();
     await checkA11y('guides '+width);
     await page.screenshot({path:resolve(output,`guides-${width}.png`)});
     await visit('/plan');
@@ -120,7 +118,10 @@ try {
     const firstAction=page.locator('#questionnaire [data-assessment-next-action]');
     assert(await firstAction.isVisible(),'The first action is visible without opening a disclosure');
     assert((await firstAction.locator('p').allTextContents()).every(text=>text.trim().length>0),'The first action includes a readable explanation and concrete action');
-    assert(await firstAction.locator('p').filter({visible:true}).count()>=2,'The explanation and action are both immediately visible');
+    const activePoint=page.locator('#questionnaire [data-instruction-point]');
+    assert.equal(await activePoint.count(),1,'Only one route point is shown at a time');
+    assert(await activePoint.locator('p').filter({visible:true}).count()>=3,'Position, explanation and action are immediately visible');
+    assert(await firstAction.locator('p').filter({visible:true}).count()>=1,'The concrete action is visible without expanding its source notes');
     const laterSteps=page.locator('#questionnaire [data-assessment-route] details');
     assert(await laterSteps.count()>0,'The remaining route stays available');
     assert.equal(await laterSteps.evaluateAll(nodes=>nodes.filter(node=>node.open).length),0,'Later steps start closed');
@@ -139,6 +140,7 @@ try {
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'true');
     await page.getByRole('button',{name:'Начать заново',exact:true}).click();
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
+    await page.getByRole('navigation',{name:'Бесплатные инструменты'}).getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'example.txt',mimeType:'text/plain',buffer:Buffer.from('Синтетический тест: доход семьи за указанный год.')});
     const doc=page.locator('#document-check');
     await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();
@@ -191,7 +193,7 @@ try {
     await context.close();
   }
   assert.deepEqual(errors,[],'No runtime errors');
-  console.log('UX review passed: provider readiness blocks upload and recovers, guide search/recovery, one expanded bento chapter, stage filters, preserved plan draft, optional contact, first action, file retry, city shortcut and axe checks at 1440/768/390/320px.');
+  console.log('UX review passed: provider readiness blocks upload and recovers, guide search/recovery, one topic per page, category links, preserved plan draft, optional contact, first action, file retry, city shortcut and axe checks at 1440/768/390/320px.');
 } finally {
   await browser.close();
   await new Promise(done=>server.close(done));

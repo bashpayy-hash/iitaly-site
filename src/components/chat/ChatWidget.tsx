@@ -44,7 +44,7 @@ interface PortalChatContext {
 }
 
 function visibleGuideContext(): PortalChatContext {
-  if (window.location.pathname !== "/guides") return {};
+  if (window.location.pathname !== "/guides" && !window.location.pathname.startsWith("/guides/")) return {};
   const id = document.querySelector("[data-guide-current]")?.getAttribute("data-guide-current");
   return isGuideId(id) ? { guideId: id } : {};
 }
@@ -95,7 +95,7 @@ function SendIcon() {
 export function ChatWidget() {
   const pathname = usePathname();
   const portalMode = pathname === "/portal";
-  const guidesMode = pathname === "/guides";
+  const guidesMode = pathname === "/guides" || pathname.startsWith("/guides/");
   const calmMode = portalMode || guidesMode;
   const stepContext = useRef<PortalChatContext>({});
   const [displayContext, setDisplayContext] = useState<PortalChatContext>({});

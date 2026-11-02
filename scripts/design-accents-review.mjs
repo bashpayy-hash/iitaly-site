@@ -1,3 +1,4 @@
+import { openGuideStage, openGuideTopic } from "./guide-review-navigation.mjs";
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
@@ -73,7 +74,7 @@ function serve(root, port) {
   return new Promise(done => server.listen(port, '127.0.0.1', () => done(server)));
 }
 const servers = [await serve('out', 4175), await serve(process.env.BASELINE_OUT, 4176)];
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
 async function settle(page, port, route = '/') {
   const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: 'networkidle' });
   assert.equal(response.status(), 200);
@@ -247,31 +248,26 @@ try {
         assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
         assert(await page.getByRole('heading', {name: 'Когда хочешь начать учёбу?'}).isVisible());
       } else {
-        assert.match(await page.locator('main').innerText(), /Аттестат и 12 лет/);
+        assert.match(await page.locator('main').innerText(), /Выбрать маршрут/);
         assert.match(await page.locator('main').innerText(), /2026/);
       }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${route} overflow at ${width}`);
       await inspectArtwork();
       assert.equal(await page.locator('h1').evaluate(el => getComputedStyle(el).filter), 'none', 'Blur never affects the heading');
       if (route === '/plan') {
-        const wash = page.locator('[data-editorial-atmosphere]');
-        assert.equal(await wash.isVisible(), width >= 1280);
-        if (width >= 1280) {
-          assert.equal(await wash.evaluate(el => getComputedStyle(el).pointerEvents), 'none');
-          assert.match(await wash.locator('img').evaluate(el => getComputedStyle(el).filter), /blur/);
-          assert(Number(await wash.locator('img').evaluate(el => getComputedStyle(el).opacity)) <= .3);
-        }
+        assert.equal(await page.locator('[data-editorial-atmosphere]').count(), 0, 'Plan has no corner watermark');
       }
       if ([1440,390].includes(width)) {
         await page.screenshot({path:resolve(output, `${route.slice(1)}-${width}.png`), animations:'disabled'});
-        await page.locator(route === '/guides' ? '[data-section="guides-header"]' : 'main > section').first().screenshot({path:resolve(output, `${route.slice(1)}-header-${width}.png`), animations:'disabled'});
+        await page.locator(route === '/guides' ? '[data-guides-pages] main header' : 'main > section').first().screenshot({path:resolve(output, `${route.slice(1)}-header-${width}.png`), animations:'disabled'});
       }
       if (route === '/guides') {
         // The requested Bento UI shares selectable topic cards on all widths.
-        await page.getByRole('navigation', {name:'Этапы справочника'}).locator('a[href="#apostille"]').click();
-        await page.locator('[data-guide-select="cimea"]').click();
+        await openGuideStage(page,'prepare');
+        await openGuideTopic(page,'cimea');
+        await page.locator('[data-story-pill]').filter({hasText:'CIMEA Verification'}).click();
         await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
-        assert.equal(await page.locator('[data-guide-select="cimea"]').getAttribute('aria-expanded'),'true');
+        assert.equal(new URL(page.url()).pathname,'/guides/cimea');
       }
       results.push({test:`${route} ${width}px: reviewed copy, loaded art, no overlap/overflow`,passed:true});
     }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Onest, Space_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
+import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
@@ -79,7 +80,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-cream text-ink font-sans">
+      <body className={`${paper.canvas} min-h-full flex flex-col text-ink font-sans`}>
         <MotionProvider>
           {/* Первое, что получает фокус на любой странице. По ТЗ клавиатурная
              навигация обязана быть видимой; без этой ссылки человек на

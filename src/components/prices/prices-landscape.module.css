@@ -1,5 +1,8 @@
-.hero { position:relative; isolation:isolate; z-index:1; padding:96px 20px 20px; text-align:center; }
+.hero { position:relative; isolation:isolate; z-index:1; padding:72px 20px 20px; text-align:center; }
 .copy { position:relative; z-index:1; isolation:isolate; width:min(100%,760px); margin-inline:auto; }
+.purchaseActions { display:flex; justify-content:center; margin-top:24px; }
+.purchaseActions > button { min-width:240px; white-space:nowrap; }
+.sectionLinks { margin-top:16px; }
 .copy::before {
   content:""; position:absolute; z-index:-1; inset:-34px -20px -20px; pointer-events:none;
   background:radial-gradient(ellipse at center,var(--color-cream) 28%,color-mix(in srgb,var(--color-cream) 97%,transparent) 59%,color-mix(in srgb,var(--color-cream) 78%,transparent) 72%,transparent 90%);
@@ -21,6 +24,8 @@
 @media (min-width:960px) { .copy::before { inset-inline:-72px; } }
 @media (max-width:767px) {
   .hero { padding:48px 20px 20px; }
+  .purchaseActions > button { width:100%; max-width:360px; min-width:0; }
+  .sectionLinks { column-gap:20px; row-gap:0; }
   .copy::before { inset:-20px -20px -14px; }
   .petalLeft { left:0; top:-28px; transform:scale(.75) rotate(-14deg); }
   .petalMiddle { right:64px; top:-22px; transform:scale(.75) rotate(22deg); }

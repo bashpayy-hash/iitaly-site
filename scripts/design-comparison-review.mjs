@@ -38,7 +38,7 @@ const server = createServer(async (request, response) => {
   } catch { response.writeHead(500).end(); }
 });
 await new Promise(done => server.listen(4177, '127.0.0.1', done));
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:['--no-sandbox','--disable-dev-shm-usage']} : {});
 async function visit(page, path) {
   const response = await page.goto(`http://127.0.0.1:4177${path}`, { waitUntil:'networkidle' });
   assert.equal(response.status(), 200);
@@ -78,7 +78,7 @@ try {
           return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
         });
       });
-      assert.equal(overlap, false, 'Postcard does not overlap comparison controls/copy');
+      assert.equal(overlap, false, 'Small header accent does not overlap text or controls');
     }
     for (const [index, id] of ['bocconi', 'polimi', 'polito'].entries()) {
       await workbench.getByLabel(`Университет ${index + 1}`, {exact:true}).selectOption(id);
@@ -89,6 +89,7 @@ try {
       }, { index, id });
     }
     results.push({ test: `${width}px: all three selections committed`, passed: true });
+    await workbench.getByRole('button', {name:'Таблица',exact:true}).click();
     assert.equal(await workbench.locator('[data-comparison-row]').count(), 12);
     // isDisabled() retargets an option inside a wrapping label to the enabled select.
     // Inspect the native option property instead; the duplicate must remain disabled.
@@ -134,12 +135,11 @@ try {
     await page.getByRole('button', {name:'На английском',exact:true}).click();
     results.push({test:`Comparison ${width}px: 3 selections, 12 rows, differences, 10/12-month calculation, modal, reset, map/filters`,passed:true});
     for (const [route, selector, assetName] of [
-      ['/plan','[data-editorial-atmosphere]','travel-paperwork-640.webp'],
-      ['/prices','[data-editorial-spot="tomatoes"]','tomato-bowl-320.webp'],
+            ['/prices','[data-editorial-spot="tomatoes"]','tomato-bowl-320.webp'],
     ]) {
       await visit(page,route);
       const accent = page.locator(selector);
-      assert.equal(await accent.isVisible(),width >= (route === '/prices' ? 768 : 1280), 'The pricing canvas also supports tablet margins; the plan wash retains its desktop breakpoint');
+      assert.equal(await accent.isVisible(),width >= (route === '/prices' ? 768 : 1280), 'The pricing canvas supports tablet margins');
       assert((await accent.locator('img').getAttribute('src')).endsWith(assetName));
       assert.equal(await page.locator('h1').evaluate(el=>getComputedStyle(el).filter),'none');
       await noOverflow(page, `${route} ${width}`);
