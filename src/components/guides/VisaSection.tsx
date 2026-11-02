@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
 import { ADMISSION_SOURCES } from "@/data/admissions";
 import { VG_PER_YEAR, VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/data/guides";
-import { VISA_PARTS, type VisaPart } from "./guideCatalogue";
+import type { VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
 import { GuidePointSwitcher } from "./GuidePointSwitcher";
+import { GuideStepCards } from "./GuideStepCards";
 import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitcher";
 
 export function VisaSection({ part }: { part?: VisaPart }) {
@@ -19,7 +20,7 @@ export function VisaSection({ part }: { part?: VisaPart }) {
   return <>
     <a className={ui.textLink} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer">Официальный VFS для Италии в Казахстане</a>
     <dl className={ui.visaFacts}>{VISA_KEY_FACTS.map(fact=><div key={fact.label}><dt>{fact.value}</dt><dd>{fact.label}</dd></div>)}</dl>
-    <nav aria-label="Вопросы о визе D"><ul className={ui.topicList}>{VISA_PARTS.map(item=><li key={item.id}><Link href={`/guides/visa/${item.id}`} data-visa-part={item.id}><span><strong>{item.title}</strong><span>{item.description}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>)}</ul></nav>
+    <GuideStepCards id="visa" />
   </>;
 }
 

@@ -265,9 +265,10 @@ try {
         // The requested Bento UI shares selectable topic cards on all widths.
         await openGuideStage(page,'prepare');
         await openGuideTopic(page,'cimea');
-        await page.locator('[data-story-pill]').filter({hasText:'CIMEA Verification'}).click();
-        await page.locator('[data-guide-panel="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
-        assert.equal(new URL(page.url()).pathname,'/guides/cimea');
+        // Each point opens its own step page (owner 2 Nov, apple.com «Learn all about»).
+        await page.locator('[data-guide-step-card]').filter({hasText:'CIMEA Verification'}).click();
+        await page.locator('[data-guide-step="cimea"]').getByText(/60 рабочих дней/).first().waitFor({state:'visible'});
+        assert.equal(new URL(page.url()).pathname,'/guides/cimea/2');
       }
       results.push({test:`${route} ${width}px: reviewed copy, loaded art, no overlap/overflow`,passed:true});
     }

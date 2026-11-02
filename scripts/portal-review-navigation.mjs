@@ -39,9 +39,12 @@ export async function portalStage(page, stage) {
   if (!await page.locator('[data-road-stage]').count()) await portalDestination(page, 'Обзор');
   const destination = page.locator(`[data-road-stage="${stage}"]`);
   if (await destination.isVisible()) {
+    // Lineup cards (stages ahead on the overview) open the stage page directly;
+    // a stop on the line first opens its preview under the node.
+    const lineup = await destination.evaluate(el => Boolean(el.closest('[data-stage-lineup]')));
     await destination.click();
     const preview = page.locator('[data-flight-stage-preview]');
-    if (await preview.count()) await preview.getByRole('link', { name: 'Открыть этап' }).click();
+    if (!lineup && await preview.count()) await preview.getByRole('link', { name: 'Открыть этап' }).click();
   }
   else {
     const stages = await page.locator('[data-road-stage]').evaluateAll(nodes => nodes.map(n => n.dataset.roadStage));

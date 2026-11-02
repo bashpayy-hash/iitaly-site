@@ -28,12 +28,14 @@ export function flightWhen(date?: string | null) {
 export function FlightPlan({ stops, index, onSelect, compact = false, children, label = "Этапы маршрута", destination = "Италия", city, currentLabel = "Текущий шаг", variant = "rail", detail, instrument = true, origin = "Казахстан" }: {
   stops: FlightStop[]; index: number; onSelect: (index: number) => void;
   compact?: boolean; children?: ReactNode; label?: string; destination?: string; city?: CityId | null; currentLabel?: string;
-  variant?: "rail" | "timeline";
+  /** dots: compact strip as one line of points with a single caption (questionnaire). */
+  variant?: "rail" | "timeline" | "dots";
   /** Timeline only: content opened under a stop (null keeps the stop closed). */
   detail?: (position: number) => ReactNode;
   instrument?: boolean; origin?: string;
 }) {
   const timeline = variant === "timeline" && !compact;
+  const dots = variant === "dots" && compact;
   const rail = useRef<HTMLElement>(null);
   const [inFocus, setInFocus] = useState<ReadonlySet<number>>(new Set());
   const safeIndex = Math.max(0, Math.min(index, stops.length - 1));
@@ -94,8 +96,13 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
   }, [compact, timeline, stops.length]);
 
   if (!stops.length) return null;
-  return <div className={styles.flight} data-flight-plan data-compact={compact || undefined} data-variant={timeline ? "timeline" : undefined} style={{ "--flight-index": safeIndex, "--flight-count": stops.length } as CSSProperties}>
-    {instrument && <div className={styles.instrument}>
+  const selectedStop = stops[safeIndex];
+  return <div className={styles.flight} data-flight-plan data-compact={compact || undefined} data-variant={timeline ? "timeline" : dots ? "dots" : undefined} style={{ "--flight-index": safeIndex, "--flight-count": stops.length } as CSSProperties}>
+    {dots && <div className={styles.instrument}>
+      <span className={styles.callsign}><Plane size={13} strokeWidth={1.8} aria-hidden="true" />Flight plan</span>
+      <span className={styles.position}>{[selectedStop?.meta, selectedStop?.title].filter(Boolean).join(" · ")}</span>
+    </div>}
+    {instrument && !dots && <div className={styles.instrument}>
       <span className={styles.callsign}><Plane size={13} strokeWidth={1.8} aria-hidden="true" />Flight plan<span className={styles.instrumentTitle}> / Маршрут поступления</span></span>
       <span className={styles.coordinates} data-flight-coordinates>
         <span>Казахстан <span aria-hidden="true">→</span> {destination}</span>
@@ -138,6 +145,7 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
             "data-flight-selected": position === safeIndex,
             "data-flight-focus": focused || undefined,
             "data-flight-distance": Math.min(3, Math.abs(position - safeIndex)),
+            title: dots ? stop.title : undefined,
             "data-road-stage": stop.locked ? undefined : stop.id,
             "data-road-stage-state": stop.state,
             "data-stage-selected": position === safeIndex || undefined,

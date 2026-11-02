@@ -218,6 +218,10 @@ const approvedGamifiedPortalPaths = new Set([
   'src/components/portal/higgsfield-visual.module.css',
   'src/components/portal/portal-upload.module.css',
   'src/data/higgsfieldVisuals.ts',
+  // User request 2026-11-02 (apple.com iPhone lineup): the stages ahead as a
+  // row of cards. Presentation only; it reads the same roadmap and progress.
+  'src/components/portal/PortalStageLineup.tsx',
+  'src/components/portal/portal-lineup.module.css',
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');

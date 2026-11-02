@@ -88,11 +88,16 @@ try {
     assert(Math.abs(design.ratio-6/26)<.00001,'Ahead tasks do not enter ordered progress');
     assert.equal(await page.locator('[data-portal-now] strong').first().evaluate(el=>getComputedStyle(el).color),'rgb(163, 52, 33)');
     const nav=page.getByRole('navigation',{name:'Этапы маршрута',exact:true});
-    assert(await nav.isVisible());assert.equal(await nav.locator('[data-flight-stop]').count(),6);
+    // Owner 2 Nov (apple.com lineup): the line runs up to the current stage;
+    // the stages ahead stand in a row of cards that link to their pages.
+    assert(await nav.isVisible());assert.equal(await nav.locator('[data-flight-stop]').count(),2,'The line runs up to the current stage');
+    const lineup=page.locator('[data-stage-lineup]');
+    assert.deepEqual(await lineup.locator('[data-stage-card]').evaluateAll(nodes=>nodes.map(n=>n.dataset.stageCard)),['apply','dsu','visa','arrival'],'Stages ahead stand in the lineup, in route order');
+    assert.equal(await lineup.locator('[data-road-stage=arrival]').getAttribute('href'),'/portal?stage=arrival');
     assert.equal(await nav.locator('[data-flight-plane]').count(),1);
-    await nav.locator('[data-road-stage=arrival]').click();
-    await page.locator('[data-flight-stage-preview=arrival]').waitFor();
-    assert.equal(await road(page).getAttribute('data-road-done'),'6','Previewing ahead never completes a task');
+    await nav.locator('[data-road-stage=start]').click();
+    await page.locator('[data-flight-stage-preview=start]').waitFor();
+    assert.equal(await road(page).getAttribute('data-road-done'),'6','Previewing a stage never completes a task');
     await nav.locator('[data-road-stage=docs]').click();
     await noOverflow(page);
     if([1440,390].includes(width)){await axe(page,'Route '+width);await capture(page,'route-'+width);}

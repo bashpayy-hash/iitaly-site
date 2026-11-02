@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-02",
+  "request": "Owner: on /guides every problem gets its own visual, as product tiles on apple.com; topic pages lead to separate step pages.",
+  "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 4:3, transparent background",
+  "promptTemplate": "Vintage risograph print illustration, slightly isometric view: [one object]. Halftone dot shading, misregistered ink, limited palette of deep teal, cream and tomato red with dark navy outlines, paper grain. A self-contained vignette isolated on a transparent background, no text, no letters, no numbers, no people.",
+  "processing": "Downloaded inside the Higgsfield sandbox, trimmed, 620px PNG masters, exported here as WebP q80 alpha90 at 240 and 480px with sharp. Reviewed at full size: no text, no flags, no people. The military master carried a translucent light haze around the tags (alpha 25–100); alpha below 100 was cleared and 100–160 ramped before export so it sits cleanly on dark tiles.",
+  "items": [
+    { "name": "tests", "topic": "tests", "job": "6c69b51e-b76c-4fe7-978a-749f2b959cd8", "object": "an exam answer sheet on a wooden clipboard with rows of small empty circles, a red pencil and a small hourglass", "masterSha256": "dc9d1e029e89a95cb6b1cffe8741250a9f4e00800e70262c88c05dd24d2403d4" },
+    { "name": "translation", "topic": "translation", "job": "37536b22-5f22-4cb4-8a91-58a43c697520", "object": "an open dictionary with a red ribbon bookmark and a fountain pen, pages with abstract wavy lines", "masterSha256": "5ce81e57ddd057c92f7aedd127dace50ea892881932f71f9e7b9cc9168923f21" },
+    { "name": "minors", "topic": "minors", "job": "fa788ac1-fc6d-449f-8bb4-81228f3b0ecd", "object": "a folded letter tied with a red ribbon and a wax seal, with a pencil", "masterSha256": "0e5c217978179b327f2b8e0f811bdba184709258e755007e9dfe54d5fb13d09d" },
+    { "name": "codice", "topic": "codice", "job": "7625c0a6-2333-4943-9108-ebdb0771aa90", "object": "two blank plastic identity cards with a golden chip and a navy stripe", "masterSha256": "bb7178615640d29930d41830291b13ce4c24909e634c73ff09edeb9c23047c48" },
+    { "name": "military", "topic": "military", "job": "ea1bd8d4-7bf3-45a1-81d1-812684cf03c2", "object": "a pair of blank metal identification tags on a ball chain", "masterSha256": "7676d04c7ae5582ced7b6d9f0f0360070a987b97d4334cd36e5a0b9d2b7d729f" }
+  ],
+  "files": [
+    { "file": "public/illustrations/riso/tests-240.webp", "width": 240, "height": 181, "bytes": 19652, "sha256": "be30ee5e0e0d052f1f8c7249b7785e67a15ef9f7692681dbe3d766130ca08222" },
+    { "file": "public/illustrations/riso/tests-480.webp", "width": 480, "height": 362, "bytes": 57414, "sha256": "64faafe0673f38e2823402911a0a8123bb2ec8325d8c715a85ecef364ab1ac7d" },
+    { "file": "public/illustrations/riso/translation-240.webp", "width": 240, "height": 174, "bytes": 15516, "sha256": "6dbd18a0d3aa73f502ead2cb6359398dc32921b731626619b509e977dee1c87d" },
+    { "file": "public/illustrations/riso/translation-480.webp", "width": 480, "height": 348, "bytes": 42472, "sha256": "2569a7a30f828e45df2e73a5e982e97c2df9677dbce6541267815dec8a015b81" },
+    { "file": "public/illustrations/riso/minors-240.webp", "width": 240, "height": 177, "bytes": 15668, "sha256": "a60aa086d6b38f7328f2a3f927e6c39c2b8fad2f431438ace9ed0b0f074314dc" },
+    { "file": "public/illustrations/riso/minors-480.webp", "width": 480, "height": 353, "bytes": 52206, "sha256": "d222cc838db48c39f1bc9397cb88dfc4a4b6221b562fe73d5e383e82560eb55a" },
+    { "file": "public/illustrations/riso/codice-240.webp", "width": 240, "height": 181, "bytes": 16218, "sha256": "8aeafcc29c35c74e9adc8a1cc409f0c39383d16771db32b8cdf88736de3495cc" },
+    { "file": "public/illustrations/riso/codice-480.webp", "width": 480, "height": 362, "bytes": 52580, "sha256": "0f4bd74091c427c36d39226dd09b200fbef332fb19f6a6c03f72e3e65073efc3" },
+    { "file": "public/illustrations/riso/military-240.webp", "width": 240, "height": 179, "bytes": 15102, "sha256": "38c40fb3ae04c0d62f5ad31beebd2a3328054ed8e9f1e1e2542199bfdc1f8f9e" },
+    { "file": "public/illustrations/riso/military-480.webp", "width": 480, "height": 357, "bytes": 44336, "sha256": "e542f495c127daf7974c3c593b9e79bff31b78ee5dfabc2c59b3af6a6eca09c8" }
+  ]
+}

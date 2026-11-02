@@ -1,0 +1,47 @@
+/* Ряд шагов темы: высокие карточки 3:4 со скруглением 28px, светлая и тёмная
+   поочерёдно; ряд прокручивается вбок и выходит за правый край колонки. */
+.steps { margin:28px 0 8px; }
+.head { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 16px; margin-bottom:16px; }
+.head h2 { margin:0; font-size:clamp(24px,2.6vw,32px); font-weight:600; line-height:1.1; letter-spacing:-.03em; }
+.head p { margin:0; font:400 10.5px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#5C6056; }
+.row { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(220px,260px); gap:14px; margin:0 -24px; padding:4px 24px 12px; overflow-x:auto; list-style:none; scroll-snap-type:x mandatory; scroll-padding-inline:24px; scrollbar-width:none; }
+.row::-webkit-scrollbar { display:none; }
+.row li { scroll-snap-align:start; min-width:0; }
+.card { position:relative; display:flex; flex-direction:column; height:100%; min-height:340px; padding:24px 22px; border-radius:28px; background:#F1ECE3; color:#241F1C; text-decoration:none; overflow:hidden; transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s ease; }
+.row li[data-tone=dark] .card { background:#2A2420; color:#FAF6EE; }
+.card:hover { transform:translateY(-3px); box-shadow:0 18px 36px -24px rgba(42,33,29,.55); }
+.label { font:500 12px/1.4 var(--font-sans); letter-spacing:.01em; color:#5C574E; }
+.row li[data-tone=dark] .label { color:#D9D1C4; }
+.title { margin-top:8px; font-size:20px; font-weight:600; line-height:1.2; letter-spacing:-.02em; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.numeral { margin-top:auto; font-size:112px; font-weight:600; line-height:.85; letter-spacing:-.06em; color:#E3D8C6; font-variant-numeric:tabular-nums; }
+.row li[data-tone=dark] .numeral { color:#4A3F38; }
+.plus { position:absolute; right:18px; bottom:18px; display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:#241F1C; color:#FAF6EE; transition:transform .3s cubic-bezier(.22,1,.36,1); }
+.row li[data-tone=dark] .plus { background:#FAF6EE; color:#241F1C; }
+.card:hover .plus { transform:rotate(90deg); }
+.card:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
+.arrows { display:flex; justify-content:flex-end; gap:10px; margin-top:4px; }
+.arrows button { display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:#E8E1D5; color:#241F1C; cursor:pointer; }
+.arrows button:hover { background:#DCD3C3; }
+.arrows button:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
+@media(max-width:600px) {
+  .row { grid-auto-columns:minmax(200px,72vw); margin:0 -16px; padding-inline:16px; scroll-padding-inline:16px; }
+  .card { min-height:300px; }
+  .numeral { font-size:96px; }
+  .arrows { display:none; }
+}
+@media(prefers-reduced-motion:reduce) { .card,.plus { transition:none; } .card:hover { transform:none; } .card:hover .plus { transform:none; } }
+@media(forced-colors:active) { .card { border:1px solid CanvasText; } }
+
+/* Шапка темы: текст слева, вещь темы справа; под шапкой — четыре факта. */
+.topicHeader { display:grid; grid-template-columns:minmax(0,1fr) 220px; align-items:center; gap:24px; }
+.topicArt { width:100%; height:auto; }
+.facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:0 0 8px; }
+.facts > div { min-width:0; padding:12px 14px; border-radius:16px; background:#F1ECE3; }
+.facts dt { margin-bottom:4px; font:400 9.5px/1.4 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:#5C6056; }
+.facts dd { margin:0; font-size:13px; font-weight:500; line-height:1.4; color:#352B28; overflow-wrap:anywhere; }
+.facts > div[data-known=false] { background:transparent; border:1px dashed #CFC6B7; }
+.facts > div[data-known=false] dd { font-weight:400; color:#5C6056; }
+@media(max-width:700px) {
+  .topicHeader { grid-template-columns:minmax(0,1fr) 110px; gap:12px; }
+  .facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}

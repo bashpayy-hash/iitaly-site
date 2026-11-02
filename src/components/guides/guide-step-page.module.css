@@ -1,0 +1,38 @@
+/* Страница шага: крупный заголовок и картинка темы, короткие пронумерованные
+   пункты, точки всех шагов и две карточки-перехода внизу. */
+.header { display:grid; grid-template-columns:minmax(0,1fr) 220px; align-items:center; gap:24px; margin-bottom:28px; }
+.header h1 { margin:8px 0 0; font-size:clamp(30px,3.6vw,46px); font-weight:600; line-height:1.06; letter-spacing:-.03em; text-wrap:balance; }
+.header h1:focus { outline:none; }
+.position { margin:0; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
+.art { width:100%; height:auto; }
+.sentences { display:grid; gap:12px; max-width:68ch; margin:0; padding:0; list-style:none; }
+.sentences li { display:grid; grid-template-columns:36px minmax(0,1fr); gap:14px; align-items:start; padding:18px 20px; border-radius:20px; background:#F1ECE3; }
+.sentences li > span { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:#2A2420; color:#FAF6EE; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; }
+.sentences p { margin:4px 0 0; font-size:17px; line-height:1.6; color:#2E2925; }
+.single { max-width:68ch; margin:0; padding:22px 24px; border-radius:20px; background:#F1ECE3; font-size:18px; line-height:1.65; color:#2E2925; }
+.dots { display:flex; flex-wrap:wrap; gap:4px; margin:28px 0 8px; }
+.dots a { display:grid; place-items:center; width:28px; height:28px; }
+.dots a span { width:8px; height:8px; border-radius:50%; background:#CFC6B7; transition:transform .2s ease,background-color .2s ease; }
+.dots a:hover span { background:#8A8174; }
+.dots a[aria-current=step] span { width:22px; border-radius:4px; background:#B83A27; }
+.dots a:focus-visible { outline:2px solid #A33421; outline-offset:2px; border-radius:6px; }
+.finish { margin:20px 0 4px; padding:20px 22px; border:1px dashed #CFC6B7; border-radius:20px; }
+.finish p { margin:0 0 12px; color:#57514B; font-size:15px; line-height:1.6; }
+.pager { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:24px; }
+.pagerCard { display:flex; align-items:center; gap:14px; min-height:84px; padding:16px 20px; border-radius:20px; background:#2A2420; color:#FAF6EE; text-decoration:none; transition:transform .3s cubic-bezier(.22,1,.36,1); }
+.pagerCard span { display:grid; gap:4px; min-width:0; font-size:16px; font-weight:600; line-height:1.3; letter-spacing:-.01em; }
+.pagerCard small { font-size:12px; font-weight:400; color:#D9D1C4; }
+.pagerCard svg { flex:none; }
+.forward { justify-content:space-between; text-align:right; background:#B83A27; }
+.forward small { color:#FBE3DC; }
+.pagerCard:hover { transform:translateY(-2px); }
+.pagerCard:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
+@media(max-width:700px) {
+  .header { grid-template-columns:minmax(0,1fr) 120px; gap:12px; }
+  .header h1 { font-size:28px; }
+  .sentences li { grid-template-columns:30px minmax(0,1fr); gap:12px; padding:16px; }
+  .sentences li > span { width:28px; height:28px; font-size:13px; }
+  .sentences p { font-size:16px; }
+  .pager { grid-template-columns:minmax(0,1fr); }
+}
+@media(prefers-reduced-motion:reduce) { .pagerCard,.dots a span { transition:none; } .pagerCard:hover { transform:none; } }

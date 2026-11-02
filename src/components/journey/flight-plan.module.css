@@ -53,6 +53,22 @@
 .flight[data-compact=true] .plane { top:-12px; left:var(--flight-left,calc(var(--flight-index) * (100% / var(--flight-count)))); transition:left .7s cubic-bezier(.22,1,.36,1); }
 .flight[data-compact=true] .plane svg { transform:rotate(45deg); }
 
+/* Точки для анкеты: одна тонкая линия из равных точек и одна подпись над
+   ней («03 / 10 · Оценки»). Названия остальных вопросов остаются для
+   экранных читалок и всплывающей подсказки, но не нагружают экран. */
+.flight[data-compact=true][data-variant=dots] .instrument { align-items:center; padding-bottom:4px; }
+.flight[data-compact=true][data-variant=dots] .position { letter-spacing:.08em; }
+.flight[data-compact=true][data-variant=dots] .rail { flex-direction:row; justify-content:space-between; gap:0; padding:0; overflow:visible; }
+.flight[data-compact=true][data-variant=dots] .stop { display:grid; grid-template-columns:24px; place-items:center; flex:0 0 24px; width:24px; min-height:40px; padding:0; filter:none; opacity:1; }
+.flight[data-compact=true][data-variant=dots] .node { display:block; justify-self:center; width:7px; height:7px; border-color:#B4AB9B; }
+.flight[data-compact=true][data-variant=dots] .stop[data-road-stage-state=done] .node { border-color:var(--flight-blue); background:var(--flight-blue); }
+.flight[data-compact=true][data-variant=dots] .stop[data-road-stage-state=current] .node { width:9px; height:9px; }
+.flight[data-compact=true][data-variant=dots] .stopCopy { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.flight[data-compact=true][data-variant=dots] .track { left:12px; top:20px; width:calc(100% - 24px); }
+.flight[data-compact=true][data-variant=dots] .fill { width:var(--flight-fill-x,0); }
+.flight[data-compact=true][data-variant=dots] .plane { top:-12px; left:calc(var(--flight-left,0px) - 12px); }
+.flight[data-compact=true][data-variant=dots] .stop[data-road-locked] .node { border-style:dashed; }
+
 /* Таймлайн mikes.cv: одна колонка по центру страницы. Месяц мелко над
    годом на левом поле, подпись FLIGHT PLAN у начала кривой, раскрытый этап
    — прямо под своей точкой. Чем дальше будущий этап от выбранного, тем

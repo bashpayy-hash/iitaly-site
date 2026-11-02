@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- Local riso art with explicit dimensions. */
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -7,7 +8,10 @@ import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
 import { GUIDE_TOPICS, VISA_PARTS, guideHref, guideStageHref, stageForGuide, type VisaPart } from "./guideCatalogue";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { VisaSection } from "./VisaSection";
-import { GuidePointSwitcher } from "./GuidePointSwitcher";
+import { GuideStepCards } from "./GuideStepCards";
+import { guideArt } from "./guideArt";
+import { guideFacts } from "./guideFacts";
+import steps from "./guide-steps.module.css";
 import ui from "./guide-pages.module.css";
 
 export function GuideFrame({ children, narrow = false }: { children: ReactNode; narrow?: boolean }) {
@@ -32,13 +36,6 @@ function GuideSources({ ids }: { ids: readonly SourceId[] }) {
   </details>;
 }
 
-export function GuideTopicLinks({ ids }: { ids: readonly string[] }) {
-  return <ul className={ui.topicList}>{ids.map(id => {
-    const guide = GUIDE_TOPICS.find(topic => topic.id === id)!;
-    return <li key={id}><Link href={guideHref(id)} data-guide-select={id}><span><strong>{guide.title}</strong><span>{guide.teaser}</span></span><ArrowRight size={20} aria-hidden="true" /></Link></li>;
-  })}</ul>;
-}
-
 export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPart }) {
   const guide = GUIDE_TOPICS.find(topic => topic.id === id)!;
   const stage = stageForGuide(id)!;
@@ -47,20 +44,27 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
   const action = helpId ? guideAction(helpId) : null;
   const nextId = stage.ids[stage.ids.findIndex(topic => topic === id) + 1];
   const next = GUIDE_TOPICS.find(topic => topic.id === nextId);
+  const art = guideArt(id);
   const note = guide.warn || (id === "tests" ? "У каждого вуза свои окна приёма CEnT-S. Не жди дедлайна подачи — сдай тест заранее, чтобы успеть получить нормализованный балл." : "");
   return <GuideFrame narrow>
     <GuideReadingContext id={helpId} />
     <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, ...(part ? [{title:guide.title,href:guideHref(id)},{title:part.title}] : [{title:guide.title}])]} />
     <article className={ui.article} data-guide-panel={id} data-guide-current={id} data-guide-part={visaPart} aria-labelledby="guide-title">
-      <header className={ui.articleHeader}>
-        <h1 id="guide-title" tabIndex={-1}>{part?.title || guide.title}</h1>
-        <p className={ui.intro}>{part?.description || guide.teaser}</p>
-        <GuideReviewed />
+      <header className={`${ui.articleHeader} ${part ? "" : steps.topicHeader}`}>
+        <div>
+          <h1 id="guide-title" tabIndex={-1}>{part?.title || guide.title}</h1>
+          <p className={ui.intro}>{part?.description || guide.teaser}</p>
+          <GuideReviewed />
+        </div>
+        {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 40vw, 220px" width={art.width} height={art.height} alt="" />}
       </header>
+      {!part && id !== "visa" && <dl className={steps.facts} data-guide-facts>
+        {guideFacts(guide).map(fact => <div key={fact.label} data-known={fact.known}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+      </dl>}
       <div className={ui.readingBody}>
         {id === "visa" ? <VisaSection part={visaPart} /> : <>
           {guide.lead && <p className={ui.lead}>{guide.lead}</p>}
-          <GuidePointSwitcher rows={guide.rows} subject={id === "tests" ? "calendar" : stage.id === "arrival" ? "key" : stage.id === "choose" ? "map" : "folder"} endAction={helpId ? <GuideActionLink id={helpId} /> : undefined} />
+          <GuideStepCards id={id} />
         </>}
         {id === "permesso" && <section className={ui.note}>
           <h2>Актуальная ремарка к тренажёру</h2>
@@ -71,6 +75,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         <GuideSources ids={guide.sources} />
         {action && helpId && id !== "visa" && <section className={ui.nextAction} data-guide-next={id} aria-label="Что сделать по этой теме">
           {!note && <p>{GUIDE_HELP[helpId].next}</p>}
+          <GuideActionLink id={helpId} />
           <p className={ui.actionNote}>{action.note}</p>
         </section>}
       </div>

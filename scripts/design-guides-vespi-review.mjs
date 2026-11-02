@@ -84,7 +84,7 @@ try {
     assert.match(await page.locator('main').innerText(),/Foundation не заменяет выпускной аттестат/);
     assert.equal(await page.locator('[data-guide-panel]').count(),1);
     assert.equal(await page.locator('[data-guide-stage],[data-guide-select],[data-guide-timeline]').count(),0,'Reading shows only the current question, with breadcrumbs');
-    if(await page.locator('[data-media-switcher]').count())await page.locator('[data-story-pill]').last().click();
+    assert((await page.locator('[data-guide-step-card]').count())>0,'The topic leads to its step pages');
     await page.locator('[data-guide-inline-action]').click();
     await page.locator('[data-guide-origin=education]').waitFor();
     await page.getByRole('heading',{name:'Какой средний балл?',exact:true}).waitFor();
@@ -100,7 +100,6 @@ try {
     assert(await refs.count()>0);
     for(const ref of await refs.all())assert.match(await ref.getAttribute('rel'),/noopener/);
     await audit('article '+width);await screenshot('guides-apostille');
-    await page.locator('[data-story-pill]').last().click();
     const documentAction=page.locator('[data-guide-inline-action]');
     await documentAction.scrollIntoViewIfNeeded();
     assert(await documentAction.evaluate(action=>{
@@ -137,7 +136,6 @@ try {
     assert.equal(await question.inputValue(),'Мой незаконченный вопрос');
     assert.equal(await page.locator('[data-chat-guide-context]').getAttribute('data-chat-guide-context'),'permesso');
     await page.keyboard.press('Escape');await page.getByRole('dialog').waitFor({state:'hidden'});
-    await page.locator('[data-story-pill]').last().click();
     assert.equal(await page.locator('[data-guide-inline-action]').getAttribute('href'),'/guides/permesso-modulo-1');
     await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
     const search=page.getByRole('searchbox',{name:'Найти тему'});

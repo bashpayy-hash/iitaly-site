@@ -28,25 +28,34 @@ try{
     const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'});
     await context.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());
     const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+    // Owner 2 Nov (apple.com home): every topic is a tile with its own
+    // picture, «Подробнее» to the topic page and «Пошагово» to its first step.
     await page.goto(origin+'/guides',{waitUntil:'networkidle'});
-    await page.locator('[data-guide-select=codice]').click();
-    await page.locator('[data-guide-preview=codice]').waitFor();
-    assert.equal(new URL(page.url()).pathname,'/guides');assert.equal(new URL(page.url()).searchParams.get('topic'),'codice');
-    await page.locator('[data-guide-select=codice]').press('ArrowUp');
-    await page.locator('[data-guide-preview=permesso]').waitFor();
-    await page.goBack();await page.locator('[data-guide-preview=codice]').waitFor();
-    await page.reload({waitUntil:'networkidle'});await page.locator('[data-guide-preview=codice]').waitFor();
+    const tiles=page.locator('[data-guide-tile]');
+    assert.equal(await tiles.count(),13);
+    const art=await tiles.locator('img').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')));
+    assert.equal(new Set(art).size,13,'Every topic has its own picture');
+    const tileBox=await tiles.first().boundingBox();
+    if(width>760)assert(Math.abs(tileBox.width-(await tiles.nth(1).boundingBox()).width)<1&&Math.abs(tileBox.y-(await tiles.nth(1).boundingBox()).y)<1,'Tiles pair up in two columns');
     await check(page,'Guides '+width);
-    await page.locator('[data-guide-explorer]').screenshot({path:path.join(destination,`guides-${width}.png`)});
+    await page.locator('[data-guide-tile=education]').screenshot({path:path.join(destination,`guides-${width}.png`)});
     await page.getByLabel('Найти тему',{exact:true}).fill('апостиль');
     assert((await page.locator('[data-guide-select]').count())>0);
     await page.getByRole('button',{name:'Сбросить поиск'}).click();
     await page.getByRole('button',{name:'После приезда',exact:true}).click();
     assert.equal(await page.locator('[data-guide-select]').count(),3);
     await page.locator('[data-guide-select=permesso]').click();
-    await page.getByRole('link',{name:'Открыть подробный наглядный разбор'}).click();
     await page.waitForURL('**/guides/permesso');
+    // The topic page is a row of step cards; each step has its own page.
+    const steps=page.locator('[data-guide-step-card]');
+    assert((await steps.count())>1);
+    await steps.nth(1).click();await page.waitForURL('**/guides/permesso/2');
+    await page.locator('[data-instruction-point="2"]').waitFor();
+    await check(page,'Guide step '+width);
+    await page.locator('[data-guide-step-next]').click();await page.waitForURL('**/guides/permesso/3');
+    await page.locator('[data-guide-step-prev]').click();await page.waitForURL('**/guides/permesso/2');
     await page.goto(origin+'/guides#con',{waitUntil:'networkidle'});await page.waitForURL('**/guides/con');
+    await page.goto(origin+'/guides?topic=codice',{waitUntil:'networkidle'});await page.waitForURL('**/guides/codice');
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
     for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
     assert.equal(await page.locator('[data-deck-university]').count(),3);
@@ -89,7 +98,7 @@ try{
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});
-    results.push({width,guides:'selection, search, filters, history, deep links',deck:'three aligned cards, choice persistence, table, plan handoff',home:'two interactive scenes',accessibility:'passed'});
+    results.push({width,guides:'tiles with own art, search, filters, step pages, old deep links',deck:'three aligned cards, choice persistence, table, plan handoff',home:'two interactive scenes',accessibility:'passed'});
     await context.close();
   }
   assert.deepEqual(errors,[]);await fs.writeFile(path.join(destination,'results.json'),JSON.stringify({results,errors},null,2));console.log(JSON.stringify(results));

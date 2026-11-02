@@ -133,8 +133,15 @@ try {
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
     assert.equal(await page.locator('[data-focus-row=notary]').count(),0,'Future tasks live on their stage page');
-    const points=await page.locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
+    // Owner 2 Nov (apple.com lineup): the route so far runs down the line,
+    // the stages ahead stand left to right in one row of cards below it.
+    const points=await page.locator('[data-flight-stop]').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
     assert(points.every((value,index)=>index===0 || value>points[index-1]),'Flight stops follow one vertical route');
+    const cards=await page.locator('[data-stage-lineup] [data-stage-card]').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y};}));
+    assert(cards.length>0&&cards.every((card,index)=>index===0||(card.x>cards[index-1].x&&Math.abs(card.y-cards[0].y)<1)),'Stages ahead share one row');
+    const actions=await page.locator('[data-stage-lineup] [data-road-stage]').evaluateAll(nodes=>nodes.map(el=>Math.round(el.getBoundingClientRect().y)));
+    assert.equal(new Set(actions).size,1,'Lineup actions stand on one line (subgrid)');
+    assert(cards[0].y>points.at(-1),'The lineup follows the route');
     assert(await page.locator('[aria-label="Этапы маршрута"]').isVisible());
     assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no separate box');
 

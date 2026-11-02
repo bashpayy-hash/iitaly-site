@@ -76,8 +76,9 @@ try {
   assert.equal(await page.locator('[data-task-check]').count(),1);
   assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
   const initialCount = await page.locator('[data-road-count]').innerText();
-  await page.locator('[data-road-stage=arrival]').click();
-  await page.locator('[data-flight-stage-preview=arrival]').waitFor();
+  // The line runs up to the current stage (owner 2 Nov); preview a passed one.
+  await page.locator('[data-road-stage=start]').click();
+  await page.locator('[data-flight-stage-preview=start]').waitFor();
   assert.equal(await page.locator('[data-road-count]').innerText(), initialCount, 'Preview does not change completion');
   assert.equal(calls.length, 0, 'Preview never writes a task');
   await page.locator('[data-road-stage=docs]').click();

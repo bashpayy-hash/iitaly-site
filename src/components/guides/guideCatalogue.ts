@@ -25,3 +25,11 @@ export const VISA_PARTS = [
   { id: "before-application", title: "Перед подачей", description: "Что проверить в подготовленном пакете." },
 ] as const;
 export type VisaPart = typeof VISA_PARTS[number]["id"];
+
+/** Пункты темы как отдельные страницы: у визы это её части, у остальных — строки разбора. */
+export function guidePoints(id: string) {
+  if (id === "visa") return VISA_PARTS.map(part => ({ title: part.title, text: part.description, href: `/guides/visa/${part.id}` }));
+  const guide = GUIDE_TOPICS.find(topic => topic.id === id);
+  return (guide?.rows || []).map((row, index) => ({ title: row.label, text: row.value, href: `/guides/${id}/${index + 1}` }));
+}
+export const guideFirstPointHref = (id: string) => guidePoints(id)[0]?.href || guideHref(id);
