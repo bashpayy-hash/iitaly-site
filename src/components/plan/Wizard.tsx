@@ -8,7 +8,7 @@ import { buildPlan } from "@/lib/planBuilder";
 import { AssessmentTransition, useAssessmentTransition } from "./AssessmentTransition";
 import { AppleButton } from "@/components/apple/Button";
 import type { PlanDraft } from "@/lib/usePlanDraft";
-import { CalendarDays, Timer, Compass, GraduationCap, BookOpen, Wallet, Languages, MapPin, Users, FileCheck2, type LucideIcon } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
 import { FlightPlan } from "@/components/journey/FlightPlan";
 
@@ -110,7 +110,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
 
   return (
     <div className={styles.wizard} data-plan-wizard>
-      <FlightPlan compact currentLabel="Сейчас" label="Вопросы для маршрута" index={Math.min(step, WIZ.length - 1)} stops={WIZ.map((question, index) => ({
+      <FlightPlan compact variant="dots" currentLabel="Сейчас" label="Вопросы для маршрута" index={Math.min(step, WIZ.length - 1)} stops={WIZ.map((question, index) => ({
         id: question.id, title: ({intake:"Набор",education:"Образование",grades:"Оценки",goal:"Цель",budget:"Бюджет",field:"Направление",lang:"Язык",age:"Возраст",residence:"Проживание",dsuRegion:"Стипендия"} as Record<string,string>)[question.id] || question.q,
         meta: `${String(index + 1).padStart(2, "0")} / ${WIZ.length}`, state: index < step ? "done" : index === step ? "current" : "future", locked: index > step && !answers[question.id],
       }))} onSelect={next => { finishTransition(); onDraftChange({ ...draft, step: next }); }} />
@@ -199,7 +199,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
         )}
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t border-white/15 pt-4">
+      <div className="mt-4 flex items-center justify-between">
         <button
           type="button"
           onClick={() => { finishTransition(); stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
@@ -230,27 +230,16 @@ function WizStep({
         </p>
       </div>
       <div className={styles.options}>
-        {question.opts.map((o, index) => {
-          const icons: Record<string, LucideIcon[]> = {
-            intake: [CalendarDays, Timer, Compass], education: [BookOpen, GraduationCap],
-            goal: [GraduationCap], budget: [Wallet], lang: [Languages], age: [Users],
-            residence: [MapPin], dsuRegion: [FileCheck2],
-          };
-          const choices = icons[question.id] || [Compass];
-          const Icon = choices[index % choices.length];
-          return (
-          <button
+        {question.opts.map(o => <button
             key={o.v}
             type="button"
             onClick={() => onChoose(o.v)}
             aria-pressed={value === o.v}
             className={styles.option}
           >
-            <Icon aria-hidden="true" />
             <span><b>{o.t}</b>{o.s && <small>{o.s}</small>}</span>
-            <span className={styles.radio} aria-hidden="true" />
-          </button>
-        ); })}
+            <span className={styles.mark} aria-hidden="true">{value === o.v ? <Check size={16} strokeWidth={2.2} /> : <ArrowRight size={16} strokeWidth={1.8} />}</span>
+          </button>)}
       </div>
     </div>
   );
