@@ -7,10 +7,11 @@ import styles from "./comparison.module.css";
 
 export type UniversitySelection = { primaryId: string | null; onSelect: (id: string) => void };
 
-export function UniversityDecision({ universities, selection, showChoices = true }: { universities: University[]; selection: UniversitySelection; showChoices?: boolean }) {
+export function UniversityDecision({ universities, selection, showChoices = true, floating = false }: { universities: University[]; selection: UniversitySelection; showChoices?: boolean; floating?: boolean }) {
   const primary = UNIS.find(university => university.id === selection.primaryId);
-  // После выбора итог прилипает к низу экрана: следующий шаг — Мой план.
-  return <div className={styles.decision} data-university-decision data-fab-yield data-chosen={primary ? "true" : undefined}>
+  // Под колодой итог после выбора прилипает к низу экрана: следующий шаг — Мой план.
+  // В таблице и в окне сравнения он остаётся на месте и не закрывает кнопки.
+  return <div className={styles.decision} data-university-decision data-fab-yield data-chosen={floating && primary ? "true" : undefined}>
     <div className={styles.decisionCopy} role="status" aria-live="polite">
       <p className={styles.decisionTitle}>{primary ? <><Check size={18} aria-hidden="true" />Отличный выбор! Маршрут поступления (Flight Plan) адаптирован под {primary.name}</> : "Сравни условия и выбери основной вуз"}</p>
       <p>{primary ? `Основной вуз: ${primary.name}. Выбор сохранён на этом устройстве.` : universities.length ? "Нажми «Выбрать этот университет» у подходящего вуза. Затем перейди к плану." : "Добавь университеты в списках выше. После сравнения выбери, для какого вуза составлять план."}</p>

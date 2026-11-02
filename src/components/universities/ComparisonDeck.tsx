@@ -69,11 +69,12 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
             <Plus size={24} strokeWidth={1.3} aria-hidden="true" />
             <p>Добавь университет</p>
             <span>На карте, в быстрых кнопках или в списке выше.</span>
+            <button type="button" disabled>Выбрать этот университет</button>
           </div>
         </div>)}
       </div>
     </div>
     <p className={styles.note}>Данные для сравнения, не подтверждение условий конкурса. Стоимость, отбор и сроки проверь у выбранной программы. Стипендия не вычитается из расходов.</p>
-    {selection && <UniversityDecision universities={universities} selection={selection} showChoices={false} />}
+    {selection && <UniversityDecision universities={universities} selection={selection} showChoices={false} floating />}
   </div>;
 }

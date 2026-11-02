@@ -97,7 +97,8 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await dialog.locator('tfoot').getByRole('button', { name:/Padova/ }).click();
           await dialog.getByRole('button', { name:'Закрыть сравнение' }).click();
           assert.match(await comparison.locator('thead [data-primary=true]').innerText(), /Padova/);
-          await comparison.getByRole('link', { name:/Перейти к плану поступления/ }).click();
+          // Owner brief 2026-11-02: the decision plaque says «Перейти в Мой план».
+          await comparison.getByRole('link', { name:/Перейти в Мой план/ }).click();
           await page.locator('[data-plan-university=unipd]').waitFor();
           assert.equal(new URL(page.url()).pathname, '/plan');
           await page.goto(origin + '/universities', { waitUntil:'networkidle' });

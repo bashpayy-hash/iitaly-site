@@ -169,6 +169,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     return {
       id: row.id, title: awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title,
       locked: !row.tasks.length, when,
+      fill: row.tasks.length && opened ? stageDone / row.tasks.length : 0,
       // The month sits on the left margin; the stop keeps the exact count.
       meta: !row.tasks.length ? "после анкеты" : [when ? "" : next ? taskDate(next) : "", `${stageDone} / ${row.tasks.length} шагов`].filter(Boolean).join(" · "),
       ahead: !opened && stageDone > 0,

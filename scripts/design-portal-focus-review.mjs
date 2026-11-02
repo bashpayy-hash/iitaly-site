@@ -110,7 +110,7 @@ try {
       const task=style('[data-focus-task=translate]');
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
         greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
-        paper:style('[data-portal-editorial]').backgroundColor,noise:style('[data-portal-grain]').opacity,noisePointer:style('[data-portal-grain]').pointerEvents,
+        paper:style('[data-portal-editorial]').backgroundColor,grain:style('[data-portal-editorial]').backgroundImage,grainBlend:style('[data-portal-editorial]').backgroundBlendMode,
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
     });
     assert.match(editorial.greeting,/Inter Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
@@ -121,9 +121,11 @@ try {
     assert.equal(await page.locator('[data-portal-overview] [data-higgsfield-visual],[data-portal-overview] [data-micro-steps],[data-portal-rubric]').count(),0,'Preview contains no illustration, microsteps or rubric');
     if(width>1100)assert.equal(await page.getByRole('navigation',{name:'Основная навигация',exact:true}).getByRole('link').count(),3);
     else { await page.getByLabel('Открыть меню',{exact:true}).click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).getByRole('link',{name:'Гайды и виза'}).isVisible());await page.getByLabel('Открыть меню',{exact:true}).press('Escape'); }
-    assert.equal(editorial.paper,'rgb(247, 244, 234)');assert.equal(editorial.noise,'0.018');assert.equal(editorial.noisePointer,'none');
+    assert.equal(editorial.paper,'rgb(247, 244, 234)');
+    // Owner 2026-10-25: visible 6% grain as a background layer, not a fixed full-screen filter (repaints on scroll on cheap Androids).
+    assert.match(editorial.grain,/^url\("data:image\/svg\+xml.*feTurbulence.*opacity='0\.06'/);assert.match(editorial.grainBlend,/^multiply/);
     assert.equal(editorial.left,'2px');assert.equal(editorial.leftColor,'rgb(53, 43, 40)');assert.equal(editorial.radius,'20px');assert.equal(editorial.background,'rgb(251, 249, 243)');
-    assert.equal(await page.locator('[data-portal-grain] feTurbulence').getAttribute('baseFrequency'),'0.75');
+    assert.equal(await page.locator('[data-portal-grain]').count(),0,'No fixed full-screen grain overlay');
     assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
     const fill=await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')));

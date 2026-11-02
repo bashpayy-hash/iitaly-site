@@ -11,6 +11,8 @@ export type FlightStop = {
   /** Короткая отметка времени на левом поле: «НОЯ 2026». Без неё — номер точки. */
   when?: string;
   state?: "done" | "current" | "future"; locked?: boolean; ahead?: boolean;
+  /** Доля сохранённых шагов открытого этапа (0–1); работа «заранее» не заполняет маршрут. */
+  fill?: number;
 };
 
 const MONTHS = ["ЯНВ", "ФЕВ", "МАР", "АПР", "МАЙ", "ИЮН", "ИЮЛ", "АВГ", "СЕН", "ОКТ", "НОЯ", "ДЕК"];
@@ -121,6 +123,7 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
           </>;
           const attrs = {
             className: styles.stop,
+            style: stop.fill === undefined ? undefined : { "--stage-fill": stop.fill } as CSSProperties,
             "data-flight-stop": position,
             "data-flight-selected": position === safeIndex,
             "data-flight-focus": focused || undefined,

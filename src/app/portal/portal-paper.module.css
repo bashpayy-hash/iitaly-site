@@ -13,8 +13,12 @@
   --color-warn:var(--status-amber); --color-red-deep:var(--accent-text); --color-green:var(--status-green);
   --depth-ambient:none; --depth-contact:none; --depth-highlight:none;
   min-width:0; min-height:100svh; color:var(--ink); font-family:var(--font-sans); font-synthesis:none;
-  /* Тайл 640px из bg_cream.jpg набора (13 КБ вместо 250 КБ) — для недорогих Android. */
-  background:var(--paper) url('/textures/zhol-paper.webp') 0 0 / 640px 640px repeat;
+  /* Тайл 640px из bg_cream.jpg набора (13 КБ вместо 250 КБ) и тактильное
+     зерно 6% (multiply) — слоями фона, а не фиксированным оверлеем: смешивание
+     полноэкранного слоя на недорогих Android пересчитывается при прокрутке. */
+  --grain-paper:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncG type='linear' slope='2.4' intercept='-0.7'/%3E%3CfeFuncB type='linear' slope='2.4' intercept='-0.7'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background:var(--grain-paper) 0 0 / 360px 360px,var(--paper) url('/textures/zhol-paper.webp') 0 0 / 640px 640px repeat;
+  background-blend-mode:multiply,normal;
 }
 .paper :is(h1,h2,h3,h4) { font-family:var(--font-sans); font-weight:600; letter-spacing:-.02em; }
 .paper :is(strong,b) { font-weight:600; }

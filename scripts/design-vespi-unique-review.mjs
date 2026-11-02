@@ -104,19 +104,14 @@ try {
     }
     await context.close();
 
-    // Overview: one costume for the current stage in the Now plate.
+    // Overview (main's progressive portal since 26 October): one Vespi in the
+    // Now plate, no stage souvenir. Stamps live on the stage pages.
     {
       const { page, context } = await portal(viewport, 'screenshot-parent');
       await decoded(page);
-      const now = page.locator('[data-portal-now]');
-      const stage = await now.getAttribute('data-now-stage');
-      assert.equal(await now.locator('img[data-vespi-pose]').count(), 1, 'Exactly one Vespi in the Now plate');
-      assert.equal(await now.locator('img[data-vespi-pose]').getAttribute('data-vespi-pose'), poses[`stage-${stage === 'education12' ? 'education' : stage}`] ? `stage-${stage === 'education12' ? 'education' : stage}` : null, 'The Now plate wears the current stage costume');
-      assert.match(await page.locator('[data-now-stage-label]').textContent(), /^Этап \d+ из \d+ · /, 'The plate names one stage of the route');
-      const tally = page.locator('[data-stage-stamps]');
-      assert.match(await tally.innerText(), /Штампы: \d+ \/ \d+/);
+      assert.equal(await page.locator('[data-portal-now] [data-vespi-scene]').count(), 1, 'Exactly one Vespi in the Now plate');
+      assert.equal(await page.locator('main [data-vespi-scene]').count(), 1, 'One mascot on the overview');
       assert.equal(await page.locator('[data-stage-souvenir],[data-portal-overview] img[data-riso-art]').count(), 0, 'No stage souvenir: the owner removed it');
-      assert.equal(await page.locator('main img[data-vespi-pose]').count(), 1, 'One mascot on the overview');
       await mascots(page, `overview ${width}`);
       await page.screenshot({ path: resolve(output, `overview-${width}.png`) });
       await context.close();
@@ -126,7 +121,6 @@ try {
     {
       const { page, context } = await portal(viewport, 'manual');
       assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(), 0, 'No reward on login');
-      const before = await page.locator('[data-stage-stamps] [data-stamp][data-stamped=true]').count();
       await page.locator('[data-task-ready="manual-task"]').click();
       const reward = page.locator('[data-portal-completion][data-visible=true]');
       await reward.waitFor();
@@ -135,7 +129,6 @@ try {
       assert.match(await reward.textContent(), /Штамп получен/);
       assert.match(await reward.locator('[data-reward-tally]').innerText(), /из \d+/);
       await page.waitForTimeout(500);
-      assert.equal(await page.locator('[data-stage-stamps] [data-stamp][data-stamped=true]').count(), before + 1, 'The stage gains exactly one stamp');
       await decoded(page);
       await mascots(page, `step reward ${width}`);
       await page.screenshot({ path: resolve(output, `reward-step-${width}.png`) });
@@ -170,7 +163,7 @@ try {
       await mascots(page, `onboarding ${width}`);
       await context.close();
     }
-    results.push({ test: `${width}px: unique poses, stage costume, step stamp and stage reward`, passed: true });
+    results.push({ test: `${width}px: unique poses, step stamp and stage reward`, passed: true });
   }
 
   for (const [pose, places] of placements) {
