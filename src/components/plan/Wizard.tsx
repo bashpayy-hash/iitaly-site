@@ -8,9 +8,10 @@ import { buildPlan } from "@/lib/planBuilder";
 import { AssessmentTransition, useAssessmentTransition } from "./AssessmentTransition";
 import { AppleButton } from "@/components/apple/Button";
 import type { PlanDraft } from "@/lib/usePlanDraft";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
 import { FlightPlan } from "@/components/journey/FlightPlan";
+import { questionArt } from "./questionArt";
 
 /** UI explanations only: the questions, answer values and plan builder stay
  * unchanged. Grades describe the profile; they are not an admissions score. */
@@ -51,8 +52,12 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
 
   useEffect(() => {
     if (!stepChanged.current || preparing) return;
-    liveRef.current?.focus({ preventScroll: true });
-    liveRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
+    const live = liveRef.current;
+    live?.focus({ preventScroll: true });
+    // A question tile can be taller than a phone screen: if its title went
+    // above the sticky header, bring the top of the next question back.
+    if (live && live.getBoundingClientRect().top < 96) live.scrollIntoView({ block: "start", behavior: "instant" });
+    else live?.scrollIntoView({ block: "nearest", behavior: "instant" });
     stepChanged.current = false;
   }, [step, preparing]);
 
@@ -116,7 +121,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
       }))} onSelect={next => { finishTransition(); onDraftChange({ ...draft, step: next }); }} />
       <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
 
-      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className="mt-6 rounded-apple-card">
+      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={preparing || finished ? styles.panel : styles.stage}>
         {preparing ? <AssessmentTransition onSkip={finishTransition} /> : finished ? (
           <>
             {preview && (
@@ -193,6 +198,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           <WizStep
             key={WIZ[step].id}
             question={WIZ[step]}
+            tone={step % 2 ? "dark" : "light"}
             value={answers[WIZ[step].id]}
             onChoose={(v) => choose(WIZ[step].id, v)}
           />
@@ -212,19 +218,25 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   );
 }
 
+/* Вопрос — плитка, как тема в справочнике: крупный вопрос и пояснение по
+   центру, ответы — кнопки-капсулы, внизу своя риzo-вещь. Светлые и тёмные
+   плитки чередуются от вопроса к вопросу. */
 function WizStep({
   question,
+  tone,
   value,
   onChoose,
 }: {
   question: (typeof WIZ)[number];
+  tone: "light" | "dark";
   value: string | undefined;
   onChoose: (v: string) => void;
 }) {
+  const art = questionArt(question.id);
   return (
-    <div className={styles.question}>
-      <div data-plan-question={question.id}>
-        <h2 className="font-apple-text text-apple-subheading font-semibold text-cloud-white">{question.q}</h2>
+    <div className={styles.question} data-tone={tone} data-plan-tile={question.id}>
+      <div className={styles.questionHead} data-plan-question={question.id}>
+        <h2>{question.q}</h2>
         <p className={styles.questionReason} data-vespi-question-reason>
           {question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}
         </p>
@@ -237,10 +249,12 @@ function WizStep({
             aria-pressed={value === o.v}
             className={styles.option}
           >
-            <span><b>{o.t}</b>{o.s && <small>{o.s}</small>}</span>
-            <span className={styles.mark} aria-hidden="true">{value === o.v ? <Check size={16} strokeWidth={2.2} /> : <ArrowRight size={16} strokeWidth={1.8} />}</span>
+            <b>{o.t}</b>{o.s && <small>{o.s}</small>}
+            {value === o.v && <span className={styles.mark} aria-hidden="true"><Check size={14} strokeWidth={2.4} /></span>}
           </button>)}
       </div>
+      {/* eslint-disable-next-line @next/next/no-img-element -- local riso art with explicit dimensions */}
+      {art && <img className={styles.questionArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 600px) 60vw, 300px" width={art.width} height={art.height} alt="" decoding="async" data-plan-question-art />}
     </div>
   );
 }

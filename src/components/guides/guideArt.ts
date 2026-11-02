@@ -18,13 +18,17 @@ const ART: Record<string, { name: string; height: number }> = {
   "health-travel": { name: "map", height: 350 },
 };
 
-/** 480px-кадр темы и его уменьшенная копия для srcSet. */
+/** 480px-кадр риzo-вещи и его уменьшенная копия для srcSet. */
+export function risoFrame(name: string, height: number) {
+  return {
+    src: `/illustrations/riso/${name}-480.webp`,
+    srcSet: `/illustrations/riso/${name}-240.webp 240w, /illustrations/riso/${name}-480.webp 480w`,
+    width: 480,
+    height,
+  };
+}
+
 export function guideArt(id: string) {
   const art = ART[id] || ART.cimea;
-  return {
-    src: `/illustrations/riso/${art.name}-480.webp`,
-    srcSet: `/illustrations/riso/${art.name}-240.webp 240w, /illustrations/riso/${art.name}-480.webp 480w`,
-    width: 480,
-    height: art.height,
-  };
+  return risoFrame(art.name, art.height);
 }
