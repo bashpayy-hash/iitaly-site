@@ -74,13 +74,12 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
             </article>
           </div>;
         })}
-        {Array.from({length:3-universities.length},(_,index)=><div key={`empty-${index}`} className={styles.emptySlot} data-offset={universities.length + index - focus < 0 ? "left" : "right"}>
+        {Array.from({length:3-universities.length},(_,index)=><div key={`empty-${index}`} className={styles.emptySlot} data-deck-empty>
           <p className={styles.code}><span>{String(universities.length+index+1).padStart(2,"0")} / ———</span></p>
           <div className={styles.empty}>
             <Plus size={26} strokeWidth={1.3} aria-hidden="true" />
             <p>Добавь университет</p>
             <span>На карте, в быстрых кнопках или в списке выше.</span>
-            <button type="button" disabled>Выбрать этот университет</button>
           </div>
         </div>)}
       </div>

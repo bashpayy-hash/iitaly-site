@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef } from "react";
+import { Fragment, useEffect, useId, useMemo, useRef } from "react";
 import { AssessmentRoadmap } from "@/components/plan/AssessmentRoadmap";
 import { AssessmentTransition, useAssessmentTransition } from "@/components/plan/AssessmentTransition";
 import { WIZ } from "@/data/wizard";
+import { DSU_CHECKED, DSU_CHECKED_CAPTION, DSU_QUESTION } from "@/components/plan/dsuChoice";
 import { buildPlan } from "@/lib/planBuilder";
 import type { PlanDraft } from "@/lib/usePlanDraft";
 import portal from "./portal.module.css";
@@ -68,12 +69,19 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
       {question.hint && <p id={`${questionId}-hint`} className={styles.hint}>{question.hint}</p>}
       <fieldset className={styles.options} disabled={busy} aria-labelledby={`${questionId}-heading`}
         aria-describedby={question.hint ? `${questionId}-hint` : undefined}>
-        {question.opts.map(option => <label className={styles.option} key={option.v}>
-          <input type="radio" name={`${questionId}-${question.id}`} value={option.v}
-            checked={answers[question.id] === option.v}
-            onChange={() => onDraftChange({ answers: { ...answers, [question.id]: option.v }, step, complete: false })} />
-          <span><strong>{option.t}</strong>{option.s && <span className={styles.optionHint}>{option.s}</span>}</span>
-        </label>)}
+        {/* Scholarship: general answers first, then the competitions whose rules
+            are checked, under a caption (see plan/dsuChoice.ts). */}
+        {(question.id === DSU_QUESTION
+          ? [...question.opts.filter(option => !DSU_CHECKED.includes(option.v)), ...question.opts.filter(option => DSU_CHECKED.includes(option.v))]
+          : question.opts).map(option => <Fragment key={option.v}>
+          {question.id === DSU_QUESTION && option.v === DSU_CHECKED[0] && <p className={styles.optionGroup}>{DSU_CHECKED_CAPTION}</p>}
+          <label className={styles.option}>
+            <input type="radio" name={`${questionId}-${question.id}`} value={option.v}
+              checked={answers[question.id] === option.v}
+              onChange={() => onDraftChange({ answers: { ...answers, [question.id]: option.v }, step, complete: false })} />
+            <span><strong>{option.t}</strong>{option.s && <span className={styles.optionHint}>{option.s}</span>}</span>
+          </label>
+        </Fragment>)}
       </fieldset>
       <div className={styles.actions}>
         {step > 0 && <button type="button" className={styles.back} disabled={busy} onClick={() => moveTo(step - 1)}>Назад</button>}

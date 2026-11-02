@@ -92,7 +92,7 @@ try {
     await peer.locator('[data-road-open]').click();
     await peer.getByRole('heading',{name:'Что заканчиваешь?',exact:true}).waitFor();
     await peer.close();
-    for(const title of ['11 классов','4,7 и выше','Бакалавриат','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Другой регион / пока не знаю']) {
+    for(const title of ['11 классов','4,7 и выше','Бакалавриат','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Пока не знаю']) {
       const button=page.locator('[data-plan-wizard] button').filter({hasText:title});
       await button.click();
     }

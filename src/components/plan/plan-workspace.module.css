@@ -37,6 +37,11 @@
 .question[data-tone=dark] .option:hover,.question[data-tone=dark] .option[aria-pressed=true] { border-color:#F29A89; background:#F29A89; color:#2A2420; }
 .question[data-tone=dark] .option:hover small,.question[data-tone=dark] .option[aria-pressed=true] small { color:#4A2A22; }
 .question[data-tone=dark] .option:focus-visible { outline-color:#F6C2B5; }
+.optionsNote { flex:1 0 100%; max-width:52ch; margin:4px 0 0; color:#5C554D; font-size:13px; line-height:1.5; text-wrap:balance; }
+.question[data-tone=dark] .optionsNote { color:#D9D1C4; }
+.optionsBack { flex:1 0 100%; min-height:44px; padding:8px 0; border:0; background:none; color:#A33421; font-size:14px; text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+.question[data-tone=dark] .optionsBack { color:#F6C2B5; }
+.optionsBack:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
 .mark { position:absolute; top:50%; right:14px; display:grid; place-items:center; width:22px; height:22px; margin-top:-11px; border-radius:50%; background:#FAF9F3; color:#B83A27; }
 .question[data-tone=dark] .mark { background:#2A2420; color:#F29A89; }
 .questionArt { display:block; width:min(60%,300px); height:auto; margin-top:auto; padding:28px 0 36px; }

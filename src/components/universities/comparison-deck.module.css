@@ -12,8 +12,9 @@
    рисуется и на недорогих телефонах. */
 .slot,.emptySlot { display:grid; grid-row:span 8; grid-template-rows:subgrid; min-width:0; scroll-snap-align:center; transition:transform .85s cubic-bezier(.22,1,.36,1); }
 .slot { cursor:pointer; }
-.slot[data-offset=left],.emptySlot[data-offset=left] { transform:perspective(1400px) rotateY(16deg) scale(.95); transform-origin:100% 50%; }
-.slot[data-offset=right],.emptySlot[data-offset=right] { transform:perspective(1400px) rotateY(-16deg) scale(.95); transform-origin:0 50%; }
+/* Empty places stand straight: only real posters take the arc (owner 2026-11-03). */
+.slot[data-offset=left] { transform:perspective(1400px) rotateY(16deg) scale(.95); transform-origin:100% 50%; }
+.slot[data-offset=right] { transform:perspective(1400px) rotateY(-16deg) scale(.95); transform-origin:0 50%; }
 .slot[data-offset=focus] { transform:perspective(1400px) scale(1.02); }
 
 .code { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:24px; margin:0 0 12px; padding:0 4px; font:400 11px/1.4 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#2A2420; }
@@ -53,7 +54,6 @@
 .empty svg { color:#2D568D; }
 .empty p { margin:0; font-size:18px; font-weight:600; color:#2A2420; }
 .empty span { max-width:24ch; font-size:13px; line-height:1.5; }
-.empty button { min-height:44px; margin-top:8px; padding:10px 14px; border:1px solid rgba(42,36,32,.25); border-radius:14px; background:transparent; color:#4A4F46; font-size:12px; cursor:not-allowed; }
 
 /* Подпись сцены: огромный код вуза в фокусе и тонкая шкала, как у Fiddle. */
 .stageFooter { display:grid; justify-items:center; gap:12px; margin:0 0 18px; }

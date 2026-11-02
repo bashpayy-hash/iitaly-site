@@ -44,7 +44,7 @@ try {
     for (const route of ['/','/changes-2026-27','/plan']) await visit(route);
     assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'),'10');
     const choices = ['Осенью 2027','11 классов','4,7 и выше','Бакалавриат','Без стипендии будет сложно',
-      'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Пьемонт · EDISU'];
+      'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
     const routeStops=page.locator('[data-assessment-route] [data-flight-stop]');

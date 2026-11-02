@@ -109,7 +109,7 @@ try {
     await page.getByRole('heading',{name:'Какой средний балл?'}).waitFor();
     await page.reload({waitUntil:'networkidle'});
     await page.getByRole('heading',{name:'Какой средний балл?'}).waitFor();
-    const choices=['4,7 и выше','Бакалавриат','Без стипендии будет сложно','Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Пьемонт · EDISU'];
+    const choices=['4,7 и выше','Бакалавриат','Без стипендии будет сложно','Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     assert.equal(await page.getByRole('textbox',{name:'Номер телефона для WhatsApp'}).isVisible(),false,'Phone is optional disclosure');
     await page.getByText('Оставить номер для связи',{exact:true}).click();

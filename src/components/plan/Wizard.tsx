@@ -12,6 +12,7 @@ import { Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
 import { FlightPlan } from "@/components/journey/FlightPlan";
 import { questionArt } from "./questionArt";
+import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuChoice";
 
 /** UI explanations only: the questions, answer values and plan builder stay
  * unchanged. Grades describe the profile; they are not an admissions score. */
@@ -233,6 +234,29 @@ function WizStep({
   onChoose: (v: string) => void;
 }) {
   const art = questionArt(question.id);
+  const dsu = question.id === DSU_QUESTION;
+  // Scholarship: general answers first; the checked competitions only once the
+  // student says they know their region (see dsuChoice.ts).
+  const [known, setKnown] = useState(() => dsu && DSU_CHECKED.includes(value ?? ""));
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const moveFocus = useRef(false);
+  useEffect(() => {
+    if (!moveFocus.current) return;
+    moveFocus.current = false;
+    optionsRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+  }, [known]);
+  const toggleKnown = (next: boolean) => { moveFocus.current = true; setKnown(next); };
+  const option = (o: (typeof question.opts)[number], label?: { t: string; s: string }) => <button
+      key={o.v}
+      type="button"
+      onClick={() => onChoose(o.v)}
+      aria-pressed={value === o.v}
+      className={styles.option}
+    >
+      <b>{label?.t ?? o.t}</b>{(label?.s ?? o.s) && <small>{label?.s ?? o.s}</small>}
+      {value === o.v && <span className={styles.mark} aria-hidden="true"><Check size={14} strokeWidth={2.4} /></span>}
+    </button>;
+  const byValue = (v: string) => question.opts.find(o => o.v === v)!;
   return (
     <div className={styles.question} data-tone={tone} data-plan-tile={question.id}>
       <div className={styles.questionHead} data-plan-question={question.id}>
@@ -241,17 +265,20 @@ function WizStep({
           {question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}
         </p>
       </div>
-      <div className={styles.options}>
-        {question.opts.map(o => <button
-            key={o.v}
-            type="button"
-            onClick={() => onChoose(o.v)}
-            aria-pressed={value === o.v}
-            className={styles.option}
-          >
-            <b>{o.t}</b>{o.s && <small>{o.s}</small>}
-            {value === o.v && <span className={styles.mark} aria-hidden="true"><Check size={14} strokeWidth={2.4} /></span>}
-          </button>)}
+      <div className={styles.options} ref={optionsRef} data-dsu-checked={dsu && known ? "" : undefined}>
+        {!dsu ? question.opts.map(o => option(o))
+          : known ? <>
+            {DSU_CHECKED.map(v => option(byValue(v)))}
+            {option(byValue("other"), DSU_LABELS.otherKnown)}
+            <p className={styles.optionsNote}>{DSU_CHECKED_NOTE}</p>
+            <button type="button" className={styles.optionsBack} onClick={() => toggleKnown(false)}>← Другие варианты</button>
+          </> : <>
+            {option(byValue("other"), DSU_LABELS.unknown)}
+            <button type="button" className={styles.option} aria-expanded={false} data-dsu-known onClick={() => toggleKnown(true)}>
+              <b>{DSU_LABELS.known.t}</b><small>{DSU_LABELS.known.s}</small>
+            </button>
+            {option(byValue("none"))}
+          </>}
       </div>
       {/* eslint-disable-next-line @next/next/no-img-element -- local riso art with explicit dimensions */}
       {art && <img className={styles.questionArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 600px) 60vw, 300px" width={art.width} height={art.height} alt="" decoding="async" data-plan-question-art />}

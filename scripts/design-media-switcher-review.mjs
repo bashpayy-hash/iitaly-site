@@ -76,7 +76,9 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await page.reload({ waitUntil:'networkidle' });
           const comparison = page.locator('#compare-universities');
           assert.equal(await page.locator('[data-university-page]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgba(0, 0, 0, 0)');
-          assert.equal(await comparison.getByRole('button', { name:'Выбрать этот университет', exact:true }).first().isDisabled(), true);
+          // Owner 2026-11-03: an empty place offers no «Выбрать» button and stands straight.
+          assert.equal(await comparison.locator('[data-deck-choose]').count(), 0, 'Nothing to choose before a university is added');
+          assert.deepEqual(await comparison.locator('[data-deck-empty]').evaluateAll(nodes => nodes.map(n => getComputedStyle(n).transform)), ['none', 'none', 'none'], 'Empty places are not tilted');
           await comparison.getByLabel('Университет 1', { exact:true }).selectOption('unipd');
           await comparison.locator('[data-deck-choose=unipd]').click();
           assert.match(await comparison.locator('[data-university-decision]').innerText(), /Основной вуз.*Padova/s);
