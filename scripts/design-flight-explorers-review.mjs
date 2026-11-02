@@ -55,7 +55,10 @@ try{
     await page.locator('[data-guide-step-next]').click();await page.waitForURL('**/guides/permesso/3');
     await page.locator('[data-guide-step-prev]').click();await page.waitForURL('**/guides/permesso/2');
     await page.goto(origin+'/guides#con',{waitUntil:'networkidle'});await page.waitForURL('**/guides/con');
-    await page.goto(origin+'/guides?topic=codice',{waitUntil:'networkidle'});await page.waitForURL('**/guides/codice');
+    // Old inspector links redirect after hydration; checked in a side tab that
+    // waits for the target, so no redirect is left in flight on this tab.
+    const legacy=await context.newPage();legacy.on('pageerror',e=>errors.push(e.message));
+    await legacy.goto(origin+'/guides?topic=codice',{waitUntil:'domcontentloaded'});await legacy.waitForURL('**/guides/codice');await legacy.locator('[data-guide-panel=codice]').waitFor();await legacy.close();
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
     for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
     assert.equal(await page.locator('[data-deck-university]').count(),3);
