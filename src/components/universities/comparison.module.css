@@ -120,3 +120,8 @@
 .deckBar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 24px; margin:18px 0 22px; padding-bottom:10px; border-bottom:1px solid #DCD3C3; }
 .deckBar .selectionActions { margin:0; }
 .deckBar .viewModes { margin:0; }
+/* Сцена сравнения — пастельная, как у Fiddle; бумага сайта просвечивает. */
+.section:not(.embedded) { background:linear-gradient(180deg,rgba(221,213,246,.62) 0%,rgba(236,231,248,.45) 42%,rgba(214,236,227,.6) 100%); border-top:0; }
+.deckBar { font-family:var(--font-space-mono),monospace; }
+.deckBar .selectionActions p { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#2B2738; }
+.deckBar .selectionActions button { font-family:var(--font-sans); }
