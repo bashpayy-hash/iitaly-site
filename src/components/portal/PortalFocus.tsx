@@ -11,10 +11,6 @@ import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
 import { PortalRouteVespi } from "./PortalRouteVespi";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
-import { Porthole } from "@/components/journey/Porthole";
-import { FlightManifest } from "@/components/journey/FlightManifest";
-import { useUniversityChoice } from "@/lib/useUniversityChoice";
-import { CITIES, UNIS } from "@/data/italy";
 import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
@@ -72,8 +68,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const stageHref = (index: number) => `/portal?stage=${encodeURIComponent(selected.id)}&step=${encodeURIComponent(visibleTasks[index].id)}`;
   usePortalPageFocus(stagePage ? `${selected.title} · ${selectedTask ? taskTitle(selectedTask) : "Шаги"}` : "Мой план", stagePage ? `${selected.id}:${selectedTask?.id}` : "overview", "portal-overview-heading");
   const universities = selectedUniversities(shortlist);
-  const { primary: primaryChoice } = useUniversityChoice();
-  const destination = UNIS.find(university => university.id === (primaryChoice?.id || data.client.profile?.universityIds?.[0]));
   const firstName = data.client.name?.trim().split(/\s+/)[0];
   const days = daysTo(position.task);
   const stageIndex = data.roadmap.filter(stage => stage.tasks.length).findIndex(stage => stage.id === position.stage?.id);
@@ -127,7 +121,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         })}
       </div>;
 
-  const passenger = (firstName || data.client.name?.trim() || "Пассажир").toUpperCase();
   const overviewDetail = <div className={styles.overviewDetail} data-portal-overview>
     {current ? taskList([current]) : <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
     {selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Открыть этап <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
@@ -161,8 +154,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
     {/* Обзор плитками по образцу главной apple.com (owner, 3 Nov): первая
         плитка «Сейчас» — приветствие-лейбл, следующий шаг заголовком, одна
-        строка Веспи, две пилюли и иллюминатор внизу, как рендер товара. */}
+        строка Веспи, две пилюли; внизу плитки — тосканский пейзаж (Higgsfield,
+        design/illustrations/landscapes-2026-11-03.json) и Веспи у ограды.
+        Owner, 3 Nov: никакой авиации — ни иллюминатора, ни манифеста рейса. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
+      <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={1024} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
       <div className={styles.welcome} data-portal-welcome>
         <div className={styles.welcomeCopy}>
           <h1 id="portal-overview-heading" tabIndex={-1}>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
@@ -191,9 +187,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         </div>}
       </aside>
       <div className={styles.cabin} data-portal-cabin>
-        <Porthole open={progress.total ? progress.done / progress.total : 0}>
-          <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
-        </Porthole>
+        <PortalRouteVespi className={styles.welcomeScene} />
       </div>
     </div>}
     {stagePage && <div className={styles.welcome} data-portal-welcome>
@@ -202,16 +196,15 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
       </div>
     </div>}
-    {/* Тёмная плитка маршрута: манифест рейса и «сделано заранее» в шапке,
-        Flight Plan с раскрытым текущим шагом под его этапом. */}
+    {/* Тёмная плитка маршрута: «сделано заранее» в шапке, маршрут этапов с
+        раскрытым текущим шагом под его этапом. */}
     <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} currentDetail={stagePage ? undefined : overviewDetail} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart}
-        boardHead={!stagePage && <div className={styles.boardHead}>
-          <FlightManifest className={styles.manifest} passenger={passenger} destination={destination ? CITIES[destination.city].name : "Италия"} city={destination?.city} />
-          {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
+        boardHead={!stagePage && ahead.length > 0 && <div className={styles.boardHead}>
+          <div className={styles.nowAhead} data-now-ahead>
             <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
             <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
-          </div>}
+          </div>
         </div>}
         lineupExtras={!stagePage && cabinetTiles} />
     </div>

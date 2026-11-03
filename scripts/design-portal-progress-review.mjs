@@ -214,7 +214,8 @@ try{
     await page.locator('#portal-panel [role=alert]').locator('..').getByRole('link').click();await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,2);
     if(motion){await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.roadTransition==='true');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.traveling==='false');}
     assert.equal(await road(page).locator('[data-road-fill],[data-road-location]').count(),0);
-    const transitions=await road(page).locator('[data-flight-plane]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).transitionDuration));
+    assert.equal(await road(page).locator('[data-flight-plane]').count(),0,'No aircraft on the route (owner, 3 Nov)');
+    const transitions=await road(page).locator('[data-flight-fill]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).transitionDuration));
     assert(transitions.every(value=>value.split(',').every(v=>parseFloat(v)===0)),'Reduced motion immediately stops every route segment');results.push({motion,errorRetry:true,confirmedFeedbackOnly:true,reducedMotionImmediate:true});await context.close();
   }
   for(const width of [1440,390]){

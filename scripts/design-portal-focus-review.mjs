@@ -98,7 +98,9 @@ try {
     assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.equal(await page.locator('[data-portal-welcome] a,[data-portal-welcome] button').count(),0,'Greeting metadata is plain text');
-    assert.equal(await page.locator('[data-portal-cabin] [data-porthole] [data-vespi-scene=welcome]').count(),1,'Vespi peeks out by the porthole');
+    assert.equal(await page.locator('[data-portal-cabin] [data-vespi-scene=welcome]').count(),1,'Vespi peeks over the hero landscape');
+    assert.equal(await page.locator('[data-porthole],[data-flight-manifest],[data-flight-plane]').count(),0,'No porthole, manifest or aircraft (owner, 3 Nov: no aviation theme)');
+    assert.equal(await page.locator('[data-portal-hero] [data-portal-landscape]').count(),1,'The hero stands on an Italian landscape');
     assert.match(await page.locator('[data-now-deadline]').innerText(),/98\s*дней до ориентира/);
     assert.equal(await page.locator('[data-now-ahead] li').count(),2);
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1,'Only the current task expands');
@@ -158,22 +160,23 @@ try {
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
     // Hero tile: greeting as the label, the next step as the headline, one
-    // line, two pills, the porthole below like a product render. Then the
-    // dark route board whose current stage opens the next task under its node.
+    // line, two pills; the landscape fills the lower part of the tile with
+    // Vespi at its right edge. Then the dark route board whose current stage
+    // opens the next task under its node.
     const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
-    assert(work.y>=route.y&&work.y+work.height<=route.y+route.height+1,'The current step opens inside the Flight Plan');
+    assert(work.y>=route.y&&work.y+work.height<=route.y+route.height+1,'The current step opens inside the route board');
     const stop=await page.locator('[data-road-stage=docs]').boundingBox();assert(work.y>=stop.y+stop.height-6&&work.y-stop.y-stop.height<24,'The step sits right under its stage');
     const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
-    const cabin=await page.locator('[data-portal-cabin]').boundingBox(),manifest=await page.locator('[data-flight-manifest]').boundingBox(),now=await page.locator('[data-portal-now]').boundingBox();
+    const cabin=await page.locator('[data-portal-cabin]').boundingBox(),now=await page.locator('[data-portal-now]').boundingBox();
     assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
-    assert(now.y+now.height<=cabin.y+1,'The porthole stands under the step and its pills');
-    assert(cabin.y+cabin.height<=hero.y+hero.height+1,'The porthole stays inside the hero tile');
+    assert(now.y+now.height<=cabin.y+1,'Vespi stands under the step and its pills');
+    assert(cabin.y+cabin.height<=hero.y+hero.height+1&&cabin.x+cabin.width<=hero.x+hero.width+1,'Vespi stays inside the hero tile, at its right edge');
     assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then the route board 12px below');
-    const centre=await page.locator('[data-portal-focus]').evaluate(el=>{const r=el.getBoundingClientRect();return r.x+r.width/2;});
-    assert(Math.abs(cabin.x+cabin.width/2-centre)<4,'The porthole is centred');
+    const landscape=await page.locator('[data-portal-landscape]').boundingBox();
+    assert(Math.abs(landscape.y-hero.y)<2&&Math.abs(landscape.height-hero.height)<2,'The landscape fills the hero tile');
+    assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),'28px');
     assert.equal(await page.locator('[data-road-board]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(42, 36, 32)','The route board is the dark tile');
-    assert(manifest.y>=route.y&&manifest.y+manifest.height<=points[0],'The flight manifest heads the route board');
     assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
     assert(work.y+work.height-card.y-card.height<=64,'The opened step ends with its stage link, without an empty area');

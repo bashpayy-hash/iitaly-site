@@ -96,7 +96,8 @@ try {
     const lineup=page.locator('[data-stage-lineup]');
     assert.deepEqual(await lineup.locator('[data-stage-card]').evaluateAll(nodes=>nodes.map(n=>n.dataset.stageCard)),['apply','dsu','visa','arrival'],'Stages ahead stand in the lineup, in route order');
     assert.equal(await lineup.locator('[data-road-stage=arrival]').getAttribute('href'),'/portal?stage=arrival');
-    assert.equal(await nav.locator('[data-flight-plane]').count(),1);
+    assert.equal(await nav.locator('[data-flight-plane]').count(),0,'No aircraft on the route (owner, 3 Nov)');
+    assert.equal(await nav.locator('[data-flight-fill]').count(),1,'The solid part of the line shows real progress');
     await nav.locator('[data-road-stage=start]').click();
     await page.locator('[data-flight-stage-preview=start]').waitFor();
     assert.equal(await road(page).getAttribute('data-road-done'),'6','Previewing a stage never completes a task');

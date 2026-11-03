@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-03",
+  "request": "Owner: «убери эту странную тему с посадочным и прогресс-линиями в виде самолётов, местами добавляй итальянские пейзажи, сделанные в Higgsfield, на фон» and, for the home scenes, «вписать информацию красивее с фото пейзажа на фоне».",
+  "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 3:2; tuscany additionally upscaled to 2k (bytedance_image_upscale) for the cabinet hero",
+  "promptTemplate": "Editorial travel photograph, 35mm, photorealistic: [one place]. No people, no text, no signs, no flags, no logos.",
+  "processing": "Downloaded inside the Higgsfield sandbox, saved as 1024×688 JPEG q82 masters (sha256 below, byte-identical copies brought over), exported here as WebP q76/q78 at 640 and 1024px with sharp into public/illustrations/landscapes (tuscany also at 1600px from the upscale). Reviewed at full size: no people, text, signs, flags or logos. amalfi and padua were generated and reviewed but are not shipped (padua's arcade frieze carries painted medallions).",
+  "items": [
+    { "name": "tuscany", "use": "cabinet hero tile; home card «Маршрут»", "job": "096c32fe-8b56-4d2d-b59d-f0771db803c3", "upscaleJob": "619fc749-f42e-48e8-a2d5-99a75a87b065", "place": "rolling Tuscan hills at golden hour with rows of cypress trees along a gravel road and a stone farmhouse on a ridge", "masterSha256": "960b5adeacf2f05c18344a861c0f38724f9eaf056b07a558c31cb28b6c2ba49e" },
+    { "name": "rome", "use": "home card «До отъезда»", "job": "41fcf892-ba39-4c10-b984-36ff1901e4e7", "place": "Rome rooftops and domes at dusk seen from a terrace, umbrella pines", "masterSha256": "586c17ad79b2acd13ac5e213f254aca6af516ea156ccd6b725619dd40c5ab44c" },
+    { "name": "bologna", "use": "home card «В Италии»", "job": "6b592e2a-f9c2-46f9-8fe6-49483326c100", "place": "an empty terracotta portico arcade in Bologna in warm evening light", "masterSha256": "1378412e2dba9f767a4af6af5faa249ddaadc1a77df7924248b07bac3d33a702" },
+    { "name": "venice", "use": "home card «Permesso»", "job": "f026967f-5384-423d-8064-c20cfe2452d2", "place": "a quiet Venetian canal at dawn, pastel facades, moored plain wooden boats", "masterSha256": "58310a373b9d9f914f0317bb2159bacd347bfa99a8eb9d4e8700092b66e761a1" },
+    { "name": "como", "use": "home card «Codice fiscale»", "job": "712ae870-538f-49b1-86f9-b4cbd976a9a8", "place": "Lake Como shoreline with cypress trees, a villa garden with stone balustrade and calm water", "masterSha256": "5c53d631a973703e07dae408e81e938ceaf87079ea163cd93b494f564df45dc0" },
+    { "name": "dolomites", "use": "home card «Страховка»", "job": "ef2b18d5-a26d-439b-a63e-24618f56435f", "place": "an alpine meadow in the Dolomites with pale limestone peaks and a small wooden chalet", "masterSha256": "67e00381c4c0d7985ef68cead9b9fe50215fd9eff81bafa73940831e14154e49" },
+    { "name": "amalfi", "use": "not shipped", "job": "94df1d2e-663b-4534-9778-72720b09adcf", "place": "Amalfi coast cliffside village above a calm sea, lemon trees", "masterSha256": "0d411a37f44ee857f9d06350cbdbc82a84733674b2ab532e94306836c2be8dbb" },
+    { "name": "padua", "use": "not shipped", "job": "913f977d-85d1-42ce-aee4-c67165affe8f", "place": "a university courtyard in Padua with Renaissance arcades and an old stone well", "masterSha256": "4bcd1198c838b118ce393861521f575106cce99dc2ee362f183b3f88c25000d8" }
+  ],
+  "files": [
+    { "file": "public/illustrations/landscapes/tuscany-640.webp", "width": 640, "height": 430, "bytes": 40052 },
+    { "file": "public/illustrations/landscapes/tuscany-1024.webp", "width": 1024, "height": 688, "bytes": 97110 },
+    { "file": "public/illustrations/landscapes/tuscany-1600.webp", "width": 1593, "height": 1075, "bytes": 238932, "source": "2k upscale, master sha256 c759a3704d3304054aeef250d0673a5eae549e658d7220b6b783d088791aeac8" },
+    { "file": "public/illustrations/landscapes/rome-640.webp", "width": 640, "height": 430, "bytes": 37862 },
+    { "file": "public/illustrations/landscapes/rome-1024.webp", "width": 1024, "height": 688, "bytes": 85438 },
+    { "file": "public/illustrations/landscapes/bologna-640.webp", "width": 640, "height": 430, "bytes": 25748 },
+    { "file": "public/illustrations/landscapes/bologna-1024.webp", "width": 1024, "height": 688, "bytes": 65040 },
+    { "file": "public/illustrations/landscapes/venice-640.webp", "width": 640, "height": 430, "bytes": 39574 },
+    { "file": "public/illustrations/landscapes/venice-1024.webp", "width": 1024, "height": 688, "bytes": 93560 },
+    { "file": "public/illustrations/landscapes/como-640.webp", "width": 640, "height": 430, "bytes": 49488 },
+    { "file": "public/illustrations/landscapes/como-1024.webp", "width": 1024, "height": 688, "bytes": 121736 },
+    { "file": "public/illustrations/landscapes/dolomites-640.webp", "width": 640, "height": 430, "bytes": 58440 },
+    { "file": "public/illustrations/landscapes/dolomites-1024.webp", "width": 1024, "height": 688, "bytes": 134578 }
+  ]
+}

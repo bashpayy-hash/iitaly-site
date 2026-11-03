@@ -41,3 +41,5 @@ Warm paper, riso objects, Apple-calm. Flat (no cast shadows): level is colour �
 - Grid: two columns from 700px of container width, checkerboard tones (`4n+2`, `4n+3` dark); an odd last tile spans both columns; one column below 700px, even tiles dark.
 - Hero: greeting 21px as the label, headline `clamp(32px,3.4vw,48px)`, one 17px line, mono cite and deadline, pills, porthole 216px (150px on phones) centred below.
 - Every tile row is `max-width:100%` with `overflow-wrap:anywhere`: nothing may spill past a tile edge (the live overlap of 3 Nov).
+- Hero landscape (3 Nov): the «Now» tile is 660px tall, cream for the top 40% (scrim to transparent by 78%), the Tuscan landscape covering the tile (`object-position: center 72%`), Vespi 190×152 at the bottom-right with a 24px margin. Home photo cards: 4:5, 20px radius, cocoa scrim from the bottom (0.9 → 0 by 68%), label 11px mono sand `#EAD7BB`, title 19px 600, line 13px `#E6DED2`.
+- Route lines (3 Nov): dashed `#A69E90`, solid progress `#A33421` (1.5px), current dot 11px with a 2px terracotta ring; no plane, no callsign. On the dark board the accent is `#F29A89`.

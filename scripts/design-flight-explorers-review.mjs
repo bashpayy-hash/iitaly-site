@@ -116,25 +116,27 @@ try{
     assert.match(await page.locator('[data-plan-university-context]').innerText(),/Bologna/);
     await check(page,'Plan '+width);
     await page.screenshot({path:path.join(destination,`plan-${width}.png`),fullPage:true});
-    // The aircraft follows actual tab positions, including the overflowing rail.
+    // Each answer advances the questionnaire; the selected dot follows the
+    // step on its own (owner, 3 Nov: no aircraft on progress lines).
+    assert.equal(await page.locator('[data-plan-wizard] [data-flight-plane]').count(),0,'No aircraft on the questionnaire dots');
     for (let step = 0; step < 9; step++) {
       await page.locator('[data-plan-question] + div button[aria-pressed]').first().click();
-      await page.waitForFunction(() => {
-        const plane = document.querySelector('[data-plan-wizard] [data-flight-plane]')?.getBoundingClientRect();
-        const stop = document.querySelector('[data-plan-wizard] [data-flight-selected=true]')?.getBoundingClientRect();
-        return plane && stop && Math.abs(plane.x - stop.x) < 2;
-      });
+      await page.waitForFunction(expected => Number(document.querySelector('[data-plan-wizard] [data-flight-selected=true]')?.getAttribute('data-flight-stop')) === expected, step + 1);
     }
     await check(page,'Plan last question '+width);
     await page.goto(origin+'/',{waitUntil:'networkidle'});
+    // Owner, 3 Nov: the two scenes show their three themes at once as photo
+    // cards (Italian landscapes), not a dark window with switches.
     assert.equal(await page.locator('[data-scene-card]').count(),2);
-    await page.getByRole('button',{name:'В Италии'}).click();
-    await page.getByRole('button',{name:'Codice fiscale',exact:true}).click();
+    assert.equal(await page.locator('[data-scene-card] [data-scene-photo]').count(),6,'Three photo cards per scene');
+    assert.equal(await page.locator('[data-scene-card] button').count(),0,'Nothing to switch: every theme is visible');
     assert.match(await page.locator('[data-scene-card]').nth(1).innerText(),/Официальный налоговый код/);
+    assert.equal(await page.locator('[data-scene-card] [data-scene-photo] img').evaluateAll(nodes=>nodes.filter(img=>!img.complete||img.naturalWidth===0).length),0,'Landscape photos load');
+    assert.equal(await page.locator('[data-scene-photo=codice]').getAttribute('href'),'/guides/codice');
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});
-    results.push({width,guides:'tiles with own art, search, filters, step pages, old deep links',deck:'three aligned cards, choice persistence, table, plan handoff',home:'two interactive scenes',accessibility:'passed'});
+    results.push({width,guides:'tiles with own art, search, filters, step pages, old deep links',deck:'three aligned cards, choice persistence, table, plan handoff',home:'two scenes of three landscape photo cards',accessibility:'passed'});
     await context.close();
   }
   assert.deepEqual(errors,[]);await fs.writeFile(path.join(destination,'results.json'),JSON.stringify({results,errors},null,2));console.log(JSON.stringify(results));
