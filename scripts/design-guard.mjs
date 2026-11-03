@@ -224,6 +224,9 @@ const approvedGamifiedPortalPaths = new Set([
   // row of cards. Presentation only; it reads the same roadmap and progress.
   'src/components/portal/PortalStageLineup.tsx',
   'src/components/portal/portal-lineup.module.css',
+  // 2026-11-03: owner removed the mascot figure from the overview hero
+  // («смотрится топорно»); the route Vespi component is deleted.
+  'src/components/portal/PortalRouteVespi.tsx',
   // Owner 2026-11-03: the scholarship options read as if only three programs
   // exist. Order and a caption only; answers and their values are unchanged.
   'src/components/portal/PortalAssessment.tsx',
