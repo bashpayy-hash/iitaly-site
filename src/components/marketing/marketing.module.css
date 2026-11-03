@@ -71,7 +71,7 @@
 .finePrint { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; border-top: 1px solid var(--i-line); padding-top: 24px; }
 .finePrint p { max-width: 640px; }
 .finePrint > a { flex-shrink: 0; }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 980px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1); }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 999px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1); }
 .button:active { transform: translateY(1px); }
 .button:disabled { opacity: .65; pointer-events: none; }
 .buttonSmall { min-height: 44px; padding: 10px 20px; font-size: 15px; }
@@ -119,9 +119,9 @@
 .journeyHeader { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--i-line); }
 .journeyHeader p { margin-top: 4px; color: #6b6761; font-size: 12px; }
 .journeyLogo { font-size: 16px; font-weight: 600; letter-spacing: -.04em; }
-.journeyBadge { color: #56524c; border: 1px solid var(--i-line); border-radius: 980px; padding: 6px 12px; font-size: 12px; white-space: nowrap; }
+.journeyBadge { color: #56524c; border: 1px solid var(--i-line); border-radius: 999px; padding: 6px 12px; font-size: 12px; white-space: nowrap; }
 .journeyBody { display: grid; grid-template-columns: 1.45fr 1fr; gap: 40px; padding: 30px 0; }
-.journeyBody h2 { margin-top: 9px; font-size: 32px; line-height: 1.15; font-weight: 500; letter-spacing: -.03em; }
+.journeyBody h2 { margin-top: 9px; font-size: 32px; line-height: 1.15; font-weight: 600; letter-spacing: -.03em; }
 .journeyBody p { max-width: 330px; margin-top: 12px; color: #6b6761; font-size: 14px; }
 .journeyBody > div:last-child { border-left: 1px solid var(--i-line); padding-left: 40px; }
 .scholarship { display: block; margin-top: 8px; font-size: 38px; line-height: 1.1; letter-spacing: -.045em; font-weight: 500; }
@@ -130,7 +130,7 @@
 .route li { min-width: 0; font-size: 14px; }
 .route a { display: flex; align-items: center; gap: 10px; min-height: 44px; border-radius: 8px; }
 .route a:hover { color: var(--i-link); background: #fff0f3; }
-.route li a > span { display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border: 1px solid var(--i-line); border-radius: 50%; font-size: 10px; }
+.route li a > span { display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border: 1px solid var(--i-line); border-radius: 50%; font-size:11px; }
 .route li:first-child a > span { background: var(--i-action); border-color: var(--i-action); color: #fff; }
 .metrics { background: transparent; padding: 48px 24px; border-bottom: 1px solid var(--i-line); }
 .metricsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; max-width: 1100px; margin: auto; }
@@ -222,11 +222,11 @@
   .actions { gap: 8px 14px; }
   .actions .button { width: auto; max-width: 100%; font-size: 15px; }
   .stage { padding: 28px 20px 0; }
-  .stageLabel { margin-bottom: 16px; font-size: 10px; }
+  .stageLabel { margin-bottom: 16px; font-size:11px; }
   .stageLabel > span:last-child { display: none; }
   .journey { padding: 20px; }
   .journeyHeader { padding-bottom: 16px; }
-  .journeyBadge { font-size: 10px; }
+  .journeyBadge { font-size:11px; }
   .journeyBody { grid-template-columns: 1fr; padding: 20px 0; gap: 20px; }
   .journeyBody h2 { font-size: 28px; }
   .journeyBody > div:last-child { border-left: 0; border-top: 1px solid var(--i-line); padding: 20px 0 0; }
@@ -241,7 +241,7 @@
   .how { padding: 64px 24px; }
   .howInner { grid-template-columns: 1fr; gap: 40px; }
   .step { gap: 10px; grid-template-columns: 30px 1fr; }
-  .university { padding: 64px 24px; }
+  .university { padding: 64px 20px; }
   .universityNumbers { gap: 40px; }
   .universityNumbers > div + div { padding-left: 40px; }
   .footerTop, .finePrint { flex-direction: column; gap: 24px; }

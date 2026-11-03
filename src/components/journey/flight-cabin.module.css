@@ -9,13 +9,13 @@
 @keyframes clouds-far { from { transform:translateX(14px); } to { transform:translateX(-14px); } }
 @keyframes shade-lift { from { transform:translateY(0); } }
 
-.manifest { display:grid; gap:4px; padding:2px 0 2px 16px; border-left:1.5px dotted #B4AB9B; font:400 10.5px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#6A6458; }
+.manifest { display:grid; gap:4px; padding:2px 0 2px 16px; border-left:1.5px dotted #B4AB9B; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#6A6458; }
 .manifest p { margin:0; }
 .passenger { color:#241F1C; font-weight:700; }
 
 @media(max-width:600px) {
   .porthole { --porthole-w:150px; }
-  .manifest { gap:2px; padding-left:12px; font-size:9.5px; }
+  .manifest { gap:2px; padding-left:12px; font-size:11px; }
 }
 @media(prefers-reduced-motion:reduce) {
   .cloudsNear,.cloudsFar,.shade { animation:none; }

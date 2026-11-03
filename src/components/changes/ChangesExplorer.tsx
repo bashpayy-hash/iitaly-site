@@ -99,7 +99,7 @@ export function ChangesExplorer() {
             {STATUSES.map((s) => (
               <Reveal as="li" key={s.title} variant="fade">
                 <div className={`h-full rounded-lg border-2 px-4 py-3.5 ${STATUS_TONE[s.kind]}`}>
-                  <p className="font-mono text-[10px] tracking-[0.1em] uppercase">{s.status}</p>
+                  <p className="font-mono text-[11px] tracking-[0.1em] uppercase">{s.status}</p>
                   <b className="mt-1 block text-sm text-ink">{s.title}</b>
                   <p className="mt-1.5 text-sm text-ink-soft">{s.body}</p>
                 </div>
@@ -154,7 +154,7 @@ export function ChangesExplorer() {
                           key={m.title}
                           className="rounded-lg border-2 border-ink bg-cream px-4 py-4 shadow-soft-sm"
                         >
-                          <p className="font-mono text-[10px] tracking-[0.1em] text-sec-deep uppercase">
+                          <p className="font-mono text-[11px] tracking-[0.1em] text-sec-deep uppercase">
                             {m.lang}
                           </p>
                           <b className="mt-1 block font-display text-base">{m.title}</b>
@@ -200,17 +200,17 @@ export function ChangesExplorer() {
                 <b className="block text-sm">{r.route}</b>
                 <dl className="mt-3 space-y-2 text-sm">
                   <div>
-                    <dt className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">Отбор</dt>
+                    <dt className="font-mono text-[11px] tracking-[0.08em] text-sec-deep uppercase">Отбор</dt>
                     <dd className="text-ink-soft">{r.selection}</dd>
                   </div>
                   <div>
-                    <dt className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
+                    <dt className="font-mono text-[11px] tracking-[0.08em] text-sec-deep uppercase">
                       Universitaly и виза для non-EU abroad
                     </dt>
                     <dd className="text-ink-soft">{r.visa}</dd>
                   </div>
                   <div>
-                    <dt className="font-mono text-[10px] tracking-[0.08em] text-sec-deep uppercase">
+                    <dt className="font-mono text-[11px] tracking-[0.08em] text-sec-deep uppercase">
                       Предостережение
                     </dt>
                     <dd className="text-ink-soft">{r.warning}</dd>
@@ -231,7 +231,7 @@ export function ChangesExplorer() {
                     <th
                       key={h}
                       scope="col"
-                      className="py-3 pr-4 font-mono text-[10px] font-normal tracking-[0.08em] text-sec-deep uppercase"
+                      className="py-3 pr-4 font-mono text-[11px] font-normal tracking-[0.08em] text-sec-deep uppercase"
                     >
                       {h}
                     </th>
@@ -281,7 +281,7 @@ export function ChangesExplorer() {
           <ol className="mt-6 space-y-2 text-sm">
             {SOURCES.map((s, i) => (
               <li key={s.url} className="flex gap-3">
-                <span className="font-mono text-[11px] text-sec-deep tabular-nums">
+                <span className="font-mono text-[12px] text-sec-deep tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <a

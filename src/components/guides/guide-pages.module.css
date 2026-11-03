@@ -9,7 +9,7 @@
 .reviewed { margin-top:16px; font-size:13px; line-height:1.5; color:#57514B; }
 .search { display:block; max-width:720px; margin-top:32px; }
 .search > label { display:block; margin-bottom:10px; font-size:14px; font-weight:500; }
-.searchField { display:flex; align-items:center; gap:12px; min-height:56px; padding:4px 12px 4px 18px; border:1px solid #CFC8BE; border-radius:12px; background:#FFFDF9; }
+.searchField { display:flex; align-items:center; gap:12px; min-height:56px; padding:4px 12px 4px 18px; border:1px solid #CFC8BE; border-radius:16px; background:#FFFDF9; }
 .searchField > svg { flex:none; color:#57514B; }
 .searchField input { width:100%; min-width:0; min-height:44px; border:0; background:transparent; color:#141413; font-size:16px; }
 .searchField input::placeholder { color:#655B52; opacity:1; }
@@ -73,7 +73,7 @@
 .checkBefore { padding-left:22px; color:#57514B; font-size:16px; line-height:1.7; }
 .checkBefore li { padding:12px 0 12px 8px; }
 .shell main :where(a,button,input,summary):focus-visible { outline:2px solid #352B28; outline-offset:4px; }
-.shell main ::selection { background:#EFE7D8; color:#352B28; }
+.shell main ::selection { background:#EFE7D8; color:#241F1C; }
 .shell main input { caret-color:#352B28; }
 @media(max-width:600px) {
  .container { padding:22px 20px 52px; }.indexHeader { padding-top:8px; }.shell .indexHeader h1 { font-size:34px; }.intro { font-size:16px; }
@@ -85,5 +85,5 @@
 }
 @media print { .search,.articleFooter,.nextAction,.indexFooter { display:none; }.container { max-width:none; padding:0; }.sources { break-inside:avoid; } }
 
-.checkItem { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:44px; margin-top:24px; padding:10px 18px; border:1px solid #DCD3C3; border-radius:999px; font-size:14px; color:#352B28; background:#FBF9F3; cursor:pointer; }
+.checkItem { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:44px; margin-top:24px; padding:10px 18px; border:1px solid #DCD3C3; border-radius:999px; font-size:14px; color:#241F1C; background:#FBF9F3; cursor:pointer; }
 .checkItem[aria-pressed=true] { color:#FAF9F3; background:#356450; border-color:#356450; }

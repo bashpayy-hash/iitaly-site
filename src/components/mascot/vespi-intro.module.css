@@ -1,6 +1,6 @@
-.intro { composes: paper from "../marketing/surface-depth.module.css"; position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) 300px; align-items:center; max-width:1216px; margin:60px auto; min-height:320px; padding:36px 38px; border:1px solid var(--color-warm-line); border-radius:28px; background:var(--color-warm-white); overflow:visible; }
+.intro { composes: paper from "../marketing/surface-depth.module.css"; position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) 300px; align-items:center; max-width:1216px; margin:60px auto; min-height:320px; padding:36px; border:1px solid var(--color-warm-line); border-radius:28px; background:var(--color-warm-white); overflow:visible; }
 .copy { position:relative; z-index:3; min-width:0; }
-.intro h2 { max-width:24ch; margin:0; font:600 34px/1.14 var(--font-apple-display); letter-spacing:-.03em; color:var(--color-ink); }
+.intro h2 { max-width:24ch; margin:0; font:600 clamp(28px,3vw,40px)/1.08 var(--font-apple-display); letter-spacing:-.03em; color:var(--color-ink); }
 .intro h2 span { color:var(--color-ink); }
 .intro ul { display:flex; flex-wrap:wrap; gap:7px 0; max-width:none; margin-top:20px; color:var(--portal-muted, var(--color-cloud-body)); font-size:14px; line-height:1.5; }
 .intro li + li::before { content:"·"; padding:0 9px; }
@@ -35,7 +35,7 @@
   .intro .copy { grid-column:1/-1; }
   .intro .copy ul { padding-right:124px; max-width:100%; }
   .intro .action { position:relative; font-size:14px; padding-inline:18px; }
-  .home { margin:44px 18px; padding:24px; }
+  .home { margin:44px 20px; padding:20px; }
   .home .portrait { top:auto; bottom:0; height:190px; width:162px; }
   .home .portrait img { top:auto; bottom:-28px; width:200px; right:-40px; }
   .portrait .spatial { top:auto; bottom:0; right:-14px; width:190px; height:160px; transform:none; }
