@@ -57,7 +57,7 @@ export function PricesExplorer() {
       <section className={`${heroArt.packages} px-5 py-10`}>
         <div className="mx-auto max-w-[900px]">
           <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row">
-            <div className={`${styles.summaryCard} flex-1 p-5`}>
+            <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
                 ИИ оценит шансы, покажет риски и назовёт следующий шаг
@@ -66,7 +66,7 @@ export function PricesExplorer() {
             <span aria-hidden className="hidden self-center text-2xl text-cloud-meta sm:block">
               →
             </span>
-            <div className={`${styles.summaryCard} flex-1 p-5`}>
+            <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold">{priceLabel(PRICE_MAIN)}</b>
               <span className="text-apple-body-sm text-cloud-meta">
                 система ведёт поступление от выбора вуза до permesso
@@ -74,7 +74,7 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-5 md:flex-row md:items-center`}>
+          <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-6 sm:p-8 md:flex-row md:items-center`}>
             <div className="min-w-0">
               <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы — это бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
@@ -90,7 +90,7 @@ export function PricesExplorer() {
           <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
             <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Что включено</h2>
             <p className="mt-2 text-apple-body-sm text-cloud-body">Весь маршрут поступления в одном кабинете</p>
-            <div className="mt-5 grid grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-[24px] border border-white/10">
+            <div className="mt-5 grid grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-[16px] border border-white/10">
               {[
                 { v: "28", l: "шагов в маршруте" },
                 { v: "43", l: "университета" },
@@ -139,7 +139,7 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div id="terms-and-refund" className={`${styles.termsBox} ${styles.anchorTarget} mt-8 p-5 sm:p-6`}>
+          <div id="terms-and-refund" className={`${styles.termsBox} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
             <b className="block text-apple-caption font-semibold text-green uppercase">
               Гарантии и как мы снимаем риск
             </b>
@@ -169,7 +169,7 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div className="mt-6 border border-white/15 p-5">
+          <div className="mt-6 rounded-[28px] border border-white/15 p-6 sm:p-8">
             <b className="block text-apple-body-sm font-semibold text-cloud-white">Что система делает сама, а где решаешь ты</b>
             <p className="mt-2 text-apple-body-sm text-cloud-body">
               Подбор программ, сроки, чек-листы, черновики и проверку
@@ -197,7 +197,7 @@ export function PricesExplorer() {
                 type="button"
                 onClick={() => openBuy(m.name, m.price)}
                 aria-haspopup="dialog"
-                className={`${styles.optionalService} flex w-full flex-col items-start justify-between gap-3 border border-white/15 p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson sm:flex-row sm:items-center sm:gap-4`}
+                className={`${styles.optionalService} flex w-full flex-col items-start justify-between gap-3 border border-white/15 p-6 sm:px-8 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson sm:flex-row sm:items-center sm:gap-4`}
               >
                 <div>
                   <b className="block text-apple-body-sm font-semibold text-cloud-white">{m.name}</b>

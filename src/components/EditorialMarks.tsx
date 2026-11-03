@@ -131,7 +131,7 @@ export function MicroLabel({
   return (
     <div
       aria-hidden={decorative || undefined}
-      className={`flex items-baseline font-mono text-[10px] leading-[1.6] tracking-[0.12em] uppercase ${
+      className={`flex items-baseline font-mono text-[11px] leading-[1.6] tracking-[0.12em] uppercase ${
         layout === "table" ? "gap-2.5" : "gap-1.5"
       }`}
     >
@@ -167,7 +167,7 @@ export function SpecTag({
   return (
     <span
       aria-hidden
-      className={`inline-flex items-center rounded-sm border border-dashed border-ink/25 px-2 py-1 font-mono text-[10px] leading-none tracking-[0.12em] text-sec-deep uppercase ${className}`}
+      className={`inline-flex items-center rounded-sm border border-dashed border-ink/25 px-2 py-1 font-mono text-[11px] leading-none tracking-[0.12em] text-sec-deep uppercase ${className}`}
     >
       {children}
     </span>

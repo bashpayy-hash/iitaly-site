@@ -303,3 +303,13 @@ The owner sent the Busy Bee Honey style reference (DESIGN.md, tokens, theme) and
 - **One column.** Home sections, the guides index and the footer share the header's column: 1216px with 32px gutters (112px edges at 1440px). Topic pages keep their 880px reading column, but their step-card row now uses the same carousel and runs to the window edges with arrows on the right.
 - **Even facts.** A topic's four facts are the same flat tile; an unknown value is only quieter text (no dashed outline).
 - **Motion.** One system everywhere: `cubic-bezier(.22,1,.36,1)` for movement, `cubic-bezier(.4,0,.2,1)` for colour, 160/320/520ms. Removed: the per-object drift inside the row (it made identical objects look misaligned) and the scroll-scrubbed row rise. Shortened: the assessment's route line (1s → 520ms), its reveal (200–260ms ease-out → 320ms), the story frame (400ms → 320ms), the cabin shade (1.6s → 1.1s). Hover is colour or an 8px lift; carousel scrolling is native smooth scrolling.
+
+## Evenness pass · 3 November 2026
+
+The owner asked to remove every unevenness and inaccuracy. Measured first (left edges of text blocks, type sizes, radii, pill heights, text colours on every public page at 1440 and 390px), then fixed to one scale; the values are recorded in `.interface-design/system.md`.
+
+- **Edges.** No more near-misses: home card text starts on one line (cards padded 36px; 20px on phones), prices cards share 32px padding (24px on phones), and phones use a 20px gutter everywhere (the questionnaire had 16, the map band and Vespi card 24 and 18). Remaining differences are centred text only.
+- **Radii.** One scale: 999 pills, 28 cards, 16 inner elements and fields. Replaced 20/22/24/26/32/980px (scene cards and windows, answer capsules, prices stats strip, search field, step-page tiles, flight-plan badge).
+- **Type floor.** No text under 11px (mono caps) / 12px (everything else) outside the Modulo 1 form replica: flight-plan labels, scene windows, facts, counts, the rules page labels.
+- **Peer headings.** The Vespi card title matches the scene cards (`clamp(28px,3vw,40px)`), the route card title is semibold like its peers.
+- **Greys.** Guides use four text levels (`#141413`, `#241F1C`, `#3F3933`, `#57514B`) instead of seven near-identical greys; the greenish `#5C6056` is gone.
