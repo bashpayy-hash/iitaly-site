@@ -6,11 +6,14 @@ import styles from "./journey-scenes.module.css";
 
 /* Две сцены на главной. Owner, 3 Nov: «суть информации не сильно понятна —
    впиши её красивее, с фото пейзажа на фоне», затем «не заменяй иконки
-   фотками пейзажей». Каждая из трёх тем стоит своей карточкой: её вещь
-   (студийный рендер, design/illustrations/objects-2026-11-03.json) на фоне
-   итальянского пейзажа (landscapes-2026-11-03.json), ярлык, название и одна
-   строка — всё видно сразу, карточка ведёт на свою страницу. Тексты — те же,
-   что были в окне. */
+   фотками пейзажей», и «Веспи можно для смеха вписать непосредственно в
+   пейзажи». Каждая из трёх тем стоит своей карточкой: ярлык, название и
+   одна строка сверху, её вещь (студийный рендер,
+   design/illustrations/objects-2026-11-03.json) внизу справа, а в самом
+   пейзаже (landscapes-2026-11-03.json) слева внизу — Веспи: на скутере в
+   Тоскане, на балюстраде в Риме, под портиками Болоньи, в лодке в Венеции,
+   на берегу Комо, в цветах Доломитов. Всё видно сразу, карточка ведёт на свою
+   страницу. Тексты — те же, что были в окне. */
 const STAGE_CARDS = [
   { label: "Маршрут", photo: "tuscany", object: "map", objectHeight: 374 },
   { label: "До отъезда", photo: "rome", object: "folder", objectHeight: 358 },
@@ -26,8 +29,8 @@ function PhotoCard({ id, photo, object, objectHeight, label, title, line, href }
   return <li className={styles.photo}>
     <Link className={styles.photoLink} href={href} data-scene-photo={id}>
       <img className={styles.photoArt} src={`/illustrations/landscapes/${photo}-640.webp`} srcSet={`/illustrations/landscapes/${photo}-640.webp 640w, /illustrations/landscapes/${photo}-1024.webp 1024w`} sizes="(max-width: 640px) 92vw, 400px" width={1024} height={688} alt="" decoding="async" loading="lazy" />
-      <span className={styles.object}><img src={`/illustrations/objects/${object}-480.webp`} srcSet={`/illustrations/objects/${object}-240.webp 240w, /illustrations/objects/${object}-480.webp 480w`} sizes="(max-width: 640px) 46vw, 240px" width={480} height={objectHeight} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
       <span className={styles.photoCopy}><small>{label}</small><strong>{title}</strong><span>{line}</span></span>
+      <span className={styles.object}><img src={`/illustrations/objects/${object}-480.webp`} srcSet={`/illustrations/objects/${object}-240.webp 240w, /illustrations/objects/${object}-480.webp 480w`} sizes="(max-width: 640px) 34vw, 190px" width={480} height={objectHeight} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
     </Link>
   </li>;
 }

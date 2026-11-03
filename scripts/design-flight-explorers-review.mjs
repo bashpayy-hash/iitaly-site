@@ -131,7 +131,11 @@ try{
     assert.equal(await page.locator('[data-scene-card] [data-scene-photo]').count(),6,'Three photo cards per scene');
     assert.equal(await page.locator('[data-scene-card] button').count(),0,'Nothing to switch: every theme is visible');
     assert.match(await page.locator('[data-scene-card]').nth(1).innerText(),/Официальный налоговый код/);
-    assert.equal(await page.locator('[data-scene-card] [data-scene-photo] img').evaluateAll(nodes=>nodes.filter(img=>!img.complete||img.naturalWidth===0).length),0,'Landscape photos load');
+    // The card images are lazy: bring the scenes on screen and decode them before checking.
+    await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
+    await page.evaluate(async()=>{const images=[...document.querySelectorAll('[data-scene-card] img')];for(const img of images)img.loading='eager';await Promise.all(images.map(img=>img.decode().catch(()=>{})));});
+    assert.equal(await page.locator('[data-scene-card] [data-scene-photo] img').evaluateAll(nodes=>nodes.filter(img=>!img.complete||img.naturalWidth===0).length),0,'Landscape photos and theme objects load');
+    assert.equal(await page.locator('[data-scene-card] [data-scene-object]').count(),6,'Every card keeps its theme object on the landscape (owner, 3 Nov)');
     assert.equal(await page.locator('[data-scene-photo=codice]').getAttribute('href'),'/guides/codice');
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
