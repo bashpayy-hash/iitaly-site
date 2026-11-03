@@ -64,7 +64,7 @@ try {
     await page.getByRole('button',{name:'Войти в кабинет',exact:true}).click();
     await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
     const progress=await summary(page);await layout(page,'overview '+width);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1,'One welcome pose sits above the route card');
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),0,'No welcome pose on the overview (owner, 3 Nov: the figure on the landscape looked crude)');
     await page.clock.fastForward(45_100);
     assert.deepEqual(await summary(page),progress);assert.equal(JSON.stringify(data),before);assert.deepEqual(calls,[],'Idle display sends no mutation or AI request');
     await capture(page,'overview-'+width);

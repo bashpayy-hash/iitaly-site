@@ -62,8 +62,6 @@
 .roundCheck[data-done=true]::before { background:var(--status-green); border-color:var(--status-green); }.roundCheck[data-done=true] svg { opacity:1; }.roundCheck[data-done=true] path { stroke-dashoffset:0; }
 .roundCheck[data-just-saved=true] { animation:checkPop .4s cubic-bezier(.34,1.56,.64,1); }.roundCheck[data-just-saved=true] path { animation:drawSuccess .25s .06s both; }
 .roundCheck:disabled { cursor:wait; opacity:.65; }
-.welcomeScene>span { mix-blend-mode:normal; }
-:global(body:has([data-portal-chat="true"])) .welcomeScene { transform:translateY(20px); opacity:0; pointer-events:none; visibility:hidden; transition:transform .24s ease,opacity .18s ease,visibility 0s .24s; }
 .canvas :is(a,button,summary,input):focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 @keyframes checkPop { from { transform:scale(.75); } 65% { transform:scale(1.08); } to { transform:scale(1); } }
 @keyframes stampPrint { from { opacity:0; transform:rotate(-8deg) scale(1.35); } 70% { opacity:1; transform:rotate(-8deg) scale(.95); } to { transform:rotate(-8deg) scale(1); } }
@@ -90,7 +88,7 @@
 .successIcon { flex-shrink:0; stroke:var(--status-green); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
 .successIcon circle,.successIcon path { stroke-dasharray:100; stroke-dashoffset:100; animation:drawSuccess .4s ease forwards; }.successIcon path { animation-delay:.18s; }
 @keyframes drawSuccess { to { stroke-dashoffset:0; } }@keyframes confirmationIn { from { opacity:0; transform:translateY(-5px); }to { opacity:1; transform:translateY(0); } }
-@media(prefers-reduced-motion:reduce) { .welcomeScene,.primary span { transition:none!important; }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.stamp[data-just-stamped=true],.confirmationBody,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
+@media(prefers-reduced-motion:reduce) { .primary span { transition:none!important; }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.stamp[data-just-stamped=true],.confirmationBody,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
 @media(forced-colors:active) { .roundCheck[data-done=true]::before,.stamp[data-stamped=true] { background:Highlight; }.roundCheck[data-done=true],.stamp[data-stamped=true] { color:HighlightText; } }
 
 /* Overview shows one next task; each stage has a separate reading surface. */
@@ -147,14 +145,18 @@
    раскрытым текущим шагом под его этапом. Ниже — сетка 2×N плиток этапов,
    документов, вузов и напоминаний (portal-lineup.module.css). */
 .canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"hero" "route"; grid-template-rows:auto auto; gap:12px; max-width:1296px; margin:16px auto 0; }
-.hero { grid-area:hero; display:grid; justify-items:center; padding:48px 32px 12px; border-radius:28px; background:#FFFDF9; text-align:center; }
+/* Плитка «Сейчас»: текст на кремовом верху, ниже — тосканский пейзаж, в
+   который плитка переходит без границы (owner, 3 Nov: пейзажи Италии на фон,
+   никакой авиации; фигура Веспи на пейзаже убрана — «смотрится топорно»). */
+.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; min-height:700px; padding:48px 32px 290px; border-radius:28px; background:#FFFDF9; text-align:center; overflow:hidden; }
 .hero > * { max-width:100%; min-width:0; }
+/* Веспи на скутере стоит в левой нижней трети фото: кадр прижат к левому
+   краю и к низу, чтобы он оставался под текстовой зоной на любой ширине. */
+.heroArt { position:absolute; inset:0; z-index:-2; width:100%; height:100%; max-width:none; object-fit:cover; object-position:30% 62%; }
+.hero::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom,#FFFDF9 0%,#FFFDF9 40%,rgba(255,253,249,.86) 54%,rgba(255,253,249,0) 78%); pointer-events:none; }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }
 .canvas[data-portal-page=overview] .welcome h1 { margin:0; font:600 21px/1.25 var(--font-sans); letter-spacing:-.01em; }
 .canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }
-.cabin { position:relative; justify-self:center; margin-top:40px; padding-right:4px; }
-.mascotWindow { position:absolute; right:-112px; bottom:-10px; z-index:2; width:150px; height:120px; pointer-events:none; }
-.welcomeScene { width:100%; height:100%; transition:transform .24s ease,opacity .18s ease; }
 
 .nowCard { display:grid; justify-items:center; gap:0; width:min(100%,720px); margin-top:28px; color:var(--ink); }
 .nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
@@ -178,15 +180,13 @@
 .nowSecondary:hover { background:var(--accent-text); color:var(--on-dark); }
 .nowPrimary:active,.nowSecondary:active { transform:scale(.97); }
 
-/* Тёмная плитка маршрута: шапка с манифестом и «заранее», ниже одна
-   колонка Flight Plan (760px) по центру. Цвета Flight Plan — светлые
-   на какао; синий самолётика — светлый оттенок из брифа 27 октября. */
+/* Тёмная плитка маршрута: «заранее» в шапке, ниже одна колонка маршрута
+   (760px) по центру. Цвета маршрута — светлые на какао, акцент — светлая
+   терракота. */
 .canvas[data-portal-page=overview] .routeCard { grid-area:route; width:auto; margin:0; padding:0; }
 .routeCard :global([data-road-board]) { --flight-surface:#2A2420; display:grid; justify-content:center; grid-template-columns:minmax(0,760px); padding:40px 32px 44px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
-.routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-blue:#A8C9F7; --flight-surface:#2A2420; }
-.boardHead { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:28px; }
-.manifest { border-color:#6E6054; color:#B8AE9F; }
-.manifest > p:first-child { color:#FAF6EE; }
+.routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-accent:#F29A89; --flight-surface:#2A2420; }
+.boardHead { display:flex; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:24px; }
 .nowAhead { max-width:320px; }
 .nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
 .nowAhead h3 span { margin-left:6px; color:#F29A89; }
@@ -201,14 +201,15 @@
 
 @media(max-width:1100px) {
  .canvas[data-portal-page=overview] { margin-top:12px; }
- .hero { padding:40px 24px 12px; }
- .cabin { margin-top:32px; }
+ .hero { min-height:700px; padding:40px 24px 300px; }
  .routeCard :global([data-road-board]) { padding:32px 24px 36px; }
 }
 @media(max-width:640px) {
- .hero { padding:36px 20px 8px; }
- .cabin { margin-top:28px; }
- .mascotWindow { right:-84px; bottom:-6px; width:110px; height:88px; }
+ /* A phone tile has no room under its text for the scooter: show the road
+    and cypresses on the right of the scene instead (Vespi rides in the
+    home cards there). */
+ .hero { min-height:600px; padding:36px 20px 220px; }
+ .heroArt { object-position:100% 62%; }
  .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
  .canvas[data-portal-page=overview] .welcomeMeta { font-size:12px; }
  .nowCard { margin-top:22px; }
@@ -219,6 +220,6 @@
  .routeCard :global([data-road-board]) { padding:28px 16px 32px; border-radius:24px; }
  .boardHead { margin-bottom:20px; }
 }
-@media(prefers-reduced-motion:reduce) { .welcomeScene { transition:none!important; } .nowPrimary,.nowSecondary { transition:none; } .nowPrimary:active,.nowSecondary:active { transform:none; } }
+@media(prefers-reduced-motion:reduce) { .nowPrimary,.nowSecondary { transition:none; } .nowPrimary:active,.nowSecondary:active { transform:none; } }
 @media(forced-colors:active) { .hero,.routeCard :global([data-road-board]) { border:1px solid CanvasText; } }
 @media(max-width:560px) { .overviewDetail .stageLink { margin-left:76px; } }

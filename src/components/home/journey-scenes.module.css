@@ -1,17 +1,27 @@
-/* Две сцены на главной: тёмное окно с названием, одной строкой и капсулами.
-   Плоско, без внутренних линий; оба окна одной высоты и устройства. */
-.section { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; max-width:1280px; margin:0 auto; padding:64px 32px 80px; }
-.window { display:flex; flex-direction:column; justify-content:space-between; gap:28px; min-width:0; min-height:300px; padding:32px; border-radius:16px; background:#352B28; color:#FAF9F3; }
-.content { animation:scene 320ms cubic-bezier(.22,1,.36,1); }
-.content h3 { margin:0; font-size:clamp(26px,2.4vw,32px); font-weight:600; line-height:1.1; letter-spacing:-.03em; text-wrap:balance; }
-.content p { max-width:40ch; margin:12px 0 0; color:#D4CBC0; font-size:15px; line-height:1.5; text-wrap:pretty; }
-.chips { display:flex; flex-wrap:wrap; gap:8px; }
-.chips button { min-height:44px; padding:10px 18px; border:1px solid #6E6054; border-radius:999px; background:transparent; color:#D4CBC0; font-size:14px; cursor:pointer; transition:background-color 160ms cubic-bezier(.4,0,.2,1),color 160ms cubic-bezier(.4,0,.2,1),border-color 160ms cubic-bezier(.4,0,.2,1); }
-.chips button:hover { border-color:#A89A8C; color:#FAF9F3; }
-.chips button[aria-pressed=true] { border-color:#F3EDE1; background:#F3EDE1; color:#352B28; }
-.chips button:focus-visible { outline:2px solid #F29A89; outline-offset:3px; }
-@keyframes scene { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-@media(max-width:900px) { .section { grid-template-columns:1fr; max-width:760px; padding:40px 20px 64px; } }
-@media(max-width:480px) { .section { gap:20px; } .window { min-height:260px; padding:24px 20px; } .content h3 { font-size:26px; } }
-@media(prefers-reduced-motion:reduce) { .content { animation:none; } .chips button { transition:none; } }
-@media(forced-colors:active) { .window { border:1px solid CanvasText; } }
+/* Две сцены на главной, одна под другой: в каждой три плоские плитки, как
+   плитки кабинета — светлая и тёмная по очереди (во второй сцене наоборот),
+   текст сверху, вещь темы внизу. Скругление, без рамок, теней и фото:
+   плитки ведут по сайту, поэтому на них только предмет по содержанию
+   (owner, 3 Nov). */
+.section { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; max-width:1280px; margin:0 auto; padding:64px 32px 80px; }
+.cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0; padding:0; list-style:none; }
+.card { min-width:0; }
+.cardLink {
+  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421;
+  position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:16px; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:var(--tile-bg); color:var(--tile-ink); text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1);
+}
+.card:nth-child(2) .cardLink,.cardsAlt .card:nth-child(odd) .cardLink { --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89; }
+.cardsAlt .card:nth-child(2) .cardLink { --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; }
+.copy { display:grid; gap:4px; width:100%; padding:24px 22px 0; }
+.copy small { font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--tile-label); }
+.copy strong { font-size:21px; font-weight:600; line-height:1.15; letter-spacing:-.02em; text-wrap:balance; }
+.copy span { font-size:14px; line-height:1.4; color:var(--tile-quiet); text-wrap:pretty; }
+/* Вещь темы стоит внизу плитки, по центру, не шире 68%. */
+.object { display:flex; flex:1; align-items:flex-end; justify-content:center; min-height:0; padding:0 20px 24px; }
+.object img { display:block; width:auto; max-width:68%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
+.cardLink:hover .object img { transform:translateY(-6px); }
+.cardLink:focus-visible { outline:2px solid #B83A27; outline-offset:3px; }
+@media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .cardLink { aspect-ratio:3 / 4; } }
+@media(max-width:640px) { .cards { grid-template-columns:1fr; } .cardLink { flex-direction:row; align-items:center; aspect-ratio:auto; min-height:200px; } .copy { flex:1 1 auto; padding:22px 0 22px 20px; } .object { flex:0 0 42%; align-items:center; padding:16px 16px 16px 0; } .object img { max-width:100%; max-height:150px; } .copy strong { font-size:19px; } }
+@media(prefers-reduced-motion:reduce) { .cardLink,.object img { transition:none; } .cardLink:hover .object img { transform:none; } }
+@media(forced-colors:active) { .cardLink { border:1px solid CanvasText; } }

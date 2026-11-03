@@ -113,7 +113,7 @@ async function railContract(page,data,compact){
 async function arrivalOrder(page,data) {
   const welcome=page.locator('[data-portal-welcome]');
   assert.equal(await welcome.getByRole('heading',{level:1}).innerText(),`Привет, ${data.client.name.trim().split(/\s+/)[0]}!`,'The greeting uses the actual account first name');
-  assert.equal(await page.locator('[data-portal-cabin] [data-vespi-scene]').count(),1,'Vespi leans on the porthole above the greeting');
+  assert.equal(await page.locator('[data-portal-hero] [data-vespi-scene]').count(),0,'The hero shows the landscape without a mascot figure (owner, 3 Nov)');
   assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
   const progressBox=await road(page).getByRole('progressbar').boundingBox();
@@ -214,7 +214,8 @@ try{
     await page.locator('#portal-panel [role=alert]').locator('..').getByRole('link').click();await page.locator('[data-portal-overview]').waitFor({state:'attached'});assert.equal(calls.length,2);
     if(motion){await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.roadTransition==='true');await page.emulateMedia({reducedMotion:'reduce'});await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.dataset.traveling==='false');}
     assert.equal(await road(page).locator('[data-road-fill],[data-road-location]').count(),0);
-    const transitions=await road(page).locator('[data-flight-plane]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).transitionDuration));
+    assert.equal(await road(page).locator('[data-flight-plane]').count(),0,'No aircraft on the route (owner, 3 Nov)');
+    const transitions=await road(page).locator('[data-flight-fill]').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).transitionDuration));
     assert(transitions.every(value=>value.split(',').every(v=>parseFloat(v)===0)),'Reduced motion immediately stops every route segment');results.push({motion,errorRetry:true,confirmedFeedbackOnly:true,reducedMotionImmediate:true});await context.close();
   }
   for(const width of [1440,390]){

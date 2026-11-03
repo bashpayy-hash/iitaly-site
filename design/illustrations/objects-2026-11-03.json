@@ -13,7 +13,10 @@
     { "name": "map", "stage": "start / universities tile", "job": "f515a81d-9689-40da-bce2-bce8cdd08b73", "object": "a brass pocket compass with a plain cream dial lying on a folded cream paper map printed only with faint abstract contour lines and no words", "masterSha256": "16da73bd03c4d64b5fb589b06cb939576e54c0832a4369250ce05242e9ebd0ff" },
     { "name": "diploma", "stage": "education12", "job": "7a42ec15-2b58-4760-9ed1-2781c7718175", "object": "a rolled cream parchment diploma scroll tied with a red satin ribbon and a wax seal, no visible writing", "masterSha256": "21420217a0c8321607a9a48f002d772c00d04992953d285fd4913db6c0016ae1" },
     { "name": "stamp-pad", "stage": "documents tile", "job": "0b71afbc-36f9-4686-91f2-d2e1656c319b", "object": "a wooden-handled rubber stamp standing next to an open red ink pad in a small tin, with one blank cream paper card", "masterSha256": "dd152d535df6da9af362bec54e135ad3a1e485d4e191b0ee52224e1bab2f5c0c" },
-    { "name": "alarm", "stage": "reminders tile", "job": "85f4c8b4-43f8-48fe-9e54-1d472b489ec7", "object": "a classic cream enamel twin-bell alarm clock with a plain white dial, two hands and no numerals", "masterSha256": "fb837daef8ecff6c3a9e894189acd73686c61f25d8cde26c54671e0bd7118bc3" }
+    { "name": "alarm", "stage": "reminders tile", "job": "85f4c8b4-43f8-48fe-9e54-1d472b489ec7", "object": "a classic cream enamel twin-bell alarm clock with a plain white dial, two hands and no numerals", "masterSha256": "fb837daef8ecff6c3a9e894189acd73686c61f25d8cde26c54671e0bd7118bc3" },
+    { "name": "permesso-kit", "stage": "home card «Permesso» (owner, later on 3 Nov: «не заменяй иконки фотками пейзажей» — each home card keeps its object on the landscape)", "job": "91516f19-5461-41a1-acb8-6ffc427cbf60", "object": "a plain bright yellow postal envelope kit with a white paper receipt slip tucked under its flap", "masterSha256": "979aed5cd2c53f5323501312a6875acf6929a77448e32c2094c1729ad564ddb0" },
+    { "name": "tax-card", "stage": "home card «Codice fiscale»", "job": "789f0bbd-8506-4669-abfb-829ccd108b70", "object": "a single plain teal-green plastic card with a golden chip resting on a cream paper form with faint empty boxes", "masterSha256": "2614367cde168f529edeb6dadf95864a7c03bfd6b116dccb3da03609acc492d7" },
+    { "name": "insurance", "stage": "home card «Страховка»", "job": "d1df1b8a-5cc8-4e3d-9129-cd5c474505ee", "object": "a compact red zip pouch with a plain white cross on its lid, next to a folded cream card", "masterSha256": "4a4f381697d25123f80bee58af84f174a7e42f73e8804adfd9c538df8325a841" }
   ],
   "files": [
     { "file": "public/illustrations/objects/folder-240.webp", "width": 240, "height": 179, "bytes": 10818 },
@@ -33,6 +36,12 @@
     { "file": "public/illustrations/objects/stamp-pad-240.webp", "width": 240, "height": 186, "bytes": 12538 },
     { "file": "public/illustrations/objects/stamp-pad-480.webp", "width": 480, "height": 372, "bytes": 26930 },
     { "file": "public/illustrations/objects/alarm-240.webp", "width": 240, "height": 188, "bytes": 10070 },
-    { "file": "public/illustrations/objects/alarm-480.webp", "width": 480, "height": 375, "bytes": 20236 }
+    { "file": "public/illustrations/objects/alarm-480.webp", "width": 480, "height": 375, "bytes": 20236 },
+    { "file": "public/illustrations/objects/permesso-kit-240.webp", "width": 240, "height": 181, "bytes": 13548 },
+    { "file": "public/illustrations/objects/permesso-kit-480.webp", "width": 480, "height": 362, "bytes": 26348 },
+    { "file": "public/illustrations/objects/tax-card-240.webp", "width": 240, "height": 176, "bytes": 7958 },
+    { "file": "public/illustrations/objects/tax-card-480.webp", "width": 480, "height": 352, "bytes": 17918 },
+    { "file": "public/illustrations/objects/insurance-240.webp", "width": 240, "height": 186, "bytes": 10954 },
+    { "file": "public/illustrations/objects/insurance-480.webp", "width": 480, "height": 371, "bytes": 23748 }
   ]
 }

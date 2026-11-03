@@ -109,8 +109,8 @@ try {
     {
       const { page, context } = await portal(viewport, 'screenshot-parent');
       await decoded(page);
-      assert.equal(await page.locator('[data-portal-cabin] [data-vespi-scene]').count(), 1, 'Exactly one Vespi, by the porthole');
-      assert.equal(await page.locator('main [data-vespi-scene]').count(), 1, 'One mascot on the overview');
+      // Owner, 3 Nov: no mascot figure on the overview hero («смотрится топорно»); Vespi stays in the chat.
+      assert.equal(await page.locator('main [data-vespi-scene]').count(), 0, 'No mascot on the overview');
       assert.equal(await page.locator('[data-stage-souvenir],[data-portal-overview] img[data-riso-art]').count(), 0, 'No stage souvenir: the owner removed it');
       await mascots(page, `overview ${width}`);
       await page.screenshot({ path: resolve(output, `overview-${width}.png`) });
