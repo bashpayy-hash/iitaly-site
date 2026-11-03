@@ -98,7 +98,7 @@ try {
     assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.equal(await page.locator('[data-portal-welcome] a,[data-portal-welcome] button').count(),0,'Greeting metadata is plain text');
-    assert.equal(await page.locator('[data-portal-cabin] [data-vespi-scene=welcome]').count(),1,'Vespi peeks over the hero landscape');
+    assert.equal(await page.locator('[data-portal-hero] [data-vespi-scene], [data-portal-cabin]').count(),0,'No mascot figure on the hero landscape (owner, 3 Nov: «смотрится топорно»)');
     assert.equal(await page.locator('[data-porthole],[data-flight-manifest],[data-flight-plane]').count(),0,'No porthole, manifest or aircraft (owner, 3 Nov: no aviation theme)');
     assert.equal(await page.locator('[data-portal-hero] [data-portal-landscape]').count(),1,'The hero stands on an Italian landscape');
     assert.match(await page.locator('[data-now-deadline]').innerText(),/98\s*дней до ориентира/);
@@ -167,10 +167,9 @@ try {
     assert(work.y>=route.y&&work.y+work.height<=route.y+route.height+1,'The current step opens inside the route board');
     const stop=await page.locator('[data-road-stage=docs]').boundingBox();assert(work.y>=stop.y+stop.height-6&&work.y-stop.y-stop.height<24,'The step sits right under its stage');
     const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
-    const cabin=await page.locator('[data-portal-cabin]').boundingBox(),now=await page.locator('[data-portal-now]').boundingBox();
+    const now=await page.locator('[data-portal-now]').boundingBox();
     assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
-    assert(now.y+now.height<=cabin.y+1,'Vespi stands under the step and its pills');
-    assert(cabin.y+cabin.height<=hero.y+hero.height+1&&cabin.x+cabin.width<=hero.x+hero.width+1,'Vespi stays inside the hero tile, at its right edge');
+    assert(hero.y+hero.height-(now.y+now.height)>=100,'The landscape keeps real room under the step and its pills');
     assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then the route board 12px below');
     const landscape=await page.locator('[data-portal-landscape]').boundingBox();
     assert(Math.abs(landscape.y-hero.y)<2&&Math.abs(landscape.height-hero.height)<2,'The landscape fills the hero tile');
@@ -191,7 +190,7 @@ try {
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),1);
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),0,'No welcome figure on the overview (owner, 3 Nov)');
     await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
     await page.locator('[data-portal-overview]').getByRole('link',{name:'Открыть этап'}).click();
     assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
@@ -219,9 +218,8 @@ try {
     await noOverflow(page);await page.screenshot({path:resolve(output,`task-${width}.png`),fullPage:true,animations:'disabled'});
     await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link',{name:'Мой план',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     await page.locator('[data-portal-assistant]').click();await page.locator('[data-portal-chat=true]').waitFor();await page.waitForTimeout(400);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').isVisible(),false,'Overview mascot retires behind the route');
-    assert.equal(await page.locator('[data-vespi-scene=chat]').count(),1);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').evaluate(el=>getComputedStyle(el).transform),'matrix(1, 0, 0, 1, 0, 20)');
+    assert.equal(await page.locator('[data-vespi-scene=chat]').count(),1,'Vespi lives in the chat');
+    assert.equal(await page.locator('main [data-vespi-scene]').count(),0,'The overview itself carries no mascot figure');
     const panel=await page.locator('[data-portal-chat=true]').boundingBox();
     if(width<=1100)assert.equal(Math.round(panel.width),width);else{const main=await page.locator('[data-portal-design]').boundingBox();assert(main.x+main.width<=panel.x);}
     await page.screenshot({path:resolve(output,`chat-${width}.png`),animations:'disabled'});

@@ -68,7 +68,7 @@ const approvedReminderUiPaths = new Set([
   'src/data/higgsfieldVisuals.ts',
   'src/components/portal/HiggsfieldVisual.tsx', 'src/components/portal/higgsfield-visual.module.css',
   'src/components/portal/PortalMicroSteps.tsx', 'src/components/portal/portal-micro-steps.module.css',
-  'src/components/portal/PortalTaskIntro.tsx', 'src/components/portal/PortalRouteVespi.tsx',
+  'src/components/portal/PortalTaskIntro.tsx',
   // 2026-10-24: single chat mascot and saved-only microfeedback.
   'src/components/mascot/VespiVideoAvatar.tsx', 'src/components/mascot/vespi-video-avatar.module.css',
   // 2026-10-24: stage-only portal canvas and feedback after confirmed completion.
@@ -213,7 +213,6 @@ const approvedGamifiedPortalPaths = new Set([
   'src/components/portal/RisoArtImage.tsx',
   'src/components/portal/PortalFocus.tsx',
   'src/components/portal/PortalCompletion.tsx',
-  'src/components/portal/PortalRouteVespi.tsx',
   'src/components/portal/PortalWelcome.tsx',
   'src/components/portal/LocalWorkspace.tsx',
   'src/components/portal/portal-focus.module.css',

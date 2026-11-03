@@ -9,7 +9,6 @@ import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigatio
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
-import { PortalRouteVespi } from "./PortalRouteVespi";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
 import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
@@ -155,8 +154,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     {/* Обзор плитками по образцу главной apple.com (owner, 3 Nov): первая
         плитка «Сейчас» — приветствие-лейбл, следующий шаг заголовком, одна
         строка Веспи, две пилюли; внизу плитки — тосканский пейзаж (Higgsfield,
-        design/illustrations/landscapes-2026-11-03.json) и Веспи у ограды.
-        Owner, 3 Nov: никакой авиации — ни иллюминатора, ни манифеста рейса. */}
+        design/illustrations/landscapes-2026-11-03.json). Owner, 3 Nov: никакой
+        авиации — ни иллюминатора, ни манифеста рейса; и без фигуры Веспи на
+        пейзаже («смотрится топорно»). */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
       <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={1024} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
       <div className={styles.welcome} data-portal-welcome>
@@ -186,9 +186,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           {position.stage && <a className={styles.nowSecondary} href={`/portal?stage=${encodeURIComponent(position.stage.id)}`} data-now-stage onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSelectStage(position.stage!.id); }}>Открыть этап</a>}
         </div>}
       </aside>
-      <div className={styles.cabin} data-portal-cabin>
-        <PortalRouteVespi className={styles.welcomeScene} />
-      </div>
     </div>}
     {stagePage && <div className={styles.welcome} data-portal-welcome>
       <div className={styles.welcomeCopy}>

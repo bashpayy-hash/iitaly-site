@@ -1,19 +1,24 @@
-/* Две сцены на главной, одна под другой: в каждой три фотокарточки —
-   итальянский пейзаж, ярлык, название, одна строка. Плоско: скругление,
-   без рамок и теней; текст стоит на тёмной подложке у нижнего края фото. */
+/* Две сцены на главной, одна под другой: в каждой три карточки — вещь темы
+   на фоне итальянского пейзажа, ярлык, название, одна строка. Плоско:
+   скругление, без рамок и теней; пейзаж приглушён, чтобы вещь и текст
+   читались; текст стоит на тёмной подложке у нижнего края. */
 .section { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; max-width:1280px; margin:0 auto; padding:64px 32px 80px; }
 .photos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0; padding:0; list-style:none; }
 .photo { min-width:0; }
-.photoLink { position:relative; display:flex; align-items:flex-end; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:#2A2420; color:#FAF6EE; text-decoration:none; isolation:isolate; }
+.photoLink { position:relative; display:flex; flex-direction:column; justify-content:flex-end; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:#2A2420; color:#FAF6EE; text-decoration:none; isolation:isolate; }
 .photoArt { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
-.photoLink::before { content:""; position:absolute; inset:0; background:linear-gradient(to top,rgba(42,36,32,.9) 0%,rgba(42,36,32,.6) 36%,rgba(42,36,32,0) 68%); pointer-events:none; }
-.photoCopy { position:relative; display:grid; gap:4px; width:100%; padding:20px 18px; }
+.photoLink::before { content:""; position:absolute; inset:0; background:linear-gradient(to top,rgba(42,36,32,.92) 0%,rgba(42,36,32,.66) 34%,rgba(42,36,32,.2) 62%,rgba(42,36,32,.28) 100%); pointer-events:none; }
+/* Вещь темы — как на плитках кабинета: по центру верхней части, не шире 62%. */
+.object { position:relative; display:flex; flex:1; align-items:center; justify-content:center; min-height:0; padding:24px 20px 8px; }
+.object img { display:block; width:auto; max-width:62%; height:auto; max-height:100%; object-fit:contain; filter:drop-shadow(0 14px 22px rgba(42,36,32,.35)); transition:transform 520ms cubic-bezier(.22,1,.36,1); }
+.photoCopy { position:relative; display:grid; gap:4px; width:100%; padding:12px 18px 20px; }
 .photoCopy small { font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#EAD7BB; }
 .photoCopy strong { font-size:19px; font-weight:600; line-height:1.2; letter-spacing:-.02em; text-wrap:balance; }
 .photoCopy span { font-size:13px; line-height:1.4; color:#E6DED2; text-wrap:pretty; }
 .photoLink:hover .photoArt { transform:scale(1.04); }
+.photoLink:hover .object img { transform:translateY(-6px); }
 .photoLink:focus-visible { outline:2px solid #B83A27; outline-offset:3px; }
 @media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .photoLink { aspect-ratio:3 / 4; } }
-@media(max-width:640px) { .photos { grid-template-columns:1fr; } .photoLink { aspect-ratio:16 / 10; } .photoCopy strong { font-size:20px; } }
-@media(prefers-reduced-motion:reduce) { .photoArt { transition:none; } .photoLink:hover .photoArt { transform:none; } }
+@media(max-width:640px) { .photos { grid-template-columns:1fr; } .photoLink { aspect-ratio:4 / 3; } .object { padding:20px 20px 4px; } .object img { max-width:40%; } .photoCopy strong { font-size:20px; } }
+@media(prefers-reduced-motion:reduce) { .photoArt,.object img { transition:none; } .photoLink:hover .photoArt,.photoLink:hover .object img { transform:none; } }
 @media(forced-colors:active) { .photoLink { border:1px solid CanvasText; } .photoLink::before { display:none; } }
