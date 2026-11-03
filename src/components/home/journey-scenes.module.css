@@ -1,25 +1,27 @@
-/* Две сцены на главной, одна под другой: в каждой три карточки — текст
-   сверху (ярлык, название, одна строка на тёмной подложке), вещь темы внизу
-   справа, а в самом пейзаже слева внизу стоит Веспи (owner, 3 Nov: «для
-   смеха вписать непосредственно в пейзажи»), поэтому фото прижато к левому
-   краю. Плоско: скругление, без рамок и теней. */
+/* Две сцены на главной, одна под другой: в каждой три плоские плитки, как
+   плитки кабинета — светлая и тёмная по очереди (во второй сцене наоборот),
+   текст сверху, вещь темы внизу. Скругление, без рамок, теней и фото:
+   плитки ведут по сайту, поэтому на них только предмет по содержанию
+   (owner, 3 Nov). */
 .section { display:grid; grid-template-columns:minmax(0,1fr); gap:24px; max-width:1280px; margin:0 auto; padding:64px 32px 80px; }
-.photos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0; padding:0; list-style:none; }
-.photo { min-width:0; }
-.photoLink { position:relative; display:flex; flex-direction:column; justify-content:space-between; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:#2A2420; color:#FAF6EE; text-decoration:none; isolation:isolate; }
-.photoArt { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; object-position:18% 50%; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
-.photoLink::before { content:""; position:absolute; inset:0; background:linear-gradient(to bottom,rgba(42,36,32,.84) 0%,rgba(42,36,32,.56) 28%,rgba(42,36,32,0) 56%); pointer-events:none; }
-.photoCopy { position:relative; display:grid; gap:4px; width:100%; padding:20px 18px 0; }
-.photoCopy small { font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#EAD7BB; }
-.photoCopy strong { font-size:19px; font-weight:600; line-height:1.2; letter-spacing:-.02em; text-wrap:balance; }
-.photoCopy span { font-size:13px; line-height:1.4; color:#E6DED2; text-wrap:pretty; }
-/* Вещь темы — внизу справа, не шире 46% карточки, с мягкой тенью на фото. */
-.object { position:relative; display:flex; align-items:flex-end; justify-content:flex-end; padding:12px 16px 16px; }
-.object img { display:block; width:auto; max-width:46%; height:auto; object-fit:contain; filter:drop-shadow(0 14px 22px rgba(42,36,32,.4)); transition:transform 520ms cubic-bezier(.22,1,.36,1); }
-.photoLink:hover .photoArt { transform:scale(1.04); }
-.photoLink:hover .object img { transform:translateY(-6px); }
-.photoLink:focus-visible { outline:2px solid #B83A27; outline-offset:3px; }
-@media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .photoLink { aspect-ratio:3 / 4; } }
-@media(max-width:640px) { .photos { grid-template-columns:1fr; } .photoLink { aspect-ratio:4 / 3; } .photoArt { object-position:30% 50%; } .object img { max-width:34%; } .photoCopy strong { font-size:20px; } }
-@media(prefers-reduced-motion:reduce) { .photoArt,.object img { transition:none; } .photoLink:hover .photoArt,.photoLink:hover .object img { transform:none; } }
-@media(forced-colors:active) { .photoLink { border:1px solid CanvasText; } .photoLink::before { display:none; } }
+.cards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0; padding:0; list-style:none; }
+.card { min-width:0; }
+.cardLink {
+  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421;
+  position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:16px; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:var(--tile-bg); color:var(--tile-ink); text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1);
+}
+.card:nth-child(2) .cardLink,.cardsAlt .card:nth-child(odd) .cardLink { --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89; }
+.cardsAlt .card:nth-child(2) .cardLink { --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; }
+.copy { display:grid; gap:4px; width:100%; padding:24px 22px 0; }
+.copy small { font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--tile-label); }
+.copy strong { font-size:21px; font-weight:600; line-height:1.15; letter-spacing:-.02em; text-wrap:balance; }
+.copy span { font-size:14px; line-height:1.4; color:var(--tile-quiet); text-wrap:pretty; }
+/* Вещь темы стоит внизу плитки, по центру, не шире 68%. */
+.object { display:flex; flex:1; align-items:flex-end; justify-content:center; min-height:0; padding:0 20px 24px; }
+.object img { display:block; width:auto; max-width:68%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
+.cardLink:hover .object img { transform:translateY(-6px); }
+.cardLink:focus-visible { outline:2px solid #B83A27; outline-offset:3px; }
+@media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .cardLink { aspect-ratio:3 / 4; } }
+@media(max-width:640px) { .cards { grid-template-columns:1fr; } .cardLink { flex-direction:row; align-items:center; aspect-ratio:auto; min-height:200px; } .copy { flex:1 1 auto; padding:22px 0 22px 20px; } .object { flex:0 0 42%; align-items:center; padding:16px 16px 16px 0; } .object img { max-width:100%; max-height:150px; } .copy strong { font-size:19px; } }
+@media(prefers-reduced-motion:reduce) { .cardLink,.object img { transition:none; } .cardLink:hover .object img { transform:none; } }
+@media(forced-colors:active) { .cardLink { border:1px solid CanvasText; } }

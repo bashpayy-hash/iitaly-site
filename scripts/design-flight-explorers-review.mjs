@@ -125,22 +125,24 @@ try{
     }
     await check(page,'Plan last question '+width);
     await page.goto(origin+'/',{waitUntil:'networkidle'});
-    // Owner, 3 Nov: the two scenes show their three themes at once as photo
-    // cards (Italian landscapes), not a dark window with switches.
+    // Owner, 3 Nov: the two scenes show their three themes at once as flat
+    // tiles with the theme's object, not a dark window with switches and not
+    // landscape photos (those belong in the cabinet).
     assert.equal(await page.locator('[data-scene-card]').count(),2);
-    assert.equal(await page.locator('[data-scene-card] [data-scene-photo]').count(),6,'Three photo cards per scene');
+    assert.equal(await page.locator('[data-scene-card] [data-scene-photo]').count(),6,'Three theme tiles per scene');
     assert.equal(await page.locator('[data-scene-card] button').count(),0,'Nothing to switch: every theme is visible');
     assert.match(await page.locator('[data-scene-card]').nth(1).innerText(),/Официальный налоговый код/);
     // The card images are lazy: bring the scenes on screen and decode them before checking.
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.evaluate(async()=>{const images=[...document.querySelectorAll('[data-scene-card] img')];for(const img of images)img.loading='eager';await Promise.all(images.map(img=>img.decode().catch(()=>{})));});
-    assert.equal(await page.locator('[data-scene-card] [data-scene-photo] img').evaluateAll(nodes=>nodes.filter(img=>!img.complete||img.naturalWidth===0).length),0,'Landscape photos and theme objects load');
-    assert.equal(await page.locator('[data-scene-card] [data-scene-object]').count(),6,'Every card keeps its theme object on the landscape (owner, 3 Nov)');
+    assert.equal(await page.locator('[data-scene-card] [data-scene-photo] img').evaluateAll(nodes=>nodes.filter(img=>!img.complete||img.naturalWidth===0).length),0,'Theme objects load');
+    assert.equal(await page.locator('[data-scene-card] [data-scene-object]').count(),6,'Every card shows its theme object (owner, 3 Nov)');
+    assert.equal(await page.locator('[data-scene-card] img[src*="landscapes"]').count(),0,'Navigation cards carry no landscape photo (owner, 3 Nov: Vespi scenes belong in the cabinet)');
     assert.equal(await page.locator('[data-scene-photo=codice]').getAttribute('href'),'/guides/codice');
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});
-    results.push({width,guides:'tiles with own art, search, filters, step pages, old deep links',deck:'three aligned cards, choice persistence, table, plan handoff',home:'two scenes of three landscape photo cards',accessibility:'passed'});
+    results.push({width,guides:'tiles with own art, search, filters, step pages, old deep links',deck:'three aligned cards, choice persistence, table, plan handoff',home:'two scenes of three flat theme tiles with objects, no landscapes',accessibility:'passed'});
     await context.close();
   }
   assert.deepEqual(errors,[]);await fs.writeFile(path.join(destination,'results.json'),JSON.stringify({results,errors},null,2));console.log(JSON.stringify(results));
