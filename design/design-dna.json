@@ -5,7 +5,8 @@
     "source_references": [
       "Screenshot of /guides at 1440px, measured with design-dna scripts/measure-colors.mjs (k=8)",
       "src/**/*.module.css and DESIGN.md",
-      "Owner references: apple.com home tiles, iPhone lineup, «Learn all about» row"
+      "Owner references: apple.com home tiles, iPhone lineup, «Learn all about» row",
+      "Owner references 3 Nov: apple.com/it/iphone-duo «First of all, the news» gallery (dots + play) and «iOS and Apple Intelligence» media row (mixed widths, caption under the frame, arrows); measured with measure-colors.mjs: background #fbfbfc 0.79, text #25282a 0.09 — structure adopted, Apple's cool palette not (warm paper stays)"
     ],
     "created_at": "2026-11-03"
   },
@@ -238,18 +239,18 @@
         "normal": "320ms (cards, capsules, icons, dots)",
         "macro": "520ms (entrances, the plane, progress, deck swing up to 560-620ms)"
       },
-      "entrance_pattern": "rise 8-16px with fade on the signature curve; staggers 30-40ms, never over 300ms in total; tiles rise with the scroll (translate only)",
+      "entrance_pattern": "rise 8-16px with fade on the signature curve; staggers 30-40ms, never over 300ms in total; tiles rise with the scroll (translate only); carousels rise 40px into place on page scroll; autoplay advances one card per 5 s with a linear progress fill in the active dot",
       "exit_pattern": "none — routes swap instantly and the new view enters",
       "philosophy": "calm premium: decelerate into place, no overshoot in UI; reduced motion removes every movement"
     },
     "components": {
       "button_style": "pills: filled terracotta or dark, outlined terracotta secondary; press scales to .97",
       "input_style": "rounded 14px fields on paper with a warm hairline",
-      "card_style": "tiles 28px radius, light/dark alternating, centred title, object at the bottom",
-      "navigation_pattern": "top bar with four sections; breadcrumbs on guide pages; dots and previous/next cards on step pages",
+      "card_style": "topic cards in a carousel: 28px frame (light #EDE6D9 / dark #2A2420) with the riso object, caption under the frame (title, one line, two pills); frames alternate wide 600 / narrow 360 at 420px tall",
+      "navigation_pattern": "top bar with four sections; breadcrumbs on guide pages; guides directory is a gallery with dots + play (5 s per card), section pages a row with previous/next arrows; dots and previous/next cards on step pages",
       "modal_style": "rare; comparison opens in a dialog with a warm scrim",
       "list_style": "hairline rows and capsule answers",
-      "component_notes": "lineup cards align on a 7-row subgrid; step cards are links, never toggles"
+      "component_notes": "carousels bleed to the window edges with the first card on the text column (scroll-snap start, scroll-padding = column offset); lineup cards align on a 7-row subgrid; step cards are links, never toggles"
     }
   },
   "design_style": {
@@ -388,6 +389,11 @@
       "scroll_morphing": {
         "enabled": false,
         "description": "not used"
+      },
+      "carousel_drift": {
+        "enabled": true,
+        "description": "inside a carousel each riso object drifts 34px against its frame while the row scrolls (view(inline) timeline, translate only); objects bleed past and are cropped by the frame edge in three poses: bleed (bottom-right), float (centre), rise (from below, wider than the frame)",
+        "technology": "CSS scroll-driven animations with @supports, overflow: clip on the frame"
       }
     },
     "text_effects": {

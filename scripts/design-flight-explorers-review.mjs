@@ -35,8 +35,21 @@ try{
     assert.equal(await tiles.count(),13);
     const art=await tiles.locator('img').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')));
     assert.equal(new Set(art).size,13,'Every topic has its own picture');
-    const tileBox=await tiles.first().boundingBox();
-    if(width>760)assert(Math.abs(tileBox.width-(await tiles.nth(1).boundingBox()).width)<1&&Math.abs(tileBox.y-(await tiles.nth(1).boundingBox()).y)<1,'Tiles pair up in two columns');
+    // Owner 3 Nov (apple.com galleries): the topics go one after another in a
+    // single row; the first card keeps to the text column, the next peeks in.
+    const tileBox=await tiles.first().boundingBox(),nextBox=await tiles.nth(1).boundingBox();
+    assert(Math.abs(tileBox.y-nextBox.y)<1&&nextBox.x>tileBox.x+tileBox.width,'Topics go in one row');
+    assert(Math.abs(tileBox.x-(await page.locator('h1').boundingBox()).x)<1,'First card on the text column');
+    assert(nextBox.x<width,'The next card peeks in');
+    assert.equal(await page.locator('[data-carousel-dot]').count(),13,'One dot per topic');
+    assert.equal(await page.locator('[data-carousel-dot][aria-current=true]').count(),1);
+    // Reduced motion: the gallery stays put until the visitor presses play.
+    assert.equal(await page.locator('[data-guide-carousel][data-playing]').count(),0);
+    await page.locator('[data-carousel-dot="5"]').click();
+    await page.waitForFunction(()=>{const t=document.querySelectorAll('[data-guide-tile]')[5],c=document.querySelector('[data-guide-carousel]');return Math.abs(t.getBoundingClientRect().left-c.getBoundingClientRect().left)<2;});
+    assert.equal(await page.locator('[data-carousel-dot="5"]').getAttribute('aria-current'),'true');
+    await page.locator('[data-carousel-dot="0"]').click();
+    await page.waitForFunction(()=>document.querySelector('[data-guide-carousel] ul').scrollLeft===0);
     await check(page,'Guides '+width);
     await page.locator('[data-guide-tile=education]').screenshot({path:path.join(destination,`guides-${width}.png`)});
     await page.getByLabel('Найти тему',{exact:true}).fill('апостиль');
@@ -44,6 +57,15 @@ try{
     await page.getByRole('button',{name:'Сбросить поиск'}).click();
     await page.getByRole('button',{name:'После приезда',exact:true}).click();
     assert.equal(await page.locator('[data-guide-select]').count(),3);
+    // Section pages: a compact row with previous/next arrows.
+    const section=await context.newPage();section.on('pageerror',e=>errors.push(e.message));
+    await section.goto(origin+'/guides/stages/prepare',{waitUntil:'networkidle'});
+    const prev=section.locator('[data-carousel-prev]'),next=section.locator('[data-carousel-next]');
+    assert(await prev.isDisabled()&&!(await next.isDisabled()),'Row starts at the first topic');
+    await next.click();await section.waitForFunction(()=>document.querySelector('[data-guide-carousel] ul').scrollLeft>0);
+    assert(!(await prev.isDisabled()));
+    await check(section,'Guide section '+width);
+    await section.close();
     // Step pages and old links are walked in a side tab that waits for URLs and
     // elements: quick in-page navigation leaves Next's background route checks
     // in flight, and a later network-idle wait on that tab could hang (PR #145).
