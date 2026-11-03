@@ -1,21 +1,25 @@
 /* Линейка предстоящих этапов: карточки в ряд, вещь этапа на тонированной
    подложке со скруглением, ниже — центрированный текст и две кнопки. */
-.lineup { margin-top:12px; padding-top:28px; border-top:1px dotted #C9C0B1; }
+.lineup { margin-top:12px; padding-top:28px; border-top:1px dotted #C9C0B1; container-type:inline-size; }
 .head { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 16px; margin-bottom:18px; }
 .head h2 { margin:0; font-size:clamp(24px,2.6vw,32px); font-weight:600; line-height:1.1; letter-spacing:-.03em; }
 .head p { margin:0; font:400 10.5px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#5C6056; }
 /* Строки карточек на одном уровне (subgrid): кнопки стоят в одну линию,
-   даже если название или первый шаг занимают две строки. */
-.row { display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,auto); grid-auto-columns:minmax(220px,250px); column-gap:16px; margin:0; padding:0 0 10px; overflow-x:auto; list-style:none; scroll-snap-type:x mandatory; scrollbar-width:none; }
+   даже если название или первый шаг занимают две строки.
+   Owner, 3 Nov: «здесь всё обрезается на пол пути, всё должно
+   перераспределяться по всей длине в зависимости от масштаба» — the row
+   shows whole cards only, as many as fit the lineup's width (--n), the rest
+   one page away; nothing is cut at the column edge. */
+.row { --n:1; --gap:16px; display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,auto); grid-auto-columns:calc((100% - (var(--n) - 1) * var(--gap)) / var(--n)); column-gap:var(--gap); margin:0; padding:0 0 10px; overflow-x:auto; list-style:none; scroll-snap-type:x mandatory; scrollbar-width:none; }
 .row::-webkit-scrollbar { display:none; }
 .card { position:relative; display:grid; grid-row:span 7; grid-template-rows:subgrid; justify-items:center; align-content:start; min-width:0; text-align:center; scroll-snap-align:start; }
-.visual { display:grid; place-items:center; width:100%; aspect-ratio:1 / 1; padding:22px; border-radius:24px; background:#EDE6D9; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
+.visual { display:grid; place-items:center; width:100%; aspect-ratio:4 / 3; padding:20px 28px; border-radius:28px; background:#EDE6D9; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
 .visual[data-art=folder] { background:#E4E8E6; }
 .visual[data-art=envelope] { background:#EFE3DA; }
 .visual[data-art=coins] { background:#F1E6D2; }
 .visual[data-art=passport] { background:#E2E7E4; }
 .visual[data-art=keys] { background:#EFE8DA; }
-.visual img { width:100%; height:auto; max-height:100%; object-fit:contain; }
+.visual img { width:100%; height:100%; object-fit:contain; }
 .visual img[data-riso-locked] { filter:grayscale(1); opacity:.55; }
 .card:hover .visual { transform:translateY(-4px); }
 .dots { display:flex; justify-content:center; gap:5px; min-height:10px; margin-top:16px; }
@@ -36,10 +40,11 @@
 .arrows { display:flex; justify-content:flex-end; gap:10px; margin-top:6px; }
 .arrows button { display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:#E8E1D5; color:#241F1C; cursor:pointer; }
 .arrows button:hover { background:#DCD3C3; }
-@media(max-width:600px) {
-  .row { grid-auto-columns:minmax(200px,66vw); }
-  .arrows { display:none; }
-}
+@container (min-width:460px) { .row { --n:2; } }
+@container (min-width:700px) { .row { --n:3; } }
+@container (min-width:920px) { .row { --n:4; } }
+@container (min-width:1180px) { .row { --n:5; } }
+@media(max-width:600px) { .arrows { display:none; } }
 @media(prefers-reduced-motion:reduce) { .visual,.primary { transition:none; } .card:hover .visual,.primary:active { transform:none; } .card { animation:none; } }
 @media(forced-colors:active) { .visual { border:1px solid CanvasText; } }
 /* Motion: the stages ahead line up one after another (40ms apart). */

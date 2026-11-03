@@ -30,7 +30,7 @@ export function PortalStageLineup({ stages, onSelectStage, onOpenTask }: {
   const scroll = (direction: number) => {
     const element = row.current;
     if (!element) return;
-    element.scrollBy({ left: direction * element.clientWidth * .8, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    element.scrollBy({ left: direction * element.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   };
   const plain = (event: React.MouseEvent) => !(event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey);
   return <section className={styles.lineup} aria-labelledby="stage-lineup-heading" data-stage-lineup>

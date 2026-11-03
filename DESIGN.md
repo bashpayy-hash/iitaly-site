@@ -313,3 +313,12 @@ The owner asked to remove every unevenness and inaccuracy. Measured first (left 
 - **Type floor.** No text under 11px (mono caps) / 12px (everything else) outside the Modulo 1 form replica: flight-plan labels, scene windows, facts, counts, the rules page labels.
 - **Peer headings.** The Vespi card title matches the scene cards (`clamp(28px,3vw,40px)`), the route card title is semibold like its peers.
 - **Greys.** Guides use four text levels (`#141413`, `#241F1C`, `#3F3933`, `#57514B`) instead of seven near-identical greys; the greenish `#5C6056` is gone.
+
+## Less data, whole cards, straight lines · 3 November 2026
+
+Owner on the live site: «слишком много данных, иконки слишком большие, сверху линии совсем бесполезные, линия с самолётиком очень кривая, здесь всё обрезается на пол пути — всё должно перераспределяться по всей длине в зависимости от масштаба».
+
+- **Home scenes.** Both dark windows are the same: title, one line and capsule switches at the bottom. Removed the window bar («FLIGHT PLAN / ОБЗОР», «СПРАВОЧНИК / ПОСЛЕ ПРИЕЗДА»), the underlined numbered tabs, the «ЭТАП 01» / «ТВОЙ СЛЕДУЮЩИЙ ВОПРОС» labels, the arrow and the dashed Kazakhstan–Italy line with the plane.
+- **Whole cards across the length.** Carousels show only whole cards and share the available length between them: the guide band spans the window (32px gutter, 20px on phones) with 1 / 2 / 3 / 4 / 5 / 6 cards from 0 / 600 / 900 / 1200 / 1600 / 2000px; topic step rows and the cabinet lineup fill their column by container width (1 to 4–5 cards). The rest is one page away (arrows, dots, swipe); nothing is cut at an edge.
+- **Smaller objects.** Guide band objects stand on a 180px stage (170px on phones) at most 78% of the card width; cabinet lineup art sits in a 4:3 tile.
+- **Straight timeline.** The cabinet timeline is one straight dashed line with the plane on it; the curve from a «Flight plan / Казахстан» caption is gone. Its month labels are 11px (were 8.5px).

@@ -73,7 +73,11 @@
    годом на левом поле, подпись FLIGHT PLAN у начала кривой, раскрытый этап
    — прямо под своей точкой. Чем дальше будущий этап от выбранного, тем
    сильнее он размыт, пока до него не доскроллили. */
-.flight[data-variant=timeline] { --when:72px; --flight-curve:84px; }
+/* Owner, 3 Nov: «линия с самолётиком очень кривая», «слишком много данных».
+   The cabin timeline is one straight dashed line: no curve from an origin
+   label down to the first stop, no «Flight plan / Казахстан» caption. */
+.flight[data-variant=timeline] { --when:72px; --flight-curve:0px; }
+.flight[data-variant=timeline] .curve, .flight[data-variant=timeline] .origin { display:none; }
 .flight[data-variant=timeline] .rail { max-height:none; overflow:visible; padding:calc(var(--flight-curve) + 34px) 0 12px; }
 .flight[data-variant=timeline] .track { top:calc(var(--flight-curve) + 34px); }
 .flight[data-variant=timeline] .curve { top:calc(var(--flight-curve) * -1); left:-11px; width:118px; height:var(--flight-curve); }
@@ -82,7 +86,7 @@
 .origin::after { content:""; position:absolute; left:6px; bottom:-8px; width:5px; height:5px; border-radius:50%; background:var(--flight-blue); }
 .flight[data-variant=timeline] .stop { grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:start; min-height:0; padding:18px 0; }
 .flight[data-variant=timeline] .when { display:grid; justify-items:end; gap:1px; padding-top:2px; font-size:12px; letter-spacing:.06em; color:var(--flight-ink); }
-.flight[data-variant=timeline] .when small { font-size:8.5px; letter-spacing:.12em; color:var(--flight-quiet); }
+.flight[data-variant=timeline] .when small { font-size:11px; letter-spacing:.12em; color:var(--flight-quiet); }
 .flight[data-variant=timeline] .node { margin-top:6px; }
 .flight[data-variant=timeline] .stopCopy { padding-left:14px; }
 .flight[data-variant=timeline] .stopTitle { font-size:18px; font-weight:600; letter-spacing:-.02em; }

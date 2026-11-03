@@ -15,5 +15,18 @@
       "mcp__Netlify",
       "mcp__Higsfield"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/install-skills.sh\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
   }
 }

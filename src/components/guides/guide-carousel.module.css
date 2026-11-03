@@ -51,6 +51,26 @@
 .round:disabled { opacity:.35; cursor:default; }
 .dot:focus-visible,.round:focus-visible,.track:focus-visible { outline:2px solid #FAF6EE; outline-offset:2px; }
 
+/* Fit (owner, 3 Nov: «всё должно перераспределяться по всей длине в
+   зависимости от масштаба», nothing cut halfway): whole cards share the
+   available length — as many as fit at this width, the rest one page away.
+   window: the row spans the window (guide band) with a 32/20px gutter and
+   the same gap, so the next card starts exactly at the window edge;
+   column: the row stays in its column (topic steps). */
+.carousel[data-fit] .track { --gap:24px; grid-auto-columns:calc((100% - (var(--n) - 1) * var(--gap)) / var(--n)); column-gap:var(--gap); }
+.carousel[data-fit=window] .track { --n:1; --gutter:32px; --gap:var(--gutter); padding-inline:var(--gutter); scroll-padding-inline:var(--gutter); }
+.carousel[data-fit=column] { container-type:inline-size; }
+.carousel[data-fit=column] .track { --n:1; margin-inline:0; padding-inline:0; scroll-padding-inline:0; }
+@media (min-width:600px) { .carousel[data-fit=window] .track { --n:2; } }
+@media (min-width:900px) { .carousel[data-fit=window] .track { --n:3; } }
+@media (min-width:1200px) { .carousel[data-fit=window] .track { --n:4; } }
+@media (min-width:1600px) { .carousel[data-fit=window] .track { --n:5; } }
+@media (min-width:2000px) { .carousel[data-fit=window] .track { --n:6; } }
+@media (max-width:760px) { .carousel[data-fit=window] .track { --gutter:20px; } .carousel[data-fit=column] .track { --gap:12px; } }
+@container (min-width:440px) { .carousel[data-fit=column] .track { --n:2; } }
+@container (min-width:640px) { .carousel[data-fit=column] .track { --n:3; } }
+@container (min-width:900px) { .carousel[data-fit=column] .track { --n:4; } }
+
 /* On paper (topic step row): the same controls in warm greys. */
 .carousel[data-tone=light] .round { background:#E8E1D5; color:#241F1C; }
 .carousel[data-tone=light] .round:hover:not(:disabled) { background:#DCD3C3; }

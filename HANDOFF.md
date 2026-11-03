@@ -250,3 +250,15 @@ CHROME_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
   особенно про неудачные попытки, чтобы их не повторили;
 - отказ делать что-то вредное звучит один раз и с предложением
   ближайшей рабочей альтернативы.
+
+## 10. Скиллы для разработки
+
+Владелец 3 ноября 2026 попросил ставить и использовать по надобности дизайн- и dev-скиллы. Облачная сессия каждый раз стартует в чистом контейнере, поэтому хук `SessionStart` в `.claude/settings.json` запускает `.claude/install-skills.sh`. Скрипт работает в фоне и ставит скиллы глобально, лог пишет в `/tmp/iitaly-skills-install.log`.
+
+Что ставится:
+- `nutlope/hallmark`, `dominikmartn/hue`, `dammyjay93/interface-design`;
+- `zanwei/design-dna`, `lottiefiles/motion-design-skill`;
+- `anthropics/skills` (только `frontend-design`), `nateherkai/scroll-craft`, `nextlevelbuilder/ui-ux-pro-max-skill`;
+- `addyosmani/agent-skills`: spec → plan → build, ревью, отладка, тесты, CI.
+
+Скиллы из чужих репозиториев — это инструкции. Правила из раздела 3 они не отменяют.

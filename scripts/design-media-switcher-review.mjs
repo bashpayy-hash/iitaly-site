@@ -137,11 +137,15 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           assert.equal(await steps.evaluate(() => document.activeElement.dataset.guideStepCard), '2');
           await steps.keyboard.press('Enter');
           await steps.waitForURL('**/guides/tests/2');
-          // Old inline-switcher links keep working (the page redirects itself after hydration).
-          await steps.goto(origin + '/guides/tests?point=3', { waitUntil:'domcontentloaded' });
-          await steps.waitForURL('**/guides/tests/3');
-          await steps.locator('[data-instruction-point="3"]').waitFor();
           await steps.close();
+          // Old inline-switcher links keep working (the page redirects itself after
+          // hydration). Opened in a fresh tab: a document navigation started while
+          // Next's client navigation above is still settling can be aborted by it.
+          const old = await context.newPage(); old.on('pageerror', error => errors.push(error.message));
+          await old.goto(origin + '/guides/tests?point=3', { waitUntil:'domcontentloaded' });
+          await old.waitForURL('**/guides/tests/3');
+          await old.locator('[data-instruction-point="3"]').waitFor();
+          await old.close();
         }
         if (route === '/guides/visa/documents') {
           await page.getByRole('button', { name:'Отметить собранным' }).click();
