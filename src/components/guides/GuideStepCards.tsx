@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { guidePoints } from "./guideCatalogue";
+import { GuideCarousel } from "./GuideCarousel";
 import styles from "./guide-steps.module.css";
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -12,9 +13,9 @@ const pad = (value: number) => String(value).padStart(2, "0");
 /* Ряд карточек «Разбор по шагам» по образцу «Learn all about iPhone»:
    метка шага, заголовок в две строки, крупная цифра и плюс. Без текста
    разбора — он живёт на отдельной странице каждого шага. Карточки светлые и
-   тёмные поочерёдно, ряд листается стрелками или свайпом. */
+   тёмные поочерёдно, ряд листается стрелками или свайпом. Ряд — та же
+   карусель, что у тем: уходит до краёв окна, первая карточка по колонке. */
 export function GuideStepCards({ id }: { id: string }) {
-  const row = useRef<HTMLOListElement>(null);
   const router = useRouter();
   const points = guidePoints(id);
   // Old links from the inline switcher (/guides/tests?point=2) open that step's page.
@@ -24,19 +25,13 @@ export function GuideStepCards({ id }: { id: string }) {
     if (Number.isInteger(point) && target) router.replace(target.href);
   }, [id, router]);
   if (!points.length) return null;
-  const scroll = (direction: number) => {
-    const element = row.current;
-    if (!element) return;
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    element.scrollBy({ left: direction * element.clientWidth * .8, behavior: reduced ? "auto" : "smooth" });
-  };
   return <section className={styles.steps} aria-labelledby="guide-steps-heading" data-guide-steps-row={id}>
     <div className={styles.head}>
       <h2 id="guide-steps-heading">Разбор по шагам</h2>
       <p>{points.length} {points.length === 1 ? "шаг" : points.length < 5 ? "шага" : "шагов"} · каждый на своей странице</p>
     </div>
-    <ol className={styles.row} ref={row}>
-      {points.map((point, index) => <li key={point.href} data-tone={index % 2 ? "dark" : "light"}>
+    <GuideCarousel label="Шаги разбора" titles={points.map(point => point.title)} tone="light" arrowLabels={["Предыдущие шаги", "Следующие шаги"]}>
+      {points.map((point, index) => <li key={point.href} className={styles.item} data-tone={index % 2 ? "dark" : "light"}>
         <Link className={styles.card} href={point.href} data-guide-step-card={index + 1} data-visa-part={id === "visa" ? point.href.split("/").pop() : undefined}>
           <span className={styles.label}>Шаг {pad(index + 1)}</span>
           <span className={styles.title}>{point.title}</span>
@@ -44,10 +39,6 @@ export function GuideStepCards({ id }: { id: string }) {
           <span className={styles.plus} aria-hidden="true"><Plus size={18} strokeWidth={2.2} /></span>
         </Link>
       </li>)}
-    </ol>
-    {points.length > 2 && <div className={styles.arrows}>
-      <button type="button" aria-label="Предыдущие шаги" onClick={() => scroll(-1)}><ChevronLeft size={18} aria-hidden="true" /></button>
-      <button type="button" aria-label="Следующие шаги" onClick={() => scroll(1)}><ChevronRight size={18} aria-hidden="true" /></button>
-    </div>}
+    </GuideCarousel>
   </section>;
 }

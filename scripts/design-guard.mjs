@@ -7,6 +7,9 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set([
+  // 2026-11-03: owner asked for Apple-like evenness (one 1216px column on the
+  // home page); the Vespi introduction only takes the shared column width.
+  'src/components/mascot/vespi-intro.module.css',
   // 2026-10-27: user-requested side-by-side deck; factual comparison model stays fixed.
   'src/components/universities/ComparisonDeck.tsx', 'src/components/universities/comparison-deck.module.css',
   // 2026-10-26: continuous root paper and persisted public comparison winner.

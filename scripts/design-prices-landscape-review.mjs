@@ -126,8 +126,11 @@ try {
     assert.match(await protectedCopy.evaluate(el=>getComputedStyle(el,'::before').backgroundImage),/radial-gradient/,'Text has a cream matte above the paint');
     const type=page=>page.locator('[data-section=prices-header] h1').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','color'].map(k=>s[k]);});
     assert.deepEqual(await type(head),await type(base),'Heading type and color are preserved');
-    const packageStyle=page=>page.locator('#main-package').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','color','backgroundColor','borderRadius','boxShadow','borderColor','padding'].map(k=>s[k]);});
+    const packageStyle=page=>page.locator('#main-package').evaluate(el=>{const s=getComputedStyle(el);return ['fontFamily','color','backgroundColor','borderRadius','borderColor','padding'].map(k=>s[k]);});
     assert.deepEqual(await packageStyle(head),await packageStyle(base),'Pricing card design is preserved');
+    // Owner 3 Nov (Apple + Busy Bee Honey reference): surfaces are flat — the
+    // card stands apart by its tone and hairline, not by a cast shadow.
+    assert.equal(await head.locator('#main-package').evaluate(el=>getComputedStyle(el).boxShadow),'none','Pricing card is flat');
     const gap=page=>page.evaluate(()=>document.querySelector('[data-price-comparison],main [data-section=prices-header] + section > div > div').getBoundingClientRect().top-document.querySelector('[aria-label="На странице цен"]').getBoundingClientRect().bottom);
     const spacing=await gap(head),oldSpacing=await gap(base);
     assert(spacing>=20&&spacing<=64,'The first comparison cards follow the links without a large void');

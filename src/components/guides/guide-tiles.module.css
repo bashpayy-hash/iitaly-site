@@ -1,50 +1,53 @@
-/* Темы в карусели (owner, 3 Nov, галереи apple.com): сверху кадр с вещью,
-   под ним подпись — название, суть одной строкой и две кнопки. Кадры разной
-   ширины (широкий, узкий, широкий…), светлые и тёмные поочерёдно. Вещь
-   крупная и «играет» с кадром: выходит за край и обрезается им, стоит в
-   центре или поднимается снизу; при прокрутке ряда чуть отстаёт от кадра.
-   Без наклона (owner, 2 Nov). */
-.slide { width:min(600px, 80vw); }
-.slide[data-size=narrow] { width:min(360px, 64vw); }
-.tile { display:flex; flex-direction:column; min-width:0; color:#241F1C; }
+/* Темы на полосе (owner, 3 Nov; Busy Bee Honey + apple.com). Плоско: ни
+   рамок, ни теней — уровень задаёт цвет полосы. Тёплая палитра IITALY:
+   какао #2A2420 вместо коричневого Busy Bee, песок #EAD7BB вместо голубой
+   ленты, кремовые пилюли вместо медовых. */
+.shelf { margin:8px 0 56px; }
 
-.media { position:relative; display:block; height:clamp(300px, 30vw, 420px); overflow:clip; border-radius:28px; background:#EDE6D9; }
-.tile[data-tone=dark] .media { background:#2A2420; }
-.art { position:absolute; display:block; max-width:none; height:auto; pointer-events:none; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
-/* Позы вещи в кадре. */
-.tile[data-pose=bleed] .art { right:-7%; bottom:-16%; width:78%; }
-.tile[data-pose=float] .art { inset:0; width:60%; margin:auto; }
-.tile[data-pose=rise] .art { left:-9%; bottom:-14%; width:118%; }
-.tile:hover .art { transform:translateY(-8px) scale(1.03); }
+/* Бегущая строка: ровная скорость (это лента, не жест), пауза под мышью,
+   с reduced motion — неподвижна. Во всю ширину окна без горизонтальной
+   прокрутки: фон дотягивается тенью и обрезается clip-path. */
+.marquee { position:relative; overflow:hidden; height:52px; background:#EAD7BB; color:#2A2420; box-shadow:0 0 0 100vmax #EAD7BB; clip-path:inset(0 -100vmax); }
+.marqueeTrack { display:flex; width:max-content; height:100%; align-items:center; }
+.marqueeItem { display:inline-flex; align-items:center; flex:0 0 auto; padding:0 22px; font-size:17px; font-weight:600; letter-spacing:-.01em; white-space:nowrap; }
+.marqueeItem::after { content:""; width:7px; height:7px; margin-left:44px; border-radius:50%; background:#B83A27; }
+@media (prefers-reduced-motion: no-preference) {
+  .marqueeTrack { animation:marquee 70s linear infinite; }
+  .marquee:hover .marqueeTrack { animation-play-state:paused; }
+}
+@keyframes marquee { to { transform:translateX(-50%); } }
 
-.caption { display:flex; flex-direction:column; align-items:flex-start; max-width:44ch; padding:18px 4px 0; }
-.caption h2 { margin:0; font-size:21px; font-weight:600; line-height:1.2; letter-spacing:-.02em; text-wrap:balance; }
-.caption p { margin:6px 0 0; color:#5C554D; font-size:15px; line-height:1.45; text-wrap:pretty; }
-.actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
-.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 18px; border-radius:999px; font-size:14px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1),border-color 160ms cubic-bezier(.4,0,.2,1),color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
-.primary:active,.secondary:active { transform:scale(.97); }
-.primary { background:#B83A27; color:#FAF9F3; }
-.primary:hover { background:#A33421; }
-.secondary { border:1px solid #B83A27; color:#A33421; }
-.secondary:hover { background:#B83A27; color:#FAF9F3; }
-.primary:focus-visible,.secondary:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
+.band { position:relative; padding:52px 0 44px; background:#2A2420; color:#FAF6EE; box-shadow:0 0 0 100vmax #2A2420; clip-path:inset(0 -100vmax); }
+
+/* Строки всех карточек на одних линиях: сцена, название, суть, действия. */
+.band [data-guide-carousel] ul { --rows:4; column-gap:28px; }
+.slide { width:340px; }
+.tile { display:grid; grid-row:span 4; grid-template-rows:subgrid; justify-items:center; min-width:0; text-align:center; }
+
+/* Вещь стоит на полосе: по центру, на общей базовой линии, без рамки. */
+.stage { display:flex; align-items:flex-end; justify-content:center; width:100%; height:260px; }
+.art { display:block; width:auto; max-width:100%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
+.tile:hover .art { transform:translateY(-8px); }
+
+.tile h2 { align-self:start; max-width:15ch; margin:24px 0 0; font-size:26px; font-weight:600; line-height:1.1; letter-spacing:-.025em; text-wrap:balance; }
+.tile p { align-self:start; max-width:30ch; margin:10px 0 0; color:#CFC6BA; font-size:15px; line-height:1.45; text-wrap:pretty; }
+.actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px 18px; margin-top:20px; }
+.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
+.primary { padding:10px 22px; background:#FAF6EE; color:#2A2420; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
+.primary:hover { background:#EAD7BB; }
+.secondary { gap:6px; padding:10px 4px; color:#FAF6EE; text-underline-offset:5px; }
+.secondary:hover { text-decoration:underline; }
+.primary:focus-visible,.secondary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
 
 @media(max-width:760px) {
-  .media { height:300px; border-radius:24px; }
-  .caption { padding-top:14px; }
-  .caption h2 { font-size:19px; }
+  .marquee { height:44px; }
+  .marqueeItem { padding:0 16px; font-size:15px; }
+  .marqueeItem::after { margin-left:32px; }
+  .band { padding:40px 0 34px; }
+  .band [data-guide-carousel] ul { column-gap:16px; }
+  .slide { width:min(76vw, 300px); }
+  .stage { height:210px; }
+  .tile h2 { margin-top:20px; font-size:22px; }
 }
-@media(prefers-reduced-motion:reduce) { .art,.primary,.secondary { transition:none; } .tile:hover .art { transform:none; } .primary:active,.secondary:active { transform:none; } }
-@media(forced-colors:active) { .media { border:1px solid CanvasText; } }
-/* Motion (DESIGN.md «Motion identity»): the row rises into place as the page
-   scrolls to it; inside the row each object drifts a little slower than its
-   frame (secondary layer). translate only; static without support or with
-   reduced motion. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .rise { animation:row-rise cubic-bezier(.22,1,.36,1) both; animation-timeline:view(); animation-range:entry 0% entry 60%; }
-    .art { animation:art-drift linear both; animation-timeline:view(inline); }
-  }
-}
-@keyframes row-rise { from { translate:0 40px; } to { translate:0 0; } }
-@keyframes art-drift { from { translate:34px 0; } to { translate:-34px 0; } }
+@media(prefers-reduced-motion:reduce) { .art,.primary { transition:none; } .tile:hover .art { transform:none; } }
+@media(forced-colors:active) { .band,.marquee { border-block:1px solid CanvasText; } }

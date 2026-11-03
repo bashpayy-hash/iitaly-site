@@ -14,11 +14,14 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
      мышь или фокус на карточках; любое касание, колесо или точка — стоп.
      С prefers-reduced-motion сама не листается, но ▶ работает.
    - row: компактный ряд со стрелками «назад/вперёд» справа. */
-export function GuideCarousel({ label, titles, variant = "row", autoplay = false, children }: {
+export function GuideCarousel({ label, titles, variant = "row", autoplay = false, tone = "dark", arrowLabels = ["Предыдущая тема", "Следующая тема"], children }: {
   label: string;
   titles: string[];
   variant?: "gallery" | "row";
   autoplay?: boolean;
+  /** Surface under the controls: the dark guide band or the paper of a page. */
+  tone?: "dark" | "light";
+  arrowLabels?: [string, string];
   children: ReactNode;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -121,7 +124,7 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
   };
   const playLabel = playing ? "Остановить прокрутку тем" : ended ? "Показать темы сначала" : "Листать темы автоматически";
 
-  return <div ref={rootRef} className={styles.carousel} data-guide-carousel={variant} data-playing={playing || undefined} data-held={held || undefined}>
+  return <div ref={rootRef} className={styles.carousel} data-guide-carousel={variant} data-tone={tone} data-playing={playing || undefined} data-held={held || undefined}>
     <ul
       ref={trackRef}
       className={styles.track}
@@ -156,8 +159,8 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
           {playing ? <Pause size={18} aria-hidden="true" fill="currentColor" /> : ended ? <RotateCcw size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" fill="currentColor" />}
         </button>
       </> : <>
-        <button type="button" className={styles.round} data-carousel-prev aria-label="Предыдущая тема" disabled={edges.start} onClick={() => step(-1)}><ChevronLeft size={20} aria-hidden="true" /></button>
-        <button type="button" className={styles.round} data-carousel-next aria-label="Следующая тема" disabled={edges.end} onClick={() => step(1)}><ChevronRight size={20} aria-hidden="true" /></button>
+        <button type="button" className={styles.round} data-carousel-prev aria-label={arrowLabels[0]} disabled={edges.start} onClick={() => step(-1)}><ChevronLeft size={20} aria-hidden="true" /></button>
+        <button type="button" className={styles.round} data-carousel-next aria-label={arrowLabels[1]} disabled={edges.end} onClick={() => step(1)}><ChevronRight size={20} aria-hidden="true" /></button>
       </>}
     </div>}
   </div>;

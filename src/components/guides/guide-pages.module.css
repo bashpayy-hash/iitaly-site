@@ -1,7 +1,7 @@
 .shell { overflow-x:clip; background:transparent; color:#141413; }
 .shell [data-marketing-surface] { background:transparent; --i-action:#141413; --i-link:#141413; }
 .shell main { padding:0; }
-.container { max-width:1136px; margin:0 auto; padding:40px 32px 80px; }
+.container { max-width:1280px; margin:0 auto; padding:40px 32px 80px; }
 .narrow { max-width:880px; }
 .indexHeader { max-width:740px; padding:20px 0 0; }
 .shell .indexHeader h1 { margin:0 0 18px; font:600 48px/1.1 var(--font-apple-display); letter-spacing:-.03em; }

@@ -1,11 +1,11 @@
-/* Depth only. The existing global palette and type tokens remain untouched. */
+/* Surfaces. Flat since 3 Nov 2026 (owner: Apple + Busy Bee Honey reference —
+   «no drop shadows; the elevation is the colour»): a white card is set apart
+   from the paper by its tone, its warm hairline (::before) and grain (::after),
+   never by a cast shadow. The global palette and type tokens remain untouched. */
 .paper {
-  --depth-ambient: 0 18px 48px -28px color-mix(in srgb, var(--color-ink) 18%, transparent);
-  --depth-contact: 0 2px 6px -3px color-mix(in srgb, var(--color-ink) 9%, transparent);
-  --depth-highlight: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 80%, transparent);
   position: relative;
   isolation: isolate;
-  box-shadow: var(--depth-highlight), var(--depth-contact), var(--depth-ambient);
+  box-shadow: none;
 }
 .paper::after {
   content: "";
@@ -36,7 +36,7 @@
   background: color-mix(in srgb, var(--color-cream) 88%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.05);
   backdrop-filter: blur(18px) saturate(1.05);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 60%, transparent), 0 6px 24px -20px color-mix(in srgb, var(--color-ink) 22%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 60%, transparent);
 }
 .chrome::after {
   content: "";
@@ -51,4 +51,4 @@
   .chrome { background: var(--color-cream); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .paper::before, .paper::after, .chrome::after { display: none; }
 }
-@media print { .paper { box-shadow: none; } .paper::before, .paper::after, .chrome::after { display: none; } }
+@media print { .paper::before, .paper::after, .chrome::after { display: none; } }
