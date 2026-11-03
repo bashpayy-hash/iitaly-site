@@ -30,7 +30,7 @@ export function GuideStepCards({ id }: { id: string }) {
       <h2 id="guide-steps-heading">Разбор по шагам</h2>
       <p>{points.length} {points.length === 1 ? "шаг" : points.length < 5 ? "шага" : "шагов"} · каждый на своей странице</p>
     </div>
-    <GuideCarousel label="Шаги разбора" titles={points.map(point => point.title)} tone="light" arrowLabels={["Предыдущие шаги", "Следующие шаги"]}>
+    <GuideCarousel label="Шаги разбора" titles={points.map(point => point.title)} tone="light" fit="column" arrowLabels={["Предыдущие шаги", "Следующие шаги"]}>
       {points.map((point, index) => <li key={point.href} className={styles.item} data-tone={index % 2 ? "dark" : "light"}>
         <Link className={styles.card} href={point.href} data-guide-step-card={index + 1} data-visa-part={id === "visa" ? point.href.split("/").pop() : undefined}>
           <span className={styles.label}>Шаг {pad(index + 1)}</span>

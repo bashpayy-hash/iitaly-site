@@ -36,11 +36,16 @@ try{
     const art=await tiles.locator('img').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')));
     assert.equal(new Set(art).size,13,'Every topic has its own picture');
     // Owner 3 Nov (apple.com galleries): the topics go one after another in a
-    // single row; the first card keeps to the text column, the next peeks in.
+    // single row. Later the same day: «всё должно перераспределяться по всей
+    // длине в зависимости от масштаба» — whole cards share the window width
+    // (more cards on wider screens), none is cut at an edge.
     const tileBox=await tiles.first().boundingBox(),nextBox=await tiles.nth(1).boundingBox();
     assert(Math.abs(tileBox.y-nextBox.y)<1&&nextBox.x>tileBox.x+tileBox.width,'Topics go in one row');
-    assert(Math.abs(tileBox.x-(await page.locator('h1').boundingBox()).x)<1,'First card on the text column');
-    assert(nextBox.x<width,'The next card peeks in');
+    assert(Math.abs(tileBox.x-(width>760?32:20))<1,'The row starts at the window gutter');
+    const cut=await tiles.evaluateAll((nodes,w)=>nodes.map(n=>n.getBoundingClientRect()).filter(r=>r.right>1&&r.left<w-1&&(r.left<-1||r.right>w+1)).length,width);
+    assert.equal(cut,0,'No topic card is cut at the window edge');
+    const visible=await tiles.evaluateAll((nodes,w)=>nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=w;}).length,width);
+    assert(visible===(width>=1200?4:width>=900?3:width>=600?2:1),'Whole cards fill the width: '+visible);
     assert.equal(await page.locator('[data-carousel-dot]').count(),13,'One dot per topic');
     assert.equal(await page.locator('[data-carousel-dot][aria-current=true]').count(),1);
     // Reduced motion: the gallery stays put until the visitor presses play.

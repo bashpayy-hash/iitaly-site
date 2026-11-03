@@ -14,13 +14,15 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
      мышь или фокус на карточках; любое касание, колесо или точка — стоп.
      С prefers-reduced-motion сама не листается, но ▶ работает.
    - row: компактный ряд со стрелками «назад/вперёд» справа. */
-export function GuideCarousel({ label, titles, variant = "row", autoplay = false, tone = "dark", arrowLabels = ["Предыдущая тема", "Следующая тема"], children }: {
+export function GuideCarousel({ label, titles, variant = "row", autoplay = false, tone = "dark", fit = "window", arrowLabels = ["Предыдущая тема", "Следующая тема"], children }: {
   label: string;
   titles: string[];
   variant?: "gallery" | "row";
   autoplay?: boolean;
   /** Surface under the controls: the dark guide band or the paper of a page. */
   tone?: "dark" | "light";
+  /** Whole cards fill the window (guide band) or the column (topic steps). */
+  fit?: "window" | "column";
   arrowLabels?: [string, string];
   children: ReactNode;
 }) {
@@ -124,7 +126,7 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
   };
   const playLabel = playing ? "Остановить прокрутку тем" : ended ? "Показать темы сначала" : "Листать темы автоматически";
 
-  return <div ref={rootRef} className={styles.carousel} data-guide-carousel={variant} data-tone={tone} data-playing={playing || undefined} data-held={held || undefined}>
+  return <div ref={rootRef} className={styles.carousel} data-guide-carousel={variant} data-tone={tone} data-fit={fit} data-playing={playing || undefined} data-held={held || undefined}>
     <ul
       ref={trackRef}
       className={styles.track}
