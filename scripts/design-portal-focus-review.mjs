@@ -141,7 +141,9 @@ try {
     assert(points.every((value,index)=>index===0 || value>points[index-1]),'Flight stops follow one vertical route');
     const cards=await page.locator('[data-stage-lineup] [data-stage-card]').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};}));
     assert(cards.length>0);
-    if(width>=1024)assert(cards.every((card,index)=>index%2===0?Math.abs(card.x-cards[0].x)<1:(card.x>cards[index-1].right&&Math.abs(card.y-cards[index-1].y)<1)),'Stage tiles stand two per row');
+    // Two columns once the grid's container is 700px wide (1440, 1024 and 768 here), one column on phones.
+    const twoUp=await page.locator('[data-stage-lineup]').evaluate(el=>el.getBoundingClientRect().width>=700);
+    if(twoUp)assert(cards.every((card,index)=>index%2===0?Math.abs(card.x-cards[0].x)<1:(card.x>cards[index-1].right&&Math.abs(card.y-cards[index-1].y)<1)),'Stage tiles stand two per row');
     else assert(cards.every((card,index)=>index===0||card.y>=cards[index-1].bottom),'Stage tiles stack in one column on narrow screens');
     assert(cards[0].y>points.at(-1),'The lineup follows the route');
     assert.equal(await page.locator('[data-stage-lineup] li').evaluateAll(nodes=>nodes.filter(el=>{const r=el.getBoundingClientRect();return [...el.querySelectorAll('h3,p,a,img')].some(n=>{const b=n.getBoundingClientRect();return b.left<r.left-1||b.right>r.right+1;});}).length),0,'Nothing in a tile spills past its edge');
