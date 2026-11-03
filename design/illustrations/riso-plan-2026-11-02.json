@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-02",
+  "request": "Owner: the /plan questionnaire in the same tile format as /guides; every question gets its own object.",
+  "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 4:3, transparent background",
+  "promptTemplate": "Vintage risograph print illustration, slightly isometric view: [one object]. Halftone dot shading, misregistered ink, limited palette of deep teal, cream and tomato red with dark navy outlines, paper grain. A self-contained vignette isolated on a transparent background, no text, no letters, no numbers, no people, no flags.",
+  "processing": "Downloaded inside the Higgsfield sandbox, trimmed, 620px PNG masters, exported here as WebP q80 alpha90 at 240 and 480px with sharp. Reviewed at full size on the light and dark tile colours: no text, numerals, flags or people; no haze.",
+  "items": [
+    {
+      "name": "alarm",
+      "question": "intake",
+      "job": "4d58a65a-c028-4215-8c74-dbd2963c32a1",
+      "object": "a classic twin-bell alarm clock with a blank round face and two hands, no numerals on the dial",
+      "masterSha256": "e5bfae30c756ef2adef0af1b424bc288499b99b37712d884e0a183a36916a81a"
+    },
+    {
+      "name": "cap",
+      "question": "goal",
+      "job": "2e581e68-ff30-42ef-aba0-6ebe3c250dbc",
+      "object": "a graduation mortarboard cap with a red tassel resting on a rolled sheet of paper",
+      "masterSha256": "8838c1ab6a510c0ce948177038bc52f0d3f7c59c0c5df9700c0e05b310f2771d"
+    },
+    {
+      "name": "books",
+      "question": "field",
+      "job": "5a345aaf-1e79-41c7-93ef-db890f9df4c1",
+      "object": "a small stack of three closed books with blank spines, a drawing compass and a paintbrush lying on top",
+      "masterSha256": "181d1824eed85df9957ca1fe095c86a33bb9dd711ed8a423d3e953096ca6507f"
+    }
+  ],
+  "reused": "Seven questions reuse the approved riso set: education diploma, grades tests, budget coins, lang translation, age minors, residence keys, dsuRegion envelope.",
+  "files": [
+    {
+      "file": "public/illustrations/riso/alarm-240.webp",
+      "width": 240,
+      "height": 178,
+      "bytes": 11378,
+      "sha256": "a7704cc76c956bf44ba6dc3ef9c30105ce36e853d343e69f9f21d12072a12a73"
+    },
+    {
+      "file": "public/illustrations/riso/alarm-480.webp",
+      "width": 480,
+      "height": 355,
+      "bytes": 33632,
+      "sha256": "e6d9ca413d45442f93b03ff4e234ae352aa9de367fc460b7a965acad2eae17f5"
+    },
+    {
+      "file": "public/illustrations/riso/cap-240.webp",
+      "width": 240,
+      "height": 172,
+      "bytes": 15890,
+      "sha256": "dc0ea8483f925f9128ee36d4b16b8eb04f64328b37da14937bf9daf7e267014d"
+    },
+    {
+      "file": "public/illustrations/riso/cap-480.webp",
+      "width": 480,
+      "height": 344,
+      "bytes": 52406,
+      "sha256": "e9e4ef9a719e64ea3e142d64ba4e10a26ccc25c4fb8f07ea4b55c796d9fa8e56"
+    },
+    {
+      "file": "public/illustrations/riso/books-240.webp",
+      "width": 240,
+      "height": 182,
+      "bytes": 15302,
+      "sha256": "15aac4b6f43ab530d8610a13a9cd603758324587a8f280bdad7d049e2d1565b2"
+    },
+    {
+      "file": "public/illustrations/riso/books-480.webp",
+      "width": 480,
+      "height": 365,
+      "bytes": 52698,
+      "sha256": "987908399ef89519a16a1140ceea16673a6d5891c5f8d140beab37729e7b1e79"
+    }
+  ]
+}

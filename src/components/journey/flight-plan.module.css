@@ -15,13 +15,13 @@
 
 .rail { position:relative; display:flex; flex-direction:column; min-width:0; max-height:470px; overflow:auto; overscroll-behavior:contain; padding:44px 12px 8px 0; scrollbar-width:thin; scrollbar-color:#DCD3C3 transparent; }
 .track { position:absolute; left:calc(var(--when) + 11px); top:44px; width:0; height:var(--flight-height,calc((var(--flight-count) - 1) * 68px + 34px)); border-left:1.5px dashed var(--flight-line); pointer-events:none; }
-.fill { position:absolute; left:-1.5px; top:0; width:1.5px; height:var(--flight-fill,0); background:var(--flight-blue); transition:height .8s cubic-bezier(.22,1,.36,1); }
+.fill { position:absolute; left:-1.5px; top:0; width:1.5px; height:var(--flight-fill,0); background:var(--flight-blue); transition:height 520ms cubic-bezier(.22,1,.36,1); }
 .curve { position:absolute; top:-44px; left:-11px; width:44px; height:44px; overflow:visible; }
 .curve path { stroke:var(--flight-line); stroke-width:1.5; stroke-dasharray:2 4; vector-effect:non-scaling-stroke; }
-.plane { position:absolute; top:calc(var(--flight-top,calc(var(--flight-index) * 68px + 34px)) - 12px); left:-12px; z-index:2; display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--flight-surface,#F2EDE3); color:var(--flight-blue); transition:top .7s cubic-bezier(.22,1,.36,1); }
+.plane { position:absolute; top:calc(var(--flight-top,calc(var(--flight-index) * 68px + 34px)) - 12px); left:-12px; z-index:2; display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--flight-surface,#F2EDE3); color:var(--flight-blue); transition:top 480ms cubic-bezier(.22,1,.36,1); }
 .plane svg { transform:rotate(135deg); }
 
-.stop { position:relative; display:grid; grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:center; flex:0 0 auto; min-width:0; min-height:68px; padding:8px 0; border:0; background:none; text-align:left; color:var(--flight-ink); text-decoration:none; cursor:pointer; transition:filter .45s ease,opacity .45s ease; }
+.stop { position:relative; display:grid; grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:center; flex:0 0 auto; min-width:0; min-height:68px; padding:8px 0; border:0; background:none; text-align:left; color:var(--flight-ink); text-decoration:none; cursor:pointer; transition:filter 420ms cubic-bezier(.4,0,.2,1),opacity 420ms cubic-bezier(.4,0,.2,1); }
 .when { padding-right:12px; text-align:right; font:400 10px/1.3 var(--font-space-mono),monospace; letter-spacing:.04em; color:var(--flight-quiet); white-space:nowrap; }
 .node { position:relative; z-index:1; justify-self:center; width:9px; height:9px; border:1px solid #8B8171; border-radius:50%; background:var(--flight-surface,#F2EDE3); }
 .stop[data-road-stage-state=done] .node { border-color:#356450; background:#356450; }
@@ -39,7 +39,7 @@
 .stop:hover,.stop:focus-visible { filter:none!important; opacity:1!important; }
 .stop:focus-visible { outline:2px solid var(--flight-blue); outline-offset:-2px; border-radius:6px; }
 
-.scene { min-width:0; animation:scene-enter .45s cubic-bezier(.16,1,.3,1); }
+.scene { min-width:0; animation:scene-enter 420ms cubic-bezier(.22,1,.36,1); }
 
 /* Компактная полоса для шапки подробных экранов и вопросов /plan. */
 .flight[data-compact=true] .layout { display:block; }
@@ -49,8 +49,8 @@
 .flight[data-compact=true] .stopCopy { padding-left:0; }
 .flight[data-compact=true] .stopTitle { font-size:13px; }
 .flight[data-compact=true] .track { left:0; top:12px; width:var(--flight-width,100%); height:0; border-left:0; border-top:1.5px dashed var(--flight-line); }
-.flight[data-compact=true] .fill { left:0; top:-1.5px; width:var(--flight-fill-x,0); height:1.5px; transition:width .8s cubic-bezier(.22,1,.36,1); }
-.flight[data-compact=true] .plane { top:-12px; left:var(--flight-left,calc(var(--flight-index) * (100% / var(--flight-count)))); transition:left .7s cubic-bezier(.22,1,.36,1); }
+.flight[data-compact=true] .fill { left:0; top:-1.5px; width:var(--flight-fill-x,0); height:1.5px; transition:width 520ms cubic-bezier(.22,1,.36,1); }
+.flight[data-compact=true] .plane { top:-12px; left:var(--flight-left,calc(var(--flight-index) * (100% / var(--flight-count)))); transition:left 480ms cubic-bezier(.22,1,.36,1); }
 .flight[data-compact=true] .plane svg { transform:rotate(45deg); }
 
 /* Точки для анкеты: одна тонкая линия из равных точек и одна подпись над
@@ -92,10 +92,10 @@
 .flight[data-variant=timeline] .stop[data-road-stage-state=done] .stopTitle { color:var(--flight-quiet); }
 .flight[data-variant=timeline] .stop:is([data-road-stage-state=future],[data-road-locked]):not([data-flight-focus])[data-flight-distance="1"] { filter:blur(1px); opacity:.62; }
 .flight[data-variant=timeline] .stop:is([data-road-stage-state=future],[data-road-locked]):not([data-flight-focus])[data-flight-distance="3"] { filter:blur(3px); opacity:.3; }
-.detail { position:relative; z-index:1; min-width:0; margin:-4px 0 22px calc(var(--when) + 22px + 14px); animation:detail-open .55s cubic-bezier(.22,1,.36,1) both; }
+.detail { position:relative; z-index:1; min-width:0; margin:-4px 0 22px calc(var(--when) + 22px + 14px); animation:detail-open 420ms cubic-bezier(.22,1,.36,1) both; }
 .flight[data-variant=timeline] .plane { background:var(--flight-surface,#F7F4EA); }
 
-@keyframes detail-open { from { opacity:0; transform:translateY(-8px); filter:blur(4px); } to { opacity:1; transform:none; filter:none; } }
+@keyframes detail-open { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
 @keyframes scene-enter { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
 @media(max-width:760px) {
   .flight { --when:48px; }

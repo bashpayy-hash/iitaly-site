@@ -13,11 +13,14 @@ import styles from "./guide-explorer.module.css";
 
 const normalize = (value: string) => value.toLocaleLowerCase("ru").replaceAll("ё", "е");
 
-/* Справочник: поиск и три раздела сверху, ниже — плитки тем. Каждая плитка
-   ведёт на страницу темы, а оттуда — на отдельные страницы шагов. */
+/* Справочник: поиск и три раздела сверху, ниже — галерея тем в один ряд.
+   Каждая тема ведёт на свою страницу, а оттуда — на отдельные страницы шагов. */
 export function GuideDirectory() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
+  // The gallery walks through the topics by itself only until the visitor
+  // starts searching or filtering.
+  const [touched, setTouched] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   useEffect(() => {
@@ -51,17 +54,17 @@ export function GuideDirectory() {
   return <>
     <search className={ui.search} aria-label="Поиск по справочнику">
       <label htmlFor="guide-search">Найти тему</label>
-      <div className={ui.searchField}><Search size={20} aria-hidden="true" /><input ref={inputRef} id="guide-search" type="search" value={query} onChange={event=>{setQuery(event.target.value);location("q",event.target.value);}} placeholder="Аттестат, перевод, виза, DSU…" autoComplete="off" />{query && <button type="button" aria-label="Сбросить поиск" onClick={()=>{setQuery("");location("q","");inputRef.current?.focus();}}><X size={18} aria-hidden="true" /></button>}</div>
+      <div className={ui.searchField}><Search size={20} aria-hidden="true" /><input ref={inputRef} id="guide-search" type="search" value={query} onChange={event=>{setTouched(true);setQuery(event.target.value);location("q",event.target.value);}} placeholder="Аттестат, перевод, виза, DSU…" autoComplete="off" />{query && <button type="button" aria-label="Сбросить поиск" onClick={()=>{setQuery("");location("q","");inputRef.current?.focus();}}><X size={18} aria-hidden="true" /></button>}</div>
     </search>
     <div className={styles.categories} aria-label="Фильтр тем">
-      {[{id:"all",title:"Все темы"},...GUIDE_STAGES].map(item=><button type="button" key={item.id} data-guide-category={item.id} aria-pressed={category===item.id} onClick={()=>{setCategory(item.id);location("category",item.id);}}>{item.title}</button>)}
+      {[{id:"all",title:"Все темы"},...GUIDE_STAGES].map(item=><button type="button" key={item.id} data-guide-category={item.id} aria-pressed={category===item.id} onClick={()=>{setTouched(true);setCategory(item.id);location("category",item.id);}}>{item.title}</button>)}
     </div>
     <div className={styles.resultRow}>
       <p className={styles.resultCount} role="status">{terms.length ? `Найдено тем: ${matches.length}` : `${matches.length} ${matches.length === 1 ? "тема" : matches.length < 5 ? "темы" : "тем"} · у каждой свой пошаговый разбор`}</p>
       {stage && <Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Раздел целиком: {stage.title}<ArrowRight size={15} aria-hidden="true" /></Link>}
     </div>
     {matches.length ? <section className={styles.explorer} aria-label="Темы справочника" data-guide-explorer>
-      <GuideTiles guides={matches} />
+      <GuideTiles key={matches.map(guide => guide.id).join()} guides={matches} variant="gallery" autoplay={!touched && !query && category === "all"} />
     </section> : <section className={ui.directory}><h2>Такой темы не нашли</h2><p>Попробуй другое слово или выбери «Все темы».</p><button className={ui.textLink} type="button" onClick={()=>openGuideHelper(undefined,query)}>Спросить Веспи<ArrowRight size={17} aria-hidden="true" /></button></section>}
   </>;
 }

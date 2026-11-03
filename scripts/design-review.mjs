@@ -133,7 +133,7 @@ try {
   assert.equal(await fileInput.evaluate(el => document.activeElement === el), true, 'Document picker remains keyboard accessible');
   await page.getByRole('link', { name: 'Составить план', exact: true }).click();
   await page.locator('#questionnaire').waitFor();
-  const choices = ['Осенью 2027', '11 классов', '4,7 и выше', 'Бакалавриат', 'Без стипендии будет сложно', 'Экономика, бизнес', 'Есть IELTS или TOEFL', 'Ещё не будет 18', 'В Казахстане', 'Пьемонт · EDISU'];
+  const choices = ['Осенью 2027', '11 классов', '4,7 и выше', 'Бакалавриат', 'Без стипендии будет сложно', 'Экономика, бизнес', 'Есть IELTS или TOEFL', 'Ещё не будет 18', 'В Казахстане', 'Уже знаю регион или вуз', 'Пьемонт · EDISU'];
   for (const name of choices) await page.getByRole('button', { name: new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) }).click();
   await page.getByRole('button', { name: 'Открыть мой план', exact: true }).click();
   await settle(page);

@@ -35,8 +35,21 @@ try{
     assert.equal(await tiles.count(),13);
     const art=await tiles.locator('img').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')));
     assert.equal(new Set(art).size,13,'Every topic has its own picture');
-    const tileBox=await tiles.first().boundingBox();
-    if(width>760)assert(Math.abs(tileBox.width-(await tiles.nth(1).boundingBox()).width)<1&&Math.abs(tileBox.y-(await tiles.nth(1).boundingBox()).y)<1,'Tiles pair up in two columns');
+    // Owner 3 Nov (apple.com galleries): the topics go one after another in a
+    // single row; the first card keeps to the text column, the next peeks in.
+    const tileBox=await tiles.first().boundingBox(),nextBox=await tiles.nth(1).boundingBox();
+    assert(Math.abs(tileBox.y-nextBox.y)<1&&nextBox.x>tileBox.x+tileBox.width,'Topics go in one row');
+    assert(Math.abs(tileBox.x-(await page.locator('h1').boundingBox()).x)<1,'First card on the text column');
+    assert(nextBox.x<width,'The next card peeks in');
+    assert.equal(await page.locator('[data-carousel-dot]').count(),13,'One dot per topic');
+    assert.equal(await page.locator('[data-carousel-dot][aria-current=true]').count(),1);
+    // Reduced motion: the gallery stays put until the visitor presses play.
+    assert.equal(await page.locator('[data-guide-carousel][data-playing]').count(),0);
+    await page.locator('[data-carousel-dot="5"]').click();
+    await page.waitForFunction(()=>{const t=document.querySelectorAll('[data-guide-tile]')[5],c=document.querySelector('[data-guide-carousel]');return Math.abs(t.getBoundingClientRect().left-c.getBoundingClientRect().left)<2;});
+    assert.equal(await page.locator('[data-carousel-dot="5"]').getAttribute('aria-current'),'true');
+    await page.locator('[data-carousel-dot="0"]').click();
+    await page.waitForFunction(()=>document.querySelector('[data-guide-carousel] ul').scrollLeft===0);
     await check(page,'Guides '+width);
     await page.locator('[data-guide-tile=education]').screenshot({path:path.join(destination,`guides-${width}.png`)});
     await page.getByLabel('Найти тему',{exact:true}).fill('апостиль');
@@ -44,18 +57,36 @@ try{
     await page.getByRole('button',{name:'Сбросить поиск'}).click();
     await page.getByRole('button',{name:'После приезда',exact:true}).click();
     assert.equal(await page.locator('[data-guide-select]').count(),3);
-    await page.locator('[data-guide-select=permesso]').click();
-    await page.waitForURL('**/guides/permesso');
+    // Section pages: a compact row with previous/next arrows.
+    const section=await context.newPage();section.on('pageerror',e=>errors.push(e.message));
+    await section.goto(origin+'/guides/stages/prepare',{waitUntil:'networkidle'});
+    const prev=section.locator('[data-carousel-prev]'),next=section.locator('[data-carousel-next]');
+    assert(await prev.isDisabled()&&!(await next.isDisabled()),'Row starts at the first topic');
+    await next.click();await section.waitForFunction(()=>document.querySelector('[data-guide-carousel] ul').scrollLeft>0);
+    assert(!(await prev.isDisabled()));
+    await check(section,'Guide section '+width);
+    await section.close();
+    // Step pages and old links are walked in a side tab that waits for URLs and
+    // elements: quick in-page navigation leaves Next's background route checks
+    // in flight, and a later network-idle wait on that tab could hang (PR #145).
+    // «Подробнее» leads to the topic page (clicking tiles is covered by the
+    // guides-vespi and UX reviews); the side tab starts there, hydrated.
+    assert.equal(await page.locator('[data-guide-select=permesso]').getAttribute('href'),'/guides/permesso');
+    const nav=await context.newPage();nav.on('pageerror',e=>errors.push(e.message));
+    await nav.goto(origin+'/guides/permesso',{waitUntil:'networkidle'});
     // The topic page is a row of step cards; each step has its own page.
-    const steps=page.locator('[data-guide-step-card]');
+    const steps=nav.locator('[data-guide-step-card]');
+    await steps.first().waitFor();
     assert((await steps.count())>1);
-    await steps.nth(1).click();await page.waitForURL('**/guides/permesso/2');
-    await page.locator('[data-instruction-point="2"]').waitFor();
-    await check(page,'Guide step '+width);
-    await page.locator('[data-guide-step-next]').click();await page.waitForURL('**/guides/permesso/3');
-    await page.locator('[data-guide-step-prev]').click();await page.waitForURL('**/guides/permesso/2');
-    await page.goto(origin+'/guides#con',{waitUntil:'networkidle'});await page.waitForURL('**/guides/con');
-    await page.goto(origin+'/guides?topic=codice',{waitUntil:'networkidle'});await page.waitForURL('**/guides/codice');
+    await steps.nth(1).click();await nav.waitForURL('**/guides/permesso/2');
+    await nav.locator('[data-instruction-point="2"]').waitFor();
+    await check(nav,'Guide step '+width);
+    await nav.locator('[data-guide-step-next]').click();await nav.waitForURL('**/guides/permesso/3');
+    await nav.locator('[data-guide-step-prev]').click();await nav.waitForURL('**/guides/permesso/2');
+    // Old links redirect after hydration: /guides#con and the former inspector's ?topic=.
+    await nav.goto(origin+'/guides#con',{waitUntil:'domcontentloaded'});await nav.waitForURL('**/guides/con');await nav.locator('[data-guide-panel=con]').waitFor();
+    await nav.goto(origin+'/guides?topic=codice',{waitUntil:'domcontentloaded'});await nav.waitForURL('**/guides/codice');await nav.locator('[data-guide-panel=codice]').waitFor();
+    await nav.close();
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
     for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
     assert.equal(await page.locator('[data-deck-university]').count(),3);

@@ -76,7 +76,9 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await page.reload({ waitUntil:'networkidle' });
           const comparison = page.locator('#compare-universities');
           assert.equal(await page.locator('[data-university-page]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgba(0, 0, 0, 0)');
-          assert.equal(await comparison.getByRole('button', { name:'Выбрать этот университет', exact:true }).first().isDisabled(), true);
+          // Owner 2026-11-03: an empty place offers no «Выбрать» button and stands straight.
+          assert.equal(await comparison.locator('[data-deck-choose]').count(), 0, 'Nothing to choose before a university is added');
+          assert.deepEqual(await comparison.locator('[data-deck-empty]').evaluateAll(nodes => nodes.map(n => getComputedStyle(n).transform)), ['none', 'none', 'none'], 'Empty places are not tilted');
           await comparison.getByLabel('Университет 1', { exact:true }).selectOption('unipd');
           await comparison.locator('[data-deck-choose=unipd]').click();
           assert.match(await comparison.locator('[data-university-decision]').innerText(), /Основной вуз.*Padova/s);
@@ -111,26 +113,35 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           assert.equal(await cards.count(), 3);
           assert.equal(await page.locator('[data-instruction-point]').count(), 0, 'Step text lives on step pages');
           assert.doesNotMatch(await page.locator('article').innerText(), /Padova|Падов/);
-          await cards.nth(1).click();
-          await page.waitForURL('**/guides/tests/2');
-          const point = page.locator('[data-instruction-point="2"]');
+          // Step pages are walked in a separate tab that waits for URLs and
+          // elements. Quick in-page navigation leaves Next's background route
+          // checks in flight, so a network-idle wait on this tab afterwards
+          // could hang; closing the side tab ends them.
+          const steps = await context.newPage();
+          steps.on('pageerror', error => errors.push(error.message));
+          await steps.setViewportSize({ width, height:900 });
+          await steps.goto(origin + route, { waitUntil:'networkidle' }); // fresh tab: hydrated before the clicks
+          const stepCards = steps.locator('[data-guide-step-card]');
+          await stepCards.nth(1).click();
+          await steps.waitForURL('**/guides/tests/2');
+          const point = steps.locator('[data-instruction-point="2"]');
           assert.match(await point.innerText(), /Результат/);
           assert.equal(await point.evaluate(element => getComputedStyle(element).animationName), 'none');
-          await page.reload({ waitUntil:'networkidle' });
-          assert.equal(await page.locator('[data-instruction-point="2"]').count(), 1);
-          await page.goBack();
-          await page.waitForURL(url => url.pathname === '/guides/tests');
-          await cards.first().waitFor();
+          await steps.reload({ waitUntil:'load' });
+          assert.equal(await steps.locator('[data-instruction-point="2"]').count(), 1);
+          await steps.goBack();
+          await steps.waitForURL(url => url.pathname === '/guides/tests');
+          await stepCards.first().waitFor();
           // Keyboard: the cards are plain links in reading order.
-          await cards.first().focus(); await page.keyboard.press('Tab');
-          assert.equal(await page.evaluate(() => document.activeElement.dataset.guideStepCard), '2');
-          await page.keyboard.press('Enter');
-          await page.waitForURL('**/guides/tests/2');
-          // Old inline-switcher links keep working.
-          await page.goto(origin + '/guides/tests?point=3', { waitUntil:'networkidle' });
-          await page.waitForURL('**/guides/tests/3');
-          await page.locator('[data-instruction-point="3"]').waitFor();
-          await page.goto(origin + route, { waitUntil:'networkidle' });
+          await stepCards.first().focus(); await steps.keyboard.press('Tab');
+          assert.equal(await steps.evaluate(() => document.activeElement.dataset.guideStepCard), '2');
+          await steps.keyboard.press('Enter');
+          await steps.waitForURL('**/guides/tests/2');
+          // Old inline-switcher links keep working (the page redirects itself after hydration).
+          await steps.goto(origin + '/guides/tests?point=3', { waitUntil:'domcontentloaded' });
+          await steps.waitForURL('**/guides/tests/3');
+          await steps.locator('[data-instruction-point="3"]').waitFor();
+          await steps.close();
         }
         if (route === '/guides/visa/documents') {
           await page.getByRole('button', { name:'Отметить собранным' }).click();

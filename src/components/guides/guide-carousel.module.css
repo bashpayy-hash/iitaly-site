@@ -1,0 +1,62 @@
+/* Карусель тем (GuideCarousel.tsx) по образцу галерей apple.com: ряд от края
+   до края окна, первая карточка по колонке текста, соседние выглядывают.
+   --bleed-start/--bleed-end ставит скрипт по колонке (без полосы прокрутки);
+   до гидрации — те же значения из ширины окна. */
+.carousel { position:relative; min-width:0; }
+.track {
+  --bleed-start:max(32px, calc(50vw - 536px));
+  --bleed-end:var(--bleed-start);
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:20px;
+  margin:0 calc(-1 * var(--bleed-end)) 0 calc(-1 * var(--bleed-start));
+  padding:8px var(--bleed-end) 6px var(--bleed-start);
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;
+  scroll-padding-inline:var(--bleed-start) var(--bleed-end);
+  scrollbar-width:none;
+  list-style:none;
+}
+.track::-webkit-scrollbar { display:none; }
+.track > li { flex:0 0 auto; min-width:0; scroll-snap-align:start; }
+
+.controls { display:flex; align-items:center; justify-content:center; gap:12px; margin-top:26px; }
+.controls[data-variant=row] { justify-content:flex-end; margin-top:16px; }
+
+/* Точки: активная вытягивается в капсулу; пока карточки идут сами, капсула
+   заполняется за 5 секунд — сколько осталось до следующей карточки. */
+.dots { display:flex; align-items:center; min-height:48px; padding:0 12px; border-radius:999px; background:#E8E1D5; }
+.dot { position:relative; display:grid; place-items:center; width:20px; height:44px; padding:0; border:0; border-radius:999px; background:none; cursor:pointer; transition:width 320ms cubic-bezier(.22,1,.36,1); }
+.dot::before { content:""; width:8px; height:8px; border-radius:999px; background:#A39A8C; transition:width 320ms cubic-bezier(.22,1,.36,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
+.dot:hover::before { background:#6F665A; }
+.dot[aria-current=true] { width:52px; }
+.dot[aria-current=true]::before { width:40px; background:#352B28; }
+.carousel[data-playing] .dot[aria-current=true]::before { background:#C9BFB0; }
+.progress { position:absolute; top:50%; left:6px; width:40px; height:8px; margin-top:-4px; border-radius:999px; background:#352B28; animation:dot-fill 5s linear forwards; }
+.carousel[data-held] .progress { animation-play-state:paused; }
+@keyframes dot-fill { from { clip-path:inset(0 80% 0 0 round 999px); } to { clip-path:inset(0 0 0 0 round 999px); } }
+
+.round { display:grid; place-items:center; flex:0 0 auto; width:48px; height:48px; padding:0; border:0; border-radius:50%; background:#E8E1D5; color:#241F1C; cursor:pointer; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1),opacity 160ms cubic-bezier(.4,0,.2,1); }
+.controls[data-variant=row] .round { width:44px; height:44px; }
+.round:hover:not(:disabled) { background:#DCD3C3; }
+.round:active:not(:disabled) { transform:scale(.94); }
+.round:disabled { opacity:.38; cursor:default; }
+.dot:focus-visible,.round:focus-visible,.track:focus-visible { outline:2px solid #A33421; outline-offset:2px; }
+
+@media(max-width:760px) {
+  .track { --bleed-start:20px; gap:12px; }
+}
+@media(max-width:480px) {
+  .dots { padding:0 8px; }
+  .dot { width:14px; }
+  .dot::before { width:6px; height:6px; }
+  .dot[aria-current=true] { width:34px; }
+  .dot[aria-current=true]::before { width:26px; }
+  .progress { left:4px; width:26px; height:6px; margin-top:-3px; }
+  .controls { gap:8px; }
+  .round { width:44px; height:44px; }
+}
+@media(prefers-reduced-motion:reduce) { .dot,.dot::before,.round { transition:none; } .round:active:not(:disabled) { transform:none; } }
+@media(forced-colors:active) { .dot::before { background:ButtonText; } .dot[aria-current=true]::before { background:Highlight; } .round { border:1px solid ButtonText; } }
