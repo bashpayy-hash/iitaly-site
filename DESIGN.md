@@ -269,3 +269,14 @@ The owner asked for the /plan questions in the same format as the /guides tiles.
 **Scholarship question, honest framing (3 November 2026).** The owner read the scholarship answers as «strange, overly specific programs». Пьемонт · EDISU, IULM and Padova are not a recommendation or a full list: they are the only competitions with checked 2026/27 rules in the plan. The tile now offers three general answers first («Пока не знаю», «Уже знаю регион или вуз», «Не планирую стипендию»); the checked competitions appear only after «Уже знаю», with «Другой регион или вуз», the note that their rules are checked, and a way back (`plan/dsuChoice.ts`). The cabinet form lists the general answers first and the three under the caption «Конкурсы, правила которых мы уже сверили». Answer values are unchanged.
 
 **Comparison deck.** Empty places stand straight (only real posters take the arc tilt) and carry no disabled «Выбрать» button.
+
+## Motion identity · 3 November 2026
+
+The owner asked for a smoother site, using the design-dna and motion-design skills. The site's DNA is recorded in `design/design-dna.json` (design-dna phase 2 on the live build; colours measured with its `measure-colors.mjs`, and `verify.mjs` confirms the pass changed none: ΔE 0). Motion now follows one system (motion-design, «Premium» personality, calm and without overshoot in the interface):
+
+- **Curves.** `cubic-bezier(.22,1,.36,1)` for everything that moves or arrives; `cubic-bezier(.4,0,.2,1)` for colour, border and background changes. The overshoot curve stays only on celebratory stamps and saved checks.
+- **Durations.** 160ms hover and colour (120ms press), 320ms cards, capsules, icons and dots, 520ms entrances and long travel (the plane, progress fills); the comparison arc swings in 560ms and its posters arrive in 620ms. No transition over 620ms; ambient loops excepted.
+- **One entrance.** Rise 8–16px with a fade on the signature curve; staggers 30–40ms, never longer than 300ms in all. Guide tiles rise with the scroll (scroll-driven `view()` timeline, translate only, so text is never transparent), their object a little later as a secondary layer. Step pages arrive heading → object → sentence cards → dots and pager; questionnaire answers follow the question 30ms apart and the object last; the cabinet lineup cards line up 40ms apart.
+- **Press feedback.** Pills and capsules scale to .97–.98 while pressed; step cards dip 1px; pager arrows nudge 3px toward their direction.
+- **Removed.** The blur on the opened flight-plan step (costly, no meaning).
+- **Reduced motion.** Every new animation sits under `prefers-reduced-motion: no-preference`; with reduce, pages are static and complete.

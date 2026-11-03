@@ -9,7 +9,8 @@
 .tile p { max-width:32ch; margin:10px 0 0; font-size:17px; line-height:1.45; color:#4A443D; text-wrap:balance; }
 .tile[data-tone=dark] p { color:#D9D1C4; }
 .actions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:22px; }
-.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 20px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color .2s ease,color .2s ease; }
+.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 20px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1),border-color 160ms cubic-bezier(.4,0,.2,1),color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
+.primary:active,.secondary:active { transform:scale(.97); }
 .primary { background:#B83A27; color:#FAF9F3; }
 .primary:hover { background:#A33421; }
 .secondary { border:1px solid #B83A27; color:#A33421; }
@@ -18,7 +19,7 @@
 .tile[data-tone=dark] .secondary:hover { background:#F29A89; color:#2A2420; }
 .primary:focus-visible,.secondary:focus-visible { outline:2px solid currentColor; outline-offset:3px; }
 .tile[data-tone=light] .primary:focus-visible { outline-color:#A33421; }
-.art { display:block; width:min(80%,360px); height:auto; margin-top:auto; padding:32px 0 40px; transition:transform .6s cubic-bezier(.22,1,.36,1); }
+.art { display:block; width:min(80%,360px); height:auto; margin-top:auto; padding:32px 0 40px; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
 .tile:hover .art { transform:translateY(-6px) scale(1.02); }
 @media(max-width:760px) {
   .tiles { grid-template-columns:minmax(0,1fr); }
@@ -27,5 +28,16 @@
   .tile p { font-size:16px; }
   .art { width:min(72%,300px); padding:26px 0 30px; }
 }
-@media(prefers-reduced-motion:reduce) { .art,.primary,.secondary { transition:none; } .tile:hover .art { transform:none; } }
+@media(prefers-reduced-motion:reduce) { .art,.primary,.secondary { transition:none; } .tile:hover .art { transform:none; } .primary:active,.secondary:active { transform:none; } }
 @media(forced-colors:active) { .tile { border:1px solid CanvasText; } }
+/* Motion (DESIGN.md «Motion identity»): tiles rise into place as they scroll
+   in, the object a little later (secondary layer). translate/scale only, so
+   text is never transparent; static without support or with reduced motion. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tile { animation:tile-rise cubic-bezier(.22,1,.36,1) both; animation-timeline:view(); animation-range:entry 0% entry 70%; }
+    .art { animation:art-rise cubic-bezier(.22,1,.36,1) both; animation-timeline:view(); animation-range:entry 15% cover 45%; }
+  }
+}
+@keyframes tile-rise { from { translate:0 48px; } to { translate:0 0; } }
+@keyframes art-rise { from { translate:0 28px; scale:.96; } to { translate:0 0; scale:1; } }

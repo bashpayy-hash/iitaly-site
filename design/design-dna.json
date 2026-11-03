@@ -1,0 +1,464 @@
+{
+  "meta": {
+    "name": "IITALY — warm paper, riso objects, Apple-style tiles",
+    "description": "The site's own design DNA, recorded with the design-dna skill (phase 2 on the live build) to steer a motion smoothing pass. Not a new direction: DESIGN.md stays the source of truth.",
+    "source_references": [
+      "Screenshot of /guides at 1440px, measured with design-dna scripts/measure-colors.mjs (k=8)",
+      "src/**/*.module.css and DESIGN.md",
+      "Owner references: apple.com home tiles, iPhone lineup, «Learn all about» row"
+    ],
+    "created_at": "2026-11-03"
+  },
+  "design_system": {
+    "color": {
+      "palette_type": "warm neutral paper with one terracotta accent; illustrations bring teal, cream and tomato red",
+      "primary": {
+        "hex": "#2A2420",
+        "role": "ink and dark tiles"
+      },
+      "secondary": {
+        "hex": "#F1ECE3",
+        "role": "light tiles and quiet surfaces"
+      },
+      "accent": {
+        "hex": "#B83A27",
+        "role": "calls to action, chosen answers, current step"
+      },
+      "neutral": {
+        "scale": [
+          "#F4F0E7",
+          "#F1ECE3",
+          "#E8E1D5",
+          "#DCD3C3",
+          "#B29A87",
+          "#8A8174",
+          "#5C554D",
+          "#4A443D",
+          "#352B28",
+          "#2A2420"
+        ],
+        "usage": "#F4F0E7 paper background; #2A2420 body text and dark tiles; mid tones for hairlines, notes and secondary text (all at least 4.5:1 for text)"
+      },
+      "semantic": {
+        "success": "#356450",
+        "warning": "#A33421",
+        "error": "#B83A27",
+        "info": "#3966A6"
+      },
+      "surface": {
+        "background": "#F4F0E7",
+        "card": "#F1ECE3",
+        "elevated": "#FFFFFF"
+      },
+      "contrast_strategy": "Dark ink on warm paper, cream on dark tiles; terracotta fills carry cream text (5.4:1). No cold colours outside the allowlisted flight blue and success greens (design-warm-palette-review).",
+      "measurement": {
+        "k": 8,
+        "sampling": {
+          "method": "deterministic_stratified",
+          "max_pixels": 160000,
+          "sampled_pixels": 160000
+        }
+      },
+      "measured_palette": [
+        {
+          "hex": "#f4f0e7",
+          "coverage": 0.6962,
+          "role": "background"
+        },
+        {
+          "hex": "#2a2420",
+          "coverage": 0.2092,
+          "role": "text"
+        },
+        {
+          "hex": "#ead7bb",
+          "coverage": 0.0327,
+          "role": "unassigned"
+        },
+        {
+          "hex": "#b29a87",
+          "coverage": 0.0169,
+          "role": "unassigned"
+        },
+        {
+          "hex": "#616c69",
+          "coverage": 0.0127,
+          "role": "unassigned"
+        },
+        {
+          "hex": "#113f50",
+          "coverage": 0.0127,
+          "role": "unassigned"
+        },
+        {
+          "hex": "#b23b2b",
+          "coverage": 0.011,
+          "role": "unassigned"
+        },
+        {
+          "hex": "#ed422c",
+          "coverage": 0.0086,
+          "role": "accent"
+        }
+      ]
+    },
+    "typography": {
+      "type_scale": {
+        "display": {
+          "size": "clamp(40px,5vw,64px)",
+          "weight": "600",
+          "line_height": "1.04",
+          "tracking": "-0.035em"
+        },
+        "heading_1": {
+          "size": "clamp(30px,3.2vw,44px)",
+          "weight": "600",
+          "line_height": "1.06",
+          "tracking": "-0.03em"
+        },
+        "heading_2": {
+          "size": "clamp(24px,2.6vw,32px)",
+          "weight": "600",
+          "line_height": "1.1",
+          "tracking": "-0.03em"
+        },
+        "heading_3": {
+          "size": "22px",
+          "weight": "600",
+          "line_height": "1.2",
+          "tracking": "-0.02em"
+        },
+        "body": {
+          "size": "17px",
+          "weight": "400",
+          "line_height": "1.45",
+          "tracking": "0"
+        },
+        "body_small": {
+          "size": "14px",
+          "weight": "400",
+          "line_height": "1.45",
+          "tracking": "0"
+        },
+        "caption": {
+          "size": "13px",
+          "weight": "400",
+          "line_height": "1.5",
+          "tracking": "0"
+        },
+        "overline": {
+          "size": "10.5px",
+          "weight": "400",
+          "line_height": "1.5",
+          "tracking": "0.08em"
+        }
+      },
+      "font_families": {
+        "heading": "Inter Tight",
+        "body": "Inter Tight",
+        "mono": "Space Mono"
+      },
+      "font_style_notes": "Tight negative tracking on headings, balanced wrapping; Space Mono uppercase for step counters and manifest labels only."
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "scale": [
+        "4px",
+        "8px",
+        "12px",
+        "16px",
+        "20px",
+        "24px",
+        "28px",
+        "32px",
+        "40px",
+        "52px",
+        "64px",
+        "80px"
+      ],
+      "content_density": "airy",
+      "section_rhythm": "one idea per tile or page; 12px between tiles, 28-52px inside them"
+    },
+    "layout": {
+      "grid_system": "CSS grid with subgrid for aligned card rows",
+      "max_content_width": "1200px (1360px for wide frames)",
+      "columns": "2 tiles on desktop, 1 below 760px; card rows scroll horizontally",
+      "gutter": "12px between tiles, 16px page gutter on phones",
+      "breakpoints": [
+        "320px",
+        "390px",
+        "440px",
+        "600px",
+        "700px",
+        "760px",
+        "900px",
+        "1024px",
+        "1440px"
+      ],
+      "alignment_tendency": "centred tiles and questions; left-aligned reading pages"
+    },
+    "shape": {
+      "border_radius": {
+        "small": "14px",
+        "medium": "20px",
+        "large": "28px",
+        "pill": "999px"
+      },
+      "border_usage": "hairlines #DCD3C3 and 1px terracotta outlines on capsules",
+      "divider_style": "thin solid or dotted warm rules"
+    },
+    "elevation": {
+      "shadow_style": "soft, warm and low; mostly flat surfaces",
+      "levels": {
+        "low": "0 1px 2px rgba(53,43,40,.08)",
+        "medium": "0 18px 36px -24px rgba(42,33,29,.55)",
+        "high": "0 30px 60px -30px rgba(42,33,29,.5)"
+      },
+      "depth_cues": "tone contrast between light and dark tiles, a 4px lift on hover, paper grain"
+    },
+    "iconography": {
+      "style": "Lucide line icons",
+      "stroke_weight": "1.5-2.4px",
+      "size_scale": [
+        "14px",
+        "16px",
+        "18px",
+        "20px"
+      ],
+      "preferred_set": "lucide-react"
+    },
+    "motion": {
+      "easing": {
+        "signature": "cubic-bezier(.22,1,.36,1)",
+        "state": "cubic-bezier(.4,0,.2,1)",
+        "celebration": "cubic-bezier(.34,1.56,.64,1) — stamps and saved checks only"
+      },
+      "duration_scale": {
+        "micro": "160ms (hover, colour, 120ms press)",
+        "normal": "320ms (cards, capsules, icons, dots)",
+        "macro": "520ms (entrances, the plane, progress, deck swing up to 560-620ms)"
+      },
+      "entrance_pattern": "rise 8-16px with fade on the signature curve; staggers 30-40ms, never over 300ms in total; tiles rise with the scroll (translate only)",
+      "exit_pattern": "none — routes swap instantly and the new view enters",
+      "philosophy": "calm premium: decelerate into place, no overshoot in UI; reduced motion removes every movement"
+    },
+    "components": {
+      "button_style": "pills: filled terracotta or dark, outlined terracotta secondary; press scales to .97",
+      "input_style": "rounded 14px fields on paper with a warm hairline",
+      "card_style": "tiles 28px radius, light/dark alternating, centred title, object at the bottom",
+      "navigation_pattern": "top bar with four sections; breadcrumbs on guide pages; dots and previous/next cards on step pages",
+      "modal_style": "rare; comparison opens in a dialog with a warm scrim",
+      "list_style": "hairline rows and capsule answers",
+      "component_notes": "lineup cards align on a 7-row subgrid; step cards are links, never toggles"
+    }
+  },
+  "design_style": {
+    "aesthetic": {
+      "mood": "calm, warm, trustworthy",
+      "visual_metaphor": "a travel notebook: paper, stamps, a flight plan",
+      "era_influence": "Apple product pages meeting 1970s risograph print",
+      "genre": "guided service / editorial product",
+      "personality_traits": [
+        "patient",
+        "precise",
+        "friendly"
+      ],
+      "adjectives": [
+        "warm",
+        "airy",
+        "tactile",
+        "clear"
+      ]
+    },
+    "visual_language": {
+      "complexity": "low per screen",
+      "ornamentation": "one riso object per topic or question",
+      "whitespace_usage": "generous; one idea per tile",
+      "visual_weight_distribution": "centred, heavy headline over light answers",
+      "focal_strategy": "headline first, then one action",
+      "contrast_level": "high for text, soft for surfaces",
+      "texture_usage": "6% paper grain, halftone illustrations"
+    },
+    "composition": {
+      "hierarchy_method": "size and tone, not colour",
+      "balance_type": "symmetrical tiles, asymmetrical reading pages",
+      "flow_direction": "top to bottom; card rows left to right",
+      "grouping_strategy": "tiles and subgrid card rows",
+      "negative_space_role": "gives each question room to breathe"
+    },
+    "imagery": {
+      "photo_treatment": "none in product surfaces",
+      "illustration_style": "risograph objects: teal, cream and tomato red with navy outlines, transparent background, no text or people",
+      "graphic_elements": "dots line, plane, stamps, porthole",
+      "pattern_usage": "halftone inside illustrations only",
+      "image_shape": "free-standing objects, never boxed photos"
+    },
+    "interaction_feel": {
+      "feedback_style": "quiet fills and a small check",
+      "hover_behavior": "4px lift, terracotta fill on capsules, object drifts up",
+      "transition_personality": "calm premium",
+      "loading_style": "skeleton-free; the plane travels and Vespi checks documents",
+      "microinteraction_density": "low"
+    },
+    "brand_voice_in_ui": {
+      "tone": "friendly, informal ты",
+      "formality": "low",
+      "cta_style": "short verbs: «Подробнее», «Пошагово», «Открыть этап»",
+      "empty_state_approach": "say what to add and where, no fake buttons",
+      "error_tone": "calm and specific, with the next step"
+    }
+  },
+  "visual_effects": {
+    "overview": {
+      "effect_intensity": "low",
+      "performance_tier": "light",
+      "fallback_strategy": "everything works static; prefers-reduced-motion removes movement; scroll-driven effects only with @supports",
+      "primary_technology": "CSS and inline SVG"
+    },
+    "background_effects": {
+      "type": "paper grain",
+      "description": "SVG feTurbulence grain at 6% multiplied over the warm paper",
+      "technology": "CSS background-image (data URI SVG)",
+      "params": {
+        "color_palette": [
+          "#F4F0E7"
+        ],
+        "speed": "static",
+        "density": "fine",
+        "opacity": "0.06",
+        "blend_mode": "multiply"
+      }
+    },
+    "particle_systems": {
+      "enabled": false,
+      "type": "none",
+      "description": "not used",
+      "technology": "none",
+      "params": {
+        "count": "0",
+        "shape": "none",
+        "size_range": "none",
+        "movement_pattern": "none",
+        "color_behavior": "none",
+        "interaction": "none",
+        "spawn_area": "none"
+      }
+    },
+    "3d_elements": {
+      "enabled": false,
+      "type": "none",
+      "description": "only a CSS perspective arc on comparison posters",
+      "technology": "CSS transforms",
+      "params": {
+        "renderer": "none",
+        "lighting": "none",
+        "camera": "perspective(1400px)",
+        "materials": "none",
+        "geometry": "none",
+        "post_processing": "none",
+        "interaction_model": "focus a poster to straighten it"
+      }
+    },
+    "shader_effects": {
+      "enabled": false,
+      "type": "none",
+      "description": "not used",
+      "technology": "none",
+      "params": {
+        "uniforms": "none",
+        "vertex_manipulation": "none",
+        "fragment_output": "none",
+        "noise_type": "none",
+        "distortion": "none"
+      }
+    },
+    "scroll_effects": {
+      "parallax": {
+        "enabled": true,
+        "layers": "2",
+        "depth_range": "tile 48px, object 28px",
+        "speed_curve": "cubic-bezier(.22,1,.36,1)"
+      },
+      "scroll_triggered_animations": {
+        "enabled": true,
+        "trigger_points": "view() entry 0-70% for tiles, entry 15% to cover 45% for objects",
+        "animation_type": "fade-free rise (translate) and slight scale for objects",
+        "scrub_behavior": "scroll-linked, reversible"
+      },
+      "scroll_morphing": {
+        "enabled": false,
+        "description": "not used"
+      }
+    },
+    "text_effects": {
+      "type": "none",
+      "description": "text never animates by letter; whole blocks rise on entrance",
+      "technology": "CSS",
+      "params": {
+        "split_strategy": "none",
+        "animation_per_unit": "none",
+        "stagger": "block-level 30-40ms",
+        "effect_style": "rise"
+      }
+    },
+    "cursor_effects": {
+      "enabled": false,
+      "type": "none",
+      "description": "system cursor",
+      "params": {
+        "shape": "system",
+        "size": "system",
+        "blend_mode": "normal",
+        "trail": "none",
+        "interaction_zone": "none"
+      }
+    },
+    "image_effects": {
+      "type": "hover drift and scroll rise",
+      "description": "riso objects drift up 6px and grow 2% on hover; rise with the scroll",
+      "technology": "CSS transform, translate and scale",
+      "params": {
+        "filter_pipeline": "grayscale + 55% opacity for locked stages",
+        "hover_transform": "translateY(-6px) scale(1.02), 520ms signature",
+        "reveal_animation": "scroll-linked rise",
+        "distortion_type": "none"
+      }
+    },
+    "glassmorphism_neumorphism": {
+      "enabled": true,
+      "style": "one soft fog at the bottom of the cabinet timeline",
+      "params": {
+        "blur_radius": "backdrop blur (masked)",
+        "transparency": "fade to paper",
+        "border_treatment": "none",
+        "shadow_type": "none",
+        "light_source_angle": "none"
+      }
+    },
+    "canvas_drawings": {
+      "enabled": false,
+      "type": "none",
+      "description": "not used",
+      "technology": "none",
+      "params": {
+        "draw_method": "none",
+        "animation_loop": "none",
+        "color_scheme": "none",
+        "responsiveness": "none",
+        "interaction": "none"
+      }
+    },
+    "svg_animations": {
+      "enabled": true,
+      "type": "porthole clouds and plane",
+      "description": "code-drawn porthole with a slow cloud drift and a lifting shade; the plane rides the flight line",
+      "params": {
+        "animation_method": "CSS on SVG",
+        "path_morphing": "none",
+        "stroke_animation": "check mark draw on save",
+        "filter_effects": "none"
+      }
+    },
+    "composite_notes": "Effects stay small so content leads. Motion identity: one signature curve, three durations, one entrance pattern (see design_system.motion and DESIGN.md «Motion identity»)."
+  }
+}

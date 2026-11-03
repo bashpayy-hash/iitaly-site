@@ -10,7 +10,7 @@
 
 /* У каждой карточки своя перспектива: без вложенного 3D дуга надёжно
    рисуется и на недорогих телефонах. */
-.slot,.emptySlot { display:grid; grid-row:span 8; grid-template-rows:subgrid; min-width:0; scroll-snap-align:center; transition:transform .85s cubic-bezier(.22,1,.36,1); }
+.slot,.emptySlot { display:grid; grid-row:span 8; grid-template-rows:subgrid; min-width:0; scroll-snap-align:center; transition:transform 560ms cubic-bezier(.22,1,.36,1); }
 .slot { cursor:pointer; }
 /* Empty places stand straight: only real posters take the arc (owner 2026-11-03). */
 .slot[data-offset=left] { transform:perspective(1400px) rotateY(16deg) scale(.95); transform-origin:100% 50%; }
@@ -22,7 +22,7 @@
 .code button { display:grid; place-items:center; flex:0 0 44px; width:44px; height:44px; margin:-10px -10px -10px 0; border:0; border-radius:50%; background:transparent; color:#2A2420; }
 .code button:hover { background:rgba(255,255,255,.6); }
 
-.card { --tone:#3966A6; --tone-deep:#2D568D; position:relative; display:grid; grid-row:span 7; grid-template-rows:subgrid; min-width:0; overflow:hidden; border-radius:26px; background:linear-gradient(170deg,var(--tone),var(--tone-deep)); color:#fff; box-shadow:0 34px 60px -38px rgba(42,33,29,.65); animation:card-in .95s cubic-bezier(.22,1,.36,1) both; animation-delay:calc(var(--deck-index,0) * 110ms); }
+.card { --tone:#3966A6; --tone-deep:#2D568D; position:relative; display:grid; grid-row:span 7; grid-template-rows:subgrid; min-width:0; overflow:hidden; border-radius:26px; background:linear-gradient(170deg,var(--tone),var(--tone-deep)); color:#fff; box-shadow:0 34px 60px -38px rgba(42,33,29,.65); animation:card-in 620ms cubic-bezier(.22,1,.36,1) both; animation-delay:calc(var(--deck-index,0) * 110ms); }
 .card[data-tone="1"] { --tone:#C8452F; --tone-deep:#93301F; }
 .card[data-tone="2"] { --tone:#1F7A68; --tone-deep:#1B5E55; }
 .card[data-primary=true] { box-shadow:0 0 0 3px #fff,0 0 0 5px var(--tone-deep),0 34px 60px -34px rgba(42,33,29,.7); }
@@ -57,7 +57,7 @@
 
 /* Подпись сцены: огромный код вуза в фокусе и тонкая шкала, как у Fiddle. */
 .stageFooter { display:grid; justify-items:center; gap:12px; margin:0 0 18px; }
-.bigCode { margin:0; font:400 clamp(56px,10.5vw,148px)/.9 var(--font-space-mono),monospace; letter-spacing:.01em; color:#221C18; animation:code-in .6s cubic-bezier(.22,1,.36,1) both; }
+.bigCode { margin:0; font:400 clamp(56px,10.5vw,148px)/.9 var(--font-space-mono),monospace; letter-spacing:.01em; color:#221C18; animation:code-in 520ms cubic-bezier(.22,1,.36,1) both; }
 .stageMeta { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:10px 18px; font:400 11px/1.4 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:#2A2420; }
 .scale { position:relative; width:180px; height:1px; background:#2A2420; }
 .scale i { position:absolute; top:-3px; left:calc(var(--scale-at,0) * 100%); width:7px; height:7px; border-radius:50%; background:#2A2420; transform:translateX(-50%); transition:left .7s cubic-bezier(.22,1,.36,1); }
