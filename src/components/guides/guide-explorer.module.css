@@ -1,10 +1,11 @@
-/* Шапка справочника над плитками: три раздела, счётчик тем и ссылка на
-   раздел целиком. Сами плитки — guide-tiles.module.css. */
-.categories { display:flex; gap:8px; overflow:auto; padding:4px 0 12px; scrollbar-width:thin; }
+/* Шапка справочника над плитками: три раздела и, при выбранном разделе,
+   ссылка на него целиком. Счётчик виден только при поиске (owner, 3 Nov:
+   над полосой — ничего). Сами плитки — guide-tiles.module.css. */
+.categories { display:flex; gap:8px; overflow:auto; padding:4px 0 20px; scrollbar-width:thin; }
 .categories button { flex-shrink:0; min-height:44px; padding:10px 16px; border:1px solid #DCD3C3; border-radius:999px; background:transparent; color:#57514B; font-size:13px; }
 .categories button[aria-pressed=true] { border-color:#352B28; background:#352B28; color:#FAF9F3; }
-.resultRow { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px 20px; margin:8px 0 20px; }
-.resultCount { margin:0; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#57514B; }
+.resultRow { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:4px 20px; margin:-8px 0 16px; }
+.resultCount { margin:0 0 16px; color:#57514B; font-size:14px; line-height:1.5; }
 .stageLink { display:inline-flex; align-items:center; gap:6px; min-height:44px; color:#241F1C; font-size:14px; text-decoration:underline; text-underline-offset:4px; }
 .explorer { min-width:0; }
 .categories button:focus-visible,.stageLink:focus-visible { outline:2px solid #A33421; outline-offset:3px; }

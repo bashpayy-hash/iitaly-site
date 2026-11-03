@@ -29,21 +29,13 @@ export function GuideTile({ guide, index }: { guide: GuideCard; index: number })
   </article>;
 }
 
-/* Бегущая строка между бумагой и полосой — названия тем, как лента на
-   вывеске. Декоративная (aria-hidden): те же названия есть в карточках. */
-function TopicMarquee({ titles }: { titles: string[] }) {
-  const run = titles.map(title => <span key={title} className={styles.marqueeItem}>{title}</span>);
-  return <div className={styles.marquee} aria-hidden="true" data-guide-marquee>
-    <div className={styles.marqueeTrack}>{run}{titles.map(title => <span key={`again-${title}`} className={styles.marqueeItem}>{title}</span>)}</div>
-  </div>;
-}
-
-/* Справочник — галерея с точками и ▶ (темы идут сами) и бегущей строкой;
-   раздел — ряд со стрелками. Оба на одной тёмной полосе во всю ширину. */
+/* Справочник — галерея с точками и ▶ (темы идут сами); раздел — ряд со
+   стрелками. Оба на одной тёмной полосе во всю ширину. Owner, 3 Nov:
+   «убери эти символы наверху» — над полосой ничего нет: ни бегущей
+   строки с названиями, ни счётчика тем. */
 export function GuideTiles({ guides, variant = "row", autoplay = false }: { guides: GuideCard[]; variant?: "gallery" | "row"; autoplay?: boolean }) {
   const titles = guides.map(guide => guide.title);
   return <div className={styles.shelf} data-guide-tiles>
-    {variant === "gallery" && guides.length > 2 && <TopicMarquee titles={titles} />}
     <div className={styles.band} data-guide-band>
       <GuideCarousel label="Темы справочника" titles={titles} variant={variant} autoplay={autoplay}>
         {guides.map((guide, index) => <li key={guide.id} className={styles.slide}>

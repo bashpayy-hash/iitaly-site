@@ -133,35 +133,46 @@ try {
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
     assert.equal(await page.locator('[data-focus-row=notary]').count(),0,'Future tasks live on their stage page');
-    // Owner 2 Nov (apple.com lineup): the route so far runs down the line,
-    // the stages ahead stand left to right in one row of cards below it.
+    // Owner 3 Nov (apple.com home): the overview is a stack of 28px tiles
+    // with 12px gaps — the «Now» hero, the dark route board whose line runs
+    // to the current stage, then a 2×N grid of stage tiles (one column on
+    // phones). Nothing scrolls sideways and nothing spills past its tile.
     const points=await page.locator('[data-flight-stop]').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
     assert(points.every((value,index)=>index===0 || value>points[index-1]),'Flight stops follow one vertical route');
-    const cards=await page.locator('[data-stage-lineup] [data-stage-card]').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y};}));
-    assert(cards.length>0&&cards.every((card,index)=>index===0||(card.x>cards[index-1].x&&Math.abs(card.y-cards[0].y)<1)),'Stages ahead share one row');
-    const actions=await page.locator('[data-stage-lineup] [data-road-stage]').evaluateAll(nodes=>nodes.map(el=>Math.round(el.getBoundingClientRect().y)));
-    assert.equal(new Set(actions).size,1,'Lineup actions stand on one line (subgrid)');
+    const cards=await page.locator('[data-stage-lineup] [data-stage-card]').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};}));
+    assert(cards.length>0);
+    if(width>=1024)assert(cards.every((card,index)=>index%2===0?Math.abs(card.x-cards[0].x)<1:(card.x>cards[index-1].right&&Math.abs(card.y-cards[index-1].y)<1)),'Stage tiles stand two per row');
+    else assert(cards.every((card,index)=>index===0||card.y>=cards[index-1].bottom),'Stage tiles stack in one column on narrow screens');
     assert(cards[0].y>points.at(-1),'The lineup follows the route');
+    assert.equal(await page.locator('[data-stage-lineup] li').evaluateAll(nodes=>nodes.filter(el=>{const r=el.getBoundingClientRect();return [...el.querySelectorAll('h3,p,a,img')].some(n=>{const b=n.getBoundingClientRect();return b.left<r.left-1||b.right>r.right+1;});}).length),0,'Nothing in a tile spills past its edge');
+    const tones=await page.locator('[data-stage-lineup] li').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).backgroundColor));
+    assert(tones.includes('rgb(42, 36, 32)')&&tones.includes('rgb(255, 253, 249)'),'Light and dark tiles alternate');
+    assert.equal(await page.locator('[data-stage-lineup] li').first().evaluate(el=>getComputedStyle(el).borderRadius),'28px');
+    assert.equal(await page.locator('[data-stage-lineup] [data-cabinet-tile]').count(),3,'Documents, universities and reminders share the grid');
     assert(await page.locator('[aria-label="Этапы маршрута"]').isVisible());
     assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no separate box');
 
 
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
-    // mikes.cv composition: manifest, porthole and the Now board on one band,
-    // greeting under the porthole, then one Flight Plan column whose current
-    // stage opens the next task right under its node.
+    // Hero tile: greeting as the label, the next step as the headline, one
+    // line, two pills, the porthole below like a product render. Then the
+    // dark route board whose current stage opens the next task under its node.
     const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
     assert(work.y>=route.y&&work.y+work.height<=route.y+route.height+1,'The current step opens inside the Flight Plan');
     const stop=await page.locator('[data-road-stage=docs]').boundingBox();assert(work.y>=stop.y+stop.height-6&&work.y-stop.y-stop.height<24,'The step sits right under its stage');
-    const header=await page.locator('[data-portal-welcome]').boundingBox();assert(header.y+header.height<=route.y+1);
+    const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
     const cabin=await page.locator('[data-portal-cabin]').boundingBox(),manifest=await page.locator('[data-flight-manifest]').boundingBox(),now=await page.locator('[data-portal-now]').boundingBox();
-    assert(cabin.y+cabin.height<=header.y+1,'The porthole sits above the greeting');
+    assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
+    assert(now.y+now.height<=cabin.y+1,'The porthole stands under the step and its pills');
+    assert(cabin.y+cabin.height<=hero.y+hero.height+1,'The porthole stays inside the hero tile');
+    assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then the route board 12px below');
     const centre=await page.locator('[data-portal-focus]').evaluate(el=>{const r=el.getBoundingClientRect();return r.x+r.width/2;});
     assert(Math.abs(cabin.x+cabin.width/2-centre)<4,'The porthole is centred');
-    if(width>1100){assert(manifest.x+manifest.width<cabin.x&&now.x>cabin.x+cabin.width,'Manifest left and Now board right of the porthole');assert(Math.abs(now.y-manifest.y)<2);}
-    else if(width>640)assert(now.y+now.height<=cabin.y+1&&Math.abs(now.y-manifest.y)<2,'Manifest and Now share the first row');
-    else assert(now.y>=header.y+header.height-1&&now.y+now.height<=route.y+1,'On phones the Now board sits between greeting and route');
+    assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),'28px');
+    assert.equal(await page.locator('[data-road-board]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(42, 36, 32)','The route board is the dark tile');
+    assert(manifest.y>=route.y&&manifest.y+manifest.height<=points[0],'The flight manifest heads the route board');
+    assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
     assert(work.y+work.height-card.y-card.height<=64,'The opened step ends with its stage link, without an empty area');
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();

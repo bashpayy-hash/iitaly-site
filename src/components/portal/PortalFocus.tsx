@@ -18,8 +18,12 @@ import { CITIES, UNIS } from "@/data/italy";
 import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
+import { LineupTile, plainClick } from "./PortalStageLineup";
 
 import { StoryPills } from "@/components/story/MediaSwitcher";
+
+const universityWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "университет" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "университета" : "университетов";
+const documentWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "документ" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "документа" : "документов";
 
 type Props = {
   data: PortalData; selectedStageId?: string; shortlist: string[]; busy: boolean;
@@ -42,7 +46,7 @@ function dayWord(days: number) {
   return days % 10 === 1 && days % 100 !== 11 ? "день" : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 12 || days % 100 > 14) ? "дня" : "дней";
 }
 
-export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete }: Props) {
+export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings }: Props) {
   const [data, setDisplayed] = useState(savedData);
   const shown = useRef(savedData);
   useEffect(() => {
@@ -129,48 +133,88 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     {selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Открыть этап <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
   </div>;
 
+  /* Плитка «Сейчас»: следующий шаг ведёт на свой разбор, как «Подробнее» у
+     Apple; «Открыть этап» — страница этапа. Отметить шаг можно только там. */
+  const nowTask = position.task;
+  const nowHref = nowTask ? data.docs[nowTask.id] ? portalTaskHref(data, nowTask) : `/portal?view=plan&task=${encodeURIComponent(nowTask.id)}` : "";
+  const docsTasks = data.roadmap.flatMap(stage => stage.tasks).filter(task => DOC_TASKS[task.id]);
+  const checkedDocs = docsTasks.filter(task => data.docs?.[task.id]).length;
+  const shortlistTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "shortlist");
+  /* Плитки кабинета после этапов: документы, университеты, напоминания —
+     той же сеткой, что и этапы (сколько плиток, столько и видно). */
+  const cabinetTiles = <>
+    <LineupTile art="stamp-pad" attrs={{ "data-cabinet-tile": "documents" }} title="Документы"
+      line={docsTasks.length ? `${checkedDocs} из ${docsTasks.length} ${documentWord(docsTasks.length)} с итогом проверки.` : "Документы появятся после анкеты."}
+      primary={{ label: "Открыть документы", href: "/portal?view=docs", attrs: { "data-cabinet-documents": "" }, onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); } }}
+      secondary={{ label: "Как проверяем", href: "/guides/stages/prepare" }} />
+    <LineupTile art="map" attrs={{ "data-cabinet-tile": "universities" }} title="Университеты"
+      line={universities.length ? universities.map(university => university.name).join(" · ") : "Выбор вуза — отдельный шаг маршрута."}
+      meta={universities.length ? `${universities.length} ${universityWord(universities.length)} в списке` : undefined}
+      primary={shortlistTask ? { label: universities.length ? "Изменить выбор" : "Выбрать вузы", href: `/portal?view=plan&task=${encodeURIComponent(shortlistTask.id)}`, attrs: { "data-cabinet-shortlist": "" }, onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(shortlistTask, "instruction"); } } : { label: "Открыть карту", href: "/universities" }}
+      secondary={shortlistTask ? { label: "Сравнить на карте", href: "/universities" } : undefined} />
+    <LineupTile art="alarm" attrs={{ "data-cabinet-tile": "reminders" }} title="Напоминания"
+      line={data.client.tgLinked && data.client.notify?.telegram !== false ? "Telegram подключён: напомню о сроках заранее." : "Telegram и почта напомнят о сроках заранее."}
+      primary={{ label: "Настроить", href: "/portal?view=settings#notifications", attrs: { "data-cabinet-reminders": "" }, onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); } }}
+      secondary={{ label: "Профиль", href: "/portal?view=settings", onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); } }} />
+  </>;
+
   return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
-    {!stagePage && <FlightManifest className={styles.manifest} passenger={passenger} destination={destination ? CITIES[destination.city].name : "Италия"} city={destination?.city} />}
-    {!stagePage && <div className={styles.cabin} data-portal-cabin>
-      <Porthole open={progress.total ? progress.done / progress.total : 0}>
-        <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
-      </Porthole>
+    {/* Обзор плитками по образцу главной apple.com (owner, 3 Nov): первая
+        плитка «Сейчас» — приветствие-лейбл, следующий шаг заголовком, одна
+        строка Веспи, две пилюли и иллюминатор внизу, как рендер товара. */}
+    {!stagePage && <div className={styles.hero} data-portal-hero>
+      <div className={styles.welcome} data-portal-welcome>
+        <div className={styles.welcomeCopy}>
+          <h1 id="portal-overview-heading" tabIndex={-1}>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
+          {(data.client.intakeYear || universities.length > 0) && <p className={styles.welcomeMeta}>
+            {data.client.intakeYear && <span>Поступление: сентябрь {data.client.intakeYear}</span>}
+            {data.client.intakeYear && universities.length > 0 && <span aria-hidden="true"> · </span>}
+            <span data-saved-universities>{universities.map(university => university.name).join(" · ")}</span>
+          </p>}
+        </div>
+      </div>
+      <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
+        <p className={styles.nowRubric}>Следующий шаг · этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
+        <h2 id="portal-now-heading">Сейчас</h2>
+        <p className={styles.nowTitle}>{nowTask ? taskTitle(nowTask) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
+        {nowTask && <blockquote className={styles.vespiQuote}>
+          <p>{introduction ? `Ответь на ${WIZ.length} вопросов по бюджету и целям — я уберу лишние шаги и открою полный маршрут.` : taskShortExplainer(nowTask)}</p>
+          <cite>Веспи Баурысаков · ИИ-помощник</cite>
+        </blockquote>}
+        {nowTask && days !== null && <div className={styles.nowDeadline} data-now-deadline>
+          {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
+          <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time>
+        </div>}
+        {(nowTask || position.stage) && <div className={styles.nowActions}>
+          {nowTask && <a className={styles.nowPrimary} href={nowHref} data-now-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>Открыть разбор</a>}
+          {position.stage && <a className={styles.nowSecondary} href={`/portal?stage=${encodeURIComponent(position.stage.id)}`} data-now-stage onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSelectStage(position.stage!.id); }}>Открыть этап</a>}
+        </div>}
+      </aside>
+      <div className={styles.cabin} data-portal-cabin>
+        <Porthole open={progress.total ? progress.done / progress.total : 0}>
+          <div className={styles.mascotWindow}><PortalRouteVespi className={styles.welcomeScene} /></div>
+        </Porthole>
+      </div>
     </div>}
-    <div className={styles.welcome} data-portal-welcome>
+    {stagePage && <div className={styles.welcome} data-portal-welcome>
       <div className={styles.welcomeCopy}>
-        {stagePage && <PortalBreadcrumbs stage={selected} />}
-        <h1 id="portal-overview-heading" tabIndex={-1}>{stagePage ? selected?.title : firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
-        {!stagePage && <p className={styles.welcomeMeta}>
-          {data.client.intakeYear && <span>Поступление: сентябрь {data.client.intakeYear}</span>}
-          {data.client.intakeYear && universities.length > 0 && <span aria-hidden="true"> · </span>}
-          <span data-saved-universities>{universities.map(university => university.name).join(" · ")}</span>
-        </p>}
+        <PortalBreadcrumbs stage={selected} />
+        <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
       </div>
-    </div>
-    {!stagePage && <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
-      <p className={styles.nowRubric}>Этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
-      <h2 id="portal-now-heading">Сейчас</h2>
-      <div className={styles.nowNext}>
-        <p className={styles.nowLabel}>Следующий шаг</p>
-        <p className={styles.nowTitle}>{position.task ? taskTitle(position.task) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
-      </div>
-      {position.task && days !== null && <div className={styles.nowDeadline} data-now-deadline>
-        {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
-        <time dateTime={position.task.deadline || undefined}>{fmtDate(position.task.deadline)}</time>
-      </div>}
-      {position.task && <blockquote className={styles.vespiQuote}>
-        <p>{introduction ? `Ответь на ${WIZ.length} вопросов по бюджету и целям — я уберу лишние шаги и открою полный маршрут.` : taskShortExplainer(position.task)}</p>
-        <cite>Веспи Баурысаков · ИИ-помощник</cite>
-      </blockquote>}
-      {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
-        <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
-        <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
-      </div>}
-    </aside>}
+    </div>}
+    {/* Тёмная плитка маршрута: манифест рейса и «сделано заранее» в шапке,
+        Flight Plan с раскрытым текущим шагом под его этапом. */}
     <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} currentDetail={stagePage ? undefined : overviewDetail} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart} />
+      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} currentDetail={stagePage ? undefined : overviewDetail} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart}
+        boardHead={!stagePage && <div className={styles.boardHead}>
+          <FlightManifest className={styles.manifest} passenger={passenger} destination={destination ? CITIES[destination.city].name : "Италия"} city={destination?.city} />
+          {ahead.length > 0 && <div className={styles.nowAhead} data-now-ahead>
+            <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
+            <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
+          </div>}
+        </div>}
+        lineupExtras={!stagePage && cabinetTiles} />
     </div>
-    {!stagePage && <div className={styles.fog} aria-hidden="true" />}
     {stagePage && <div className={styles.stageBody} data-portal-overview>
       <div className={styles.stageHeading}>
         <div className={styles.stageTitle}>

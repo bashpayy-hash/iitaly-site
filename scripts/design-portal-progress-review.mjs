@@ -123,8 +123,11 @@ async function arrivalOrder(page,data) {
   assert(progressBox.y+progressBox.height<=nextBox.y+1,'Progress precedes the current task details');
   assert(detailsBox.y>=roadBox.y&&detailsBox.y+detailsBox.height<=roadBox.y+roadBox.height+1,'The current step opens inside the route, under its stage');
   assert(greetingBox.y>=0&&greetingBox.y+greetingBox.height<=await page.evaluate(()=>innerHeight),'The greeting remains in the first viewport');
-  if(await page.evaluate(()=>innerWidth)>1100)assert(progressBox.y+progressBox.height<=await page.evaluate(()=>innerHeight),'Desktop progress fits the first viewport');
-  else {const now=await page.locator('[data-portal-now]').boundingBox();assert(now.y+now.height<=roadBox.y,'On mobile the current problem comes before the global route');}
+  // Owner 3 Nov (apple.com tiles): the «Now» hero carries the next step and
+  // its actions; on desktop it fits the first viewport, the route board follows.
+  const now=await page.locator('[data-portal-now]').boundingBox();
+  if(await page.evaluate(()=>innerWidth)>1100)assert(now.y+now.height<=await page.evaluate(()=>innerHeight),'The next step and its actions fit the first viewport');
+  else assert(now.y+now.height<=roadBox.y,'On mobile the current problem comes before the global route');
 }
 async function sticky(page){
   const chrome=page.locator('[data-portal-chrome]'),before=await chrome.boundingBox(),available=await page.evaluate(()=>document.documentElement.scrollHeight-innerHeight);

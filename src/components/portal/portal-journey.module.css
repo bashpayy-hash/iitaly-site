@@ -59,10 +59,18 @@
 
 .journey[data-condensed=true] .summary{justify-content:flex-end;margin-bottom:12px}.journey[data-condensed=true] .countNumbers{font-size:16px}.journey[data-condensed=true] .count{font-size:12px}.journey[data-condensed=true] .ahead{display:inline;margin-left:10px;font-size:12px}
 
-/* Таймлайн mikes.cv в обзоре кабинета: строка статуса над маршрутом,
-   текущий шаг раскрыт под своим этапом, просмотр другого этапа — лёгкая
-   карточка-сноска без тёмной плиты. */
+/* Таймлайн в обзоре кабинета: строка статуса над маршрутом, текущий шаг
+   раскрыт под своим этапом, просмотр другого этапа — лёгкая
+   карточка-сноска. Обзор стоит на тёмной плитке маршрута (owner, 3 Nov,
+   плитки как на главной apple.com; portal-focus.module.css красит плитку),
+   поэтому цифры и подписи здесь светлые. */
 .timeline .summary { align-items:flex-end; margin:0 0 4px; padding-bottom:14px; border-bottom:1px dotted #C9C0B1; }
+.timeline .route[data-road-board] .summary { border-bottom-color:#4A4038; color:#CFC6BA; }
+.timeline .route[data-road-board] :is(.stageLabel,.stageNumber,.countNumbers) { color:#F29A89; }
+.timeline .route[data-road-board] .currentStageName { color:#FAF6EE; }
+.timeline .route[data-road-board] .ahead { color:#B8AE9F; }
+.timeline .route[data-road-board] .feedback { color:#8FC7A6; }
+.timeline .route[data-road-board] .previewTop { color:#B8AE9F; }
 .currentStop { display:grid; gap:12px; min-width:0; }
 .stopPreview { display:grid; gap:10px; max-width:420px; padding:18px 20px; border:1px solid #E2DACC; border-radius:18px; background:rgba(251,249,243,.82); }
 .previewTop { display:flex; justify-content:space-between; gap:12px; margin:0; font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#6A6458; }

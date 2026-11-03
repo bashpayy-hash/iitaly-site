@@ -84,7 +84,9 @@ try {
       const style=getComputedStyle(marker);
       return {size:style.fontSize,weight:style.fontWeight,accent:style.color,ratio:Number(el.style.getPropertyValue('--route-fill'))};
     });
-    assert.deepEqual({...design,ratio:0},{size:'40px',weight:'600',accent:'rgb(163, 52, 33)',ratio:0});
+    // Owner 3 Nov: the route sits on the dark board, so its stage number is
+    // the light terracotta (#F29A89) instead of the deep one on paper.
+    assert.deepEqual({...design,ratio:0},{size:'40px',weight:'600',accent:'rgb(242, 154, 137)',ratio:0});
     assert(Math.abs(design.ratio-6/26)<.00001,'Ahead tasks do not enter ordered progress');
     assert.equal(await page.locator('[data-portal-now] strong').first().evaluate(el=>getComputedStyle(el).color),'rgb(163, 52, 33)');
     const nav=page.getByRole('navigation',{name:'Этапы маршрута',exact:true});

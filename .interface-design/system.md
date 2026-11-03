@@ -33,3 +33,11 @@ Warm paper, riso objects, Apple-calm. Flat (no cast shadows): level is colour �
 ## Patterns
 - Topic carousel: cocoa band, unframed object on a 260px stage (210 phone), equal 340px slides, subgrid rows (stage, title 26px, teaser 15px, actions), cream pill + quiet link.
 - Carousel controls: 48px round buttons (44 in rows), dots capsule `#3A322D` on dark, `#E8E1D5` on paper.
+
+## Cabinet tiles (3 Nov, apple.com home grid)
+
+- Overview = tile stack on the full 1296px width: hero «Now» (light `#FFFDF9`) → route board (dark `#2A2420`) → 2×N grid; 12px gaps, 28px radius, no shadows or hairlines.
+- Tile anatomy: label (mono 11px caps) → title `clamp(28px,3vw,36px)` 600 → line 17px → meta (mono 11px caps) → two 44px pills (filled terracotta `#B83A27` / outlined; cream `#FAF6EE` on dark) → object at the bottom (250px stage, ≤72% width; 210px on phones).
+- Grid: two columns from 700px of container width, checkerboard tones (`4n+2`, `4n+3` dark); an odd last tile spans both columns; one column below 700px, even tiles dark.
+- Hero: greeting 21px as the label, headline `clamp(32px,3.4vw,48px)`, one 17px line, mono cite and deadline, pills, porthole 216px (150px on phones) centred below.
+- Every tile row is `max-width:100%` with `overflow-wrap:anywhere`: nothing may spill past a tile edge (the live overlap of 3 Nov).
