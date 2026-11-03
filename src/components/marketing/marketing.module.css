@@ -51,7 +51,7 @@
 .navInner { display: flex; align-items: center; justify-content: space-between; gap: 32px; max-width: 1280px; height: 64px; margin: auto; padding: 0 32px; }
 .wordmark { display: inline-flex; align-items: center; min-height: 44px; color: #141413; font-size: 24px; font-weight: 650; letter-spacing: -.07em; text-decoration: none; white-space: nowrap; }
 .wordmark span { color: var(--i-signal); }
-.wordmark { cursor:pointer; transition:opacity .2s ease,transform .2s ease; }
+.wordmark { cursor:pointer; transition:opacity 160ms cubic-bezier(.4,0,.2,1),transform 160ms cubic-bezier(.22,1,.36,1); }
 .wordmark:hover { opacity:0.8; transform:translateY(-1px); }
 @media(prefers-reduced-motion:reduce) { .wordmark { transition:none; }.wordmark:hover { transform:none; } }
 .desktopNav { display: flex; align-items: center; gap: 32px; height: 100%; }
@@ -62,7 +62,7 @@
 .portalLink { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: #141413; white-space: nowrap; }
 .portalLink span { margin-left: 6px; color: #75716b; }
 .mobileMenu { display: none; }
-.footer { padding: 56px max(24px, calc((100vw - 1160px)/2)) 28px; background: transparent; color: #6b6761; font-size: 13px; line-height: 1.6; }
+.footer { padding: 56px max(24px, calc((100vw - 1216px)/2)) 28px; background: transparent; color: #6b6761; font-size: 13px; line-height: 1.6; }
 .footerTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 36px; padding-bottom: 40px; }
 .footerTagline { margin: 16px 0 8px; color: #141413; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
 .footer nav { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 40px; padding-top: 10px; }
@@ -71,7 +71,7 @@
 .finePrint { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; border-top: 1px solid var(--i-line); padding-top: 24px; }
 .finePrint p { max-width: 640px; }
 .finePrint > a { flex-shrink: 0; }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 980px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color .18s, color .18s, border-color .18s; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 980px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1); }
 .button:active { transform: translateY(1px); }
 .button:disabled { opacity: .65; pointer-events: none; }
 .buttonSmall { min-height: 44px; padding: 10px 20px; font-size: 15px; }
@@ -82,7 +82,7 @@
 .ghost { min-height: 44px; padding: 8px 0; color: var(--i-link, #141413); font-size: 16px; }
 .ghost:hover { text-decoration: underline; text-underline-offset: 5px; }
 .hero { position: relative; }
-.heroIntro { --hero-gutter: max(32px, calc((100vw - 1240px)/2)); display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr); align-items: center; gap: 8px; padding: 64px var(--hero-gutter) 56px; background: transparent; }
+.heroIntro { --hero-gutter: max(32px, calc((100vw - 1216px)/2)); display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr); align-items: center; gap: 8px; padding: 64px var(--hero-gutter) 56px; background: transparent; }
 .heroCopy { position: relative; z-index: 1; min-width: 0; text-align: left; }
 /* Картинка кампуса — панель, а не вставленный прямоугольник. Справа она
    доходит до края окна, сверху упирается в шапку, снизу — в тёмную секцию:
@@ -113,9 +113,9 @@
 .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; margin-top: 28px; }
 .heroNote { margin-top: 20px; max-width: 500px; color: #6b6761; font-size: 13px; line-height: 1.6; }
 .stage { position: relative; padding: 44px 24px 0; overflow: clip; background: transparent; }
-.stageLabel { display: flex; align-items: center; justify-content: space-between; max-width: 980px; margin: 0 auto 24px; color: #141413; font-size: 12px; letter-spacing: .03em; }
+.stageLabel { display: flex; align-items: center; justify-content: space-between; max-width: 1216px; margin: 0 auto 24px; color: #141413; font-size: 12px; letter-spacing: .03em; }
 .stageLabel > span:last-child { color: #655b52; }
-.journey { position: relative; max-width: 1100px; margin: auto; padding: 28px 36px; border: 1px solid var(--color-warm-line); border-radius: 28px 28px 0 0; background: #fff;  }
+.journey { position: relative; max-width: 1216px; margin: auto; padding: 28px 36px; border: 1px solid var(--color-warm-line); border-radius: 28px 28px 0 0; background: #fff;  }
 .journeyHeader { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--i-line); }
 .journeyHeader p { margin-top: 4px; color: #6b6761; font-size: 12px; }
 .journeyLogo { font-size: 16px; font-weight: 600; letter-spacing: -.04em; }
@@ -204,7 +204,7 @@
   .mobileMenu { display: block; }
   .mobileMenu summary { display: flex; min-height: 44px; align-items: center; gap: 12px; cursor: pointer; font-size: 13px; list-style: none; }
   .mobileMenu summary::-webkit-details-marker { display: none; }
-  .mobileMenu summary span { font-size: 23px; transition: transform .18s; }
+  .mobileMenu summary span { font-size: 23px; transition: transform 160ms cubic-bezier(.22,1,.36,1); }
   .mobileMenu[open] summary span { transform: rotate(45deg); }
   .mobileMenu nav { position: absolute; top: 100%; inset-inline: 0; display: grid; padding: 12px 24px 24px; background: #fefaf4; border-bottom: 1px solid var(--i-line); }
   .mobileMenu nav a { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--i-line); font-size: 18px; }
