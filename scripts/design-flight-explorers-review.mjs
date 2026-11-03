@@ -51,7 +51,7 @@ try{
     // Reduced motion: the gallery stays put until the visitor presses play.
     assert.equal(await page.locator('[data-guide-carousel][data-playing]').count(),0);
     await page.locator('[data-carousel-dot="5"]').click();
-    await page.waitForFunction(()=>{const t=document.querySelectorAll('[data-guide-tile]')[5],c=document.querySelector('[data-guide-carousel]');return Math.abs(t.getBoundingClientRect().left-c.getBoundingClientRect().left)<2;});
+    await page.waitForFunction(()=>{const t=document.querySelectorAll('[data-guide-tile]')[5];return Math.abs(t.getBoundingClientRect().left-(innerWidth>760?32:20))<2;});
     assert.equal(await page.locator('[data-carousel-dot="5"]').getAttribute('aria-current'),'true');
     await page.locator('[data-carousel-dot="0"]').click();
     await page.waitForFunction(()=>document.querySelector('[data-guide-carousel] ul').scrollLeft===0);
