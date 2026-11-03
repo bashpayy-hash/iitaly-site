@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-03",
+  "request": "Owner: «сделай иконки пореалистичнее» for the cabinet tiles; the overview follows the apple.com home grid, so each stage object is a studio product render instead of a risograph drawing.",
+  "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 4:3, transparent background",
+  "promptTemplate": "Photorealistic studio product render, three-quarter view from slightly above: [one object]. Soft diffused studio lighting, gentle contact shadow directly beneath the object, warm neutral materials, crisp detail. One isolated object on a transparent background, no text, no letters, no numbers, no logos, no emblems, no flags, no people, no hands.",
+  "processing": "Downloaded inside the Higgsfield sandbox, trimmed, 480px PNG masters (sha256 below, byte-identical copies brought over), exported here as WebP q82 alpha92 at 240 and 480px with sharp into public/illustrations/objects. Reviewed at full size on the light (#FFFDF9) and dark (#2A2420) tile colours: no text, numerals, emblems, flags or people. The risograph objects in public/illustrations/riso stay for the portal artwork and step posters.",
+  "items": [
+    { "name": "folder", "stage": "docs", "job": "48b7418a-6cb6-4d69-ab3a-6811d117ed5b", "object": "a kraft paper document folder closed with a thin red elastic band, the edges of a few cream paper sheets peeking out", "masterSha256": "2bbb608b6c85c2d7c52101b21589990d6b46045d764296d31e6b2cf0869217c0" },
+    { "name": "envelope", "stage": "apply", "job": "f7a1b8c3-f997-4dfe-bc5e-99dc945e7b5a", "object": "an open cream paper envelope with a plain folded letter rising out of it and a small red wax seal on the flap", "masterSha256": "d027bf7a72897cebe1bacaa79a68c32bf1e241acbc8ad9dce812d69dd6d1f470" },
+    { "name": "coins", "stage": "dsu", "job": "4396fe3e-98b7-4d5d-8a01-416955ac8fcc", "object": "a clear glass jar filled with mixed brass and silver coins, lid off, with three coins stacked beside it", "masterSha256": "a208fb8cfb30586712016880ee340975105bc954d60cccb05a125ef13ffcedd7" },
+    { "name": "passport", "stage": "visa", "job": "669556a5-dad1-4611-b536-1ea42f9e4d97", "object": "a closed burgundy leather passport booklet with a completely plain cover, no emblem and no lettering, lying slightly tilted with a cream boarding card tucked inside", "masterSha256": "7a2d0d4f9faff0fb13742eb7c5379668f5424a45a2d1ef7fba31c2c3fcd24c63" },
+    { "name": "keys", "stage": "arrival", "job": "013d679e-7c65-4017-b2f8-7e1d91c71171", "object": "a ring of three brass keys with a small plain tan leather tag", "masterSha256": "6c4f2d8820a04404d23494ea04e4238fbf856dc9c96000e9bfb3ca27ce244a94" },
+    { "name": "map", "stage": "start / universities tile", "job": "f515a81d-9689-40da-bce2-bce8cdd08b73", "object": "a brass pocket compass with a plain cream dial lying on a folded cream paper map printed only with faint abstract contour lines and no words", "masterSha256": "16da73bd03c4d64b5fb589b06cb939576e54c0832a4369250ce05242e9ebd0ff" },
+    { "name": "diploma", "stage": "education12", "job": "7a42ec15-2b58-4760-9ed1-2781c7718175", "object": "a rolled cream parchment diploma scroll tied with a red satin ribbon and a wax seal, no visible writing", "masterSha256": "21420217a0c8321607a9a48f002d772c00d04992953d285fd4913db6c0016ae1" },
+    { "name": "stamp-pad", "stage": "documents tile", "job": "0b71afbc-36f9-4686-91f2-d2e1656c319b", "object": "a wooden-handled rubber stamp standing next to an open red ink pad in a small tin, with one blank cream paper card", "masterSha256": "dd152d535df6da9af362bec54e135ad3a1e485d4e191b0ee52224e1bab2f5c0c" },
+    { "name": "alarm", "stage": "reminders tile", "job": "85f4c8b4-43f8-48fe-9e54-1d472b489ec7", "object": "a classic cream enamel twin-bell alarm clock with a plain white dial, two hands and no numerals", "masterSha256": "fb837daef8ecff6c3a9e894189acd73686c61f25d8cde26c54671e0bd7118bc3" }
+  ],
+  "files": [
+    { "file": "public/illustrations/objects/folder-240.webp", "width": 240, "height": 179, "bytes": 10818 },
+    { "file": "public/illustrations/objects/folder-480.webp", "width": 480, "height": 358, "bytes": 19448 },
+    { "file": "public/illustrations/objects/envelope-240.webp", "width": 240, "height": 177, "bytes": 5992 },
+    { "file": "public/illustrations/objects/envelope-480.webp", "width": 480, "height": 354, "bytes": 11622 },
+    { "file": "public/illustrations/objects/coins-240.webp", "width": 240, "height": 179, "bytes": 15286 },
+    { "file": "public/illustrations/objects/coins-480.webp", "width": 480, "height": 358, "bytes": 40436 },
+    { "file": "public/illustrations/objects/passport-240.webp", "width": 240, "height": 188, "bytes": 7124 },
+    { "file": "public/illustrations/objects/passport-480.webp", "width": 480, "height": 375, "bytes": 15950 },
+    { "file": "public/illustrations/objects/keys-240.webp", "width": 240, "height": 183, "bytes": 15754 },
+    { "file": "public/illustrations/objects/keys-480.webp", "width": 480, "height": 365, "bytes": 36722 },
+    { "file": "public/illustrations/objects/map-240.webp", "width": 240, "height": 187, "bytes": 9798 },
+    { "file": "public/illustrations/objects/map-480.webp", "width": 480, "height": 374, "bytes": 21390 },
+    { "file": "public/illustrations/objects/diploma-240.webp", "width": 240, "height": 181, "bytes": 12152 },
+    { "file": "public/illustrations/objects/diploma-480.webp", "width": 480, "height": 362, "bytes": 25430 },
+    { "file": "public/illustrations/objects/stamp-pad-240.webp", "width": 240, "height": 186, "bytes": 12538 },
+    { "file": "public/illustrations/objects/stamp-pad-480.webp", "width": 480, "height": 372, "bytes": 26930 },
+    { "file": "public/illustrations/objects/alarm-240.webp", "width": 240, "height": 188, "bytes": 10070 },
+    { "file": "public/illustrations/objects/alarm-480.webp", "width": 480, "height": 375, "bytes": 20236 }
+  ]
+}

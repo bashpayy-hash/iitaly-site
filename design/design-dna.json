@@ -251,7 +251,7 @@
       "navigation_pattern": "top bar with four sections; breadcrumbs on guide pages; guides directory is a gallery with dots + play (5 s per card), section pages a row with previous/next arrows; dots and previous/next cards on step pages",
       "modal_style": "rare; comparison opens in a dialog with a warm scrim",
       "list_style": "hairline rows and capsule answers",
-      "component_notes": "carousels bleed to the window edges with the first card on the text column; /guides has a sand marquee strip above the band; one 1216px column for home, guides index and footer"
+      "component_notes": "carousels bleed to the window edges with the first card on the text column; nothing runs above the guide band; one 1216px column for home, guides index and footer; the cabinet overview is a stack of 28px tiles with 12px gaps like the apple.com home (hero «Now» tile, dark route board, 2×N grid of light/dark tiles with a studio-rendered object each)"
     }
   },
   "design_style": {
@@ -392,9 +392,9 @@
         "description": "not used"
       },
       "marquee": {
-        "enabled": true,
-        "description": "sand strip with topic titles above the guide band, constant 70s loop, paused on hover, static with reduced motion, aria-hidden",
-        "technology": "CSS transform animation"
+        "enabled": false,
+        "description": "removed 3 Nov (owner: «убери эти символы наверху»): nothing runs above the guide band",
+        "technology": "none"
       }
     },
     "text_effects": {

@@ -1,58 +1,72 @@
-/* Линейка предстоящих этапов: карточки в ряд, вещь этапа на тонированной
-   подложке со скруглением, ниже — центрированный текст и две кнопки. */
-.lineup { margin-top:12px; padding-top:28px; border-top:1px dotted #C9C0B1; container-type:inline-size; }
-.head { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 16px; margin-bottom:18px; }
-.head h2 { margin:0; font-size:clamp(24px,2.6vw,32px); font-weight:600; line-height:1.1; letter-spacing:-.03em; }
-.head p { margin:0; font:400 10.5px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#5C6056; }
-/* Строки карточек на одном уровне (subgrid): кнопки стоят в одну линию,
-   даже если название или первый шаг занимают две строки.
-   Owner, 3 Nov: «здесь всё обрезается на пол пути, всё должно
-   перераспределяться по всей длине в зависимости от масштаба» — the row
-   shows whole cards only, as many as fit the lineup's width (--n), the rest
-   one page away; nothing is cut at the column edge. */
-.row { --n:1; --gap:16px; display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,auto); grid-auto-columns:calc((100% - (var(--n) - 1) * var(--gap)) / var(--n)); column-gap:var(--gap); margin:0; padding:0 0 10px; overflow-x:auto; list-style:none; scroll-snap-type:x mandatory; scrollbar-width:none; }
-.row::-webkit-scrollbar { display:none; }
-.card { position:relative; display:grid; grid-row:span 7; grid-template-rows:subgrid; justify-items:center; align-content:start; min-width:0; text-align:center; scroll-snap-align:start; }
-.visual { display:grid; place-items:center; width:100%; aspect-ratio:4 / 3; padding:20px 28px; border-radius:28px; background:#EDE6D9; transition:transform 520ms cubic-bezier(.22,1,.36,1); }
-.visual[data-art=folder] { background:#E4E8E6; }
-.visual[data-art=envelope] { background:#EFE3DA; }
-.visual[data-art=coins] { background:#F1E6D2; }
-.visual[data-art=passport] { background:#E2E7E4; }
-.visual[data-art=keys] { background:#EFE8DA; }
-.visual img { width:100%; height:100%; object-fit:contain; }
-.visual img[data-riso-locked] { filter:grayscale(1); opacity:.55; }
-.card:hover .visual { transform:translateY(-4px); }
-.dots { display:flex; justify-content:center; gap:5px; min-height:10px; margin-top:16px; }
-.dots i { width:8px; height:8px; border:1px solid #8A8174; border-radius:50%; }
-.dots i[data-done] { border-color:#356450; background:#356450; }
-.label { margin:14px 0 0; color:#A33421; font-size:12px; font-weight:600; line-height:1.4; }
-.card h3 { margin:4px 0 0; font-size:22px; font-weight:600; line-height:1.2; letter-spacing:-.02em; text-wrap:balance; }
-.description { margin:8px 0 0; max-width:26ch; color:#3F3933; font-size:14px; line-height:1.45; }
-.meta { margin:10px 0 0; color:#5C6056; font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; }
-.actions { display:flex; flex-direction:column; align-items:center; gap:2px; margin-top:16px; }
-.primary { display:inline-flex; align-items:center; min-height:44px; padding:10px 18px; border-radius:999px; background:#352B28; color:#FAF6EE; font-size:14px; font-weight:500; text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
-.primary:active { transform:scale(.97); }
-.primary:hover { background:#241F1C; }
-.secondary { display:inline-flex; align-items:center; gap:2px; min-height:44px; color:#A33421; font-size:14px; text-decoration:none; }
-.secondary:hover { text-decoration:underline; text-underline-offset:4px; }
-.primary:focus-visible,.secondary:focus-visible,.arrows button:focus-visible,.row:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
+/* Сетка плиток кабинета по образцу главной apple.com (owner, 3 Nov:
+   «разграничения как на сайте эпл, почти один в один»): две колонки,
+   12px между плитками, светлая и тёмная в шахматном порядке, скругление
+   28px, без теней. В каждой плитке — лейбл, название, одна строка, метка,
+   две пилюли и большая вещь внизу. Ничего не прокручивается и не режется:
+   сколько плиток — столько и видно; на узком экране — одна колонка.
+   Owner, 3 Nov (скриншот): подписи вылезали из колонок — теперь каждая
+   строка плитки ограничена её шириной. */
+.lineup { margin-top:12px; container-type:inline-size; }
+.grid { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:0; padding:0; list-style:none; }
+
+.tile {
+  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-mono:#6A6458; --tile-label:#A33421;
+  --pill-bg:#B83A27; --pill-bg-hover:#A33421; --pill-ink:#FAF6EE; --pill-line:#B83A27; --pill-text:#A33421; --pill-text-hover:#FAF6EE; --pill-fill-hover:#A33421;
+  position:relative; display:grid; grid-row:span 6; grid-template-rows:subgrid; justify-items:center; min-width:0;
+  padding:44px 28px 0; border-radius:28px; background:var(--tile-bg); color:var(--tile-ink); text-align:center;
+}
+.tile > * { max-width:100%; min-width:0; }
+.label { margin:0; min-height:1.5em; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--tile-label); overflow-wrap:anywhere; }
+.tile h3 { align-self:start; max-width:min(100%,16ch); margin:6px 0 0; font-size:clamp(28px,3vw,36px); font-weight:600; line-height:1.08; letter-spacing:-.03em; text-wrap:balance; overflow-wrap:anywhere; }
+.line { align-self:start; max-width:min(100%,36ch); margin:10px 0 0; font-size:17px; line-height:1.4; letter-spacing:-.01em; color:var(--tile-quiet); text-wrap:pretty; overflow-wrap:anywhere; }
+.meta { align-self:start; margin:8px 0 0; min-height:1.5em; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:var(--tile-mono); text-wrap:balance; overflow-wrap:anywhere; }
+.actions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:20px; }
+.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:44px; padding:10px 20px; border-radius:999px; font-size:14px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1),color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
+.primary { background:var(--pill-bg); color:var(--pill-ink); }
+.primary:hover { background:var(--pill-bg-hover); }
+.secondary { border:1px solid var(--pill-line); color:var(--pill-text); }
+.secondary:hover { background:var(--pill-fill-hover); color:var(--pill-text-hover); }
+.primary:active,.secondary:active { transform:scale(.97); }
+.primary:focus-visible,.secondary:focus-visible { outline:2px solid var(--pill-text); outline-offset:3px; }
 .srOnly { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.arrows { display:flex; justify-content:flex-end; gap:10px; margin-top:6px; }
-.arrows button { display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:#E8E1D5; color:#241F1C; cursor:pointer; }
-.arrows button:hover { background:#DCD3C3; }
-@container (min-width:460px) { .row { --n:2; } }
-@container (min-width:700px) { .row { --n:3; } }
-@container (min-width:920px) { .row { --n:4; } }
-@container (min-width:1180px) { .row { --n:5; } }
-@media(max-width:600px) { .arrows { display:none; } }
-@media(prefers-reduced-motion:reduce) { .visual,.primary { transition:none; } .card:hover .visual,.primary:active { transform:none; } .card { animation:none; } }
-@media(forced-colors:active) { .visual { border:1px solid CanvasText; } }
-/* Motion: the stages ahead line up one after another (40ms apart). */
+
+/* Вещь стоит внизу плитки, как рендер товара у Apple: по центру, не шире
+   72% плитки, на общей нижней линии соседей. */
+.visual { display:flex; align-items:flex-end; justify-content:center; align-self:end; width:100%; height:250px; margin-top:28px; padding-bottom:24px; }
+.visual img { display:block; width:auto; max-width:72%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
+.tile:hover .visual img { transform:translateY(-6px); }
+.tile[data-tile-locked] .visual img { filter:grayscale(1); opacity:.45; }
+
+/* Две колонки от 700px: шахматный порядок — светлая, тёмная / тёмная,
+   светлая; нечётная последняя плитка растягивается на обе колонки. */
+@container (min-width:700px) {
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .tile:nth-child(4n+2),.tile:nth-child(4n+3) {
+    --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-mono:#B8AE9F; --tile-label:#F29A89;
+    --pill-bg:#FAF6EE; --pill-bg-hover:#EAD7BB; --pill-ink:#2A2420; --pill-line:#CFC6BA; --pill-text:#FAF6EE; --pill-text-hover:#2A2420; --pill-fill-hover:#FAF6EE;
+  }
+  .tile:last-child:nth-child(odd) { grid-column:1 / -1; }
+}
+@container (max-width:699.98px) {
+  .tile:nth-child(even) {
+    --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-mono:#B8AE9F; --tile-label:#F29A89;
+    --pill-bg:#FAF6EE; --pill-bg-hover:#EAD7BB; --pill-ink:#2A2420; --pill-line:#CFC6BA; --pill-text:#FAF6EE; --pill-text-hover:#2A2420; --pill-fill-hover:#FAF6EE;
+  }
+}
+@media(max-width:600px) {
+  .tile { padding:36px 20px 0; }
+  .tile h3 { font-size:28px; }
+  .line { font-size:16px; }
+  .visual { height:210px; margin-top:24px; padding-bottom:20px; }
+}
+@media(prefers-reduced-motion:reduce) { .visual img,.primary,.secondary { transition:none; } .tile:hover .visual img,.primary:active,.secondary:active { transform:none; } .tile { animation:none; } }
+@media(forced-colors:active) { .tile { border:1px solid CanvasText; } .secondary { border-color:ButtonText; } }
+/* Motion: the tiles line up one after another (40ms apart). */
 @media (prefers-reduced-motion: no-preference) {
-  .card { animation:lineup-in 520ms cubic-bezier(.22,1,.36,1) backwards; }
-  .card:nth-child(2) { animation-delay:40ms; }
-  .card:nth-child(3) { animation-delay:80ms; }
-  .card:nth-child(4) { animation-delay:120ms; }
-  .card:nth-child(n+5) { animation-delay:160ms; }
+  .tile { animation:lineup-in 520ms cubic-bezier(.22,1,.36,1) backwards; }
+  .tile:nth-child(2) { animation-delay:40ms; }
+  .tile:nth-child(3) { animation-delay:80ms; }
+  .tile:nth-child(4) { animation-delay:120ms; }
+  .tile:nth-child(n+5) { animation-delay:160ms; }
 }
 @keyframes lineup-in { from { opacity:0; translate:0 16px; } to { opacity:1; translate:0 0; } }

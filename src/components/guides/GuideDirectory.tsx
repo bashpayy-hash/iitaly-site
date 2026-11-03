@@ -59,10 +59,10 @@ export function GuideDirectory() {
     <div className={styles.categories} aria-label="Фильтр тем">
       {[{id:"all",title:"Все темы"},...GUIDE_STAGES].map(item=><button type="button" key={item.id} data-guide-category={item.id} aria-pressed={category===item.id} onClick={()=>{setTouched(true);setCategory(item.id);location("category",item.id);}}>{item.title}</button>)}
     </div>
-    <div className={styles.resultRow}>
-      <p className={styles.resultCount} role="status">{terms.length ? `Найдено тем: ${matches.length}` : `${matches.length} ${matches.length === 1 ? "тема" : matches.length < 5 ? "темы" : "тем"} · у каждой свой пошаговый разбор`}</p>
-      {stage && <Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Раздел целиком: {stage.title}<ArrowRight size={15} aria-hidden="true" /></Link>}
-    </div>
+    {/* Owner, 3 Nov: no caption over the band. The count is spoken only while
+        searching (it answers the query); the section link appears with a section. */}
+    <p className={terms.length ? styles.resultCount : "sr-only"} role="status">{terms.length ? `Найдено тем: ${matches.length}` : ""}</p>
+    {stage && <div className={styles.resultRow}><Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Раздел целиком: {stage.title}<ArrowRight size={15} aria-hidden="true" /></Link></div>}
     {matches.length ? <section className={styles.explorer} aria-label="Темы справочника" data-guide-explorer>
       <GuideTiles key={matches.map(guide => guide.id).join()} guides={matches} variant="gallery" autoplay={!touched && !query && category === "all"} />
     </section> : <section className={ui.directory}><h2>Такой темы не нашли</h2><p>Попробуй другое слово или выбери «Все темы».</p><button className={ui.textLink} type="button" onClick={()=>openGuideHelper(undefined,query)}>Спросить Веспи<ArrowRight size={17} aria-hidden="true" /></button></section>}

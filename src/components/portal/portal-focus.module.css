@@ -138,61 +138,87 @@
 .canvas[data-portal-page=stage] .routeCard{margin-bottom:24px;padding:20px 0;border:0;border-radius:0;background:transparent}
 
 
-/* Обзор кабинета по референсу mikes.cv: манифест в левом верхнем углу,
-   иллюминатор по центру кадра, под ним приветствие, справа бортовая
-   сводка «Сейчас». Ниже — одна колонка Flight Plan; текущий шаг раскрыт
-   под своим этапом, дальние этапы уходят в расфокус и в туман у края. */
-.canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); grid-template-areas:"manifest cabin now" "welcome welcome welcome" "route route route"; grid-template-rows:auto auto auto; gap:0 40px; max-width:1180px; margin:40px auto 0; }
-.manifest { grid-area:manifest; justify-self:start; align-self:start; margin-top:8px; }
-.cabin { grid-area:cabin; justify-self:center; position:relative; padding-right:4px; }
-.canvas[data-portal-page=overview] .welcome { justify-self:center; max-width:640px; padding:36px 0 0; text-align:center; }
-.canvas[data-portal-page=overview] .welcome h1 { margin:0 0 10px; font:600 clamp(30px,3vw,42px)/1.08 var(--font-sans); letter-spacing:-.03em; }
-.canvas[data-portal-page=overview] .welcomeMeta { color:var(--quiet); font-size:14px; line-height:1.6; }
+/* Обзор кабинета по образцу главной apple.com (owner, 3 Nov: «разграничения
+   как на сайте эпл, почти один в один»): плитки со скруглением 28px и
+   зазором 12px, без теней, светлая и тёмная по очереди. Первая, во всю
+   ширину, — «Сейчас»: приветствие-лейбл, следующий шаг заголовком, одна
+   строка Веспи, две пилюли и иллюминатор внизу, как рендер товара. Вторая,
+   тёмная, — маршрут: манифест рейса, «сделано заранее» и Flight Plan с
+   раскрытым текущим шагом под его этапом. Ниже — сетка 2×N плиток этапов,
+   документов, вузов и напоминаний (portal-lineup.module.css). */
+.canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"hero" "route"; grid-template-rows:auto auto; gap:12px; max-width:1296px; margin:16px auto 0; }
+.hero { grid-area:hero; display:grid; justify-items:center; padding:48px 32px 12px; border-radius:28px; background:#FFFDF9; text-align:center; }
+.hero > * { max-width:100%; min-width:0; }
+.canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }
+.canvas[data-portal-page=overview] .welcome h1 { margin:0; font:600 21px/1.25 var(--font-sans); letter-spacing:-.01em; }
+.canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }
+.cabin { position:relative; justify-self:center; margin-top:40px; padding-right:4px; }
 .mascotWindow { position:absolute; right:-112px; bottom:-10px; z-index:2; width:150px; height:120px; pointer-events:none; }
 .welcomeScene { width:100%; height:100%; transition:transform .24s ease,opacity .18s ease; }
 
-.nowCard { grid-area:now; justify-self:end; align-self:start; display:grid; gap:12px; width:min(100%,300px); margin-top:8px; padding:2px 0 2px 16px; border-left:1.5px dotted #B4AB9B; color:var(--ink); }
-.nowRubric { margin:0; font:400 10.5px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
+.nowCard { display:grid; justify-items:center; gap:0; width:min(100%,720px); margin-top:28px; color:var(--ink); }
+.nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
 .nowCard h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.nowNext { display:grid; gap:2px; }
-.nowLabel { margin:0; color:var(--quiet); font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
-.nowTitle { margin:0; color:var(--ink); font-size:15px; font-weight:600; line-height:1.35; letter-spacing:-.015em; }
-.dayCount { display:flex; align-items:baseline; flex-wrap:wrap; gap:8px; margin:0; }
-.dayCount strong { color:var(--accent-text); font-size:30px; font-weight:600; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
-.dayCount span { color:var(--quiet); font-size:13px; line-height:1.4; }
-.nowDeadline time { display:block; margin-top:4px; color:var(--quiet); font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; }
+.nowTitle { margin:0; color:var(--ink); font:600 clamp(32px,3.4vw,48px)/1.05 var(--font-sans); letter-spacing:-.03em; text-wrap:balance; overflow-wrap:anywhere; }
+.vespiQuote { margin:16px 0 0; padding:0; border:0; }
+.vespiQuote p { max-width:48ch; margin:0; color:var(--ink); font-size:17px; line-height:1.45; letter-spacing:-.01em; text-wrap:pretty; }
+.vespiQuote cite { display:block; margin-top:8px; color:var(--quiet); font:400 11px/1.5 var(--font-space-mono),monospace; font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
+.nowDeadline { display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:4px 12px; margin-top:14px; }
+.nowLabel { margin:0; color:var(--quiet); font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
+.dayCount { display:flex; align-items:baseline; gap:6px; margin:0; }
+.dayCount strong { color:var(--accent-text); font-size:22px; font-weight:600; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+.dayCount span,.nowDeadline time { color:var(--quiet); font-size:13px; line-height:1.5; }
+.nowDeadline time::before { content:"·"; margin-right:10px; }
 .nowCard [data-overdue=true] { color:var(--accent-text); }
-.vespiQuote { margin:2px 0 0; padding-left:12px; border-left:2px solid var(--accent); }
-.vespiQuote p { margin:0; color:var(--ink); font-size:13px; line-height:1.5; }
-.vespiQuote cite { display:block; margin-top:6px; color:var(--quiet); font:400 9.5px/1.5 var(--font-space-mono),monospace; font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
-.nowAhead h3 { margin:0 0 6px; color:var(--quiet); font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
-.nowAhead h3 span { margin-left:6px; color:var(--accent-text); }
-.nowAhead ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
-.nowAhead li { display:flex; align-items:flex-start; gap:6px; color:var(--quiet); font-size:12px; line-height:1.45; }
-.nowAhead li svg { flex-shrink:0; margin-top:2px; color:var(--status-green); }
+.nowActions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:24px; }
+.nowPrimary,.nowSecondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 22px; border-radius:999px; font-size:14px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1),color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
+.nowPrimary { background:var(--accent); color:var(--on-dark); }
+.nowPrimary:hover { background:var(--accent-text); }
+.nowSecondary { border:1px solid var(--accent); color:var(--accent-text); }
+.nowSecondary:hover { background:var(--accent-text); color:var(--on-dark); }
+.nowPrimary:active,.nowSecondary:active { transform:scale(.97); }
 
-.canvas[data-portal-page=overview] .routeCard { --flight-surface:#F7F4EA; justify-self:center; width:min(100%,760px); margin-top:56px; padding:0 0 18vh; }
+/* Тёмная плитка маршрута: шапка с манифестом и «заранее», ниже одна
+   колонка Flight Plan (760px) по центру. Цвета Flight Plan — светлые
+   на какао; синий самолётика — светлый оттенок из брифа 27 октября. */
+.canvas[data-portal-page=overview] .routeCard { grid-area:route; width:auto; margin:0; padding:0; }
+.routeCard :global([data-road-board]) { --flight-surface:#2A2420; display:grid; justify-content:center; grid-template-columns:minmax(0,760px); padding:40px 32px 44px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
+.routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-blue:#A8C9F7; --flight-surface:#2A2420; }
+.boardHead { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:28px; }
+.manifest { border-color:#6E6054; color:#B8AE9F; }
+.manifest > p:first-child { color:#FAF6EE; }
+.nowAhead { max-width:320px; }
+.nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
+.nowAhead h3 span { margin-left:6px; color:#F29A89; }
+.nowAhead ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
+.nowAhead li { display:flex; align-items:flex-start; gap:6px; color:#CFC6BA; font-size:12px; line-height:1.45; }
+.nowAhead li svg { flex-shrink:0; margin-top:2px; color:#8FC7A6; }
 .overviewDetail { display:grid; gap:4px; min-width:0; }
-.overviewDetail .stageLink { justify-self:start; }
-.canvas[data-portal-page=overview] .task[data-expanded=true] { margin:0; }
-/* Туман у нижнего края, как у mikes.cv: контент под ним уходит в расфокус. */
-.fog { position:fixed; inset:auto 0 0; z-index:3; height:88px; pointer-events:none; backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); -webkit-mask-image:linear-gradient(to bottom,transparent,#000 70%); mask-image:linear-gradient(to bottom,transparent,#000 70%); }
+.overviewDetail .stageLink { justify-self:start; color:#FAF6EE; }
+.canvas[data-portal-page=overview] .emptyStage { color:#CFC6BA; }
+/* The open task is a light card on the dark board: it keeps its own ink. */
+.canvas[data-portal-page=overview] .task[data-expanded=true] { margin:0; box-shadow:none; color:var(--ink); }
 
 @media(max-width:1100px) {
- .canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-areas:"manifest now" "cabin cabin" "welcome welcome" "route route"; gap:0 24px; margin-top:28px; }
- .cabin { margin-top:28px; }
+ .canvas[data-portal-page=overview] { margin-top:12px; }
+ .hero { padding:40px 24px 12px; }
+ .cabin { margin-top:32px; }
+ .routeCard :global([data-road-board]) { padding:32px 24px 36px; }
 }
 @media(max-width:640px) {
- .canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"manifest" "cabin" "welcome" "now" "route"; gap:0; margin-top:20px; }
- .cabin { margin-top:24px; }
+ .hero { padding:36px 20px 8px; }
+ .cabin { margin-top:28px; }
  .mascotWindow { right:-84px; bottom:-6px; width:110px; height:88px; }
- .canvas[data-portal-page=overview] .welcome { padding-top:24px; }
- .canvas[data-portal-page=overview] .welcome h1 { font-size:30px; }
- .canvas[data-portal-page=overview] .welcomeMeta { font-size:13px; }
- .nowCard { justify-self:stretch; width:auto; margin-top:24px; padding:16px 0 16px 14px; }
- .canvas[data-portal-page=overview] .routeCard { margin-top:32px; }
- .fog { height:64px; }
+ .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
+ .canvas[data-portal-page=overview] .welcomeMeta { font-size:12px; }
+ .nowCard { margin-top:22px; }
+ .nowTitle { font-size:30px; }
+ .vespiQuote p { font-size:16px; }
+ .nowActions { width:100%; }
+ .nowPrimary,.nowSecondary { flex:1 1 auto; }
+ .routeCard :global([data-road-board]) { padding:28px 16px 32px; border-radius:24px; }
+ .boardHead { margin-bottom:20px; }
 }
-@media(prefers-reduced-motion:reduce) { .welcomeScene { transition:none!important; } }
-@media(forced-colors:active) { .fog { display:none; } }
+@media(prefers-reduced-motion:reduce) { .welcomeScene { transition:none!important; } .nowPrimary,.nowSecondary { transition:none; } .nowPrimary:active,.nowSecondary:active { transform:none; } }
+@media(forced-colors:active) { .hero,.routeCard :global([data-road-board]) { border:1px solid CanvasText; } }
 @media(max-width:560px) { .overviewDetail .stageLink { margin-left:76px; } }

@@ -1,21 +1,9 @@
 /* Темы на полосе (owner, 3 Nov; Busy Bee Honey + apple.com). Плоско: ни
    рамок, ни теней — уровень задаёт цвет полосы. Тёплая палитра IITALY:
-   какао #2A2420 вместо коричневого Busy Bee, песок #EAD7BB вместо голубой
-   ленты, кремовые пилюли вместо медовых. */
+   какао #2A2420 вместо коричневого Busy Bee, кремовые пилюли вместо
+   медовых. Над полосой ничего не бежит (owner, 3 Nov: «убери эти символы
+   наверху»). */
 .shelf { margin:8px 0 56px; }
-
-/* Бегущая строка: ровная скорость (это лента, не жест), пауза под мышью,
-   с reduced motion — неподвижна. Во всю ширину окна без горизонтальной
-   прокрутки: фон дотягивается тенью и обрезается clip-path. */
-.marquee { position:relative; overflow:hidden; height:52px; background:#EAD7BB; color:#2A2420; box-shadow:0 0 0 100vmax #EAD7BB; clip-path:inset(0 -100vmax); }
-.marqueeTrack { display:flex; width:max-content; height:100%; align-items:center; }
-.marqueeItem { display:inline-flex; align-items:center; flex:0 0 auto; padding:0 22px; font-size:17px; font-weight:600; letter-spacing:-.01em; white-space:nowrap; }
-.marqueeItem::after { content:""; width:7px; height:7px; margin-left:44px; border-radius:50%; background:#B83A27; }
-@media (prefers-reduced-motion: no-preference) {
-  .marqueeTrack { animation:marquee 70s linear infinite; }
-  .marquee:hover .marqueeTrack { animation-play-state:paused; }
-}
-@keyframes marquee { to { transform:translateX(-50%); } }
 
 .band { position:relative; padding:52px 0 44px; background:#2A2420; color:#FAF6EE; box-shadow:0 0 0 100vmax #2A2420; clip-path:inset(0 -100vmax); }
 
@@ -41,12 +29,9 @@
 .primary:focus-visible,.secondary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
 
 @media(max-width:760px) {
-  .marquee { height:44px; }
-  .marqueeItem { padding:0 16px; font-size:15px; }
-  .marqueeItem::after { margin-left:32px; }
   .band { padding:40px 0 34px; }
   .stage { height:170px; }
   .tile h2 { margin-top:20px; font-size:22px; }
 }
 @media(prefers-reduced-motion:reduce) { .art,.primary { transition:none; } .tile:hover .art { transform:none; } }
-@media(forced-colors:active) { .band,.marquee { border-block:1px solid CanvasText; } }
+@media(forced-colors:active) { .band { border-block:1px solid CanvasText; } }

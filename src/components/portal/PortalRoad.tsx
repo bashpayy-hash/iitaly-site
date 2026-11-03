@@ -28,7 +28,7 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail }: {
+export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail, boardHead, lineupExtras }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -48,6 +48,10 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   /** Overview as a mikes.cv timeline; the current step opens under its stage. */
   timeline?: boolean;
   currentDetail?: ReactNode;
+  /** Overview: the flight manifest row at the top of the route board. */
+  boardHead?: ReactNode;
+  /** Overview: extra cabinet tiles after the stages ahead (documents, universities…). */
+  lineupExtras?: ReactNode;
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
@@ -235,7 +239,10 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
-    <div className={styles.route}>
+    {/* Overview: the board is the dark route tile (portal-focus.module.css);
+        the stages ahead follow it as a separate grid of tiles. */}
+    <div className={styles.route} data-road-board={overview || undefined}>
+      {overview && boardHead}
       {!condensed && !timeline && <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>}
       <div className={styles.summary}>
         {!condensed && <div className={styles.stageMarker}>
@@ -284,9 +291,9 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       </FlightPlan>
       {/* Without stages the timeline has no node to open under: keep the step block. */}
       {timeline && !condensed && !stops.length && currentDetail}
-      {overview && <PortalStageLineup stages={lineup} onSelectStage={onSelectStage} onOpenTask={task => onOpenTask(task)} />}
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
     </div>
+    {overview && <PortalStageLineup stages={lineup} extras={lineupExtras} onSelectStage={onSelectStage} onOpenTask={task => onOpenTask(task)} />}
     {progressFirst && focus}
   </section>;
 }
