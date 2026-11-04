@@ -114,7 +114,7 @@ export function PaymentSuccess() {
 
   return (
     <section className="px-5 py-16 sm:py-24">
-      <div className="mx-auto max-w-[620px] rounded-2xl border border-white/15 bg-white p-6 text-center sm:p-9" aria-busy={view.kind === "checking"}>
+      <div className="mx-auto max-w-[620px] rounded-3xl border border-warm-line bg-warm-white p-6 text-center sm:rounded-[28px] sm:p-10" aria-busy={view.kind === "checking"}>
         {view.kind === "activated" ? (
           <>
             <p className="text-apple-caption font-semibold text-green uppercase">Оплата подтверждена</p>
@@ -124,7 +124,7 @@ export function PaymentSuccess() {
             <p className="mt-3 text-apple-body-sm text-cloud-body">
               Stripe подтвердил платёж, а IITALY автоматически создал твой маршрут.
             </p>
-            <div className="mt-6 rounded-xl border border-white/15 bg-carbon p-4 text-left">
+            <div className="mt-6 rounded-2xl bg-carbon p-5 text-left">
               <p className="text-apple-caption text-cloud-meta">Фамилия</p>
               <b className="text-cloud-white">{view.surname}</b>
               <p className="mt-4 text-apple-caption text-cloud-meta">Код кабинета</p>

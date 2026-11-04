@@ -93,7 +93,10 @@ try {
     await visit(page);await noOverflow(page,`initial ${width}`);
     assert.equal(await page.locator('.paper-layer-global').count(),0);
     assert.equal(await page.locator('[data-university-page]').count(),1);
-    assert.equal(await page.getByRole('link',{name:'IITALY — главная',exact:true}).count(),1);
+    // One home link in the header; since 4 November the shared paper footer carries its own wordmark link, as on every public page.
+    assert.equal(await page.locator('header').getByRole('link',{name:'IITALY — главная',exact:true}).count(),1);
+    assert.equal(await page.locator('footer').getByRole('link',{name:'IITALY — главная',exact:true}).count(),1,'The shared MarketingFooter is rendered on /universities');
+    assert.match(await page.locator('footer').innerText(),/Италия ближе, чем кажется/,'/universities uses the same paper footer as the other public pages');
     assert.equal(await page.evaluate(()=>document.documentElement.classList.contains('lenis')),false);
     for(const art of await page.locator('[data-university-art]').all()) {
       assert(await art.isVisible());
