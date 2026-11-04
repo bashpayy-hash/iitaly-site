@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Onest, Space_Mono, Inter_Tight } from "next/font/google";
+import { Onest, JetBrains_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
@@ -22,11 +22,14 @@ const onest = Onest({
 });
 
 // Моноширинный — только для табличных технических подписей (сроки, коды,
-// метаданные), не альтернатива основной гарнитуре.
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
+// метаданные, ярлыки капсом), не альтернатива основной гарнитуре. Owner,
+// 4 Nov: «кривые тексты много где» — Space Mono не содержит кириллицы, и на
+// iPad подписи вроде «ЭТАП 1 ИЗ 1» собирались из системного фолбэка и
+// латинских цифр Space Mono. JetBrains Mono несёт кириллицу (включая
+// казахские буквы cyrillic-ext) одним variable-файлом.
+const jetBrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   display: "swap",
 });
 
@@ -78,7 +81,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ru"
-      className={`${onest.variable} ${spaceMono.variable} ${interTight.variable} h-full antialiased`}
+      className={`${onest.variable} ${jetBrainsMono.variable} ${interTight.variable} h-full antialiased`}
     >
       <body className={`${paper.canvas} min-h-full flex flex-col text-ink font-sans`}>
         <MotionProvider>

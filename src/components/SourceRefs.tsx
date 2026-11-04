@@ -8,7 +8,7 @@ export function SourceRefs({ ids }: { ids: readonly SourceId[] }) {
         {ids.map((id) => {
           const source = ADMISSION_SOURCES[id];
           return <li key={id}>
-            <a href={source.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{source.label} ↗</a>
+            <a href={source.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{source.label} ↗︎</a>
             <span className="block text-apple-caption leading-relaxed">{source.scope}</span>
           </li>;
         })}

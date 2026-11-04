@@ -41,7 +41,7 @@
   --font-display: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
   --font-sans: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
   --font-editorial: Charter, Georgia, serif;
-  --font-mono: var(--font-space-mono), "SF Mono", "Courier New", monospace;
+  --font-mono: var(--font-jetbrains-mono), "SF Mono", "Courier New", monospace;
 
   --radius-pill: 999px;
   --radius-xl: 28px;

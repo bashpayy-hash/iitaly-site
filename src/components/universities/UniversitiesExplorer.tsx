@@ -174,7 +174,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 cities={filteredCities.size}
                 filtered={filtersActive}
               />
-              {!portalSelection && <Link href="/plan" className={ui.navigatorLink}>Подобрать по моей ситуации <span aria-hidden="true">↗</span></Link>}
+              {!portalSelection && <Link href="/plan" className={ui.navigatorLink}>Подобрать по моей ситуации <span aria-hidden="true">↗︎</span></Link>}
             </div>
             {!portalSelection && cityShortcut}
           </div>

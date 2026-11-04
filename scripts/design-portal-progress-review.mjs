@@ -138,7 +138,8 @@ try{
   const base=process.env.BASE_SHA||'HEAD';
   // The user explicitly replaced the brand mark on 24 October. The portal's
   // global palette, typography, progress and interaction contracts stay fixed.
-  const sharedFontOnly=source=>source.replace('  --font-editorial: Charter, Georgia, serif;\n','');
+  // The mono token may change too (4 Nov: JetBrains Mono carries Cyrillic, Space Mono did not).
+  const sharedFontOnly=source=>source.replace('  --font-editorial: Charter, Georgia, serif;\n','').replace(/  --font-mono: [^\n]+\n/,'');
   for(const file of ['src/app/globals.css'])assert.equal(sharedFontOnly(await readFile(file,'utf8')),sharedFontOnly(execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'})),file+' preserves all existing styles');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);

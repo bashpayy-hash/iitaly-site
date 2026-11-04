@@ -11,6 +11,9 @@ const approvedPresentationPaths = new Set([
   // illustrated touches), Vespi scenes on the stage board and settings, a
   // peeking Vespi beside a larger map, and Apple-like information blocks.
   // Presentation only: roadmap, profile, reminder and map data stay as they are.
+  // Same day: the mono label face gains Cyrillic (JetBrains Mono replaces
+  // Space Mono in layout.tsx and globals.css, both listed below), and the
+  // cabinet board stacks without duplicated counters on narrow screens.
   'src/components/portal/PortalArtwork.tsx', 'src/components/portal/RisoArtImage.tsx',
   'src/components/portal/portalStageArt.ts', 'src/components/portal/PortalRoad.tsx',
   'src/components/portal/ProfileSection.tsx', 'src/components/portal/HelpSection.tsx',
@@ -279,8 +282,10 @@ for (const path of [
 ]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
 // The shared Modulo 1 serif stack may be extracted into exactly one token;
 // every existing global rule and palette token remains byte-for-byte unchanged.
-const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '');
-assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial font token may change in globals');
+// The mono token is exempt as well (2026-11-04: JetBrains Mono replaces Space
+// Mono because the latter has no Cyrillic; design-vespi-system-review checks it).
+const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '').replace(/  --font-mono: [^\n]+\n/, '');
+assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial and mono font tokens may change in globals');
 assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');
 assert(!/HowItWorks/.test(readFileSync('src/app/page.tsx','utf8')),'Do not restore the removed home section');
 for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBand.tsx']) {

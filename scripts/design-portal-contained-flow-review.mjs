@@ -112,7 +112,7 @@ async function setup(width, current = 'shortlist') {
   page.on('popup', popup => popups.push(popup.url()));
   await page.goto(`${origin}/portal?auth=login`, { waitUntil: 'networkidle' });
   // Guest workspace is the default; explicitly connect the cloud fixture.
-    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗', exact: true }).click();
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗︎', exact: true }).click();
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
   await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
   await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();

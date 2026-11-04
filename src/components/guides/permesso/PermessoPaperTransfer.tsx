@@ -87,7 +87,7 @@ export function PermessoPaperTransfer({ active, scenario, values, today, onEdit,
       <details><summary>Что нужно уточнить отдельно ({deferred.length})</summary><div className={styles.jumpList}>{deferred.map(s => <button type="button" key={s.id} onClick={() => jump(steps.findIndex(x => x.id === s.id))}>{fieldName(s.fields[0])} · {s.fields[0].meta.ru}</button>)}</div><p>«Отложить» не означает «проверено». Не переносим неподтверждённое правило автоматически.</p></details>
       <fieldset className={styles.checklist}><legend>Проверяешь самостоятельно</legend>{CHECKS.map((label, i) => <label key={label}><input type="checkbox" checked={!!checks[i]} onChange={e => setChecks(previous => ({ ...previous, [i]: e.target.checked }))} /><span>{label}</span></label>)}</fieldset>
       <p className={styles.pagesNote}>Страницы 4–8 не вырывай. Этот помощник охватывает обычный студенческий сценарий без семьи, а не все специальные случаи.</p>
-      <div className={styles.sources}><a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинальный Modulo 1 ↗</a><a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Сверить официальные расходы ↗</a></div>
+      <div className={styles.sources}><a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинальный Modulo 1 ↗︎</a><a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Сверить официальные расходы ↗︎</a></div>
       <button type="button" className={styles.secondary} onClick={() => jump(Math.max(0, cursor))}>Назад к шагам</button>
     </div> : <>
       <div className={styles.stepLayout}>
