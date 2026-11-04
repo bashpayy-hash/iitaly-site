@@ -21,7 +21,8 @@
    сам шаг и переходы. Без заголовка «Шаги этапа», счётчика штампов и
    ряда «01–05». */
 .stageEyebrow { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 6px; min-width:0; }
-.stageEyebrow h1,.stageEyebrow .stagePosition { margin:0; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
+/* No text-transform here: the h1 must read exactly as the stage title (reviews compare innerText). */
+.stageEyebrow h1,.stageEyebrow .stagePosition { margin:0; font:500 13px/1.5 var(--font-sans); letter-spacing:.01em; }
 .stageEyebrow h1 { color:var(--accent-text); }
 .stageEyebrow h1:focus { outline:none; }
 .stageEyebrow .stagePosition { color:var(--quiet); font-variant-numeric:tabular-nums; }

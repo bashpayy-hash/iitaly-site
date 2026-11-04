@@ -129,8 +129,11 @@ try {
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-polished-${width}.png`), animations: 'disabled' });
     const afterLayout = await heroLayout(page);
     await writeFile(resolve(output, `hero-layout-${width}.json`), JSON.stringify({beforeLayout,afterLayout},null,2));
-    const campus = page.locator('picture img[src*="campus-arrival"]');
-    assert.equal(await campus.evaluate(img => img.complete && img.naturalWidth > 0), true);
+    // Owner, 4 Nov: the first screen is the welcome scene (Vespi in the Bologna
+    // arcade) with the copy on the cream panel; the still is the poster that must load.
+    const scene = page.locator('[data-section="hero"] img[data-hero-landscape]');
+    assert.equal(await scene.evaluate(img => img.complete && img.naturalWidth > 0), true, 'The welcome landscape loads');
+    assert.equal(await page.locator('[data-section="hero"] [data-hero-panel] h1').count(), 1, 'The hero copy sits on the panel over the scene');
     const primary = page.getByRole('link', { name: /Составить план бесплатно/ });
     const ctaBox = await primary.boundingBox();
     assert(ctaBox && ctaBox.y + ctaBox.height < 900, 'Free plan action visible in first viewport');

@@ -93,7 +93,8 @@ try {
    assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),stage.tasks.length);
    if(stage.tasks.length>1){await page.locator('[data-stage-switcher] [data-story-pill]').last().click();assert.equal(new URL(page.url()).searchParams.get('step'),stage.tasks.at(-1).id);assert.equal(await page.locator('[data-task-check]').count(),1);}
    assert.equal(await page.locator('[data-portal-now]').count(),0);
-   assert.equal(await page.locator('[data-portal-road] [data-flight-plan][data-compact=true]').count(),1);
+   // Owner, 4 Nov («один блок, один поинт»): no route strip on a stage page.
+   assert.equal(await page.locator('[data-portal-road],[data-flight-plan]').count(),0,'A stage page is one tile, without the route');
    await noOverflow(page);
   }
   await portalStage(page,'docs');
