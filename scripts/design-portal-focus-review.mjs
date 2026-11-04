@@ -113,7 +113,8 @@ try {
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
         greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,grain:style('[data-portal-editorial]').backgroundImage,grainBlend:style('[data-portal-editorial]').backgroundBlendMode,
-        left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
+        left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor,
+        tileRadius:style('[data-step-tile]').borderRadius,tileBackground:style('[data-step-tile]').backgroundColor};
     });
     assert.match(editorial.greeting,/Inter Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
@@ -126,7 +127,9 @@ try {
     assert.equal(editorial.paper,'rgb(247, 244, 234)');
     // Owner 2026-10-25: visible 6% grain as a background layer, not a fixed full-screen filter (repaints on scroll on cheap Androids).
     assert.match(editorial.grain,/^url\("data:image\/svg\+xml.*feTurbulence.*opacity='0\.06'/);assert.match(editorial.grainBlend,/^multiply/);
-    assert.equal(editorial.left,'2px');assert.equal(editorial.leftColor,'rgb(53, 43, 40)');assert.equal(editorial.radius,'20px');assert.equal(editorial.background,'rgb(251, 249, 243)');
+    // Owner, 4 Nov: the step lies flat on its own 28px tile — no frame, no inner card.
+    assert.equal(editorial.left,'0px','The step card has no frame of its own');assert.equal(editorial.background,'rgba(0, 0, 0, 0)','The step card is flat on the tile');
+    assert.equal(editorial.tileRadius,width>640?'28px':'24px','The step tile shares the cabinet tile radius');assert.equal(editorial.tileBackground,'rgb(255, 253, 249)');
     assert.equal(await page.locator('[data-portal-grain]').count(),0,'No fixed full-screen grain overlay');
     assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
