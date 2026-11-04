@@ -103,7 +103,7 @@
 .finalChoices .chooseButton:hover { background:#EFE7D8; }
 @media(max-width:767px) { .decision { gap:18px; }.decisionCopy { flex-basis:100%; }.planLink { width:100%; justify-content:space-between; }.finalChoices { display:grid; grid-template-columns:minmax(0,1fr); }.finalChoices .chooseButton { justify-content:flex-start; } }
 
-.viewModes{display:flex;align-items:center;gap:10px;margin:18px 0 0;color:#6E685D;font:400 11px/1.4 var(--font-jetbrains-mono),monospace;text-transform:uppercase;letter-spacing:.06em}
+.viewModes{display:flex;align-items:center;gap:10px;margin:18px 0 0;color:#6E685D;font:400 11px/1.4 var(--font-sans);text-transform:uppercase;letter-spacing:.06em}
 .viewModes button{min-height:44px;padding:10px 4px;color:#6E685D;background:none;border:0;text-transform:uppercase}.viewModes button[aria-pressed=true]{color:#352B28;border-bottom:2px solid #B83A27}.viewModes button:focus-visible{outline:2px solid #A33421;outline-offset:3px}
 /* Итог выбора: после «Выбрать этот университет» — тёмная плашка у нижнего
    края экрана с переходом в Мой план. */
@@ -122,6 +122,6 @@
 .deckBar .viewModes { margin:0; }
 /* Сцена сравнения — пастельная, как у Fiddle; бумага сайта просвечивает. */
 .section:not(.embedded) { background:linear-gradient(180deg,rgba(244,226,212,.7) 0%,rgba(247,240,230,.5) 42%,rgba(230,244,241,.85) 100%); border-top:0; }
-.deckBar { font-family:var(--font-jetbrains-mono),monospace; }
+.deckBar { font-family:var(--font-sans); }
 .deckBar .selectionActions p { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#2A2420; }
 .deckBar .selectionActions button { font-family:var(--font-sans); }

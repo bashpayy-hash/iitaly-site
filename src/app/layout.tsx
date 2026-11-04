@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Onest, JetBrains_Mono, Inter_Tight } from "next/font/google";
+import { Onest, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
@@ -21,17 +21,12 @@ const onest = Onest({
   display: "swap",
 });
 
-// Моноширинный — только для табличных технических подписей (сроки, коды,
-// метаданные, ярлыки капсом), не альтернатива основной гарнитуре. Owner,
-// 4 Nov: «кривые тексты много где» — Space Mono не содержит кириллицы, и на
-// iPad подписи вроде «ЭТАП 1 ИЗ 1» собирались из системного фолбэка и
-// латинских цифр Space Mono. JetBrains Mono несёт кириллицу (включая
-// казахские буквы cyrillic-ext) одним variable-файлом.
-const jetBrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin", "cyrillic", "cyrillic-ext"],
-  display: "swap",
-});
+// Моноширинной гарнитуры больше нет (owner, 4 Nov: «убери вот этот второй
+// шрифт»). Технические подписи, счётчики и ярлыки капсом набраны тем же
+// Onest: токен --font-mono в globals.css указывает на него, чтобы ни одна
+// подпись не выглядела чужим шрифтом. До этого стояла Space Mono без
+// кириллицы (на iPad подписи собирались из двух шрифтов), затем один день —
+// JetBrains Mono.
 
 // Apple-хром сайта (везде, кроме /universities) набран практическим
 // аналогом SF Pro: Inter Tight, самохостится через next/font, та же
@@ -81,7 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ru"
-      className={`${onest.variable} ${jetBrainsMono.variable} ${interTight.variable} h-full antialiased`}
+      className={`${onest.variable} ${interTight.variable} h-full antialiased`}
     >
       <body className={`${paper.canvas} min-h-full flex flex-col text-ink font-sans`}>
         <MotionProvider>

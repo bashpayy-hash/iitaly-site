@@ -113,7 +113,8 @@ try {
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
         greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,grain:style('[data-portal-editorial]').backgroundImage,grainBlend:style('[data-portal-editorial]').backgroundBlendMode,
-        left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor};
+        left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor,
+        tileRadius:style('[data-step-tile]').borderRadius,tileBackground:style('[data-step-tile]').backgroundColor};
     });
     assert.match(editorial.greeting,/Inter Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
@@ -126,7 +127,9 @@ try {
     assert.equal(editorial.paper,'rgb(247, 244, 234)');
     // Owner 2026-10-25: visible 6% grain as a background layer, not a fixed full-screen filter (repaints on scroll on cheap Androids).
     assert.match(editorial.grain,/^url\("data:image\/svg\+xml.*feTurbulence.*opacity='0\.06'/);assert.match(editorial.grainBlend,/^multiply/);
-    assert.equal(editorial.left,'2px');assert.equal(editorial.leftColor,'rgb(53, 43, 40)');assert.equal(editorial.radius,'20px');assert.equal(editorial.background,'rgb(251, 249, 243)');
+    // Owner, 4 Nov: the step lies flat on its own 28px tile — no frame, no inner card.
+    assert.equal(editorial.left,'0px','The step card has no frame of its own');assert.equal(editorial.background,'rgba(0, 0, 0, 0)','The step card is flat on the tile');
+    assert.equal(editorial.tileRadius,width>640?'28px':'24px','The step tile shares the cabinet tile radius');assert.equal(editorial.tileBackground,'rgb(255, 253, 249)');
     assert.equal(await page.locator('[data-portal-grain]').count(),0,'No fixed full-screen grain overlay');
     assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
@@ -161,11 +164,14 @@ try {
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
     // Hero tile: greeting as the label, the next step as the headline, one
     // line, two pills; the landscape fills the lower part of the tile with
-    // Vespi at its right edge. Then the dark route board whose current stage
-    // opens the next task under its node.
-    const route=await page.locator('[data-route-card]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox();
-    assert(work.y>=route.y&&work.y+work.height<=route.y+route.height+1,'The current step opens inside the route board');
-    const stop=await page.locator('[data-road-stage=docs]').boundingBox();assert(work.y>=stop.y+stop.height-6&&work.y-stop.y-stop.height<24,'The step sits right under its stage');
+    // Vespi at its right edge. Then the dark route board (route only), then
+    // the current step in its own light tile (owner, 4 Nov: «перебор
+    // информации на маленькое пространство»), then the lineup.
+    const route=await page.locator('[data-road-board]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox(),tile=await page.locator('[data-step-tile]').boundingBox();
+    assert(tile.y>=route.y+route.height-1&&tile.y-(route.y+route.height)<=13,'The current step stands in its own tile right after the route board');
+    assert(work.y>=tile.y&&work.y+work.height<=tile.y+tile.height+1,'The step and its stage link sit inside the step tile');
+    assert.equal(await page.locator('[data-road-board] [data-task-check]').count(),0,'The dark board carries only the route');
+    assert.equal(await page.locator('[data-road-board] [data-flight-stage-preview]').count(),0,'The current stage opens no preview until chosen');
     const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
     const now=await page.locator('[data-portal-now]').boundingBox();
     assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
@@ -185,7 +191,7 @@ try {
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
     if(width>600){assert(card.height<=220,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+10);}
-    else {assert(Math.abs(openButton.width-(card.width-28))<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
+    else {assert(Math.abs(openButton.width-card.width)<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
     assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(184, 58, 39)');
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
     assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),26);

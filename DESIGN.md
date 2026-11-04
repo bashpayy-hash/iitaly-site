@@ -370,3 +370,18 @@ Owner, from an iPad split view of the live cabinet: «вот здесь конк
 - **Arrows as text.** `↗` has an emoji form, and iOS draws the bare character as a blue square. Every `↗` in the components («Личный кабинет ↗», «Подключить облачный кабинет ↗», «Составить план бесплатно ↗», source links) carries the text-presentation selector U+FE0E; the review names follow.
 - **Board without repeats.** With the stat blocks beside the route, the summary row no longer prints the route figure (`[data-road-count]` stays in the DOM for the reviews; the «Шаг сохранён» note is inline); below 1100px, where the scene and stats stand above the route, the big stage marker is hidden too — the current stop names the stage right under the figures. The opened step is a full-width card from 760px down (`FlightPlan` `.detail` has no left margin there); the «ahead» list aligns left on the stacked board.
 - **Hero frame on 480–640px.** The right-aligned Tuscan frame still showed the scooter's front wheel at the left edge; the image is scaled 1.45× from its right edge in that range (1.1× below 480px) so Vespi is out of frame on phones and in full from 641px up.
+
+## No second typeface · 4 November 2026
+
+Owner, on the live cabinet board: «Убери вот этот второй шрифт».
+
+- **One face.** The monospace face is gone: `layout.tsx` loads Onest and Inter Tight only, `--font-mono` in `globals.css` resolves to the Onest stack (the token stays so `font-mono` utilities keep working), and every `var(--font-jetbrains-mono), monospace` in the modules became `var(--font-sans)`. Technical labels, counters, stage indices, poster codes and eyebrows keep their sizes, caps and tracking (11px, .06–.08em), now in Onest. The Modulo 1 form replica keeps Courier New in its cells, because it reproduces the paper form.
+- **Reviews.** `design-vespi-system-review` asserts the mono token points at Onest and that `layout.tsx` loads no `*Mono(` face; the `globals.css` comparisons in `design-guard` and `design-portal-progress-review` keep ignoring the mono token line.
+
+## A roomier cabinet: the step leaves the board · 4 November 2026
+
+Owner: «в личном кабинете идёт перебор информации на маленькое пространство — не бойся его расширять, не бойся делать дополнительные ссылки; главное, чтобы всё было наглядно, понятно, продемонстрировано».
+
+- **The current step has its own tile.** The open step no longer hangs under its stop inside the dark route board. The overview now reads hero («Сейчас») → dark board → light step tile → lineup. The tile (`PortalRoad` `afterBoard`, `PortalFocus` `stepTile`, `[data-step-tile]`) carries a caps label («Текущий шаг · этап 2 из 6 · Документы»), the flat step card (check, 34px index, 22px title, explainer, dates) with its actions on the right, and the «Открыть этап» link. All the step's ids and controls (`[data-portal-overview]`, `[data-task-check]`, `[data-road-open]`, `[data-task-ready]`) are the same elements in a new place.
+- **The board is the route only.** Scene and stat blocks beside the stage list; the current stage opens a preview under its stop only when chosen (`previewId`), labelled «Сейчас». Padding grew to 44/40/48px, stops to 20px.
+- **Reviews.** `design-portal-focus-review` asserts the tile right after the board (≤13px), the step inside the tile, no check control and no preview inside the board, and the phone action spanning the flat card; `design-portal-progress-review` lets keyboard focus pass through the step tile between the last stop and the lineup.

@@ -138,7 +138,7 @@ try{
   const base=process.env.BASE_SHA||'HEAD';
   // The user explicitly replaced the brand mark on 24 October. The portal's
   // global palette, typography, progress and interaction contracts stay fixed.
-  // The mono token may change too (4 Nov: JetBrains Mono carries Cyrillic, Space Mono did not).
+  // The mono token may change too (4 Nov: it points at Onest — the owner asked for no second typeface).
   const sharedFontOnly=source=>source.replace('  --font-editorial: Charter, Georgia, serif;\n','').replace(/  --font-mono: [^\n]+\n/,'');
   for(const file of ['src/app/globals.css'])assert.equal(sharedFontOnly(await readFile(file,'utf8')),sharedFontOnly(execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'})),file+' preserves all existing styles');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
@@ -156,12 +156,13 @@ try{
     await sticky(page);await axe(page,'Plan '+viewport.width);await portalDestination(page,'Обзор');
     if(viewport.width===1440){
       await road(page).locator('[aria-current=step]').focus();
-      // The opened step sits under its stage, so Tab visits it before the next stage.
+      // The opened step stands in its own tile right after the board (owner,
+      // 4 Nov), so Tab visits its controls before the next stage.
       let next=null;
       for(let i=0;i<12&&!next;i++){
         await page.keyboard.press('Tab');
         next=await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage'));
-        if(!next)assert(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-flight-detail]'))),'Between stages focus only visits the opened step');
+        if(!next)assert(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-flight-detail],[data-step-tile]'))),'Between stages focus only visits the opened step');
       }
       assert.equal(next,'documents','Stage links follow native keyboard order');
       // The next stage is a lineup card after the line; Enter opens its page.
