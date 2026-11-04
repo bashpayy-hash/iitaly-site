@@ -82,7 +82,41 @@
 .ghost { min-height: 44px; padding: 8px 0; color: var(--i-link, #141413); font-size: 16px; }
 .ghost:hover { text-decoration: underline; text-underline-offset: 5px; }
 .hero { position: relative; }
-.heroIntro { --hero-gutter: max(32px, calc((100vw - 1216px)/2)); display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr); align-items: center; gap: 8px; padding: 64px var(--hero-gutter) 56px; background: transparent; }
+/* Welcome-сцена (owner, 4 Nov): пейзаж с Веспи во всю ширину под шапкой,
+   текст на кремовой панели справа — та же панель, что у FAQ (trust-faq):
+   rgba(255,253,249,.94) с размытием, 28px. Кадр чуть отстаёт от прокрутки
+   (scroll-driven, без JS; увеличен на 12%, чтобы сдвиг ±5% не открывал
+   края), на нём — видеопетля (LivingLandscape). На телефоне кадр сверху
+   4:3, панель под ним на кремовом. Текст появляется одной короткой
+   последовательностью (520 мс, шаг 60 мс); с prefers-reduced-motion всё
+   стоит на месте. */
+.heroScene { --hero-gutter: max(32px, calc((100vw - 1216px)/2)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 580px); align-items: center; min-height: min(720px, 84vh); overflow: clip; background: #2A2420; color: #141413; }
+.heroSceneBox { position: absolute; inset: 0; z-index: -1; overflow: clip; }
+.heroLandscape { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 30% 62%; }
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .heroLandscape { animation: hero-scene-drift linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+  }
+}
+@keyframes hero-scene-drift { from { transform: scale(1.12) translateY(-5%); } to { transform: scale(1.12) translateY(5%); } }
+.heroPanel { grid-column: 2; margin: 48px var(--hero-gutter) 48px 24px; padding: 40px 40px 32px; border-radius: 28px; background: rgba(255,253,249,.94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.heroPanel .heroTitle { font-size: clamp(36px, 3.4vw, 52px); }
+.heroPanel .heroDescription { font-size: 18px; }
+@media (prefers-reduced-motion: no-preference) {
+  .heroPanel > * { animation: hero-rise 520ms cubic-bezier(.22,1,.36,1) backwards; }
+  .heroPanel > :nth-child(2) { animation-delay: 60ms; }
+  .heroPanel > :nth-child(3) { animation-delay: 120ms; }
+  .heroPanel > :nth-child(4) { animation-delay: 180ms; }
+  .heroPanel > :nth-child(n+5) { animation-delay: 240ms; }
+}
+@keyframes hero-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+@media (max-width: 1023px) {
+  .heroScene { grid-template-columns: minmax(0, 1fr); align-items: stretch; min-height: 0; }
+  .heroSceneBox { position: relative; z-index: 0; aspect-ratio: 4 / 3; max-height: 60vh; }
+  .heroLandscape { object-position: 28% 62%; }
+  .heroPanel { grid-column: 1; margin: 0; padding: 28px 20px 24px; border-radius: 0; background: #FAF6EE; backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@media (forced-colors: active) { .heroScene, .heroPanel { border: 1px solid CanvasText; } }
 .heroCopy { position: relative; z-index: 1; min-width: 0; text-align: left; }
 /* Картинка кампуса — панель, а не вставленный прямоугольник. Справа она
    доходит до края окна, сверху упирается в шапку, снизу — в тёмную секцию:
@@ -93,10 +127,9 @@
    Левый край рисунка растворяется в белый, а фон героя — #faf8f5, поэтому
    белый прямоугольник был виден на сером. Маска уводит левую треть в
    прозрачность, и рисунок переходит прямо в фон страницы. */
+/* Картинка кампуса (CampusArtwork) осталась на странице входа в кабинет;
+   на главной её место заняла welcome-сцена выше. */
 .campusArtwork { position: relative; display: block; align-self: stretch; min-height: 480px; margin: 0; overflow: hidden; border-radius: 36px 100px 36px 36px; pointer-events: none; user-select: none; }
-/* Картинка лежит абсолютно и не участвует в расчёте высоты: высоту героя
-   задаёт текст. Иначе на широких экранах собственные пропорции рисунка
-   растягивали весь первый экран. */
 .campusArtwork > picture > img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 66% center;  }
 .campusCompanion { position: absolute; bottom: 24px; left: 18%; width: 192px; }
 .campusCompanion img { display: block; width: 100%; height: auto; }
@@ -210,14 +243,12 @@
   .mobileMenu nav a { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--i-line); font-size: 18px; }
   .mobileMenu nav [aria-current="page"] { color: var(--i-link); font-weight:600; border-bottom-color:var(--i-signal); }
   .mobileMenu nav button { min-height: 44px; margin-top: 16px; color: var(--i-link); text-align: left; }
-  .heroIntro { grid-template-columns: 1fr; gap: 16px; padding: 40px 20px 0; }
-  .heroCopy { text-align: center; padding: 0; }
-  .heroCopy .actions { justify-content: center; }
+  .heroCopy { text-align: left; padding: 0; }
+  .heroCopy .actions { justify-content: flex-start; }
   .campusArtwork { width: 100%; max-width: 480px; min-height: 0; margin: 0 auto; height: 210px; overflow: hidden; }
   .campusArtwork > picture > img { min-height: 0; height: 100%; object-fit: cover; object-position: 70% 64%; -webkit-mask-image: none; mask-image: none; }
-  .heroNote { margin-inline: auto; }
-  .heroTitle { margin: 16px auto 0; font-size: clamp(32px, 8.5vw, 54px); letter-spacing: -.03em; }
-  .heroDescription { font-size: 17px; max-width: 430px; margin: 20px auto 0; }
+  .heroTitle, .heroPanel .heroTitle { margin: 16px 0 0; font-size: clamp(32px, 8.5vw, 44px); letter-spacing: -.03em; }
+  .heroDescription, .heroPanel .heroDescription { font-size: 17px; max-width: 430px; margin: 20px 0 0; }
   .eyebrow { font-size: 12px; }
   .actions { gap: 8px 14px; }
   .actions .button { width: auto; max-width: 100%; font-size: 15px; }
@@ -258,7 +289,6 @@
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) { .header { background: #fefaf4; backdrop-filter: none; } }
 @media (prefers-contrast: more) { .surface { --i-line: #777; --color-cloud-meta: #46423c; --color-cloud-body: #333; } }
 
-.heroIntro { background: transparent; }
 .offerCard, .termsBox, .optionalService { border-radius: 28px; border-color: var(--color-warm-line);  }
 
 .summaryCard {

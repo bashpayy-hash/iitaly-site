@@ -73,9 +73,15 @@ async function open(viewport,mode='partial',options={}){
 }
 async function railContract(page,data,compact){
   if(!await page.locator('[data-portal-page=overview]').count()){
-    const stagePage=await page.locator('[data-portal-page=stage]').count();
-    assert.equal(await road(page).count(),stagePage?1:0,'Only stage pages include the compact Flight Plan');
-    assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута',exact:true}).count(),stagePage?1:0);
+    // Owner, 4 Nov («один блок, один поинт»): a stage page is the breadcrumbs and
+    // one tile with the current step; no route strip, no stamp counter, no 01–05 row.
+    assert.equal(await road(page).count(),0,'Inner pages carry no route strip');
+    assert.equal(await page.getByRole('navigation',{name:'Этапы маршрута',exact:true}).count(),0);
+    if(await page.locator('[data-portal-page=stage]').count()){
+      assert.equal(await page.locator('[data-portal-page=stage] [data-stage-switcher] a[data-story-pill]').count(),await page.locator('[data-portal-page=stage] [data-stage-switcher] a[data-stamp]').count(),'The step pips are the stamps');
+      assert.equal(await page.locator('[data-portal-page=stage] [data-stage-switcher] a[data-story-pill]').evaluateAll(nodes=>nodes.filter(node=>/\d/.test(node.innerText)).length),0,'Pips carry no numerals');
+      assert.doesNotMatch(await page.locator('[data-portal-page=stage]').innerText(),/Штампы|Шаги этапа/);
+    }
     await noOverflow(page);await portalDestination(page,'Обзор');await railContract(page,data,false);await page.goBack();return;
   }
   assert.equal(await road(page).count(),1,'Exactly one global route');

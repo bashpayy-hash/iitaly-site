@@ -26,12 +26,15 @@
   },
   {
    "name": "bologna",
-   "use": "archived, not shipped (was the home card «В Италии»)",
+   "use": "home welcome hero (owner, 4 Nov: «welcome page на фоне того, как Веспи что-то делает в пейзаже Италии»); shipped as public/illustrations/landscapes/bologna-{640,1024,1600}.webp (q76/q78; 1600 from the 2k upscale)",
    "job": "2dcdd8e8-2484-403a-b888-39c3b9eecd72",
    "place": "an empty terracotta portico arcade in Bologna in warm evening light",
    "vespi": "walks along the arcade with a tiny canvas backpack",
    "masterSha256": "82c042e712f820eeb77b02880038f3887f3559bb5684cd22596370cdc38a0696",
-   "master": "design/illustrations/source/landscapes/bologna-vespi.jpg"
+   "master": "design/illustrations/source/landscapes/bologna-vespi.jpg",
+   "upscaleJob": "a033124a-3354-444f-8265-afe36a2d05b3",
+   "upscaleMaster": "design/illustrations/source/landscapes/bologna-vespi-2k.jpg",
+   "upscaleMasterSha256": "0d3f0c0b661b1fd2ffb958e4c92a1c7986e599a970eaea91d057e0c0fe1ff8dd"
   },
   {
    "name": "venice",
