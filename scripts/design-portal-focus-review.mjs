@@ -81,8 +81,14 @@ try {
     assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
     assert.equal(await page.locator('[data-stage-souvenir]').count(),0,'Stage headers contain no decorative souvenir');
     assert.equal(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).length),0);
-    await page.evaluate(()=>document.fonts.load('500 16px "Inter Tight"','Привет, Қазақстан!'));
-    assert.equal(await page.evaluate(()=>document.fonts.check('500 16px "Inter Tight"','Привет, Қазақстан!')),true);
+    // Inter Tight comes from next/font in layout.tsx (the family keeps its name here;
+    // older Next versions hashed it), not from a second self-hosted copy in /zhol/fonts.
+    const cabinetFace=await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily);
+    assert.match(cabinetFace,/Inter[ _]Tight/);
+    await page.evaluate(face=>document.fonts.load('500 16px '+face,'Привет, Қазақстан!'),cabinetFace);
+    assert.equal(await page.evaluate(face=>document.fonts.check('500 16px '+face,'Привет, Қазақстан!'),cabinetFace),true);
+    assert(await page.evaluate(()=>[...document.fonts].some(font=>/Inter[ _]Tight/.test(font.family)&&font.status==='loaded')),'Inter Tight is loaded through next/font');
+    assert.equal(await page.evaluate(()=>[...document.styleSheets].some(sheet=>{try{return [...sheet.cssRules].some(rule=>rule.type===CSSRule.FONT_FACE_RULE&&/zhol\/fonts/.test(rule.style.getPropertyValue('src')));}catch{return false;}})),false,'No second self-hosted Inter Tight (/zhol/fonts) remains');
     const hit=await page.locator('[data-task-check=profile]').boundingBox();assert(hit.width>=44&&hit.height>=44);
     await noOverflow(page);await axe(page,`New local profile ${width}`);
     await page.screenshot({path:resolve(output,`guest-${width}.png`),fullPage:true,animations:'disabled'});
@@ -116,7 +122,7 @@ try {
         left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor,
         tileRadius:style('[data-step-tile]').borderRadius,tileBackground:style('[data-step-tile]').backgroundColor};
     });
-    assert.match(editorial.greeting,/Inter Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter Tight/);
+    assert.match(editorial.greeting,/Inter[ _]Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter[ _]Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
     assert.equal(await page.locator('[data-focus-row] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
     assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the single route rule remains');
@@ -219,7 +225,7 @@ try {
     await page.getByRole('navigation',{name:'Путь по кабинету'}).getByRole('link',{name:'Документы',exact:true}).click();await page.locator('[data-portal-focus]').waitFor();
     assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1);assert(await page.locator('[data-portal-task=translate]').isVisible());
     await page.locator('[data-portal-task=translate]').click();await page.locator('[data-step-detail=translate]').waitFor();
-    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Inter Tight/);
+    assert.match(await page.locator('#portal-step-heading').evaluate(el=>getComputedStyle(el).fontFamily),/Inter[ _]Tight/);
     assert.equal(await page.locator('[data-micro-steps]').count(),0);
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить',exact:true}).click();
     assert.equal(await page.locator('[data-instruction-point]').count(),1);

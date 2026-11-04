@@ -1266,7 +1266,6 @@
 .onboardingPrimarySmall:disabled,
 .onboardingSecondarySmall:disabled { opacity: .55; }
 .onboardingBack { margin-top: 8px; border: 0; background: transparent; color: var(--portal-muted); }
-.onboardingError { margin: 16px 0 0; border-left: 2px solid var(--portal-danger); padding-left: 10px; color: var(--portal-danger); font-size: 13px; line-height: 1.45; }
 .pathChoices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
 .pathChoice { min-height: 190px; padding: 17px; border: 1px solid var(--portal-border); border-radius: 14px; background: transparent; color: inherit; text-align: left; }
 .pathChoice:hover { border-color: rgba(183,42,58,.32); background: rgba(183,42,58,.035); }

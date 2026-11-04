@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import ui from "@/components/universities/university-ui.module.css";
-import { Footer } from "@/components/Footer";
+import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 import { UniversitiesExplorer } from "@/components/universities/UniversitiesExplorer";
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function UniversitiesPage() {
       <main id="main" className={ui.main}>
         <UniversitiesExplorer />
       </main>
-      <Footer />
+      <MarketingFooter />
     </div>
   );
 }

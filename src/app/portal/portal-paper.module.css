@@ -6,7 +6,9 @@
   --dark-slide:#392A22; --dark-border:#5A4A40;
   --on-dark:#FAF9F3; --on-dark-accent:#F29A89; --on-dark-quiet:#C9CFC4; --on-dark-tracker:#A89F95;
   --status-green:#356450; --status-amber:#8A5A12;
-  --font-sans:"Inter Tight",sans-serif; --font-display:var(--font-sans); --font-editorial:var(--font-sans);
+  /* Inter Tight кабинета — та же гарнитура, что грузит next/font в layout.tsx
+     (--font-inter-tight); второй самохостинг из zhol-кита убран 4 ноября. */
+  --font-sans:var(--font-inter-tight),sans-serif; --font-display:var(--font-sans); --font-editorial:var(--font-sans);
   --font-apple-display:var(--font-sans); --font-apple-text:var(--font-sans);
   --color-cream:var(--paper); --color-paper:var(--card); --color-ink:var(--ink); --color-ink-soft:var(--ink-strong);
   --color-warm-line:var(--border); --color-warm-stone:var(--beige); --color-cloud-body:var(--quiet);
@@ -45,8 +47,8 @@
 @media(forced-colors:active) { .paper { background:Canvas; }.paper :global([data-portal-header]) > div::after { background:CanvasText; } }
 /* The assistant is mounted outside the route wrapper. Theme only its portal variant. */
 :global(body):has(.paper) :global([data-portal-chat="true"]) {
-  --font-apple-text:"Inter Tight",sans-serif; --font-apple-display:"Inter Tight",sans-serif;
-  color:#352B28; background:#FBF9F3; border-color:#DCD3C3; box-shadow:none; font-family:"Inter Tight",sans-serif;
+  --font-apple-text:var(--font-inter-tight),sans-serif; --font-apple-display:var(--font-inter-tight),sans-serif;
+  color:#352B28; background:#FBF9F3; border-color:#DCD3C3; box-shadow:none; font-family:var(--font-inter-tight),sans-serif;
 }
 :global(body):has(.paper) :global([data-portal-chat="true"]) > div:first-child { background:#FBF9F3; color:#352B28; border-color:#DCD3C3; }
 .paper :global([data-brand-logo]) { font-family:var(--font-sans); font-weight:600; }

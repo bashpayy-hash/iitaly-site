@@ -8,7 +8,9 @@ Higgsfield informed the refinement; production uses flat vector geometry in
 The open diagonal is transparent, not a white overlay. Brand green `#087C55`
 belongs to the mark only; existing UI accent, semantic statuses and global
 tokens remain unchanged. The wordmark is upright, monochrome, weight 700 in the
-existing display family. Use the white monochrome variant on the dark footer.
+existing display family. The white monochrome variant exists for dark
+surfaces (the dark public footer it was drawn for is gone since 4 November;
+every public page now shares the paper footer).
 No logo shadows, gradients or hover rotation. Normal mark 36px, compact 28px;
 the favicon keeps a light backing for dark browser chrome. Export assets with
 `node scripts/export-brand-assets.mjs`. The handmade Vespi system stays intact.
@@ -395,3 +397,15 @@ Owner: «ты можешь начать добавлять какие-то ан�
 - **Parallax without JavaScript.** The hero landscape and the FAQ scene drift ±5% against the scroll (`animation-timeline: view()`, frame scaled 1.12 so no edge shows), from 641px / 1024px up and only without reduced motion; browsers without scroll-driven animations see the still frame. The tiles clip with `overflow: clip`, not `hidden`, because a hidden overflow makes the tile its own scroll container and the parallax would measure against it instead of the window.
 - **Vespi peeks for real.** On /universities the mascot rises from behind the map's bottom edge as the frame enters the viewport (`map-peek-rise`, entry 10–70%, translateY 72% → 0 with a 3° tilt), by the same scroll-driven rule; reduced motion keeps him where he was.
 - **Reviews.** `design-portal-focus-review` accepts `overflow: clip` on the hero tile; the landscape assertions keep measuring the `<img>`.
+
+## Polish pass: one style on every branch · 4 November 2026
+
+Owner: «полишни это всё… пройдись по всем ответвлениям, и если есть несовпадения по стилю — унифицируй». Every secondary route was screenshotted at 1440 and 390 (topic, step, stage and checklist pages, Modulo 1, /prices, /plan, /terms, /privacy, /changes-2026-27, 404, /payment/success, the cabinet's documents, settings, stage, task and login views) and compared with the home page and the cabinet overview. Most of the site already read as one system; the drift was in four places.
+
+- **One footer.** `/universities` was the only public page still rendering the legacy dark footer (`Footer.tsx`, white wordmark, four links, no tagline); every other page had the paper footer from `MarketingLayout`. The footer is now its own component, `src/components/marketing/MarketingFooter.tsx`, used by `MarketingLayout` and by `/universities`; the legacy `Footer.tsx` and the equally unused legacy `Header.tsx` are deleted. `/universities` still stays outside `MarketingLayout` (its reviews assert that).
+- **The payment card is a tile.** `/payment/success` had a white 16px card with a hairline; it now uses the tile language of the rest of the site: `#FFFDF9`, 28px radius (24px on phones), warm hairline, 40px padding; the dark code block inside uses the 16px inner radius.
+- **The stage card in the cabinet is a tile too.** The stage page's card (`.stageBody`, stamps + step pills + heading) was the one 16px card left in the cabinet beside 28px tiles; it is 28px (24px on phones) with tile padding.
+- **One Inter Tight.** The cabinet shipped its own 12 Inter Tight WOFF2 subsets (`src/app/portal/zhol-fonts.css`, `public/zhol/fonts`, 260 KB) while `layout.tsx` already self-hosts the same family through `next/font` for the whole site. The cabinet tokens now read `var(--font-inter-tight)`; the duplicate files and stylesheet are gone. No external font request appears, as before.
+- **Dead rule.** `.onboardingError` (a terracotta side border) had no usage; removed.
+- **Kept on purpose.** The brand gradient on hero titles, the stamp overshoot easing in the cabinet, the underline tabs (`/plan`, cabinet sections, header navigation) and the terracotta outline answers of the questionnaire are committed decisions, not drift; the detector's remarks on them are expected.
+- **Reviews.** `design-portal-focus-review` and `design-vespi-system-review` match the cabinet face as `/Inter[ _]Tight/` (this Next keeps the family name; older versions hashed it), check that the face is loaded and that no `@font-face` points at `/zhol/fonts` any more.

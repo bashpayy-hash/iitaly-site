@@ -370,8 +370,9 @@ try {
     await page.locator('[data-portal-overview]').waitFor({ state: 'attached' });
     await page.locator('[data-portal-road]').waitFor();
     brands[`portal-${width}`] = await brand(page);
-    // Owner's zhol kit, 2026-10-25: the cabinet uses the kit's self-hosted Inter Tight, no serif.
-    if (!baseline) { const face = await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily); assert.match(face, /Inter Tight/, 'Portal headline uses the supplied Cyrillic Inter Tight family'); assert.doesNotMatch(face, /Spectral|Charter|Georgia/); }
+    // Owner's zhol kit, 2026-10-25: the cabinet is set in Inter Tight, no serif.
+    // Since 4 November the face comes from next/font in layout.tsx rather than a second self-hosted copy (/zhol/fonts).
+    if (!baseline) { const face = await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily); assert.match(face, /Inter[ _]Tight/, 'Portal headline uses the Cyrillic Inter Tight family'); assert.doesNotMatch(face, /Spectral|Charter|Georgia/); }
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
