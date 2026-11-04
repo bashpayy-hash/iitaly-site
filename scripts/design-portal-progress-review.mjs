@@ -96,7 +96,8 @@ async function railContract(page,data,compact){
   assert.equal(Number(await progress.getAttribute('aria-valuenow')),done,'Accessible progress counts completed real tasks');
   assert.equal(Number(await progress.getAttribute('aria-valuemax')),tasks.length||1);
   assert.equal(await progress.getAttribute('aria-valuetext'),`${done} из ${tasks.length} шагов`);
-  assert.equal(await road(page).locator('img:not([data-portal-overview] img):not([data-stage-lineup] img)').count(),0,'Progress is data, not a repeated mascot (the opened step keeps its message icon; lineup cards show stage objects, never Vespi)');
+  // Owner, 4 Nov: the board aside carries the stage's Vespi scene; the route itself stays data.
+  assert.equal(await road(page).locator('img:not([data-portal-overview] img):not([data-stage-lineup] img):not([data-board-aside] img)').count(),0,'Progress is data, not a repeated mascot (the opened step keeps its message icon; lineup cards show stage objects, never Vespi)');
   assert.equal(await road(page).locator('[data-stage-lineup] img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
