@@ -282,8 +282,10 @@ for (const path of [
 ]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
 // The shared Modulo 1 serif stack may be extracted into exactly one token;
 // every existing global rule and palette token remains byte-for-byte unchanged.
-const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '');
-assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial font token may change in globals');
+// The mono token is exempt as well (2026-11-04: JetBrains Mono replaces Space
+// Mono because the latter has no Cyrillic; design-vespi-system-review checks it).
+const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '').replace(/  --font-mono: [^\n]+\n/, '');
+assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial and mono font tokens may change in globals');
 assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');
 assert(!/HowItWorks/.test(readFileSync('src/app/page.tsx','utf8')),'Do not restore the removed home section');
 for (const path of ['src/components/home/Hero.tsx','src/components/home/PriceBand.tsx']) {
