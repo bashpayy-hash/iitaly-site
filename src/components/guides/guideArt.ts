@@ -1,28 +1,30 @@
-/* Своя риzo-иллюстрация у каждой темы справочника: одна вещь на прозрачном
-   фоне, как товар на плитке. Картинки декоративные (alt=""): смысл несут
-   заголовок и тизер темы. Источники и промпты — design/mascot/vespi/handmade-v2.json
-   и design/illustrations/riso-guides-2026-11-02.json. */
+/* Своя вещь у каждой темы справочника: один предмет на прозрачном фоне, как
+   товар на плитке. С 4 ноября это тот же набор, что в кабинете и на главной
+   (owner: «добавь элементы иллюстрированности, но всё ещё с упором на
+   реализм, чтобы сочеталось с остальным сайтом») — студийный реализм с
+   иллюстративными акцентами, design/illustrations/objects-2026-11-04.json.
+   Картинки декоративные (alt=""): смысл несут заголовок и тизер темы. */
 const ART: Record<string, { name: string; height: number }> = {
   education: { name: "diploma", height: 357 },
-  tests: { name: "tests", height: 362 },
-  apostille: { name: "stamp-pad", height: 357 },
-  translation: { name: "translation", height: 348 },
-  cimea: { name: "folder", height: 340 },
-  con: { name: "envelope", height: 367 },
-  iseeu: { name: "coins", height: 467 },
-  visa: { name: "passport", height: 349 },
-  minors: { name: "minors", height: 353 },
-  military: { name: "military", height: 357 },
-  permesso: { name: "keys", height: 362 },
-  codice: { name: "codice", height: 362 },
-  "health-travel": { name: "map", height: 350 },
+  tests: { name: "tests", height: 352 },
+  apostille: { name: "stamp-pad", height: 371 },
+  translation: { name: "translation", height: 351 },
+  cimea: { name: "folder", height: 338 },
+  con: { name: "envelope", height: 362 },
+  iseeu: { name: "coins", height: 367 },
+  visa: { name: "passport", height: 359 },
+  minors: { name: "minors", height: 371 },
+  military: { name: "military", height: 358 },
+  permesso: { name: "keys", height: 365 },
+  codice: { name: "tax-card", height: 361 },
+  "health-travel": { name: "insurance", height: 362 },
 };
 
-/** 480px-кадр риzo-вещи и его уменьшенная копия для srcSet. */
-export function risoFrame(name: string, height: number) {
+/** 480px-кадр предмета из общего набора и его уменьшенная копия для srcSet. */
+export function objectFrame(name: string, height: number) {
   return {
-    src: `/illustrations/riso/${name}-480.webp`,
-    srcSet: `/illustrations/riso/${name}-240.webp 240w, /illustrations/riso/${name}-480.webp 480w`,
+    src: `/illustrations/objects/${name}-480.webp`,
+    srcSet: `/illustrations/objects/${name}-240.webp 240w, /illustrations/objects/${name}-480.webp 480w`,
     width: 480,
     height,
   };
@@ -30,5 +32,5 @@ export function risoFrame(name: string, height: number) {
 
 export function guideArt(id: string) {
   const art = ART[id] || ART.cimea;
-  return risoFrame(art.name, art.height);
+  return objectFrame(art.name, art.height);
 }

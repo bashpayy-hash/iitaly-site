@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element -- Local riso art with explicit dimensions. */
+/* eslint-disable @next/next/no-img-element -- Local object renditions with explicit dimensions. */
 import Link from "next/link";
 import type { GuideCard } from "@/data/guides";
 import { guideFirstPointHref, guideHref } from "./guideCatalogue";
@@ -37,7 +37,7 @@ export function GuideTiles({ guides, variant = "row", autoplay = false }: { guid
   const titles = guides.map(guide => guide.title);
   return <div className={styles.shelf} data-guide-tiles>
     <div className={styles.band} data-guide-band>
-      <GuideCarousel label="Темы справочника" titles={titles} variant={variant} autoplay={autoplay}>
+      <GuideCarousel label="Темы справочника" titles={titles} variant={variant} autoplay={autoplay} drift>
         {guides.map((guide, index) => <li key={guide.id} className={styles.slide}>
           <GuideTile guide={guide} index={index} />
         </li>)}

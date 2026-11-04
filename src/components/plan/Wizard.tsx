@@ -10,7 +10,6 @@ import { AppleButton } from "@/components/apple/Button";
 import type { PlanDraft } from "@/lib/usePlanDraft";
 import { Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
-import { FlightPlan } from "@/components/journey/FlightPlan";
 import { questionArt } from "./questionArt";
 import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuChoice";
 
@@ -116,10 +115,9 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
 
   return (
     <div className={styles.wizard} data-plan-wizard>
-      <FlightPlan compact variant="dots" currentLabel="Сейчас" label="Вопросы для маршрута" index={Math.min(step, WIZ.length - 1)} stops={WIZ.map((question, index) => ({
-        id: question.id, title: ({intake:"Набор",education:"Образование",grades:"Оценки",goal:"Цель",budget:"Бюджет",field:"Направление",lang:"Язык",age:"Возраст",residence:"Проживание",dsuRegion:"Стипендия"} as Record<string,string>)[question.id] || question.q,
-        meta: `${String(index + 1).padStart(2, "0")} / ${WIZ.length}`, state: index < step ? "done" : index === step ? "current" : "future", locked: index > step && !answers[question.id],
-      }))} onSelect={next => { finishTransition(); onDraftChange({ ...draft, step: next }); }} />
+      {/* Owner, 4 Nov: «прогресс-бар вообще убери» — над плиткой вопроса ничего
+          нет; номер вопроса стоит ярлыком внутри самой плитки, а для
+          скринридера остаётся невидимый progressbar. */}
       <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
 
       <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={preparing || finished ? styles.panel : styles.stage}>
@@ -199,6 +197,8 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           <WizStep
             key={WIZ[step].id}
             question={WIZ[step]}
+            index={step}
+            total={WIZ.length}
             tone={step % 2 ? "dark" : "light"}
             value={answers[WIZ[step].id]}
             onChoose={(v) => choose(WIZ[step].id, v)}
@@ -222,13 +222,19 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
 /* Вопрос — плитка, как тема в справочнике: крупный вопрос и пояснение по
    центру, ответы — кнопки-капсулы, внизу своя риzo-вещь. Светлые и тёмные
    плитки чередуются от вопроса к вопросу. */
+const STEP_TITLES: Record<string, string> = { intake: "Набор", education: "Образование", grades: "Оценки", goal: "Цель", budget: "Бюджет", field: "Направление", lang: "Язык", age: "Возраст", residence: "Проживание", dsuRegion: "Стипендия" };
+
 function WizStep({
   question,
+  index,
+  total,
   tone,
   value,
   onChoose,
 }: {
   question: (typeof WIZ)[number];
+  index: number;
+  total: number;
   tone: "light" | "dark";
   value: string | undefined;
   onChoose: (v: string) => void;
@@ -260,6 +266,7 @@ function WizStep({
   return (
     <div className={styles.question} data-tone={tone} data-plan-tile={question.id}>
       <div className={styles.questionHead} data-plan-question={question.id}>
+        <p className={styles.questionStep} data-plan-step>Вопрос {index + 1} из {total} · {STEP_TITLES[question.id] || question.q}</p>
         <h2>{question.q}</h2>
         <p className={styles.questionReason} data-vespi-question-reason>
           {question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}

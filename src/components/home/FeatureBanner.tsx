@@ -13,14 +13,14 @@ import styles from "./journey-scenes.module.css";
    design/illustrations/objects-2026-11-03.json) внизу. Всё видно сразу,
    плитка ведёт на свою страницу. Тексты — те же, что были в окне. */
 const STAGE_CARDS = [
-  { label: "Маршрут", object: "map", objectHeight: 374 },
-  { label: "До отъезда", object: "folder", objectHeight: 358 },
+  { label: "Маршрут", object: "map", objectHeight: 358 },
+  { label: "До отъезда", object: "folder", objectHeight: 338 },
   { label: "В Италии", object: "keys", objectHeight: 365 },
 ];
 const ARRIVAL_CARDS = [
-  { id: "permesso", label: "Permesso", object: "permesso-kit", objectHeight: 362 },
-  { id: "codice", label: "Codice fiscale", object: "tax-card", objectHeight: 352 },
-  { id: "health-travel", label: "Страховка", object: "insurance", objectHeight: 371 },
+  { id: "permesso", label: "Permesso", object: "permesso-kit", objectHeight: 387 },
+  { id: "codice", label: "Codice fiscale", object: "tax-card", objectHeight: 361 },
+  { id: "health-travel", label: "Страховка", object: "insurance", objectHeight: 362 },
 ];
 
 function ThemeCard({ id, object, objectHeight, label, title, line, href }: { id: string; object: string; objectHeight: number; label: string; title: string; line: string; href: string }) {

@@ -58,14 +58,17 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         </div>
         {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 40vw, 220px" width={art.width} height={art.height} alt="" />}
       </header>
-      {!part && id !== "visa" && <dl className={steps.facts} data-guide-facts>
-        {guideFacts(guide).map(fact => <div key={fact.label} data-known={fact.known}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
-      </dl>}
+      {/* Owner, 4 Nov (apple.com/iphone-duo): the facts as a column of large
+          values with small captions beside the lead paragraph; without a lead
+          they form one row of four stat tiles. */}
+      {!part && id !== "visa" && <section className={steps.overview} data-guide-overview data-with-lead={Boolean(guide.lead)}>
+        {guide.lead && <p className={ui.lead}>{guide.lead}</p>}
+        <dl className={steps.facts} data-guide-facts>
+          {guideFacts(guide).map(fact => <div key={fact.label} data-known={fact.known}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+        </dl>
+      </section>}
       <div className={ui.readingBody}>
-        {id === "visa" ? <VisaSection part={visaPart} /> : <>
-          {guide.lead && <p className={ui.lead}>{guide.lead}</p>}
-          <GuideStepCards id={id} />
-        </>}
+        {id === "visa" ? <VisaSection part={visaPart} /> : <GuideStepCards id={id} />}
         {id === "permesso" && <section className={ui.note}>
           <h2>Актуальная ремарка к тренажёру</h2>
           <p>Poste отдельно указывает €16 за marca da bollo, €30 за приём kit и €30,46 за электронную карточку; дополнительный contributo зависит от длительности и типа permesso. Для rinnovo требования также зависят от кода 24 / 31 — сверяй свой тип на Portale Immigrazione и у Questura.</p>

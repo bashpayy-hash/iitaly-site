@@ -185,6 +185,19 @@
    терракота. */
 .canvas[data-portal-page=overview] .routeCard { grid-area:route; width:auto; margin:0; padding:0; }
 .routeCard :global([data-road-board]) { --flight-surface:#2A2420; display:grid; justify-content:center; grid-template-columns:minmax(0,760px); padding:40px 32px 44px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
+/* Доска блоками (owner, 4 Nov): маршрут слева, справа сцена этапа с Веспи и
+   три факта с подписями, как колонка цифр у Apple; на узких экранах сцена
+   встаёт над маршрутом. */
+.routeCard :global([data-road-board][data-board-aside]) { grid-template-columns:minmax(0,1fr) minmax(280px,400px); justify-content:stretch; align-items:start; column-gap:48px; }
+.routeCard :global([data-road-board][data-board-aside] > [data-board-aside]) { order:2; }
+.boardAside { display:grid; gap:22px; align-content:start; min-width:0; }
+.boardScene { display:block; width:100%; height:auto; border-radius:20px; }
+.boardStats { display:grid; gap:12px; margin:0; padding:0; list-style:none; }
+.boardStats li { display:grid; gap:3px; padding-top:12px; border-top:1px solid #4A4038; }
+.boardStats strong { font-size:28px; font-weight:600; line-height:1.1; letter-spacing:-.025em; color:#FAF6EE; font-variant-numeric:tabular-nums; }
+.boardStats strong small { font-size:15px; font-weight:400; color:#CFC6BA; letter-spacing:0; }
+.boardStats span { font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#B8AE9F; }
+.boardMain { min-width:0; }
 .routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-accent:#F29A89; --flight-surface:#2A2420; }
 .boardHead { display:flex; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:24px; }
 .nowAhead { max-width:320px; }
@@ -203,6 +216,10 @@
  .canvas[data-portal-page=overview] { margin-top:12px; }
  .hero { min-height:700px; padding:40px 24px 300px; }
  .routeCard :global([data-road-board]) { padding:32px 24px 36px; }
+ .routeCard :global([data-road-board][data-board-aside]) { grid-template-columns:minmax(0,1fr); row-gap:28px; }
+ .routeCard :global([data-road-board][data-board-aside] > [data-board-aside]) { order:0; }
+ .boardStats { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+ .boardStats strong { font-size:24px; }
 }
 @media(max-width:640px) {
  /* A phone tile has no room under its text for the scooter: show the road
@@ -210,6 +227,10 @@
     home cards there). */
  .hero { min-height:600px; padding:36px 20px 220px; }
  .heroArt { object-position:100% 62%; }
+ .boardStats { grid-template-columns:minmax(0,1fr); gap:0; }
+ .boardStats li { grid-template-columns:minmax(0,1fr) auto; align-items:baseline; gap:12px; padding:10px 0; }
+ .boardStats li span { text-align:right; }
+ .boardStats strong { font-size:22px; }
  .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
  .canvas[data-portal-page=overview] .welcomeMeta { font-size:12px; }
  .nowCard { margin-top:22px; }

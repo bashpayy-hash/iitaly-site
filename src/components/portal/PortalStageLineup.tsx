@@ -20,15 +20,15 @@ export type LineupObject = RisoArt | "stamp-pad" | "alarm";
    одна вещь на прозрачном фоне, без текста, флагов и людей. Размеры —
    обрезанных мастеров, чтобы место под картинку было известно до загрузки. */
 const OBJECT_SIZE: Record<LineupObject, { width: number; height: number }> = {
-  map: { width: 480, height: 374 },
-  diploma: { width: 480, height: 362 },
-  folder: { width: 480, height: 358 },
-  envelope: { width: 480, height: 354 },
-  coins: { width: 480, height: 358 },
-  passport: { width: 480, height: 375 },
+  map: { width: 480, height: 358 },
+  diploma: { width: 480, height: 357 },
+  folder: { width: 480, height: 338 },
+  envelope: { width: 480, height: 362 },
+  coins: { width: 480, height: 367 },
+  passport: { width: 480, height: 359 },
   keys: { width: 480, height: 365 },
-  "stamp-pad": { width: 480, height: 372 },
-  alarm: { width: 480, height: 375 },
+  "stamp-pad": { width: 480, height: 371 },
+  alarm: { width: 480, height: 357 },
 };
 
 export function StageObject({ art, locked = false, sizes = "(max-width: 700px) 72vw, 400px" }: { art: LineupObject; locked?: boolean; sizes?: string }) {

@@ -1,0 +1,31 @@
+/* FAQ главной на пейзаже (owner, 4 Nov): плитка 28px во всю колонку, фото со
+   смотровой площадки Флоренции и Веспи, смотрящим вдаль, закрывает плитку;
+   вопросы — на кремовой панели справа, чтобы Веспи и город оставались видны.
+   На телефоне фото сверху, панель под ним на кремовом. */
+.section { max-width:1280px; margin:0 auto; padding:0 32px 80px; }
+.tile { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,600px); align-items:center; min-height:720px; overflow:hidden; border-radius:28px; background:#2A2420; color:#141413; }
+.scene { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; object-position:18% 62%; }
+.panel { grid-column:2; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:rgba(255,253,249,.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.eyebrow { margin:0; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
+.title { margin:10px 0 18px; font:600 clamp(28px,3vw,40px)/1.1 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
+.list { border-top:1px solid #DCD5CA; }
+.item { border-bottom:1px solid #DCD5CA; }
+.question { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:56px; padding:14px 0; list-style:none; cursor:pointer; font-size:18px; font-weight:500; line-height:1.3; letter-spacing:-.01em; }
+.question::-webkit-details-marker { display:none; }
+.question:focus-visible { outline:2px solid #A33421; outline-offset:4px; border-radius:4px; }
+.chevron { flex:none; width:16px; height:10px; color:#A33421; transition:transform 200ms cubic-bezier(.4,0,.2,1); }
+.item[open] .chevron { transform:rotate(180deg); }
+.answer { max-width:60ch; margin:0 0 18px; color:#3F3933; font-size:15px; line-height:1.55; }
+@media(max-width:1023px) {
+  .tile { grid-template-columns:minmax(0,1fr); align-items:stretch; min-height:0; }
+  .scene { position:relative; z-index:0; aspect-ratio:4 / 3; height:auto; object-position:26% 62%; }
+  .panel { grid-column:1; margin:0; padding:28px 24px 12px; border-radius:0; background:#FAF6EE; backdrop-filter:none; -webkit-backdrop-filter:none; }
+}
+@media(max-width:640px) {
+  .section { padding:0 20px 64px; }
+  .tile { border-radius:24px; }
+  .panel { padding:24px 20px 8px; }
+  .question { font-size:17px; }
+}
+@media(prefers-reduced-motion:reduce) { .chevron { transition:none; } }
+@media(forced-colors:active) { .tile,.panel { border:1px solid CanvasText; } }

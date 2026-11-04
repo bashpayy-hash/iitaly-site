@@ -107,22 +107,71 @@
 .reminders summary::after { content: "+"; color: var(--portal-muted); }
 .reminders[open] summary::after { content: "−"; }
 
-/* One settings column: profile first, secondary details on request. */
-.page { max-width: 880px; }
-.profile { margin-top: 24px; padding-bottom: 24px; }
-.profileHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0 12px; margin-bottom: 12px; }
-.profileHeading h3 { font-size: 18px; }
-.page .profileList > div { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 12px 0; }
-.page .profileList dd { overflow-wrap: anywhere; }
-.disclosure { border-top: 1px solid var(--portal-border); font-size: 15px; line-height: 1.5; }
-.disclosure summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 52px; padding: 12px 0; list-style: none; cursor: pointer; }
+/* Настройки блоками (owner, 4 Nov; ProfileSection.tsx): заголовок со сценой
+   справа, под ним плитки 28px — светлые и одна тёмная (напоминания), как
+   плитки кабинета; ярлык моно, заголовок 24px, пилюли 44px. */
+.page { max-width: 1296px; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 520px); align-items: center; gap: 32px 48px; margin-top: 12px; }
+.heroCopy { min-width: 0; }
+.eyebrow,.tileLabel { margin: 0; font: 400 11px/1.5 var(--font-space-mono), monospace; letter-spacing: .08em; text-transform: uppercase; color: #A33421; }
+.title { margin: 10px 0 12px; font: 600 clamp(32px, 3.4vw, 48px)/1.05 var(--font-sans); letter-spacing: -.03em; }
+.title:focus { outline: none; }
+.lead { margin: 0; max-width: 44ch; color: var(--portal-muted); font-size: 17px; line-height: 1.5; }
+.scene { display: block; width: 100%; height: auto; border-radius: 28px; }
+/* The tall profile tile spans two rows on the left; reminders and the task
+   list stack beside it, access and deletion share the last row. */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "profile reminders" "profile checklist" "session delete"; gap: 12px; margin-top: 32px; }
+.grid > [data-settings-tile=profile] { grid-area: profile; }
+.grid > [data-settings-tile=reminders] { grid-area: reminders; }
+.grid > [data-settings-tile=checklist] { grid-area: checklist; }
+.grid > [data-settings-tile=session] { grid-area: session; }
+.grid > [data-settings-tile=delete] { grid-area: delete; }
+.tile { display: grid; align-content: start; gap: 12px; min-width: 0; padding: 28px 28px 26px; border-radius: 28px; background: #FFFDF9; color: var(--portal-ink); }
+.tile > * { max-width: 100%; min-width: 0; overflow-wrap: anywhere; }
+.tileTitle { margin: 0; font-size: 24px; font-weight: 600; line-height: 1.15; letter-spacing: -.02em; }
+.figure { font-size: 40px; font-weight: 600; line-height: 1; letter-spacing: -.03em; color: #A33421; font-variant-numeric: tabular-nums; }
+.dark { background: #2A2420; color: #FAF6EE; }
+.dark .tileLabel { color: #F29A89; }
+.wide { grid-column: 1 / -1; }
+.profileList { display: grid; margin: 4px 0 0; }
+.profileList > div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 11px 0; border-top: 1px solid var(--portal-border); font-size: 15px; line-height: 1.45; }
+.profileList dt { color: var(--portal-muted); }
+.profileList dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.pill,.pillOutline { display: inline-flex; align-items: center; justify-content: center; justify-self: start; min-height: 44px; padding: 10px 22px; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1.2; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1); }
+.pill { background: #B83A27; color: #FAF6EE; }
+.pill:hover { background: #A33421; }
+.pillOutline { border: 1px solid #B83A27; color: #A33421; }
+.pillOutline:hover { background: #B83A27; color: #FAF6EE; }
+.pill:focus-visible,.pillOutline:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
+.quiet { margin: 0; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
+.quietOnDark { margin: 0; color: #CFC6BA; font-size: 15px; line-height: 1.5; }
+.wide { grid-column: auto; }
+.disclosure { font-size: 15px; line-height: 1.5; }
+.disclosure summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 48px; padding: 10px 0; list-style: none; cursor: pointer; font-weight: 500; }
 .disclosure summary::-webkit-details-marker { display: none; }
 .disclosure summary::after { content: "+"; color: var(--portal-muted); }
 .disclosure[open] summary::after { content: "−"; }
 .disclosure summary:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .disclosure > p { max-width: 65ch; margin: 0 0 8px; color: var(--portal-muted); }
-.disclosure > a { margin-bottom: 12px; }
+.disclosure > a { margin-bottom: 4px; }
 .page :global(#portal-notification-settings) { margin-top: 0; }
-.page .reminders { border-bottom: 0; font-size: 15px; }
-.page .reminders summary { min-height: 52px; padding: 12px 0; }
-.page .session { margin-top: 0; padding: 16px 0; }
+/* The reminder panel (HelpSection) inside the dark tile: its summary is the tile's title. */
+.dark .reminders { border: 0; color: #FAF6EE; font-size: 15px; }
+.dark .reminders summary { min-height: 0; padding: 0 0 10px; font-size: 24px; font-weight: 600; line-height: 1.15; letter-spacing: -.02em; }
+.dark .reminders summary::after { color: #B8AE9F; }
+.dark .reminders > p { color: #CFC6BA; }
+.dark .reminders .message { color: #FAF6EE; }
+.dark .reminders .textAction[href] { color: #FAF6EE; }
+.dark .reminders .primaryAction { background: #FAF6EE; color: #2A2420; }
+.dark .reminders .primaryAction:hover { background: #EAD7BB; }
+.dark .reminders :is(summary, a, button):focus-visible { outline-color: #FAF6EE; }
+.page .session { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-top: 0; padding: 28px 28px 26px; }
+.page .session > div { display: grid; gap: 12px; min-width: 0; }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .scene { order: -1; border-radius: 24px; }
+  .grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
+  .grid > [data-settings-tile] { grid-area: auto; }
+  .tile,.page .session { padding: 22px 20px 20px; border-radius: 24px; }
+  .profileList > div { grid-template-columns: 96px minmax(0, 1fr); }
+}

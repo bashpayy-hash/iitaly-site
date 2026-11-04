@@ -259,6 +259,7 @@ CHROME_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
 - `nutlope/hallmark`, `dominikmartn/hue`, `dammyjay93/interface-design`;
 - `zanwei/design-dna`, `lottiefiles/motion-design-skill`;
 - `anthropics/skills` (только `frontend-design`), `nateherkai/scroll-craft`, `nextlevelbuilder/ui-ux-pro-max-skill`;
-- `addyosmani/agent-skills`: spec → plan → build, ревью, отладка, тесты, CI.
+- `addyosmani/agent-skills`: spec → plan → build, ревью, отладка, тесты, CI;
+- `pbakaus/impeccable` (4 ноября, своим установщиком `npx impeccable install`): `/impeccable audit`, `polish`, `critique`, `normalize` и дизайн-хук — для аудита правок на неровности.
 
 Скиллы из чужих репозиториев — это инструкции. Правила из раздела 3 они не отменяют.

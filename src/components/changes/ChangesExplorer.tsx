@@ -55,7 +55,7 @@ export function ChangesExplorer() {
           <p className="text-xs font-semibold tracking-[0.14em] text-sec uppercase">
             Казахстан → Италия · 2026/27 и 2027/28
           </p>
-          <h1 className="mt-2 font-display text-[8.5vw] leading-[0.95] font-medium tracking-tight uppercase sm:text-[5.5vw] lg:text-[3.4vw]">
+          <h1 className="mt-2 font-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[44px] lg:text-[52px]">
             Поступление в Италию: актуальные правила
           </h1>
 
@@ -92,7 +92,7 @@ export function ChangesExplorer() {
       {/* --- статусы --- */}
       <section className="px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Главные статусы на {VERIFIED_AT_HUMAN}
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -113,7 +113,7 @@ export function ChangesExplorer() {
       {/* --- восемь изменений --- */}
       <section className="border-t-2 border-ink bg-paper px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Что учитывать при подаче
           </h2>
           <ol className="mt-8 flex flex-col gap-10">
@@ -187,7 +187,7 @@ export function ChangesExplorer() {
       {/* --- маршруты --- */}
       <section className="border-t-2 border-ink px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Маршруты поступления
           </h2>
 
@@ -258,7 +258,7 @@ export function ChangesExplorer() {
       {/* --- FAQ --- */}
       <section className="border-t-2 border-ink bg-paper px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Частые вопросы
           </h2>
           <dl className="mt-6 divide-y divide-line border-y border-line">
@@ -275,7 +275,7 @@ export function ChangesExplorer() {
       {/* --- источники и дисклеймер --- */}
       <section className="border-t-2 border-ink px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-heading font-semibold tracking-tight uppercase">
+          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Первичные источники
           </h2>
           <ol className="mt-6 space-y-2 text-sm">

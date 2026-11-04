@@ -7,6 +7,18 @@ assert(base, 'Pass the reviewed base commit SHA.');
 const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n');
 // The user authorized a visual refresh of this page, not a change to its map/data.
 const approvedPresentationPaths = new Set([
+  // 2026-11-04: owner asked for one object style everywhere (realistic with
+  // illustrated touches), Vespi scenes on the stage board and settings, a
+  // peeking Vespi beside a larger map, and Apple-like information blocks.
+  // Presentation only: roadmap, profile, reminder and map data stay as they are.
+  'src/components/portal/PortalArtwork.tsx', 'src/components/portal/RisoArtImage.tsx',
+  'src/components/portal/portalStageArt.ts', 'src/components/portal/PortalRoad.tsx',
+  'src/components/portal/ProfileSection.tsx', 'src/components/portal/HelpSection.tsx',
+  'src/components/portal/portal-settings.module.css', 'src/components/portal/portal-journey.module.css',
+  'src/components/portal/PortalFocus.tsx', 'src/components/portal/portal-focus.module.css',
+  'src/components/portal/PortalStageLineup.tsx', 'src/components/portal/portal-lineup.module.css',
+  'src/components/portal/PortalExplorer.tsx', 'src/components/portal/portal.module.css',
+  'src/components/universities/UniversitiesExplorer.tsx', 'src/components/universities/university-ui.module.css',
   // 2026-11-03: owner asked for Apple-like evenness (one 1216px column on the
   // home page); the Vespi introduction only takes the shared column width.
   'src/components/mascot/vespi-intro.module.css',

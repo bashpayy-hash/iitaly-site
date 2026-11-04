@@ -6,13 +6,13 @@ export type HiggsfieldMedia = { poster: string; video?: string };
  * Provenance and file hashes: design/mascot/vespi/handmade-v2.json.
  * Leaving video undefined avoids requests to nonexistent media files. */
 export const HIGGSFIELD_VISUALS: Record<HiggsfieldStage, HiggsfieldMedia> = {
-  start: { poster: "/illustrations/riso/map-480.webp" },
-  education12: { poster: "/illustrations/riso/diploma-480.webp" },
-  docs: { poster: "/illustrations/riso/folder-480.webp" },
-  apply: { poster: "/illustrations/riso/envelope-480.webp" },
-  dsu: { poster: "/illustrations/riso/coins-480.webp" },
-  visa: { poster: "/illustrations/riso/passport-480.webp" },
-  arrival: { poster: "/illustrations/riso/keys-480.webp" },
+  start: { poster: "/illustrations/objects/map-480.webp" },
+  education12: { poster: "/illustrations/objects/diploma-480.webp" },
+  docs: { poster: "/illustrations/objects/folder-480.webp" },
+  apply: { poster: "/illustrations/objects/envelope-480.webp" },
+  dsu: { poster: "/illustrations/objects/coins-480.webp" },
+  visa: { poster: "/illustrations/objects/passport-480.webp" },
+  arrival: { poster: "/illustrations/objects/keys-480.webp" },
 };
 
 /** Optional task-specific exports override their stage without changing UI code. */

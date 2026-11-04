@@ -26,7 +26,7 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail, boardHead, lineupExtras }: {
+export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail, boardHead, lineupExtras, boardAside }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -50,6 +50,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   boardHead?: ReactNode;
   /** Overview: extra cabinet tiles after the stages ahead (documents, universities…). */
   lineupExtras?: ReactNode;
+  /** Overview: the stage's scene and stat blocks beside the route (owner, 4 Nov). */
+  boardAside?: ReactNode;
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
@@ -235,8 +237,12 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
     data-road-arriving={motion.arriving ? "true" : "false"} aria-label="Маршрут поступления">
     {!progressFirst && focus}
     {/* Overview: the board is the dark route tile (portal-focus.module.css);
-        the stages ahead follow it as a separate grid of tiles. */}
-    <div className={styles.route} data-road-board={overview || undefined}>
+        the stage's scene and stat blocks stand beside the route (owner, 4 Nov:
+        «информацию преподносить блоками и более наглядно»); the stages ahead
+        follow the board as a separate grid of tiles. */}
+    <div className={styles.route} data-road-board={overview || undefined} data-board-aside={overview && boardAside ? "true" : undefined}>
+      {overview && boardAside && <aside className={styles.boardAside} data-board-aside aria-label="Этап в цифрах">{boardAside}</aside>}
+      <div className={styles.boardMain}>
       {overview && boardHead}
       {!condensed && !timeline && <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>}
       <div className={styles.summary}>
@@ -287,6 +293,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       {/* Without stages the timeline has no node to open under: keep the step block. */}
       {timeline && !condensed && !stops.length && currentDetail}
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
+      </div>
     </div>
     {overview && <PortalStageLineup stages={lineup} extras={lineupExtras} onSelectStage={onSelectStage} onOpenTask={task => onOpenTask(task)} />}
     {progressFirst && focus}
