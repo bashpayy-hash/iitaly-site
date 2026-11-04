@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { PAY_PHONE, PAY_WA } from "@/lib/payment";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
@@ -105,35 +104,31 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
 
 export default function PrivacyPage() {
   return (
-    <>
-      <Header />
-      <main id="main">
-        <section className="px-5 py-10 sm:py-14">
-          <div className="mx-auto max-w-[720px]">
-            <h1 className="font-display text-3xl font-semibold tracking-tight uppercase sm:text-4xl">
+    <MarketingLayout>
+        <section className="px-5 py-10 sm:py-14" data-legal-page>
+          <div className="mx-auto max-w-[760px]">
+            <h1 className="font-display text-[36px]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
               Политика конфиденциальности
             </h1>
-            <p className="mt-1.5 text-xs text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
+            <p className="mt-3 text-[13px] text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
 
-            <div className="mt-8 space-y-6">
+            <div className="mt-10 space-y-8">
               {SECTIONS.map((s) => (
                 <div key={s.title}>
-                  <h2 className="font-display text-lg font-bold">{s.title}</h2>
-                  <div className="mt-1.5 text-sm text-ink-soft [&_a]:font-bold [&_a]:text-red [&_b]:text-ink">
+                  <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">{s.title}</h2>
+                  <div className="mt-2 text-[16px] leading-[1.6] text-ink-soft [&_a]:font-semibold [&_a]:text-red [&_b]:text-ink">
                     {s.body}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 flex flex-wrap gap-5 text-sm font-bold">
+            <div className="mt-12 flex flex-wrap gap-6 text-[15px] font-medium">
               <Link href="/terms" className="text-ink underline underline-offset-4">Условия сервиса</Link>
               <Link href="/" className="text-ink underline underline-offset-4">← Вернуться на сайт</Link>
             </div>
           </div>
         </section>
-      </main>
-      <Footer />
-    </>
+    </MarketingLayout>
   );
 }

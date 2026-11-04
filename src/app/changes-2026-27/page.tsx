@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { ChangesExplorer } from "@/components/changes/ChangesExplorer";
 
 /* Адрес короткий, как у остальных разделов (/guides, /prices, /plan), а не
@@ -16,12 +15,8 @@ export const metadata: Metadata = {
 
 export default function ChangesPage() {
   return (
-    <>
-      <Header />
-      <main id="main">
-        <ChangesExplorer />
-      </main>
-      <Footer />
-    </>
+    <MarketingLayout>
+      <ChangesExplorer />
+    </MarketingLayout>
   );
 }

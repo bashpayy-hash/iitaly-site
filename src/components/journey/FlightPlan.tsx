@@ -25,17 +25,16 @@ export function flightWhen(date?: string | null) {
  *  Owner, 3 Nov: «убери эту странную тему с посадочным и прогресс-линиями в
  *  виде самолётов» — без самолётика, позывного, координат и кривой взлёта.
  *  `timeline` — одна колонка: месяц над годом на левом поле, раскрытый этап
- *  прямо под своей точкой; `dots` — полоса точек анкеты с одной подписью. */
+ *  прямо под своей точкой. Полосы точек над анкетой /plan больше нет
+ *  (owner, 4 Nov: «прогресс-бар вообще убери»). */
 export function FlightPlan({ stops, index, onSelect, compact = false, children, label = "Этапы маршрута", currentLabel = "Текущий шаг", variant = "rail", detail }: {
   stops: FlightStop[]; index: number; onSelect: (index: number) => void;
   compact?: boolean; children?: ReactNode; label?: string; currentLabel?: string;
-  /** dots: compact strip as one line of points with a single caption (questionnaire). */
-  variant?: "rail" | "timeline" | "dots";
+  variant?: "rail" | "timeline";
   /** Timeline only: content opened under a stop (null keeps the stop closed). */
   detail?: (position: number) => ReactNode;
 }) {
   const timeline = variant === "timeline" && !compact;
-  const dots = variant === "dots" && compact;
   const rail = useRef<HTMLElement>(null);
   const [inFocus, setInFocus] = useState<ReadonlySet<number>>(new Set());
   const safeIndex = Math.max(0, Math.min(index, stops.length - 1));
@@ -93,9 +92,7 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
   }, [compact, timeline, stops.length]);
 
   if (!stops.length) return null;
-  const selectedStop = stops[safeIndex];
-  return <div className={styles.flight} data-flight-plan data-compact={compact || undefined} data-variant={timeline ? "timeline" : dots ? "dots" : undefined} style={{ "--flight-index": safeIndex, "--flight-count": stops.length } as CSSProperties}>
-    {dots && <p className={styles.position}>{[selectedStop?.meta, selectedStop?.title].filter(Boolean).join(" · ")}</p>}
+  return <div className={styles.flight} data-flight-plan data-compact={compact || undefined} data-variant={timeline ? "timeline" : undefined} style={{ "--flight-index": safeIndex, "--flight-count": stops.length } as CSSProperties}>
     <div className={styles.layout} data-has-scene={Boolean(children) && !timeline}>
       <nav ref={rail} className={styles.rail} aria-label={label} onKeyDown={event => {
         if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
@@ -129,7 +126,6 @@ export function FlightPlan({ stops, index, onSelect, compact = false, children, 
             "data-flight-selected": position === safeIndex,
             "data-flight-focus": focused || undefined,
             "data-flight-distance": Math.min(3, Math.abs(position - safeIndex)),
-            title: dots ? stop.title : undefined,
             "data-road-stage": stop.locked ? undefined : stop.id,
             "data-road-stage-state": stop.state,
             "data-stage-selected": position === safeIndex || undefined,

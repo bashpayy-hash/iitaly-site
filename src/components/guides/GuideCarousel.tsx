@@ -13,8 +13,14 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
      друг за другом (5 с на карточку, ход виден в активной точке); пауза, пока
      мышь или фокус на карточках; любое касание, колесо или точка — стоп.
      С prefers-reduced-motion сама не листается, но ▶ работает.
-   - row: компактный ряд со стрелками «назад/вперёд» справа. */
-export function GuideCarousel({ label, titles, variant = "row", autoplay = false, tone = "dark", fit = "window", arrowLabels = ["Предыдущая тема", "Следующая тема"], children }: {
+   - row: компактный ряд со стрелками «назад/вперёд» справа.
+   - drift (owner, 4 Nov: «чтобы это всё передвигалось при наведении мышкой, а
+     то выглядит довольно статично»): под мышью ряд плавно сдвигается в
+     сторону курсора (до 28px), а вещь каждой карточки наклоняется за ним и
+     приподнимается, чем ближе курсор. Переменные --drift, --lean-x, --lean-y
+     и --near читает CSS карточек; касания, клавиатура и prefers-reduced-motion
+     видят неподвижный ряд. */
+export function GuideCarousel({ label, titles, variant = "row", autoplay = false, tone = "dark", fit = "window", drift = false, arrowLabels = ["Предыдущая тема", "Следующая тема"], children }: {
   label: string;
   titles: string[];
   variant?: "gallery" | "row";
@@ -23,11 +29,39 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
   tone?: "dark" | "light";
   /** Whole cards fill the window (guide band) or the column (topic steps). */
   fit?: "window" | "column";
+  /** The row and its objects follow the mouse (guide band). */
+  drift?: boolean;
   arrowLabels?: [string, string];
   children: ReactNode;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
+  const driftFrame = useRef(0);
+  const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
+  const onDrift = (x: number, y: number) => {
+    const track = trackRef.current;
+    if (!drift || !track || reducedMotion()) return;
+    cancelAnimationFrame(driftFrame.current);
+    driftFrame.current = requestAnimationFrame(() => {
+      const box = track.getBoundingClientRect();
+      track.style.setProperty("--drift", String(clamp(0.5 - (x - box.left) / box.width, 0.5) * 2));
+      for (const slide of track.children as HTMLCollectionOf<HTMLElement>) {
+        const rect = slide.getBoundingClientRect();
+        const dx = (x - (rect.left + rect.width / 2)) / rect.width, dy = (y - (rect.top + rect.height / 2)) / rect.height;
+        slide.style.setProperty("--lean-x", String(clamp(dx, 1.5)));
+        slide.style.setProperty("--lean-y", String(clamp(dy, 1)));
+        slide.style.setProperty("--near", String(Math.max(0, 1 - Math.abs(dx))));
+      }
+    });
+  };
+  const endDrift = () => {
+    cancelAnimationFrame(driftFrame.current);
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.removeProperty("--drift");
+    for (const slide of track.children as HTMLCollectionOf<HTMLElement>) for (const name of ["--lean-x", "--lean-y", "--near"]) slide.style.removeProperty(name);
+  };
+  useEffect(() => () => cancelAnimationFrame(driftFrame.current), []);
   // Card asked for by a dot, an arrow or autoplay. Wins over the scroll
   // position until the visitor scrolls the row themselves.
   const requested = useRef<number | null>(null);
@@ -136,7 +170,9 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
       onKeyDown={takeOver}
       onWheel={event => { if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) takeOver(); }}
       onPointerEnter={event => { if (event.pointerType === "mouse") setHold(current => ({ ...current, hover: true })); }}
-      onPointerLeave={() => setHold(current => ({ ...current, hover: false }))}
+      onPointerMove={event => { if (event.pointerType === "mouse") onDrift(event.clientX, event.clientY); }}
+      onPointerLeave={() => { endDrift(); setHold(current => ({ ...current, hover: false })); }}
+      data-drift={drift || undefined}
       onFocus={() => { requested.current = null; setHold(current => ({ ...current, focus: true })); }}
       onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHold(current => ({ ...current, focus: false })); }}
     >

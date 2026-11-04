@@ -14,9 +14,15 @@
 
 /* Вещь стоит на полосе: по центру, на общей базовой линии, без рамки. */
 /* Owner, 3 Nov: «иконки слишком большие» — a 180px stage, objects at most 78% wide. */
-.stage { display:flex; align-items:flex-end; justify-content:center; width:100%; height:180px; }
-.art { display:block; width:auto; max-width:78%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
-.tile:hover .art { transform:translateY(-8px); }
+/* Owner, 4 Nov: под мышью ряд дрейфует к курсору (--drift с ul), а вещь
+   наклоняется за ним и приподнимается, чем ближе курсор (--lean-x, --lean-y и
+   --near с li, GuideCarousel.tsx); названия и строки идут за курсором на 3px. */
+.band [data-guide-carousel] ul > li { transform:translate3d(calc(var(--drift,0) * 28px),0,0); transition:transform 720ms cubic-bezier(.22,1,.36,1); }
+.stage { display:flex; align-items:flex-end; justify-content:center; width:100%; height:180px; perspective:900px; }
+.art { display:block; width:auto; max-width:78%; height:auto; max-height:100%; object-fit:contain; transform:translate3d(calc(var(--lean-x,0) * 10px),calc(var(--near,0) * -12px),0) rotateY(calc(var(--lean-x,0) * 8deg)) rotateX(calc(var(--lean-y,0) * -6deg)); transition:transform 520ms cubic-bezier(.22,1,.36,1); will-change:transform; }
+.tile h2,.tile p { transform:translate3d(calc(var(--lean-x,0) * 3px),0,0); transition:transform 720ms cubic-bezier(.22,1,.36,1); }
+/* Клавиатура и касания: подъём вещи только у карточки в фокусе. */
+.tile:focus-within .art { transform:translateY(-12px); }
 
 .tile h2 { align-self:start; max-width:15ch; margin:22px 0 0; font-size:24px; font-weight:600; line-height:1.1; letter-spacing:-.025em; text-wrap:balance; }
 .tile p { align-self:start; max-width:30ch; margin:10px 0 0; color:#CFC6BA; font-size:15px; line-height:1.45; text-wrap:pretty; }
@@ -33,5 +39,5 @@
   .stage { height:170px; }
   .tile h2 { margin-top:20px; font-size:22px; }
 }
-@media(prefers-reduced-motion:reduce) { .art,.primary { transition:none; } .tile:hover .art { transform:none; } }
+@media(prefers-reduced-motion:reduce) { .art,.primary,.tile h2,.tile p,.band [data-guide-carousel] ul > li { transition:none; } .art,.tile h2,.tile p,.band [data-guide-carousel] ul > li,.tile:focus-within .art { transform:none; } }
 @media(forced-colors:active) { .band { border-block:1px solid CanvasText; } }

@@ -1,15 +1,17 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Local landscape renditions with explicit dimensions. */
 
-import { RisoSpot } from "@/components/marketing/PublicPaper";
-import paper from "@/components/marketing/public-paper.module.css";
-import styles from "@/components/marketing/marketing.module.css";
-
-import { AppleCaption, AppleHeading, AppleBody } from "@/components/apple/Typography";
 import { track } from "@/lib/track";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import styles from "./trust-faq.module.css";
 
-/** Existing FAQ copy and analytics, presented on a quiet white surface. */
+/** Existing FAQ copy and analytics. Owner, 4 Nov: «на фон добавь один из
+ *  пейзажей Италии с Веспи, где он воодушевлённо смотрит вдаль, на смотровой
+ *  площадке с видом на город» — the Florence belvedere scene
+ *  (design/illustrations/landscapes-2026-11-03.json, «belvedere») fills a
+ *  28px tile; the questions sit on a cream panel on its right so Vespi and
+ *  the city stay in view. */
 const FAQ = [
   {
     q: "Как проходит работа с iItaly?",
@@ -39,45 +41,31 @@ const FAQ = [
 
 export function TrustFAQ() {
   return (
-    <section data-public-paper-zone="home-faq" className={`${styles.faq} ${paper.surface} px-5 py-20 sm:py-28`}>
-      <RisoSpot subject="map" placement="faq" />
-      <div className="mx-auto max-w-[760px]">
-        <AppleCaption as="p" className="text-center">Прежде чем платить</AppleCaption>
-        <AppleHeading as="h2" className="mt-3 text-center">
-          Можно ли нам доверять
-        </AppleHeading>
-
-        <div className="mt-10 divide-y divide-white/15">
-          {FAQ.map((item) => (
-            <details
-              key={item.q}
-              className="group py-5"
-              onToggle={(e) => {
-                if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
-              }}
-            >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-apple-text text-apple-subheading font-normal text-cloud-white marker:content-none [&::-webkit-details-marker]:hidden">
-                {item.q}
-                <svg
-                  aria-hidden
-                  viewBox="0 0 16 10"
-                  className="h-2.5 w-4 shrink-0 text-crimson transition-transform duration-200 group-open:-rotate-180"
-                >
-                  <path
-                    d="M1 1.5 8 8.5 15 1.5"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </summary>
-              <AppleBody as="p" className="mt-3 max-w-[65ch] text-apple-body-sm text-cloud-body">
-                {item.a}
-              </AppleBody>
-            </details>
-          ))}
+    <section data-public-paper-zone="home-faq" className={styles.section} aria-labelledby="home-faq-title">
+      <div className={styles.tile} data-faq-tile>
+        <img className={styles.scene} src="/illustrations/landscapes/belvedere-1024.webp" srcSet="/illustrations/landscapes/belvedere-640.webp 640w, /illustrations/landscapes/belvedere-1024.webp 1024w, /illustrations/landscapes/belvedere-1600.webp 1600w" sizes="(max-width: 1344px) 100vw, 1216px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-faq-landscape="belvedere" />
+        <div className={styles.panel}>
+          <p className={styles.eyebrow}>Прежде чем платить</p>
+          <h2 id="home-faq-title" className={styles.title}>Можно ли нам доверять</h2>
+          <div className={styles.list}>
+            {FAQ.map((item) => (
+              <details
+                key={item.q}
+                className={styles.item}
+                onToggle={(e) => {
+                  if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
+                }}
+              >
+                <summary className={styles.question}>
+                  {item.q}
+                  <svg aria-hidden viewBox="0 0 16 10" className={styles.chevron}>
+                    <path d="M1 1.5 8 8.5 15 1.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </summary>
+                <p className={styles.answer}>{item.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
     </section>

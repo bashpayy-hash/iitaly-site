@@ -20,6 +20,10 @@
 .question { display:flex; flex-direction:column; align-items:center; min-width:0; padding:52px 32px 0; overflow:hidden; border-radius:28px; background:#F1ECE3; color:#241F1C; text-align:center; animation:question-enter 420ms cubic-bezier(.22,1,.36,1); }
 .question[data-tone=dark] { background:#2A2420; color:#FAF6EE; }
 .questionHead { max-width:760px; }
+/* Номер вопроса — ярлык плитки (как «Маршрут» на плитках главной), а не
+   полоса прогресса над ней (owner, 4 Nov). */
+.questionStep { margin:0 0 14px; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
+.question[data-tone=dark] .questionStep { color:#F29A89; }
 .question[data-tone] .questionHead h2 { margin:0; font:600 clamp(28px,3.4vw,44px)/1.08 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
 .questionReason { max-width:46ch; margin:12px auto 0; color:#4A443D; font-size:17px; line-height:1.45; text-wrap:balance; }
 .question[data-tone=dark] .questionReason { color:#D9D1C4; }

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Local mascot cut-out with explicit dimensions. */
 
 import { useMemo, useState } from "react";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
@@ -191,6 +192,10 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                   onSelectCity={chooseCity}
                   matchedCities={matchedCities}
                 />
+                {/* Owner, 4 Nov: «из угла выглядывающего Веспи, который
+                    выглядывает в карту» — decorative cut-out over the Ionian
+                    corner of the frame, never over a city; clicks pass through. */}
+                {!portalSelection && <img className={ui.mapPeek} src="/illustrations/objects/peek-up-480.webp" srcSet="/illustrations/objects/peek-up-240.webp 240w, /illustrations/objects/peek-up-480.webp 480w" sizes="(max-width: 767px) 112px, 168px" width={480} height={460} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} data-map-peek="vespi" />}
               </div>
               <p className={ui.mapCaption}>
                 Крупные точки — города с несколькими университетами

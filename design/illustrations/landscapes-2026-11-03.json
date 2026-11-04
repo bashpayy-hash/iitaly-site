@@ -1,30 +1,187 @@
 {
-  "date": "2026-11-03",
-  "request": "Owner: «убери эту странную тему с посадочным и прогресс-линиями в виде самолётов, местами добавляй итальянские пейзажи, сделанные в Higgsfield, на фон», then «Веспи можно для смеха вписать непосредственно в пейзажи», then «на карточки — просто картинки пермессо и прочего, по содержанию; Веспи в пейзаже — в личный кабинет или в другие места, но не на иконки, которые должны перераспределять».",
-  "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 3:2. The six Vespi scenes were generated with the mascot's reference images (image_references ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5) so Vespi stands inside each place; the Tuscan scene additionally upscaled to 2k (bytedance_image_upscale) for the cabinet hero",
-  "promptTemplate": "Editorial travel photograph, 35mm, photorealistic: [one place]. The exact same handmade cotton toy character as in the references (smooth cream cotton body, satin red helmet with a cream stripe, tiny dot eyes, olive green felt collar with a red button) [pose] in the lower left third of the frame, small in the scene, clearly a soft toy placed in the real place. No text, no signs, no flags, no other people, no logos.",
-  "processing": "Downloaded inside the Higgsfield sandbox, saved as 1024×688 JPEG q82 masters (sha256 below, byte-identical copies brought over). Reviewed at full size: no people, text, signs, flags or logos; one Vespi per scene, lower left. Only tuscany ships, exported as WebP q76/q78 at 640, 1024 and 1600px (the last from the upscale) with sharp into public/illustrations/landscapes, for the cabinet hero. The other five scenes were briefly shipped as home-card backgrounds and withdrawn on the owner's word (navigation cards carry only the theme's object); their masters are archived in design/illustrations/source/landscapes/<name>-vespi.jpg for later use in the cabinet or other non-navigation places. The first, mascot-free versions (jobs listed under plainScenes) were reviewed and shipped briefly, then replaced; amalfi and padua were generated and are not shipped (padua's arcade frieze carries painted medallions).",
-  "items": [
-    { "name": "tuscany", "use": "cabinet hero tile", "job": "7ce12b5b-14ca-4dae-87ae-4f6a1d3f8458", "upscaleJob": "51c7c070-c4d6-4ce0-a383-8528262b6e34", "place": "rolling Tuscan hills at golden hour with rows of cypress trees along a gravel road and a stone farmhouse on a ridge", "vespi": "rides a small cream vintage scooter along the road", "masterSha256": "b37da7a31e2196d215d93f0e20650297f05e51ee39f9c46f7beaa5f326c2fcb7", "master": "design/illustrations/source/landscapes/tuscany-vespi.jpg" },
-    { "name": "rome", "use": "archived, not shipped (was the home card «До отъезда»)", "job": "4d041e2e-8631-4247-8e33-3b23faa03b8b", "place": "Rome rooftops and domes at dusk seen from a terrace with a stone balustrade and umbrella pines", "vespi": "sits on the balustrade looking at the city", "masterSha256": "40dfd20d6281b5e380b259dcbacaae871d3630f49cb273d4627fb6fb1784037f", "master": "design/illustrations/source/landscapes/rome-vespi.jpg" },
-    { "name": "bologna", "use": "archived, not shipped (was the home card «В Италии»)", "job": "2dcdd8e8-2484-403a-b888-39c3b9eecd72", "place": "an empty terracotta portico arcade in Bologna in warm evening light", "vespi": "walks along the arcade with a tiny canvas backpack", "masterSha256": "82c042e712f820eeb77b02880038f3887f3559bb5684cd22596370cdc38a0696", "master": "design/illustrations/source/landscapes/bologna-vespi.jpg" },
-    { "name": "venice", "use": "archived, not shipped (was the home card «Permesso»)", "job": "85db4841-bf3d-460b-9979-dd97f9db7d43", "place": "a quiet Venetian canal at dawn, pastel facades, moored plain wooden boats", "vespi": "sits in one of the wooden boats", "masterSha256": "a03a52c265ed1bd12eef34577a44718cbab7ecbabb9d58db8659fa5a7eb0f8a1", "master": "design/illustrations/source/landscapes/venice-vespi.jpg" },
-    { "name": "como", "use": "archived, not shipped (was the home card «Codice fiscale»)", "job": "10bc6d33-84f8-45b3-9455-d81d909ad976", "place": "Lake Como shoreline with cypress trees, a villa garden with a stone balustrade and calm water", "vespi": "sits on the balustrade with its feet dangling", "masterSha256": "eb9f3c4e2e8a318663aacf6cda8c0fef31497648bb47b3e483c289f26cc7367d", "master": "design/illustrations/source/landscapes/como-vespi.jpg" },
-    { "name": "dolomites", "use": "archived, not shipped (was the home card «Страховка»)", "job": "ac34fe0f-9944-4c5a-9ae6-5fdedb8c6f59", "place": "an alpine meadow in the Dolomites with pale limestone peaks and a small wooden chalet", "vespi": "stands in the wildflowers holding a tiny wildflower", "masterSha256": "4cafe62400767c2baed1ff62602ef603601fa6ff13aca09a09cbc069370a7a36", "master": "design/illustrations/source/landscapes/dolomites-vespi.jpg" }
-  ],
-  "plainScenes": [
-    { "name": "tuscany", "job": "096c32fe-8b56-4d2d-b59d-f0771db803c3", "upscaleJob": "619fc749-f42e-48e8-a2d5-99a75a87b065", "masterSha256": "960b5adeacf2f05c18344a861c0f38724f9eaf056b07a558c31cb28b6c2ba49e" },
-    { "name": "rome", "job": "41fcf892-ba39-4c10-b984-36ff1901e4e7", "masterSha256": "586c17ad79b2acd13ac5e213f254aca6af516ea156ccd6b725619dd40c5ab44c" },
-    { "name": "bologna", "job": "6b592e2a-f9c2-46f9-8fe6-49483326c100", "masterSha256": "1378412e2dba9f767a4af6af5faa249ddaadc1a77df7924248b07bac3d33a702" },
-    { "name": "venice", "job": "f026967f-5384-423d-8064-c20cfe2452d2", "masterSha256": "58310a373b9d9f914f0317bb2159bacd347bfa99a8eb9d4e8700092b66e761a1" },
-    { "name": "como", "job": "712ae870-538f-49b1-86f9-b4cbd976a9a8", "masterSha256": "5c53d631a973703e07dae408e81e938ceaf87079ea163cd93b494f564df45dc0" },
-    { "name": "dolomites", "job": "ef2b18d5-a26d-439b-a63e-24618f56435f", "masterSha256": "67e00381c4c0d7985ef68cead9b9fe50215fd9eff81bafa73940831e14154e49" },
-    { "name": "amalfi", "use": "not shipped", "job": "94df1d2e-663b-4534-9778-72720b09adcf", "masterSha256": "0d411a37f44ee857f9d06350cbdbc82a84733674b2ab532e94306836c2be8dbb" },
-    { "name": "padua", "use": "not shipped", "job": "913f977d-85d1-42ce-aee4-c67165affe8f", "masterSha256": "4bcd1198c838b118ce393861521f575106cce99dc2ee362f183b3f88c25000d8" }
-  ],
-  "files": [
-    { "file": "public/illustrations/landscapes/tuscany-640.webp", "width": 640, "height": 481, "bytes": 46508, "note": "right 10.5% of the frame cropped: the generator left a cluster of tiny figures at the right edge" },
-    { "file": "public/illustrations/landscapes/tuscany-1024.webp", "width": 916, "height": 688, "bytes": 80286, "note": "same crop" },
-    { "file": "public/illustrations/landscapes/tuscany-1600.webp", "width": 1426, "height": 1075, "bytes": 144346, "source": "2k upscale (master sha256 a03d7ae34eff072f9f3e32d86af71de45636480625ef75c885478d29a47031bd), same crop" }
-  ]
+ "date": "2026-11-03",
+ "request": "Owner: «убери эту странную тему с посадочным и прогресс-линиями в виде самолётов, местами добавляй итальянские пейзажи, сделанные в Higgsfield, на фон», then «Веспи можно для смеха вписать непосредственно в пейзажи», then «на карточки — просто картинки пермессо и прочего, по содержанию; Веспи в пейзаже — в личный кабинет или в другие места, но не на иконки, которые должны перераспределять».",
+ "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 3:2. The six Vespi scenes were generated with the mascot's reference images (image_references ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5) so Vespi stands inside each place; the Tuscan scene additionally upscaled to 2k (bytedance_image_upscale) for the cabinet hero",
+ "promptTemplate": "Editorial travel photograph, 35mm, photorealistic: [one place]. The exact same handmade cotton toy character as in the references (smooth cream cotton body, satin red helmet with a cream stripe, tiny dot eyes, olive green felt collar with a red button) [pose] in the lower left third of the frame, small in the scene, clearly a soft toy placed in the real place. No text, no signs, no flags, no other people, no logos.",
+ "processing": "Downloaded inside the Higgsfield sandbox, saved as 1024×688 JPEG q82 masters (sha256 below, byte-identical copies brought over). Reviewed at full size: no people, text, signs, flags or logos; one Vespi per scene, lower left. Only tuscany ships, exported as WebP q76/q78 at 640, 1024 and 1600px (the last from the upscale) with sharp into public/illustrations/landscapes, for the cabinet hero. The other five scenes were briefly shipped as home-card backgrounds and withdrawn on the owner's word (navigation cards carry only the theme's object); their masters are archived in design/illustrations/source/landscapes/<name>-vespi.jpg for later use in the cabinet or other non-navigation places. The first, mascot-free versions (jobs listed under plainScenes) were reviewed and shipped briefly, then replaced; amalfi and padua were generated and are not shipped (padua's arcade frieze carries painted medallions).",
+ "items": [
+  {
+   "name": "tuscany",
+   "use": "cabinet hero tile",
+   "job": "7ce12b5b-14ca-4dae-87ae-4f6a1d3f8458",
+   "upscaleJob": "51c7c070-c4d6-4ce0-a383-8528262b6e34",
+   "place": "rolling Tuscan hills at golden hour with rows of cypress trees along a gravel road and a stone farmhouse on a ridge",
+   "vespi": "rides a small cream vintage scooter along the road",
+   "masterSha256": "b37da7a31e2196d215d93f0e20650297f05e51ee39f9c46f7beaa5f326c2fcb7",
+   "master": "design/illustrations/source/landscapes/tuscany-vespi.jpg"
+  },
+  {
+   "name": "rome",
+   "use": "archived, not shipped (was the home card «До отъезда»)",
+   "job": "4d041e2e-8631-4247-8e33-3b23faa03b8b",
+   "place": "Rome rooftops and domes at dusk seen from a terrace with a stone balustrade and umbrella pines",
+   "vespi": "sits on the balustrade looking at the city",
+   "masterSha256": "40dfd20d6281b5e380b259dcbacaae871d3630f49cb273d4627fb6fb1784037f",
+   "master": "design/illustrations/source/landscapes/rome-vespi.jpg"
+  },
+  {
+   "name": "bologna",
+   "use": "archived, not shipped (was the home card «В Италии»)",
+   "job": "2dcdd8e8-2484-403a-b888-39c3b9eecd72",
+   "place": "an empty terracotta portico arcade in Bologna in warm evening light",
+   "vespi": "walks along the arcade with a tiny canvas backpack",
+   "masterSha256": "82c042e712f820eeb77b02880038f3887f3559bb5684cd22596370cdc38a0696",
+   "master": "design/illustrations/source/landscapes/bologna-vespi.jpg"
+  },
+  {
+   "name": "venice",
+   "use": "archived, not shipped (was the home card «Permesso»)",
+   "job": "85db4841-bf3d-460b-9979-dd97f9db7d43",
+   "place": "a quiet Venetian canal at dawn, pastel facades, moored plain wooden boats",
+   "vespi": "sits in one of the wooden boats",
+   "masterSha256": "a03a52c265ed1bd12eef34577a44718cbab7ecbabb9d58db8659fa5a7eb0f8a1",
+   "master": "design/illustrations/source/landscapes/venice-vespi.jpg"
+  },
+  {
+   "name": "como",
+   "use": "archived, not shipped (was the home card «Codice fiscale»)",
+   "job": "10bc6d33-84f8-45b3-9455-d81d909ad976",
+   "place": "Lake Como shoreline with cypress trees, a villa garden with a stone balustrade and calm water",
+   "vespi": "sits on the balustrade with its feet dangling",
+   "masterSha256": "eb9f3c4e2e8a318663aacf6cda8c0fef31497648bb47b3e483c289f26cc7367d",
+   "master": "design/illustrations/source/landscapes/como-vespi.jpg"
+  },
+  {
+   "name": "dolomites",
+   "use": "archived, not shipped (was the home card «Страховка»)",
+   "job": "ac34fe0f-9944-4c5a-9ae6-5fdedb8c6f59",
+   "place": "an alpine meadow in the Dolomites with pale limestone peaks and a small wooden chalet",
+   "vespi": "stands in the wildflowers holding a tiny wildflower",
+   "masterSha256": "4cafe62400767c2baed1ff62602ef603601fa6ff13aca09a09cbc069370a7a36",
+   "master": "design/illustrations/source/landscapes/dolomites-vespi.jpg"
+  },
+  {
+   "name": "belvedere",
+   "use": "home FAQ «Можно ли нам доверять» background (owner, 4 Nov: «пейзаж с Веспи, где он воодушевлённо смотрит вдаль, на смотровой площадке с видом на город»)",
+   "job": "534fd5cf-fbdd-489f-8781-c70eb8db4088",
+   "upscaleJob": "6a397266-df73-4844-9e39-0a5d897e8cb9",
+   "place": "a hilltop viewpoint with a low stone wall and a cypress, overlooking Florence: the Arno with its bridges, the Palazzo Vecchio tower and the Duomo in late afternoon light",
+   "vespi": "sits on the stone wall, one paw shading its eyes, looking far into the distance with a happy open expression",
+   "masterSha256": "bcf4819b933b7659fdc742e1234c3468755cddc91647be13d8ea13836e9c35f9",
+   "master": "design/illustrations/source/landscapes/belvedere-vespi.jpg",
+   "upscaleMaster1600Sha256": "e6e998fa1449b7297fb67516217b1310d9d506319425ccfa86d7ff1f15688183"
+  },
+  {
+   "name": "belvedere-standing",
+   "use": "archived alternative (exported, not placed)",
+   "job": "9fef92a8-a778-46da-b306-9b4d0dd0050e",
+   "place": "a stone belvedere balustrade above Florence at golden hour, the Duomo on the right",
+   "vespi": "stands at the balustrade seen from behind, both paws on the stone, gazing over the city",
+   "masterSha256": "a5855508afaeb61270041802269823249a5df0630135a8ae2c462ebc44021e93",
+   "master": "design/illustrations/source/landscapes/belvedere-standing-vespi.jpg"
+  }
+ ],
+ "plainScenes": [
+  {
+   "name": "tuscany",
+   "job": "096c32fe-8b56-4d2d-b59d-f0771db803c3",
+   "upscaleJob": "619fc749-f42e-48e8-a2d5-99a75a87b065",
+   "masterSha256": "960b5adeacf2f05c18344a861c0f38724f9eaf056b07a558c31cb28b6c2ba49e"
+  },
+  {
+   "name": "rome",
+   "job": "41fcf892-ba39-4c10-b984-36ff1901e4e7",
+   "masterSha256": "586c17ad79b2acd13ac5e213f254aca6af516ea156ccd6b725619dd40c5ab44c"
+  },
+  {
+   "name": "bologna",
+   "job": "6b592e2a-f9c2-46f9-8fe6-49483326c100",
+   "masterSha256": "1378412e2dba9f767a4af6af5faa249ddaadc1a77df7924248b07bac3d33a702"
+  },
+  {
+   "name": "venice",
+   "job": "f026967f-5384-423d-8064-c20cfe2452d2",
+   "masterSha256": "58310a373b9d9f914f0317bb2159bacd347bfa99a8eb9d4e8700092b66e761a1"
+  },
+  {
+   "name": "como",
+   "job": "712ae870-538f-49b1-86f9-b4cbd976a9a8",
+   "masterSha256": "5c53d631a973703e07dae408e81e938ceaf87079ea163cd93b494f564df45dc0"
+  },
+  {
+   "name": "dolomites",
+   "job": "ef2b18d5-a26d-439b-a63e-24618f56435f",
+   "masterSha256": "67e00381c4c0d7985ef68cead9b9fe50215fd9eff81bafa73940831e14154e49"
+  },
+  {
+   "name": "amalfi",
+   "use": "not shipped",
+   "job": "94df1d2e-663b-4534-9778-72720b09adcf",
+   "masterSha256": "0d411a37f44ee857f9d06350cbdbc82a84733674b2ab532e94306836c2be8dbb"
+  },
+  {
+   "name": "padua",
+   "use": "not shipped",
+   "job": "913f977d-85d1-42ce-aee4-c67165affe8f",
+   "masterSha256": "4bcd1198c838b118ce393861521f575106cce99dc2ee362f183b3f88c25000d8"
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/landscapes/tuscany-640.webp",
+   "width": 640,
+   "height": 481,
+   "bytes": 46508,
+   "note": "right 10.5% of the frame cropped: the generator left a cluster of tiny figures at the right edge"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-1024.webp",
+   "width": 916,
+   "height": 688,
+   "bytes": 80286,
+   "note": "same crop"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-1600.webp",
+   "width": 1426,
+   "height": 1075,
+   "bytes": 144346,
+   "source": "2k upscale (master sha256 a03d7ae34eff072f9f3e32d86af71de45636480625ef75c885478d29a47031bd), same crop"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 52540,
+   "sha256": "fba6bc61af697e309ae8d75eff8b3323f1bb16b231a21e7a4d701c3e8da3c1de"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 104388,
+   "sha256": "b94eafa0decec77247c4e05b9e5c38fb842e624af4821f8594b3b7b5632e4402"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-standing-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 39072,
+   "sha256": "2fb7d47569559bf2a2929ce9042c1531ece55076368a383a665515668122a1f4"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-standing-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 81420,
+   "sha256": "de05f8a4d32f650f868ef6ae7d71e1305efc45d6014d24d8bfa4294d22e957d7"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-1600.webp",
+   "width": 1600,
+   "height": 1080,
+   "bytes": 200238,
+   "source": "2k upscale (3200×2160) resized to 1600 wide, JPEG q78 master (sha256 above), WebP q78"
+  }
+ ]
 }

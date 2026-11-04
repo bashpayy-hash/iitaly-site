@@ -1,6 +1,6 @@
 /* Справочник под черновиком — в той же светлой палитре, что и бланк над
-   ним (permesso-light.module.css): тот же фон, засечный заголовок, винный
-   акцент. В режиме «Оригинал» он был в другой гамме и с текстом 10px —
+   ним (permesso-light.module.css): тот же фон; заголовки — шрифт сайта
+   (owner, 4 Nov: «общий стиль везде»), терракотовый акцент. В режиме «Оригинал» он был в другой гамме и с текстом 10px —
    на телефоне это не читалось. Здесь вторичный текст не меньше 12px,
    поля ввода на телефоне 16px, чтобы iOS не увеличивал страницу. */
 .helpers {
@@ -8,12 +8,12 @@
   --muted: #66635d;
   --line: #ddd9d1;
   --line-strong: #cfc9bf;
-  --accent: #8b2939;
+  --accent: #A33421;
   --focus: #574331;
   padding: 0 24px 80px;
   background: #FAF8F5;
   color: var(--ink);
-  font-family: var(--font-onest), system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 .helpers *, .helpers *::before, .helpers *::after { box-sizing: border-box; }
 .helpers :is(a, button, input, select, summary):focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
@@ -22,7 +22,7 @@
 .section + .section { padding-top: 56px; }
 
 .header { max-width: 680px; margin-bottom: 20px; }
-.header h2 { margin: 0; font: 400 28px/1.2 Charter, Georgia, serif; }
+.header h2 { margin: 0; font: 600 28px/1.15 var(--font-apple-display); letter-spacing: -.025em; }
 .header p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
 .toolsGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid var(--line-strong); }

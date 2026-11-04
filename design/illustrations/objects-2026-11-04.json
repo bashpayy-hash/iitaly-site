@@ -1,0 +1,471 @@
+{
+ "date": "2026-11-04",
+ "request": "Owner: «по иконкам более-менее, но добавь элементы иллюстрированности, но всё ещё с упором на реализм, чтобы с остальным кодом сайта более-менее сочеталось»; «сделай общий стиль везде». One object set for the guide band and topic pages, the cabinet tiles and stage art, the home theme tiles. Also two mascot cut-outs: «добавь из угла выглядывающего Веспи, который выглядывает в карту».",
+ "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 4:3 (cut-outs 1:1), transparent background; the cut-outs used the mascot reference images ab833075-dfc7-4e28-824c-7e299aad556c and a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+ "promptTemplate": "Editorial still-life illustration rendered photorealistically, three-quarter view from slightly above: [object]. Realistic materials and crisp detail with gentle illustrative touches: softly simplified forms, hand-painted highlights and a faint warm ink line along the silhouette, like a premium magazine product illustration. Soft diffused studio light, gentle contact shadow directly beneath the object. Warm neutral palette with one accent of tomato red [or deep teal]. One isolated object on a transparent background, no text, no letters, no numbers, no logos, no emblems, no flags, no people, no hands.",
+ "processing": "Downloaded inside the Higgsfield sandbox, trimmed, resized to 480px PNG masters (sha256 below, byte-identical copies brought over), exported here as WebP q82 alpha92 at 240 and 480px with sharp into public/illustrations/objects, replacing the 3 November studio renders of the same names. Reviewed at full size on the light (#FFFDF9) and dark (#2A2420) tile colours: no text, numerals, emblems, flags or people. The questionnaire of /plan uses the same set (cap and books added for «Цель» and «Направление»); the risograph set left public/illustrations/riso.",
+ "items": [
+  {
+   "name": "diploma",
+   "use": "education (guide), education12 stage",
+   "job": "5571a598-5c6a-47ed-94d0-af37fbacec00",
+   "object": "a rolled cream parchment diploma scroll tied with a red satin ribbon and a wax seal, no visible writing",
+   "masterWidth": 480,
+   "masterHeight": 357,
+   "masterSha256": "4ac56d89c798d4c82ae0ef3e0ddfc1102c260a6d0de435154d562863b4a4203e"
+  },
+  {
+   "name": "tests",
+   "use": "tests (guide)",
+   "job": "e5ecb24d-f32d-4dc0-b33d-d69123d54e9c",
+   "object": "an exam answer sheet with rows of small empty circles on a wooden clipboard, a red pencil and a small brass hourglass beside it",
+   "masterWidth": 480,
+   "masterHeight": 352,
+   "masterSha256": "a273b3a67343650d9207828dd2324bc7b4357272ff47a32215106e093cdbc070"
+  },
+  {
+   "name": "stamp-pad",
+   "use": "apostille (guide), documents tile and documents page art",
+   "job": "566b59f8-a19e-4983-99d8-4af4cc875092",
+   "object": "a wooden-handled rubber stamp standing next to an open red ink pad in a small tin, with one blank cream paper card",
+   "masterWidth": 480,
+   "masterHeight": 371,
+   "masterSha256": "47ebb9aa1db64a32ff83fdaf51289035c85b67e42e449c8f4d42fab4f1c894f4"
+  },
+  {
+   "name": "translation",
+   "use": "translation (guide)",
+   "job": "bde12f6a-0925-47ed-9496-b1b690d0f6b6",
+   "object": "an open dictionary with a red ribbon bookmark and a fountain pen, its pages showing only faint abstract wavy lines",
+   "masterWidth": 480,
+   "masterHeight": 351,
+   "masterSha256": "c812e0b2d85346b5594932d104bb577b3622aa7b93562d41f9c8a00d610bbc8d"
+  },
+  {
+   "name": "folder",
+   "use": "cimea (guide), docs stage, home card «До отъезда»",
+   "job": "cfe38973-22e0-41fc-9631-326ab3f564ce",
+   "object": "a kraft paper document folder closed with a thin red elastic band, the edges of a few cream paper sheets peeking out",
+   "masterWidth": 480,
+   "masterHeight": 338,
+   "masterSha256": "0b9f09d49b4b56ba79784de96d59607fc6ff8bb090871a9f84fe7d78441f9e98"
+  },
+  {
+   "name": "envelope",
+   "use": "con (guide), apply stage",
+   "job": "5a88ce6a-c973-4f90-bfd2-20fe0974dbf9",
+   "object": "an open cream paper envelope with a plain folded letter rising out of it and a small red wax seal on the flap",
+   "masterWidth": 480,
+   "masterHeight": 362,
+   "masterSha256": "2a4e602aa31eef3d8690346542ec9cf481affea5d34d61cd796decd5f05531a8"
+  },
+  {
+   "name": "coins",
+   "use": "iseeu (guide), dsu stage",
+   "job": "c58cf348-0d86-4b55-9334-65fa3d909c04",
+   "object": "a clear glass jar filled with mixed brass and silver coins, lid off, with three coins stacked beside it",
+   "masterWidth": 480,
+   "masterHeight": 367,
+   "masterSha256": "057344037ddaef8c707547ae1cfdd9253b3263cd5609f33a9e06068b85050cb6"
+  },
+  {
+   "name": "passport",
+   "use": "visa (guide), visa stage",
+   "job": "f9f39d1a-58eb-4b4e-a6b7-4d7de6b32433",
+   "object": "a closed burgundy leather passport booklet with a completely plain cover, no emblem and no lettering, lying slightly tilted with a cream boarding card tucked inside",
+   "masterWidth": 480,
+   "masterHeight": 359,
+   "masterSha256": "f473ced2d2a55479cb6b138a0e4706fc460bb08c8f15ec5f1333dd5115656998"
+  },
+  {
+   "name": "minors",
+   "use": "minors (guide)",
+   "job": "20632f4f-8c29-4678-be45-0e1c611b4d5f",
+   "object": "a folded cream letter tied with a red ribbon and a wax seal, with a short pencil beside it",
+   "masterWidth": 480,
+   "masterHeight": 371,
+   "masterSha256": "653e146deae511b83fa7c7bcc36a10613afe81c4097dcf204ea58451ceb9ec12"
+  },
+  {
+   "name": "military",
+   "use": "military (guide)",
+   "job": "a95cb833-563d-44f6-a1fb-4dafe5bb4d1b",
+   "object": "a pair of blank brushed-metal identification tags on a ball chain, the chain loosely coiled",
+   "masterWidth": 480,
+   "masterHeight": 358,
+   "masterSha256": "62ed9f96433220cfde410524d4d523cb53954e57afb56fd32a0117df7b49d493"
+  },
+  {
+   "name": "keys",
+   "use": "permesso (guide), arrival stage, home card «В Италии»",
+   "job": "f08ead77-f8ff-4319-951b-2c7b12a5ab95",
+   "object": "a ring of three brass keys with a small plain tan leather tag",
+   "masterWidth": 480,
+   "masterHeight": 365,
+   "masterSha256": "931cab5ce1494f6029158d4359a09e353ccf13e8411d7d7a1ee8c0580b715ed0"
+  },
+  {
+   "name": "tax-card",
+   "use": "codice (guide), home card «Codice fiscale»",
+   "job": "0a0ba4e9-f1b0-415e-819e-60d4559f02d5",
+   "object": "a single plain teal-green plastic card with a golden chip resting on a cream paper form with faint empty boxes",
+   "masterWidth": 480,
+   "masterHeight": 361,
+   "masterSha256": "1a7ce831e8725a298fe209e199aba88a5542e51dd05765e9707198eaf9736509"
+  },
+  {
+   "name": "map",
+   "use": "start stage, universities tile, home card «Маршрут»",
+   "job": "729100b7-0d18-4c37-a8bc-1875b460dfb6",
+   "object": "a brass pocket compass with a plain cream dial lying on a folded cream paper map printed only with faint abstract contour lines and no words",
+   "masterWidth": 480,
+   "masterHeight": 358,
+   "masterSha256": "10a00adca9390d3581e803310e08e8920f5808742d81ed491e9abb70588b67fd"
+  },
+  {
+   "name": "insurance",
+   "use": "health-travel (guide), home card «Страховка»",
+   "job": "38ea7d44-9ac7-4601-9dba-db8d59aefca0",
+   "object": "a compact red zip pouch with a plain white cross on its lid, next to a folded cream card",
+   "masterWidth": 480,
+   "masterHeight": 362,
+   "masterSha256": "d799c0536895d52b41482b5de1217df28a3f93b81f5d2310b2fd120d18c538fa"
+  },
+  {
+   "name": "permesso-kit",
+   "use": "home card «Permesso»",
+   "job": "f225ce01-1d24-4cea-bceb-0b7456f18ea0",
+   "object": "a plain bright yellow postal envelope kit with a white paper receipt slip tucked under its flap",
+   "masterWidth": 480,
+   "masterHeight": 387,
+   "masterSha256": "4c1f03484c9d5d561a1a271d7b063970ce5613c7cca112a7175cb76967aa50bd"
+  },
+  {
+   "name": "alarm",
+   "use": "reminders tile",
+   "job": "a5e74bba-c013-4259-901d-11384d6804b2",
+   "object": "a classic cream enamel twin-bell alarm clock with a plain white dial, two hands and no numerals",
+   "masterWidth": 480,
+   "masterHeight": 357,
+   "masterSha256": "6f6a17e7e834599f49d17fb46a0a6792c5850a12fef39e7bc896dc9e66bee5ac"
+  },
+  {
+   "name": "peek-up",
+   "use": "/universities: peeks over the bottom edge of the map tile (owner, 4 Nov)",
+   "job": "0c102e74-db07-42e2-ba68-89c86a9856f1",
+   "object": "Vespi peeking over a horizontal edge: head, helmet and two paws, looking up-left",
+   "masterWidth": 480,
+   "masterHeight": 460,
+   "masterSha256": "8a5b2077c26f11957f5b3c374be9b1650bfe975d3d8749b91ae31946a0909fc7"
+  },
+  {
+   "name": "peek-side",
+   "use": "/universities: alternative peek from the right edge",
+   "job": "af7e30e6-08ea-4848-8bc1-9fa8f53f3af6",
+   "object": "Vespi peeking around a vertical edge: head, one shoulder and one paw, looking left",
+   "masterWidth": 446,
+   "masterHeight": 480,
+   "masterSha256": "7f3f62ba734b464f2fe1963d41d989f69f208ac3bfa618c7d4f4c176215b4f7c"
+  },
+  {
+   "name": "cap",
+   "use": "/plan question «Цель»",
+   "job": "ecf42330-0515-4682-a461-019a29fb5ac0",
+   "object": "a black graduation mortarboard cap with a red tassel resting on a small stack of two cream hardcover books",
+   "masterWidth": 480,
+   "masterHeight": 348,
+   "masterSha256": "db2a53ac19ac9c1e72340eb1fe314a3bb20c50d4c9b7ca1299d1742ff4ae46ef"
+  },
+  {
+   "name": "books",
+   "use": "/plan question «Направление»",
+   "job": "34d90966-b211-4ff7-9916-f927c86153ce",
+   "object": "a stack of three hardcover books in cream, deep teal and terracotta cloth with plain spines, the top one slightly askew",
+   "masterWidth": 480,
+   "masterHeight": 369,
+   "masterSha256": "450f1d15967991bf87336d17f453c190ca0baedc07111ce1af92207150755694"
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/objects/diploma-240.webp",
+   "width": 240,
+   "height": 179,
+   "bytes": 11238,
+   "sha256": "f14410f60bc64ce4f1a07cceb9db63dd8b91bce6f696931b8912c85be9b33cdd"
+  },
+  {
+   "file": "public/illustrations/objects/diploma-480.webp",
+   "width": 480,
+   "height": 357,
+   "bytes": 24552,
+   "sha256": "cb5b6c6eb661839544f8e8fe205d0729acb791236e9bc8d0fbd516b5a42d0a83"
+  },
+  {
+   "file": "public/illustrations/objects/tests-240.webp",
+   "width": 240,
+   "height": 176,
+   "bytes": 14584,
+   "sha256": "3bb96d835ec2582737a782f0d9811676f759568823866c31e2a73b7913b8b490"
+  },
+  {
+   "file": "public/illustrations/objects/tests-480.webp",
+   "width": 480,
+   "height": 352,
+   "bytes": 33366,
+   "sha256": "6c90bf7ecbb670467be46d3d28c46510804b2a888914a69efb5f942f3fb12c8d"
+  },
+  {
+   "file": "public/illustrations/objects/stamp-pad-240.webp",
+   "width": 240,
+   "height": 186,
+   "bytes": 14798,
+   "sha256": "480f4d811feb817f004a1498ce4d1abf2081ee2e0b5cf88bdf6e523901e06117"
+  },
+  {
+   "file": "public/illustrations/objects/stamp-pad-480.webp",
+   "width": 480,
+   "height": 371,
+   "bytes": 32660,
+   "sha256": "93523b0f031049839672e1d2e18327eb36d3513e6c563e99b116eb6f99874c4e"
+  },
+  {
+   "file": "public/illustrations/objects/translation-240.webp",
+   "width": 240,
+   "height": 176,
+   "bytes": 10784,
+   "sha256": "3c3d53605b8f1bcf43a6b4d0a066dbeb4c2e90ff4182638ee74faceeb99e2eb0"
+  },
+  {
+   "file": "public/illustrations/objects/translation-480.webp",
+   "width": 480,
+   "height": 351,
+   "bytes": 23620,
+   "sha256": "a60c5b48f7c45a39023cd2c526393f98f7ca264f7f1b049f84ccf644b1044316"
+  },
+  {
+   "file": "public/illustrations/objects/folder-240.webp",
+   "width": 240,
+   "height": 169,
+   "bytes": 8508,
+   "sha256": "f6c9ff9d50a295721b9543ade03f3fe59c7bd61b70cc07b0032bade706f9d829"
+  },
+  {
+   "file": "public/illustrations/objects/folder-480.webp",
+   "width": 480,
+   "height": 338,
+   "bytes": 18762,
+   "sha256": "94acf557d27040219508a1f4b8bd4be186b5932cd9000493f318fb54ae3152fc"
+  },
+  {
+   "file": "public/illustrations/objects/envelope-240.webp",
+   "width": 240,
+   "height": 181,
+   "bytes": 7936,
+   "sha256": "318fac11edeb6fb66f0674bbe5782931e9af544f92d4a4cd1eb0ef5780723451"
+  },
+  {
+   "file": "public/illustrations/objects/envelope-480.webp",
+   "width": 480,
+   "height": 362,
+   "bytes": 16288,
+   "sha256": "54ad1148e57c45172053a79e9e15def84fdf19b1d9f0c8ca4a6257af60a3abc0"
+  },
+  {
+   "file": "public/illustrations/objects/coins-240.webp",
+   "width": 240,
+   "height": 184,
+   "bytes": 16984,
+   "sha256": "09782713a89de60f582e426aded233715418156d37294c9190c2c90131205b9f"
+  },
+  {
+   "file": "public/illustrations/objects/coins-480.webp",
+   "width": 480,
+   "height": 367,
+   "bytes": 40452,
+   "sha256": "af328ea4cc3dab8fcdc8a64a35b29cf850900db949cea063f621605717ee1616"
+  },
+  {
+   "file": "public/illustrations/objects/passport-240.webp",
+   "width": 240,
+   "height": 180,
+   "bytes": 8258,
+   "sha256": "3a9a9d6e5ab29daef0d23b27d5b26c18af8a0591728679133395f8ffa9b9644a"
+  },
+  {
+   "file": "public/illustrations/objects/passport-480.webp",
+   "width": 480,
+   "height": 359,
+   "bytes": 17500,
+   "sha256": "8c392b17ea41cf79266c112b67f0cacb2291d3fcc8e9d4bc1241cdeb7656a6d9"
+  },
+  {
+   "file": "public/illustrations/objects/minors-240.webp",
+   "width": 240,
+   "height": 186,
+   "bytes": 12042,
+   "sha256": "7da45468d734f6d1146bef11528359b104f300a891b9cbad1f2630e4f22b8ddf"
+  },
+  {
+   "file": "public/illustrations/objects/minors-480.webp",
+   "width": 480,
+   "height": 371,
+   "bytes": 25392,
+   "sha256": "17dacf1f66feab94821f087778b16c34129b2539f9df24e9d4657c4001a9aed7"
+  },
+  {
+   "file": "public/illustrations/objects/military-240.webp",
+   "width": 240,
+   "height": 179,
+   "bytes": 15552,
+   "sha256": "85cc66280d2b131a552fceece4a02fb9e92397802f754709224f4fdcc935f1dd"
+  },
+  {
+   "file": "public/illustrations/objects/military-480.webp",
+   "width": 480,
+   "height": 358,
+   "bytes": 34366,
+   "sha256": "2d945da66490e7bc1c99088256930d5259ae05e44efe14374e7fc3f18c42231f"
+  },
+  {
+   "file": "public/illustrations/objects/keys-240.webp",
+   "width": 240,
+   "height": 183,
+   "bytes": 13256,
+   "sha256": "ec2fc9fc4d3c1f1a592f28b3e19480876a8a7f2b33399ac5e2bb223768ad1dc3"
+  },
+  {
+   "file": "public/illustrations/objects/keys-480.webp",
+   "width": 480,
+   "height": 365,
+   "bytes": 27766,
+   "sha256": "e27d424e2ffd6afe22451d838dd3e5026c6798164b0dcece876a0de0c4182573"
+  },
+  {
+   "file": "public/illustrations/objects/tax-card-240.webp",
+   "width": 240,
+   "height": 181,
+   "bytes": 10076,
+   "sha256": "2b5d368a6ae395c9257f0334f4eb4ad26bd7dc5c741badeb5137a0b42011cda3"
+  },
+  {
+   "file": "public/illustrations/objects/tax-card-480.webp",
+   "width": 480,
+   "height": 361,
+   "bytes": 20002,
+   "sha256": "00435745e055370fc4b4c995dec99b5a0b988e6b937f85ba98744ec5c0842281"
+  },
+  {
+   "file": "public/illustrations/objects/map-240.webp",
+   "width": 240,
+   "height": 179,
+   "bytes": 12782,
+   "sha256": "a41f57dd6c8096c8d7ec913fcc77ebf4c6eab9b260e8aeacbc486b7bdfa0eaf0"
+  },
+  {
+   "file": "public/illustrations/objects/map-480.webp",
+   "width": 480,
+   "height": 358,
+   "bytes": 28594,
+   "sha256": "8d1f433e91d5d4453b58ff55f6b11415ad258fd7306beb70e7c8bc07e339a030"
+  },
+  {
+   "file": "public/illustrations/objects/insurance-240.webp",
+   "width": 240,
+   "height": 181,
+   "bytes": 17666,
+   "sha256": "62f731047ca817d298e7ef47b1e940e29ae8ef91f389d24728ee422eccdf9adf"
+  },
+  {
+   "file": "public/illustrations/objects/insurance-480.webp",
+   "width": 480,
+   "height": 362,
+   "bytes": 39440,
+   "sha256": "26e35a47e337c63cdc833dcf3896709e78789bd2ab875892301e976f69dc5ac6"
+  },
+  {
+   "file": "public/illustrations/objects/permesso-kit-240.webp",
+   "width": 240,
+   "height": 194,
+   "bytes": 12122,
+   "sha256": "0d3854ccbe9f174ef7eb2cb9a0aae05c933fef9124035b5b8b565477e99b478e"
+  },
+  {
+   "file": "public/illustrations/objects/permesso-kit-480.webp",
+   "width": 480,
+   "height": 387,
+   "bytes": 24650,
+   "sha256": "c87913703c4ee676664c69b8cade5ba6e24cc63ef0744fd98e0c0ba66d840d45"
+  },
+  {
+   "file": "public/illustrations/objects/alarm-240.webp",
+   "width": 240,
+   "height": 179,
+   "bytes": 9608,
+   "sha256": "62b4087c49f853e072187418c1a4ece3d7f4504a81192db3baf2ab71803f6a5a"
+  },
+  {
+   "file": "public/illustrations/objects/alarm-480.webp",
+   "width": 480,
+   "height": 357,
+   "bytes": 19464,
+   "sha256": "d2b3f79bd96c497ce73af9c748312480acf034d07d77adbff8dcd2158754982a"
+  },
+  {
+   "file": "public/illustrations/objects/peek-up-240.webp",
+   "width": 240,
+   "height": 230,
+   "bytes": 8684,
+   "sha256": "968cfada39e86ceb459c76f15265ff833e1413bbcc381cdb6cc935927b1c9f3a"
+  },
+  {
+   "file": "public/illustrations/objects/peek-up-480.webp",
+   "width": 480,
+   "height": 460,
+   "bytes": 19532,
+   "sha256": "fc11dc11cf147f208c38d8cb45b209a8d608e690e32c1889975b1e7ce443be04"
+  },
+  {
+   "file": "public/illustrations/objects/peek-side-240.webp",
+   "width": 240,
+   "height": 258,
+   "bytes": 10196,
+   "sha256": "fbec9c49cceecdf4999acbaf3fdffb4097ead18105c95ef5d14ae2e945169fe8"
+  },
+  {
+   "file": "public/illustrations/objects/peek-side-480.webp",
+   "width": 446,
+   "height": 480,
+   "bytes": 21186,
+   "sha256": "6ede38286ee00d45d56c474dee85b972758f9a02158a4b9ea4c2e3e0a629623d"
+  },
+  {
+   "file": "public/illustrations/objects/cap-240.webp",
+   "width": 240,
+   "height": 174,
+   "bytes": 12154,
+   "sha256": "f452cc0727cc0ee38f5ab65339d509299c663bc39ff30a802a4d8c5e9a77d8d0"
+  },
+  {
+   "file": "public/illustrations/objects/cap-480.webp",
+   "width": 480,
+   "height": 348,
+   "bytes": 25876,
+   "sha256": "cfc75a8bf80cdff11b8742503f7f445961ce872cc6878567d99d3746ca89ac9d"
+  },
+  {
+   "file": "public/illustrations/objects/books-240.webp",
+   "width": 240,
+   "height": 185,
+   "bytes": 9674,
+   "sha256": "7bfb39f36ae2f2b0d97e122698ada6da74f589e019c0e249a3a296226dcda976"
+  },
+  {
+   "file": "public/illustrations/objects/books-480.webp",
+   "width": 480,
+   "height": 369,
+   "bytes": 21434,
+   "sha256": "8a672f4c5f4ad89ad27a87c1b7260d9c486a8aeccaa3a688486d1e7c5d2db638"
+  }
+ ]
+}

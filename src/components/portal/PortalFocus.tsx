@@ -14,8 +14,15 @@ import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import { LineupTile, plainClick } from "./PortalStageLineup";
+import { stageKey, type PortalStageKey } from "./portalStageArt";
 
 import { StoryPills } from "@/components/story/MediaSwitcher";
+
+/* Сцена этапа на доске маршрута (owner, 4 Nov: «тематические генерации, где
+   Веспи что-то делает»): Веспи выбирает программу, разворачивает диплом,
+   ставит штамп, запечатывает конверт, копит монеты, ждёт с паспортом,
+   стоит с ключами у двери — design/illustrations/scenes-2026-11-04.json. */
+const STAGE_SCENE: Record<PortalStageKey, string> = { start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys" };
 
 const universityWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "университет" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "университета" : "университетов";
 const documentWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "документ" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "документа" : "документов";
@@ -150,6 +157,20 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       secondary={{ label: "Профиль", href: "/portal?view=settings", onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); } }} />
   </>;
 
+  /* Доска этапа блоками, как у Apple: сцена этапа и три факта с подписями —
+     шаги этого этапа, шаги всего маршрута, ближайший ориентир. */
+  const stageTasks = position.stage?.tasks || [];
+  const stageDone = stageTasks.filter(task => portalTaskDone(data, task)).length;
+  const scene = STAGE_SCENE[stageKey(position.stage?.id)];
+  const boardAside = !stagePage && <>
+    <img className={styles.boardScene} src={`/illustrations/scenes/${scene}-1024.webp`} srcSet={`/illustrations/scenes/${scene}-640.webp 640w, /illustrations/scenes/${scene}-1024.webp 1024w`} sizes="(max-width: 1023px) 100vw, 400px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-board-scene={scene} />
+    <ul className={styles.boardStats} data-board-stats>
+      <li><strong>{stageDone}<small> из {stageTasks.length || 1}</small></strong><span>шагов этого этапа</span></li>
+      <li><strong>{progress.done}<small> из {progress.total || 1}</small></strong><span>шагов всего маршрута</span></li>
+      {nowTask?.deadline && <li><strong>{fmtDate(nowTask.deadline)}</strong><span>{days !== null && days > 0 ? `ориентир · через ${days} ${dayWord(days)}` : "ближайший ориентир"}</span></li>}
+    </ul>
+  </>;
+
   return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
     {/* Обзор плитками по образцу главной apple.com (owner, 3 Nov): первая
         плитка «Сейчас» — приветствие-лейбл, следующий шаг заголовком, одна
@@ -203,7 +224,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
           </div>
         </div>}
-        lineupExtras={!stagePage && cabinetTiles} />
+        lineupExtras={!stagePage && cabinetTiles} boardAside={boardAside} />
     </div>
     {stagePage && <div className={styles.stageBody} data-portal-overview>
       <div className={styles.stageHeading}>

@@ -6,7 +6,6 @@
 .flight { --flight-accent:#A33421; --flight-ink:#352B28; --flight-quiet:#5C6056; --flight-line:#A69E90; --when:58px; min-width:0; color:var(--flight-ink); }
 
 /* Анкета: одна подпись над точками («03 / 10 · Оценки»). */
-.position { margin:0 0 4px; font:400 11px/1.6 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--flight-ink); }
 
 .layout { display:grid; gap:32px; min-width:0; }
 .layout[data-has-scene=true] { grid-template-columns:minmax(240px,.9fr) minmax(0,1.1fr); align-items:center; }
@@ -48,15 +47,6 @@
 /* Точки для анкеты: одна тонкая линия из равных точек и одна подпись над
    ней. Названия остальных вопросов остаются для экранных читалок и
    всплывающей подсказки, но не нагружают экран. */
-.flight[data-compact=true][data-variant=dots] .rail { flex-direction:row; justify-content:space-between; gap:0; padding:0; overflow:visible; }
-.flight[data-compact=true][data-variant=dots] .stop { display:grid; grid-template-columns:24px; place-items:center; flex:0 0 24px; width:24px; min-height:40px; padding:0; filter:none; opacity:1; }
-.flight[data-compact=true][data-variant=dots] .node { display:block; justify-self:center; width:7px; height:7px; border-color:#B4AB9B; }
-.flight[data-compact=true][data-variant=dots] .stop[data-road-stage-state=done] .node { border-color:var(--flight-accent); background:var(--flight-accent); }
-.flight[data-compact=true][data-variant=dots] .stop[data-road-stage-state=current] .node { width:9px; height:9px; }
-.flight[data-compact=true][data-variant=dots] .stopCopy { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.flight[data-compact=true][data-variant=dots] .track { left:12px; top:20px; width:calc(100% - 24px); }
-.flight[data-compact=true][data-variant=dots] .fill { width:var(--flight-fill-x,0); }
-.flight[data-compact=true][data-variant=dots] .stop[data-road-locked] .node { border-style:dashed; }
 
 /* Таймлайн: одна колонка. Месяц мелко над годом на левом поле, раскрытый
    этап — прямо под своей точкой. Чем дальше будущий этап от выбранного, тем

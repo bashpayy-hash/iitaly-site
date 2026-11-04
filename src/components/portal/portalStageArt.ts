@@ -1,8 +1,9 @@
 import type { VespiPoseName } from "@/components/mascot/VespiPose";
 
 /* Этап маршрута = костюм Веспи в плашке «Сейчас». Локальный кабинет делит
-   путь на свои пять фаз, они сводятся к тем же этапам. Ризограф-предметы
-   остаются иллюстрациями шагов (RisoArtImage, higgsfieldVisuals). */
+   путь на свои пять фаз, они сводятся к тем же этапам. Предметы этапов —
+   общий набор design/illustrations/objects-2026-11-04.json (PortalStageLineup,
+   higgsfieldVisuals). */
 
 export type PortalStageKey = "start" | "education12" | "docs" | "apply" | "dsu" | "visa" | "arrival";
 export type RisoArt = "map" | "diploma" | "folder" | "envelope" | "coins" | "passport" | "keys";
@@ -26,14 +27,3 @@ export function stageKey(id?: string | null): PortalStageKey {
   if (local) return LOCAL_PHASES[Number(local[1])] || "start";
   return Object.hasOwn(STAGE_ART, id) ? id as PortalStageKey : "start";
 }
-
-export const RISO_SIZE: Record<RisoArt | "stamp-pad", { width: number; height: number }> = {
-  map: { width: 480, height: 350 },
-  diploma: { width: 480, height: 357 },
-  folder: { width: 480, height: 340 },
-  envelope: { width: 480, height: 367 },
-  coins: { width: 480, height: 467 },
-  passport: { width: 480, height: 349 },
-  keys: { width: 480, height: 362 },
-  "stamp-pad": { width: 480, height: 357 },
-};

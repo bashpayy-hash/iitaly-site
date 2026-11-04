@@ -25,17 +25,32 @@
 @media(prefers-reduced-motion:reduce) { .card,.plus { transition:none; } .card:hover,.card:active { transform:none; } .card:hover .plus { transform:none; } }
 @media(forced-colors:active) { .card { border:1px solid CanvasText; } }
 
-/* Шапка темы: текст слева, вещь темы справа; под шапкой — четыре факта. */
-.topicHeader { display:grid; grid-template-columns:minmax(0,1fr) 220px; align-items:center; gap:24px; }
+/* Шапка темы: текст слева, вещь темы справа (вещь из общего набора,
+   objects-2026-11-04.json). Под шапкой — блок фактов как у Apple (owner,
+   4 Nov): крупное значение, под ним мелкая подпись; рядом с лид-абзацем
+   факты стоят колонкой справа, без него — одним рядом из четырёх плиток. */
+.topicHeader { display:grid; grid-template-columns:minmax(0,1fr) 260px; align-items:center; gap:24px 40px; }
 .topicArt { width:100%; height:auto; }
-.facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:0 0 8px; }
-.facts > div { min-width:0; padding:12px 14px; border-radius:16px; background:#F1ECE3; }
-.facts dt { margin-bottom:4px; font:400 11px/1.4 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:#57514B; }
-.facts dd { margin:0; font-size:13px; font-weight:500; line-height:1.4; color:#241F1C; overflow-wrap:anywhere; }
-/* Unknown values keep the same flat tile (no dashed outline that broke the row);
-   only the value is quieter. */
-.facts > div[data-known=false] dd { font-weight:400; color:#57514B; }
+.overview { margin:0 0 12px; }
+.overview[data-with-lead=true] { display:grid; grid-template-columns:minmax(0,1fr) minmax(220px,300px); align-items:start; gap:24px 48px; padding:28px 32px; border-radius:28px; background:#F1ECE3; }
+.overview[data-with-lead=true] > p { margin:0; font-size:17px; line-height:1.6; color:#3F3933; }
+.overview[data-with-lead=true] .facts { grid-template-columns:minmax(0,1fr); gap:0; }
+.overview[data-with-lead=true] .facts > div { padding:12px 0; border-top:1px solid #DCD5CA; border-radius:0; background:transparent; }
+.overview[data-with-lead=true] .facts > div:first-child { padding-top:0; border-top:0; }
+.facts { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin:0; }
+.facts > div { display:grid; gap:4px; min-width:0; padding:18px 20px 16px; border-radius:20px; background:#F1ECE3; }
+.facts dt { order:2; font:400 11px/1.4 var(--font-space-mono),monospace; letter-spacing:.06em; text-transform:uppercase; color:#57514B; }
+.facts dd { order:1; margin:0; font-size:clamp(18px,1.6vw,22px); font-weight:600; line-height:1.2; letter-spacing:-.02em; color:#241F1C; overflow-wrap:anywhere; text-wrap:balance; }
+/* Unknown values keep the same flat tile; only the value is quieter. */
+.facts > div[data-known=false] dd { font-weight:500; color:#57514B; }
+@media(max-width:900px) {
+  .overview[data-with-lead=true] { grid-template-columns:minmax(0,1fr); padding:22px 20px; }
+  .overview[data-with-lead=true] .facts { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .overview[data-with-lead=true] .facts > div { padding:14px 16px; border:0; border-radius:16px; background:#FFFDF9; }
+  .overview[data-with-lead=true] .facts > div:first-child { padding-top:14px; }
+}
 @media(max-width:700px) {
-  .topicHeader { grid-template-columns:minmax(0,1fr) 110px; gap:12px; }
+  .topicHeader { grid-template-columns:minmax(0,1fr) 120px; gap:12px; }
   .facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .facts > div { padding:14px 16px 12px; }
 }

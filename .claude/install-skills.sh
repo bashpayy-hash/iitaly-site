@@ -20,6 +20,16 @@ log=/tmp/iitaly-skills-install.log
   install nateherkai/scroll-craft '*' scroll-craft
   install nextlevelbuilder/ui-ux-pro-max-skill '*' ui-ux-pro-max
   install addyosmani/agent-skills '*' spec-driven-development
+  # Owner, 4 Nov: «добавь скил impeccable». Its own installer downloads a
+  # bundle from impeccable.style, which the cloud proxy refuses, so the built
+  # skill and its subagents are copied from the GitHub repository instead.
+  if [ -d "$HOME/.claude/skills/impeccable" ]; then echo "skip impeccable"; else
+    src=$(mktemp -d) && timeout 300 git clone -q --depth 1 https://github.com/pbakaus/impeccable "$src/impeccable" \
+      && cp -R "$src/impeccable/plugin/skills/impeccable" "$HOME/.claude/skills/impeccable" \
+      && mkdir -p "$HOME/.claude/agents" && cp "$src/impeccable/plugin/agents/"*.md "$HOME/.claude/agents/" \
+      || echo "failed impeccable"
+    rm -rf "$src"
+  fi
   echo done
 ) > "$log" 2>&1 &
 exit 0

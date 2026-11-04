@@ -1,0 +1,187 @@
+{
+ "date": "2026-11-04",
+ "request": "Owner: доска «Этап» на /portal и пустые страницы вроде настроек «всё ещё страшны — туда можно добавить тематические генерации в Higgsfield, где Веспи что-то делает, и преподносить информацию блоками и более наглядно».",
+ "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 3:2, with the mascot reference images ab833075-dfc7-4e28-824c-7e299aad556c and a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+ "promptTemplate": "Editorial photograph, 35mm, photorealistic, warm natural light: [an interior in an old Italian apartment or building with the stage's objects]. The exact same handmade cotton toy character as in the references (smooth cream cotton body, satin red helmet with a cream stripe, tiny dot eyes, olive green felt collar with a red button) [does the stage's action], clearly a soft toy placed in the real place, in the left half of the frame. No text, no letters, no signs, no flags, no other people, no logos.",
+ "processing": "Downloaded inside the Higgsfield sandbox, saved as 1024×688 JPEG q82 masters (sha256 below, byte-identical copies brought over, archived in design/illustrations/source/scenes), exported here as WebP q76/q78 at 640 and 1024px with sharp into public/illustrations/scenes. Reviewed at full size: no people, text, signs, flags or logos; one Vespi per scene on the left so the right half can carry text.",
+ "items": [
+  {
+   "name": "choose",
+   "stage": "start",
+   "job": "b917cb87-af01-4cdd-b2e4-f4da24d54972",
+   "vespi": "sits at a sunlit desk leaning over open brochures with blank pages, pointing at one, a brass magnifying glass beside",
+   "masterSha256": "8d84db2d8df452ed4cbce3cb510cad8d9560cf94721d757989496e4016dd1716",
+   "master": "design/illustrations/source/scenes/choose.jpg"
+  },
+  {
+   "name": "diploma",
+   "stage": "education12",
+   "job": "9d3402eb-c04e-47bc-bb05-16db1736b516",
+   "vespi": "kneels on a desk holding an unrolled parchment scroll, a second scroll tied with a red ribbon beside",
+   "masterSha256": "bce47f2f5077bf0592d202a28c11e8778bae8163e5b5dd656b1ce4c9bfd6e05e",
+   "master": "design/illustrations/source/scenes/diploma.jpg"
+  },
+  {
+   "name": "stamp",
+   "stage": "docs",
+   "job": "baa34a6a-21a7-4e8f-9698-07f5e79bb0ca",
+   "vespi": "presses a wooden rubber stamp onto a blank sheet, kraft folder and red ink pad beside",
+   "masterSha256": "c90ad17663bd2ca06403067af61075a1da536864d9ea612f55dee709eb15ee8d",
+   "master": "design/illustrations/source/scenes/stamp.jpg"
+  },
+  {
+   "name": "envelope",
+   "stage": "apply",
+   "job": "55c3d3c4-c80a-49d7-a3f0-18dd433a790a",
+   "vespi": "presses the flap of a cream envelope closed, a stack of blank papers and a red wax stick beside",
+   "masterSha256": "65b22d29f569bf4630db5b586ee4c834253e39f9f394d0bc90706b8e71f457e5",
+   "master": "design/illustrations/source/scenes/envelope.jpg"
+  },
+  {
+   "name": "coins",
+   "stage": "dsu",
+   "job": "6ad20f43-eece-4004-a6f1-f0deb5de213c",
+   "vespi": "holds a coin over a glass jar of coins, about to drop it in",
+   "masterSha256": "e6a70ed9ba7ec9aa46daf5836d41bd1a6b4e07357b93d31dd65ca757cad887c4",
+   "master": "design/illustrations/source/scenes/coins.jpg"
+  },
+  {
+   "name": "passport",
+   "stage": "visa",
+   "job": "5f6f3a03-854b-42ae-9da0-97a8151e3834",
+   "vespi": "sits on a wooden bench in a stone hall with tall arched windows, holding a plain burgundy passport",
+   "masterSha256": "43d5bbb8bd32b4dcb3e633499d20ea013478458d53de123921823e8a700971f4",
+   "master": "design/illustrations/source/scenes/passport.jpg"
+  },
+  {
+   "name": "keys",
+   "stage": "arrival",
+   "job": "5f14fcc9-c3bd-4340-ab30-33e7fb7652b9",
+   "vespi": "stands at a tall wooden apartment door in an old stairwell with a small leather suitcase, holding up three brass keys",
+   "masterSha256": "8ed81fad8d926e5df09856ab1dbc734684d118f37cfb75cc3411f0b1ee1208ba",
+   "master": "design/illustrations/source/scenes/keys.jpg"
+  },
+  {
+   "name": "notebook",
+   "stage": "settings / reminders",
+   "job": "64db7a19-ff6f-4546-9d95-c3cd83051b27",
+   "vespi": "sits at a tidy desk writing in an open blank notebook, a cream twin-bell alarm clock and an olive sprig beside",
+   "masterSha256": "5884176b1134454f7f3143e470656d3939b84a7d748a4ba1b55bcbac6d9a53db",
+   "master": "design/illustrations/source/scenes/notebook.jpg"
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/scenes/choose-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 30488,
+   "sha256": "6b537da0905a471a86cca892f0f113b57a657097df9a702f9c752a61c95faad1"
+  },
+  {
+   "file": "public/illustrations/scenes/choose-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 62652,
+   "sha256": "bfb67df77060e214859b1217143a8c176af48ed84423db623bafd5d54a2a97f2"
+  },
+  {
+   "file": "public/illustrations/scenes/diploma-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 26574,
+   "sha256": "e5a8e0d7cec4c74b252daa22edb9221205bb7b091fe6366b1f3bfff52b421058"
+  },
+  {
+   "file": "public/illustrations/scenes/diploma-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 56804,
+   "sha256": "e153c954a0e7cdcd223836292dd2457bf77cee0c3dcde51dffc2e202bda835bb"
+  },
+  {
+   "file": "public/illustrations/scenes/stamp-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 23476,
+   "sha256": "f186a71924d4a3d6fb4c28e172273c2639a3de2845bbcdb4802226701378fe4f"
+  },
+  {
+   "file": "public/illustrations/scenes/stamp-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 54700,
+   "sha256": "4af3a53d4d066ad5e623173c79d9eb53c223f56bf31507e517d96a74cb5301ac"
+  },
+  {
+   "file": "public/illustrations/scenes/envelope-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 24650,
+   "sha256": "efa34d383fdced7ab4f9a3a207479482c7fb5f1ab7b0fb2298114d0a18e47fb9"
+  },
+  {
+   "file": "public/illustrations/scenes/envelope-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 55168,
+   "sha256": "1eb99b4542bab98d440c40f8ffdac2168d0cf3c9301ce893c45aa1b69ff3c548"
+  },
+  {
+   "file": "public/illustrations/scenes/coins-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 26688,
+   "sha256": "486e6863e68d2cbca539c031d1a26e39086bffb37835272a122c88bdd88d8b64"
+  },
+  {
+   "file": "public/illustrations/scenes/coins-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 60924,
+   "sha256": "24ab0e4aabb567670979cdd4fb74f902b282338702593888cc15c5ec9a46e65c"
+  },
+  {
+   "file": "public/illustrations/scenes/passport-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 27000,
+   "sha256": "458aca215fe22596aef39230cfd686145a6b3ad0c3523e71bb7d0d1033bcfaff"
+  },
+  {
+   "file": "public/illustrations/scenes/passport-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 61798,
+   "sha256": "12e6e2ea9c11c5f9dd8cffa70052dfc22ac595f0ea9f477b2a6166c939e4270a"
+  },
+  {
+   "file": "public/illustrations/scenes/keys-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 32052,
+   "sha256": "e40dfe23fea6ba0405b39240bbd8064a120b3bcddb2c57f96a05d8f5b2c2462e"
+  },
+  {
+   "file": "public/illustrations/scenes/keys-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 73132,
+   "sha256": "822f8141ffebda5ac909c1410ebd020b1d9e1a81dffe9b07f8dbccafc2c80168"
+  },
+  {
+   "file": "public/illustrations/scenes/notebook-640.webp",
+   "width": 640,
+   "height": 430,
+   "bytes": 25078,
+   "sha256": "2c82d11ddcdd9062ef08496a85c44b95b9fbe004dc299f96eb0cf5d50a78d191"
+  },
+  {
+   "file": "public/illustrations/scenes/notebook-1024.webp",
+   "width": 1024,
+   "height": 688,
+   "bytes": 57678,
+   "sha256": "5e2567afdb4d39dfccccf25ce3ca14a99a065644a202056524472e7220ed8813"
+  }
+ ]
+}
