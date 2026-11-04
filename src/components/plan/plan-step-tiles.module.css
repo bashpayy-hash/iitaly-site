@@ -1,0 +1,94 @@
+/* Шаги плана плитками (owner, 4 Nov, скрин с телефона: «список выглядит
+   как Word-файл… сделай дофаминовее, в виде блоков Apple, как мы
+   прогоняли»). Та же сетка, что у lineup кабинета (portal-lineup.module.css):
+   две колонки от 700px контейнера, 12px между плитками, светлая и тёмная в
+   шахматном порядке, 28px, без теней. В плитке — ярлык, название, строка,
+   пилюля и вещь внизу; вся плитка — ссылка. Открытый шаг не меняет сетку:
+   плитка становится светлой с терракотовым кольцом и раскрывает текст
+   шага; строка и пилюля прячутся, вещь уходит вниз. */
+.tiles { container-type:inline-size; min-width:0; }
+.grid { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:0; padding:0; list-style:none; }
+
+.tile {
+  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; --tile-pip:rgba(36,31,28,.16);
+  --pill-bg:#B83A27; --pill-bg-hover:#A33421; --pill-ink:#FAF6EE;
+  position:relative; display:flex; flex-direction:column; min-width:0; min-height:400px;
+  padding:32px 28px 0; border-radius:28px; background:var(--tile-bg); color:var(--tile-ink);
+  scroll-margin-top:96px;
+  transition:background-color 320ms cubic-bezier(.4,0,.2,1),color 320ms cubic-bezier(.4,0,.2,1);
+}
+.tile > * { max-width:100%; min-width:0; }
+
+/* Вся плитка кликается: ссылка растянута псевдоэлементом; у открытого шага
+   растяжка снята, чтобы кнопки и источники внутри работали сами. */
+.open { display:flex; flex-direction:column; align-items:flex-start; min-width:0; color:inherit; text-decoration:none; }
+.open::after { content:""; position:absolute; inset:0; border-radius:inherit; }
+.tile[data-flight-selected=true] .open::after { content:none; }
+.open:focus-visible { outline:2px solid var(--tile-label); outline-offset:4px; border-radius:6px; }
+
+.label { font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:var(--tile-label); overflow-wrap:anywhere; }
+.title { margin-top:8px; font-size:clamp(22px,2.2vw,27px); font-weight:600; line-height:1.12; letter-spacing:-.025em; text-wrap:balance; overflow-wrap:anywhere; }
+.line { margin-top:10px; max-width:38ch; font-size:15px; line-height:1.45; color:var(--tile-quiet); text-wrap:pretty; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.pill { display:inline-flex; align-items:center; min-height:40px; margin-top:18px; padding:9px 18px; border-radius:999px; background:var(--pill-bg); color:var(--pill-ink); font-size:14px; font-weight:500; line-height:1.2; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
+.tile:hover .pill { background:var(--pill-bg-hover); }
+.tile:active .pill { transform:scale(.97); }
+
+.visual { display:flex; align-items:flex-end; justify-content:center; width:100%; height:190px; margin-top:auto; padding:24px 0 20px; }
+.visual img { display:block; width:auto; max-width:min(58%,300px); height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
+.tile:hover .visual img { transform:translateY(-6px); }
+
+/* Открытый шаг: содержимое рисует родитель (assessment-result.module.css). */
+.detail { min-width:0; margin-top:16px; animation:tile-open 420ms cubic-bezier(.22,1,.36,1) both; }
+
+/* Две колонки от 700px: шахматный порядок, как в кабинете. */
+@container (min-width:700px) {
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .tile:nth-child(4n+2),.tile:nth-child(4n+3) {
+    --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89;
+    --pill-bg:#FAF6EE; --pill-bg-hover:#EAD7BB; --pill-ink:#2A2420;
+  }
+  /* An odd last tile takes both columns, as in the cabinet lineup. */
+  .tile:last-child:nth-child(odd) { grid-column:1 / -1; }
+}
+@container (max-width:699.98px) {
+  .tile:nth-child(even) {
+    --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89;
+    --pill-bg:#FAF6EE; --pill-bg-hover:#EAD7BB; --pill-ink:#2A2420;
+  }
+}
+/* Открытый шаг всегда на бумаге с терракотовым кольцом, в какой бы клетке
+   ни стоял, чтобы текст, источники и кнопки читались одинаково. */
+.tile[data-flight-selected=true] {
+  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421;
+  --pill-bg:#B83A27; --pill-bg-hover:#A33421; --pill-ink:#FAF6EE;
+  box-shadow:inset 0 0 0 2px #B83A27;
+}
+.tile[data-flight-selected=true] :is(.line,.pill) { display:none; }
+.tile[data-flight-selected=true] .visual { height:150px; padding-top:20px; }
+.tile[data-flight-selected=true] .visual img { max-width:44%; }
+
+@media(max-width:600px) {
+  .tile { min-height:0; padding:28px 20px 0; }
+  .title { font-size:22px; }
+  .visual { height:160px; padding:20px 0 18px; }
+}
+/* Motion: the tiles line up one after another (40ms apart); the opened step fades in. */
+@media (prefers-reduced-motion: no-preference) {
+  .tile { animation:tiles-in 520ms cubic-bezier(.22,1,.36,1) backwards; }
+  .tile:nth-child(2) { animation-delay:40ms; }
+  .tile:nth-child(3) { animation-delay:80ms; }
+  .tile:nth-child(4) { animation-delay:120ms; }
+  .tile:nth-child(n+5) { animation-delay:160ms; }
+}
+@keyframes tiles-in { from { opacity:0; translate:0 16px; } to { opacity:1; translate:0 0; } }
+@keyframes tile-open { from { opacity:0; translate:0 -6px; } to { opacity:1; translate:0 0; } }
+@media(prefers-reduced-motion:reduce) {
+  .tile,.pill,.visual img { transition:none; animation:none; }
+  .detail { animation:none; }
+  .tile:hover .visual img,.tile:active .pill { transform:none; }
+}
+@media(forced-colors:active) {
+  .tile { border:1px solid CanvasText; }
+  .tile[data-flight-selected=true] { border:2px solid Highlight; box-shadow:none; }
+  .pill { border:1px solid ButtonText; }
+}
