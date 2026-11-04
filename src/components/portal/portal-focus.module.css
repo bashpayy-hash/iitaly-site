@@ -148,12 +148,25 @@
 /* Плитка «Сейчас»: текст на кремовом верху, ниже — тосканский пейзаж, в
    который плитка переходит без границы (owner, 3 Nov: пейзажи Италии на фон,
    никакой авиации; фигура Веспи на пейзаже убрана — «смотрится топорно»). */
-.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; min-height:700px; padding:48px 32px 290px; border-radius:28px; background:#FFFDF9; text-align:center; overflow:hidden; }
+/* overflow:clip, не hidden: hidden делает плитку scroll-контейнером, и
+   scroll-driven параллакс пейзажа мерил бы положение внутри плитки, а не в
+   окне. */
+.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; min-height:700px; padding:48px 32px 290px; border-radius:28px; background:#FFFDF9; text-align:center; overflow:clip; }
 .hero > * { max-width:100%; min-width:0; }
 /* Веспи на скутере стоит в левой нижней трети фото: кадр прижат к левому
    краю и к низу, чтобы он оставался под текстовой зоной на любой ширине. */
 .heroArt { position:absolute; inset:0; z-index:-2; width:100%; height:100%; max-width:none; object-fit:cover; object-position:30% 62%; }
 .hero::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom,#FFFDF9 0%,#FFFDF9 40%,rgba(255,253,249,.86) 54%,rgba(255,253,249,0) 78%); pointer-events:none; }
+/* Живой пейзаж (owner, 4 Nov: «заигрывать с пейзажами»): пока плитка едет
+   через экран, кадр чуть отстаёт от прокрутки (scroll-driven, без JS; где
+   не поддерживается — просто стоит). Кадр увеличен на 12%, чтобы при сдвиге
+   ±5% не открывать края. На телефоне свой масштаб (ниже), без параллакса. */
+@supports (animation-timeline: view()) {
+  @media (min-width:641px) and (prefers-reduced-motion:no-preference) {
+    .heroArt { animation:hero-drift linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
+  }
+}
+@keyframes hero-drift { from { transform:scale(1.12) translateY(-5%); } to { transform:scale(1.12) translateY(5%); } }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }
 .canvas[data-portal-page=overview] .welcome h1 { margin:0; font:600 21px/1.25 var(--font-sans); letter-spacing:-.01em; }
 .canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }

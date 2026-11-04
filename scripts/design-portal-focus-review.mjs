@@ -181,7 +181,7 @@ try {
     // The frame may be enlarged on phones (4 Nov: the scooter is scaled out of the
     // right-aligned crop), so the photo covers the tile and the tile clips it.
     assert(landscape.y<=hero.y+2&&landscape.y+landscape.height>=hero.y+hero.height-2&&landscape.x<=hero.x+2&&landscape.x+landscape.width>=hero.x+hero.width-2,'The landscape fills the hero tile');
-    assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),'hidden','The hero tile clips its landscape');
+    assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape (clip, so the scroll-driven parallax measures against the window)');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),'28px');
     assert.equal(await page.locator('[data-road-board]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(42, 36, 32)','The route board is the dark tile');

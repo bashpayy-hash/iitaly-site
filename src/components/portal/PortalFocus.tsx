@@ -17,6 +17,7 @@ import { LineupTile, plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
 
 import { StoryPills } from "@/components/story/MediaSwitcher";
+import { LivingLandscape } from "@/components/motion/LivingLandscape";
 
 /* Сцена этапа на доске маршрута (owner, 4 Nov: «тематические генерации, где
    Веспи что-то делает»): Веспи выбирает программу, разворачивает диплом,
@@ -187,6 +188,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         пейзаже («смотрится топорно»). */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
       <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={916} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
+      {/* Живой пейзаж (owner, 4 Nov): видеопетля той же дороги — плащ Веспи,
+          трава и кипарисы на ветру; картинка выше остаётся постером. */}
+      <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany" label="tuscany" />
       <div className={styles.welcome} data-portal-welcome>
         <div className={styles.welcomeCopy}>
           <h1 id="portal-overview-heading" tabIndex={-1}>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
