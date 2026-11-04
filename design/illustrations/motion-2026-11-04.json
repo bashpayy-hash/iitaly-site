@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-04",
+  "request": "Owner: «ты можешь начать добавлять какие-то анимации… с этими пейзажами заигрывать, с Веспи — это добавило бы визитную карточку всему сайту».",
+  "method": "Higgsfield image-to-video from the shipped landscape stills (the 2k upscales of the Tuscan road and the Florence belvedere, jobs in landscapes-2026-11-03.json), 5 s, aspect auto, prompt asking for a locked-off camera and ambient motion only (cape and collar in the breeze, grass and cypress tops, haze, a few distant swallows, drifting clouds). Two models per scene were rendered and compared frame by frame; Kling 4.0 (1080p) kept the Tuscan dust light and Vespi unchanged, MiniMax H3 (2K) kept the belvedere sky to a few small birds where Kling painted a whole flock. In the Higgsfield sandbox (ffmpeg): the Tuscan frame cropped to its left 89.5% like the still (tiny figures at the right edge), forward + reversed concat (first reversed frame dropped) for a seamless 10 s ping-pong loop, scaled to 1280 and 640 px wide, H.264 high@4.0, CRF 25/27, yuv420p, faststart, no audio. The files were carried over as grayscale PNG parts and rebuilt byte-for-byte (sha256 below).",
+  "items": [
+    { "name": "tuscany", "use": "cabinet hero («Сейчас») over the tuscany still", "source": "51c7c070-c4d6-4ce0-a383-8528262b6e34", "chosen": { "model": "kling4_0", "job": "9de26546-79d4-4fc6-9596-4f41abda9d26" }, "rejected": { "model": "minimax_h3", "job": "c46b30be-3048-40f0-a5ab-d9087be56a3e", "why": "a dust cloud fogs the whole middle of the clip" }, "crop": "left 89.5% of the frame, like the still" },
+    { "name": "belvedere", "use": "home FAQ tile («Можно ли нам доверять») over the belvedere still", "source": "6a397266-df73-4844-9e39-0a5d897e8cb9", "chosen": { "model": "minimax_h3", "job": "f52fff34-cf9e-4eeb-9724-7daccab28eaa" }, "rejected": { "model": "kling4_0", "job": "4278c164-cbec-4c6e-acb8-08df97f43313", "why": "a dense flock of birds over the Duomo" } }
+  ],
+  "prompts": {
+    "tuscany": "Locked-off camera, subtle ambient motion only: the small cotton toy rider on the cream vintage scooter stays exactly in place; its cream cape stirs gently in a warm breeze; the golden grass and the cypress tops sway softly; warm dust motes drift in the low sun; the distant haze shimmers. No camera movement, no new objects, no people, no text, photoreal, calm, seamless loop.",
+    "belvedere": "Locked-off camera, subtle ambient motion only: the small cotton toy on the stone parapet stays exactly in place, one paw shading its eyes; its cream cape and felt collar stir in a light breeze; a few distant swallows cross the sky; thin clouds drift slowly over the rooftops and the dome; the river glints; a gentle heat shimmer over the city. No camera movement, no people, no new objects, no text, photoreal, calm, seamless loop."
+  },
+  "files": [
+    { "file": "public/illustrations/motion/tuscany-1280.mp4", "width": 1280, "height": 964, "seconds": 10.04, "bytes": 1177817, "sha256": "be9b285fd379aecac8f220bfbfa091a0fbe84be4ea9271d224599f8e37136798" },
+    { "file": "public/illustrations/motion/tuscany-640.mp4", "width": 640, "height": 482, "seconds": 10.04, "bytes": 301024, "sha256": "cea64e5a85b5f058abc859b0d109b3bd2baaefcd1217a779797eb69760dd7f8e" },
+    { "file": "public/illustrations/motion/belvedere-1280.mp4", "width": 1280, "height": 860, "seconds": 10.29, "bytes": 1100272, "sha256": "91cb0791e338fb78194d1a11dc863c9c7322c67ee3f23e43a44f120ec5e37f76" },
+    { "file": "public/illustrations/motion/belvedere-640.mp4", "width": 640, "height": 430, "seconds": 10.29, "bytes": 216202, "sha256": "e3ecd830c6ee1b4ec58f1381be5bf092d37c6639dbe5361610af6e843930995d" }
+  ],
+  "placement": "src/components/motion/LivingLandscape.tsx: the video lies over the still with the still's own layout class, is loaded only when the tile is in view (narrow file at ≤640px), fades in on the first played frame, pauses off-screen, and is skipped entirely under prefers-reduced-motion or Save-Data. The still stays the poster and the only image for screenshots and reviews."
+}

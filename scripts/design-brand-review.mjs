@@ -43,7 +43,9 @@ try {
     });
     const page = await context.newPage(); page.on('pageerror', e => errors.push(e.message));
     for (const path of ['/', '/guides', '/universities', '/plan', '/prices', '/portal']) {
-      await page.goto(origin + path, {waitUntil:'networkidle'});
+      // 90 s: under CPU contention (parallel reviews, a build) the 30 s default
+      // expired on /guides a few times without any stalled request.
+      await page.goto(origin + path, {waitUntil:'networkidle', timeout:90000});
       await page.evaluate(() => document.fonts.ready);
       const logo = page.locator('header [data-brand-logo]').first();
       assert.equal(await logo.getAttribute('data-brand-version'), 'low-arc');

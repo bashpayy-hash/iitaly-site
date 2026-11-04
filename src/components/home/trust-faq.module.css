@@ -3,8 +3,18 @@
    вопросы — на кремовой панели справа, чтобы Веспи и город оставались видны.
    На телефоне фото сверху, панель под ним на кремовом. */
 .section { max-width:1280px; margin:0 auto; padding:0 32px 80px; }
-.tile { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,600px); align-items:center; min-height:720px; overflow:hidden; border-radius:28px; background:#2A2420; color:#141413; }
-.scene { position:absolute; inset:0; z-index:-1; width:100%; height:100%; object-fit:cover; object-position:18% 62%; }
+.tile { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,600px); align-items:center; min-height:720px; overflow:clip; border-radius:28px; background:#2A2420; color:#141413; }
+.sceneBox { position:absolute; inset:0; z-index:-1; overflow:clip; }
+.scene { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:18% 62%; }
+/* Живой пейзаж (owner, 4 Nov): кадр и видеопетля чуть отстают от прокрутки
+   (scroll-driven, без JS; кадр увеличен на 12%, чтобы сдвиг ±5% не открывал
+   края). Где не поддерживается — стоят на месте. */
+@supports (animation-timeline: view()) {
+  @media (min-width:1024px) and (prefers-reduced-motion:no-preference) {
+    .scene { animation:faq-drift linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
+  }
+}
+@keyframes faq-drift { from { transform:scale(1.12) translateY(-5%); } to { transform:scale(1.12) translateY(5%); } }
 .panel { grid-column:2; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:rgba(255,253,249,.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
 .eyebrow { margin:0; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
 .title { margin:10px 0 18px; font:600 clamp(28px,3vw,40px)/1.1 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
@@ -18,7 +28,8 @@
 .answer { max-width:60ch; margin:0 0 18px; color:#3F3933; font-size:15px; line-height:1.55; }
 @media(max-width:1023px) {
   .tile { grid-template-columns:minmax(0,1fr); align-items:stretch; min-height:0; }
-  .scene { position:relative; z-index:0; aspect-ratio:4 / 3; height:auto; object-position:26% 62%; }
+  .sceneBox { position:relative; z-index:0; aspect-ratio:4 / 3; }
+  .scene { object-position:26% 62%; }
   .panel { grid-column:1; margin:0; padding:28px 24px 12px; border-radius:0; background:#FAF6EE; backdrop-filter:none; -webkit-backdrop-filter:none; }
 }
 @media(max-width:640px) {

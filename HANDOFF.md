@@ -34,6 +34,12 @@ IITALY — сервис поступления в итальянские уни�
   `--font-mono` указывает на Onest. Скачиваются на наш домен при сборке.
   Символ «↗» всегда с селектором текстового начертания (`↗︎`, U+FE0E) —
   иначе iOS рисует его эмодзи в синем квадрате.
+- Живые пейзажи — `public/illustrations/motion/*.mp4|webm` (Higgsfield
+  image-to-video из тех же кадров, пинг-понг 10 с, без звука; паспорт —
+  `design/illustrations/motion-2026-11-04.json`). Компонент
+  `src/components/motion/LivingLandscape.tsx` кладёт видео поверх картинки
+  и включает его только в зоне видимости; картинка остаётся постером и
+  единственным, что видят reduced-motion, Save-Data и ревью.
 - Деплой — **Netlify** по `netlify.toml`: `npm run build`, каталог `out`,
   Node 22.
 

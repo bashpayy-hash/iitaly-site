@@ -4,6 +4,7 @@
 import { track } from "@/lib/track";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import styles from "./trust-faq.module.css";
 
 /** Existing FAQ copy and analytics. Owner, 4 Nov: «на фон добавь один из
@@ -43,7 +44,12 @@ export function TrustFAQ() {
   return (
     <section data-public-paper-zone="home-faq" className={styles.section} aria-labelledby="home-faq-title">
       <div className={styles.tile} data-faq-tile>
-        <img className={styles.scene} src="/illustrations/landscapes/belvedere-1024.webp" srcSet="/illustrations/landscapes/belvedere-640.webp 640w, /illustrations/landscapes/belvedere-1024.webp 1024w, /illustrations/landscapes/belvedere-1600.webp 1600w" sizes="(max-width: 1344px) 100vw, 1216px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-faq-landscape="belvedere" />
+        {/* Живой пейзаж (owner, 4 Nov): поверх кадра — видеопетля той же
+            сцены, плащ Веспи и облака над Флоренцией в движении. */}
+        <div className={styles.sceneBox} data-faq-scene>
+          <img className={styles.scene} src="/illustrations/landscapes/belvedere-1024.webp" srcSet="/illustrations/landscapes/belvedere-640.webp 640w, /illustrations/landscapes/belvedere-1024.webp 1024w, /illustrations/landscapes/belvedere-1600.webp 1600w" sizes="(max-width: 1344px) 100vw, 1216px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-faq-landscape="belvedere" />
+          <LivingLandscape className={styles.scene} base="/illustrations/motion/belvedere" label="belvedere" />
+        </div>
         <div className={styles.panel}>
           <p className={styles.eyebrow}>Прежде чем платить</p>
           <h2 id="home-faq-title" className={styles.title}>Можно ли нам доверять</h2>
