@@ -188,13 +188,15 @@ try {
     await roleAssetBudget();
     // Mascot placement changes preserve the established typography and palette.
     // The mono token is checked by name: owner, 4 Nov («кривые тексты много
-    // где») — Space Mono has no Cyrillic, so labels on iPad mixed a system
-    // fallback with Latin digits; JetBrains Mono carries cyrillic-ext.
+    // где», then «убери вот этот второй шрифт») — Space Mono had no Cyrillic
+    // and mixed with a system fallback on iPad; now there is no second
+    // typeface at all and technical labels are set in Onest.
     const fonts = source => source.match(/--font-[^;]+;/g).filter(token => !token.startsWith('--font-mono:'));
     const globals = await readFile('src/app/globals.css', 'utf8');
     const before = execFileSync('git', ['show', `${baseRef}:src/app/globals.css`], { encoding: 'utf8' });
     assert.deepEqual(fonts(globals), fonts(before), 'Typography tokens remain unchanged');
-    assert.match(globals, /--font-mono: var\(--font-jetbrains-mono\)/, 'Mono labels use a face that carries Cyrillic (JetBrains Mono)');
+    assert.match(globals, /--font-mono: var\(--font-onest\)/, 'Technical labels use the product face: no second typeface (owner, 4 Nov)');
+    assert.doesNotMatch(await readFile('src/app/layout.tsx', 'utf8'), /Mono\(/, 'No monospace face is loaded');
     assert.doesNotMatch(await readFile('src/components/mascot/vespi-assistant.module.css', 'utf8'), /#[\da-f]{3,8}\b|(?:rgb|hsl|oklch)a?\(/i, 'The shared assistant consumes existing tokens instead of introducing a new palette');
   }
   const beforeBrands = baseline ? {} : JSON.parse(await readFile(resolve(output, 'before-brands.json'), 'utf8').catch(() => '{}'));

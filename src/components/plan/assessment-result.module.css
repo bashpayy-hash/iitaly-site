@@ -58,7 +58,7 @@
 
 .flightFrame{--flight-surface:#EEE8DD;padding:40px 40px 28px;border:1px solid rgba(53,43,40,.09);border-radius:32px;background:rgba(237,232,222,.8)}
 .flightStep{max-width:620px;padding:24px 26px;border:2px solid #352B28;border-radius:20px;background:#FBF9F3;color:#352B28;min-width:0;box-shadow:0 8px 32px rgba(53,43,40,.08)}
-.flightPosition{margin:0 0 14px;font:400 11px/1.5 var(--font-jetbrains-mono),monospace;text-transform:uppercase;letter-spacing:.08em;color:#A33421}
+.flightPosition{margin:0 0 14px;font:400 11px/1.5 var(--font-sans);text-transform:uppercase;letter-spacing:.08em;color:#A33421}
 .flightStep h2{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .flightStep .summary,.flightStep .references p{color:#5C574E}.flightStep .references a{color:#352B28}.flightStep .action{font-size:15px}.flightStep .references{border-color:#E2DACC}
 .flightActions{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #E2DACC;margin-top:20px;padding-top:14px}

@@ -159,14 +159,14 @@
 .canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }
 
 .nowCard { display:grid; justify-items:center; gap:0; width:min(100%,720px); margin-top:28px; color:var(--ink); }
-.nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
+.nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
 .nowCard h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .nowTitle { margin:0; color:var(--ink); font:600 clamp(32px,3.4vw,48px)/1.05 var(--font-sans); letter-spacing:-.03em; text-wrap:balance; overflow-wrap:anywhere; }
 .vespiQuote { margin:16px 0 0; padding:0; border:0; }
 .vespiQuote p { max-width:48ch; margin:0; color:var(--ink); font-size:17px; line-height:1.45; letter-spacing:-.01em; text-wrap:pretty; }
-.vespiQuote cite { display:block; margin-top:8px; color:var(--quiet); font:400 11px/1.5 var(--font-jetbrains-mono),monospace; font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
+.vespiQuote cite { display:block; margin-top:8px; color:var(--quiet); font:400 11px/1.5 var(--font-sans); font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
 .nowDeadline { display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:4px 12px; margin-top:14px; }
-.nowLabel { margin:0; color:var(--quiet); font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
+.nowLabel { margin:0; color:var(--quiet); font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
 .dayCount { display:flex; align-items:baseline; gap:6px; margin:0; }
 .dayCount strong { color:var(--accent-text); font-size:22px; font-weight:600; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .dayCount span,.nowDeadline time { color:var(--quiet); font-size:13px; line-height:1.5; }
@@ -201,12 +201,12 @@
 .boardStats li { display:grid; gap:3px; padding-top:12px; border-top:1px solid #4A4038; }
 .boardStats strong { font-size:28px; font-weight:600; line-height:1.1; letter-spacing:-.025em; color:#FAF6EE; font-variant-numeric:tabular-nums; }
 .boardStats strong small { font-size:15px; font-weight:400; color:#CFC6BA; letter-spacing:0; }
-.boardStats span { font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#B8AE9F; }
+.boardStats span { font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:#B8AE9F; }
 .boardMain { min-width:0; }
 .routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-accent:#F29A89; --flight-surface:#2A2420; }
 .boardHead { display:flex; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:24px; }
 .nowAhead { max-width:320px; }
-.nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
+.nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
 .nowAhead h3 span { margin-left:6px; color:#F29A89; }
 .nowAhead ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
 .nowAhead li { display:flex; align-items:flex-start; gap:6px; color:#CFC6BA; font-size:12px; line-height:1.45; }
