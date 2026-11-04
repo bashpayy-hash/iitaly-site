@@ -83,8 +83,13 @@ try{
     const steps=nav.locator('[data-guide-step-card]');
     await steps.first().waitFor();
     assert((await steps.count())>1);
+    // Owner, 4 Nov (phone screenshot): no «Шаг 01»-style labels or big numerals;
+    // each card shows its pips, title and the first sentence of the step.
+    assert.equal(await steps.locator('[data-step-pips]').count(),await steps.count(),'Every step card shows its pips');
+    assert.doesNotMatch(await nav.locator('[data-guide-steps-row]').innerText(),/Шаг \d|\b0\d\b/,'Cards carry titles and teasers, not numerals');
     await steps.nth(1).click();await nav.waitForURL('**/guides/permesso/2');
     await nav.locator('[data-instruction-point="2"]').waitFor();
+    assert.doesNotMatch(await nav.locator('article').innerText(),/Шаг 0\d|\bиз 0\d\b/,'The step page names the topic and the neighbouring steps, not zero-padded numbers');
     await check(nav,'Guide step '+width);
     await nav.locator('[data-guide-step-next]').click();await nav.waitForURL('**/guides/permesso/3');
     await nav.locator('[data-guide-step-prev]').click();await nav.waitForURL('**/guides/permesso/2');

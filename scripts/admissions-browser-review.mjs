@@ -49,6 +49,14 @@ try {
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
     const routeStops=page.locator('[data-assessment-route] [data-flight-stop]');
     await routeStops.first().waitFor();
+    // Owner, 4 Nov (phone screenshot): the plan is a grid of Apple-style step
+    // tiles with the step's object, not a timeline list; the opened step keeps its flat 28px tile.
+    const tiles=page.locator('[data-assessment-route] [data-plan-step-tile]');
+    assert.equal(await tiles.count(),await routeStops.count(),'One tile per plan step');
+    assert.equal(await tiles.locator('img[data-plan-step-object]').count(),await routeStops.count(),'Every step tile shows its object');
+    assert.equal(await tiles.first().evaluate(el=>getComputedStyle(el).borderRadius),'28px');
+    assert.equal(await page.locator('[data-assessment-route] [data-plan-step-tile][data-flight-selected=true]').count(),1,'Exactly one step is open');
+    if (width>=1440) { const [a,b]=await Promise.all([tiles.nth(0).boundingBox(),tiles.nth(1).boundingBox()]); assert(Math.abs(a.y-b.y)<1&&b.x>a.x,'Two tiles per row on desktop'); }
     const chapters=[await page.locator('main').textContent()];
     for (let index=0;index<await routeStops.count();index++) {
       await routeStops.nth(index).click();

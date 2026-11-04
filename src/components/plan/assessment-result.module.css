@@ -56,13 +56,19 @@
 @media(max-width:480px) { .next { padding: 18px; } .nextHeading, .steps > li { gap: 10px; } .next h4 { font-size: 18px; } .transition h3 { font-size: 22px; } }
 @media(prefers-reduced-motion:reduce) { .result, .stepBody, .transitionTrack i::after { animation: none; } .result summary > svg:last-child { transition: none; } }
 
-.flightFrame{--flight-surface:#EEE8DD;padding:40px 40px 28px;border:1px solid rgba(53,43,40,.09);border-radius:32px;background:rgba(237,232,222,.8)}
-.flightStep{max-width:620px;padding:24px 26px;border:2px solid #352B28;border-radius:20px;background:#FBF9F3;color:#352B28;min-width:0;box-shadow:0 8px 32px rgba(53,43,40,.08)}
-.flightPosition{margin:0 0 14px;font:400 11px/1.5 var(--font-sans);text-transform:uppercase;letter-spacing:.08em;color:#A33421}
-.flightStep h2{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.flightStep .summary,.flightStep .references p{color:#5C574E}.flightStep .references a{color:#352B28}.flightStep .action{font-size:15px}.flightStep .references{border-color:#E2DACC}
-.flightActions{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #E2DACC;margin-top:20px;padding-top:14px}
-.flightActions button,.flightActions a{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:10px 18px;font-size:14px;font-weight:600;border:0;border-radius:12px;text-decoration:none;background:#B83A27;color:#FAF9F3}
-.flightActions button:first-child{background:none;color:#5C574E;font-weight:400;padding-left:0}.flightActions button:disabled{opacity:.4;cursor:not-allowed}
-.flightFrame :is(button,a):focus-visible{outline:2px solid #A33421;outline-offset:4px}
-@media(max-width:760px){.flightFrame{padding:20px 16px;border-radius:28px}.flightStep{padding:18px}}
+/* Открытый шаг внутри плитки (plan-step-tiles.module.css, owner 4 Nov):
+   позиция, объяснение, действие, источники и переходы-пилюли. */
+.step{min-width:0}
+.stepPosition{margin:0 0 10px;font:400 11px/1.5 var(--font-sans);text-transform:uppercase;letter-spacing:.08em;color:#A33421}
+.srOnly{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.step .summary{margin-top:0;font-size:16px;line-height:1.55;color:#3F3933}
+.step .action{margin:16px 0;font-size:16px;color:#241F1C}
+.step .references{border-color:#DCD5CA}.step .references p{color:#57514B}.step .references a{color:#241F1C}
+.stepActions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:14px;border-top:1px solid #DCD5CA}
+.stepActions button,.stepActions a{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:10px 20px;font-size:14px;font-weight:500;border:0;border-radius:999px;text-decoration:none;background:#B83A27;color:#FAF6EE;cursor:pointer;transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1)}
+.stepActions button:not(:disabled):hover,.stepActions a:hover{background:#A33421}
+.stepActions button:first-child{padding-left:0;background:none;color:#57514B;font-weight:400}
+.stepActions button:disabled{opacity:.4;cursor:not-allowed}
+.stepActions :is(button,a):not(:disabled):active{transform:scale(.97)}
+.result :is(button,a):focus-visible{outline:2px solid #A33421;outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.stepActions button,.stepActions a{transition:none}.stepActions :is(button,a):active{transform:none}}
