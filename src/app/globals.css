@@ -41,8 +41,6 @@
   --font-display: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
   --font-sans: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
   --font-editorial: Charter, Georgia, serif;
-  /* Второй гарнитуры нет (owner, 4 Nov): технические подписи и счётчики —
-     тот же Onest капсом с трекингом; токен оставлен ради утилиты font-mono. */
   --font-mono: var(--font-onest), "Helvetica Neue", Arial, sans-serif;
 
   --radius-pill: 999px;
