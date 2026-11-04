@@ -3,18 +3,121 @@
   "request": "Owner: «ты можешь начать добавлять какие-то анимации… с этими пейзажами заигрывать, с Веспи — это добавило бы визитную карточку всему сайту».",
   "method": "Higgsfield image-to-video from the shipped landscape stills (the 2k upscales of the Tuscan road and the Florence belvedere, jobs in landscapes-2026-11-03.json), 5 s, aspect auto, prompt asking for a locked-off camera and ambient motion only (cape and collar in the breeze, grass and cypress tops, haze, a few distant swallows, drifting clouds). Two models per scene were rendered and compared frame by frame; Kling 4.0 (1080p) kept the Tuscan dust light and Vespi unchanged, MiniMax H3 (2K) kept the belvedere sky to a few small birds where Kling painted a whole flock. In the Higgsfield sandbox (ffmpeg): the Tuscan frame cropped to its left 89.5% like the still (tiny figures at the right edge), forward + reversed concat (first reversed frame dropped) for a seamless 10 s ping-pong loop, scaled to 1280 and 640 px wide, H.264 high@4.0, CRF 25/27, yuv420p, faststart, no audio. The files were carried over as grayscale PNG parts and rebuilt byte-for-byte (sha256 below).",
   "items": [
-    { "name": "tuscany", "use": "cabinet hero («Сейчас») over the tuscany still", "source": "51c7c070-c4d6-4ce0-a383-8528262b6e34", "chosen": { "model": "kling4_0", "job": "9de26546-79d4-4fc6-9596-4f41abda9d26" }, "rejected": { "model": "minimax_h3", "job": "c46b30be-3048-40f0-a5ab-d9087be56a3e", "why": "a dust cloud fogs the whole middle of the clip" }, "crop": "left 89.5% of the frame, like the still" },
-    { "name": "belvedere", "use": "home FAQ tile («Можно ли нам доверять») over the belvedere still", "source": "6a397266-df73-4844-9e39-0a5d897e8cb9", "chosen": { "model": "minimax_h3", "job": "f52fff34-cf9e-4eeb-9724-7daccab28eaa" }, "rejected": { "model": "kling4_0", "job": "4278c164-cbec-4c6e-acb8-08df97f43313", "why": "a dense flock of birds over the Duomo" } }
+    {
+      "name": "tuscany",
+      "use": "cabinet hero («Сейчас») over the tuscany still",
+      "source": "51c7c070-c4d6-4ce0-a383-8528262b6e34",
+      "chosen": {
+        "model": "kling4_0",
+        "job": "9de26546-79d4-4fc6-9596-4f41abda9d26"
+      },
+      "rejected": {
+        "model": "minimax_h3",
+        "job": "c46b30be-3048-40f0-a5ab-d9087be56a3e",
+        "why": "a dust cloud fogs the whole middle of the clip"
+      },
+      "crop": "left 89.5% of the frame, like the still"
+    },
+    {
+      "name": "belvedere",
+      "use": "home FAQ tile («Можно ли нам доверять») over the belvedere still",
+      "source": "6a397266-df73-4844-9e39-0a5d897e8cb9",
+      "chosen": {
+        "model": "minimax_h3",
+        "job": "f52fff34-cf9e-4eeb-9724-7daccab28eaa"
+      },
+      "rejected": {
+        "model": "kling4_0",
+        "job": "4278c164-cbec-4c6e-acb8-08df97f43313",
+        "why": "a dense flock of birds over the Duomo"
+      }
+    },
+    {
+      "name": "bologna",
+      "use": "home welcome hero over the bologna still (owner, 4 Nov: «welcome page на фоне того, как Веспи что-то делает в пейзаже Италии… subtle-анимация»)",
+      "source": "a033124a-3354-444f-8265-afe36a2d05b3",
+      "chosen": {
+        "model": "kling4_0",
+        "job": "8b3eacef-fed9-4ae2-b5ea-8defc875ee33"
+      },
+      "rejected": {
+        "model": "minimax_h3",
+        "job": "1d8b8a4c-fc58-41dd-8cf8-713d812a5a04",
+        "why": "Vespi walks across the arcade, so the ping-pong loop would send it backwards; Kling keeps it in place with a soft sway"
+      },
+      "crop": "full frame"
+    }
   ],
   "prompts": {
     "tuscany": "Locked-off camera, subtle ambient motion only: the small cotton toy rider on the cream vintage scooter stays exactly in place; its cream cape stirs gently in a warm breeze; the golden grass and the cypress tops sway softly; warm dust motes drift in the low sun; the distant haze shimmers. No camera movement, no new objects, no people, no text, photoreal, calm, seamless loop.",
-    "belvedere": "Locked-off camera, subtle ambient motion only: the small cotton toy on the stone parapet stays exactly in place, one paw shading its eyes; its cream cape and felt collar stir in a light breeze; a few distant swallows cross the sky; thin clouds drift slowly over the rooftops and the dome; the river glints; a gentle heat shimmer over the city. No camera movement, no people, no new objects, no text, photoreal, calm, seamless loop."
+    "belvedere": "Locked-off camera, subtle ambient motion only: the small cotton toy on the stone parapet stays exactly in place, one paw shading its eyes; its cream cape and felt collar stir in a light breeze; a few distant swallows cross the sky; thin clouds drift slowly over the rooftops and the dome; the river glints; a gentle heat shimmer over the city. No camera movement, no people, no new objects, no text, photoreal, calm, seamless loop.",
+    "bologna": "Locked-off camera, subtle ambient motion only: the small cotton toy walker in the arcade stays exactly in place, mid-step, same pose; its tiny canvas backpack straps and olive felt collar stir in a light breeze; warm evening light flickers softly through the arches; faint dust motes drift in the sunbeams; the hanging lanterns sway very slightly. No camera movement, no new objects, no people, no text, photoreal, calm, seamless loop."
   },
   "files": [
-    { "file": "public/illustrations/motion/tuscany-1280.mp4", "width": 1280, "height": 964, "seconds": 10.04, "bytes": 1177817, "sha256": "be9b285fd379aecac8f220bfbfa091a0fbe84be4ea9271d224599f8e37136798" },
-    { "file": "public/illustrations/motion/tuscany-640.mp4", "width": 640, "height": 482, "seconds": 10.04, "bytes": 301024, "sha256": "cea64e5a85b5f058abc859b0d109b3bd2baaefcd1217a779797eb69760dd7f8e" },
-    { "file": "public/illustrations/motion/belvedere-1280.mp4", "width": 1280, "height": 860, "seconds": 10.29, "bytes": 1100272, "sha256": "91cb0791e338fb78194d1a11dc863c9c7322c67ee3f23e43a44f120ec5e37f76" },
-    { "file": "public/illustrations/motion/belvedere-640.mp4", "width": 640, "height": 430, "seconds": 10.29, "bytes": 216202, "sha256": "e3ecd830c6ee1b4ec58f1381be5bf092d37c6639dbe5361610af6e843930995d" }
+    {
+      "file": "public/illustrations/motion/tuscany-1280.mp4",
+      "width": 1280,
+      "height": 964,
+      "seconds": 10.04,
+      "bytes": 1177817,
+      "sha256": "be9b285fd379aecac8f220bfbfa091a0fbe84be4ea9271d224599f8e37136798"
+    },
+    {
+      "file": "public/illustrations/motion/tuscany-640.mp4",
+      "width": 640,
+      "height": 482,
+      "seconds": 10.04,
+      "bytes": 301024,
+      "sha256": "cea64e5a85b5f058abc859b0d109b3bd2baaefcd1217a779797eb69760dd7f8e"
+    },
+    {
+      "file": "public/illustrations/motion/belvedere-1280.mp4",
+      "width": 1280,
+      "height": 860,
+      "seconds": 10.29,
+      "bytes": 1100272,
+      "sha256": "91cb0791e338fb78194d1a11dc863c9c7322c67ee3f23e43a44f120ec5e37f76"
+    },
+    {
+      "file": "public/illustrations/motion/belvedere-640.mp4",
+      "width": 640,
+      "height": 430,
+      "seconds": 10.29,
+      "bytes": 216202,
+      "sha256": "e3ecd830c6ee1b4ec58f1381be5bf092d37c6639dbe5361610af6e843930995d"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-1280.mp4",
+      "width": 1280,
+      "height": 862,
+      "seconds": 10.04,
+      "bytes": 499608,
+      "sha256": "b5cb14f3af99526ba9a758cd4fead9ec8f06d50274fcd5c105da854209b67275"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-640.mp4",
+      "width": 640,
+      "height": 432,
+      "seconds": 10.04,
+      "bytes": 112529,
+      "sha256": "c3a307c070d9343e20bdee4d6153e8774ca4528132f1c7e4bf0c52f7ad3a1593"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-1280.webm",
+      "width": 1280,
+      "height": 862,
+      "seconds": 10.04,
+      "bytes": 425030,
+      "sha256": "e9090481c7e43bb98e32b0a86d1f9ebe57c1f35bdb181adfee971b72e59e0afe"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-640.webm",
+      "width": 640,
+      "height": 432,
+      "seconds": 10.04,
+      "bytes": 151451,
+      "sha256": "4b5845418d2990e14a32d0478c1d8e7cbfadc006fcabd70babcd70c8f2115989"
+    }
   ],
-  "placement": "src/components/motion/LivingLandscape.tsx: the video lies over the still with the still's own layout class, is loaded only when the tile is in view (narrow file at ≤640px), fades in on the first played frame, pauses off-screen, and is skipped entirely under prefers-reduced-motion or Save-Data. The still stays the poster and the only image for screenshots and reviews."
+  "placement": "src/components/motion/LivingLandscape.tsx: the video lies over the still with the still's own layout class, is loaded only when the tile is in view (narrow file at ≤640px), fades in on the first played frame, pauses off-screen, and is skipped entirely under prefers-reduced-motion or Save-Data. The still stays the poster and the only image for screenshots and reviews. On the home page the same component lies over the Bologna still in the welcome scene (src/components/home/Hero.tsx)."
 }

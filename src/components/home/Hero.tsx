@@ -1,18 +1,28 @@
-import paper from "@/components/marketing/public-paper.module.css";
+/* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders with explicit dimensions. */
 import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import styles from "@/components/marketing/marketing.module.css";
-import { CampusArtwork } from "@/components/marketing/CampusArtwork";
+import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import assistant from "./home-assistant.module.css";
 
-/** An honest service diagram, not a fabricated screenshot or applicant result. */
+/* Первый экран — welcome (owner, 4 Nov): Веспи идёт с рюкзачком по аркаде
+   Болоньи в вечернем свете (Higgsfield, design/illustrations/landscapes-
+   2026-11-03.json, сцена «bologna»), поверх кадра — та же видеопетля, что
+   у пейзажей кабинета и FAQ (motion-2026-11-04.json): лямки и воротник на
+   ветру, мерцание света, пыль в лучах. Текст и действия — на кремовой
+   панели справа, как панель FAQ; на телефоне кадр сверху, панель под ним.
+   Тексты прежние. Пример маршрута ниже не меняется. */
 export function Hero() {
   return (
     <section data-section="hero" className={styles.hero}>
-      <div className={`${styles.heroIntro} ${assistant.heroIntro} ${paper.surface}`}>
-        <div className={`${styles.heroCopy} ${assistant.heroCopy}`}>
+      <div className={styles.heroScene} data-hero-scene>
+        <div className={styles.heroSceneBox} aria-hidden="true">
+          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-1024.webp" srcSet="/illustrations/landscapes/bologna-640.webp 640w, /illustrations/landscapes/bologna-1024.webp 1024w, /illustrations/landscapes/bologna-1600.webp 1600w" sizes="100vw" width={1024} height={688} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna" />
+          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna" label="bologna" />
+        </div>
+        <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
           <p className={styles.eyebrow}><span className={styles.signal} aria-hidden />Из Казахстана — в Италию</p>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
           <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
@@ -26,7 +36,6 @@ export function Hero() {
           <p className={styles.heroNote}>Короткий опрос · Для абитуриентов и студентов</p>
           <Link href="/changes-2026-27" className="mt-3 inline-block min-h-11 py-2 text-sm underline underline-offset-4">Правила 2026/27–2027/28 · проверено 9 октября</Link>
         </div>
-        <CampusArtwork />
       </div>
       <div className={styles.stage}>
         <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗︎</span> Италия</span></div>

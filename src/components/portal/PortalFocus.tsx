@@ -16,7 +16,6 @@ import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParamet
 import { LineupTile, plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
 
-import { StoryPills } from "@/components/story/MediaSwitcher";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 
 /* Сцена этапа на доске маршрута (owner, 4 Nov: «тематические генерации, где
@@ -219,15 +218,14 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         </div>}
       </aside>
     </div>}
-    {stagePage && <div className={styles.welcome} data-portal-welcome>
-      <div className={styles.welcomeCopy}>
-        <PortalBreadcrumbs stage={selected} />
-        <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
-      </div>
-    </div>}
+    {/* Страница этапа (owner, 4 Nov, скрин: «информации слишком много… перед
+        глазами максимум один блок и один поинт; не так, что сначала карта, а
+        снизу другое»): только хлебные крошки и одна плитка с текущим шагом —
+        без полосы маршрута, без «Штампы 1/5» и ряда «01–05». */}
+    {stagePage && <div className={styles.welcome}><PortalBreadcrumbs stage={selected} /></div>}
     {/* Тёмная плитка маршрута: «сделано заранее» в шапке, маршрут этапов с
         раскрытым текущим шагом под его этапом. */}
-    <div className={styles.routeCard} data-route-card>
+    {!stagePage && <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} afterBoard={stepTile} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart}
         boardHead={!stagePage && ahead.length > 0 && <div className={styles.boardHead}>
           <div className={styles.nowAhead} data-now-ahead>
@@ -236,24 +234,23 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           </div>
         </div>}
         lineupExtras={!stagePage && cabinetTiles} boardAside={boardAside} />
-    </div>
+    </div>}
     {stagePage && <div className={styles.stageBody} data-portal-overview>
-      <div className={styles.stageHeading}>
-        <div className={styles.stageTitle}>
-          <h2>Шаги этапа</h2>
-          <div className={styles.stamps} data-stage-stamps aria-label={`Штампы: ${savedStampCount} из ${ordered.length}`}>
-            <span>Штампы: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
-            <span className={styles.stampTrack} aria-hidden="true">{ordered.map((row, index) => {
-              const saved = portalTaskDone(savedData, row), before = portalTaskDone(data, row);
-              return <span key={row.id} className={styles.stamp} data-stamp={row.id} data-stamped={saved} data-just-stamped={saved && !before}>{saved ? <Check size={14} strokeWidth={2} /> : <span>{String(index + 1).padStart(2, "0")}</span>}</span>;
-            })}</span>
-          </div>
-        </div>
+      <div className={styles.stageEyebrow}>
+        <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
+        {selectedTask && <span className={styles.stagePosition}>· шаг {selectedTaskIndex + 1} из {visibleTasks.length}</span>}
       </div>
-      {selectedTask && <div className={styles.stageSwitcher} data-stage-switcher>
-        <StoryPills items={visibleTasks.map((row, index) => ({ id:row.id, title:taskTitle(row), label:String(index + 1).padStart(2, "0") }))} index={selectedTaskIndex} onSelect={index => navigatePortal(stageHref(index))} href={stageHref} label="Шаги этапа" />
-        <p className={styles.stagePosition}>Шаг {selectedTaskIndex + 1} из {visibleTasks.length}</p>
-      </div>}
+      {/* Точки шагов: одна строка — положение, сохранённые штампы (зелёные)
+          и переход к любому шагу этапа. Счёт штампов остаётся для читалок. */}
+      {selectedTask && <nav className={styles.pips} data-stage-switcher aria-label="Шаги этапа">
+        <span className={styles.srOnly} data-stage-stamps>Готово: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
+        {visibleTasks.map((row, index) => {
+          const saved = portalTaskDone(savedData, row), before = portalTaskDone(data, row);
+          return <a key={row.id} href={stageHref(index)} data-story-pill={index} aria-current={index === selectedTaskIndex ? "step" : undefined} title={taskTitle(row)} aria-label={`Шаг ${index + 1}: ${taskTitle(row)}${saved ? " — готово" : ""}`}
+            data-stamp={row.id} data-stamped={saved} data-just-stamped={saved && !before ? true : undefined}
+            onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(stageHref(index)); }}><span /></a>;
+        })}
+      </nav>}
       {taskList(selectedTask ? [selectedTask] : [])}
       {selectedTask && <nav className={styles.stepPagination} aria-label="Переход между шагами этапа">
         {selectedTaskIndex > 0 ? <PortalPageLink href={stageHref(selectedTaskIndex - 1)}>Назад</PortalPageLink> : <span />}

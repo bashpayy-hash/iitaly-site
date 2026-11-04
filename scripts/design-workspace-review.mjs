@@ -119,7 +119,10 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_portal_code')),null,'Guest actions create no authentication credentials');
     await capture('portal-profile');await audit('guest overview');
     await portalDestination(page, 'План');
-    assert.equal(await page.locator('[data-flight-plan][data-compact=true]').count(),1,'The local stage page has one compact Flight Plan');
+    // Owner, 4 Nov («один блок, один поинт»): the stage page is one tile with the
+    // current step and its pips; the route lives on the overview only.
+    assert.equal(await page.locator('[data-flight-plan]').count(),0,'The local stage page carries no route strip');
+    assert.equal(await page.locator('[data-portal-page=stage] [data-stage-switcher] a[data-story-pill]').count(),await page.locator('[data-portal-page=stage] [data-stage-switcher] a[data-stamp]').count(),'The step pips double as stamps');
     assert.equal(await page.locator('[aria-label="Пять этапов маршрута"],[data-workspace-ring]').count(),0);
     const checks=page.getByRole('checkbox',{name:/Отметить выполненным/});
     assert(await checks.count()>0,'The checklist exposes completion controls');
