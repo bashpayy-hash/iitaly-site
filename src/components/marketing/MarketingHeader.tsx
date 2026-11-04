@@ -43,7 +43,7 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
             }} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
-        {variant === "portal" ? actions : <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗</span></Link>}
+        {variant === "portal" ? actions : <Link href="/portal" className={styles.portalLink} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет <span aria-hidden>↗︎</span></Link>}
         <details ref={menuRef} key={pathname} className={styles.mobileMenu} onKeyDown={(event) => {
           if (event.key === "Escape") {
             event.currentTarget.open = false;
@@ -61,9 +61,9 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
               <Link key={href} href={href} onClick={event => {
                 if (variant !== "portal" || href !== "/portal" || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                 event.preventDefault(); navigatePortal(href);
-              }} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}<span aria-hidden>↗</span></Link>
+              }} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}<span aria-hidden>↗︎</span></Link>
             ))}
-            {variant === "public" && <><Link href="/portal">Личный кабинет <span aria-hidden>↗</span></Link>
+            {variant === "public" && <><Link href="/portal">Личный кабинет <span aria-hidden>↗︎</span></Link>
             <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button></>}
           </nav>
         </details>

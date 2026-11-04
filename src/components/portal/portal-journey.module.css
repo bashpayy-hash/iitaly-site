@@ -49,7 +49,7 @@
 
 /* Flight Plan: the instrument describes real progress; selection only previews. */
 .flightWindow{display:flex;flex-direction:column;min-height:300px;padding:24px;border:1px solid #5A4A40;border-radius:20px;background:#352B28;color:#FAF9F3}
-.windowTop{display:flex;justify-content:space-between;gap:12px;font:400 10px/1.5 var(--font-space-mono),monospace;letter-spacing:.04em;color:#C9CFC4}
+.windowTop{display:flex;justify-content:space-between;gap:12px;font:400 10px/1.5 var(--font-jetbrains-mono),monospace;letter-spacing:.04em;color:#C9CFC4}
 .flightWindow h3{margin:26px 0 18px;font:500 clamp(22px,2.3vw,30px)/1.12 var(--font-sans);letter-spacing:-.03em}
 .stageStat{display:flex;align-items:center;gap:12px;margin:0}.stageStat strong{font-size:54px;font-weight:500;line-height:1;letter-spacing:-.03em;color:#F29A89}.stageStat span{color:#C9CFC4;font-size:12px;line-height:1.5}
 .stageMeter{height:2px;margin:20px 0 22px;background:#6E6054}.stageMeter span{display:block;height:100%;background:#F29A89;transition:width .6s ease}
@@ -73,7 +73,7 @@
 .timeline .route[data-road-board] .previewTop { color:#B8AE9F; }
 .currentStop { display:grid; gap:12px; min-width:0; }
 .stopPreview { display:grid; gap:10px; max-width:420px; padding:18px 20px; border:1px solid #E2DACC; border-radius:18px; background:rgba(251,249,243,.82); }
-.previewTop { display:flex; justify-content:space-between; gap:12px; margin:0; font:400 10px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#6A6458; }
+.previewTop { display:flex; justify-content:space-between; gap:12px; margin:0; font:400 10px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#6A6458; }
 .previewStat { margin:0; color:var(--quiet); font-size:13px; line-height:1.5; }
 .previewStat strong { margin-right:4px; color:var(--accent-text); font-size:28px; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .previewMeter { display:block; height:2px; background:#E2DACC; }

@@ -85,7 +85,7 @@ export function Header() {
                 aria-current={pathname === l.href ? "page" : undefined}
                 className="flex min-h-11 items-center justify-between rounded-lg px-3 text-sm hover:bg-pebble/50"
               >
-                {l.label}<span aria-hidden>↗</span>
+                {l.label}<span aria-hidden>↗︎</span>
               </Link>
             ))}
             <button
@@ -95,7 +95,7 @@ export function Header() {
                 window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))
               }
             >
-              Задать вопрос<span aria-hidden>↗</span>
+              Задать вопрос<span aria-hidden>↗︎</span>
             </button>
           </nav>
         </details>

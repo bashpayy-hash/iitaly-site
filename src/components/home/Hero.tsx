@@ -17,10 +17,10 @@ export function Hero() {
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
           <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <div className={assistant.entryActions}>
-            <AppleButtonLink href="/plan">Составить план бесплатно <span aria-hidden>↗</span></AppleButtonLink>
+            <AppleButtonLink href="/plan">Составить план бесплатно <span aria-hidden>↗︎</span></AppleButtonLink>
             <div className={assistant.entryAlternatives}>
-              <Link href="/plan#document-check">Проверить документ <span aria-hidden>↗</span></Link>
-              <Link href="/universities">Смотреть университеты <span aria-hidden>↗</span></Link>
+              <Link href="/plan#document-check">Проверить документ <span aria-hidden>↗︎</span></Link>
+              <Link href="/universities">Смотреть университеты <span aria-hidden>↗︎</span></Link>
             </div>
           </div>
           <p className={styles.heroNote}>Короткий опрос · Для абитуриентов и студентов</p>
@@ -29,7 +29,7 @@ export function Hero() {
         <CampusArtwork />
       </div>
       <div className={styles.stage}>
-        <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗</span> Италия</span></div>
+        <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗︎</span> Италия</span></div>
         <div className={styles.journey} data-journey-preview>
           <div className={styles.journeyHeader}>
             <div><span className={styles.journeyLogo}>Твой маршрут с <span role="img" aria-label="IITALY"><BrandLogo compact /></span></span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>

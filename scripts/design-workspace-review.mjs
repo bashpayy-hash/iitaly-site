@@ -98,7 +98,7 @@ try {
       await button.click();
     }
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
-    await page.getByRole('link',{name:'Продолжить в личном кабинете ↗',exact:true}).click();
+    await page.getByRole('link',{name:'Продолжить в личном кабинете ↗︎',exact:true}).click();
     await page.locator('[data-local-workspace]').waitFor();
     await page.locator('[data-road-open]').first().click();
     await page.locator('[data-portal-universities]').waitFor();

@@ -245,8 +245,8 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       <div className={styles.boardMain}>
       {overview && boardHead}
       {!condensed && !timeline && <h2 className={styles.routeTitle}>Твой маршрут{!embedded && deadline && <span className={styles.goalDeadline}>{deadline}</span>}</h2>}
-      <div className={styles.summary}>
-        {!condensed && <div className={styles.stageMarker}>
+      <div className={styles.summary} data-route-summary>
+        {!condensed && <div className={styles.stageMarker} data-route-marker>
           <span className={styles.stageLabel}>Этап</span>
           <strong className={styles.stageNumber} data-route-stage-number>{String(currentStageIndex + 1).padStart(2, "0")}</strong>
           <span className={styles.currentStageName} data-route-current-name>{currentStageTitle}</span>

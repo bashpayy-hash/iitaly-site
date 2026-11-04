@@ -157,7 +157,7 @@ export function EditablePermesso() {
         <aside className={light.scope} aria-label="Что важно знать">
           <p><b>Бланк остаётся главным источником.</b> Это учебный помощник, не замена инструкции Questura. Если foglio note твоего kit расходится с подсказкой, следуй бумажному kit и требованиям своей провинции.</p>
           <nav className={light.headLinks} aria-label="Оригинал и справка">
-            <a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF ↗</a>
+            <a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF ↗︎</a>
             <a href="#helpers">Коды и расчёты ↓</a>
             <a href="#before-poste">Перед почтой ↓</a>
           </nav>
@@ -172,7 +172,7 @@ export function EditablePermesso() {
         {page > 3 && <p className={z.scopeNote}>Эти листы остаются в kit. Здесь — пропуски для сценария без семьи, не инструкция для семейного заявления.</p>}
         <div className={`${styles.workspace} ${z.workspace}`}>
           <div className={styles.document} data-fab-yield>
-            <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · страница {page} из 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF ↗</a></div>
+            <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · страница {page} из 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF ↗︎</a></div>
             {!transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v) => {setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
             <div className={styles.documentFoot}>Оригинальные клетки и подписи не изменены. Это учебный черновик, не подача заявления.</div>
           </div>

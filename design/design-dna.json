@@ -158,9 +158,9 @@
       "font_families": {
         "heading": "Inter Tight",
         "body": "Inter Tight",
-        "mono": "Space Mono"
+        "mono": "JetBrains Mono"
       },
-      "font_style_notes": "Tight negative tracking on headings, balanced wrapping; Space Mono uppercase for step counters and manifest labels only."
+      "font_style_notes": "Tight negative tracking on headings, balanced wrapping; JetBrains Mono uppercase for step counters and labels only (carries Cyrillic)."
     },
     "spacing": {
       "base_unit": "4px",

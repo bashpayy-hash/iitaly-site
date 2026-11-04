@@ -46,7 +46,7 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
         lastAction={<PortalPageLink data-instruction-next href={href("action")}>{DOC_TASKS[task.id] ? "Перейти к проверке" : "Перейти к действию"}<span aria-hidden="true">→</span></PortalPageLink>}
       />
       {last && guideExtra}
-      {sources.length > 0 && <details className={styles.readingSources}><summary>Официальные источники</summary><ul>{sources.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label} ↗</a></li>)}</ul></details>}
+      {sources.length > 0 && <details className={styles.readingSources}><summary>Официальные источники</summary><ul>{sources.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label} ↗︎</a></li>)}</ul></details>}
     </div>}
     {/* Keep the mounted action while reading: selected files and form answers stay intact. */}
     <div hidden={part !== "action"} data-task-action-page>

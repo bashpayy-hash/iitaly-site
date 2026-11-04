@@ -11,6 +11,9 @@ const approvedPresentationPaths = new Set([
   // illustrated touches), Vespi scenes on the stage board and settings, a
   // peeking Vespi beside a larger map, and Apple-like information blocks.
   // Presentation only: roadmap, profile, reminder and map data stay as they are.
+  // Same day: the mono label face gains Cyrillic (JetBrains Mono replaces
+  // Space Mono in layout.tsx and globals.css, both listed below), and the
+  // cabinet board stacks without duplicated counters on narrow screens.
   'src/components/portal/PortalArtwork.tsx', 'src/components/portal/RisoArtImage.tsx',
   'src/components/portal/portalStageArt.ts', 'src/components/portal/PortalRoad.tsx',
   'src/components/portal/ProfileSection.tsx', 'src/components/portal/HelpSection.tsx',

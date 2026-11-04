@@ -20,7 +20,8 @@ Warm paper, riso objects, Apple-calm. Flat (no cast shadows): level is colour �
 - Prices cards: 32px desktop (`sm:p-8`), 24px phone (`p-6`).
 
 ## Type
-- Floor: 11px for Space Mono caps labels, 12px for any other text (the Modulo 1 form replica is the only exception).
+- Floor: 11px for JetBrains Mono caps labels (the mono face carries Cyrillic; Space Mono did not and mixed with a system fallback on iOS), 12px for any other text (the Modulo 1 form replica is the only exception).
+- `↗` is always written with the text-presentation selector (`↗︎`); iOS otherwise draws it as a blue emoji square.
 - Peer card titles share one size: `clamp(28px,3vw,40px)/1.08`, weight 600.
 - Section titles 44–52px; mega band titles 68px.
 

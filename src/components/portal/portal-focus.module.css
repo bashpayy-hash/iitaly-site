@@ -159,14 +159,14 @@
 .canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }
 
 .nowCard { display:grid; justify-items:center; gap:0; width:min(100%,720px); margin-top:28px; color:var(--ink); }
-.nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
+.nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
 .nowCard h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .nowTitle { margin:0; color:var(--ink); font:600 clamp(32px,3.4vw,48px)/1.05 var(--font-sans); letter-spacing:-.03em; text-wrap:balance; overflow-wrap:anywhere; }
 .vespiQuote { margin:16px 0 0; padding:0; border:0; }
 .vespiQuote p { max-width:48ch; margin:0; color:var(--ink); font-size:17px; line-height:1.45; letter-spacing:-.01em; text-wrap:pretty; }
-.vespiQuote cite { display:block; margin-top:8px; color:var(--quiet); font:400 11px/1.5 var(--font-space-mono),monospace; font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
+.vespiQuote cite { display:block; margin-top:8px; color:var(--quiet); font:400 11px/1.5 var(--font-jetbrains-mono),monospace; font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
 .nowDeadline { display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:4px 12px; margin-top:14px; }
-.nowLabel { margin:0; color:var(--quiet); font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
+.nowLabel { margin:0; color:var(--quiet); font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
 .dayCount { display:flex; align-items:baseline; gap:6px; margin:0; }
 .dayCount strong { color:var(--accent-text); font-size:22px; font-weight:600; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .dayCount span,.nowDeadline time { color:var(--quiet); font-size:13px; line-height:1.5; }
@@ -190,18 +190,23 @@
    встаёт над маршрутом. */
 .routeCard :global([data-road-board][data-board-aside]) { grid-template-columns:minmax(0,1fr) minmax(280px,400px); justify-content:stretch; align-items:start; column-gap:48px; }
 .routeCard :global([data-road-board][data-board-aside] > [data-board-aside]) { order:2; }
+/* The stat blocks already give the route figure, so the summary row keeps
+   only the stage marker and the «Шаг сохранён» note (owner, 4 Nov: «всё друг
+   на друга наслаивается» — the same «0 из 2» stood four times in a column). */
+.routeCard :global([data-road-board][data-board-aside] [data-road-count]) { display:none; }
+.routeCard :global([data-road-board][data-board-aside] [data-road-feedback]) { position:static; }
 .boardAside { display:grid; gap:22px; align-content:start; min-width:0; }
 .boardScene { display:block; width:100%; height:auto; border-radius:20px; }
 .boardStats { display:grid; gap:12px; margin:0; padding:0; list-style:none; }
 .boardStats li { display:grid; gap:3px; padding-top:12px; border-top:1px solid #4A4038; }
 .boardStats strong { font-size:28px; font-weight:600; line-height:1.1; letter-spacing:-.025em; color:#FAF6EE; font-variant-numeric:tabular-nums; }
 .boardStats strong small { font-size:15px; font-weight:400; color:#CFC6BA; letter-spacing:0; }
-.boardStats span { font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#B8AE9F; }
+.boardStats span { font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; color:#B8AE9F; }
 .boardMain { min-width:0; }
 .routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-accent:#F29A89; --flight-surface:#2A2420; }
 .boardHead { display:flex; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:24px; }
 .nowAhead { max-width:320px; }
-.nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-space-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
+.nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-jetbrains-mono),monospace; letter-spacing:.08em; text-transform:uppercase; }
 .nowAhead h3 span { margin-left:6px; color:#F29A89; }
 .nowAhead ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
 .nowAhead li { display:flex; align-items:flex-start; gap:6px; color:#CFC6BA; font-size:12px; line-height:1.45; }
@@ -218,15 +223,23 @@
  .routeCard :global([data-road-board]) { padding:32px 24px 36px; }
  .routeCard :global([data-road-board][data-board-aside]) { grid-template-columns:minmax(0,1fr); row-gap:28px; }
  .routeCard :global([data-road-board][data-board-aside] > [data-board-aside]) { order:0; }
+ /* Stacked board: the current stop of the route names the stage right under
+    the figures, so the big stage marker would say it a third time. The
+    «ahead» list sits on the left like everything else here. */
+ .routeCard :global([data-road-board][data-board-aside] [data-route-marker]) { display:none; }
+ .routeCard :global([data-road-board][data-board-aside] [data-route-summary]) { padding-bottom:0; }
+ .boardHead { justify-content:flex-start; }
  .boardStats { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
  .boardStats strong { font-size:24px; }
 }
 @media(max-width:640px) {
  /* A phone tile has no room under its text for the scooter: show the road
     and cypresses on the right of the scene instead (Vespi rides in the
-    home cards there). */
+    home cards there). Between 480 and 640px the right-aligned frame still
+    reached the scooter's front wheel (owner's iPad split view, 4 Nov), so
+    the frame is enlarged from its right edge until Vespi is out of it. */
  .hero { min-height:600px; padding:36px 20px 220px; }
- .heroArt { object-position:100% 62%; }
+ .heroArt { object-position:100% 62%; transform:scale(1.45); transform-origin:100% 62%; }
  .boardStats { grid-template-columns:minmax(0,1fr); gap:0; }
  .boardStats li { grid-template-columns:minmax(0,1fr) auto; align-items:baseline; gap:12px; padding:10px 0; }
  .boardStats li span { text-align:right; }
@@ -243,4 +256,4 @@
 }
 @media(prefers-reduced-motion:reduce) { .nowPrimary,.nowSecondary { transition:none; } .nowPrimary:active,.nowSecondary:active { transform:none; } }
 @media(forced-colors:active) { .hero,.routeCard :global([data-road-board]) { border:1px solid CanvasText; } }
-@media(max-width:560px) { .overviewDetail .stageLink { margin-left:76px; } }
+@media(max-width:480px) { .heroArt { transform:scale(1.1); } }

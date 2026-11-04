@@ -12,7 +12,7 @@ export function Split() {
       <h2 className={styles.universityTitle}>Одна Италия.<br /><span>Твой собственный выбор.</span></h2>
       <p>Найди свой университет: цены по ISEE, тесты, дедлайны и стипендия региона.</p>
       <div className={styles.universityNumbers}><div><b>43</b><small>университета</small></div><div><b>30</b><small>городов</small></div></div>
-      <div className={styles.actions}><AppleButtonLink href="/universities" variant="outlined">Открыть карту Италии <span aria-hidden>↗</span></AppleButtonLink></div>
+      <div className={styles.actions}><AppleButtonLink href="/universities" variant="outlined">Открыть карту Италии <span aria-hidden>↗︎</span></AppleButtonLink></div>
     </section>
   );
 }

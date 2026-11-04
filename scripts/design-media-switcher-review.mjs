@@ -94,7 +94,7 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           assert.equal(await comparison.getByLabel('Университет 2', { exact:true }).inputValue(), 'unibo');
           const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_university_choice_v1')));
           assert.equal(stored.primaryId, 'unibo');
-          await comparison.getByRole('button', { name:'Открыть в отдельном окне ↗' }).click();
+          await comparison.getByRole('button', { name:'Открыть в отдельном окне ↗︎' }).click();
           const dialog = page.getByRole('dialog');
           await dialog.locator('tfoot').getByRole('button', { name:/Padova/ }).click();
           await dialog.getByRole('button', { name:'Закрыть сравнение' }).click();

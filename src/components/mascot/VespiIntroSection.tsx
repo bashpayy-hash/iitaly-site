@@ -18,7 +18,7 @@ export function VespiIntroSection({ placement = "home", href = "/portal", action
     <div className={styles.copy}>
       <h2 id={id}>Знакомься, это Веспи —<br /><span>твой ИИ-проводник в Италию.</span></h2>
       <ul aria-label="Чем поможет Веспи">{BENEFITS.map(item => <li key={item}>{item}</li>)}</ul>
-      {withAction && <Link href={href} className={styles.action} onClick={onAction}>{action}<span aria-hidden="true">↗</span></Link>}
+      {withAction && <Link href={href} className={styles.action} onClick={onAction}>{action}<span aria-hidden="true">↗︎</span></Link>}
     </div>
     <div className={styles.portrait} aria-hidden="true">
       <VespiScene pose="peek" className={styles.spatial} sizes={placement === "portal" ? "112px" : "(max-width: 600px) 190px, 360px"} />
