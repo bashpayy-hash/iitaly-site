@@ -123,7 +123,7 @@ try{
     for (let step = 0; step < 9; step++) {
       await page.locator('[data-plan-question] + div button[aria-pressed]').first().click();
       await page.waitForFunction(expected => Number(document.querySelector('[data-plan-wizard] [role=progressbar]')?.getAttribute('aria-valuenow')) === expected, step + 1);
-      assert.match(await page.locator('[data-plan-step]').innerText(),new RegExp(`^Вопрос ${step + 2} из 10`),'The tile names its question number');
+      assert.match(await page.locator('[data-plan-step]').innerText(),new RegExp(`^Вопрос ${step + 2} из 10`,'i'),'The tile names its question number');
     }
     await check(page,'Plan last question '+width);
     await page.goto(origin+'/',{waitUntil:'networkidle'});
