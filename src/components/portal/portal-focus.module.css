@@ -184,7 +184,7 @@
    (760px) по центру. Цвета маршрута — светлые на какао, акцент — светлая
    терракота. */
 .canvas[data-portal-page=overview] .routeCard { grid-area:route; width:auto; margin:0; padding:0; }
-.routeCard :global([data-road-board]) { --flight-surface:#2A2420; display:grid; justify-content:center; grid-template-columns:minmax(0,760px); padding:40px 32px 44px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
+.routeCard :global([data-road-board]) { --flight-surface:#2A2420; display:grid; justify-content:center; grid-template-columns:minmax(0,760px); padding:44px 40px 48px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
 /* Доска блоками (owner, 4 Nov): маршрут слева, справа сцена этапа с Веспи и
    три факта с подписями, как колонка цифр у Apple; на узких экранах сцена
    встаёт над маршрутом. */
@@ -211,11 +211,21 @@
 .nowAhead ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
 .nowAhead li { display:flex; align-items:flex-start; gap:6px; color:#CFC6BA; font-size:12px; line-height:1.45; }
 .nowAhead li svg { flex-shrink:0; margin-top:2px; color:#8FC7A6; }
-.overviewDetail { display:grid; gap:4px; min-width:0; }
-.overviewDetail .stageLink { justify-self:start; color:#FAF6EE; }
-.canvas[data-portal-page=overview] .emptyStage { color:#CFC6BA; }
-/* The open task is a light card on the dark board: it keeps its own ink. */
-.canvas[data-portal-page=overview] .task[data-expanded=true] { margin:0; box-shadow:none; color:var(--ink); }
+.overviewDetail { display:grid; gap:12px; min-width:0; }
+.overviewDetail .stageLink { justify-self:start; color:var(--ink); }
+/* Текущий шаг — своя светлая плитка между доской и сеткой этапов (owner,
+   4 Nov: «перебор информации на маленькое пространство — не бойся
+   расширять»). Карточка шага лежит на плитке плоско: ярлык с этапом, номер
+   и название, пояснение, даты; действия справа; ссылка на этап внизу.
+   В тёмной доске остаётся только маршрут. */
+.stepTile { margin-top:12px; padding:36px 40px 32px; border-radius:28px; background:#FFFDF9; color:var(--ink); }
+.stepRubric { margin:0 0 20px; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
+.stepTile .emptyStage { margin:0; color:var(--quiet); }
+.canvas[data-portal-page=overview] .task[data-expanded=true] { margin:0; padding:0; border:0; background:transparent; box-shadow:none; color:var(--ink); gap:16px; }
+.canvas[data-portal-page=overview] .task[data-expanded=true] .headingCopy { font-size:22px; line-height:1.25; }
+.canvas[data-portal-page=overview] .task[data-expanded=true] .stepIndex { flex-basis:44px; margin-top:0; font-size:34px; line-height:40px; }
+.canvas[data-portal-page=overview] .task[data-expanded=true] .explainer { font-size:15px; }
+.canvas[data-portal-page=overview] .task[data-expanded=true] .taskActions { gap:4px; align-self:center; }
 
 @media(max-width:1100px) {
  .canvas[data-portal-page=overview] { margin-top:12px; }
@@ -253,6 +263,11 @@
  .nowPrimary,.nowSecondary { flex:1 1 auto; }
  .routeCard :global([data-road-board]) { padding:28px 16px 32px; border-radius:24px; }
  .boardHead { margin-bottom:20px; }
+ .stepTile { padding:26px 18px 22px; border-radius:24px; }
+ .stepRubric { margin-bottom:16px; }
+ .canvas[data-portal-page=overview] .task[data-expanded=true] { padding:0; gap:8px; }
+ .canvas[data-portal-page=overview] .task[data-expanded=true] .headingCopy { font-size:19px; }
+ .canvas[data-portal-page=overview] .task[data-expanded=true] .stepIndex { font-size:28px; line-height:36px; flex-basis:36px; }
 }
 @media(prefers-reduced-motion:reduce) { .nowPrimary,.nowSecondary { transition:none; } .nowPrimary:active,.nowSecondary:active { transform:none; } }
 @media(forced-colors:active) { .hero,.routeCard :global([data-road-board]) { border:1px solid CanvasText; } }

@@ -127,10 +127,17 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         })}
       </div>;
 
-  const overviewDetail = <div className={styles.overviewDetail} data-portal-overview>
-    {current ? taskList([current]) : <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
-    {selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Открыть этап <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
-  </div>;
+  /* Текущий шаг — своя светлая плитка после доски маршрута (owner, 4 Nov:
+     «перебор информации на маленькое пространство — не бойся расширять»):
+     ярлык с этапом, карточка шага с действиями и ссылка на страницу этапа.
+     Внутри тёмной доски остаётся только маршрут. */
+  const stepTile = !stagePage && <section className={styles.stepTile} aria-labelledby="portal-step-now" data-step-tile>
+    <p className={styles.stepRubric} id="portal-step-now">Текущий шаг{position.stage ? ` · этап ${Math.max(0, stageIndex) + 1} из ${stageTotal || 1} · ${position.stage.title}` : ""}</p>
+    <div className={styles.overviewDetail} data-portal-overview>
+      {current ? taskList([current]) : <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
+      {selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Открыть этап <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
+    </div>
+  </section>;
 
   /* Плитка «Сейчас»: следующий шаг ведёт на свой разбор, как «Подробнее» у
      Apple; «Открыть этап» — страница этапа. Отметить шаг можно только там. */
@@ -217,7 +224,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     {/* Тёмная плитка маршрута: «сделано заранее» в шапке, маршрут этапов с
         раскрытым текущим шагом под его этапом. */}
     <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} currentDetail={stagePage ? undefined : overviewDetail} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart}
+      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} afterBoard={stepTile} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart}
         boardHead={!stagePage && ahead.length > 0 && <div className={styles.boardHead}>
           <div className={styles.nowAhead} data-now-ahead>
             <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>

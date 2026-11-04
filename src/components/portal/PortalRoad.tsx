@@ -26,7 +26,7 @@ function roadPosition(done: number, total: number) {
   return (total > 0 ? Math.min(total, Math.max(0, done)) / total : 0) * 100;
 }
 
-export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail, boardHead, lineupExtras, boardAside }: {
+export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, embedded = false, condensed = false, travel, onTravelStart, currentOpen = false, secondaryAction = false, navigationOnly = false, progressFirst = false, activeStageId, deadline, timeline = false, currentDetail, boardHead, lineupExtras, boardAside, afterBoard }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
@@ -52,6 +52,9 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
   lineupExtras?: ReactNode;
   /** Overview: the stage's scene and stat blocks beside the route (owner, 4 Nov). */
   boardAside?: ReactNode;
+  /** Overview: the current step's own tile between the board and the lineup
+   *  (owner, 4 Nov: «перебор информации на маленькое пространство»). */
+  afterBoard?: ReactNode;
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
@@ -264,9 +267,11 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
           if (currentDetail && (position === currentPosition || (currentPosition < 0 && previewed))) {
             return <div className={styles.currentStop} data-flight-stage-preview={previewed ? row.id : undefined}>{currentDetail}</div>;
           }
-          if (!previewed || !row.tasks.length) return null;
+          // Without an inline step the current stage opens a preview only when
+          // it is chosen: the step itself stands in its own tile after the board.
+          if (!previewed || !row.tasks.length || (!currentDetail && previewId === null && position === currentPosition)) return null;
           return <div className={styles.stopPreview} data-flight-stage-preview={row.id}>
-            <p className={styles.previewTop}><span>Этап {String(position + 1).padStart(2, "0")}</span><span>{stops[position].state === "done" ? "Пройден" : stops[position].ahead ? "Начат заранее" : "Обзор"}</span></p>
+            <p className={styles.previewTop}><span>Этап {String(position + 1).padStart(2, "0")}</span><span>{stops[position].state === "done" ? "Пройден" : stops[position].ahead ? "Начат заранее" : stops[position].state === "current" ? "Сейчас" : "Обзор"}</span></p>
             <p className={styles.previewStat}><strong>{previewDone}</strong> из {row.tasks.length} шагов выполнено</p>
             <span className={styles.previewMeter} aria-hidden="true"><span style={{ width: `${row.tasks.length ? previewDone / row.tasks.length * 100 : 0}%` }} /></span>
             <a href={`/portal?stage=${encodeURIComponent(row.id)}`} onClick={event => {
@@ -295,6 +300,7 @@ export function PortalRoad({ data, current, stage, onOpenTask, onSelectStage, em
       {!navigationOnly && <p className={styles.routeNote}><ChevronRight size={13} aria-hidden="true" />Пройденные этапы можно открыть снова, будущие можно посмотреть заранее.</p>}
       </div>
     </div>
+    {overview && afterBoard}
     {overview && <PortalStageLineup stages={lineup} extras={lineupExtras} onSelectStage={onSelectStage} onOpenTask={task => onOpenTask(task)} />}
     {progressFirst && focus}
   </section>;

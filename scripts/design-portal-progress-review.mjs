@@ -156,12 +156,13 @@ try{
     await sticky(page);await axe(page,'Plan '+viewport.width);await portalDestination(page,'Обзор');
     if(viewport.width===1440){
       await road(page).locator('[aria-current=step]').focus();
-      // The opened step sits under its stage, so Tab visits it before the next stage.
+      // The opened step stands in its own tile right after the board (owner,
+      // 4 Nov), so Tab visits its controls before the next stage.
       let next=null;
       for(let i=0;i<12&&!next;i++){
         await page.keyboard.press('Tab');
         next=await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage'));
-        if(!next)assert(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-flight-detail]'))),'Between stages focus only visits the opened step');
+        if(!next)assert(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-flight-detail],[data-step-tile]'))),'Between stages focus only visits the opened step');
       }
       assert.equal(next,'documents','Stage links follow native keyboard order');
       // The next stage is a lineup card after the line; Enter opens its page.

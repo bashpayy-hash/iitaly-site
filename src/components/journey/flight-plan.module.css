@@ -54,7 +54,7 @@
 .flight[data-variant=timeline] { --when:72px; }
 .flight[data-variant=timeline] .rail { max-height:none; overflow:visible; padding:34px 0 12px; }
 .flight[data-variant=timeline] .track { top:34px; }
-.flight[data-variant=timeline] .stop { grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:start; min-height:0; padding:18px 0; }
+.flight[data-variant=timeline] .stop { grid-template-columns:var(--when) 22px minmax(0,1fr); align-items:start; min-height:0; padding:20px 0; }
 .flight[data-variant=timeline] .when { display:grid; justify-items:end; gap:1px; padding-top:2px; font-size:12px; letter-spacing:.06em; color:var(--flight-ink); }
 .flight[data-variant=timeline] .when small { font-size:11px; letter-spacing:.12em; color:var(--flight-quiet); }
 .flight[data-variant=timeline] .node { margin-top:6px; }
