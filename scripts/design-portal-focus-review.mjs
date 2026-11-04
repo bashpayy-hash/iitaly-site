@@ -85,8 +85,10 @@ try {
     // older Next versions hashed it), not from a second self-hosted copy in /zhol/fonts.
     const cabinetFace=await page.locator('[data-portal-welcome] h1').evaluate(el=>getComputedStyle(el).fontFamily);
     assert.match(cabinetFace,/Inter[ _]Tight/);
-    await page.evaluate(face=>document.fonts.load('500 16px '+face,'Привет, Қазақстан!'),cabinetFace);
-    assert.equal(await page.evaluate(face=>document.fonts.check('500 16px '+face,'Привет, Қазақстан!'),cabinetFace),true);
+    // Only the first family: next/font's size-adjusted fallback is a local() face that the review Linux lacks.
+    const cabinetFamily=cabinetFace.split(',')[0].trim();
+    await page.evaluate(face=>document.fonts.load('500 16px '+face,'Привет, Қазақстан!'),cabinetFamily);
+    assert.equal(await page.evaluate(face=>document.fonts.check('500 16px '+face,'Привет, Қазақстан!'),cabinetFamily),true);
     assert(await page.evaluate(()=>[...document.fonts].some(font=>/Inter[ _]Tight/.test(font.family)&&font.status==='loaded')),'Inter Tight is loaded through next/font');
     assert.equal(await page.evaluate(()=>[...document.styleSheets].some(sheet=>{try{return [...sheet.cssRules].some(rule=>rule.type===CSSRule.FONT_FACE_RULE&&/zhol\/fonts/.test(rule.style.getPropertyValue('src')));}catch{return false;}})),false,'No second self-hosted Inter Tight (/zhol/fonts) remains');
     const hit=await page.locator('[data-task-check=profile]').boundingBox();assert(hit.width>=44&&hit.height>=44);
