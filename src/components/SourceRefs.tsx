@@ -9,7 +9,7 @@ export function SourceRefs({ ids }: { ids: readonly SourceId[] }) {
           const source = ADMISSION_SOURCES[id];
           return <li key={id}>
             <a href={source.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{source.label} ↗︎</a>
-            <span className="block text-apple-caption leading-relaxed">{source.scope}</span>
+            <span className="block text-[13px] leading-relaxed opacity-80">{source.scope}</span>
           </li>;
         })}
       </ul>

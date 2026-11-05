@@ -4,6 +4,7 @@ import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import styles from "@/components/marketing/marketing.module.css";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import Link from "next/link";
+import { FileText, GraduationCap, KeyRound, Stamp } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import assistant from "./home-assistant.module.css";
 
@@ -13,7 +14,9 @@ import assistant from "./home-assistant.module.css";
    у пейзажей кабинета и FAQ (motion-2026-11-04.json): лямки и воротник на
    ветру, мерцание света, пыль в лучах. Текст и действия — на кремовой
    панели справа, как панель FAQ; на телефоне кадр сверху, панель под ним.
-   Тексты прежние. Пример маршрута ниже не меняется. */
+   Тексты прежние. Пример маршрута ниже не меняется.
+   Разгрузка (owner, 5 Nov): без строки «Короткий опрос · …» под кнопками,
+   без пилюли «От идеи до Италии» и без капса и номеров «01–04». */
 export function Hero() {
   return (
     <section data-section="hero" className={styles.hero}>
@@ -33,16 +36,14 @@ export function Hero() {
               <Link href="/universities">Смотреть университеты <span aria-hidden>↗︎</span></Link>
             </div>
           </div>
-          <p className={styles.heroNote}>Короткий опрос · Для абитуриентов и студентов</p>
           <Link href="/changes-2026-27" className="mt-3 inline-block min-h-11 py-2 text-sm underline underline-offset-4">Правила 2026/27–2027/28 · проверено 9 октября</Link>
         </div>
       </div>
       <div className={styles.stage}>
-        <div className={styles.stageLabel}><span>БОЛЬШОЙ ПУТЬ. ПО ОДНОМУ ШАГУ.</span><span>Казахстан <span aria-hidden>↗︎</span> Италия</span></div>
+        <div className={styles.stageLabel}><span>Большой путь. По одному шагу.</span><span>Казахстан <span aria-hidden>↗︎</span> Италия</span></div>
         <div className={styles.journey} data-journey-preview>
           <div className={styles.journeyHeader}>
             <div><span className={styles.journeyLogo}>Твой маршрут с <span role="img" aria-label="IITALY"><BrandLogo compact /></span></span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
-            <span className={styles.journeyBadge}>От идеи до Италии</span>
           </div>
           <div className={styles.journeyBody}>
             <div>
@@ -57,12 +58,13 @@ export function Hero() {
             </div>
           </div>
           <ol className={styles.route} aria-label="Этапы поступления">
+            {/* Words and a picture instead of «01–04» (owner, 5 Nov: без номеров). */}
             {[
-              { label: 'Подбор вузов', href: '/universities' },
-              { label: 'Документы и DSU', href: '/plan#document-check' },
-              { label: 'Виза D', href: '/guides#visa' },
-              { label: 'Первые недели', href: '/guides#permesso' },
-            ].map(({ label, href }, index) => <li key={label}><Link href={href}><span aria-hidden>0{index + 1}</span>{label}</Link></li>)}
+              { label: 'Подбор вузов', href: '/universities', Icon: GraduationCap },
+              { label: 'Документы и DSU', href: '/plan#document-check', Icon: FileText },
+              { label: 'Виза D', href: '/guides#visa', Icon: Stamp },
+              { label: 'Первые недели', href: '/guides#permesso', Icon: KeyRound },
+            ].map(({ label, href, Icon }) => <li key={label}><Link href={href}><span aria-hidden><Icon size={14} strokeWidth={1.8} /></span>{label}</Link></li>)}
           </ol>
         </div>
       </div>

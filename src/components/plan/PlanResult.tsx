@@ -1,30 +1,24 @@
 "use client";
 
 import { AssessmentRoadmap } from "./AssessmentRoadmap";
-import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
-import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
-import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { AppleButtonLink } from "@/components/apple/Button";
 import styles from "./plan-journey.module.css";
 
+/* Результат анкеты без повторов (owner, 5 Nov: «перепроверь перегрузы»):
+   одна строка «что это», одна главная кнопка, шаги плитками. Ушли рамка
+   с капсом «Персональный план готов» (заголовок выше уже говорит это) и
+   вторая заливная кнопка «Собрать документы» внизу — покупка и так стоит
+   в каждом закрытом шаге. */
 export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void }) {
-  const router = useRouter();
-
   return (
     <div data-assessment-result>
-      <VespiAssistant
-        variant="celebrate"
-        layout="editorial-callout"
-        appearance="none"
-        label=""
-        title={<p className="text-apple-caption font-semibold text-crimson uppercase">Персональный план готов</p>}
-        message={<>
-            План собран по твоим ответам. Набор: {plan.intake}.
-            Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
-        </>}
-      />
+      <p className={styles.ready} data-plan-ready>
+        План собран по твоим ответам. Набор: {plan.intake}.
+        Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
+      </p>
 
-      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете ↗︎</AppleButtonLink><p className="mt-2 text-apple-caption text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
+      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете ↗︎</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
 
       <div className={styles.routeHeading}>
         <h2>С чего начать</h2>
@@ -45,17 +39,11 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
             Настроить напоминания
           </AppleButtonLink>
         </div>
-        <p className="mt-3 text-apple-caption text-cloud-meta">
+        <p className="mt-3 text-[13px] leading-relaxed text-cloud-meta">
           Для подключения понадобится активированный личный кабинет. Telegram
           получит одноразовую ссылку, а не код доступа к кабинету.
         </p>
       </details>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <AppleButton type="button" variant="filled" size="sm" onClick={() => router.push("/prices")}>
-          Собрать документы с IITALY
-        </AppleButton>
-      </div>
     </div>
   );
 }

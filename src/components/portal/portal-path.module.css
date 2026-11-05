@@ -30,7 +30,7 @@
 .badge { display:inline-flex; align-items:center; gap:4px; min-height:24px; padding:2px 10px; border-radius:999px; background:#F1ECE3; color:var(--quiet); font-size:13px; font-weight:500; }
 .status[data-state=current] .badge { background:var(--accent); color:var(--on-dark); }
 .status[data-state=done] .badge { background:#E3F0E8; color:#1F6B47; }
-.status small { color:var(--quiet); font-size:12px; font-variant-numeric:tabular-nums; }
+.status small { color:var(--quiet); font-size:13px; font-variant-numeric:tabular-nums; }
 .chevron { color:var(--quiet); }
 .row > a[aria-current=step] .text strong { color:var(--ink); }
 @media (hover:hover) and (pointer:fine) {

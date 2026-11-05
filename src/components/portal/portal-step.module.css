@@ -47,7 +47,7 @@
 .editorialHero[data-has-visual=false] { grid-template-columns:minmax(0,1fr); }
 .editorialHero[data-has-visual=false] .detailExplainer,.instructionList p { max-width:75ch; }
 .editorialHero>div { min-width:0; }
-.rubric { margin:0 0 12px; color:var(--accent-text); font:600 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
+.rubric { margin:0 0 12px; color:var(--accent-text); font:600 13px/1.5 var(--font-sans); }
 .editorialHero .detailTitle { margin:0; color:var(--ink-strong); font:600 clamp(26px,2.5vw,34px)/1.18 var(--font-sans); letter-spacing:-.02em; }
 .detailExplainer { margin-top:14px; color:var(--quiet); font-size:15px; line-height:1.6; }
 .detailMeta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }

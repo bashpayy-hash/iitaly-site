@@ -51,7 +51,7 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
             style={{ "--deck-index": index } as CSSProperties}
             onClick={() => setFocusId(university.id)} onFocusCapture={() => setFocusId(university.id)}>
             <p className={styles.code}>
-              <span>{String(index+1).padStart(2,"0")} / {university.id.toUpperCase()} • {cityLatin(university.city)}</span>
+              <span>{university.id.toUpperCase()} • {cityLatin(university.city)}</span>
               <button type="button" onClick={event => { event.stopPropagation(); onRemove(university.id); }} aria-label={`Убрать из сравнения: ${university.name}`}><X size={15} aria-hidden="true" /></button>
             </p>
             <article className={styles.card} data-deck-university={university.id} data-primary={primary || undefined} data-tone={index % 3}>
@@ -75,7 +75,7 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
           </div>;
         })}
         {Array.from({length:3-universities.length},(_,index)=><div key={`empty-${index}`} className={styles.emptySlot} data-deck-empty>
-          <p className={styles.code}><span>{String(universities.length+index+1).padStart(2,"0")} / ———</span></p>
+          <p className={styles.code}><span>Свободное место</span></p>
           <div className={styles.empty}>
             <Plus size={26} strokeWidth={1.3} aria-hidden="true" />
             <p>Добавь университет</p>
@@ -89,7 +89,7 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
       <div className={styles.stageMeta}>
         <span>{CITIES[focused.city].name} · {focused.name}</span>
         <span className={styles.scale} style={{ "--scale-at": slots > 1 ? focus / (slots - 1) : 0 } as CSSProperties}><i /></span>
-        <span>{String(focus + 1).padStart(2, "0")} / {String(slots).padStart(2, "0")}</span>
+        <span>{focus + 1} из {slots}</span>
       </div>
     </div>}
     <p className={styles.note}>Данные для сравнения, не подтверждение условий конкурса. Стоимость, отбор и сроки проверь у выбранной программы. Стипендия не вычитается из расходов.</p>

@@ -75,17 +75,19 @@ export function PlanExplorer() {
             <GuidePlanContext target="plan" />
             <div className={workspace.heading}>
               <h2>Твой план поступления</h2>
-              <span className={workspace.badge}>~2 минуты · Персональный трек</span>
+              {!plan && <span className={workspace.badge}>~2 минуты · Персональный трек</span>}
             </div>
             {plan ? (
               <PlanResult plan={plan} onReset={() => { updateDraft({ ...draft, complete: false, step: 0 }); focusPlan(); }} />
             ) : (
               <Wizard draft={draft} onDraftChange={updateDraft} onDone={handleDone} />
             )}
-            <div className={workspace.footer}>
+            {/* With a ready plan the result already says where answers live and
+               offers «Изменить ответы»; the footer would repeat both. */}
+            {!plan && <div className={workspace.footer}>
               <p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p>
               {Object.keys(draft.answers).length > 0 && <button type="button" className="min-h-11 underline underline-offset-4" onClick={() => { updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }}>Начать заново</button>}
-            </div>
+            </div>}
           </div>
           <div id="document-check" hidden={tool !== "document-check"} className={workspace.document}>
             <GuidePlanContext target="document" />

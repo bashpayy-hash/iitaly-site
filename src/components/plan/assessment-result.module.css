@@ -59,7 +59,7 @@
 /* Открытый шаг внутри плитки (plan-step-tiles.module.css, owner 4 Nov):
    позиция, объяснение, действие, источники и переходы-пилюли. */
 .step{min-width:0}
-.stepPosition{margin:0 0 10px;font:400 11px/1.5 var(--font-sans);text-transform:uppercase;letter-spacing:.08em;color:#A33421}
+.stepPosition{margin:0 0 10px;font:600 13px/1.5 var(--font-sans);color:#A33421}
 .srOnly{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .step .summary{margin-top:0;font-size:16px;line-height:1.55;color:#3F3933}
 .step .action{margin:16px 0;font-size:16px;color:#241F1C}
