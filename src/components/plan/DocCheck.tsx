@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
+import { FREE_DOCUMENT_CHECKS, documentFingerprint, recordFreeCheck, useFreeChecks } from "@/lib/access";
+import { AccessWall } from "@/components/access/AccessWall";
 import { AppleButton } from "@/components/apple/Button";
 import { PortalDocumentContext } from "@/components/portal/PortalDocumentContext";
 import { PortalDocumentNotes } from "@/components/portal/PortalDocumentUpload";
@@ -37,9 +39,10 @@ type State =
   | { step: "retry"; file: File; payload: DocPayload; message: string }
   | { step: "error"; message: string };
 
-function inspectorMessage(step: State["step"], availabilityPending: boolean, unavailable: boolean) {
+function inspectorMessage(step: State["step"], availabilityPending: boolean, unavailable: boolean, walled = false) {
   if (availabilityPending) return "Сначала проверю, доступна ли ИИ-сверка.";
   if (unavailable) return "Проверка временно недоступна. Это не замечание к твоему документу.";
+  if (walled) return "Бесплатная проверка одного файла уже использована на этом устройстве. Следующие документы проверяются в кабинете.";
   if (step === "reading") return "Читаю выбранный файл. Проверка начнётся после твоего подтверждения.";
   if (step === "checking") return "Проверяю содержание и применимые требования. Покажу итог, замечания и что делать дальше.";
   if (step === "ready") return "Файл выбран. Уточни заявку и нажми «Проверить документ» — до этого файл не отправляется на ИИ-анализ.";
@@ -66,6 +69,13 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   const [availability, setAvailability] = useState<DocumentAvailability | null>(null);
   const [availabilityPending, setAvailabilityPending] = useState(true);
   const unavailable = availability?.ok === false;
+  /* Стена доступа (owner, 5 Nov): публичная проверка — один файл на
+     устройство; тот же файл можно проверять снова (другая программа или
+     год), другой файл — уже в кабинете. Инспектор кабинета лимита не знает. */
+  const freeUsed = useFreeChecks();
+  const fingerprint = "file" in state ? documentFingerprint(state.file) : null;
+  const walled = !portalInspector && freeUsed.length >= FREE_DOCUMENT_CHECKS && !(fingerprint && freeUsed.includes(fingerprint));
+  const wall = <AccessWall place="document-check" detail="В кабинете: проверка каждого документа без лимита, повторные версии после исправлений, сохранённый разбор и весь маршрут с датами и чек-листами." />;
 
   function unavailableFrom(error: unknown): DocumentAvailability {
     return { ok: false, code: error instanceof DocCheckError ? error.code || "AI_UNAVAILABLE" : "AI_UNAVAILABLE",
@@ -107,7 +117,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   }
 
   async function run() {
-    if (unavailable || availabilityPending) return;
+    if (unavailable || availabilityPending || walled) return;
     if (state.step !== "ready" && state.step !== "done" && state.step !== "retry") return;
     const { file, payload } = state;
     setState({ step: "checking", file, payload });
@@ -116,6 +126,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       const result = await checkDocument(payload, undefined, context);
       setState({ step: "done", file, payload, result });
       track("doc_check_done", { verdict: result.verdict });
+      if (!portalInspector) recordFreeCheck(documentFingerprint(file));
       onComplete?.(result, file.name);
     } catch (e) {
       /* Текст ошибки готовит checkDocument — там же, где известно, что
@@ -185,9 +196,9 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext} data-portal-inspector={portalInspector || undefined} data-inspector-state={portalInspector ? state.step : undefined}>
-        {!portalInspector && <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · Бесплатно</p>}
+        {!portalInspector && <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · одна проверка бесплатно</p>}
         <h2>Проверь документ перед подачей</h2>
-        <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable)}</p>
+        <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable, walled && !("file" in state))}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
         <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -250,7 +261,9 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       </div>}
 
       {portalInspector && <p className="text-apple-body-sm text-cloud-body">Новая проверка заменит текущий разбор. Исходный файл остаётся только в открытой форме.</p>}
-      {state.step === "idle" || state.step === "error" || state.step === "reading" ? (
+      {walled && !("file" in state) ? (
+        <div className="mt-5">{wall}</div>
+      ) : state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
           className={styles.dropzone}
           data-drag={dragOver}
@@ -294,7 +307,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
           )}
           <div className="min-w-0 flex-1">
             <p className="break-words text-apple-body-sm font-semibold text-cloud-white [overflow-wrap:anywhere]">{state.file.name}</p>
-            <div className="mt-3 flex flex-wrap gap-2 [&>button]:w-full sm:[&>button]:w-auto">
+            {walled ? <div className="mt-3 space-y-3" data-document-walled>
+              {wall}
+              <AppleButton type="button" variant="outlined" size="sm" onClick={reset}>Выбрать другой</AppleButton>
+            </div> : <div className="mt-3 flex flex-wrap gap-2 [&>button]:w-full sm:[&>button]:w-auto">
               <AppleButton
                 type="button"
                 variant="filled"
@@ -313,7 +329,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
               <AppleButton type="button" variant="outlined" size="sm" onClick={reset} disabled={state.step === "checking"}>
                 Выбрать другой
               </AppleButton>
-            </div>
+            </div>}
           </div>
         </div>
       )}

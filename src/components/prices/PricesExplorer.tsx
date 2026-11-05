@@ -60,7 +60,7 @@ export function PricesExplorer() {
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
-                ИИ оценит шансы, покажет риски и назовёт следующий шаг
+                ИИ оценит шансы, соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа
               </span>
             </div>
             <span aria-hidden className="hidden self-center text-2xl text-cloud-meta sm:block">
@@ -69,7 +69,7 @@ export function PricesExplorer() {
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold">{priceLabel(PRICE_MAIN)}</b>
               <span className="text-apple-body-sm text-cloud-meta">
-                система ведёт поступление от выбора вуза до permesso
+                открывает остальные шаги с датами и чек-листами, проверки без лимита и напоминания — до permesso
               </span>
             </div>
           </div>
@@ -78,8 +78,8 @@ export function PricesExplorer() {
             <div className="min-w-0">
               <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы — это бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
-                Расскажи о себе, и ИИ скажет, реально ли поступить и на что
-                рассчитывать. Платить, чтобы это узнать, не нужно.
+                Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт
+                маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.
               </span>
             </div>
             <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan")} className="w-full shrink-0 md:w-auto">

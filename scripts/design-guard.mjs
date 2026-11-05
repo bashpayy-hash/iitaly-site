@@ -247,6 +247,12 @@ const approvedGamifiedPortalPaths = new Set([
   // exist. Order and a caption only; answers and their values are unchanged.
   'src/components/portal/PortalAssessment.tsx',
   'src/components/portal/portal-assessment.module.css',
+  // Owner 2026-11-05 («имплементи эти изменения в структуру», after the
+  // funnel research): the access wall. One module decides what the public
+  // result and the guest workspace show for free (first step, one document
+  // check) and what waits for payment. It never calls the backend, grants no
+  // paid access and stores only a hashed file fingerprint on the device.
+  'src/lib/access.ts',
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');

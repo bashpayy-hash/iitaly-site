@@ -17,6 +17,7 @@ import { LineupTile, plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
 
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
+import { AccessWall, routeWallDetail } from "@/components/access/AccessWall";
 
 /* Сцена этапа на доске маршрута (owner, 4 Nov: «тематические генерации, где
    Веспи что-то делает»): Веспи выбирает программу, разворачивает диплом,
@@ -34,6 +35,10 @@ type Props = {
   onOpenTask: (task: PortalTask, intent?: "instruction" | "upload") => void;
   onComplete: (task: PortalTask) => void;
   onDocuments: () => void; onSettings: () => void;
+  /** Стена доступа локального профиля (owner, 5 Nov): закрытые шаги видны
+   * по названию и дате, вместо действий — стена с ценой. Облачный кабинет
+   * этот проп не передаёт. */
+  locked?: (task: PortalTask) => boolean;
 };
 
 function daysTo(task: PortalTask | null) {
@@ -48,7 +53,7 @@ function dayWord(days: number) {
   return days % 10 === 1 && days % 100 !== 11 ? "день" : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 12 || days % 100 > 14) ? "дня" : "дней";
 }
 
-export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings }: Props) {
+export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings, locked }: Props) {
   const [data, setDisplayed] = useState(savedData);
   const shown = useRef(savedData);
   useEffect(() => {
@@ -83,8 +88,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
     .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
 
+  const isLockedTask = (task: PortalTask | null | undefined) => Boolean(task && locked?.(task));
+  const lockedCount = locked ? data.roadmap.flatMap(stage => stage.tasks).filter(locked).length : 0;
   function check(row: PortalTask) {
     if (busy || portalTaskDone(savedData, row)) return;
+    // A locked step cannot be self-reported: its page carries the wall.
+    if (isLockedTask(row)) { onOpenTask(row, "instruction"); return; }
     // A profile or university choice must still collect its actual answers.
     if (["profile", "shortlist", "path12", "chances"].includes(row.id)) { onOpenTask(row, "instruction"); return; }
     onComplete(row);
@@ -92,7 +101,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const taskList = (list: PortalTask[]) => <div className={styles.taskList} aria-label="Задачи этапа">
         {list.map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
-          const isCurrent = current?.id === row.id, open = stagePage || isCurrent;
+          const isCurrent = current?.id === row.id, open = stagePage || isCurrent, rowLocked = isLockedTask(row);
           const date = row.deadline && /^\d{4}-\d{2}-\d{2}$/.test(row.deadline) ? fmtDate(row.deadline) : "";
           const time = row.time || TASK_META[row.id]?.min;
           const description = row.id === "translate" ? "Получателю может понадобиться перевод документа и его приложений." : row.id === "apostille" ? "Уточнить требования выбранного вуза и поставить штамп в ЦОНе" : taskShortExplainer(row);
@@ -101,8 +110,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined);
           };
-          return <article key={row.id} className={`${styles.task} ${stagePage ? styles.stageScreen : ""}`} data-expanded={open} data-completed={done} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
-            <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
+          return <article key={row.id} className={`${styles.task} ${stagePage ? styles.stageScreen : ""}`} data-expanded={open} data-completed={done} data-locked={rowLocked || undefined} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
+            <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-task-locked={rowLocked || undefined} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : rowLocked ? "Закрыт до оплаты" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
             </button>
             <span className={styles.stepIndex} aria-hidden="true">{String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0")}</span>
@@ -119,9 +128,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
                 </div>
               </div>}
             </div>
-            {open && <div className={styles.taskActions}>
-              <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
-              {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
+            {open && <div className={styles.taskActions} data-locked={rowLocked || undefined}>
+              {rowLocked ? <AccessWall place="portal-task" compact detail={routeWallDetail(lockedCount)} /> : <>
+                <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
+                {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
+              </>}
             </div>}
           </article>;
         })}
@@ -213,7 +224,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time>
         </div>}
         {(nowTask || position.stage) && <div className={styles.nowActions}>
-          {nowTask && <a className={styles.nowPrimary} href={nowHref} data-now-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>Открыть разбор</a>}
+          {nowTask && <a className={styles.nowPrimary} href={nowHref} data-now-open data-now-locked={isLockedTask(nowTask) || undefined} onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{isLockedTask(nowTask) ? "Что внутри" : "Открыть разбор"}</a>}
           {position.stage && <a className={styles.nowSecondary} href={`/portal?stage=${encodeURIComponent(position.stage.id)}`} data-now-stage onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSelectStage(position.stage!.id); }}>Открыть этап</a>}
         </div>}
       </aside>

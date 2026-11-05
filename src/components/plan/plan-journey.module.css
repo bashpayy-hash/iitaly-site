@@ -3,4 +3,13 @@
 .routeHeading button { min-height: 44px; color: var(--i-link); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 639px) { .routeHeading h2 { font-size: 24px; } }
 
+/* «Собрано»: три факта плитками в ряд, как счётчики доски кабинета
+   (owner, 5 Nov). */
+.collected { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:20px 0 0; padding:0; list-style:none; }
+.collected li { display:flex; flex-direction:column; gap:4px; min-width:0; padding:16px 18px; border-radius:16px; background:#FAF6EE; color:#241F1C; }
+.collected strong { font-size:26px; font-weight:600; line-height:1.1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.collected span { font-size:13px; line-height:1.45; color:#57514B; }
+.collectedNote { margin:12px 0 0; max-width:60ch; font-size:14px; line-height:1.55; color:#57514B; }
+@media (max-width: 639px) { .collected { grid-template-columns:repeat(2,minmax(0,1fr)); } .collected li:last-child { grid-column:1 / -1; } .collected strong { font-size:22px; } }
+
 .reminders { margin-top:20px; padding-block:8px; border-block:1px solid #DCD3C3; }.reminders summary { min-height:44px; padding-block:10px; font-size:16px; font-weight:500; cursor:pointer; }.reminders[open] { padding-bottom:20px; }

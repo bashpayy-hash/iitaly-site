@@ -64,6 +64,8 @@
 .step .summary{margin-top:0;font-size:16px;line-height:1.55;color:#3F3933}
 .step .action{margin:16px 0;font-size:16px;color:#241F1C}
 .step .references{border-color:#DCD5CA}.step .references p{color:#57514B}.step .references a{color:#241F1C}
+/* Стена внутри плитки закрытого шага (owner, 5 Nov). */
+.step .wall{margin-top:16px;max-width:none}
 .stepActions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:14px;border-top:1px solid #DCD5CA}
 .stepActions button,.stepActions a{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:10px 20px;font-size:14px;font-weight:500;border:0;border-radius:999px;text-decoration:none;background:#B83A27;color:#FAF6EE;cursor:pointer;transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1)}
 .stepActions button:not(:disabled):hover,.stepActions a:hover{background:#A33421}
