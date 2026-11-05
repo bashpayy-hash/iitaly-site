@@ -131,10 +131,31 @@ try {
     await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
+    // Before payment (owner, 5 Nov, after the funnel research): the first route
+    // step is free; the next one is locked — the overview tile, the stage page
+    // and the step page keep their structure, and the purchase button stands
+    // where «Открыть разбор» was; it opens the same purchase form as /prices.
+    await portalDestination(page, 'Обзор');
+    assert.equal(await page.locator('[data-now-locked]').count(),1,'The step after the free one is locked');
+    assert.equal(await page.locator('[data-portal-overview] [data-wall-buy][data-wall-place="portal-task"]').count(),1,'The current-step tile carries the wall');
+    assert.equal(await page.locator('[data-task-ready]').count(),0,'A locked step cannot be self-reported');
+    await page.locator('[data-now-stage]').click();
+    await page.locator('[data-portal-page=stage]').waitFor();
+    assert.equal(await page.locator('[data-portal-page=stage] [data-wall-buy]').count(),1,'The stage page shows the wall for the locked step');
+    assert.equal(await page.locator('[data-task-check][data-task-locked=true]').count(),1,'The locked step keeps its row and check mark, dashed');
+    assert.match(await page.locator('[data-wall-buy]').innerText(),/10\s990\s₸/,'The wall names the one-time price');
+    await page.locator('[data-wall-buy]').click();
+    const buy=page.getByRole('dialog');await buy.waitFor();
+    assert.match((await buy.innerText()).replace(/\s+/g,' '),/Поступление под ключ.*10 990 ₸/,'The wall opens the same purchase form as /prices');
+    await page.keyboard.press('Escape');await buy.waitFor({state:'hidden'});
+    await capture('portal-wall');await audit('guest wall');
     await portalDestination(page, 'Документы');
+    assert.equal(await page.locator('[data-documents-free-note]').count(),1,'The vault names the one free check on /plan');
     await page.locator('[data-document="apostille"]').click();
-    assert.equal(await page.getByLabel('Выбрать документ для проверки').count(),0,'Future file step cannot upload');
-    assert.match(await page.locator('main').innerText(),/Сначала:/);
+    await page.locator('[data-task-locked][data-step-detail]').waitFor();
+    assert.equal(await page.getByLabel('Выбрать документ для проверки').count(),0,'Locked file step cannot upload');
+    assert.equal(await page.locator('[data-step-detail] [data-wall-buy]').count(),1,'The locked step page carries the wall');
+    assert.doesNotMatch(await page.locator('[data-step-detail]').innerText(),/€|рабочих дней/,'Locked requirements stay behind the wall');
     await capture('portal-future');
     await portalDestination(page, 'Документы');
     await capture('portal-documents');await audit('guest document vault');
@@ -143,50 +164,28 @@ try {
     assert.equal(await page.locator('[data-document="apostille"]').count(),0);
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await capture('portal-settings');await audit('guest settings');
-    await portalDestination(page, 'Обзор');
-    for(let step=0;step<12;step++) {
-      await page.locator('[data-road-open]').first().click();
-      await actionPage();
-      if(await page.getByLabel('Выбрать документ для проверки').count())break;
-      await page.getByRole('button',{name:'Готово',exact:true}).click();
-    }
-    const upload=page.getByLabel('Выбрать документ для проверки');
-    await upload.waitFor({state:'attached'});assert(await page.getByRole('button',{name:'Выбрать файл',exact:true}).isVisible());
-    const currentDoc=new URL(page.url()).searchParams.get('doc') || new URL(page.url()).searchParams.get('task');
-    const fixtureReview=(verdict,year,status)=>({verdict,docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.'],review:{profile:'bocconi',profileLabel:'Тестовый конкурс',academicYear:year,rulesStatus:status,referenceYear:null,rulesVersion:'synthetic-fixture',verifiedOn:'2026-10-18',notice:'Изолированная фикстура, не действующие правила.',sources:[]}});
-    async function review(result) {
-      reviewResult=result;
-      await actionPage();
-      const prepare=page.locator('[data-document-prepare]');
-      if(await prepare.count())await prepare.click();
-      await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);
-      await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
-      await page.getByRole('button',{name:'Проверить документ',exact:true}).click();
-      await page.locator('[data-portal-focus]').waitFor();
-      await page.waitForFunction(()=>!new URLSearchParams(location.search).has('doc')&&!new URLSearchParams(location.search).has('task'));
-    }
-    await review(fixtureReview('warn','2027/28','unspecified'));
-    let storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
-    assert.equal(storedState.done[currentDoc],false,'An uncertain review cannot complete a file task');
-    assert.equal(storedState.reviews[currentDoc],'clarify');
-    assert.doesNotMatch(JSON.stringify(storedState),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
-    await page.reload({waitUntil:'networkidle'});
-    await page.locator('[data-road-open]').first().click();
-    await review(fixtureReview('ok','2026/27','verified'));
-    storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
-    assert.equal(storedState.done[currentDoc],false,'A verified review from another intake cannot close this route task');
-    assert.equal(storedState.reviews[currentDoc],'clarify');
-    await page.locator('[data-road-open]').first().click();
-    await review(fixtureReview('ok','2027/28','verified'));
-    storedState=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')));
-    assert.equal(storedState.done[currentDoc],true,'Only an applicable passed review closes the file task');
-    assert.equal(storedState.reviews[currentDoc],'approved');
-    await portalDestination(page, 'Документы');
-    await page.locator(`[data-document="${currentDoc}"]`).click();
-    await page.locator('[data-document-prepare]').click();
-    assert.equal(await page.locator('[data-portal-inspector]').count(),1,'The saved file keeps its inspector when reopened for a new version');
-    assert.equal(await page.locator('section[aria-label="Твой следующий шаг"] [data-vespi]').count(),0,'The route yields its portrait while the saved file owns the inspector');
+    // One free document check per device on /plan: the same file may be
+    // checked again (another programme or year); a different file meets the
+    // wall. Only a hashed fingerprint is stored — never the file name,
+    // its text or the report.
+    await visit('/plan#document-check');
+    const doc=page.locator('#document-check');
+    reviewResult={verdict:'warn',docTitle:'Синтетическая справка QA',summary:'Синтетический результат из изолированной фикстуры.',checks:[{status:'ok',label:'Читаемость',note:'Тестовая строка.'}],problems:[],nextSteps:['Сверь заявку.']};
+    await page.waitForFunction(()=>!document.querySelector('[aria-label="Выбрать документ для проверки"]').disabled);
+    await doc.getByLabel('Выбрать документ для проверки').setInputFiles({name:'synthetic-qa.txt',mimeType:'text/plain',buffer:Buffer.from('SYNTHETIC QA ONLY. NO PERSONAL DATA.')});
+    await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();
+    await doc.getByRole('region',{name:'Синтетическая справка QA'}).waitFor();
+    assert.equal(calls.filter(path=>path==='/api/check-document').length,1);
+    assert.match(await page.evaluate(()=>localStorage.getItem('iitaly_free_check_v1')),/^\["[a-z0-9]{1,16}"\]$/,'The free check stores one hashed fingerprint');
+    assert.doesNotMatch(JSON.stringify(await page.evaluate(()=>({...localStorage}))),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
+    assert.equal(await doc.locator('[data-wall-buy]').count(),0,'The checked file keeps its result and may be rechecked');
+    assert(await doc.getByRole('button',{name:'Проверить ещё раз',exact:true}).isVisible());
+    await doc.getByRole('button',{name:'Выбрать другой',exact:true}).click();
+    await doc.locator('[data-wall-buy][data-wall-place="document-check"]').waitFor();
+    assert.equal(await doc.getByLabel('Выбрать документ для проверки').count(),0,'A second document meets the wall');
+    await capture('document-wall');await audit('document wall');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');
+    await visit('/portal');await page.locator('[data-local-workspace]').waitFor();
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await page.getByRole('link',{name:'Изменить ответы анкеты',exact:true}).click();
     await page.getByRole('heading',{name:'Когда хочешь начать учёбу?',exact:true}).waitFor();
@@ -194,7 +193,7 @@ try {
     assert.equal(await page.locator('img[data-vespi]').count(),0,'Editing the questionnaire has no repeated mascot portrait');
     await capture('portal-questionnaire');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'No protected API calls during guest questionnaire, selection or self-report');
-    results.push({width,sharedDraft:true,guestWithoutAuth:true,persistentSelection:true,existingMapAndComparison:true,noFutureUpload:true,exampleHonest:true,singleMascot:true,applicableReviewYearOnly:true,noStoredFileOrReportContent:true});
+    results.push({width,sharedDraft:true,guestWithoutAuth:true,persistentSelection:true,existingMapAndComparison:true,noFutureUpload:true,exampleHonest:true,singleMascot:true,accessWall:true,oneFreeCheck:true,noStoredFileOrReportContent:true});
     await context.close();
   }
   assert.deepEqual(errors,[],'No browser runtime errors');

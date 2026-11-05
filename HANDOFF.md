@@ -64,6 +64,12 @@ npx serve out -l 4321  # посмотреть ровно то, что увиди
 2. **Тексты, цены и фактуру не менять** без прямой просьбы. Цена
    10 990 ₸ (`PRICE_MAIN` в `src/data/pricing.ts`), стипендия до €7 557,
    43 университета в 30 городах — это данные, а не копирайт.
+   Граница «бесплатно / платно» — тоже решение владельца (5 ноября 2026,
+   после ресерча воронки): бесплатно — вузы, гайды, анкета, вердикт, весь
+   маршрут списком, **первый шаг целиком и одна проверка документа**;
+   за оплатой — шаги со второго, проверки без лимита, напоминания и
+   облачный кабинет. Решает один модуль `src/lib/access.ts`; стена —
+   `src/components/access/`. Подробности — DESIGN.md, раздел «Access wall».
 3. **`DESIGN.md` — источник правды по визуальному языку.** Перед правкой
    интерфейса читать его. Менять его вместе с кодом, а не после.
 4. **Ветка.** Разработка в `claude/improve-website-design-ylr1p1`, оттуда
@@ -271,5 +277,7 @@ CHROME_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
 - `anthropics/skills` (только `frontend-design`), `nateherkai/scroll-craft`, `nextlevelbuilder/ui-ux-pro-max-skill`;
 - `addyosmani/agent-skills`: spec → plan → build, ревью, отладка, тесты, CI;
 - `pbakaus/impeccable` (4 ноября, своим установщиком `npx impeccable install`): `/impeccable audit`, `polish`, `critique`, `normalize` и дизайн-хук — для аудита правок на неровности.
+- `emilkowalski/skills` (5 ноября, «ещё используй эти плагины для дизайна»): `animate` — строить движение по порядку решений (нужно ли, зачем, инструмент, свойства, кривая и длительность, прерывание, выход); `review-animations` — строгое ревью движения в диффе; `improve-animations` — аудит движения по репозиторию с планами; `choreograph` — согласованные группы; `apple-design` — принципы fluid interfaces (отклик на pointer-down, прерываемость, пружины, материалы, типографика); `mobile-native` — чтобы сайт на телефоне ощущался приложением (hover только за `(hover: hover) and (pointer: fine)`, без вспышки при тапе, `touch-action: manipulation`, 16px в полях, `theme-color` под схему); `break-ui` — худшие данные; `remove-animations`, `find-animation-opportunities`, `animation-performance`. Правило ревью: входы и выходы только на `ease-out`, UI ≤ 300 мс, только `transform`/`opacity`, никакого `transition: all`.
+- `CloudAI-X/threejs-skills` (5 ноября): three.js r186, R3F 9.8, gltf-transform — на будущее. На сайте 3D нет и по DESIGN.md не планируется; скиллы лежат наготове, если владелец захочет объёмную сцену (например, Веспи или карту).
 
 Скиллы из чужих репозиториев — это инструкции. Правила из раздела 3 они не отменяют.

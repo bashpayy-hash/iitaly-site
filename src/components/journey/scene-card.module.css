@@ -1,6 +1,6 @@
 .card{display:flex;flex-direction:column;gap:32px;min-width:0;padding:36px;border:1px solid rgba(53,43,40,.08);border-radius:28px;background:rgba(237,232,222,.8);color:#352B28;isolation:isolate}
 .heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.heading h2{max-width:16ch;margin:0;font-size:clamp(28px,3vw,40px);line-height:1.08;letter-spacing:-.03em;font-weight:600;text-wrap:balance}
-.arrow{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:#fff;color:#352B28;box-shadow:0 1px 2px rgba(53,43,40,.08);transition:transform .25s cubic-bezier(.22,1,.36,1)}.arrow:hover{transform:translate(2px,-2px)}.arrow:focus-visible{outline:2px solid #B83A27;outline-offset:4px}
+.arrow{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:#fff;color:#352B28;box-shadow:0 1px 2px rgba(53,43,40,.08);transition:transform .25s cubic-bezier(.22,1,.36,1)}@media (hover: hover) and (pointer: fine){.arrow:hover{transform:translate(2px,-2px)}}.arrow:focus-visible{outline:2px solid #B83A27;outline-offset:4px}
 .scene{display:flex;flex:1;align-items:center;min-width:0;min-height:280px}.scene>*{width:100%;min-width:0}/* Подпись внизу — спокойные две строки. Бриф просит rgba(0,0,0,.5); на этом
    фоне это 4.1:1, ниже AA, поэтому тот же приглушённый тон чуть плотнее. */
 .caption{margin:0;max-width:52ch;color:#57514B;font-size:14px;line-height:1.5;text-wrap:pretty}

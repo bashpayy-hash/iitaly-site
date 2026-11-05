@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Onest, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import paper from "@/components/marketing/public-paper.module.css";
@@ -44,6 +44,9 @@ const title = "IITALY — поступление в Италию ведёт ИИ
 const description =
   "Поступление в Италию из Казахстана по понятному плану: подбор программ, расчёт шансов на стипендию DSU, "
   + `документы, Universitaly и виза. Один платёж ${priceLabel(PRICE_MAIN)} за цифровой маршрут.`;
+
+/* mobile-native (5 Nov): the browser chrome takes the paper colour of the page top. */
+export const viewport: Viewport = { themeColor: "#FAF8F5" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

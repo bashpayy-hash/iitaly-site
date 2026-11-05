@@ -68,6 +68,8 @@ try{
     const prev=section.locator('[data-carousel-prev]'),next=section.locator('[data-carousel-next]');
     assert(await prev.isDisabled()&&!(await next.isDisabled()),'Row starts at the first topic');
     await next.click();await section.waitForFunction(()=>document.querySelector('[data-guide-carousel] ul').scrollLeft>0);
+    // The arrows follow the scroll position one frame later; wait for the state, not just the scroll (CI, 5 Nov).
+    await section.waitForFunction(()=>!document.querySelector('[data-carousel-prev]').disabled);
     assert(!(await prev.isDisabled()));
     await check(section,'Guide section '+width);
     await section.close();

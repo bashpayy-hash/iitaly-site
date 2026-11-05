@@ -75,6 +75,10 @@
 .roundCheck[data-done=true]::before { background:var(--status-green); border-color:var(--status-green); }.roundCheck[data-done=true] svg { opacity:1; }.roundCheck[data-done=true] path { stroke-dashoffset:0; }
 .roundCheck[data-just-saved=true] { animation:checkPop .4s cubic-bezier(.34,1.56,.64,1); }.roundCheck[data-just-saved=true] path { animation:drawSuccess .25s .06s both; }
 .roundCheck:disabled { cursor:wait; opacity:.65; }
+/* Закрытый шаг (до оплаты, owner 5 Nov): кольцо пунктиром; на месте
+   «Открыть разбор» — та же кнопка, но покупка. */
+.roundCheck[data-task-locked=true]::before { border-style:dashed; }
+button.nowPrimary { border:0; cursor:pointer; }
 .canvas :is(a,button,summary,input):focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 @keyframes checkPop { from { transform:scale(.75); } 65% { transform:scale(1.08); } to { transform:scale(1); } }
 @keyframes stampPrint { from { opacity:0; transform:rotate(-8deg) scale(1.35); } 70% { opacity:1; transform:rotate(-8deg) scale(.95); } to { transform:rotate(-8deg) scale(1); } }

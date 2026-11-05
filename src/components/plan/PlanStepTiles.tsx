@@ -5,7 +5,7 @@ import { type MouseEvent, type ReactNode, useEffect, useRef } from "react";
 import { planStepArt } from "./planStepArt";
 import styles from "./plan-step-tiles.module.css";
 
-export type PlanTileStep = { title: string; line: string };
+export type PlanTileStep = { title: string; line: string; locked?: boolean };
 
 /* Шаги плана плитками по образцу главной apple.com и lineup кабинета
    (owner, 4 Nov, скрин с телефона: «список выглядит как Word-файл… сделай
@@ -13,7 +13,10 @@ export type PlanTileStep = { title: string; line: string };
    в плитке — ярлык темы шага, название, одна строка, пилюля и вещь шага.
    Вся плитка — ссылка на свой шаг (?step=n). Открытый шаг остаётся в своей
    клетке: плитка светлеет, получает терракотовое кольцо и раскрывает
-   объяснение, действие, источники и переходы (их рисует родитель). */
+   объяснение, действие, источники и переходы (их рисует родитель).
+   Закрытый шаг (до оплаты, owner 5 Nov) выглядит так же — название, строка,
+   пилюля и вещь на месте, только ярлык получает «· закрыт»; внутри плитки
+   родитель ставит покупку на место действия. */
 export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги персонального плана", detail }: {
   steps: PlanTileStep[]; index: number;
   href: (position: number) => string; onSelect: (position: number) => void;
@@ -36,13 +39,13 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
       {steps.map((step, position) => {
         const selected = position === index;
         const { label: eyebrow, art, frame } = planStepArt(step.title);
-        return <li key={position} className={styles.tile} data-plan-step-tile={position + 1} data-flight-selected={selected} data-art={art}>
+        return <li key={position} className={styles.tile} data-plan-step-tile={position + 1} data-plan-step-locked={step.locked || undefined} data-flight-selected={selected} data-art={art}>
           <a className={styles.open} href={href(position)} data-flight-stop={position} aria-current={selected ? "step" : undefined} aria-expanded={selected}
             onClick={(event: MouseEvent<HTMLAnchorElement>) => {
               if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); onSelect(position);
             }}>
-            <span className={styles.label}>{eyebrow}</span>
+            <span className={styles.label}>{eyebrow}{step.locked ? " · закрыт" : ""}</span>
             <span className={styles.title}>{step.title}</span>
             <span className={styles.line}>{step.line}</span>
             <span className={styles.pill}>{selected ? "Открыт" : "Открыть шаг"}</span>

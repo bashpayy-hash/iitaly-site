@@ -245,6 +245,16 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* mobile-native (emilkowalski/skills, 5 Nov): controls answer like an app —
+   no double-tap wait before click, no long-press selection on button labels. */
+button, a, [role="button"] {
+  touch-action: manipulation;
+}
+button, [role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 html {
   scroll-behavior: smooth;
 }

@@ -72,7 +72,17 @@ async function preservedPricingCopy(base, head) {
       before.splice(index,1);
     }
   }
-  assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')),after,'Pricing copy outside the approved repeated header and launch price');
+  // Owner 2026-11-05 (access wall, after the funnel research): the «Бесплатно»
+  // and «10 990 ₸» cards and the «check your chances» line describe the new
+  // split exactly — first step and one document check free, the rest paid.
+  // Price, feature list, guarantees and every other line stay as they were.
+  const wallCopy=new Map([
+    ['ИИ оценит шансы, покажет риски и назовёт следующий шаг','ИИ оценит шансы, соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа'],
+    ['система ведёт поступление от выбора вуза до permesso','открывает остальные шаги с датами и чек-листами, проверки без лимита и напоминания — до permesso'],
+    ['Расскажи о себе, и ИИ скажет, реально ли поступить и на что рассчитывать. Платить, чтобы это узнать, не нужно.','Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.'],
+  ]);
+  for(const to of wallCopy.values()) assert(after.includes(to),`Wall copy present: ${to}`);
+  assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')).map(value=>wallCopy.get(value)??value),after,'Pricing copy outside the approved repeated header, launch price and wall cards');
   const packageCard=head.locator('#main-package');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);
   assert.equal(await packageCard.getByText('Весь маршрут поступления в одном кабинете',{exact:true}).count(),1);

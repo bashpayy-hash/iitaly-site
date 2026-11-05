@@ -247,6 +247,12 @@ const approvedGamifiedPortalPaths = new Set([
   // exist. Order and a caption only; answers and their values are unchanged.
   'src/components/portal/PortalAssessment.tsx',
   'src/components/portal/portal-assessment.module.css',
+  // Owner 2026-11-05 («имплементи эти изменения в структуру», after the
+  // funnel research): the access wall. One module decides what the public
+  // result and the guest workspace show for free (first step, one document
+  // check) and what waits for payment. It never calls the backend, grants no
+  // paid access and stores only a hashed file fingerprint on the device.
+  'src/lib/access.ts',
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
@@ -285,7 +291,9 @@ for (const path of [
 // every existing global rule and palette token remains byte-for-byte unchanged.
 // The mono token is exempt as well (2026-11-04: it now points at Onest — the
 // owner asked for no second typeface; design-vespi-system-review checks it).
-const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '').replace(/  --font-mono: [^\n]+\n/, '');
+const withoutEditorialToken = source => source.replace('  --font-editorial: Charter, Georgia, serif;\n', '').replace(/  --font-mono: [^\n]+\n/, '')
+  // 2026-11-05 (owner: «используй эти плагины для дизайна», emilkowalski mobile-native): app-like controls only.
+  .replace(/\n\/\* mobile-native \(emilkowalski\/skills[\s\S]*?user-select: none;\n\}\n/, '');
 assert.equal(withoutEditorialToken(readFileSync('src/app/globals.css','utf8')), withoutEditorialToken(execFileSync('git',['show',`${base}:src/app/globals.css`],{encoding:'utf8'})), 'Only the shared editorial and mono font tokens may change in globals');
 assert(!existsSync('src/components/home/HowItWorks.tsx'),'How-it-works facts now live in the FAQ');
 assert(!/HowItWorks/.test(readFileSync('src/app/page.tsx','utf8')),'Do not restore the removed home section');
