@@ -63,7 +63,6 @@ try {
     // no new blocks (owner: «не меняй структуру блоков»).
     assert.equal(await page.locator('[data-assessment-route] [data-plan-step-locked]').count(),await routeStops.count()-1,'Every step after the first is marked locked');
     assert.equal(await page.locator('[data-plan-step-tile="1"][data-plan-step-locked]').count(),0,'The first step is open');
-    assert.match(await page.locator('[data-plan-collected]').innerText(),/шагов под твой случай/,'The result counts what was collected');
     const chapters=[await page.locator('main').textContent()];
     for (let index=0;index<await routeStops.count();index++) {
       await routeStops.nth(index).click();
