@@ -14,9 +14,9 @@ export type PlanTileStep = { title: string; line: string; locked?: boolean };
    Вся плитка — ссылка на свой шаг (?step=n). Открытый шаг остаётся в своей
    клетке: плитка светлеет, получает терракотовое кольцо и раскрывает
    объяснение, действие, источники и переходы (их рисует родитель).
-   Закрытый шаг (стена доступа, owner 5 Nov) выглядит так же — название,
-   строка и вещь видны, ярлык получает «· закрыт», пилюля — «Что внутри»;
-   внутри плитки родитель показывает стену вместо инструкции. */
+   Закрытый шаг (до оплаты, owner 5 Nov) выглядит так же — название, строка,
+   пилюля и вещь на месте, только ярлык получает «· закрыт»; внутри плитки
+   родитель ставит покупку на место действия. */
 export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги персонального плана", detail }: {
   steps: PlanTileStep[]; index: number;
   href: (position: number) => string; onSelect: (position: number) => void;
@@ -48,7 +48,7 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
             <span className={styles.label}>{eyebrow}{step.locked ? " · закрыт" : ""}</span>
             <span className={styles.title}>{step.title}</span>
             <span className={styles.line}>{step.line}</span>
-            <span className={styles.pill}>{selected ? "Открыт" : step.locked ? "Что внутри" : "Открыть шаг"}</span>
+            <span className={styles.pill}>{selected ? "Открыт" : "Открыть шаг"}</span>
           </a>
           {selected && <div className={styles.detail} data-flight-detail={position}>{detail(position)}</div>}
           <span className={styles.visual} aria-hidden="true">

@@ -131,17 +131,17 @@ try {
     await page.getByRole('button',{name:'Готово',exact:true}).click();
     await page.reload({waitUntil:'networkidle'});
     assert(Object.keys(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_local_workspace_v1')).done)).length>=2,'Self-report persists');
-    // Access wall (owner, 5 Nov, after the funnel research): the first route
+    // Before payment (owner, 5 Nov, after the funnel research): the first route
     // step is free; the next one is locked — the overview tile, the stage page
-    // and the step page show the wall instead of instructions, completion or
-    // upload, and the wall opens the same purchase form as /prices.
+    // and the step page keep their structure, and the purchase button stands
+    // where «Открыть разбор» was; it opens the same purchase form as /prices.
     await portalDestination(page, 'Обзор');
     assert.equal(await page.locator('[data-now-locked]').count(),1,'The step after the free one is locked');
-    assert.equal(await page.locator('[data-portal-overview] [data-access-wall][data-wall-place="portal-task"]').count(),1,'The current-step tile carries the wall');
+    assert.equal(await page.locator('[data-portal-overview] [data-wall-buy][data-wall-place="portal-task"]').count(),1,'The current-step tile carries the wall');
     assert.equal(await page.locator('[data-task-ready]').count(),0,'A locked step cannot be self-reported');
     await page.locator('[data-now-stage]').click();
     await page.locator('[data-portal-page=stage]').waitFor();
-    assert.equal(await page.locator('[data-portal-page=stage] [data-access-wall]').count(),1,'The stage page shows the wall for the locked step');
+    assert.equal(await page.locator('[data-portal-page=stage] [data-wall-buy]').count(),1,'The stage page shows the wall for the locked step');
     assert.equal(await page.locator('[data-task-check][data-task-locked=true]').count(),1,'The locked step keeps its row and check mark, dashed');
     assert.match(await page.locator('[data-wall-buy]').innerText(),/10\s990\s₸/,'The wall names the one-time price');
     await page.locator('[data-wall-buy]').click();
@@ -154,7 +154,7 @@ try {
     await page.locator('[data-document="apostille"]').click();
     await page.locator('[data-task-locked][data-step-detail]').waitFor();
     assert.equal(await page.getByLabel('Выбрать документ для проверки').count(),0,'Locked file step cannot upload');
-    assert.equal(await page.locator('[data-step-detail] [data-access-wall]').count(),1,'The locked step page carries the wall');
+    assert.equal(await page.locator('[data-step-detail] [data-wall-buy]').count(),1,'The locked step page carries the wall');
     assert.doesNotMatch(await page.locator('[data-step-detail]').innerText(),/€|рабочих дней/,'Locked requirements stay behind the wall');
     await capture('portal-future');
     await portalDestination(page, 'Документы');
@@ -178,10 +178,10 @@ try {
     assert.equal(calls.filter(path=>path==='/api/check-document').length,1);
     assert.match(await page.evaluate(()=>localStorage.getItem('iitaly_free_check_v1')),/^\["[a-z0-9]{1,16}"\]$/,'The free check stores one hashed fingerprint');
     assert.doesNotMatch(JSON.stringify(await page.evaluate(()=>({...localStorage}))),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
-    assert.equal(await doc.locator('[data-access-wall]').count(),0,'The checked file keeps its result and may be rechecked');
+    assert.equal(await doc.locator('[data-wall-buy]').count(),0,'The checked file keeps its result and may be rechecked');
     assert(await doc.getByRole('button',{name:'Проверить ещё раз',exact:true}).isVisible());
     await doc.getByRole('button',{name:'Выбрать другой',exact:true}).click();
-    await doc.locator('[data-access-wall][data-wall-place="document-check"]').waitFor();
+    await doc.locator('[data-wall-buy][data-wall-place="document-check"]').waitFor();
     assert.equal(await doc.getByLabel('Выбрать документ для проверки').count(),0,'A second document meets the wall');
     await capture('document-wall');await audit('document wall');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');

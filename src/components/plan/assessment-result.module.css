@@ -64,12 +64,17 @@
 .step .summary{margin-top:0;font-size:16px;line-height:1.55;color:#3F3933}
 .step .action{margin:16px 0;font-size:16px;color:#241F1C}
 .step .references{border-color:#DCD5CA}.step .references p{color:#57514B}.step .references a{color:#241F1C}
-/* Стена внутри плитки закрытого шага (owner, 5 Nov). */
-.step .wall{margin-top:16px;max-width:none}
+/* Закрытый шаг (owner, 5 Nov): та же плитка и та же строка переходов —
+   одна тихая строка вместо действия, покупка на месте пилюли, «Далее» тише. */
+.lockedNote{margin:14px 0 0;max-width:60ch;font-size:14px;line-height:1.55;color:#57514B}
+.stepGroup{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 12px;min-width:0}
+.stepActions .quietNext{background:transparent;color:#241F1C;box-shadow:inset 0 0 0 1px #DCD5CA}
+.stepActions .quietNext:hover{background:#F1ECE3}
+@media(max-width:600px){.stepActions{flex-wrap:wrap}.stepGroup{width:100%}.stepGroup>*{flex:1 1 auto}}
 .stepActions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:14px;border-top:1px solid #DCD5CA}
 .stepActions button,.stepActions a{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:10px 20px;font-size:14px;font-weight:500;border:0;border-radius:999px;text-decoration:none;background:#B83A27;color:#FAF6EE;cursor:pointer;transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1)}
 .stepActions button:not(:disabled):hover,.stepActions a:hover{background:#A33421}
-.stepActions button:first-child{padding-left:0;background:none;color:#57514B;font-weight:400}
+.stepActions>button:first-child{padding-left:0;background:none;color:#57514B;font-weight:400}
 .stepActions button:disabled{opacity:.4;cursor:not-allowed}
 .stepActions :is(button,a):not(:disabled):active{transform:scale(.97)}
 .result :is(button,a):focus-visible{outline:2px solid #A33421;outline-offset:4px}

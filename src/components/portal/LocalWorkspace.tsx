@@ -25,7 +25,7 @@ import { taskQuestions } from "@/lib/portalStepCopy";
 import { PortalFocus } from "./PortalFocus";
 import { PortalCompletion, PortalSoundSetting } from "./PortalCompletion";
 import { usePortalFeedback } from "./usePortalFeedback";
-import { localTaskLocked, lockedTaskCount } from "@/lib/access";
+import { localTaskLocked } from "@/lib/access";
 import { LockedTaskPage } from "@/components/access/LockedTaskPage";
 import focusStyles from "./portal-focus.module.css";
 import { PortalArtwork } from "./PortalArtwork";
@@ -71,7 +71,6 @@ export function LocalWorkspace() {
      проверка и отметка «Готово» — за оплатой. Это только показ: в
      локальном профиле ничего платного не хранится и не включается. */
   const locked = (task: PortalTask) => localTaskLocked(data, task);
-  const lockedCount = lockedTaskCount(data);
   const position = portalPosition(data);
   const tasks = data.roadmap.flatMap(stage => stage.tasks);
   const active = tasks.find(task => task.id === (location.doc || location.task));
@@ -170,7 +169,7 @@ export function LocalWorkspace() {
             onOpenTask={openTask} onComplete={complete} onDocuments={() => navigate({ view: "docs", task: null, doc: null })} onSettings={() => navigate({ view: "settings", task: null, doc: null })} locked={locked} />}
           {showDetail && <>
             {active.id === "profile" && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => { event.preventDefault(); if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: location.doc ? "docs" : "plan", task: null, doc: null }); }}>← Назад</a>}
-            {locked(active) ? <LockedTaskPage task={active} stage={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))} lockedCount={lockedCount} teaser={plan?.steps.find(step => step.t === active.t)?.summary} />
+            {locked(active) ? <LockedTaskPage task={active} stage={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))} teaser={plan?.steps.find(step => step.t === active.t)?.summary} />
               : active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1>{draft.complete ? <SavedProfileAnswers profile={data.client.profile || {}} answers={draft.answers} onEdit={() => updateDraft({ ...draft, step: 0, complete: false })} /> : <Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { feedback.prime(); updateDraft({ answers, step: 10, complete: true }); try { if (JSON.parse(localStorage.getItem("iitaly_plan_draft_v1") || "{}").complete) feedback.confirm("profile", "Анкета заполнена"); } catch {} navigate({ view: "today", task: null, doc: null }); }}/>}</>
               : active.id === "shortlist" && (!readOnly || data.done.shortlist) ? <PortalUniversityStep localOnly data={data} task={active} selectedIds={local.selectedIds} busy={false} onBack={() => navigate({ view: "plan", task: null, doc: null })} backHref="/portal?view=plan" onReopen={() => updateLocal({ ...local, done: { ...local.done, shortlist: false } })} onSave={async selectedIds => { feedback.prime(); const saved = saveLocal({ ...local, scope: localWorkspaceScope(draft, selectedIds), selectedIds, reviews: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? local.reviews : {}, done: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? { ...local.done, shortlist: true } : { shortlist: true } }); if (!saved) return false; if (!data.done.shortlist) feedback.confirm("shortlist", taskTitle(active)); navigate({ view: "today", task: null, doc: null }); return true; }}/>
               : DOC_TASKS[active.id] && existing ? <PortalDocumentReport taskId={active.id} key={active.id} title={DOC_TASKS[active.id]} doc={existing} storage="local"

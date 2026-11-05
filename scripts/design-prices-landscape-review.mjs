@@ -81,7 +81,7 @@ async function preservedPricingCopy(base, head) {
     ['система ведёт поступление от выбора вуза до permesso','открывает остальные шаги с датами и чек-листами, проверки без лимита и напоминания — до permesso'],
     ['Расскажи о себе, и ИИ скажет, реально ли поступить и на что рассчитывать. Платить, чтобы это узнать, не нужно.','Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.'],
   ]);
-  for(const [from,to] of wallCopy) assert(after.includes(to),`Wall copy present: ${to}`);
+  for(const to of wallCopy.values()) assert(after.includes(to),`Wall copy present: ${to}`);
   assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')).map(value=>wallCopy.get(value)??value),after,'Pricing copy outside the approved repeated header, launch price and wall cards');
   const packageCard=head.locator('#main-package');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);

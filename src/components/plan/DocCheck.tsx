@@ -8,7 +8,7 @@ import { preparePayload, type DocPayload } from "@/lib/docPayload";
 import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckResult, type DocumentAvailability, type DocumentReviewContext } from "@/lib/checkDocument";
 import { track } from "@/lib/track";
 import { FREE_DOCUMENT_CHECKS, documentFingerprint, recordFreeCheck, useFreeChecks } from "@/lib/access";
-import { AccessWall } from "@/components/access/AccessWall";
+import { useWallPurchase } from "@/components/access/useWallPurchase";
 import { AppleButton } from "@/components/apple/Button";
 import { PortalDocumentContext } from "@/components/portal/PortalDocumentContext";
 import { PortalDocumentNotes } from "@/components/portal/PortalDocumentUpload";
@@ -75,7 +75,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   const freeUsed = useFreeChecks();
   const fingerprint = "file" in state ? documentFingerprint(state.file) : null;
   const walled = !portalInspector && freeUsed.length >= FREE_DOCUMENT_CHECKS && !(fingerprint && freeUsed.includes(fingerprint));
-  const wall = <AccessWall place="document-check" detail="В кабинете: проверка каждого документа без лимита, повторные версии после исправлений, сохранённый разбор и весь маршрут с датами и чек-листами." />;
+  const wall = useWallPurchase("document-check", walled);
 
   function unavailableFrom(error: unknown): DocumentAvailability {
     return { ok: false, code: error instanceof DocCheckError ? error.code || "AI_UNAVAILABLE" : "AI_UNAVAILABLE",
@@ -262,7 +262,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
 
       {portalInspector && <p className="text-apple-body-sm text-cloud-body">Новая проверка заменит текущий разбор. Исходный файл остаётся только в открытой форме.</p>}
       {walled && !("file" in state) ? (
-        <div className="mt-5">{wall}</div>
+        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-apple-input border border-white/15 p-4" data-document-walled>
+          <AppleButton type="button" variant="filled" size="sm" onClick={wall.open} data-wall-buy data-wall-place="document-check" aria-haspopup="dialog">{wall.label}</AppleButton>
+          <span className="text-apple-caption text-cloud-meta">Бесплатная проверка одного файла использована. В кабинете — проверки без лимита и повторные версии.</span>
+        </div>
       ) : state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
           className={styles.dropzone}
@@ -307,9 +310,12 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
           )}
           <div className="min-w-0 flex-1">
             <p className="break-words text-apple-body-sm font-semibold text-cloud-white [overflow-wrap:anywhere]">{state.file.name}</p>
-            {walled ? <div className="mt-3 space-y-3" data-document-walled>
-              {wall}
-              <AppleButton type="button" variant="outlined" size="sm" onClick={reset}>Выбрать другой</AppleButton>
+            {walled ? <div className="mt-3" data-document-walled>
+              <p className="text-apple-caption text-cloud-meta">Бесплатная проверка одного файла использована. Этот файл проверится в кабинете.</p>
+              <div className="mt-3 flex flex-wrap gap-2 [&>button]:w-full sm:[&>button]:w-auto">
+                <AppleButton type="button" variant="filled" size="sm" onClick={wall.open} data-wall-buy data-wall-place="document-check" aria-haspopup="dialog">{wall.label}</AppleButton>
+                <AppleButton type="button" variant="outlined" size="sm" onClick={reset}>Выбрать другой</AppleButton>
+              </div>
             </div> : <div className="mt-3 flex flex-wrap gap-2 [&>button]:w-full sm:[&>button]:w-auto">
               <AppleButton
                 type="button"
@@ -376,6 +382,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
         университет, CAF или стипендиальный орган.
       </p>
       </div>
+      {wall.modal}
     </div>
   );
 }

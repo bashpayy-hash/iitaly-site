@@ -57,9 +57,10 @@ try {
     assert.equal(await tiles.first().evaluate(el=>getComputedStyle(el).borderRadius),'28px');
     assert.equal(await page.locator('[data-assessment-route] [data-plan-step-tile][data-flight-selected=true]').count(),1,'Exactly one step is open');
     if (width>=1440) { const [a,b]=await Promise.all([tiles.nth(0).boundingBox(),tiles.nth(1).boundingBox()]); assert(Math.abs(a.y-b.y)<1&&b.x>a.x,'Two tiles per row on desktop'); }
-    // Access wall (owner, 5 Nov): the first step opens in full; every later
-    // step keeps its title, object and one orienting line, and its tile shows
-    // the wall instead of the action, requirements and sources.
+    // Before payment (owner, 5 Nov): the first step opens in full; every later
+    // step keeps its tile, title, object and one orienting line, and inside
+    // the opened tile the purchase stands where the action was — same row,
+    // no new blocks (owner: «не меняй структуру блоков»).
     assert.equal(await page.locator('[data-assessment-route] [data-plan-step-locked]').count(),await routeStops.count()-1,'Every step after the first is marked locked');
     assert.equal(await page.locator('[data-plan-step-tile="1"][data-plan-step-locked]').count(),0,'The first step is open');
     assert.match(await page.locator('[data-plan-collected]').innerText(),/шагов под твой случай/,'The result counts what was collected');
@@ -68,8 +69,8 @@ try {
       await routeStops.nth(index).click();
       const point=page.locator('[data-instruction-point]');
       assert.equal(await point.count(),1,'Only the selected admission step is rendered');
-      if (index===0) { assert.equal(await point.locator('[data-assessment-next-action]').count(),1,'The first step shows its action and sources'); assert.equal(await point.locator('[data-access-wall]').count(),0); }
-      else { assert.equal(await point.locator('[data-access-wall][data-wall-place="plan-step"]').count(),1,`Step ${index+1} shows the wall`); assert.equal(await point.locator('[data-assessment-next-action], details').count(),0,`Step ${index+1} hides its action and sources`); assert.match(await point.locator('[data-wall-buy]').innerText(),/10\s990\s₸/); }
+      if (index===0) { assert.equal(await point.locator('[data-assessment-next-action]').count(),1,'The first step shows its action and sources'); assert.equal(await point.locator('[data-wall-buy]').count(),0); }
+      else { assert.equal(await point.locator('[data-wall-buy][data-wall-place="plan-step"]').count(),1,`Step ${index+1} shows the wall`); assert.equal(await point.locator('[data-assessment-next-action], details').count(),0,`Step ${index+1} hides its action and sources`); assert.match(await point.locator('[data-wall-buy]').innerText(),/10\s990\s₸/); }
       chapters.push(await point.textContent());
     }
     const result=chapters.join(' ');

@@ -17,7 +17,7 @@ import { LineupTile, plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
 
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
-import { AccessWall, routeWallDetail } from "@/components/access/AccessWall";
+import { useWallPurchase } from "@/components/access/useWallPurchase";
 
 /* Сцена этапа на доске маршрута (owner, 4 Nov: «тематические генерации, где
    Веспи что-то делает»): Веспи выбирает программу, разворачивает диплом,
@@ -89,7 +89,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
 
   const isLockedTask = (task: PortalTask | null | undefined) => Boolean(task && locked?.(task));
-  const lockedCount = locked ? data.roadmap.flatMap(stage => stage.tasks).filter(locked).length : 0;
+  // The purchase form behind every locked action; no new blocks on the page.
+  const wall = useWallPurchase("portal-task", Boolean(locked) && data.roadmap.some(stage => stage.tasks.some(task => isLockedTask(task))));
   function check(row: PortalTask) {
     if (busy || portalTaskDone(savedData, row)) return;
     // A locked step cannot be self-reported: its page carries the wall.
@@ -129,7 +130,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
               </div>}
             </div>
             {open && <div className={styles.taskActions} data-locked={rowLocked || undefined}>
-              {rowLocked ? <AccessWall place="portal-task" compact detail={routeWallDetail(lockedCount)} /> : <>
+              {rowLocked ? <button type="button" className={styles.primary} data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button> : <>
                 <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
                 {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
               </>}
@@ -224,7 +225,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time>
         </div>}
         {(nowTask || position.stage) && <div className={styles.nowActions}>
-          {nowTask && <a className={styles.nowPrimary} href={nowHref} data-now-open data-now-locked={isLockedTask(nowTask) || undefined} onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{isLockedTask(nowTask) ? "Что внутри" : "Открыть разбор"}</a>}
+          {nowTask && (isLockedTask(nowTask)
+            ? <button type="button" className={styles.nowPrimary} data-now-locked data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button>
+            : <a className={styles.nowPrimary} href={nowHref} data-now-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>Открыть разбор</a>)}
           {position.stage && <a className={styles.nowSecondary} href={`/portal?stage=${encodeURIComponent(position.stage.id)}`} data-now-stage onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSelectStage(position.stage!.id); }}>Открыть этап</a>}
         </div>}
       </aside>
@@ -272,5 +275,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         {data.roadmap[data.roadmap.indexOf(selected) + 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)+1].id)}`}>Следующий этап: {data.roadmap[data.roadmap.indexOf(selected)+1].title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
       </nav>
     </div>}
+    {wall.modal}
   </section>;
 }

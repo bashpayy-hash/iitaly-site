@@ -3,18 +3,12 @@
 import { AssessmentRoadmap } from "./AssessmentRoadmap";
 import { useRouter } from "next/navigation";
 import type { Plan } from "@/lib/planBuilder";
-import { FREE_PLAN_STEPS } from "@/lib/access";
-import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import styles from "./plan-journey.module.css";
 
-const stepWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "шаг" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "шага" : "шагов";
-const documentWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "документ" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "документа" : "документов";
-
 export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void }) {
   const router = useRouter();
-  const year = /^\d{4}\/\d{2}$/.test(plan.intake) ? plan.intake : null;
 
   return (
     <div data-assessment-result>
@@ -29,18 +23,6 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
             Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
         </>}
       />
-
-      {/* «Собрано»: что уже сделано под этот случай и что из этого открыто
-          (owner, 5 Nov; эффект вложенного прогресса — закрытое названо по
-          счёту, а не спрятано). Цифры — из самого плана. */}
-      <ul className={styles.collected} data-plan-collected aria-label="Что собрано по твоим ответам">
-        <li><strong>{plan.steps.length}</strong><span>{stepWord(plan.steps.length)} под твой случай</span></li>
-        <li><strong>{plan.docs.length}</strong><span>{documentWord(plan.docs.length)} к сбору</span></li>
-        <li><strong>{year || "—"}</strong><span>{year ? "год набора" : "год набора не выбран"}</span></li>
-      </ul>
-      <p className={styles.collectedNote} data-plan-open-count>
-        Открыт шаг {FREE_PLAN_STEPS} из {plan.steps.length} и одна проверка документа. Остальные шаги с датами и чек-листами — за {priceLabel(PRICE_MAIN)} один раз.
-      </p>
 
       <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете ↗︎</AppleButtonLink><p className="mt-2 text-apple-caption text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
 
