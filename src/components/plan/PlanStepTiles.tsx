@@ -4,6 +4,7 @@
 import { type MouseEvent, type ReactNode, useEffect, useRef } from "react";
 import { planStepArt } from "./planStepArt";
 import styles from "./plan-step-tiles.module.css";
+import { revealElement } from "@/components/motion/scroll";
 
 export type PlanTileStep = { title: string; line: string; locked?: boolean };
 
@@ -31,7 +32,8 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
   useEffect(() => {
     if (!mounted.current) { mounted.current = true; return; }
     const tile = root.current?.querySelector<HTMLElement>('[data-flight-selected="true"]');
-    tile?.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    // On a phone the opened step's title lands under the header; in the two-column grid the row only comes into view.
+    revealElement(tile, matchMedia("(max-width: 700px)").matches ? "start" : "nearest");
   }, [index]);
   if (!steps.length) return null;
   return <div className={styles.tiles}>

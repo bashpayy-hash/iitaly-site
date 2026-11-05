@@ -81,6 +81,9 @@
   .tile:nth-child(4) { animation-delay:120ms; }
   .tile:nth-child(n+5) { animation-delay:160ms; }
 }
+/* Phones (motion pass, 5 Nov): only the two tiles that can be on screen arrive;
+   the rest stand still instead of animating as off-screen layers. */
+@media (max-width:600px) { .tile:nth-child(n+3) { animation:none; } }
 @keyframes tiles-in { from { opacity:0; translate:0 16px; } to { opacity:1; translate:0 0; } }
 @keyframes tile-open { from { opacity:0; translate:0 -6px; } to { opacity:1; translate:0 0; } }
 @media(prefers-reduced-motion:reduce) {

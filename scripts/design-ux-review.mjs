@@ -183,7 +183,8 @@ try {
     assert(await page.locator('#selected-city').getByRole('heading',{name:'Милан',exact:true}).isVisible());
     assert.equal(await page.locator('svg[aria-label="Карта Италии с университетами по городам"]').getAttribute('role'),'group');
     await checkA11y('universities '+width);
-    if(width<1024) assert((await page.locator('#selected-city').boundingBox()).y<200,'City result moves into view on mobile');
+    // The city result glides into view (smooth scroll, motion pass 5 Nov): wait for it to settle.
+    if(width<1024) await page.waitForFunction(()=>(document.getElementById('selected-city')?.getBoundingClientRect().y??999)<200,undefined,{timeout:4000}).catch(()=>{throw new Error('City result moves into view on mobile');});
     if(width===1440 || width===390) {
       for(const path of ['/','/prices','/portal','/changes-2026-27','/guides/permesso-modulo-1']) {
         await visit(path);

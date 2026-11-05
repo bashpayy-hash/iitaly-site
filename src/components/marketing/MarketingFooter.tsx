@@ -14,16 +14,19 @@ export function MarketingFooter() {
     <footer className={styles.footer}>
       <div className={styles.footerTop}>
         <div>
-          <Link href="/" className={styles.wordmark} aria-label="IITALY — главная"><BrandLogo /></Link>
+          {/* Footer links prefetch on hover or touch only (motion pass, 5 Nov): they
+              enter the viewport mid-scroll, and parsing their route payloads
+              there costs frames on a phone. */}
+          <Link href="/" className={styles.wordmark} aria-label="IITALY — главная" prefetch={false}><BrandLogo /></Link>
           <p className={styles.footerTagline}>Италия ближе, чем кажется.</p>
           <p>ИИ-сервис поступления в университеты Италии · Казахстан</p>
         </div>
         <nav aria-label="Навигация в подвале">
-          <Link href="/plan">Мой план</Link>
-          <Link href="/universities">Университеты</Link>
-          <Link href="/prices">Цены</Link>
-          <Link href="/guides">Гайды и виза</Link>
-          <Link href="/portal">Личный кабинет</Link>
+          <Link href="/plan" prefetch={false}>Мой план</Link>
+          <Link href="/universities" prefetch={false}>Университеты</Link>
+          <Link href="/prices" prefetch={false}>Цены</Link>
+          <Link href="/guides" prefetch={false}>Гайды и виза</Link>
+          <Link href="/portal" prefetch={false}>Личный кабинет</Link>
         </nav>
       </div>
       <div className={styles.finePrint}>
@@ -37,8 +40,8 @@ export function MarketingFooter() {
           {" "}Ответы ИИ могут содержать ошибки.
         </p>
         <span className="flex flex-wrap gap-4">
-          <Link href="/terms">Условия сервиса</Link>
-          <Link href="/privacy">Политика конфиденциальности</Link>
+          <Link href="/terms" prefetch={false}>Условия сервиса</Link>
+          <Link href="/privacy" prefetch={false}>Политика конфиденциальности</Link>
         </span>
       </div>
     </footer>

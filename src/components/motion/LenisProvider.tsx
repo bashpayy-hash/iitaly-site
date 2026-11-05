@@ -27,6 +27,11 @@ export function LenisProvider() {
   useEffect(() => {
     if (!pathname || !LENIS_ROUTES.has(pathname)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Touch-only devices scroll natively anyway (syncTouch is off): there Lenis
+    // only added a handler to every scroll event and a ticker to every frame
+    // (motion pass, 5 Nov: 40ms of scroll handlers per flick on /plan at 6×
+    // throttle). ScrollTrigger listens to native scrolling by itself.
+    if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
 
