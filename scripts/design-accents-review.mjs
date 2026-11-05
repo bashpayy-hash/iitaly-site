@@ -237,13 +237,21 @@ try {
       }
     }
     await inspectArtwork();
+    // Owner 2026-11-05 (access wall): the «Бесплатно» / «10 990 ₸» cards and the
+    // «check your chances» line describe the new free/paid split; everything
+    // else on /prices must still match the baseline word for word.
+    const wallCopy = new Map([
+      ['ИИ оценит шансы, покажет риски и назовёт следующий шаг', 'ИИ оценит шансы, соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа'],
+      ['система ведёт поступление от выбора вуза до permesso', 'открывает остальные шаги с датами и чек-листами, проверки без лимита и напоминания — до permesso'],
+      ['Расскажи о себе, и ИИ скажет, реально ли поступить и на что рассчитывать. Платить, чтобы это узнать, не нужно.', 'Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.'],
+    ]);
     for (const route of ['/guides', '/plan', '/prices']) {
       await settle(page, 4176, route);
       const beforeText = await textInventory(page);
       await settle(page, 4175, route);
       const afterText = await textInventory(page);
       if (route === '/prices') {
-        assertContentPreserved(beforeText, afterText, `${route} ${width}px`);
+        assertContentPreserved(beforeText.map(value => wallCopy.get(value) ?? value), afterText, `${route} ${width}px`);
         assert.match(afterText.join(' '), /Календарь дедлайнов с напоминаниями в Telegram/);
         assert.doesNotMatch(afterText.join(' '), /Telegram и на почту/);
       }

@@ -25,7 +25,7 @@
 .pagerCard svg { flex:none; }
 .forward { justify-content:space-between; text-align:right; background:#B83A27; }
 .forward small { color:#FBE3DC; }
-.pagerCard:hover { transform:translateY(-2px); }
+@media (hover: hover) and (pointer: fine) { .pagerCard:hover { transform:translateY(-2px); } }
 .pagerCard:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
 @media(max-width:700px) {
   .header { grid-template-columns:minmax(0,1fr) 120px; gap:12px; }

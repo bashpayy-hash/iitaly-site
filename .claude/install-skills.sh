@@ -20,6 +20,12 @@ log=/tmp/iitaly-skills-install.log
   install nateherkai/scroll-craft '*' scroll-craft
   install nextlevelbuilder/ui-ux-pro-max-skill '*' ui-ux-pro-max
   install addyosmani/agent-skills '*' spec-driven-development
+  # Owner, 5 Nov («ещё используй эти плагины для дизайна»): Emil Kowalski's
+  # animation and design-engineering skills (animate, review-animations,
+  # improve-animations, choreograph, apple-design, mobile-native, break-ui…)
+  # and the three.js r186 skills. lottiefiles/motion-design-skill is above.
+  install emilkowalski/skills '*' animate
+  install CloudAI-X/threejs-skills '*' threejs-fundamentals
   # Owner, 4 Nov: «добавь скил impeccable». Its own installer downloads a
   # bundle from impeccable.style, which the cloud proxy refuses, so the built
   # skill and its subagents are copied from the GitHub repository instead.
