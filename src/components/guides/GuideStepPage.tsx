@@ -35,7 +35,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
           <h1 id="guide-step-title" tabIndex={-1}>{point.title}</h1>
           <GuideReviewed />
         </div>
-        <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" />
+        <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" decoding="async" />
       </header>
       {sentences.length > 1 ? <ol className={styles.sentences} data-guide-step-body>
         {sentences.map((sentence, index) => <li key={index}><span aria-hidden="true">{index + 1}</span><p>{sentence}</p></li>)}
