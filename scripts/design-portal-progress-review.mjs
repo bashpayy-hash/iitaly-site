@@ -145,7 +145,8 @@ try{
   // The user explicitly replaced the brand mark on 24 October. The portal's
   // global palette, typography, progress and interaction contracts stay fixed.
   // The mono token may change too (4 Nov: it points at Onest — the owner asked for no second typeface).
-  const sharedFontOnly=source=>source.replace('  --font-editorial: Charter, Georgia, serif;\n','').replace(/  --font-mono: [^\n]+\n/,'');
+  // 5 Nov (owner: «используй эти плагины для дизайна», emilkowalski mobile-native): the app-like control block may be added too.
+  const sharedFontOnly=source=>source.replace('  --font-editorial: Charter, Georgia, serif;\n','').replace(/  --font-mono: [^\n]+\n/,'').replace(/\n\/\* mobile-native \(emilkowalski\/skills[\s\S]*?user-select: none;\n\}\n/,'');
   for(const file of ['src/app/globals.css'])assert.equal(sharedFontOnly(await readFile(file,'utf8')),sharedFontOnly(execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'})),file+' preserves all existing styles');
   for(const viewport of [{width:1440,height:900},{width:1024,height:768},{width:768,height:1024},{width:390,height:844},{width:390,height:667},{width:320,height:740}]){
     const {page,context,data,calls}=await open(viewport);await railContract(page,data,false);
