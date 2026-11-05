@@ -69,7 +69,7 @@ try {
       const point=page.locator('[data-instruction-point]');
       assert.equal(await point.count(),1,'Only the selected admission step is rendered');
       if (index===0) { assert.equal(await point.locator('[data-assessment-next-action]').count(),1,'The first step shows its action and sources'); assert.equal(await point.locator('[data-access-wall]').count(),0); }
-      else { assert.equal(await point.locator('[data-access-wall][data-wall-place="plan-step"]').count(),1,`Step ${index+1} shows the wall`); assert.equal(await point.locator('[data-assessment-next-action], details').count(),0,`Step ${index+1} hides its action and sources`); assert.match(await point.locator('[data-wall-buy]').innerText(),/10 990 ₸/); }
+      else { assert.equal(await point.locator('[data-access-wall][data-wall-place="plan-step"]').count(),1,`Step ${index+1} shows the wall`); assert.equal(await point.locator('[data-assessment-next-action], details').count(),0,`Step ${index+1} hides its action and sources`); assert.match(await point.locator('[data-wall-buy]').innerText(),/10\s990\s₸/); }
       chapters.push(await point.textContent());
     }
     const result=chapters.join(' ');

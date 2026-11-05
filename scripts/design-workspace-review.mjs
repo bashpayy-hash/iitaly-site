@@ -143,7 +143,7 @@ try {
     await page.locator('[data-portal-page=stage]').waitFor();
     assert.equal(await page.locator('[data-portal-page=stage] [data-access-wall]').count(),1,'The stage page shows the wall for the locked step');
     assert.equal(await page.locator('[data-task-check][data-task-locked=true]').count(),1,'The locked step keeps its row and check mark, dashed');
-    assert.match(await page.locator('[data-wall-buy]').innerText(),/10 990 ₸/,'The wall names the one-time price');
+    assert.match(await page.locator('[data-wall-buy]').innerText(),/10\s990\s₸/,'The wall names the one-time price');
     await page.locator('[data-wall-buy]').click();
     const buy=page.getByRole('dialog');await buy.waitFor();
     assert.match((await buy.innerText()).replace(/\s+/g,' '),/Поступление под ключ.*10 990 ₸/,'The wall opens the same purchase form as /prices');
@@ -185,6 +185,7 @@ try {
     assert.equal(await doc.getByLabel('Выбрать документ для проверки').count(),0,'A second document meets the wall');
     await capture('document-wall');await audit('document wall');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');
+    await visit('/portal');await page.locator('[data-local-workspace]').waitFor();
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await page.getByRole('link',{name:'Изменить ответы анкеты',exact:true}).click();
     await page.getByRole('heading',{name:'Когда хочешь начать учёбу?',exact:true}).waitFor();
