@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
-import { Settings, FileText } from "lucide-react";
+import { Settings, FileText, MapPin } from "lucide-react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { VespiOutline } from "@/components/mascot/VespiOutline";
 import { usePlanDraft } from "@/lib/usePlanDraft";
@@ -42,12 +42,15 @@ function readLocation(): Location {
   const view = raw === "settings" || raw === "help" || raw === "profile" ? "settings" : raw === "docs" || raw === "plan" ? raw : "today";
   return { view, stage: params.get("stage") || undefined, task: view === "plan" ? params.get("task") : null, doc: view === "docs" ? params.get("doc") : null };
 }
-const DOCUMENT_INFO: Record<string, { purpose: "uni" | "dsu" | "visa"; where: string; validity: string }> = {
-  apostille: { purpose: "uni", where: "eGov / ЦОН · орган образования", validity: "Комплект и формат — по требованиям получателя." },
-  translate: { purpose: "uni", where: "Переводчик · способ заверения по инструкции получателя", validity: "Проверь имя, приложение и текст апостиля." },
-  familyDocs: { purpose: "dsu", where: "eGov / ЦОН · органы по виду справки", validity: "Год и актуальность — только из bando своего конкурса." },
-  statements: { purpose: "visa", where: "Банк · документы спонсора, если применимо", validity: "Период и срок выдачи — по чек-листу своего консульства." },
-  housing: { purpose: "visa", where: "Арендодатель / общежитие", validity: "Условия подтверждения — по консульскому чек-листу." },
+/* Для чего документ — словами, без фильтров (owner, 5 Nov: «минимализм,
+   поменьше кнопок»): пять карточек читаются без переключателей. */
+const PURPOSE_LABEL = { uni: "Нужен для вуза", dsu: "Нужен для стипендии DSU", visa: "Нужен для визы" } as const;
+const DOCUMENT_INFO: Record<string, { purpose: "uni" | "dsu" | "visa"; where: string }> = {
+  apostille: { purpose: "uni", where: "eGov / ЦОН · орган образования" },
+  translate: { purpose: "uni", where: "Переводчик · способ заверения по инструкции получателя" },
+  familyDocs: { purpose: "dsu", where: "eGov / ЦОН · органы по виду справки" },
+  statements: { purpose: "visa", where: "Банк · документы спонсора, если применимо" },
+  housing: { purpose: "visa", where: "Арендодатель / общежитие" },
 };
 
 /** No synthetic login and no portal API calls: guest state is a separate local
@@ -63,7 +66,6 @@ export function LocalWorkspace() {
   const [location, setLocation] = useState<Location>({ view: "today", task: null, doc: null });
   const [roadTravel, setRoadTravel] = useState<RoadTravel>();
   const travelSequence = useRef(0);
-  const [purpose, setPurpose] = useState("all");
   const feedback = usePortalFeedback();
   const [storageError, setStorageError] = useState("");
   const data = useMemo(() => buildLocalWorkspace(draft, local, reports), [draft, local, reports]);
@@ -161,11 +163,11 @@ export function LocalWorkspace() {
   return <div className={`${portal.portal} ${styles.workspace} ${focusStyles.portalRoot}`} data-local-workspace data-portal-design="shared-site">
     <div ref={chrome} className={styles.header}><MarketingHeader variant="portal" actions={<div className={styles.headerActions}>
       <a href="#iitaly-chat" data-portal-assistant data-step-id={assistantTask?.id || ""} onClick={event => { event.preventDefault(); window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "portal-header", taskId: assistantTask?.id, taskTitle: assistantTask ? taskTitle(assistantTask) : undefined, taskContext: assistantTask && !locked(assistantTask) ? assistantTask.explain : undefined, taskDone: assistantTask ? portalTaskDone(data, assistantTask) : false, questions: assistantTask ? taskQuestions(assistantTask, portalTaskDone(data, assistantTask)) : undefined } })); }}><VespiOutline /><span>Помощник</span></a>
-      <a href="/portal?view=docs" aria-label="Документы" title="Документы" data-portal-documents onClick={event => link(event, { view: "docs", task: null, doc: null })}><FileText size={18} strokeWidth={1.5} aria-hidden="true" /></a>
+      <a href="/portal?view=docs" aria-label="Документы" title="Документы" aria-current={location.view === "docs" && !location.doc ? "page" : undefined} data-portal-documents onClick={event => link(event, { view: "docs", task: null, doc: null })}><FileText size={18} strokeWidth={1.5} aria-hidden="true" /><span className={styles.settingsText}>Документы</span></a>
       <a href="/portal?view=settings" aria-label="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
     </div>} /></div>
     <main id="main" className={`${styles.frame} ${focusStyles.localFrame}`} onClickCapture={event => { if ((event.target as Element).closest("button")) feedback.prime(); }}>
-      <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗︎</a></div>
+      <div className={styles.localStatus}><span>Твой план сохранён на этом устройстве</span><a href={cloudLoginHref}>Есть код доступа? Войти</a></div>
       {storageError && <p role="alert" className={styles.readOnly}>{storageError}</p>}
       <div className={`${styles.layout} ${focusStyles.localLayout}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div ref={content} className={styles.content}>
@@ -199,14 +201,15 @@ export function LocalWorkspace() {
               </>} />}
           </>}
           {location.view === "docs" && !showDetail && <>
-            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Отметка о сборе принадлежит тебе. Итог проверки появляется только после реального разбора файла.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <a className={styles.textLink} href="/plan#document-check">«Мой план»</a>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><PortalArtwork placement="documents" /></div>
-            <fieldset className={styles.filters}><legend className="sr-only">Назначение документа</legend>{[{ id: "all", label: "Все" }, { id: "uni", label: "Для вуза" }, { id: "dsu", label: "Для DSU" }, { id: "visa", label: "Для визы D" }].map(item => <label key={item.id}><input type="radio" name="local-document-purpose" value={item.id} checked={purpose === item.id} onChange={() => setPurpose(item.id)}/>{item.label}</label>)}</fieldset>
+            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <a className={styles.textLink} href="/plan#document-check">«Мой план»</a>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><PortalArtwork placement="documents" /></div>
             {!documents.length && <div className={styles.paper}><h2>Сначала уточним твой маршрут</h2><p>После анкеты здесь появятся документы по твоей ситуации. Поздние этапы откроются по мере выполнения текущих шагов.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "profile"); if (task) openTask(task); }}>Заполнить анкету</a></div>}
-            <div className={styles.vault}>{documents.filter(task => purpose === "all" || DOCUMENT_INFO[task.id]?.purpose === purpose).map(task => {
+            <div className={styles.vault}>{documents.map(task => {
               const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);
               return <a className={styles.docCard} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
-                <FileText size={25} aria-hidden="true"/><h3>{DOC_TASKS[task.id]}</h3><p>{info?.where}</p><p>{info?.validity}</p>
-                <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{outcome.action && <p>Что сделать: {outcome.action}</p>}
+                <FileText size={25} aria-hidden="true"/><h3>{DOC_TASKS[task.id]}</h3>
+                {info && <p className={styles.docPurpose}>{PURPOSE_LABEL[info.purpose]}</p>}
+                {info && <p className={styles.docWhere}><MapPin size={14} strokeWidth={1.8} aria-hidden="true" />Где взять: {info.where}</p>}
+                <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{data.docs[task.id] && outcome.action && <p>Что сделать: {outcome.action}</p>}
 
               </a>;
             })}</div>

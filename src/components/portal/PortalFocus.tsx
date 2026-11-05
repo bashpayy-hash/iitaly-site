@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Local task artwork with explicit dimensions. */
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import { Bell, CalendarDays, ChevronRight, Clock, FileText, MapPin } from "lucide-react";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META, fmtDate } from "@/lib/portalMeta";
 import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigation";
@@ -10,23 +10,18 @@ import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import { taskShortExplainer } from "@/lib/portalStepCopy";
 import { selectedUniversities } from "@/lib/portalShortlist";
 import { PortalRoad, type RoadTravel } from "./PortalRoad";
-import { WIZ } from "@/data/wizard";
 import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
-import { LineupTile, plainClick } from "./PortalStageLineup";
-import { stageKey, type PortalStageKey } from "./portalStageArt";
+import { plainClick } from "./PortalStageLineup";
+import { PlainTerms } from "./PlainTerms";
+import { stepActionLabel } from "./plainWords";
+import path from "./portal-path.module.css";
 
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
 
-/* Сцена этапа на доске маршрута (owner, 4 Nov: «тематические генерации, где
-   Веспи что-то делает»): Веспи выбирает программу, разворачивает диплом,
-   ставит штамп, запечатывает конверт, копит монеты, ждёт с паспортом,
-   стоит с ключами у двери — design/illustrations/scenes-2026-11-04.json. */
-const STAGE_SCENE: Record<PortalStageKey, string> = { start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys" };
-
-const universityWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "университет" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "университета" : "университетов";
-const documentWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "документ" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "документа" : "документов";
+/* Время шага в чипе показываем, только когда оно конкретное («15 мин»). */
+const concreteTime = (value?: string) => value && /\d/.test(value) ? value : "";
 
 type Props = {
   data: PortalData; selectedStageId?: string; shortlist: string[]; busy: boolean;
@@ -81,12 +76,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const universities = selectedUniversities(shortlist);
   const firstName = data.client.name?.trim().split(/\s+/)[0];
   const days = daysTo(position.task);
-  const stageIndex = data.roadmap.filter(stage => stage.tasks.length).findIndex(stage => stage.id === position.stage?.id);
-  const stageTotal = data.roadmap.filter(stage => stage.tasks.length).length;
   const savedStampCount = rows.filter(row => portalTaskDone(savedData, row)).length;
-  const introduction = position.task?.id === "profile";
-  const ahead = data.roadmap.filter(stage => !progress.stages.find(item => item.id === stage.id)?.open)
-    .flatMap(stage => stage.tasks.filter(task => portalTaskDone(data, task)));
 
   const isLockedTask = (task: PortalTask | null | undefined) => Boolean(task && locked?.(task));
   // The purchase form behind every locked action; no new blocks on the page.
@@ -99,108 +89,69 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     if (["profile", "shortlist", "path12", "chances"].includes(row.id)) { onOpenTask(row, "instruction"); return; }
     onComplete(row);
   }
+  /* Шаг на странице этапа (owner, 5 Nov: «максимально разжёвывая, маленькими
+     символами»): кружок-отметка, название, одна строка «зачем», объяснение
+     незнакомых слов, два факта значками (до какого числа, сколько времени)
+     и одна главная кнопка с понятной подписью. «Уже сделано» — тихая ссылка
+     для тех, кто сделал шаг сам. Без номеров «01–05». */
   const taskList = (list: PortalTask[]) => <div className={styles.taskList} aria-label="Задачи этапа">
         {list.map(row => {
           const done = portalTaskDone(data, row), savedDone = portalTaskDone(savedData, row);
-          const isCurrent = current?.id === row.id, open = stagePage || isCurrent, rowLocked = isLockedTask(row);
+          const isCurrent = current?.id === row.id, rowLocked = isLockedTask(row);
           const date = row.deadline && /^\d{4}-\d{2}-\d{2}$/.test(row.deadline) ? fmtDate(row.deadline) : "";
-          const time = row.time || TASK_META[row.id]?.min;
+          const time = concreteTime(row.time || TASK_META[row.id]?.min);
           const description = row.id === "translate" ? "Получателю может понадобиться перевод документа и его приложений." : row.id === "apostille" ? "Уточнить требования выбранного вуза и поставить штамп в ЦОНе" : taskShortExplainer(row);
           const href = data.docs[row.id] ? portalTaskHref(data, row) : `/portal?view=plan&task=${encodeURIComponent(row.id)}`;
           const openTask = (event: React.MouseEvent<HTMLAnchorElement>) => {
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault(); onOpenTask(row, DOC_TASKS[row.id] && !data.docs[row.id] ? "instruction" : undefined);
           };
-          return <article key={row.id} className={`${styles.task} ${stagePage ? styles.stageScreen : ""}`} data-expanded={open} data-completed={done} data-locked={rowLocked || undefined} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
+          return <article key={row.id} className={`${styles.task} ${styles.stageScreen}`} data-expanded="true" data-completed={done} data-locked={rowLocked || undefined} data-road-next={isCurrent || undefined} data-focus-task={isCurrent ? row.id : undefined}>
             <button type="button" className={styles.roundCheck} role="checkbox" aria-checked={savedDone} data-task-check={row.id} data-task-locked={rowLocked || undefined} data-done={savedDone} data-current={isCurrent} data-just-saved={savedDone && !done} disabled={busy} aria-label={`${savedDone ? "Выполнено" : rowLocked ? "Закрыт до оплаты" : "Отметить выполненным"}: ${taskTitle(row)}`} onClick={() => check(row)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" pathLength="100" /></svg>
             </button>
-            <span className={styles.stepIndex} aria-hidden="true">{String(ordered.findIndex(task => task.id === row.id) + 1).padStart(2, "0")}</span>
             <div className={styles.taskDetails} data-focus-row={row.id}>
               <div className={styles.taskHeading}>
-                <h3 className={styles.headingCopy}>{isCurrent ? <strong data-road-step-title>{taskTitle(row)}</strong> : <a href={href} onClick={openTask}><strong>{taskTitle(row)}</strong></a>}</h3>
-                {!open && <span className={styles.rowMeta}>{done ? <span className={styles.doneBadge}>Выполнено</span> : date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}<ChevronRight size={14} strokeWidth={1.5} aria-hidden="true" /></span>}
+                <h3 className={styles.headingCopy}><strong data-road-step-title={isCurrent || undefined}>{taskTitle(row)}</strong></h3>
               </div>
-              {open && <div className={styles.taskBody}>
-                {description && <p className={styles.explainer} data-step-short-explainer><img src="/zhol/icon-msg.webp" width="18" height="18" alt="" />{description}</p>}
+              <div className={styles.taskBody}>
+                {description && <p className={styles.explainer} data-step-short-explainer>{description}</p>}
+                <PlainTerms text={`${taskTitle(row)} ${description}`} />
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Ориентир: {date}</time>}
-                  {!done && time && <span>Срок: {time}</span>}
+                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><CalendarDays size={14} strokeWidth={1.8} aria-hidden="true" /><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
+                  {!done && time && <span><Clock size={14} strokeWidth={1.8} aria-hidden="true" />{time}</span>}
                 </div>
-              </div>}
+              </div>
             </div>
-            {open && <div className={styles.taskActions} data-locked={rowLocked || undefined}>
+            <div className={styles.taskActions} data-locked={rowLocked || undefined}>
               {rowLocked ? <button type="button" className={styles.primary} data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button> : <>
-                <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>Открыть разбор <span aria-hidden="true">→</span></a>
-                {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} onClick={() => check(row)}>Отметить готовым</button>}
+                <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>{stepActionLabel(data, row)} <span aria-hidden="true">→</span></a>
+                {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} aria-label={`Отметить шаг как сделанный: ${taskTitle(row)}`} onClick={() => check(row)}>Уже сделано</button>}
               </>}
-            </div>}
+            </div>
           </article>;
         })}
       </div>;
 
-  /* Текущий шаг — своя светлая плитка после доски маршрута (owner, 4 Nov:
-     «перебор информации на маленькое пространство — не бойся расширять»):
-     ярлык с этапом, карточка шага с действиями и ссылка на страницу этапа.
-     Внутри тёмной доски остаётся только маршрут. */
-  const stepTile = !stagePage && <section className={styles.stepTile} aria-labelledby="portal-step-now" data-step-tile>
-    <p className={styles.stepRubric} id="portal-step-now">Текущий шаг{position.stage ? ` · этап ${Math.max(0, stageIndex) + 1} из ${stageTotal || 1} · ${position.stage.title}` : ""}</p>
-    <div className={styles.overviewDetail} data-portal-overview>
-      {current ? taskList([current]) : <p className={styles.emptyStage}>Все доступные шаги этого этапа отмечены. Открой этап, чтобы вернуться к материалам.</p>}
-      {selected && <PortalPageLink className={styles.stageLink} href={`/portal?stage=${encodeURIComponent(selected.id)}`}>Открыть этап <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
-    </div>
-  </section>;
-
-  /* Плитка «Сейчас»: следующий шаг ведёт на свой разбор, как «Подробнее» у
-     Apple; «Открыть этап» — страница этапа. Отметить шаг можно только там. */
   const nowTask = position.task;
   const nowHref = nowTask ? data.docs[nowTask.id] ? portalTaskHref(data, nowTask) : `/portal?view=plan&task=${encodeURIComponent(nowTask.id)}` : "";
+  const nowWhy = nowTask ? nowTask.id === "profile" ? "10 коротких вопросов про учёбу, цель и бюджет. По ответам соберу твой личный маршрут." : taskShortExplainer(nowTask) : "";
+  const nowTime = nowTask ? concreteTime(nowTask.time || TASK_META[nowTask.id]?.min) : "";
   const docsTasks = data.roadmap.flatMap(stage => stage.tasks).filter(task => DOC_TASKS[task.id]);
   const checkedDocs = docsTasks.filter(task => data.docs?.[task.id]).length;
   const shortlistTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "shortlist");
-  /* Плитки кабинета после этапов: документы, университеты, напоминания —
-     той же сеткой, что и этапы (сколько плиток, столько и видно). */
-  const cabinetTiles = <>
-    <LineupTile art="stamp-pad" attrs={{ "data-cabinet-tile": "documents" }} title="Документы"
-      line={docsTasks.length ? `${checkedDocs} из ${docsTasks.length} ${documentWord(docsTasks.length)} с итогом проверки.` : "Документы появятся после анкеты."}
-      primary={{ label: "Открыть документы", href: "/portal?view=docs", attrs: { "data-cabinet-documents": "" }, onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); } }}
-      secondary={{ label: "Как проверяем", href: "/guides/stages/prepare" }} />
-    <LineupTile art="map" attrs={{ "data-cabinet-tile": "universities" }} title="Университеты"
-      line={universities.length ? universities.map(university => university.name).join(" · ") : "Выбор вуза — отдельный шаг маршрута."}
-      meta={universities.length ? `${universities.length} ${universityWord(universities.length)} в списке` : undefined}
-      primary={shortlistTask ? { label: universities.length ? "Изменить выбор" : "Выбрать вузы", href: `/portal?view=plan&task=${encodeURIComponent(shortlistTask.id)}`, attrs: { "data-cabinet-shortlist": "" }, onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(shortlistTask, "instruction"); } } : { label: "Открыть карту", href: "/universities" }}
-      secondary={shortlistTask ? { label: "Сравнить на карте", href: "/universities" } : undefined} />
-    <LineupTile art="alarm" attrs={{ "data-cabinet-tile": "reminders" }} title="Напоминания"
-      line={data.client.tgLinked && data.client.notify?.telegram !== false ? "Telegram подключён: напомню о сроках заранее." : "Telegram и почта напомнят о сроках заранее."}
-      primary={{ label: "Настроить", href: "/portal?view=settings#notifications", attrs: { "data-cabinet-reminders": "" }, onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); } }}
-      secondary={{ label: "Профиль", href: "/portal?view=settings", onClick: event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); } }} />
-  </>;
-
-  /* Доска этапа блоками, как у Apple: сцена этапа и три факта с подписями —
-     шаги этого этапа, шаги всего маршрута, ближайший ориентир. */
-  const stageTasks = position.stage?.tasks || [];
-  const stageDone = stageTasks.filter(task => portalTaskDone(data, task)).length;
-  const scene = STAGE_SCENE[stageKey(position.stage?.id)];
-  const boardAside = !stagePage && <>
-    <img className={styles.boardScene} src={`/illustrations/scenes/${scene}-1024.webp`} srcSet={`/illustrations/scenes/${scene}-640.webp 640w, /illustrations/scenes/${scene}-1024.webp 1024w`} sizes="(max-width: 1023px) 100vw, 400px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-board-scene={scene} />
-    <ul className={styles.boardStats} data-board-stats>
-      <li><strong>{stageDone}<small> из {stageTasks.length || 1}</small></strong><span>шагов этого этапа</span></li>
-      <li><strong>{progress.done}<small> из {progress.total || 1}</small></strong><span>шагов всего маршрута</span></li>
-      {nowTask?.deadline && <li><strong>{fmtDate(nowTask.deadline)}</strong><span>{days !== null && days > 0 ? `ориентир · через ${days} ${dayWord(days)}` : "ближайший ориентир"}</span></li>}
-    </ul>
-  </>;
+  const remindersOn = Boolean(data.client.tgLinked && data.client.notify?.telegram !== false);
+  const nextStage = data.roadmap.slice(data.roadmap.indexOf(selected) + 1).find(stage => stage.tasks.length);
 
   return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
-    {/* Обзор плитками по образцу главной apple.com (owner, 3 Nov): первая
-        плитка «Сейчас» — приветствие-лейбл, следующий шаг заголовком, одна
-        строка Веспи, две пилюли; внизу плитки — тосканский пейзаж (Higgsfield,
-        design/illustrations/landscapes-2026-11-03.json). Owner, 3 Nov: никакой
-        авиации — ни иллюминатора, ни манифеста рейса; и без фигуры Веспи на
-        пейзаже («смотрится топорно»). */}
+    {/* Обзор кабинета (owner, 5 Nov: «минимализм Apple… нормальный поток
+        информации… не думай как я, думай как 11-классник»). Три блока, один
+        поток: «Сейчас» — один шаг и одна кнопка; «Весь путь» — пять этапов
+        простыми словами со статусом; «Ещё в кабинете» — три строки. Ничего не
+        показано дважды, у каждого блока одна цель нажатия на строку. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
       <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={916} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
-      {/* Живой пейзаж (owner, 4 Nov): видеопетля той же дороги — плащ Веспи,
-          трава и кипарисы на ветру; картинка выше остаётся постером. */}
+      {/* Живой пейзаж (owner, 4 Nov): видеопетля той же дороги; картинка выше остаётся постером. */}
       <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany" label="tuscany" />
       <div className={styles.welcome} data-portal-welcome>
         <div className={styles.welcomeCopy}>
@@ -212,50 +163,54 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           </p>}
         </div>
       </div>
-      <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now>
-        <p className={styles.nowRubric}>Следующий шаг · этап {Math.max(0, stageIndex) + 1} из {stageTotal || 1} · {position.stage?.title || "Твой маршрут"}</p>
-        <h2 id="portal-now-heading">Сейчас</h2>
-        <p className={styles.nowTitle}>{nowTask ? taskTitle(nowTask) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
-        {nowTask && <blockquote className={styles.vespiQuote}>
-          <p>{introduction ? `Ответь на ${WIZ.length} вопросов по бюджету и целям — я уберу лишние шаги и открою полный маршрут.` : taskShortExplainer(nowTask)}</p>
-          <cite>Веспи Баурысаков · ИИ-помощник</cite>
-        </blockquote>}
-        {nowTask && days !== null && <div className={styles.nowDeadline} data-now-deadline>
-          {days > 0 ? <p className={styles.dayCount}><strong>{days}</strong><span>{dayWord(days)} до ориентира</span></p> : <p className={styles.nowLabel} data-overdue={days < 0}>{days < 0 ? `Ориентир прошёл ${Math.abs(days)} ${dayWord(Math.abs(days))} назад` : "Ориентир сегодня"}</p>}
-          <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time>
-        </div>}
-        {(nowTask || position.stage) && <div className={styles.nowActions}>
-          {nowTask && (isLockedTask(nowTask)
+      <aside className={styles.nowCard} aria-labelledby="portal-now-heading" data-portal-now data-portal-overview data-road-next>
+        <h2 id="portal-now-heading" className={styles.nowRubric}>{nowTask ? "Сейчас твой шаг" : "Твой маршрут"}</h2>
+        <p className={styles.nowTitle} data-road-step-title>{nowTask ? taskTitle(nowTask) : progress.total > 0 && progress.done === progress.total ? "Все шаги отмечены" : "Следующий шаг пока недоступен"}</p>
+        {nowWhy && <p className={styles.nowWhy} data-step-short-explainer>{nowWhy}</p>}
+        {nowTask && <PlainTerms text={`${taskTitle(nowTask)} ${nowWhy}`} className={styles.nowTerms} />}
+        {nowTask && (days !== null || nowTime) && <ul className={styles.nowFacts} data-now-deadline>
+          {days !== null && <li data-overdue={days < 0}><CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
+            <span>{days > 0 ? <>Лучше успеть до <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time> · осталось {days} {dayWord(days)}</> : days < 0 ? <>Рекомендуемая дата прошла {Math.abs(days)} {dayWord(Math.abs(days))} назад</> : <>Лучше успеть сегодня</>}</span></li>}
+          {nowTime && <li><Clock size={16} strokeWidth={1.8} aria-hidden="true" /><span>Займёт {nowTime}</span></li>}
+        </ul>}
+        {nowTask && <div className={styles.nowActions}>
+          {isLockedTask(nowTask)
             ? <button type="button" className={styles.nowPrimary} data-now-locked data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button>
-            : <a className={styles.nowPrimary} href={nowHref} data-now-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>Открыть разбор</a>)}
-          {position.stage && <a className={styles.nowSecondary} href={`/portal?stage=${encodeURIComponent(position.stage.id)}`} data-now-stage onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSelectStage(position.stage!.id); }}>Открыть этап</a>}
+            : <a className={styles.nowPrimary} href={nowHref} data-now-open data-road-open data-road-action data-portal-task={nowTask.id} data-current-task="true" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{stepActionLabel(data, nowTask)} <span aria-hidden="true">→</span></a>}
         </div>}
       </aside>
     </div>}
-    {/* Страница этапа (owner, 4 Nov, скрин: «информации слишком много… перед
-        глазами максимум один блок и один поинт; не так, что сначала карта, а
-        снизу другое»): только хлебные крошки и одна плитка с текущим шагом —
-        без полосы маршрута, без «Штампы 1/5» и ряда «01–05». */}
-    {stagePage && <div className={styles.welcome}><PortalBreadcrumbs stage={selected} /></div>}
-    {/* Тёмная плитка маршрута: «сделано заранее» в шапке, маршрут этапов с
-        раскрытым текущим шагом под его этапом. */}
     {!stagePage && <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} activeStageId={selected?.id} condensed={stagePage} navigationOnly embedded timeline={!stagePage} afterBoard={stepTile} onSelectStage={onSelectStage} onOpenTask={onOpenTask} travel={travel} onTravelStart={onTravelStart}
-        boardHead={!stagePage && ahead.length > 0 && <div className={styles.boardHead}>
-          <div className={styles.nowAhead} data-now-ahead>
-            <h3>Уже сделано заранее <span>{progress.ahead}</span></h3>
-            <ul>{ahead.map(task => <li key={task.id}><Check size={14} aria-hidden="true" /><span>{taskTitle(task)}</span></li>)}</ul>
-          </div>
-        </div>}
-        lineupExtras={!stagePage && cabinetTiles} boardAside={boardAside} />
+      <PortalRoad data={data} current={position.task} stage={position.stage} onSelectStage={onSelectStage} travel={travel} onTravelStart={onTravelStart} />
     </div>}
+    {!stagePage && <nav className={path.more} aria-labelledby="portal-more-heading" data-cabinet-more>
+      <h2 id="portal-more-heading">Ещё в кабинете</h2>
+      <ul className={path.moreList}>
+        <li><a href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
+          <span className={path.moreIcon}><FileText size={20} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className={path.text}><strong>Документы</strong><span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span></span>
+          <ChevronRight className={path.chevron} size={18} strokeWidth={1.6} aria-hidden="true" /></a></li>
+        <li><a href={shortlistTask ? `/portal?view=plan&task=${encodeURIComponent(shortlistTask.id)}` : "/universities"} data-cabinet-tile="universities" data-cabinet-shortlist={shortlistTask ? "" : undefined} onClick={event => { if (!shortlistTask || !plainClick(event)) return; event.preventDefault(); onOpenTask(shortlistTask, "instruction"); }}>
+          <span className={path.moreIcon}><MapPin size={20} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className={path.text}><strong>Университеты</strong><span>{universities.length ? universities.map(university => university.name).join(" · ") : "Пока не выбраны"}</span></span>
+          <ChevronRight className={path.chevron} size={18} strokeWidth={1.6} aria-hidden="true" /></a></li>
+        <li><a href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
+          <span className={path.moreIcon}><Bell size={20} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className={path.text}><strong>Напоминания о сроках</strong><span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span></span>
+          <ChevronRight className={path.chevron} size={18} strokeWidth={1.6} aria-hidden="true" /></a></li>
+      </ul>
+    </nav>}
+    {/* Страница этапа (owner, 4 Nov: «перед глазами максимум один блок и один
+        поинт»): хлебные крошки и одна плитка с одним шагом; внизу «Назад /
+        Далее», на последнем шаге — переход к следующему этапу. */}
+    {stagePage && <div className={styles.welcome}><PortalBreadcrumbs stage={selected} /></div>}
     {stagePage && <div className={styles.stageBody} data-portal-overview>
       <div className={styles.stageEyebrow}>
         <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
         {selectedTask && <span className={styles.stagePosition}>· шаг {selectedTaskIndex + 1} из {visibleTasks.length}</span>}
       </div>
-      {/* Точки шагов: одна строка — положение, сохранённые штампы (зелёные)
-          и переход к любому шагу этапа. Счёт штампов остаётся для читалок. */}
+      {/* Точки шагов: положение, сохранённые штампы (зелёные) и переход к
+          любому шагу этапа. Счёт штампов остаётся для читалок. */}
       {selectedTask && <nav className={styles.pips} data-stage-switcher aria-label="Шаги этапа">
         <span className={styles.srOnly} data-stage-stamps>Готово: <span data-stamp-count>{savedStampCount} / {ordered.length}</span></span>
         {visibleTasks.map((row, index) => {
@@ -268,12 +223,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       {taskList(selectedTask ? [selectedTask] : [])}
       {selectedTask && <nav className={styles.stepPagination} aria-label="Переход между шагами этапа">
         {selectedTaskIndex > 0 ? <PortalPageLink href={stageHref(selectedTaskIndex - 1)}>Назад</PortalPageLink> : <span />}
-        {selectedTaskIndex < visibleTasks.length - 1 ? <PortalPageLink href={stageHref(selectedTaskIndex + 1)}>Далее <ChevronRight size={16} aria-hidden="true" /></PortalPageLink> : <PortalPageLink href="/portal">К моему плану <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
+        {selectedTaskIndex < visibleTasks.length - 1 ? <PortalPageLink href={stageHref(selectedTaskIndex + 1)}>Далее <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>
+          : nextStage ? <PortalPageLink href={`/portal?stage=${encodeURIComponent(nextStage.id)}`} data-next-stage={nextStage.id}>Следующий этап: {nextStage.title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>
+          : <PortalPageLink href="/portal">К моему плану <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
       </nav>}
-      <nav className={styles.stagePagination} aria-label="Соседние этапы">
-        {data.roadmap[data.roadmap.indexOf(selected) - 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)-1].id)}`}>Предыдущий этап: {data.roadmap[data.roadmap.indexOf(selected)-1].title}</PortalPageLink>}
-        {data.roadmap[data.roadmap.indexOf(selected) + 1] && <PortalPageLink href={`/portal?stage=${encodeURIComponent(data.roadmap[data.roadmap.indexOf(selected)+1].id)}`}>Следующий этап: {data.roadmap[data.roadmap.indexOf(selected)+1].title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
-      </nav>
     </div>}
     {wall.modal}
   </section>;

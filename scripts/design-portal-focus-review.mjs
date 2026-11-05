@@ -74,11 +74,12 @@ try {
     await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
     const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
     await page.goto(origin+'/portal',{waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
-    assert.equal(await page.locator('[data-road-count]').innerText(),'0 из 2 шагов');
+    assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 0 из 2 шагов');
     assert.equal(await page.locator('[data-road-locked]').count(),5);
     assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
     assert.equal(await page.locator('[data-stamp-count]').count(),0,'Overview leaves detailed stamps on the stage page');
-    assert.match(await page.locator('[data-portal-now] blockquote').innerText(),/Ответь на 10 вопросов/,'Quote reflects the existing questionnaire');
+    assert.match(await page.locator('[data-portal-now] [data-step-short-explainer]').innerText(),/10 коротких вопросов/,'The line reflects the existing questionnaire');
+    assert.equal(await page.locator('[data-portal-now] a,[data-portal-now] button').count(),1,'The «Now» block has exactly one action (owner, 5 Nov: «минимализм, поменьше кнопок»)');
     assert.equal(await page.locator('[data-stage-souvenir]').count(),0,'Stage headers contain no decorative souvenir');
     assert.equal(await page.locator('[data-portal-focus]').evaluate(el=>[...el.querySelectorAll('*')].filter(node=>getComputedStyle(node).backgroundImage.includes('gradient')).length),0);
     // Inter Tight comes from next/font in layout.tsx (the family keeps its name here;
@@ -91,10 +92,12 @@ try {
     assert.equal(await page.evaluate(face=>document.fonts.check('500 16px '+face,'Привет, Қазақстан!'),cabinetFamily),true);
     assert(await page.evaluate(()=>[...document.fonts].some(font=>/Inter[ _]Tight/.test(font.family)&&font.status==='loaded')),'Inter Tight is loaded through next/font');
     assert.equal(await page.evaluate(()=>[...document.styleSheets].some(sheet=>{try{return [...sheet.cssRules].some(rule=>rule.type===CSSRule.FONT_FACE_RULE&&/zhol\/fonts/.test(rule.style.getPropertyValue('src')));}catch{return false;}})),false,'No second self-hosted Inter Tight (/zhol/fonts) remains');
-    const hit=await page.locator('[data-task-check=profile]').boundingBox();assert(hit.width>=44&&hit.height>=44);
+    const hit=await page.locator('[data-now-open]').boundingBox();assert(hit.width>=44&&hit.height>=44);
+    assert.equal(await page.locator('[data-task-check]').count(),0,'The overview marks nothing: completion lives on the step and stage pages');
     await noOverflow(page);await axe(page,`New local profile ${width}`);
     await page.screenshot({path:resolve(output,`guest-${width}.png`),fullPage:true,animations:'disabled'});
-    await page.locator('[data-task-ready=profile]').click();await page.locator('[data-plan-wizard]').waitFor();
+    assert.equal((await page.locator('[data-now-open]').innerText()).replace(/\s+/g,' '),'Ответить на вопросы →');
+    await page.locator('[data-now-open]').click();await page.locator('[data-plan-wizard]').waitFor();
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')||'{}').complete===true),false,'Completion opens the real questionnaire rather than faking saved answers');
     results.push({width,guest:true,lockedStages:5,realQuestionnaire:true});await context.close();
   }
@@ -103,30 +106,31 @@ try {
     assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Demo!');
     assert.match(await page.locator('[data-saved-universities]').innerText(),/Università di Padova/);
     assert.match(await page.locator('[data-saved-universities]').innerText(),/LUISS Guido Carli/);
-    assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
+    assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 4 из 26 шагов · заранее 2');
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.equal(await page.locator('[data-portal-welcome] a,[data-portal-welcome] button').count(),0,'Greeting metadata is plain text');
     assert.equal(await page.locator('[data-portal-hero] [data-vespi-scene], [data-portal-cabin]').count(),0,'No mascot figure on the hero landscape (owner, 3 Nov: «смотрится топорно»)');
     assert.equal(await page.locator('[data-porthole],[data-flight-manifest],[data-flight-plane]').count(),0,'No porthole, manifest or aircraft (owner, 3 Nov: no aviation theme)');
     assert.equal(await page.locator('[data-portal-hero] [data-portal-landscape]').count(),1,'The hero stands on an Italian landscape');
-    assert.match(await page.locator('[data-now-deadline]').innerText(),/98\s*дней до ориентира/);
-    assert.equal(await page.locator('[data-now-ahead] li').count(),2);
-    assert.equal(await page.locator('[data-portal-overview] [data-expanded=true]').count(),1,'Only the current task expands');
+    assert.match(await page.locator('[data-now-deadline]').innerText(),/Лучше успеть до .*осталось 98 дней/);
+    assert.match(await page.locator('[data-now-deadline]').innerText(),/Займёт ~3–7 дней/);
+    assert.equal(await page.locator('[data-now-deadline] svg').count(),2,'Each fact carries its small icon');
+    assert.equal(await page.locator('[data-now-ahead],[data-step-tile],[data-road-board],[data-stage-lineup],[data-flight-stop]').count(),0,'No dark board, duplicate step tile, lineup or flight line (owner, 5 Nov)');
     assert.equal(await page.locator('[data-road-stage]').count(),6);
-    assert.equal(await page.locator('[data-task-check]').count(),1,'Overview only shows the next task');
-    assert.equal(await page.locator('[data-task-check]:disabled').count(),0);
+    assert.equal(await page.locator('[data-task-check]').count(),0,'Overview shows the next task once, without a second completion control');
+    assert.equal(await page.locator('[data-portal-now] a,[data-portal-now] button').count(),1,'One action in «Now»');
+    assert.match(await page.locator('[data-portal-now] [data-road-step-title]').innerText(),/перевод/i,'«Now» names the current step');
     const editorial=await page.evaluate(()=>{
       const style=q=>getComputedStyle(document.querySelector(q));
-      const task=style('[data-focus-task=translate]');
-      return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-focus-task=translate] strong').fontFamily,
+      const tile=style('[data-portal-road]');
+      return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-portal-now] [data-road-step-title]').fontFamily,
         greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,grain:style('[data-portal-editorial]').backgroundImage,grainBlend:style('[data-portal-editorial]').backgroundBlendMode,
-        left:task.borderLeftWidth,leftColor:task.borderLeftColor,radius:task.borderRadius,background:task.backgroundColor,
-        tileRadius:style('[data-step-tile]').borderRadius,tileBackground:style('[data-step-tile]').backgroundColor};
+        tileRadius:tile.borderRadius,tileBackground:tile.backgroundColor,moreRadius:style('[data-cabinet-more]').borderRadius};
     });
     assert.match(editorial.greeting,/Inter[ _]Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter[ _]Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
-    assert.equal(await page.locator('[data-focus-row] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
+    assert.equal(await page.locator('[data-road-stage] strong').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).fontWeight==='600')),true);
     assert.equal(await page.locator('[data-road-fill],[data-road-scooter]').count(),0,'Only the single route rule remains');
     assert.equal(await page.getByRole('progressbar',{name:'Выполненные шаги маршрута'}).count(),1);
     assert.equal(await page.locator('[data-portal-overview] [data-higgsfield-visual],[data-portal-overview] [data-micro-steps],[data-portal-rubric]').count(),0,'Preview contains no illustration, microsteps or rubric');
@@ -135,56 +139,43 @@ try {
     assert.equal(editorial.paper,'rgb(247, 244, 234)');
     // Owner 2026-10-25: visible 6% grain as a background layer, not a fixed full-screen filter (repaints on scroll on cheap Androids).
     assert.match(editorial.grain,/^url\("data:image\/svg\+xml.*feTurbulence.*opacity='0\.06'/);assert.match(editorial.grainBlend,/^multiply/);
-    // Owner, 4 Nov: the step lies flat on its own 28px tile — no frame, no inner card.
-    assert.equal(editorial.left,'0px','The step card has no frame of its own');assert.equal(editorial.background,'rgba(0, 0, 0, 0)','The step card is flat on the tile');
-    assert.equal(editorial.tileRadius,width>640?'28px':'24px','The step tile shares the cabinet tile radius');assert.equal(editorial.tileBackground,'rgb(255, 253, 249)');
+    // Owner, 5 Nov: «Весь путь» and «Ещё в кабинете» are light 28px tiles like the hero.
+    assert.equal(editorial.tileRadius,width>640?'28px':'24px','The path tile shares the cabinet tile radius');assert.equal(editorial.tileBackground,'rgb(255, 253, 249)');
+    assert.equal(editorial.moreRadius,width>640?'28px':'24px');
     assert.equal(await page.locator('[data-portal-grain]').count(),0,'No fixed full-screen grain overlay');
-    assert(await page.locator('[data-task-ready=translate]').isVisible());
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
     const fill=await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')));
     assert(Math.abs(fill-4/26)<0.0001,'Visible rail excludes the two tasks completed ahead');
     assert.equal(await page.locator('[data-road-stage=arrival]').getAttribute('data-road-stage-state'),'future');
     assert.equal(await page.locator('[data-road-stage=arrival] [data-stage-ahead]').innerText(),'заранее');
     assert.equal(await page.locator('[data-focus-row=notary]').count(),0,'Future tasks live on their stage page');
-    // Owner 3 Nov (apple.com home): the overview is a stack of 28px tiles
-    // with 12px gaps — the «Now» hero, the dark route board whose line runs
-    // to the current stage, then a 2×N grid of stage tiles (one column on
-    // phones). Nothing scrolls sideways and nothing spills past its tile.
-    const points=await page.locator('[data-flight-stop]').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
-    assert(points.every((value,index)=>index===0 || value>points[index-1]),'Flight stops follow one vertical route');
-    const cards=await page.locator('[data-stage-lineup] [data-stage-card]').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom};}));
-    assert(cards.length>0);
-    // Two columns once the grid's container is 700px wide (1440, 1024 and 768 here), one column on phones.
-    const twoUp=await page.locator('[data-stage-lineup]').evaluate(el=>el.getBoundingClientRect().width>=700);
-    if(twoUp)assert(cards.every((card,index)=>index%2===0?Math.abs(card.x-cards[0].x)<1:(card.x>cards[index-1].right&&Math.abs(card.y-cards[index-1].y)<1)),'Stage tiles stand two per row');
-    else assert(cards.every((card,index)=>index===0||card.y>=cards[index-1].bottom),'Stage tiles stack in one column on narrow screens');
-    assert(cards[0].y>points.at(-1),'The lineup follows the route');
-    assert.equal(await page.locator('[data-stage-lineup] li').evaluateAll(nodes=>nodes.filter(el=>{const r=el.getBoundingClientRect();return [...el.querySelectorAll('h3,p,a,img')].some(n=>{const b=n.getBoundingClientRect();return b.left<r.left-1||b.right>r.right+1;});}).length),0,'Nothing in a tile spills past its edge');
-    const tones=await page.locator('[data-stage-lineup] li').evaluateAll(nodes=>nodes.map(el=>getComputedStyle(el).backgroundColor));
-    assert(tones.includes('rgb(42, 36, 32)')&&tones.includes('rgb(255, 253, 249)'),'Light and dark tiles alternate');
-    assert.equal(await page.locator('[data-stage-lineup] li').first().evaluate(el=>getComputedStyle(el).borderRadius),'28px');
-    assert.equal(await page.locator('[data-stage-lineup] [data-cabinet-tile]').count(),3,'Documents, universities and reminders share the grid');
-    assert(await page.locator('[aria-label="Этапы маршрута"]').isVisible());
+    // Owner 5 Nov («минимализм Apple, один поток»): every stage is one row of
+    // «Весь путь» — object, name, one plain line, status in words and its count;
+    // the whole row is one link, rows stack in one column and nothing spills.
+    const rows=await page.locator('[data-portal-road] [data-road-stage]').evaluateAll(nodes=>nodes.map(el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,height:r.height,right:r.right,bottom:r.bottom,controls:el.querySelectorAll('a,button').length};}));
+    assert(rows.every((row,index)=>index===0||row.y>=rows[index-1].bottom-1),'Stage rows stack in one column');
+    assert(rows.every(row=>row.height>=56&&row.controls===0),'Each row is one roomy link with nothing clickable inside');
+    assert.equal(await page.locator('[data-portal-road] [data-road-stage]').evaluateAll(nodes=>nodes.filter(el=>{const r=el.closest('li').getBoundingClientRect();return [...el.querySelectorAll('strong,span,img')].some(n=>{const b=n.getBoundingClientRect();return b.width&&(b.left<r.left-1||b.right>r.right+1);});}).length),0,'Nothing in a row spills past its edge');
+    assert.deepEqual(await page.locator('[data-road-stage] [data-state]').evaluateAll(nodes=>nodes.map(n=>n.querySelector('span').innerText.trim())),['Готово','Сейчас','Дальше','Дальше','Дальше','Начат заранее'],'Status words, sentence case');
+    assert.doesNotMatch(await road(page).innerText(),/Этап\s*0\d|\b0[1-9]\b|ЭТАП/,'No stage codes like «01»');
+    assert.equal(await page.locator('[data-cabinet-more] [data-cabinet-tile]').count(),3,'Documents, universities and reminders are three rows');
+    assert.equal(await page.locator('[data-cabinet-more] a').count(),3,'One link per row');
+    assert(await page.getByRole('region',{name:'Весь путь до учёбы в Италии'}).isVisible());
     assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no separate box');
 
 
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
     // Hero tile: greeting as the label, the next step as the headline, one
-    // line, two pills; the landscape fills the lower part of the tile with
-    // Vespi at its right edge. Then the dark route board (route only), then
-    // the current step in its own light tile (owner, 4 Nov: «перебор
-    // информации на маленькое пространство»), then the lineup.
-    const route=await page.locator('[data-road-board]').boundingBox(),work=await page.locator('[data-portal-overview]').boundingBox(),tile=await page.locator('[data-step-tile]').boundingBox();
-    assert(tile.y>=route.y+route.height-1&&tile.y-(route.y+route.height)<=13,'The current step stands in its own tile right after the route board');
-    assert(work.y>=tile.y&&work.y+work.height<=tile.y+tile.height+1,'The step and its stage link sit inside the step tile');
-    assert.equal(await page.locator('[data-road-board] [data-task-check]').count(),0,'The dark board carries only the route');
-    assert.equal(await page.locator('[data-road-board] [data-flight-stage-preview]').count(),0,'The current stage opens no preview until chosen');
+    // plain line, small icon facts, one button; the landscape fills the lower
+    // part of the tile. Then «Весь путь», then «Ещё в кабинете», 12px apart.
+    const route=await road(page).boundingBox(),more=await page.locator('[data-cabinet-more]').boundingBox();
     const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
     const now=await page.locator('[data-portal-now]').boundingBox();
     assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
-    assert(hero.y+hero.height-(now.y+now.height)>=100,'The landscape keeps real room under the step and its pills');
-    assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then the route board 12px below');
+    assert(hero.y+hero.height-(now.y+now.height)>=100,'The landscape keeps real room under the step and its button');
+    assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then «Весь путь» 12px below');
+    assert(route.y+route.height<=more.y+1&&more.y-(route.y+route.height)<=13,'Then «Ещё в кабинете» 12px below');
     const landscape=await page.locator('[data-portal-landscape]').boundingBox();
     // The frame may be enlarged on phones (4 Nov: the scooter is scaled out of the
     // right-aligned crop), so the photo covers the tile and the tile clips it.
@@ -192,31 +183,32 @@ try {
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape (clip, so the scroll-driven parallax measures against the window)');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),'28px');
-    assert.equal(await page.locator('[data-road-board]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(42, 36, 32)','The route board is the dark tile');
     assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');
+    assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
+    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),0,'No welcome figure on the overview (owner, 3 Nov)');
+    await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
+    await page.locator('[data-road-stage][aria-current=step]').click();
+    assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
+    assert.equal(await page.locator('[data-task-check]').count(),1);
+    // The current step's card on its stage page: one plain line, icon facts, one button and a quiet «Уже сделано».
+    const work=await page.locator('[data-portal-overview]').boundingBox();
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
-    assert(work.y+work.height-card.y-card.height<=64,'The opened step ends with its stage link, without an empty area');
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
     assert(ready.height>=44&&openButton.height>=44,'Actions keep 44px hit targets');
-    if(width>600){assert(card.height<=220,`Compact task height ${card.height} at ${width}px`);assert(openButton.x>=copy.x+copy.width+10);}
+    if(width>600){assert(card.height<=420,`Step card height ${card.height} at ${width}px`);assert(openButton.y>=copy.y+copy.height,'The button follows the step text');}
     else {assert(Math.abs(openButton.width-card.width)<2,'Mobile primary action spans the card');assert(Math.abs(ready.width-openButton.width)<1);}
     assert.equal(await page.locator('[data-portal-task=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(184, 58, 39)');
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
     assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),26);
     assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
-    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);
+    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta] svg').count(),2,'Date and duration carry small icons');assert.equal(await page.locator('[data-task-ready=translate]').innerText(),'Уже сделано');assert.equal((await page.locator('[data-portal-task=translate]').innerText()).replace(/\s+/g,' '),'Как подготовить →');
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
-    assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
-    assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),0,'No welcome figure on the overview (owner, 3 Nov)');
-    await noOverflow(page);await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true,animations:'disabled'});await axe(page,`Modular ${width}`);
-    await page.locator('[data-portal-overview]').getByRole('link',{name:'Открыть этап'}).click();
-    assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
-    assert.equal(await page.locator('[data-task-check]').count(),1);
+    assert.equal(await page.locator('[data-next-stage],[aria-label="Соседние этапы"]').count(),0,'Mid-stage pages link only to the neighbouring steps');
     assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),5);
     await page.locator('[data-stage-switcher] [data-story-pill="2"]').click();
     assert.equal(await page.locator('[data-portal-now]').count(),0,'Stage pages focus on their own tasks');
     assert.equal(await page.locator('[data-focus-row=notary]').count(),1);
-    await page.locator('[data-focus-row=notary] a').click();await page.locator('[data-step-detail=notary]').waitFor();
+    await page.locator('[data-portal-task=notary]').click();await page.locator('[data-step-detail=notary]').waitFor();
     assert.equal(await page.locator('[data-step-detail=notary] [data-higgsfield-visual]').count(),0,'Notary instructions have no unrelated folder illustration');
     assert.equal(await page.locator('[data-micro-steps]').count(),0,'Brief does not repeat the full instruction');
     await page.getByRole('navigation',{name:'Разделы задачи'}).getByRole('link',{name:'Как выполнить',exact:true}).click();
@@ -246,14 +238,14 @@ try {
       for(const part of ['svg','span']){
         await page.locator('header a.logo-link').locator(part).first().click();await page.waitForURL(origin+'/');
         await page.goBack({waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();
-        assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
+        assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 4 из 26 шагов · заранее 2');
       }
     }
     assert.equal(calls.length,0);results.push({width,compactHeight:card.height,checkboxes:5,instructionsOnlyInDetail:true,singleVisibleMascot:true,axeOtherRules:true,consistentFonts:true});await context.close();
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});
-    await page.locator('[data-portal-overview]').getByRole('link',{name:'Открыть этап'}).click();
+    await page.locator('[data-road-stage][aria-current=step]').click();
     await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
     await page.locator('[data-task-check=translate]').click();
     if(failTask){await page.locator('#portal-panel [role=alert]').waitFor();assert.equal(await page.locator('[data-task-check=translate]').getAttribute('aria-checked'),'false');assert.equal(await page.evaluate(()=>window.__notes),0);assert.equal((await portalRoadState(page)).done,'3');await page.getByRole('link',{name:'Сохранить отметку ещё раз',exact:true}).click();}

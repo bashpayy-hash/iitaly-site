@@ -73,17 +73,18 @@ const crumbs = page => page.getByRole('navigation',{name:'Путь по каби
 try {
  for(const width of [1440,390,320]) {
   const {page,context,data,calls,fileCalls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true});
-  assert.equal(await page.locator('[data-task-check]').count(),1);
-  assert.match(await page.locator('[data-road-count]').innerText(),/4 из 26 шагов\s*заранее: 2/);
+  // Owner, 5 Nov: the overview marks nothing; each stage is one row of «Весь путь».
+  assert.equal(await page.locator('[data-task-check]').count(),0);
+  assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 4 из 26 шагов · заранее 2');
   const initialCount = await page.locator('[data-road-count]').innerText();
-  // The line runs up to the current stage (owner 2 Nov); preview a passed one.
-  await page.locator('[data-road-stage=start]').click();
-  await page.locator('[data-flight-stage-preview=start]').waitFor();
-  assert.equal(await page.locator('[data-road-count]').innerText(), initialCount, 'Preview does not change completion');
-  assert.equal(calls.length, 0, 'Preview never writes a task');
-  await page.locator('[data-road-stage=docs]').click();
   await noOverflow(page);await axe(page,`Overview ${width}`);
   await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true});
+  // Opening a passed stage and coming back never changes completion.
+  await page.locator('[data-road-stage=start]').click();
+  await page.locator('[data-portal-page=stage][data-selected-stage=start]').waitFor();
+  await page.goBack();await page.locator('[data-portal-page=overview]').waitFor();
+  assert.equal(await page.locator('[data-road-count]').innerText(), initialCount, 'Browsing a stage does not change completion');
+  assert.equal(calls.length, 0, 'Browsing never writes a task');
   for(const stage of data.roadmap) {
    await portalStage(page,stage.id);
    await page.locator('[data-portal-page=stage]').waitFor();
@@ -142,11 +143,11 @@ try {
   await page.locator('[data-portal-page=stage]').waitFor();
   await crumbs(page).getByRole('link',{name:'Мой план',exact:true}).click();
   await page.locator('[data-portal-page=overview]').waitFor();
-  assert.equal(await page.locator('[data-task-check]').count(),1);assert.equal(calls.length,0);
+  assert.equal(await page.locator('[data-task-check]').count(),0,'The overview marks nothing');assert.equal(await page.locator('[data-now-open]').count(),1);assert.equal(calls.length,0);
   await portalStage(page,'docs');
   await portalDestination(page,'Обзор');
   assert.equal(new URL(page.url()).search,'','The main menu returns to the overview URL and view together');
-  assert.equal(await page.locator('[data-task-check]').count(),1);
+  assert.equal(await page.locator('[data-now-open]').count(),1);
   await page.goto(guideUrl,{waitUntil:'networkidle'});await page.locator('[data-task-page=guide]').waitFor();
   await portalDestination(page,'Обзор');
   assert.equal(new URL(page.url()).search,'','The main menu remains reachable on inner pages');

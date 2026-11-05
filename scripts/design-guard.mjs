@@ -253,6 +253,14 @@ const approvedGamifiedPortalPaths = new Set([
   // check) and what waits for payment. It never calls the backend, grants no
   // paid access and stores only a hashed file fingerprint on the device.
   'src/lib/access.ts',
+  // Owner 2026-11-05 («минимализм Apple… нормальный поток информации… думай
+  // как 11-классник, который ничего не знает об Италии»): the cabinet
+  // overview becomes three calm blocks. Plain one-line stage descriptions,
+  // short explanations of unfamiliar words and clearer button labels are a
+  // presentation layer over the same roadmap, progress, completion and wall.
+  'src/components/portal/plainWords.ts',
+  'src/components/portal/PlainTerms.tsx',
+  'src/components/portal/portal-path.module.css',
 ]);
 assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
