@@ -54,8 +54,9 @@
 .task[data-completed=true] .headingCopy { color:var(--quiet); }
 .explainer { display:flex; align-items:flex-start; gap:8px; margin:10px 0 0; padding:10px 12px; border-radius:8px; background:var(--beige); color:var(--ink); font-size:13px; line-height:1.45; }
 .explainer img { flex-shrink:0; margin-top:1px; }
-.metaBadges { display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:10px; color:var(--quiet); font-size:11px; line-height:1.5; font-variant-numeric:tabular-nums; }
-.metaBadges>:not(:first-child)::before { content:"·"; margin-right:12px; }
+.metaBadges { display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:12px; color:var(--quiet); font-size:14px; line-height:1.5; font-variant-numeric:tabular-nums; }
+.metaBadges > span { display:inline-flex; align-items:center; gap:6px; }
+.metaBadges svg { flex-shrink:0; color:var(--accent-text); }
 .canvas [data-overdue=true] { color:var(--accent-text); font-size:12px; }
 .taskActions { display:flex; flex-direction:column; flex-shrink:0; align-items:stretch; gap:0; margin-left:auto; }
 .primary,.markReady { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:12px 20px; border:0; font:600 13px/1.45 var(--font-sans); white-space:nowrap; text-decoration:none; cursor:pointer; }
@@ -69,8 +70,6 @@
 .roundCheck::before { content:""; position:absolute; inset:9px; border:1px solid var(--border); border-radius:50%; transition:background .2s; }
 .roundCheck[data-current=true]::before { border:2px solid var(--status-green); }
 .roundCheck svg { position:relative; width:26px; height:26px; padding:4px; opacity:0; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-.stepIndex { flex:0 0 26px; align-self:flex-start; margin-top:10px; color:var(--accent-text); font-size:18px; font-weight:600; line-height:24px; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
-.task[data-expanded=true] .stepIndex { font-size:30px; flex-basis:36px; line-height:36px; margin-top:3px; }
 .roundCheck path { stroke-dasharray:100; stroke-dashoffset:100; }
 .roundCheck[data-done=true]::before { background:var(--status-green); border-color:var(--status-green); }.roundCheck[data-done=true] svg { opacity:1; }.roundCheck[data-done=true] path { stroke-dashoffset:0; }
 .roundCheck[data-just-saved=true] { animation:checkPop .4s cubic-bezier(.34,1.56,.64,1); }.roundCheck[data-just-saved=true] path { animation:drawSuccess .25s .06s both; }
@@ -94,8 +93,8 @@ button.nowPrimary { border:0; cursor:pointer; }
  .routeCard { padding:8px 0 0; }.stageBody { padding:20px 16px 6px; border-radius:24px; }
  .pips { margin-top:12px; }
  .task { gap:6px; padding-inline:0; }.taskHeading { flex-wrap:wrap; gap:0; }.headingCopy { width:100%; font-size:14px; }.rowMeta { padding-bottom:2px; font-size:11px; }.rowMeta time { text-align:left; }.rowMeta svg { display:none; }
- .stepIndex { font-size:15px; flex-basis:24px; }.task[data-expanded=true] { display:grid; grid-template-columns:44px 32px minmax(0,1fr); gap:8px; padding:14px 12px; }.task[data-expanded=true] .stepIndex { margin-top:5px; font-size:26px; }
- .task[data-expanded=true] .taskDetails { display:contents; }.task[data-expanded=true] .taskHeading { align-self:center; }.taskBody { grid-column:1 / -1; }.metaBadges { gap:4px 10px; }.metaBadges>:not(:first-child)::before { margin-right:10px; }
+ .task[data-expanded=true] { display:grid; grid-template-columns:44px minmax(0,1fr); gap:8px; padding:14px 12px; }
+ .task[data-expanded=true] .taskDetails { display:contents; }.task[data-expanded=true] .taskHeading { align-self:center; }.taskBody { grid-column:1 / -1; }.metaBadges { gap:4px 14px; font-size:13px; }
  .taskActions { grid-column:1 / -1; width:100%; margin-top:4px; }.primary,.markReady { width:100%; min-height:44px; font-size:13px; }
 }
 .soundSetting { display:flex; align-items:center; gap:10px; min-height:48px; font-size:15px; margin-top:24px; }.soundSetting input { width:18px; height:18px; accent-color:var(--status-green); }
@@ -123,7 +122,6 @@ button.nowPrimary { border:0; cursor:pointer; }
 /* One task per stage screen; pills navigate saved tasks without completing them. */
 .stepPagination { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:8px; padding-top:16px; border-top:1px solid var(--border); }
 .task.stageScreen { display:grid; grid-template-columns:26px minmax(0,1fr); column-gap:22px; padding:28px 0; background:transparent; border:0; border-radius:0; box-shadow:none; animation:stagePoint .4s cubic-bezier(.16,1,.3,1) both; }
-.stageScreen .stepIndex { display:none; }
 .stageScreen .roundCheck { grid-column:1; grid-row:1; align-self:start; margin-top:8px; }
 .stageScreen .taskDetails { grid-column:2; grid-row:1; }
 .stageScreen .headingCopy { font-size:28px; line-height:1.15; letter-spacing:-.02em; }
@@ -147,15 +145,14 @@ button.nowPrimary { border:0; cursor:pointer; }
 .canvas[data-portal-page=stage] .routeCard{margin-bottom:24px;padding:20px 0;border:0;border-radius:0;background:transparent}
 
 
-/* Обзор кабинета по образцу главной apple.com (owner, 3 Nov: «разграничения
-   как на сайте эпл, почти один в один»): плитки со скруглением 28px и
-   зазором 12px, без теней, светлая и тёмная по очереди. Первая, во всю
-   ширину, — «Сейчас»: приветствие-лейбл, следующий шаг заголовком, одна
-   строка Веспи, две пилюли и иллюминатор внизу, как рендер товара. Вторая,
-   тёмная, — маршрут: манифест рейса, «сделано заранее» и Flight Plan с
-   раскрытым текущим шагом под его этапом. Ниже — сетка 2×N плиток этапов,
-   документов, вузов и напоминаний (portal-lineup.module.css). */
-.canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"hero" "route"; grid-template-rows:auto auto; gap:12px; max-width:1296px; margin:16px auto 0; }
+/* Обзор кабинета (owner, 5 Nov: «минимализм Apple… нормальный поток
+   информации… думай как 11-классник»): три плитки 28px с зазором 12px, без
+   теней. «Сейчас» — один шаг крупно, одна строка «зачем», значки-факты и
+   одна кнопка, внизу тосканский пейзаж. «Весь путь» и «Ещё в кабинете» —
+   сгруппированные списки (portal-path.module.css). Тёмная доска маршрута,
+   сцена этапа с цифрами, повтор текущего шага и плитки этапов с двумя
+   пилюлями сняты: всё это повторяло одно и то же. */
+.canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"hero" "route" "more"; grid-template-rows:auto auto auto; gap:12px; max-width:1296px; margin:16px auto 0; }
 /* Плитка «Сейчас»: текст на кремовом верху, ниже — тосканский пейзаж, в
    который плитка переходит без границы (owner, 3 Nov: пейзажи Италии на фон,
    никакой авиации; фигура Веспи на пейзаже убрана — «смотрится топорно»). */
@@ -183,88 +180,25 @@ button.nowPrimary { border:0; cursor:pointer; }
 .canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }
 
 .nowCard { display:grid; justify-items:center; gap:0; width:min(100%,720px); margin-top:28px; color:var(--ink); }
-.nowRubric { margin:0 0 12px; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); }
-.nowCard h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .nowTitle { margin:0; color:var(--ink); font:600 clamp(32px,3.4vw,48px)/1.05 var(--font-sans); letter-spacing:-.03em; text-wrap:balance; overflow-wrap:anywhere; }
-.vespiQuote { margin:16px 0 0; padding:0; border:0; }
-.vespiQuote p { max-width:48ch; margin:0; color:var(--ink); font-size:17px; line-height:1.45; letter-spacing:-.01em; text-wrap:pretty; }
-.vespiQuote cite { display:block; margin-top:8px; color:var(--quiet); font:400 11px/1.5 var(--font-sans); font-style:normal; letter-spacing:.06em; text-transform:uppercase; }
-.nowDeadline { display:flex; align-items:baseline; justify-content:center; flex-wrap:wrap; gap:4px 12px; margin-top:14px; }
-.nowLabel { margin:0; color:var(--quiet); font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
-.dayCount { display:flex; align-items:baseline; gap:6px; margin:0; }
-.dayCount strong { color:var(--accent-text); font-size:22px; font-weight:600; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
-.dayCount span,.nowDeadline time { color:var(--quiet); font-size:13px; line-height:1.5; }
-.nowDeadline time::before { content:"·"; margin-right:10px; }
-.nowCard [data-overdue=true] { color:var(--accent-text); }
+.nowRubric { margin:0 0 10px; color:var(--accent-text); font:600 15px/1.4 var(--font-sans); letter-spacing:-.01em; }
+.nowWhy { max-width:46ch; margin:14px 0 0; color:var(--ink); font-size:18px; line-height:1.45; letter-spacing:-.01em; text-wrap:pretty; }
+.nowTerms { justify-self:center; max-width:52ch; }
+.nowFacts { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 20px; margin:16px 0 0; padding:0; list-style:none; color:var(--quiet); font-size:14px; line-height:1.5; font-variant-numeric:tabular-nums; }
+.nowFacts li { display:inline-flex; align-items:center; gap:6px; }
+.nowFacts svg { flex-shrink:0; color:var(--accent-text); }
+.nowFacts [data-overdue=true] { color:var(--accent-text); }
 .nowActions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:24px; }
-.nowPrimary,.nowSecondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 22px; border-radius:999px; font-size:14px; font-weight:500; line-height:1.2; text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1),color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
-.nowPrimary { background:var(--accent); color:var(--on-dark); }
+.nowPrimary { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:12px 28px; border-radius:999px; font-size:16px; font-weight:600; line-height:1.2; text-decoration:none; background:var(--accent); color:var(--on-dark); transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
 .nowPrimary:hover { background:var(--accent-text); }
-.nowSecondary { border:1px solid var(--accent); color:var(--accent-text); }
-.nowSecondary:hover { background:var(--accent-text); color:var(--on-dark); }
-.nowPrimary:active,.nowSecondary:active { transform:scale(.97); }
+.nowPrimary:active { transform:scale(.97); }
 
-/* Тёмная плитка маршрута: «заранее» в шапке, ниже одна колонка маршрута
-   (760px) по центру. Цвета маршрута — светлые на какао, акцент — светлая
-   терракота. */
 .canvas[data-portal-page=overview] .routeCard { grid-area:route; width:auto; margin:0; padding:0; }
-.routeCard :global([data-road-board]) { --flight-surface:#2A2420; display:grid; justify-content:center; grid-template-columns:minmax(0,760px); padding:44px 40px 48px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
-/* Доска блоками (owner, 4 Nov): маршрут слева, справа сцена этапа с Веспи и
-   три факта с подписями, как колонка цифр у Apple; на узких экранах сцена
-   встаёт над маршрутом. */
-.routeCard :global([data-road-board][data-board-aside]) { grid-template-columns:minmax(0,1fr) minmax(280px,400px); justify-content:stretch; align-items:start; column-gap:48px; }
-.routeCard :global([data-road-board][data-board-aside] > [data-board-aside]) { order:2; }
-/* The stat blocks already give the route figure, so the summary row keeps
-   only the stage marker and the «Шаг сохранён» note (owner, 4 Nov: «всё друг
-   на друга наслаивается» — the same «0 из 2» stood four times in a column). */
-.routeCard :global([data-road-board][data-board-aside] [data-road-count]) { display:none; }
-.routeCard :global([data-road-board][data-board-aside] [data-road-feedback]) { position:static; }
-.boardAside { display:grid; gap:22px; align-content:start; min-width:0; }
-.boardScene { display:block; width:100%; height:auto; border-radius:20px; }
-.boardStats { display:grid; gap:12px; margin:0; padding:0; list-style:none; }
-.boardStats li { display:grid; gap:3px; padding-top:12px; border-top:1px solid #4A4038; }
-.boardStats strong { font-size:28px; font-weight:600; line-height:1.1; letter-spacing:-.025em; color:#FAF6EE; font-variant-numeric:tabular-nums; }
-.boardStats strong small { font-size:15px; font-weight:400; color:#CFC6BA; letter-spacing:0; }
-.boardStats span { font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:#B8AE9F; }
-.boardMain { min-width:0; }
-.routeCard :global([data-road-board] [data-flight-plan]) { --flight-ink:#FAF6EE; --flight-quiet:#CFC6BA; --flight-line:#6E6054; --flight-accent:#F29A89; --flight-surface:#2A2420; }
-.boardHead { display:flex; justify-content:flex-end; align-items:flex-start; flex-wrap:wrap; gap:16px 32px; margin-bottom:24px; }
-.nowAhead { max-width:320px; }
-.nowAhead h3 { margin:0 0 6px; color:#B8AE9F; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; }
-.nowAhead h3 span { margin-left:6px; color:#F29A89; }
-.nowAhead ul { display:grid; gap:4px; margin:0; padding:0; list-style:none; }
-.nowAhead li { display:flex; align-items:flex-start; gap:6px; color:#CFC6BA; font-size:12px; line-height:1.45; }
-.nowAhead li svg { flex-shrink:0; margin-top:2px; color:#8FC7A6; }
-.overviewDetail { display:grid; gap:12px; min-width:0; }
-.overviewDetail .stageLink { justify-self:start; color:var(--ink); }
-/* Текущий шаг — своя светлая плитка между доской и сеткой этапов (owner,
-   4 Nov: «перебор информации на маленькое пространство — не бойся
-   расширять»). Карточка шага лежит на плитке плоско: ярлык с этапом, номер
-   и название, пояснение, даты; действия справа; ссылка на этап внизу.
-   В тёмной доске остаётся только маршрут. */
-.stepTile { margin-top:12px; padding:36px 40px 32px; border-radius:28px; background:#FFFDF9; color:var(--ink); }
-.stepRubric { margin:0 0 20px; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
-.stepTile .emptyStage { margin:0; color:var(--quiet); }
-.canvas[data-portal-page=overview] .task[data-expanded=true] { margin:0; padding:0; border:0; background:transparent; box-shadow:none; color:var(--ink); gap:16px; }
-.canvas[data-portal-page=overview] .task[data-expanded=true] .headingCopy { font-size:22px; line-height:1.25; }
-.canvas[data-portal-page=overview] .task[data-expanded=true] .stepIndex { flex-basis:44px; margin-top:0; font-size:34px; line-height:40px; }
-.canvas[data-portal-page=overview] .task[data-expanded=true] .explainer { font-size:15px; }
-.canvas[data-portal-page=overview] .task[data-expanded=true] .taskActions { gap:4px; align-self:center; }
+.canvas[data-portal-page=overview] [data-cabinet-more] { grid-area:more; }
 
 @media(max-width:1100px) {
  .canvas[data-portal-page=overview] { margin-top:12px; }
  .hero { min-height:700px; padding:40px 24px 300px; }
- .routeCard :global([data-road-board]) { padding:32px 24px 36px; }
- .routeCard :global([data-road-board][data-board-aside]) { grid-template-columns:minmax(0,1fr); row-gap:28px; }
- .routeCard :global([data-road-board][data-board-aside] > [data-board-aside]) { order:0; }
- /* Stacked board: the current stop of the route names the stage right under
-    the figures, so the big stage marker would say it a third time. The
-    «ahead» list sits on the left like everything else here. */
- .routeCard :global([data-road-board][data-board-aside] [data-route-marker]) { display:none; }
- .routeCard :global([data-road-board][data-board-aside] [data-route-summary]) { padding-bottom:0; }
- .boardHead { justify-content:flex-start; }
- .boardStats { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
- .boardStats strong { font-size:24px; }
 }
 @media(max-width:640px) {
  /* A phone tile has no room under its text for the scooter: show the road
@@ -274,25 +208,14 @@ button.nowPrimary { border:0; cursor:pointer; }
     the frame is enlarged from its right edge until Vespi is out of it. */
  .hero { min-height:600px; padding:36px 20px 220px; }
  .heroArt { object-position:100% 62%; transform:scale(1.45); transform-origin:100% 62%; }
- .boardStats { grid-template-columns:minmax(0,1fr); gap:0; }
- .boardStats li { grid-template-columns:minmax(0,1fr) auto; align-items:baseline; gap:12px; padding:10px 0; }
- .boardStats li span { text-align:right; }
- .boardStats strong { font-size:22px; }
  .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
  .canvas[data-portal-page=overview] .welcomeMeta { font-size:12px; }
  .nowCard { margin-top:22px; }
  .nowTitle { font-size:30px; }
- .vespiQuote p { font-size:16px; }
+ .nowWhy { font-size:16px; }
  .nowActions { width:100%; }
- .nowPrimary,.nowSecondary { flex:1 1 auto; }
- .routeCard :global([data-road-board]) { padding:28px 16px 32px; border-radius:24px; }
- .boardHead { margin-bottom:20px; }
- .stepTile { padding:26px 18px 22px; border-radius:24px; }
- .stepRubric { margin-bottom:16px; }
- .canvas[data-portal-page=overview] .task[data-expanded=true] { padding:0; gap:8px; }
- .canvas[data-portal-page=overview] .task[data-expanded=true] .headingCopy { font-size:19px; }
- .canvas[data-portal-page=overview] .task[data-expanded=true] .stepIndex { font-size:28px; line-height:36px; flex-basis:36px; }
+ .nowPrimary { flex:1 1 auto; }
 }
-@media(prefers-reduced-motion:reduce) { .nowPrimary,.nowSecondary { transition:none; } .nowPrimary:active,.nowSecondary:active { transform:none; } }
-@media(forced-colors:active) { .hero,.routeCard :global([data-road-board]) { border:1px solid CanvasText; } }
+@media(prefers-reduced-motion:reduce) { .nowPrimary { transition:none; } .nowPrimary:active { transform:none; } }
+@media(forced-colors:active) { .hero { border:1px solid CanvasText; } }
 @media(max-width:480px) { .heroArt { transform:scale(1.1); } }

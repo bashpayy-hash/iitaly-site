@@ -7,6 +7,8 @@
 .page[data-task-page] { width:100%; max-width:880px; margin-inline:auto; }
 .heading { max-width:36ch; margin:0 0 14px; color:var(--ink-strong); font:600 32px/1.2 var(--font-sans); letter-spacing:-.02em; overflow-wrap:anywhere; }
 .meta { display:flex; flex-wrap:wrap; gap:6px 16px; margin:0; color:var(--quiet); font-size:13px; line-height:1.5; font-variant-numeric:tabular-nums; }
+.meta > span { display:inline-flex; align-items:center; gap:6px; }
+.meta svg { flex-shrink:0; color:var(--accent-text); }
 .sections { display:flex; flex-wrap:wrap; gap:0 24px; margin:22px 0 28px; border-bottom:1px solid var(--border); }
 .sections a { display:flex; align-items:center; min-height:48px; padding:10px 0; color:var(--quiet); border-bottom:3px solid transparent; font-size:14px; font-weight:500; text-decoration:none; }
 .sections a[aria-current=page] { color:var(--accent-text); border-color:var(--accent); font-weight:600; }

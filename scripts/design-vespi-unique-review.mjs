@@ -121,6 +121,8 @@ try {
     {
       const { page, context } = await portal(viewport, 'manual');
       assert.equal(await page.locator('[data-portal-completion][data-visible=true]').count(), 0, 'No reward on login');
+      // Owner, 5 Nov: the overview marks nothing; the step is marked on its stage page.
+      await page.locator('[data-road-stage][aria-current=step]').click();await page.locator('[data-portal-page=stage]').waitFor();
       await page.locator('[data-task-ready="manual-task"]').click();
       const reward = page.locator('[data-portal-completion][data-visible=true]');
       await reward.waitFor();
@@ -141,6 +143,8 @@ try {
     // The last step of a stage completes it: celebrate pose, every stamp collected.
     {
       const { page, context } = await portal(viewport, 'last');
+      // Owner, 5 Nov: the overview marks nothing; the step is marked on its stage page.
+      await page.locator('[data-road-stage][aria-current=step]').click();await page.locator('[data-portal-page=stage]').waitFor();
       await page.locator('[data-task-ready="manual-task"]').click();
       const reward = page.locator('[data-portal-completion][data-visible=true]');
       await reward.waitFor();

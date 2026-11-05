@@ -81,17 +81,18 @@ try {
     const total=data.roadmap.flatMap(stage=>stage.tasks).length;
     assert.equal(await road(page).getAttribute('data-road-done'),'3');
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
-    assert.match(await road(page).locator('[data-road-count]').innerText(),/заранее: 2/);
-    assert.equal(await road(page).locator('[data-road-stage="arrival"] svg').count(),0,'Future stages use an ordinal, never a lock');
+    assert.match(await road(page).locator('[data-road-count]').innerText(),/заранее 2/);
+    assert.equal(await road(page).locator('[data-road-stage="arrival"] svg[class*=lock]').count(),0,'Future stages are named, never locked with an icon');
     const progressbar=road(page).getByRole('progressbar');
     assert.equal(await progressbar.getAttribute('aria-valuenow'),'3');assert.equal(await progressbar.getAttribute('aria-valuemax'),String(total));
-    const segments=await road(page).locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(el=>Number(el.style.getPropertyValue('--stage-fill'))));
-    assert.deepEqual(segments,[1,0,0,0,0,0],'Only eligible saved stage work fills the route');
+    // Owner, 5 Nov: stage rows say their state in words; work saved ahead of time is marked, never counted as the current stage.
+    assert.equal(await road(page).locator('[data-road-stage] [data-state=current]').count(),1,'Exactly one stage is «Сейчас»');
+    assert(await road(page).locator('[data-road-stage] [data-ahead]').count()>=1,'Work saved ahead is marked «Начат заранее»');
     assert(Math.abs(await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')))-3/total)<0.0001,'The visible rail uses ordered progress, not all checked tasks');
     assert.match(await page.locator('[data-portal-welcome] [data-saved-universities]').innerText(),/Bocconi/);
     assert.doesNotMatch(await page.locator('main').innerText(),/Выбраны в этом браузере|До подачи в/);
     const instruction=page.locator('[data-road-open]');
-    assert.equal((await instruction.innerText()).replace(/\s+/g,' '),'Открыть разбор →');
+    assert.equal((await instruction.innerText()).replace(/\s+/g,' '),data.docs?.apostille?'Открыть итог проверки →':'Как подготовить →','The button says what happens next');
     assert.match(await instruction.getAttribute('href'),/view=plan&task=apostille/);
     assert.equal(await page.locator('[data-road-upload]').count(),0,'Upload lives inside the breakdown, keeping one action in the card');
     await capture(page,`overview-${width}`);
@@ -133,7 +134,7 @@ try {
     data.docs.insurance={verdict:'warn',summary:'Синтетическая предварительная проверка будущего этапа.'};
     await page.goto(origin+'/portal',{waitUntil:'networkidle'});await page.locator('[data-portal-overview]').waitFor();
     assert.equal(await road(page).getAttribute('data-road-done'),'4','Ready document counts even without a done flag');
-    assert.match(await road(page).locator('[data-road-stage=docs]').innerText(),/1 \/ 5 шагов/);
+    assert.match(await road(page).locator('[data-road-stage=docs]').innerText(),/1 из 5/);
     await go(page,'Документы');await page.locator('[data-document-list]').waitFor();
     assert.equal(await page.getByRole('heading',{name:'Твои документы',exact:true}).count(),1);
     assert.match(await page.locator('[data-document=apostille]').innerText(),/Готово/);

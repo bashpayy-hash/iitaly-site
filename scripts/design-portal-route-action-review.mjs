@@ -77,31 +77,26 @@ try {
     assert.equal(await road(page).getAttribute('data-road-done'),'6');
     assert.equal(await road(page).getAttribute('data-road-total'),'26');
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
-    assert.equal(await page.locator('[data-route-stage-number]').innerText(),'02');
     assert.doesNotMatch(await road(page).innerText(),/Будущие этапы пока/);
-    const design=await road(page).evaluate(el=>{
-      const marker=el.querySelector('[data-route-stage-number]');
-      const style=getComputedStyle(marker);
-      return {size:style.fontSize,weight:style.fontWeight,accent:style.color,ratio:Number(el.style.getPropertyValue('--route-fill'))};
-    });
-    // Owner 3 Nov: the route sits on the dark board, so its stage number is
-    // the light terracotta (#F29A89) instead of the deep one on paper.
-    assert.deepEqual({...design,ratio:0},{size:'40px',weight:'600',accent:'rgb(242, 154, 137)',ratio:0});
-    assert(Math.abs(design.ratio-6/26)<.00001,'Ahead tasks do not enter ordered progress');
-    assert.equal(await page.locator('[data-portal-now] strong').first().evaluate(el=>getComputedStyle(el).color),'rgb(163, 52, 33)');
-    const nav=page.getByRole('navigation',{name:'Этапы маршрута',exact:true});
-    // Owner 2 Nov (apple.com lineup): the line runs up to the current stage;
-    // the stages ahead stand in a row of cards that link to their pages.
-    assert(await nav.isVisible());assert.equal(await nav.locator('[data-flight-stop]').count(),2,'The line runs up to the current stage');
-    const lineup=page.locator('[data-stage-lineup]');
-    assert.deepEqual(await lineup.locator('[data-stage-card]').evaluateAll(nodes=>nodes.map(n=>n.dataset.stageCard)),['apply','dsu','visa','arrival'],'Stages ahead stand in the lineup, in route order');
-    assert.equal(await lineup.locator('[data-road-stage=arrival]').getAttribute('href'),'/portal?stage=arrival');
+    // Owner, 5 Nov («без 0.1, 0.2»): no stage codes; progress is one plain sentence and a thin bar.
+    assert.doesNotMatch(await road(page).innerText(),/\b0[1-9]\b|ЭТАП/);
+    assert.equal(await page.locator('[data-route-stage-number]').count(),0);
+    const ratio=await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')));
+    assert(Math.abs(ratio-6/26)<.00001,'Ahead tasks do not enter ordered progress');
+    assert.equal(await page.locator('[data-portal-now] h2').evaluate(el=>getComputedStyle(el).color),'rgb(163, 52, 33)');
+    assert.equal(await page.locator('[data-portal-now] h2').innerText(),'Сейчас твой шаг');
+    const nav=page.getByRole('region',{name:'Весь путь до учёбы в Италии',exact:true});
+    // Every stage is one row of «Весь путь», in route order, linking to its page.
+    assert(await nav.isVisible());
+    assert.deepEqual(await nav.locator('[data-road-stage]').evaluateAll(nodes=>nodes.map(n=>n.dataset.roadStage)),['start','docs','apply','dsu','visa','arrival'],'All stages, in route order');
+    assert.equal(await nav.locator('[data-road-stage=arrival]').getAttribute('href'),'/portal?stage=arrival');
+    assert.equal(await nav.locator('[data-road-stage][aria-current=step]').getAttribute('data-road-stage'),'docs');
     assert.equal(await nav.locator('[data-flight-plane]').count(),0,'No aircraft on the route (owner, 3 Nov)');
-    assert.equal(await nav.locator('[data-flight-fill]').count(),1,'The solid part of the line shows real progress');
+    assert.equal(await nav.locator('[data-flight-fill]').count(),1,'The solid part of the bar shows real progress');
     await nav.locator('[data-road-stage=start]').click();
-    await page.locator('[data-flight-stage-preview=start]').waitFor();
-    assert.equal(await road(page).getAttribute('data-road-done'),'6','Previewing a stage never completes a task');
-    await nav.locator('[data-road-stage=docs]').click();
+    await page.locator('[data-portal-page=stage][data-selected-stage=start]').waitFor();
+    await page.goBack();await page.locator('[data-portal-page=overview]').waitFor();
+    assert.equal(await road(page).getAttribute('data-road-done'),'6','Opening a stage never completes a task');
     await noOverflow(page);
     if([1440,390].includes(width)){await axe(page,'Route '+width);await capture(page,'route-'+width);}
     await page.locator('[data-portal-task=cimea]').click();

@@ -58,7 +58,9 @@ try {
     }
     await visit('/portal?view=plan');
     await page.locator('[data-portal-task=profile]').waitFor();
-    assert.equal(await page.locator('[data-task-check]').count(),1,'Overview presents the questionnaire first');
+    // Owner, 5 Nov: the overview names one step in «Сейчас» with one button; marking lives on the step page.
+    assert.equal(await page.locator('[data-portal-now] [data-portal-task=profile]').count(),1,'Overview presents the questionnaire first');
+    assert.equal(await page.locator('[data-task-check]').count(),0,'The overview carries no completion control');
     assert((await page.locator('main details summary').allTextContents()).every(text=>!/0\s*из\s*0/.test(text)),'Unconfigured stages are never labelled completed');
     for(const path of ['/plan','/guides','/universities','/portal']) {
       await visit(path); if(path==='/portal')await page.locator('[data-local-workspace]').waitFor();
@@ -139,7 +141,7 @@ try {
     assert.equal(await page.locator('[data-now-locked]').count(),1,'The step after the free one is locked');
     assert.equal(await page.locator('[data-portal-overview] [data-wall-buy][data-wall-place="portal-task"]').count(),1,'The current-step tile carries the wall');
     assert.equal(await page.locator('[data-task-ready]').count(),0,'A locked step cannot be self-reported');
-    await page.locator('[data-now-stage]').click();
+    await page.locator('[data-road-stage][aria-current=step]').click();
     await page.locator('[data-portal-page=stage]').waitFor();
     assert.equal(await page.locator('[data-portal-page=stage] [data-wall-buy]').count(),1,'The stage page shows the wall for the locked step');
     assert.equal(await page.locator('[data-task-check][data-task-locked=true]').count(),1,'The locked step keeps its row and check mark, dashed');
@@ -159,9 +161,11 @@ try {
     await capture('portal-future');
     await portalDestination(page, 'Документы');
     await capture('portal-documents');await audit('guest document vault');
-    await page.getByRole('radio',{name:'Для DSU',exact:true}).check();
-    assert.equal(await page.locator('[data-document="familyDocs"]').count(),1);
-    assert.equal(await page.locator('[data-document="apostille"]').count(),0);
+    // Owner, 5 Nov: five cards need no filter pills; each says what it is for and where to get it.
+    assert.equal(await page.locator('input[name="local-document-purpose"]').count(),0,'No purpose filters');
+    assert.match(await page.locator('[data-document="familyDocs"]').innerText(),/Нужен для стипендии DSU/);
+    assert.match(await page.locator('[data-document="apostille"]').innerText(),/Нужен для вуза[\s\S]*Где взять: eGov/);
+    assert.doesNotMatch(await page.locator('[data-document="apostille"]').innerText(),/Что сделать:/,'An untouched card repeats no generic instruction');
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
     await capture('portal-settings');await audit('guest settings');
     // One free document check per device on /plan: the same file may be

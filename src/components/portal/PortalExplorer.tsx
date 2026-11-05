@@ -777,7 +777,7 @@ export function PortalExplorer() {
     <MarketingHeader variant="portal" actions={
       <div className={navigation.headerLinks}>
         <a href="#iitaly-chat" title={VESPI_NAME} data-portal-assistant data-step-id={assistantTask?.id || ""} onClick={event => { event.preventDefault(); openAssistant(); }} className={navigation.settingsButton}><VespiOutline /><span>Помощник</span></a>
-        <a href="/portal?view=docs" aria-label="Документы" title="Документы" data-portal-documents className={navigation.settingsButton} onClick={event => { if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();changeSection("docs"); }}><FileText size={18} strokeWidth={1.5} aria-hidden="true" /></a>
+        <a href="/portal?view=docs" aria-label="Документы" title="Документы" data-portal-documents className={navigation.settingsButton + " " + navigation.settingsLink} onClick={event => { if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();changeSection("docs"); }}><FileText size={18} strokeWidth={1.5} aria-hidden="true" /><span>Документы</span></a>
         <a href="/portal?view=settings" aria-label="Настройки" onClick={event => {
           if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
           event.preventDefault(); openSettings();

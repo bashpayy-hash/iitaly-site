@@ -102,15 +102,14 @@ async function railContract(page,data,compact){
   assert.equal(Number(await progress.getAttribute('aria-valuenow')),done,'Accessible progress counts completed real tasks');
   assert.equal(Number(await progress.getAttribute('aria-valuemax')),tasks.length||1);
   assert.equal(await progress.getAttribute('aria-valuetext'),`${done} из ${tasks.length} шагов`);
-  // Owner, 4 Nov: the board aside carries the stage's Vespi scene; the route itself stays data.
-  assert.equal(await road(page).locator('img:not([data-portal-overview] img):not([data-stage-lineup] img):not([data-board-aside] img)').count(),0,'Progress is data, not a repeated mascot (the opened step keeps its message icon; lineup cards show stage objects, never Vespi)');
-  assert.equal(await road(page).locator('[data-stage-lineup] img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
+  // Owner, 5 Nov: each row of «Весь путь» carries a small stage object; never a mascot.
+  assert.equal(await road(page).locator('img:not([data-stage-object])').count(),0,'Progress is data, not a repeated mascot');
+  assert.equal(await road(page).locator('img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
     const stageDone=stage.tasks.filter(complete).length;
-    // Stages ahead stand in the lineup (owner 2 Nov); their card carries the count.
-    const card=link.locator('xpath=ancestor::*[@data-stage-card][1]');
-    assert(((await card.count())?await card.textContent():await link.textContent()).includes(`${stageDone} / ${stage.tasks.length} шагов`),'Each stage shows its own real completed/total count');
+    // Owner, 5 Nov: every stage row carries its own count in words («1 из 4»).
+    assert((await link.textContent()).includes(`${stageDone} из ${stage.tasks.length}`),'Each stage shows its own real completed/total count');
     assert.equal(await link.getAttribute('data-road-stage-state'),openStages.includes(stage)&&stageDone===stage.tasks.length?'done':await link.getAttribute('aria-current')==='step'?'current':'future');
     assert.equal(await link.evaluate(n=>n.tagName),'A');if(await link.isVisible())assert(await link.evaluate(n=>n.getBoundingClientRect().height>=44),'Touchable stage link');assert.match(await link.getAttribute('href'),/^\/portal\?stage=/);
   }
@@ -125,10 +124,11 @@ async function arrivalOrder(page,data) {
   const greetingBox=await welcome.boundingBox(),roadBox=await road(page).boundingBox();
   const progressBox=await road(page).getByRole('progressbar').boundingBox();
   const nextBox=await page.locator('[data-road-next]').boundingBox();
-  const detailsBox=await page.locator('[data-portal-overview]').boundingBox();
+  const detailsBox=await page.locator('[data-portal-overview]').boundingBox(),heroBox=await page.locator('[data-portal-hero]').boundingBox();
+  // Owner, 5 Nov («нормальный поток информации»): what to do now first, then the whole path.
   assert(greetingBox.y+greetingBox.height<=roadBox.y+1,'Welcome precedes the route');
-  assert(progressBox.y+progressBox.height<=nextBox.y+1,'Progress precedes the current task details');
-  assert(detailsBox.y>=roadBox.y&&detailsBox.y+detailsBox.height<=roadBox.y+roadBox.height+1,'The current step opens inside the route, under its stage');
+  assert(nextBox.y+nextBox.height<=progressBox.y+1,'The current step precedes the whole path and its progress');
+  assert(detailsBox.y>=heroBox.y&&detailsBox.y+detailsBox.height<=heroBox.y+heroBox.height+1,'The current step stands in the «Сейчас» tile');
   assert(greetingBox.y>=0&&greetingBox.y+greetingBox.height<=await page.evaluate(()=>innerHeight),'The greeting remains in the first viewport');
   // Owner 3 Nov (apple.com tiles): the «Now» hero carries the next step and
   // its actions; on desktop it fits the first viewport, the route board follows.
@@ -163,17 +163,9 @@ try{
     await sticky(page);await axe(page,'Plan '+viewport.width);await portalDestination(page,'Обзор');
     if(viewport.width===1440){
       await road(page).locator('[aria-current=step]').focus();
-      // The opened step stands in its own tile right after the board (owner,
-      // 4 Nov), so Tab visits its controls before the next stage.
-      let next=null;
-      for(let i=0;i<12&&!next;i++){
-        await page.keyboard.press('Tab');
-        next=await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage'));
-        if(!next)assert(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-flight-detail],[data-step-tile]'))),'Between stages focus only visits the opened step');
-      }
-      assert.equal(next,'documents','Stage links follow native keyboard order');
-      // The next stage is a lineup card after the line; Enter opens its page.
-      assert.equal(await page.evaluate(()=>Boolean(document.activeElement?.closest('[data-stage-lineup]'))),true,'Stages ahead follow the line in the lineup');
+      // Owner, 5 Nov: stage rows are one list; Tab goes straight to the next stage.
+      await page.keyboard.press('Tab');
+      assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage')),'documents','Stage links follow native keyboard order');
       await page.keyboard.press('Enter');
     }else await portalStage(page,'documents');
     await page.locator('[data-portal-focus][data-selected-stage=documents]').waitFor();

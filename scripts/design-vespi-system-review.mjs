@@ -300,7 +300,7 @@ try {
       data = fixture(true); savedReport(data);
       await visit('/portal?auth=login');
       // Guest workspace is the default; explicitly connect the cloud fixture.
-    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗︎', exact: true }).click();
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Есть код доступа? Войти', exact: true }).click();
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
       await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
       await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
@@ -363,7 +363,7 @@ try {
 
     await visit('/portal?auth=login');
     // Guest workspace is the default; explicitly connect the cloud fixture.
-    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗︎', exact: true }).click();
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Есть код доступа? Войти', exact: true }).click();
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
@@ -376,12 +376,12 @@ try {
     await capture('portal-overview');
     if (!baseline) {
       await checkWordmark(page);
-      // Owner, 4 Nov: the stage board carries the stage's Vespi scene beside the
-      // route ([data-board-aside]); the route itself still has no mascot.
-      assert.equal(await page.locator('[data-portal-road] img:not([data-portal-overview] img):not([data-stage-lineup] img):not([data-board-aside] img)').count(),0,'Progress has no mascot image (the opened step keeps its message icon; lineup cards show stage objects; the board aside shows the stage scene)');assert.equal(await page.locator('[data-portal-road] [data-vespi-scene]').count(),0,'No mascot inside the route');
-      assert.equal(await page.locator('[data-board-aside] img[data-board-scene]').count(),1,'The board shows one stage scene (owner, 4 Nov)');
+      // Owner, 5 Nov: «Весь путь» shows one small stage object per row; no mascot and no stage scene.
+      assert.equal(await page.locator('[data-portal-road] img:not([data-stage-object])').count(),0,'Progress has no mascot image, only stage objects');
+      assert.equal(await page.locator('[data-portal-road] img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
+      assert.equal(await page.locator('[data-board-scene]').count(),0,'The stage scene board is gone (owner, 5 Nov: one calm flow)');
       assert(await page.locator('[data-portal-overview] [data-road-open]').isVisible(),'Overview exposes the active breakdown action');
-      assert.equal(await page.locator('[data-task-check=shortlist]').count(),1,'University selection keeps its check and opens the actual selection flow');
+      assert.equal(await page.locator('[data-portal-now] [data-portal-task=shortlist]').count(),1,'University selection is the one action in «Сейчас» and opens the actual selection flow');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-done'), '1', 'Progress only counts real route tasks');
       assert.equal(await page.locator('[data-portal-road]').getAttribute('data-road-total'), '7');
       await noLegacyPortraits(page.locator('[data-portal-road]'), `portal focus ${width}`);

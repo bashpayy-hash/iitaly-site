@@ -1,0 +1,69 @@
+/* «Весь путь» и «Ещё в кабинете» (owner, 5 Nov: минимализм Apple, один
+   поток, поменьше кнопок). Сгруппированные списки как в настройках iPhone:
+   светлая плитка 28px, строки по 72px+, разделители 1px, у строки одна цель
+   нажатия на всю ширину. Статус — словом, без капса (GOV.UK: капс в статусах
+   читается хуже), цифры — обычным текстом «1 из 4», без нумерации этапов. */
+.path,.more { padding:32px 32px 12px; border-radius:28px; background:#FFFDF9; color:var(--ink); }
+.path:focus { outline:none; }
+.head { position:relative; display:grid; gap:10px; padding-bottom:20px; }
+.head h2,.more h2 { margin:0; font:600 clamp(22px,2.2vw,28px)/1.15 var(--font-sans); letter-spacing:-.025em; text-wrap:balance; }
+.count { margin:0; color:var(--quiet); font-size:15px; line-height:1.5; font-variant-numeric:tabular-nums; }
+.count strong { color:var(--ink); font-weight:600; }
+.ahead { color:var(--quiet); }
+.bar { position:relative; display:block; width:100%; height:6px; border-radius:999px; background:#EFE8DC; overflow:hidden; }
+.bar > span { position:absolute; inset:0; border-radius:inherit; background:var(--status-green); transform:scaleX(var(--route-fill,0)); transform-origin:left; transition:transform var(--road-travel-duration,920ms) cubic-bezier(.22,1,.36,1); }
+.feedback { display:inline-flex; align-items:center; gap:6px; min-height:20px; color:var(--status-green); font-size:13px; font-weight:600; }
+.feedback:empty { display:none; }
+.srOnly { position:absolute; width:1px; height:1px; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+.list,.moreList { margin:0; padding:0; list-style:none; }
+.row { border-top:1px solid var(--border); }
+.row > a,.row[data-road-locked],.moreList a { display:grid; grid-template-columns:56px minmax(0,1fr) auto 18px; align-items:center; gap:16px; min-height:76px; padding:12px 4px; color:inherit; text-decoration:none; }
+.row[data-road-locked] { grid-template-columns:56px minmax(0,1fr); color:var(--quiet); }
+.thumb { display:grid; place-items:center; width:56px; height:44px; }
+.thumb img { display:block; width:100%; height:100%; object-fit:contain; }
+.row[data-road-locked] .thumb img { opacity:.55; filter:grayscale(.6); }
+.text { display:grid; gap:3px; min-width:0; }
+.text strong { font-size:17px; font-weight:600; line-height:1.3; letter-spacing:-.01em; overflow-wrap:anywhere; }
+.text > span { color:var(--quiet); font-size:14px; line-height:1.45; text-wrap:pretty; overflow-wrap:anywhere; }
+.status { display:grid; justify-items:end; gap:2px; text-align:right; white-space:nowrap; }
+.badge { display:inline-flex; align-items:center; gap:4px; min-height:24px; padding:2px 10px; border-radius:999px; background:#F1ECE3; color:var(--quiet); font-size:13px; font-weight:500; }
+.status[data-state=current] .badge { background:var(--accent); color:var(--on-dark); }
+.status[data-state=done] .badge { background:#E3F0E8; color:#1F6B47; }
+.status small { color:var(--quiet); font-size:12px; font-variant-numeric:tabular-nums; }
+.chevron { color:var(--quiet); }
+.row > a[aria-current=step] .text strong { color:var(--ink); }
+@media (hover:hover) and (pointer:fine) {
+  .row > a,.moreList a { border-radius:14px; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
+  .row > a:hover,.moreList a:hover { background:#F6F1E8; }
+  .row > a:hover .chevron,.moreList a:hover .chevron { color:var(--ink); }
+}
+.row > a:focus-visible,.moreList a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:14px; }
+
+/* «Ещё в кабинете»: три строки вместо трёх плиток с двумя пилюлями. */
+.more { padding-top:28px; }
+.more h2 { font-size:20px; margin-bottom:8px; }
+.moreList li { border-top:1px solid var(--border); }
+.moreList a { grid-template-columns:40px minmax(0,1fr) 18px; min-height:64px; }
+.moreIcon { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; background:#F1ECE3; color:var(--ink); }
+
+/* Незнакомые слова шага: маленький значок «i» и одна строка на слово. */
+.terms { display:grid; gap:6px; margin:14px 0 0; padding:0; list-style:none; }
+.terms li { display:flex; align-items:flex-start; gap:8px; color:var(--quiet); font-size:13px; line-height:1.5; text-align:left; }
+.terms li svg { flex-shrink:0; margin-top:3px; color:var(--accent-text); }
+.terms strong { color:var(--ink); font-weight:600; }
+
+@media(max-width:640px) {
+  .path,.more { padding:24px 16px 8px; border-radius:24px; }
+  /* На телефоне статус встаёт строкой под описанием: текст этапа идёт во всю ширину. */
+  .row > a,.row[data-road-locked] { grid-template-columns:44px minmax(0,1fr); gap:4px 12px; min-height:72px; padding:14px 0; }
+  .row > a .status { grid-column:2; display:flex; align-items:center; justify-items:start; gap:8px; text-align:left; }
+  .row[data-road-locked] { grid-template-columns:44px minmax(0,1fr); }
+  .thumb { width:44px; height:36px; }
+  .chevron { display:none; }
+  .text strong { font-size:16px; }
+  .text > span { font-size:13px; }
+  .moreList a { padding:10px 0; }
+}
+@media(prefers-reduced-motion:reduce) { .bar > span { transition:none !important; } }
+@media(forced-colors:active) { .path,.more { border:1px solid CanvasText; } .bar > span { background:Highlight; } .badge { border:1px solid CanvasText; } }

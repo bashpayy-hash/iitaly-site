@@ -57,6 +57,9 @@
 .docCard > svg { color:var(--color-cloud-body); margin-bottom:16px; }
 .docCard h3 { font-size:17px; line-height:1.4; font-weight:600; }
 .docCard p { color:var(--color-cloud-body); font-size:13px; line-height:1.6; margin-top:10px; }
+.docCard .docPurpose { margin-top:6px; color:var(--portal-ink,#241F1C); font-weight:500; }
+.docCard .docWhere { display:flex; align-items:flex-start; gap:6px; }
+.docCard .docWhere svg { flex-shrink:0; margin-top:4px; color:var(--portal-accent-deep,#A33421); }
 .docCard .status { margin-top:auto; padding-top:18px; }
 .status { display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.5; }
 .status[data-kind=fix] { color:var(--color-red-deep); }

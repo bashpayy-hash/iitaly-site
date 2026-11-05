@@ -162,7 +162,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`${origin}/portal?view=docs`, { waitUntil: 'networkidle' });
     // Guest workspace is the default; explicitly connect the cloud fixture.
-    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Подключить облачный кабинет ↗︎', exact: true }).click();
+    if (!await page.getByLabel('Фамилия', { exact: true }).count()) await page.getByRole('link', { name: 'Есть код доступа? Войти', exact: true }).click();
     await page.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await page.getByLabel('Код доступа', { exact: true }).fill('TEST-01');
     await page.getByRole('button', { name: 'Войти в кабинет', exact: true }).click();
@@ -262,7 +262,7 @@ try {
     const overview = page.locator('[data-portal-overview]');
     assert.doesNotMatch(await overview.innerText(), /Нужно уточнить/,'Review detail is not repeated in the checklist');
     assert.match(await overview.innerText(), /Банковские выписки|Подготовить банковские выписки/, 'Overview identifies the document rather than an opaque filename');
-    assert.equal((await overview.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),'Открыть разбор →');
+    assert.equal((await overview.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),'Открыть итог проверки →');
     await noOverflow(page, `Document summary ${width}px`);
     await portalDestination(page, 'План');
     const plan = page.locator('[data-portal-focus]');
