@@ -27,6 +27,7 @@ import { PortalCompletion, PortalSoundSetting } from "./PortalCompletion";
 import { usePortalFeedback } from "./usePortalFeedback";
 import { localTaskLocked } from "@/lib/access";
 import { LockedTaskPage } from "@/components/access/LockedTaskPage";
+import { useViewEntrance } from "@/components/motion/useViewEntrance";
 import focusStyles from "./portal-focus.module.css";
 import { PortalArtwork } from "./PortalArtwork";
 import portal from "./portal.module.css";
@@ -80,6 +81,10 @@ export function LocalWorkspace() {
   const plan = draft.complete ? buildPlan(draft.answers) : null;
   const wizardOpen = active?.id === "profile" && !draft.complete;
   const chrome = useRef<HTMLDivElement>(null);
+  // Every section, task and document page swaps in place: the content arrives
+  // with one short rise instead of a hard cut (motion pass, 5 Nov).
+  const content = useRef<HTMLDivElement>(null);
+  useViewEntrance(content, `${location.view}|${location.task ?? ""}|${location.doc ?? ""}|${location.stage ?? ""}`);
   useEffect(() => {
     const element = chrome.current;
     if (!element) return;
@@ -163,7 +168,7 @@ export function LocalWorkspace() {
       <div className={styles.localStatus}><span>Локальный профиль активен · только на этом устройстве</span><a href={cloudLoginHref}>Подключить облачный кабинет ↗︎</a></div>
       {storageError && <p role="alert" className={styles.readOnly}>{storageError}</p>}
       <div className={`${styles.layout} ${focusStyles.localLayout}`} data-focus-layout={showFocus ? "stage" : "detail"}>
-        <div className={styles.content}>
+        <div ref={content} className={styles.content}>
           {showFocus && <PortalFocus data={data} selectedStageId={location.stage} shortlist={local.selectedIds} busy={false}
             travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} onSelectStage={selectStage}
             onOpenTask={openTask} onComplete={complete} onDocuments={() => navigate({ view: "docs", task: null, doc: null })} onSettings={() => navigate({ view: "settings", task: null, doc: null })} locked={locked} />}

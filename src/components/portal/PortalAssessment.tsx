@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useId, useMemo, useRef } from "react";
 import { AssessmentRoadmap } from "@/components/plan/AssessmentRoadmap";
+import { revealElement } from "@/components/motion/scroll";
 import { AssessmentTransition, useAssessmentTransition } from "@/components/plan/AssessmentTransition";
 import { WIZ } from "@/data/wizard";
 import { DSU_CHECKED, DSU_CHECKED_CAPTION, DSU_QUESTION } from "@/components/plan/dsuChoice";
@@ -37,7 +38,7 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
   useEffect(() => {
     if (!stepChanged.current || preparing) return;
     headingRef.current?.focus({ preventScroll: true });
-    headingRef.current?.scrollIntoView({ block: "nearest", behavior: "instant" });
+    revealElement(headingRef.current, "nearest");
     stepChanged.current = false;
   }, [step, preparing]);
 

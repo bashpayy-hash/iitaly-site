@@ -45,6 +45,8 @@ import { taskQuestions } from "@/lib/portalStepCopy";
 import { WIZ } from "@/data/wizard";
 import { EMPTY_PLAN_DRAFT, type PlanDraft } from "@/lib/usePlanDraft";
 import { LocalWorkspace } from "./LocalWorkspace";
+import { revealElement } from "@/components/motion/scroll";
+import { useViewEntrance } from "@/components/motion/useViewEntrance";
 
 const PortalAssessment = dynamic(() => import("./PortalAssessment").then(module => module.PortalAssessment), {
   loading: () => <p role="status">Загружаю вопросы…</p>,
@@ -145,6 +147,10 @@ export function PortalExplorer() {
   const completionFocusPending = useRef(false);
   const profileFromTask = useRef(false);
   const chromeRef = useRef<HTMLDivElement>(null);
+  // Every section, task and document page swaps in place: the panel arrives
+  // with one short rise instead of a hard cut (motion pass, 5 Nov).
+  const panel = useRef<HTMLDivElement>(null);
+  useViewEntrance(panel, `${section}|${openTaskId ?? ""}|${openDocument ?? ""}|${selectedStageId ?? ""}`);
   const hasPortalData = Boolean(code && surname && data);
 
   // The persistent guide can wrap with real task names or zoomed text. Measure
@@ -297,7 +303,7 @@ export function PortalExplorer() {
     if (!actionError) return;
     const target = actionErrorRef.current || document.querySelector<HTMLElement>("[data-document-operation-error]");
     target?.focus({ preventScroll: true });
-    target?.scrollIntoView({ block: "nearest", behavior: "instant" });
+    revealElement(target, "nearest");
   }, [actionError]);
 
   useEffect(() => {
@@ -499,7 +505,7 @@ export function PortalExplorer() {
       prepare?.click();
       requestAnimationFrame(() => {
         const zone = document.querySelector<HTMLButtonElement>("[data-portal-upload-zone]");
-        zone?.scrollIntoView({ block: "center", behavior: "instant" });
+        revealElement(zone, "center");
         zone?.focus();
       });
     });
@@ -783,7 +789,7 @@ export function PortalExplorer() {
       <div className={`${styles.shell} ${focusStyles.shell}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div className={styles.main}>
           {!showFocus && !activeTask && <h1 className="sr-only">Личный кабинет: {activeTask ? taskTitle(activeTask) : section === "docs" ? "документы" : "настройки"}</h1>}
-          <div id="portal-panel" className={styles.panel}>
+          <div id="portal-panel" ref={panel} className={styles.panel}>
             {shortlistNotice && <p role="status" className={styles.muted}>{shortlistNotice} <button type="button" className={styles.textLink} disabled={Boolean(busyTask)} onClick={() => { void handleSaveUniversities(shortlist); }}>Повторить синхронизацию</button></p>}
             {actionError && !documentError && (
               <div ref={actionErrorRef} tabIndex={-1} className={styles.actionError} data-portal-action-error>

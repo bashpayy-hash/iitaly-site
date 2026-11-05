@@ -12,6 +12,7 @@ import { Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
 import { questionArt } from "./questionArt";
 import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuChoice";
+import { revealElement } from "@/components/motion/scroll";
 
 /** UI explanations only: the questions, answer values and plan builder stay
  * unchanged. Grades describe the profile; they are not an admissions score. */
@@ -55,9 +56,9 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
     const live = liveRef.current;
     live?.focus({ preventScroll: true });
     // A question tile can be taller than a phone screen: if its title went
-    // above the sticky header, bring the top of the next question back.
-    if (live && live.getBoundingClientRect().top < 96) live.scrollIntoView({ block: "start", behavior: "instant" });
-    else live?.scrollIntoView({ block: "nearest", behavior: "instant" });
+    // above the sticky header, bring the top of the next question back —
+    // gliding (motion pass, 5 Nov), not thrown.
+    if (live) revealElement(live, live.getBoundingClientRect().top < 96 ? "start" : "nearest");
     stepChanged.current = false;
   }, [step, preparing]);
 

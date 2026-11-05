@@ -13,6 +13,7 @@ import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
 import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import workspace from "./plan-workspace.module.css";
+import { revealElement } from "@/components/motion/scroll";
 
 const subscribeTool = (listener: () => void) => {
   window.addEventListener("hashchange", listener);
@@ -31,7 +32,7 @@ export function PlanExplorer() {
     requestAnimationFrame(() => {
       const target = document.getElementById("questionnaire");
       target?.focus({ preventScroll: true });
-      target?.scrollIntoView({ block: "start", behavior: "instant" });
+      revealElement(target, "start");
     });
   }
 

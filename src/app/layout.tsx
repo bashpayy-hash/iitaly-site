@@ -7,6 +7,7 @@ import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlayGate } from "@/components/PaperOverlayGate";
 import { LenisProvider } from "@/components/motion/LenisProvider";
+import { RouteEntrance } from "@/components/motion/RouteEntrance";
 
 // Единственная гарнитура продукта — variable, один файл на весь диапазон
 // начертаний (100–900), реальная поддержка казахской кириллицы
@@ -94,6 +95,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Перейти к содержимому
           </a>
           <LenisProvider />
+          <RouteEntrance />
           {children}
           <PaperOverlayGate />
           <ChatWidget />

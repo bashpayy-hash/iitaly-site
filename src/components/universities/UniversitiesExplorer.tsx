@@ -4,6 +4,7 @@
 import { useMemo, useState } from "react";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { usePortalPart, navigatePortal } from "@/components/portal/PortalPageNavigation";
+import { revealElement } from "@/components/motion/scroll";
 import { CITIES, UNIS, type CityId, type University } from "@/data/italy";
 import { ItalyMap } from "./ItalyMap";
 import { CityPanel } from "./CityPanel";
@@ -102,7 +103,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   function chooseCity(id: CityId | null) {
     setActiveCity(id);
     if (id && window.matchMedia("(max-width: 1023px)").matches) requestAnimationFrame(() => {
-      document.getElementById("selected-city")?.scrollIntoView({ block: "start", behavior: "instant" });
+      revealElement(document.getElementById("selected-city"), "start");
     });
   }
 

@@ -4,6 +4,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import type { PortalDoc } from "@/lib/portalApi";
 import { documentOutcome } from "@/lib/portalDocument";
 import type { DocumentReviewContext } from "@/lib/checkDocument";
+import { revealElement } from "@/components/motion/scroll";
 import { PortalDocumentUpload, type DocumentOperation, type DocumentActionError } from "./PortalDocumentUpload";
 import { MediaSwitcher, type StoryItem } from "@/components/story/MediaSwitcher";
 import { instructionIndex } from "./portalInstructionPages";
@@ -59,7 +60,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
         const chrome = document.querySelector("[data-portal-chrome]");
         if (heading.current && chrome) heading.current.style.scrollMarginTop = `${chrome.getBoundingClientRect().height + 24}px`;
         heading.current?.focus({ preventScroll: true });
-        heading.current?.closest("section")?.scrollIntoView({ block: "start", behavior: "instant" });
+        revealElement(heading.current?.closest("section"), "start");
       });
     });
     return () => { cancelled = true; cancelAnimationFrame(frame); };
