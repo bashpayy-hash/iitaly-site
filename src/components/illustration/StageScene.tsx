@@ -9,7 +9,7 @@ import styles from "./stage-scene.module.css";
    на 20 секунд плывёт к Веспи и обратно, по стеклу проходит тёплый блик —
    только transform и opacity, без пересчёта макета; при reduced motion
    кадр стоит. Картинка декоративная (alt=""): смысл несёт текст рядом. */
-export type StageSceneName = "choose" | "diploma" | "stamp" | "envelope" | "coins" | "passport" | "keys" | "notebook";
+export type StageSceneName = "choose" | "diploma" | "stamp" | "envelope" | "coins" | "passport" | "keys" | "notebook" | "alarm";
 
 export function StageScene({ name, className, priority = false }: { name: StageSceneName; className?: string; priority?: boolean }) {
   return <figure className={`${styles.scene}${className ? ` ${className}` : ""}`} data-stage-scene={name} aria-hidden="true">
