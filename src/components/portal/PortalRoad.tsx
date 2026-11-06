@@ -1,16 +1,28 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal-path.module.css";
-import { StageObject, plainClick } from "./PortalStageLineup";
-import { stageKey, type PortalStageKey, type RisoArt } from "./portalStageArt";
+import { plainClick } from "./PortalStageLineup";
+import { stageKey, type PortalStageKey } from "./portalStageArt";
 import { STAGE_PLAIN } from "./plainWords";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
-const PREVIEW_ART: RisoArt[] = ["map", "folder", "envelope", "coins", "passport", "keys"];
-const STAGE_RISO: Record<PortalStageKey, RisoArt> = { start: "map", education12: "diploma", docs: "folder", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys" };
+const PREVIEW_ART: PortalStageKey[] = ["start", "docs", "apply", "dsu", "visa", "arrival"];
+
+/* Значок этапа в строке «Весь путь» (owner, 6 Nov, ночь: «в личном кабинете
+   сделай их более концептуальными», банку монет — «срочно»). Свой набор, не
+   предметы гайдов: идея этапа одной вещью — компас к булавке на карте, свиток
+   на книгах, листы со скрепкой и галочкой, конверт в почтовом ящике, монеты
+   с ростком, паспорт со штампом, ключ с домиком. Мягкий 3D, тёплая палитра,
+   прозрачный фон без ореола (design/illustrations/objects-2026-11-06.json).
+   В гайдах остаются физические студийные предметы. */
+function StageMark({ stage, locked = false }: { stage: PortalStageKey; locked?: boolean }) {
+  return <img src={`/illustrations/stages/${stage}-128.webp`} srcSet={`/illustrations/stages/${stage}-128.webp 128w, /illustrations/stages/${stage}-256.webp 256w`} sizes="56px"
+    width={128} height={128} alt="" aria-hidden="true" data-stage-object={stage} data-stage-mark={stage} data-stage-locked={locked || undefined} loading="lazy" decoding="async" draggable={false} />;
+}
 
 export type RoadTravel = { fromDone: number; id: number };
 
@@ -181,7 +193,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const locked = !row.tasks.length;
         const preview = row.id.startsWith("preview-stage-");
         const key = stageKey(row.id);
-        const art = preview ? PREVIEW_ART[index] || "envelope" : STAGE_RISO[key];
+        const art = preview ? PREVIEW_ART[index] || "apply" : key;
         const title = awaitingProfile && index === 0 ? PREVIEW_STAGES[0] : row.title;
         const stageDone = row.tasks.filter(task => portalTaskDone(data, task)).length;
         const opened = progress.stages.find(item => item.id === row.id)?.open;
@@ -190,13 +202,13 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const ahead = !opened && stageDone > 0;
         const status = state === "done" ? "Готово" : isCurrent ? "Сейчас" : ahead ? "Начат заранее" : "Дальше";
         if (locked) return <li key={row.id} className={styles.row} data-road-locked data-road-stage-state="future">
-          <span className={styles.thumb}><StageObject art={art} locked sizes="56px" /></span>
+          <span className={styles.thumb}><StageMark stage={art} locked /></span>
           <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
         </li>;
         return <li key={row.id} className={styles.row}>
           <a href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>
-            <span className={styles.thumb}><StageObject art={art} sizes="56px" /></span>
+            <span className={styles.thumb}><StageMark stage={art} /></span>
             <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
             <span className={styles.status} data-state={state} data-ahead={ahead || undefined}>
               <span className={styles.badge}>{status}</span>

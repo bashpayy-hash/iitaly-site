@@ -164,10 +164,21 @@ try {
   for (const width of [1440, 390]) {
     const reduced = width === 390;
     const { page, context, calls, profileCalls, data } = await setup({ width, cloud: true, reducedMotion: reduced ? 'reduce' : 'no-preference' });
-    await page.goto(`${origin}/portal?view=plan&task=chances`, { waitUntil: 'networkidle' });
+    await page.goto(`${origin}/portal?view=plan&task=chances&part=action`, { waitUntil: 'networkidle' });
     const assessment = page.locator('[data-portal-assessment]');
     await assessment.waitFor();
     const questions = [];
+    // Owner, 6 Nov (night): «здесь всё ещё старый формат опросника» — the
+    // cabinet asks in the same question tile as /plan: label, large question,
+    // reason, answer capsules (real radios underneath) and the question's object.
+    { const tile = assessment.locator('[data-plan-tile]');
+      assert.equal(await tile.count(), 1, 'The cabinet question is a plan tile');
+      assert.match(await tile.locator('p').first().textContent(), /^Вопрос \d+ из 10 · /);
+      assert.equal(await tile.evaluate(el => getComputedStyle(el).borderRadius), width === 390 ? '24px' : '28px');
+      assert.equal(await tile.locator('img[data-plan-question-art]').count(), 1, 'The question shows its object');
+      const radios = tile.getByRole('radio');
+      assert(await radios.count() >= 2, 'Answers stay radios');
+      assert.equal(await tile.locator('label').first().evaluate(el => getComputedStyle(el).borderRadius), '16px', 'Answers are capsules'); }
     while (await assessment.locator('[data-assessment-question]').count()) {
       assert(questions.length < 11, 'Questionnaire cannot loop');
       const id = await assessment.locator('[data-assessment-question]').getAttribute('data-assessment-question');

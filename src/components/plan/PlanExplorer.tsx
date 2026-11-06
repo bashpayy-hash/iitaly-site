@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
@@ -15,6 +16,7 @@ import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import workspace from "./plan-workspace.module.css";
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
+import { LivingLandscape } from "@/components/motion/LivingLandscape";
 
 const subscribeTool = (listener: () => void) => {
   window.addEventListener("hashchange", listener);
@@ -55,6 +57,17 @@ export function PlanExplorer() {
           {WIZ.length} вопросов, затем понятные шаги и список документов.
           Бесплатно, без регистрации. Проверка файла доступна отдельно.
         </p>
+        {/* Owner, 6 Nov (ночь): «там должен быть Веспи, делающий что-то, с
+           анимацией». Дворик с лимонами и фонтаном: Веспи пишет свой план и
+           думает. Картинка — постер и вся сцена при «меньше движения»;
+           петля Kling (первый кадр = последний) идёт поверх, только в кадре. */}
+        <div className={workspace.heroScene} data-plan-hero-scene>
+          <img className={workspace.heroArt} src="/illustrations/scenes/plan-courtyard-1600.webp"
+            srcSet="/illustrations/scenes/plan-courtyard-960.webp 960w, /illustrations/scenes/plan-courtyard-1600.webp 1600w"
+            sizes="(max-width: 1040px) calc(100vw - 40px), 1000px" width={1600} height={900} alt="" aria-hidden="true"
+            decoding="async" fetchPriority="high" draggable={false} data-plan-scene="courtyard" />
+          <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-courtyard" label="plan-courtyard" widths={[960, 1600]} webmWidths={[960]} />
+        </div>
       </section>
 
       <section className={workspace.tools} data-public-paper-zone="plan-tools">

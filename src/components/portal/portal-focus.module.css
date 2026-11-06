@@ -1,6 +1,7 @@
 /* The current task is the message; route and stamps describe real progress. */
 .portalRoot.portalRoot { background:transparent; padding-bottom:0; }
-.portalRoot > :first-child { background:var(--paper) url('/zhol/bg_cream.jpg') center top / 1440px auto; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; }
+/* Шапка кабинета — тот же ровный холст, что и страница (owner, 6 Nov, ночь: «артефакты на фоне»): фото бумаги bg_cream.jpg давало пёструю полосу сверху. */
+.portalRoot > :first-child { background:var(--paper); box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; }
 .portalRoot > :first-child::after { display:none; }
 .portalRoot .shell { display:block; max-width:1360px; padding:0 32px 28px; }
 .portalRoot .shell[data-focus-layout=detail] { padding-top:24px; }

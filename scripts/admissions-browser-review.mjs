@@ -49,14 +49,22 @@ try {
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
     const routeStops=page.locator('[data-assessment-route] [data-flight-stop]');
     await routeStops.first().waitFor();
-    // Owner, 4 Nov (phone screenshot): the plan is a grid of Apple-style step
-    // tiles with the step's object, not a timeline list; the opened step keeps its flat 28px tile.
+    // Owner, 4 Nov (phone screenshot): Apple-style step tiles with the step's
+    // object, not a Word-like list; the opened step keeps its flat 28px tile.
     const tiles=page.locator('[data-assessment-route] [data-plan-step-tile]');
     assert.equal(await tiles.count(),await routeStops.count(),'One tile per plan step');
     assert.equal(await tiles.locator('img[data-plan-step-object]').count(),await routeStops.count(),'Every step tile shows its object');
     assert.equal(await tiles.first().evaluate(el=>getComputedStyle(el).borderRadius),'28px');
     assert.equal(await page.locator('[data-assessment-route] [data-plan-step-tile][data-flight-selected=true]').count(),1,'Exactly one step is open');
-    if (width>=1440) { const [a,b]=await Promise.all([tiles.nth(0).boundingBox(),tiles.nth(1).boundingBox()]); assert(Math.abs(a.y-b.y)<1&&b.x>a.x,'Two tiles per row on desktop'); }
+    // Owner, 6 Nov (night): «нагляднее, в хронологическом порядке» — one
+    // column, steps top to bottom under the cabinet's stage names, a numbered stop per step.
+    { const boxes=await tiles.evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {x:Math.round(r.x),y:r.y+scrollY,w:Math.round(r.width)};}));
+      for (let i=1;i<boxes.length;i++) { assert(boxes[i].y>boxes[i-1].y,'Steps go down the page in plan order'); assert(Math.abs(boxes[i].x-boxes[0].x)<1&&Math.abs(boxes[i].w-boxes[0].w)<1,'One column of equal steps'); }
+      assert.deepEqual(await page.locator('[data-assessment-route] [data-plan-stop]').allTextContents(),boxes.map((_,i)=>String(i+1)),'Every step carries its number on the line');
+      const phases=await page.locator('[data-assessment-route] [data-plan-phase]').evaluateAll(els=>els.map(el=>el.dataset.planPhase));
+      assert.equal(phases[0],'Документы','The route starts with the education documents');
+      assert.equal(phases.at(-1),'После приезда','The route ends after arrival');
+      assert.equal(new Set(phases).size,phases.length,'Each stage appears once'); }
     // Before payment (owner, 5 Nov): the first step opens in full; every later
     // step keeps its tile, title, object and one orienting line, and inside
     // the opened tile the purchase stands where the action was — same row,

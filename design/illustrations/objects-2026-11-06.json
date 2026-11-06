@@ -1,0 +1,172 @@
+{
+  "date": "2026-11-06",
+  "request": "Owner, 6 Nov (night): guide objects with a white outline (coin jar, first aid kit) «поменяй их, сделай их более красивыми, но с упором на реализм… на гайдах более физические»; cabinet «иконки просто страшные… сделай их более концептуальными».",
+  "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, transparent background",
+  "guides": {
+    "promptTemplate": "Photorealistic studio product photograph, three-quarter view from slightly above: [object]. Real materials, natural soft key light from the upper left, crisp tactile detail, like a premium catalogue photograph. One isolated group of objects on a fully transparent background with crisp clean silhouette edges: no glow, no halo, no white rim, no outer shadow, no backdrop. No text, letters, numbers, logos, emblems, flags, people or hands.",
+    "items": [
+      {
+        "name": "coins",
+        "use": "iseeu guide, budget question, DSU plan steps",
+        "job": "12cd0095-798b-429a-8b8b-6b3bc4baf6b9",
+        "object": "a linen drawstring pouch tied with a tomato-red cord, coins spilling out, a stack of coins beside"
+      },
+      {
+        "name": "insurance",
+        "use": "health-travel guide, home banner",
+        "job": "514842c9-b55c-40e4-bd2a-c0486e14cbb3",
+        "object": "a tan leather suitcase with brass clasps and a stethoscope on its lid (no cross emblem)"
+      },
+      {
+        "name": "stamp-pad",
+        "use": "apostille guide, documents art",
+        "job": "149ff82f-8232-4e2d-b5fc-fa480a626401",
+        "object": "a wooden-handled rubber stamp, an open metal tin with a red ink pad, a blank cream card"
+      }
+    ],
+    "replaced": "the 4 November renders with a semi-transparent white glow (coins 24k, insurance 47k, stamp-pad 5k light low-alpha pixels; new: 1k, 0.2k)"
+  },
+  "cabinet": {
+    "promptTemplate": "Conceptual 3D icon in a calm premium minimal style, like a refined modern app icon object: [concept]. Simplified idealized forms with real materials, softly rounded edges, soft even studio light from the upper left, gentle ambient occlusion. Warm palette of cream, sand, terracotta red and deep sage green. Three-quarter view from slightly above, centred. One isolated object on a fully transparent background with crisp clean edges. No text, letters, numbers, logos, emblems, flags, people or hands.",
+    "items": [
+      {
+        "name": "start",
+        "job": "76f4c428-1907-4c54-ad85-aa8c008eff1f",
+        "concept": "a brass compass pointing at a terracotta map pin on a folded map"
+      },
+      {
+        "name": "education12",
+        "job": "41862130-9c5b-49ff-b817-f5fe6bd638d7",
+        "concept": "a rolled diploma with a ribbon on two books"
+      },
+      {
+        "name": "docs",
+        "job": "bda7006b-c74e-4b41-bd42-f1e1ae690d6b",
+        "concept": "three sheets with a brass paper clip and a sage check button"
+      },
+      {
+        "name": "apply",
+        "job": "86dd2af9-76d5-44bb-83b1-edd0c3281656",
+        "concept": "a sealed envelope sliding into a sage mailbox"
+      },
+      {
+        "name": "dsu",
+        "job": "15fc740d-11f7-450b-875a-62fa728f8982",
+        "concept": "a stack of gold coins with a sprout"
+      },
+      {
+        "name": "visa",
+        "job": "f7d2a9a6-71f6-4e84-b3e8-9eaa54b8ad1e",
+        "concept": "a burgundy passport with a wooden stamp and a ring mark with a check"
+      },
+      {
+        "name": "arrival",
+        "job": "238f5bfb-4a6b-4e75-badc-ba7b185a46a8",
+        "concept": "a brass key with a terracotta house keychain"
+      }
+    ]
+  },
+  "processing": "Downloaded in the Higgsfield sandbox, alpha-trimmed, WebP q90 masters (design/illustrations/source/objects-2026-11-06) carried over as grayscale PNG parts and rebuilt byte for byte; framed here with sharp (contain, transparent) into the existing object frames and into square stage icons at 4% padding, WebP q82 alpha 92. Reviewed on #2B2420 and #FFFDF9: no halo, text, emblems, flags or people.",
+  "files": [
+    {
+      "file": "public/illustrations/objects/coins-240.webp",
+      "bytes": 11992,
+      "sha256": "b8ca9349a2eaa6f643d028f2126831718b528555e4ac2fcc7f6b2966defe0416"
+    },
+    {
+      "file": "public/illustrations/objects/coins-480.webp",
+      "bytes": 39618,
+      "sha256": "bcbc60c154bdd01159397c77e662a73f6338a735b28f064c9bde3741631a2250"
+    },
+    {
+      "file": "public/illustrations/objects/insurance-240.webp",
+      "bytes": 12836,
+      "sha256": "715bda4fc1adab8f0b9ad251c2e3ddb2aa3444029f9d8ff9a37bb2b6b5354d94"
+    },
+    {
+      "file": "public/illustrations/objects/insurance-480.webp",
+      "bytes": 39898,
+      "sha256": "275ef6901428411954d2669c2f353f246d3c9bba6e6915ed2d5677cc08c50b8e"
+    },
+    {
+      "file": "public/illustrations/objects/stamp-pad-240.webp",
+      "bytes": 9346,
+      "sha256": "eb8f0478ebd4e9ee03a8dc7be2e82e8de44ee2bef0a568eae3facb7b9abec732"
+    },
+    {
+      "file": "public/illustrations/objects/stamp-pad-480.webp",
+      "bytes": 27708,
+      "sha256": "5c5b6cbb68fb8820c3a97bac16ddfc543ca4683c4be9cd101660f27558484c23"
+    },
+    {
+      "file": "public/illustrations/stages/apply-128.webp",
+      "bytes": 2980,
+      "sha256": "08b3948e659e2be40e37e96433d87a23f144ec4686acb8079388f3dd61c20410"
+    },
+    {
+      "file": "public/illustrations/stages/apply-256.webp",
+      "bytes": 7350,
+      "sha256": "ce7ad437eb4f6531f00cafe4c8d6e75825015deaefb93f99cb670ef9368f1756"
+    },
+    {
+      "file": "public/illustrations/stages/arrival-128.webp",
+      "bytes": 4774,
+      "sha256": "0c78169c92f3fd59fa09233933d3fef2d2a108127bf899fba9cef4625ab6444c"
+    },
+    {
+      "file": "public/illustrations/stages/arrival-256.webp",
+      "bytes": 12206,
+      "sha256": "998e36d33976b57761af4d3d51fca76f6e58fd123d41adb06b62c6ef56d6377c"
+    },
+    {
+      "file": "public/illustrations/stages/docs-128.webp",
+      "bytes": 3934,
+      "sha256": "acbfef2bca65e093dad257dd93ba4a990ab205a8aa97e7020ae1a413ed64360a"
+    },
+    {
+      "file": "public/illustrations/stages/docs-256.webp",
+      "bytes": 9292,
+      "sha256": "70a5cf78baf8db044f4e56d193dbb4847774410a215ce673eade8eba91444122"
+    },
+    {
+      "file": "public/illustrations/stages/dsu-128.webp",
+      "bytes": 4146,
+      "sha256": "4410194ebf25944215b822f4cd2d49696a357b2a363f49cd1f4483efc640098f"
+    },
+    {
+      "file": "public/illustrations/stages/dsu-256.webp",
+      "bytes": 11268,
+      "sha256": "bef60ce40eb036d9d8b631eab0b8e230cec463f3012f321abb39dbda66075a24"
+    },
+    {
+      "file": "public/illustrations/stages/education12-128.webp",
+      "bytes": 4012,
+      "sha256": "466080181e098bfa1b43a47f284b508628e8a7df2fd49d6521c04eb7b8855000"
+    },
+    {
+      "file": "public/illustrations/stages/education12-256.webp",
+      "bytes": 9978,
+      "sha256": "7b9ef7a8705e8a23f0aa97844422ecc1896874d66959dc5ff0722aac306cceac"
+    },
+    {
+      "file": "public/illustrations/stages/start-128.webp",
+      "bytes": 4248,
+      "sha256": "679e5a926e88bea87353b1aaec104e41b5357493235c2e4f114ca5c6113cd0d3"
+    },
+    {
+      "file": "public/illustrations/stages/start-256.webp",
+      "bytes": 10482,
+      "sha256": "db27c3b720614dfc33136bb90d665a05a3152610513eb5b96dd1f4c7c706738f"
+    },
+    {
+      "file": "public/illustrations/stages/visa-128.webp",
+      "bytes": 3328,
+      "sha256": "3f8679192a025a6500cdee8e36c1cd1314f9513018b6153621505e71c60e44d6"
+    },
+    {
+      "file": "public/illustrations/stages/visa-256.webp",
+      "bytes": 8610,
+      "sha256": "da5afd5f671f90a97f715d059f3fe494ccf0253dde60667df38f81edb2415e73"
+    }
+  ]
+}

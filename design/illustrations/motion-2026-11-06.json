@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-06",
+  "request": "Owner, 6 Nov (night), /plan screenshot: «там должен быть Веспи, делающий что-то, с анимацией».",
+  "still": {
+    "model": "gpt_image_2_6 (Higgsfield), quality high, 2k, 16:9, mascot references ab833075-dfc7-4e28-824c-7e299aad556c and a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "job": "62162e95-3237-4271-8cc8-3f1f2fefe3b1",
+    "scene": "a sunlit Italian courtyard with lemon trees in terracotta pots, a stone fountain and jasmine; Vespi at an iron table writing in a notebook, chin on paw, map, compass and lemonade",
+    "rejected": [
+      {
+        "job": "af8af48d-91be-4de2-8d63-0d4a7c353ae3",
+        "why": "piazza café: good, but the courtyard fountain gives natural motion and is a new place on the site"
+      }
+    ]
+  },
+  "loop": {
+    "model": "kling4_0, image-to-video, 1080p, 6 s, the still as start and end frame",
+    "job": "751175f6-736c-47ef-815d-d3e4023e8c33",
+    "motion": "locked camera; Vespi writes, lifts its head thinking, settles; fountain trickles, leaves sway, light flickers"
+  },
+  "processing": "Sandbox: scaled to 1600 px, AV1 CRF 40 transfer master (rebuilt here byte for byte). Here (ffmpeg): first 144 frames, last 8 blended into the first frame (seam PSNR 36.9 dB, first vs last of the raw clip 34.5 dB), H.264 high CRF 23 at 1600, CRF 25 at 960, VP9 CRF 34 at 960, faststart, no audio; the poster is the loop's first frame, WebP q82/q80.",
+  "files": [
+    {
+      "file": "public/illustrations/motion/plan-courtyard-1600.mp4",
+      "bytes": 975924,
+      "sha256": "0c5b98862590400180a4ce0861218fd40fe3555468ac18ee598655c77bd7942e"
+    },
+    {
+      "file": "public/illustrations/motion/plan-courtyard-960.mp4",
+      "bytes": 402055,
+      "sha256": "3e3da72bad80010ad389e548ccbf75f337acc25f8e01c70d3a9f8dede36771d7"
+    },
+    {
+      "file": "public/illustrations/motion/plan-courtyard-960.webm",
+      "bytes": 487506,
+      "sha256": "285741f0f1210f6cb62c3b8c6a4c47a720ac1f6ca803f1add46092351434756a"
+    },
+    {
+      "file": "public/illustrations/scenes/plan-courtyard-1600.webp",
+      "bytes": 199786,
+      "sha256": "61edad7a3309f6a0e00352eda84e253e996d9abefe442b6a0015bce12016e5b8"
+    },
+    {
+      "file": "public/illustrations/scenes/plan-courtyard-960.webp",
+      "bytes": 103262,
+      "sha256": "b0bd8929c62414d9cd9334a11a990f8fea6fdb26b016a55327c21db57b87dbbe"
+    }
+  ]
+}

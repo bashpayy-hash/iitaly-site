@@ -556,3 +556,50 @@ Owner, 6 Nov: «иллюстрация должна быть на фоне, и �
   balcony with geraniums, lemons and rooftops (`scenes/alarm-*`,
   design/illustrations/scenes-2026-11-06.json). The notebook scene stays on
   the settings page. Feature scenes are 16:7 on wide screens, 16:9 on phones.
+
+## Vespi plans on /plan, physical guides, conceptual cabinet · 6 November 2026 (night)
+
+Owner, phone and laptop screenshots: «на /plan должен быть Веспи, делающий
+что-то, с анимацией»; the guide objects with a white outline (coin jar, first
+aid kit) «поменяй, сделай красивее, с упором на реализм»; in the cabinet
+«иконки страшные… сделай их более концептуальными», on the guides «более
+физические»; the cabinet questionnaire «всё ещё старый формат»; the plan result
+«нагляднее, в хронологическом порядке»; «что за артефакты на фоне».
+
+- **/plan header has a living scene.** Under the subtitle, one 28 px tile
+  (2:1, 4:3 on phones): Vespi at an iron table in a lemon courtyard with a
+  fountain, writing the plan and thinking. Still
+  `scenes/plan-courtyard-{960,1600}.webp` (the loop's first frame, so the
+  swap is invisible), loop `motion/plan-courtyard-{1600.mp4,960.mp4,960.webm}`
+  made with Kling 4.0, the still as both start and end frame, last 8 frames
+  blended into the first (seam 36.9 dB). Reduced motion and Save-Data keep the
+  still. design/illustrations/motion-2026-11-06.json.
+- **Guides: physical objects without halos.** DSU/ISEEU is now a linen coin
+  pouch with a red cord and a stack of coins, «Страховка и поездки» a tan
+  leather suitcase with a stethoscope, apostille a re-shot wooden stamp and
+  ink tin. Same names and frames in `objects/` (480 × 367/362/371), so every
+  place that shows them (guides, questionnaire, plan steps, home banner)
+  updates at once. Studio-photo realism, transparent, no glow or white rim.
+- **Cabinet: conceptual stage icons.** «Весь путь» rows use their own set,
+  `public/illustrations/stages/{start,education12,docs,apply,dsu,visa,arrival}-{128,256}.webp`:
+  compass pointing at a pin on a map, a diploma on two books, sheets with a
+  paper clip and a check, an envelope going into a mailbox, coins with a
+  sprout, a passport with a stamp, a key with a little house. Soft 3D, warm
+  cream / sand / terracotta / sage. Physical objects stay in the guides.
+  design/illustrations/objects-2026-11-06.json.
+- **Cabinet questionnaire = /plan tile.** The cloud cabinet's «Расчёт» asks
+  in the same tile as /plan: «Вопрос n из 10 · тема», large question, reason,
+  answer capsules, the question's object; light and dark alternate. Answers
+  are still radios (a transparent radio over each capsule) with «Назад /
+  Продолжить» under the tile, so saving works as before.
+- **Plan result is a chronology.** One column top to bottom instead of the
+  2×N checkerboard: the cabinet's stage names as groups («1. Документы ·
+  шаги 1–2», «Поступление», «Стипендия DSU», «Виза», «После приезда»), a line
+  on the left with each step's number, the same 28 px step tile with its
+  label, title, line, pill and object on the right. The opened step keeps a
+  terracotta ring and number; locked steps keep «· закрыт». The builder's
+  order is untouched (`planStepPhase` only groups consecutive steps).
+- **Plain cabinet background.** The `zhol-paper.webp` tile was mirrored
+  (kaleidoscope) and drew diamonds and blotches every 640 px; the header used
+  a photo of paper (`zhol/bg_cream.jpg`). Both are gone from the cabinet: a
+  flat canvas plus the seamless fractal grain.
