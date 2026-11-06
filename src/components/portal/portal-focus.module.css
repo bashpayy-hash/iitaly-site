@@ -154,32 +154,22 @@ button.nowPrimary { border:0; cursor:pointer; }
    сгруппированные списки (portal-path.module.css). Тёмная доска маршрута,
    сцена этапа с цифрами, повтор текущего шага и плитки этапов с двумя
    пилюлями сняты: всё это повторяло одно и то же. */
-.canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"hero" "route" "more"; grid-template-rows:auto auto auto; gap:12px; max-width:1296px; margin:16px auto 0; }
+.canvas[data-portal-page=overview] { grid-template-columns:minmax(0,1fr); grid-template-areas:"hero" "features" "route"; grid-template-rows:auto auto auto; gap:12px; max-width:1296px; margin:16px auto 0; }
 /* Плитка «Сейчас»: текст на кремовом верху, ниже — тосканский пейзаж, в
    который плитка переходит без границы (owner, 3 Nov: пейзажи Италии на фон,
    никакой авиации; фигура Веспи на пейзаже убрана — «смотрится топорно»). */
 /* overflow:clip, не hidden: hidden делает плитку scroll-контейнером, и
    scroll-driven параллакс пейзажа мерил бы положение внутри плитки, а не в
    окне. */
-.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; padding:48px 32px 16px; border-radius:28px; background:#FFFDF9; text-align:center; overflow:clip; }
+.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; aspect-ratio:1296 / 800; padding:28px 28px 0; border-radius:28px; background:#E9DCC6; text-align:center; overflow:clip; }
 .hero > * { max-width:100%; min-width:0; }
-/* Веспи на скутере стоит в левой нижней трети фото: кадр прижат к левому
-   краю и к низу, чтобы он оставался под текстовой зоной на любой ширине. */
-/* Пейзаж — своё окно под текстом (owner, 6 Nov: «белое свечение не нужно,
-   градиент понизить»): ни дымки, ни перехода в бумагу, чёткий край 22px.
-   Кадр смещён к Веспи на скутере (левая нижняя треть фото). */
-.heroScene { position:relative; z-index:0; justify-self:stretch; overflow:hidden; margin:36px -16px 0; border-radius:22px; aspect-ratio:1296 / 520; background:#EDE5D8; }
-.heroArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:30% 66%; }
-/* Живой пейзаж (owner, 4 Nov: «заигрывать с пейзажами»): пока плитка едет
-   через экран, кадр чуть отстаёт от прокрутки (scroll-driven, без JS; где
-   не поддерживается — просто стоит). Кадр увеличен на 12%, чтобы при сдвиге
-   ±5% не открывать края. На телефоне свой масштаб (ниже), без параллакса. */
-@supports (animation-timeline: view()) {
-  @media (min-width:641px) and (prefers-reduced-motion:no-preference) {
-    .heroArt { animation:hero-drift linear both; animation-timeline:view(); animation-range:entry 0% exit 100%; }
-  }
-}
-@keyframes hero-drift { from { transform:scale(1.08) translateY(-3%); } to { transform:scale(1.08) translateY(3%); } }
+/* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
+   фоне, и Веспи должен реально ехать»). Кадр прижат к низу: дорога, по
+   которой Веспи въезжает слева и уезжает к ферме, идёт под панелью. Никакой
+   дымки и перехода в бумагу — текст стоит на сплошной панели. */
+.heroScene { position:absolute; inset:0; z-index:0; overflow:hidden; background:#E9DCC6; }
+.heroArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:50% 100%; }
+.heroPanel { position:relative; z-index:1; display:grid; justify-items:center; width:min(100%,600px); padding:26px 32px 28px; border-radius:24px; background:#FFFDF9; box-shadow:0 1px 2px rgba(42,36,32,.08),0 14px 36px rgba(42,36,32,.14); }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }
 .canvas[data-portal-page=overview] .welcome h1 { margin:0; font:600 21px/1.25 var(--font-sans); letter-spacing:-.01em; }
 .canvas[data-portal-page=overview] .welcomeMeta { margin:6px 0 0; color:var(--quiet); font-size:13px; line-height:1.5; }
@@ -201,21 +191,17 @@ button.nowPrimary { border:0; cursor:pointer; }
 .nowPrimary:active { transform:scale(.97); }
 
 .canvas[data-portal-page=overview] .routeCard { grid-area:route; width:auto; margin:0; padding:0; }
-.canvas[data-portal-page=overview] [data-cabinet-more] { grid-area:more; }
 
 @media(max-width:1100px) {
  .canvas[data-portal-page=overview] { margin-top:12px; }
- .hero { padding:40px 24px 16px; }
+ .hero { aspect-ratio:4 / 3; padding:24px 20px 0; }
 }
 @media(max-width:640px) {
- /* A phone tile has no room under its text for the scooter: show the road
-    and cypresses on the right of the scene instead (Vespi rides in the
-    home cards there). Between 480 and 640px the right-aligned frame still
-    reached the scooter's front wheel (owner's iPad split view, 4 Nov), so
-    the frame is enlarged from its right edge until Vespi is out of it. */
- .hero { padding:32px 20px 12px; }
- .heroScene { margin:28px -8px 0; border-radius:18px; aspect-ratio:4 / 3; }
- .heroArt { object-position:24% 70%; }
+ /* Телефон: пейзаж сверху во всю ширину плитки, панель с шагом заходит на
+    него снизу, как лист — дорога и Веспи остаются над текстом. */
+ .hero { display:block; aspect-ratio:auto; padding:0; border-radius:24px; background:#FFFDF9; }
+ .heroScene { position:relative; inset:auto; aspect-ratio:4 / 3; }
+ .heroPanel { width:100%; margin-top:-28px; padding:24px 20px 22px; border-radius:24px 24px 0 0; box-shadow:none; }
  .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
  .canvas[data-portal-page=overview] .welcomeMeta { font-size:13px; }
  .nowCard { margin-top:22px; }
