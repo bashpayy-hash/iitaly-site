@@ -162,7 +162,7 @@ try {
     // фишка наряду с уведомлениями». Two tiles right under «Сейчас»: documents
     // first, reminders second, each a Vespi scene, a status and one action.
     assert.deepEqual(await page.locator('[data-cabinet-features] a').evaluateAll(links=>links.map(a=>a.dataset.feature)),['documents','reminders'],'Documents, then reminders');
-    assert.deepEqual(await page.locator('[data-cabinet-features] [data-stage-scene]').evaluateAll(nodes=>nodes.map(n=>n.dataset.stageScene)),['stamp','notebook'],'Each feature has its Vespi scene');
+    assert.deepEqual(await page.locator('[data-cabinet-features] [data-stage-scene]').evaluateAll(nodes=>nodes.map(n=>n.dataset.stageScene)),['stamp','alarm'],'Each feature has its own Vespi scene (owner, 6 Nov: reminders on a different background than the documents desk)');
     assert.equal(await page.locator('[data-cabinet-features] [data-feature-action]').count(),2,'One action per feature');
     assert.match(await page.locator('[data-feature=documents] [data-feature-action]').innerText(),/^Проверить документ$/);
     assert.match(await page.locator('[data-feature=documents]').innerText(),/Проверено \d+ из \d+/);

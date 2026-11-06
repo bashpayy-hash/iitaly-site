@@ -549,3 +549,10 @@ Owner, 6 Nov: «иллюстрация должна быть на фоне, и �
 - **Navigation lands at the top.** `<html data-scroll-behavior="smooth">`
   and a Lenis glide that stops on a link click: a page opened from a
   scrolled one starts at its top (was: /guides at its footer).
+
+- **Reminders on their own background** (owner, 6 Nov, later: «вот здесь
+  хотелось бы другой фон»). The reminders tile no longer repeats the wooden
+  desk of the documents tile: Vespi winds an alarm clock on a sunny Italian
+  balcony with geraniums, lemons and rooftops (`scenes/alarm-*`,
+  design/illustrations/scenes-2026-11-06.json). The notebook scene stays on
+  the settings page. Feature scenes are 16:7 on wide screens, 16:9 on phones.

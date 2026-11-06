@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-06",
+  "request": "Owner, 6 Nov (cabinet screenshot, «Напоминания о сроках»): «вот здесь хотелось бы, чтобы был другой фон» — the reminders tile repeated the wooden desk of the documents tile.",
+  "model": "gpt_image_2 (Higgsfield), 2k, quality high, 3:2, with the mascot references ab833075-dfc7-4e28-824c-7e299aad556c and a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+  "items": [
+    {
+      "name": "alarm",
+      "use": "cabinet «Напоминания о сроках» tile",
+      "job": "76922ea8-f33b-4a3c-ac3c-e7f527138039",
+      "place": "a sunny Italian balcony with geraniums, a lemon tree, a mosaic café table, rooftops and a bell tower in soft focus",
+      "vespi": "winds a cream twin-bell alarm clock next to an envelope with a red wax seal",
+      "rejected": [
+        {
+          "job": "f31b15ab-145d-405f-a89a-21d9d99b0dd0",
+          "why": "Vespi centred, not in the left half like the other scenes"
+        },
+        {
+          "job": "933e9fc0-7afa-46d2-af97-6d2bbcf08fce",
+          "why": "windowsill over a piazza: good, but the balcony and sky differ more from the documents desk"
+        },
+        {
+          "job": "0a175125-cf41-4991-ae7e-d53b0e660cc3",
+          "why": "same as above, Vespi more central"
+        }
+      ]
+    }
+  ],
+  "processing": "2048×1360 PNG resized in the Higgsfield sandbox to WebP q80 at 640, 1024 and 1600 px; reviewed at full size: no people, text, signs, flags or logos.",
+  "files": [
+    {
+      "file": "public/illustrations/scenes/alarm-640.webp",
+      "bytes": 45626,
+      "sha256": "bc9c870a4588d7814968193a8de4e413b6fb31fe8ac5d95a03fa54f95aa093cc"
+    },
+    {
+      "file": "public/illustrations/scenes/alarm-1024.webp",
+      "bytes": 86574,
+      "sha256": "f193c186b3f15fd5ae3e6546e629bf42cc0b53aa352c78b999171de78f212f8c"
+    },
+    {
+      "file": "public/illustrations/scenes/alarm-1600.webp",
+      "bytes": 156852,
+      "sha256": "e8d3a65000df8bcab1465145c0dafe3298c091666beb195fe86d82970145ce72"
+    }
+  ]
+}

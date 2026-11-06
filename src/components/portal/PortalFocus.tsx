@@ -209,7 +209,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <span className={path.featureAction} data-feature-action>Проверить документ</span>
       </a>
       <a className={path.feature} href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders data-feature="reminders" data-reminders-on={remindersOn || undefined} onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
-        <StageScene name="notebook" className={path.featureScene} />
+        <StageScene name="alarm" className={path.featureScene} />
         <span className={path.featureCopy}>
           <strong>Напоминания о сроках</strong>
           <span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span>
