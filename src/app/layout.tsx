@@ -80,6 +80,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ru"
+      // Next 16 keeps CSS smooth scrolling during route changes unless told
+      // otherwise: a new page then rolled up from the previous scroll position
+      // and, with Lenis on, stuck at the bottom (owner, 6 Nov: /guides opened
+      // at its footer). This attribute makes navigation land at the top at once.
+      data-scroll-behavior="smooth"
       className={`${onest.variable} ${interTight.variable} h-full antialiased`}
     >
       <body className={`${paper.canvas} min-h-full flex flex-col text-ink font-sans`}>

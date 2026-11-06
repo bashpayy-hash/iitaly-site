@@ -52,8 +52,15 @@ export function LenisProvider() {
     function onFocusOut(e: FocusEvent) {
       if ((e.target as HTMLElement)?.matches?.("input, textarea, select")) lenis.start();
     }
+    // A link click halts an unfinished glide. Otherwise this instance keeps
+    // easing toward its old target while Next lands the next page at the top,
+    // and drags that page back down (owner, 6 Nov: /guides opened at its footer).
+    function onClick(e: MouseEvent) {
+      if ((e.target as Element | null)?.closest?.("a[href]")) lenis.scrollTo(window.scrollY, { immediate: true, force: true });
+    }
     document.addEventListener("focusin", onFocusIn);
     document.addEventListener("focusout", onFocusOut);
+    document.addEventListener("click", onClick, true);
 
     // ScrollTrigger читает высоту документа при первом рендере; секции
     // главной могут доехать до финального размера на такт позже (шрифты,
@@ -66,6 +73,7 @@ export function LenisProvider() {
       lenis.destroy();
       document.removeEventListener("focusin", onFocusIn);
       document.removeEventListener("focusout", onFocusOut);
+      document.removeEventListener("click", onClick, true);
     };
   }, [pathname]);
 
