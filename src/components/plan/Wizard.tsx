@@ -11,24 +11,10 @@ import type { PlanDraft } from "@/lib/usePlanDraft";
 import { Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
 import { questionArt } from "./questionArt";
+import { QUESTION_CONTEXT, STEP_TITLES } from "./questionCopy";
 import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuChoice";
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
-
-/** UI explanations only: the questions, answer values and plan builder stay
- * unchanged. Grades describe the profile; they are not an admissions score. */
-const QUESTION_CONTEXT: Record<string, string> = {
-  intake: "Так я не смешаю правила разных наборов.",
-  education: "Допуск всё равно подтвердит выбранный вуз.",
-  grades: "Это ориентир для твоего профиля, не прогноз поступления.",
-  goal: "У бакалавриата и магистратуры разные требования к диплому. Начнём с нужного уровня.",
-  budget: "Стипендию и средства на визу нужно проверять отдельно.",
-  field: "От направления зависят тесты и условия конкурса. Точные требования проверим у программы.",
-  lang: "От ответа зависит, что делать дальше: подтвердить язык или подготовиться к тесту.",
-  age: "Если тебе ещё нет 18, в маршрут нужны отдельные требования к жилью и документам.",
-  residence: "Используем процедуру для твоего места проживания.",
-  dsuRegion: "Требования к справкам проверяем по конкретному конкурсу.",
-};
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -224,7 +210,6 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
 /* Вопрос — плитка, как тема в справочнике: крупный вопрос и пояснение по
    центру, ответы — кнопки-капсулы, внизу своя риzo-вещь. Светлые и тёмные
    плитки чередуются от вопроса к вопросу. */
-const STEP_TITLES: Record<string, string> = { intake: "Набор", education: "Образование", grades: "Оценки", goal: "Цель", budget: "Бюджет", field: "Направление", lang: "Язык", age: "Возраст", residence: "Проживание", dsuRegion: "Стипендия" };
 
 function WizStep({
   question,

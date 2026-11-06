@@ -47,6 +47,12 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await page.reload({ waitUntil:'networkidle' });
           assert.equal(await page.locator('[data-editorial-atmosphere]').count(), 0);
           assert.equal(await page.locator('[data-section=plan-header]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgba(0, 0, 0, 0)');
+          // Owner, 6 Nov (night): Vespi does something, animated, in the plan header.
+          const scene = page.locator('[data-section=plan-header] [data-plan-hero-scene]');
+          assert.equal(await scene.count(), 1, 'The plan header has its living scene');
+          assert.equal(await scene.locator('img[data-plan-scene=courtyard]').evaluate(element => element.naturalWidth > 0), true);
+          assert.equal(await scene.locator('video[data-living-landscape=plan-courtyard]').count(), 1);
+          assert.equal(await scene.evaluate(element => getComputedStyle(element).borderRadius), width <= 640 ? '24px' : '28px');
           if (width === 1440) assert((await page.locator('#questionnaire').boundingBox()).width >= 1100, 'Plan must use the full workspace');
           await page.getByRole('link', { name:'Проверить документ', exact:true }).click();
           assert.equal(await page.locator('#questionnaire').isVisible(), false);

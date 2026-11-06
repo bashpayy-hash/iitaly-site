@@ -12,12 +12,31 @@
 .optionHint { display: block; margin-top: 3px; color: var(--portal-muted); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 .optionGroup { margin: 22px 0 8px; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
 .options:disabled .option { opacity: .65; cursor: wait; }
+/* Вопрос-плитка из /plan (plan-workspace.module.css) внутри кабинета: те же
+   цвета и капсулы; радиокнопка лежит прозрачным слоем на всей капсуле, так
+   что выбор, клавиатура и скринридер работают как у обычного радио. */
+.tile { margin-top: 4px; padding-top: 44px; }
+.tileHeading { margin: 0; font: 600 clamp(26px, 3vw, 38px)/1.1 var(--font-apple-display, var(--font-sans)); letter-spacing: -.03em; text-wrap: balance; overflow-wrap: anywhere; scroll-margin-block: 220px 24px; }
+.tileOptions { min-width: 0; padding: 0; border: 0; }
+.tileOptions:disabled { opacity: .65; }
+.tileOption { cursor: pointer; }
+.tileOption input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; border-radius: inherit; opacity: 0; cursor: pointer; }
+.tileOptions:disabled .tileOption, .tileOptions:disabled .tileOption input { cursor: wait; }
+.tileOption:has(input:checked) { border-color: #B83A27; background: #B83A27; color: #FAF9F3; }
+.tileOption:has(input:checked) small { color: #FBEDE8; }
+[data-tone=dark] .tileOption:has(input:checked) { border-color: #F29A89; background: #F29A89; color: #2A2420; }
+[data-tone=dark] .tileOption:has(input:checked) small { color: #4A2A22; }
+.tileOption:has(input:focus-visible) { outline: 2px solid #A33421; outline-offset: 3px; }
+[data-tone=dark] .tileOption:has(input:focus-visible) { outline-color: #F6C2B5; }
+.questionForm .actions { margin-top: 16px; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 24px; margin-top: 24px; }
 .back { min-height: 44px; margin-right: auto; padding: 8px 0; border: 0; background: transparent; color: var(--portal-ink); font: inherit; font-size: 15px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .back:disabled { opacity: .65; cursor: wait; }
 .assessment :is(input, button, summary, a, h3):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 @media(max-width:480px) {
   .assessment { margin-top: 20px; }
+  .tile { padding: 32px 16px 0; border-radius: 24px; }
+  .tileOptions > .tileOption { flex-basis: 100%; }
   .heading { font-size: 22px; }
   .actions { gap: 12px; }
 }

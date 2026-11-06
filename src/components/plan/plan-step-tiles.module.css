@@ -1,111 +1,97 @@
-/* Шаги плана плитками (owner, 4 Nov, скрин с телефона: «список выглядит
-   как Word-файл… сделай дофаминовее, в виде блоков Apple, как мы
-   прогоняли»). Та же сетка, что у lineup кабинета (portal-lineup.module.css):
-   две колонки от 700px контейнера, 12px между плитками, светлая и тёмная в
-   шахматном порядке, 28px, без теней. В плитке — ярлык, название, строка,
-   пилюля и вещь внизу; вся плитка — ссылка. Открытый шаг не меняет сетку:
-   плитка становится светлой с терракотовым кольцом и раскрывает текст
-   шага; строка и пилюля прячутся, вещь уходит вниз. */
-.tiles { container-type:inline-size; min-width:0; }
-.grid { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; margin:0; padding:0; list-style:none; }
+/* Шаги плана — хронология (owner, 6 Nov, ночь: «нагляднее, в хронологическом
+   порядке»; до этого — сетка 2×N в шахматном порядке, owner 4 Nov: «в виде
+   блоков Apple»). Блоки остались: плитка 28px на бумаге, ярлык, название,
+   строка, пилюля, вещь справа; вся плитка — ссылка. Порядок теперь один —
+   сверху вниз: этапы пути с подписью «шаги 1–2», сквозная линия слева и номер
+   шага на ней. Открытый шаг — терракотовое кольцо и терракотовый номер,
+   внутри — текст шага (assessment-result.module.css). */
+.tiles { container-type:inline-size; min-width:0; margin-top:24px; }
+.phases { --rail-x:21px; --rail-pad:64px; --stop:44px; position:relative; display:grid; gap:28px; margin:0; padding:0; list-style:none; }
+/* Линия пути: от первого номера до последнего этапа. */
+.phases::before { content:""; position:absolute; left:var(--rail-x); top:12px; bottom:32px; width:2px; margin-left:-1px; border-radius:2px; background:#DCCFBB; }
+.phase { position:relative; display:grid; gap:12px; min-width:0; }
+.phaseHead { position:relative; display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:0 0 0 var(--rail-pad); color:#241F1C; }
+.phaseHead b { font:600 17px/1.3 var(--font-sans); letter-spacing:-.01em; }
+.phaseHead span { color:#6A625A; font-size:14px; font-variant-numeric:tabular-nums; }
+/* Начало этапа — точка на линии. */
+.phaseHead::before { content:""; position:absolute; left:calc(var(--rail-x) - var(--rail-pad) - 6px); top:5px; width:12px; height:12px; border-radius:50%; background:#B83A27; box-shadow:0 0 0 4px var(--portal-canvas, #F7F2EA); }
+.grid { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; min-width:0; margin:0; padding:0 0 0 var(--rail-pad); list-style:none; }
 
 .tile {
-  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; --tile-pip:rgba(36,31,28,.16);
+  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421;
   --pill-bg:#B83A27; --pill-bg-hover:#A33421; --pill-ink:#FAF6EE;
-  position:relative; display:flex; flex-direction:column; min-width:0; min-height:400px;
-  padding:32px 28px 0; border-radius:28px; background:var(--tile-bg); color:var(--tile-ink);
-  scroll-margin-top:96px;
-  transition:background-color 320ms cubic-bezier(.4,0,.2,1),color 320ms cubic-bezier(.4,0,.2,1);
+  position:relative; display:grid; grid-template-columns:minmax(0,1fr) 168px; align-items:center; gap:0 24px; min-width:0;
+  padding:26px 28px; border-radius:28px; background:var(--tile-bg); color:var(--tile-ink);
+  scroll-margin-top:112px;
+  transition:box-shadow 320ms cubic-bezier(.4,0,.2,1);
 }
 .tile > * { max-width:100%; min-width:0; }
 
+/* Номер шага на линии, слева от плитки. */
+.stop { position:absolute; left:calc(var(--rail-x) - var(--rail-pad) - var(--stop) / 2); top:24px; display:grid; place-items:center; width:var(--stop); height:var(--stop); border-radius:50%; background:#FFFDF9; box-shadow:inset 0 0 0 2px #D9CBB6; color:#241F1C; font:600 16px/1 var(--font-sans); font-variant-numeric:tabular-nums; transition:background-color 240ms cubic-bezier(.4,0,.2,1),color 240ms cubic-bezier(.4,0,.2,1); }
+.tile[data-plan-step-locked] .stop { color:#6A625A; }
+.tile[data-flight-selected=true] .stop { background:#B83A27; color:#FFFDF9; box-shadow:none; }
+
 /* Вся плитка кликается: ссылка растянута псевдоэлементом; у открытого шага
    растяжка снята, чтобы кнопки и источники внутри работали сами. */
-.open { display:flex; flex-direction:column; align-items:flex-start; min-width:0; color:inherit; text-decoration:none; }
+.open { grid-column:1; grid-row:1; display:flex; flex-direction:column; align-items:flex-start; min-width:0; color:inherit; text-decoration:none; }
 .open::after { content:""; position:absolute; inset:0; border-radius:inherit; }
 .tile[data-flight-selected=true] .open::after { content:none; }
 .open:focus-visible { outline:2px solid var(--tile-label); outline-offset:4px; border-radius:6px; }
 
 .label { font:600 13px/1.5 var(--font-sans); color:var(--tile-label); overflow-wrap:anywhere; }
-.title { margin-top:8px; font-size:clamp(22px,2.2vw,27px); font-weight:600; line-height:1.12; letter-spacing:-.025em; text-wrap:balance; overflow-wrap:anywhere; -webkit-hyphens:auto; hyphens:auto; }
-.line { margin-top:10px; max-width:38ch; font-size:15px; line-height:1.45; color:var(--tile-quiet); text-wrap:pretty; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-.pill { display:inline-flex; align-items:center; min-height:40px; margin-top:18px; padding:9px 18px; border-radius:999px; background:var(--pill-bg); color:var(--pill-ink); font-size:14px; font-weight:500; line-height:1.2; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
+.title { margin-top:6px; font-size:clamp(20px,2vw,24px); font-weight:600; line-height:1.15; letter-spacing:-.025em; text-wrap:balance; overflow-wrap:anywhere; -webkit-hyphens:auto; hyphens:auto; }
+.line { margin-top:8px; max-width:56ch; font-size:15px; line-height:1.45; color:var(--tile-quiet); text-wrap:pretty; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.pill { display:inline-flex; align-items:center; min-height:40px; margin-top:16px; padding:9px 18px; border-radius:999px; background:var(--pill-bg); color:var(--pill-ink); font-size:14px; font-weight:500; line-height:1.2; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
 /* Hover lives only on a real pointer (mobile-native, 5 Nov): touch fires a sticky hover on tap. */
-@media (hover: hover) and (pointer: fine) { .tile:hover .pill { background:var(--pill-bg-hover); } }
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover .pill { background:var(--pill-bg-hover); }
+  .tile:not([data-flight-selected=true]):hover { box-shadow:inset 0 0 0 1px #D9CBB6; }
+}
 .tile:active .pill { transform:scale(.97); }
 
-.visual { display:flex; align-items:flex-end; justify-content:center; width:100%; height:190px; margin-top:auto; padding:24px 0 20px; }
-.visual img { display:block; width:auto; max-width:min(58%,300px); height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
-@media (hover: hover) and (pointer: fine) { .tile:hover .visual img { transform:translateY(-6px); } }
+.visual { grid-column:2; grid-row:1; display:flex; align-items:center; justify-content:center; height:128px; }
+.visual img { display:block; width:auto; max-width:100%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
+@media (hover: hover) and (pointer: fine) { .tile:hover .visual img { transform:translateY(-4px); } }
 
 /* Открытый шаг: содержимое рисует родитель (assessment-result.module.css). */
-.detail { min-width:0; margin-top:16px; animation:tile-open 420ms cubic-bezier(.22,1,.36,1) both; }
-
-/* Две колонки от 700px: шахматный порядок, как в кабинете. */
-@container (min-width:700px) {
-  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .tile:nth-child(4n+2),.tile:nth-child(4n+3) {
-    --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89;
-    --pill-bg:#FAF6EE; --pill-bg-hover:#EAD7BB; --pill-ink:#2A2420;
-  }
-  /* An odd last tile takes both columns, as in the cabinet lineup. */
-  .tile:last-child:nth-child(odd) { grid-column:1 / -1; }
-}
-@container (max-width:699.98px) {
-  .tile:nth-child(even) {
-    --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89;
-    --pill-bg:#FAF6EE; --pill-bg-hover:#EAD7BB; --pill-ink:#2A2420;
-  }
-}
-/* Открытый шаг всегда на бумаге с терракотовым кольцом, в какой бы клетке
-   ни стоял, чтобы текст, источники и кнопки читались одинаково. */
-.tile[data-flight-selected=true] {
-  --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421;
-  --pill-bg:#B83A27; --pill-bg-hover:#A33421; --pill-ink:#FAF6EE;
-  box-shadow:inset 0 0 0 2px #B83A27;
-}
+.detail { grid-column:1 / -1; grid-row:2; min-width:0; margin-top:16px; animation:tile-open 420ms cubic-bezier(.22,1,.36,1) both; }
+.tile[data-flight-selected=true] { align-items:start; padding-top:30px; box-shadow:inset 0 0 0 2px #B83A27; }
+.tile[data-flight-selected=true] .visual { height:96px; }
 .tile[data-flight-selected=true] :is(.line,.pill) { display:none; }
-.tile[data-flight-selected=true] .visual { height:150px; padding-top:20px; }
-.tile[data-flight-selected=true] .visual img { max-width:44%; }
 
-@media(max-width:600px) {
-  .tile { min-height:0; padding:28px 20px 0; }
-  .title { font-size:22px; }
-  .visual { height:160px; padding:20px 0 18px; }
-  /* Overload pass (owner, 5 Nov): on a phone eleven full-height tiles were
-     eight screens of scrolling. A closed tile keeps its label, title, one
-     line and object, but sits as a short row — text left, object right —
-     like the home page's route cards; the pill becomes a quiet text link.
-     The opened step keeps the full tile. */
-  .tile:not([data-flight-selected=true]) { display:grid; grid-template-columns:minmax(0,1fr) 84px; align-items:center; gap:0 14px; padding:22px 18px 22px 20px; }
-  .tile:not([data-flight-selected=true]) .title { font-size:19px; }
-  .tile:not([data-flight-selected=true]) .line { -webkit-line-clamp:2; font-size:14px; }
-  .tile:not([data-flight-selected=true]) .pill { min-height:0; margin-top:10px; padding:0; background:none; color:var(--tile-label); font-weight:600; }
-  .tile:not([data-flight-selected=true]) .visual { grid-column:2; grid-row:1; height:84px; margin:0; padding:0; align-items:center; }
-  .tile:not([data-flight-selected=true]) .visual img { max-width:100%; }
+.srOnly { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+@container (max-width:599.98px) {
+  .phases { --rail-x:13px; --rail-pad:36px; --stop:28px; gap:24px; }
+  .phaseHead b { font-size:16px; }
+  .phaseHead span { font-size:13px; }
+  .stop { top:20px; font-size:13px; }
+  .tile { grid-template-columns:minmax(0,1fr) 72px; gap:0 12px; padding:20px 16px 20px 18px; }
+  .title { font-size:18px; }
+  .line { font-size:14px; }
+  .tile:not([data-flight-selected=true]) .pill { min-height:0; margin-top:8px; padding:0; background:none; color:var(--tile-label); font-weight:600; }
+  .visual { height:72px; }
+  .tile[data-flight-selected=true] { padding-top:24px; }
 }
-/* 320px phones: long Russian words («академические», «финансирование»)
-   broke mid-word next to the 84px object; a smaller object gives them room
-   and the title hyphenates where the browser can. */
-@media(max-width:360px) {
-  .tile:not([data-flight-selected=true]) { grid-template-columns:minmax(0,1fr) 64px; gap:0 10px; padding-right:14px; }
-  .tile:not([data-flight-selected=true]) .visual { height:64px; }
+/* 320px phones: long Russian words («академические», «финансирование») get room. */
+@container (max-width:340px) {
+  .tile { grid-template-columns:minmax(0,1fr) 56px; gap:0 10px; padding-right:12px; }
+  .visual { height:56px; }
 }
-/* Motion: the tiles line up one after another (40ms apart); the opened step fades in. */
+/* Motion: the steps line up one after another (40ms apart); the opened step fades in. */
 @media (prefers-reduced-motion: no-preference) {
   .tile { animation:tiles-in 520ms cubic-bezier(.22,1,.36,1) backwards; }
-  .tile:nth-child(2) { animation-delay:40ms; }
-  .tile:nth-child(3) { animation-delay:80ms; }
-  .tile:nth-child(4) { animation-delay:120ms; }
-  .tile:nth-child(n+5) { animation-delay:160ms; }
+  .phase:nth-child(2) .tile { animation-delay:40ms; }
+  .phase:nth-child(3) .tile { animation-delay:80ms; }
+  .phase:nth-child(n+4) .tile { animation-delay:120ms; }
 }
-/* Phones (motion pass, 5 Nov): only the two tiles that can be on screen arrive;
-   the rest stand still instead of animating as off-screen layers. */
-@media (max-width:600px) { .tile:nth-child(n+3) { animation:none; } }
+/* Phones (motion pass, 5 Nov): only what can be on screen arrives. */
+@media (max-width:600px) { .phase:nth-child(n+3) .tile { animation:none; } }
 @keyframes tiles-in { from { opacity:0; translate:0 16px; } to { opacity:1; translate:0 0; } }
 @keyframes tile-open { from { opacity:0; translate:0 -6px; } to { opacity:1; translate:0 0; } }
 @media(prefers-reduced-motion:reduce) {
-  .tile,.pill,.visual img { transition:none; animation:none; }
+  .tile,.pill,.visual img,.stop { transition:none; animation:none; }
   .detail { animation:none; }
   .tile:hover .visual img,.tile:active .pill { transform:none; }
 }
@@ -113,4 +99,7 @@
   .tile { border:1px solid CanvasText; }
   .tile[data-flight-selected=true] { border:2px solid Highlight; box-shadow:none; }
   .pill { border:1px solid ButtonText; }
+  .phases::before,.phaseHead::before { background:CanvasText; }
+  .stop { border:1px solid CanvasText; box-shadow:none; }
+  .tile[data-flight-selected=true] .stop { background:Highlight; color:HighlightText; }
 }

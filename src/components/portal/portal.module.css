@@ -34,7 +34,7 @@
   --portal-slow: 360ms;
   min-height: 100vh;
   min-height: 100svh;
-  background: var(--portal-canvas) url("/textures/zhol-paper.webp") repeat 0 0 / 640px 640px;
+  background: var(--portal-canvas);
   color: var(--portal-ink);
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -1503,9 +1503,11 @@
   background:
     var(--grain-paper) 0 0 / 360px 360px,
     radial-gradient(ellipse at 12% 0%, rgba(253,238,228,.45), transparent 42%),
-    url("/textures/zhol-paper.webp") 0 0 / 640px 640px,
     var(--portal-canvas);
-  background-blend-mode: multiply, normal, normal, normal;
+  /* Owner, 6 Nov (ночь): «что за артефакты на фоне». Плитка zhol-paper
+     зеркальная (калейдоскоп), и при повторе через 640px проступали ромбы и
+     пятна. Остались ровный холст и бесшовное фрактальное зерно. */
+  background-blend-mode: multiply, normal, normal;
 }
 .card { background: #fff; border-radius: 28px;  }
 

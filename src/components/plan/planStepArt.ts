@@ -27,6 +27,22 @@ const RULES: { test: RegExp; label: string; art: keyof typeof HEIGHTS }[] = [
   { test: /зачисление/i, label: "Зачисление", art: "keys" },
 ];
 
+/* Этап пути для хронологии плана (owner, 6 Nov, ночь: «нагляднее, в
+   хронологическом порядке»). Названия — те же, что у этапов «Весь путь» в
+   кабинете; порядок шагов задаёт planBuilder, этап лишь группирует подряд
+   идущие шаги. */
+const PHASES: Record<string, string> = {
+  "Образование": "Документы", "Подтверждение документов": "Документы",
+  "Программа": "Поступление", "Требования вуза": "Поступление", "Сроки": "Поступление",
+  "Стипендия": "Стипендия DSU",
+  "Статус в Италии": "Виза", "Консульство": "Виза", "Виза D": "Виза", "Финансы": "Виза", "Бюджет": "Виза", "До 18 лет": "Виза", "Призыв": "Виза",
+  "Зачисление": "После приезда",
+};
+
+export function planStepPhase(title: string) {
+  return PHASES[planStepArt(title).label] || "Маршрут";
+}
+
 export function planStepArt(title: string) {
   const rule = RULES.find(item => item.test.test(title)) || { label: "Шаг маршрута", art: "map" as const };
   return { label: rule.label, art: rule.art, frame: objectFrame(rule.art, HEIGHTS[rule.art]) };
