@@ -1,7 +1,7 @@
 "use client";
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { Check, ChevronRight } from "lucide-react";
+import { WarmIcon } from "@/components/icons/WarmIcon";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal-path.module.css";
@@ -24,7 +24,13 @@ function roadPosition(done: number, total: number) {
 
 const stepWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "шага" : "шагов";
 
-/* «Весь путь» (owner, 5 Nov: «минимализм Apple… нормальный поток
+/* Полоса прогресса (owner, 6 Nov: «прогресс-бар максимально юзер-френдли»):
+   крупный процент, полоса 12px, поделённая на отрезки по этапам (длина
+   отрезка — число шагов этапа), бегунок «ты здесь» на конце заливки и
+   подписи концов пути «Старт — Учёба в Италии». Заливка и бегунок едут
+   вместе на transform, без layout; при reduced motion — сразу на месте.
+
+   «Весь путь» (owner, 5 Nov: «минимализм Apple… нормальный поток
    информации… без 0.1, 0.2… думай как школьник, который ничего не знает»).
    Одна плитка: заголовок, одна фраза прогресса с тонкой полосой и список
    этапов, как сгруппированный список в настройках iPhone (GOV.UK task list):
@@ -139,6 +145,13 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
   // An orientation preview only: placeholders never enter progress or storage.
   const stages = awaitingProfile ? [realStages[0], ...PREVIEW_STAGES.slice(1).map((title, index) => ({ id: `preview-stage-${index + 1}`, title, tasks: [] as PortalTask[] }))] : realStages;
   const allComplete = total > 0 && done === total;
+  const percent = total > 0 ? Math.round(done / total * 100) : 0;
+  // Stage boundaries cut the bar into segments, one per stage, sized by its steps.
+  const ticks: number[] = [];
+  if (!awaitingProfile && total > 0) {
+    let sum = 0;
+    for (const row of realStages.slice(0, -1)) { sum += row.tasks.length; if (sum > 0 && sum < total) ticks.push(sum / total * 100); }
+  }
 
   return <section className={styles.path}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100 } as CSSProperties}
@@ -148,11 +161,19 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
     data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
     data-road-arriving={motion.arriving ? "true" : "false"} aria-labelledby="portal-path-heading">
     <div className={styles.head}>
-      <h2 id="portal-path-heading">Весь путь до учёбы в Италии</h2>
+      <div className={styles.headTop}>
+        <h2 id="portal-path-heading">Весь путь до учёбы в Италии</h2>
+        <p className={styles.percent} aria-hidden="true" data-road-percent><strong>{percent}%</strong><span>пройдено</span></p>
+      </div>
       <p className={styles.count} data-road-count>Сделано <strong>{done}</strong> из {total} {stepWord(total)}{progress.ahead > 0 && <span className={styles.ahead}> · заранее {progress.ahead}</span>}</p>
-      <span className={styles.bar} aria-hidden="true"><span data-flight-fill data-road-bar /></span>
+      <div className={styles.meter} aria-hidden="true" data-road-meter>
+        <span className={styles.bar}><span data-flight-fill data-road-bar /></span>
+        {ticks.map(at => <i key={at} className={styles.tick} style={{ left: `${at}%` }} />)}
+        <span className={styles.knobTrack}><span className={styles.knob} data-road-knob /></span>
+      </div>
+      <p className={styles.ends} aria-hidden="true"><span>Старт</span><span>Учёба в Италии</span></p>
       <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">
-        {completion !== null && <><Check size={14} strokeWidth={2.4} aria-hidden="true" />{allComplete ? "Все шаги сохранены" : "Шаг сохранён"}</>}
+        {completion !== null && <><WarmIcon name="check" size={16} />{allComplete ? "Все шаги сохранены" : "Шаг сохранён"}</>}
       </span>
       <span className={styles.srOnly} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
     </div>
@@ -179,11 +200,11 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
             <span className={styles.thumb}><StageObject art={art} sizes="56px" /></span>
             <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
             <span className={styles.status} data-state={state} data-ahead={ahead || undefined}>
-              <span className={styles.badge}>{state === "done" && <Check size={13} strokeWidth={2.4} aria-hidden="true" />}{status}</span>
+              <span className={styles.badge}>{state === "done" && <WarmIcon name="check" size={15} />}{status}</span>
               <small>{stageDone} из {row.tasks.length}</small>
               {ahead && <span className={styles.srOnly} data-stage-ahead>заранее</span>}
             </span>
-            <ChevronRight className={styles.chevron} size={18} strokeWidth={1.6} aria-hidden="true" />
+           
           </a>
         </li>;
       })}

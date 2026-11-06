@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { COUNTRY_CODES, PERMIT_CODES, PROVINCES, TRAINER_SECTIONS } from "./permessoData";
 import { usePermessoRoute } from "./usePermessoRoute";
 import styles from "./permesso-helpers.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 /* Справочник под бланком. Раньше жил внутри режима «Оригинал» вместе со
    встроенным PDF и вторым пошаговым гидом («1 из 9» рядом с «1 / 55» у
@@ -171,13 +172,13 @@ export function PermessoHelpers() {
 
         <div className={styles.sources}>
           <b>Проверяй перед походом:</b>
-          <a href="https://www.poste.it/guida-rilascio-e-rinnovo-permesso-di-soggiorno" target="_blank" rel="noopener noreferrer">Poste Italiane ↗︎</a>
-          <a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Portale Immigrazione · costi ↗︎</a>
-          <a href="https://www.portaleimmigrazione.it/ITA/tabellauffpostali.html" target="_blank" rel="noopener noreferrer">Portale Immigrazione · codici ↗︎</a>
+          <a href="https://www.poste.it/guida-rilascio-e-rinnovo-permesso-di-soggiorno" target="_blank" rel="noopener noreferrer">Poste Italiane</a>
+          <a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Portale Immigrazione · costi</a>
+          <a href="https://www.portaleimmigrazione.it/ITA/tabellauffpostali.html" target="_blank" rel="noopener noreferrer">Portale Immigrazione · codici</a>
         </div>
 
         <details className={styles.cheatSheet}>
-          <summary>Шпаргалка: что оставить пустым в сценарии {scenario === "rilascio" ? "RILASCIO" : "RINNOVO"}</summary>
+          <summary className={disclosure.row}>Шпаргалка: что оставить пустым в сценарии {scenario === "rilascio" ? "RILASCIO" : "RINNOVO"}</summary>
           <p>Поля / блоки: {emptyFields.join(", ")}. Страницы 4–8 также не заполняй в сценарии студента без семьи.</p>
           <small>Это учебная шпаргалка, а не замена foglio note бумажного kit.</small>
         </details>

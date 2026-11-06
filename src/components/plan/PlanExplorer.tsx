@@ -14,6 +14,7 @@ import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import workspace from "./plan-workspace.module.css";
 import { revealElement } from "@/components/motion/scroll";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const subscribeTool = (listener: () => void) => {
   window.addEventListener("hashchange", listener);
@@ -62,7 +63,7 @@ export function PlanExplorer() {
           <Link href="/universities#compare-universities">Изменить выбор</Link>
         </div>}
         {primary && <details className={workspace.selectedContext} data-plan-university-context>
-          <summary>Условия {primary.name}</summary>
+          <summary className={disclosure.row}>Условия {primary.name}</summary>
           <dl><div><dt>Экзамен / отбор</dt><dd>{primary.test}</dd></div><div><dt>Подача · по базе</dt><dd>{primary.dl}</dd></div><div><dt>Стоимость в год</dt><dd>{primary.tu}</dd></div></dl>
           <p>Это контекст выбранного вуза. Персональные шаги ниже формируются по твоим ответам; условия конкретной программы нужно сверить.</p>
         </details>}

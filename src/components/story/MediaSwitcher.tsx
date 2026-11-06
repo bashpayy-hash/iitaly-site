@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { type StorySubject } from "./StoryArtwork";
 import styles from "./story.module.css";
 
@@ -79,8 +78,8 @@ export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAct
       </div>
     </section>
     <nav className={styles.navigation} data-fab-yield aria-label="Переход между пунктами">
-      {index > 0 ? <button type="button" className={styles.back} onClick={() => onSelect(index - 1)}><ArrowLeft size={18} aria-hidden="true" />Назад</button> : firstAction || <button type="button" className={styles.back} disabled><ArrowLeft size={18} aria-hidden="true" />Назад</button>}
-      {last && lastAction ? lastAction : <button type="button" className={styles.next} data-instruction-next disabled={last} onClick={() => onSelect(index + 1)}>{last ? "Все пункты просмотрены" : "Далее"}<ArrowRight size={18} aria-hidden="true" /></button>}
+      {index > 0 ? <button type="button" className={styles.back} onClick={() => onSelect(index - 1)}>Назад</button> : firstAction || <button type="button" className={styles.back} disabled>Назад</button>}
+      {last && lastAction ? lastAction : <button type="button" className={styles.next} data-instruction-next disabled={last} onClick={() => onSelect(index + 1)}>{last ? "Все пункты просмотрены" : "Далее"}</button>}
     </nav>
   </div>;
 }

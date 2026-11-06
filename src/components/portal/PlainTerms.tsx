@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { WarmIcon } from "@/components/icons/WarmIcon";
 import { plainTerms } from "./plainWords";
 import styles from "./portal-path.module.css";
 
@@ -9,6 +9,6 @@ export function PlainTerms({ text, className = "" }: { text: string; className?:
   const terms = plainTerms(text);
   if (!terms.length) return null;
   return <ul className={`${styles.terms} ${className}`} data-plain-terms aria-label="Что значат слова">
-    {terms.map(item => <li key={item.term}><Info size={14} strokeWidth={1.8} aria-hidden="true" /><span><strong>{item.term}</strong> — {item.plain}</span></li>)}
+    {terms.map(item => <li key={item.term}><WarmIcon name="info" size={18} /><span><strong>{item.term}</strong> — {item.plain}</span></li>)}
   </ul>;
 }

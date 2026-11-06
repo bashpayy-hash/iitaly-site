@@ -11,6 +11,7 @@ import { PricesHero } from "./PricesHero";
 import heroArt from "./prices-landscape.module.css";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import styles from "@/components/marketing/marketing.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 const MICRO = [
@@ -63,9 +64,6 @@ export function PricesExplorer() {
                 ИИ оценит шансы, соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа
               </span>
             </div>
-            <span aria-hidden className="hidden self-center text-2xl text-cloud-meta sm:block">
-              →
-            </span>
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold">{priceLabel(PRICE_MAIN)}</b>
               <span className="text-apple-body-sm text-cloud-meta">
@@ -146,22 +144,8 @@ export function PricesExplorer() {
             <div className="mt-3 divide-y divide-green/15">
               {GUARANTEES.map((g) => (
                 <details key={g.title} open={g.title === "Возврат" || undefined} className="group py-3 first:pt-0 last:pb-0">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-apple-body-sm font-semibold text-cloud-white marker:content-none [&::-webkit-details-marker]:hidden">
+                  <summary className={`${disclosure.row} text-apple-body-sm font-semibold text-cloud-white [--disclosure-bg:rgba(255,255,255,.1)] [--disclosure-bg-hover:rgba(255,255,255,.16)] [--disclosure-ink:var(--color-green)]`}>
                     {g.title}
-                    <svg
-                      aria-hidden
-                      viewBox="0 0 16 10"
-                      className="h-2.5 w-4 shrink-0 text-green transition-transform duration-200 group-open:-rotate-180"
-                    >
-                      <path
-                        d="M1 1.5 8 8.5 15 1.5"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
                   </summary>
                   <p className="mt-2 text-apple-body-sm text-cloud-body">{g.body}</p>
                 </details>

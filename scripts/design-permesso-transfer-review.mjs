@@ -59,7 +59,7 @@ try {
   assert(await guide.locator('[data-glyph]').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize)>=18),'Readable independent of A4 scale');
   if([1440,390].includes(width)) await screenshot(`transfer-page1-${width}.png`);
   await guide.locator('[data-transfer-confirm]').click();
-  await guide.getByRole('button',{name:'← Назад',exact:true}).click();assert.match(await guide.innerText(),/Этот шаг уже отмечен/);
+  await guide.getByRole('button',{name:'Назад',exact:true}).click();assert.match(await guide.innerText(),/Этот шаг уже отмечен/);
   await guide.getByRole('button',{name:'Изменить значение в бланке',exact:true}).click();await loaded();
   await part('3').fill('UPDATED TEST');await launch();
   assert.equal(await guide.getByText('Этот шаг уже отмечен для текущего значения.',{exact:true}).count(),0,'Changed answer invalidates receipt');

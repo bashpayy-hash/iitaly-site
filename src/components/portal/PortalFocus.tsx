@@ -2,7 +2,8 @@
 /* eslint-disable @next/next/no-img-element -- Local task artwork with explicit dimensions. */
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, CalendarDays, ChevronRight, Clock, FileText, MapPin } from "lucide-react";
+import { WarmIcon } from "@/components/icons/WarmIcon";
+import { ObjectIcon } from "@/components/icons/ObjectIcon";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META, fmtDate } from "@/lib/portalMeta";
 import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigation";
@@ -118,14 +119,14 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
                 {description && <p className={styles.explainer} data-step-short-explainer>{description}</p>}
                 <PlainTerms text={`${taskTitle(row)} ${description}`} />
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><CalendarDays size={14} strokeWidth={1.8} aria-hidden="true" /><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
-                  {!done && time && <span><Clock size={14} strokeWidth={1.8} aria-hidden="true" />{time}</span>}
+                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><WarmIcon name="calendar" size={18} /><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
+                  {!done && time && <span><WarmIcon name="clock" size={18} />{time}</span>}
                 </div>
               </div>
             </div>
             <div className={styles.taskActions} data-locked={rowLocked || undefined}>
               {rowLocked ? <button type="button" className={styles.primary} data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button> : <>
-                <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>{stepActionLabel(data, row)} <span aria-hidden="true">→</span></a>
+                <a className={styles.primary} href={href} data-road-open={isCurrent || undefined} data-road-action={isCurrent || undefined} data-portal-task={row.id} data-current-task={row.id === position.task?.id} onClick={openTask}>{stepActionLabel(data, row)}</a>
                 {!savedDone && <button type="button" className={styles.markReady} data-task-ready={row.id} disabled={busy} aria-label={`Отметить шаг как сделанный: ${taskTitle(row)}`} onClick={() => check(row)}>Уже сделано</button>}
               </>}
             </div>
@@ -169,14 +170,14 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         {nowWhy && <p className={styles.nowWhy} data-step-short-explainer>{nowWhy}</p>}
         {nowTask && <PlainTerms text={`${taskTitle(nowTask)} ${nowWhy}`} className={styles.nowTerms} />}
         {nowTask && (days !== null || nowTime) && <ul className={styles.nowFacts} data-now-deadline>
-          {days !== null && <li data-overdue={days < 0}><CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
+          {days !== null && <li data-overdue={days < 0}><WarmIcon name="calendar" size={20} />
             <span>{days > 0 ? <>Лучше успеть до <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time> · осталось {days} {dayWord(days)}</> : days < 0 ? <>Рекомендуемая дата прошла {Math.abs(days)} {dayWord(Math.abs(days))} назад</> : <>Лучше успеть сегодня</>}</span></li>}
-          {nowTime && <li><Clock size={16} strokeWidth={1.8} aria-hidden="true" /><span>Займёт {nowTime}</span></li>}
+          {nowTime && <li><WarmIcon name="clock" size={20} /><span>Займёт {nowTime}</span></li>}
         </ul>}
         {nowTask && <div className={styles.nowActions}>
           {isLockedTask(nowTask)
             ? <button type="button" className={styles.nowPrimary} data-now-locked data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button>
-            : <a className={styles.nowPrimary} href={nowHref} data-now-open data-road-open data-road-action data-portal-task={nowTask.id} data-current-task="true" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{stepActionLabel(data, nowTask)} <span aria-hidden="true">→</span></a>}
+            : <a className={styles.nowPrimary} href={nowHref} data-now-open data-road-open data-road-action data-portal-task={nowTask.id} data-current-task="true" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{stepActionLabel(data, nowTask)}</a>}
         </div>}
       </aside>
     </div>}
@@ -187,17 +188,17 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       <h2 id="portal-more-heading">Ещё в кабинете</h2>
       <ul className={path.moreList}>
         <li><a href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
-          <span className={path.moreIcon}><FileText size={20} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className={path.moreIcon}><ObjectIcon name="folder" size={44} /></span>
           <span className={path.text}><strong>Документы</strong><span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span></span>
-          <ChevronRight className={path.chevron} size={18} strokeWidth={1.6} aria-hidden="true" /></a></li>
+         </a></li>
         <li><a href={shortlistTask ? `/portal?view=plan&task=${encodeURIComponent(shortlistTask.id)}` : "/universities"} data-cabinet-tile="universities" data-cabinet-shortlist={shortlistTask ? "" : undefined} onClick={event => { if (!shortlistTask || !plainClick(event)) return; event.preventDefault(); onOpenTask(shortlistTask, "instruction"); }}>
-          <span className={path.moreIcon}><MapPin size={20} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className={path.moreIcon}><ObjectIcon name="cap" size={44} /></span>
           <span className={path.text}><strong>Университеты</strong><span>{universities.length ? universities.map(university => university.name).join(" · ") : "Пока не выбраны"}</span></span>
-          <ChevronRight className={path.chevron} size={18} strokeWidth={1.6} aria-hidden="true" /></a></li>
+         </a></li>
         <li><a href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
-          <span className={path.moreIcon}><Bell size={20} strokeWidth={1.6} aria-hidden="true" /></span>
+          <span className={path.moreIcon}><ObjectIcon name="alarm" size={44} /></span>
           <span className={path.text}><strong>Напоминания о сроках</strong><span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span></span>
-          <ChevronRight className={path.chevron} size={18} strokeWidth={1.6} aria-hidden="true" /></a></li>
+         </a></li>
       </ul>
     </nav>}
     {/* Страница этапа (owner, 4 Nov: «перед глазами максимум один блок и один
@@ -223,9 +224,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       {taskList(selectedTask ? [selectedTask] : [])}
       {selectedTask && <nav className={styles.stepPagination} aria-label="Переход между шагами этапа">
         {selectedTaskIndex > 0 ? <PortalPageLink href={stageHref(selectedTaskIndex - 1)}>Назад</PortalPageLink> : <span />}
-        {selectedTaskIndex < visibleTasks.length - 1 ? <PortalPageLink href={stageHref(selectedTaskIndex + 1)}>Далее <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>
-          : nextStage ? <PortalPageLink href={`/portal?stage=${encodeURIComponent(nextStage.id)}`} data-next-stage={nextStage.id}>Следующий этап: {nextStage.title} <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>
-          : <PortalPageLink href="/portal">К моему плану <ChevronRight size={16} aria-hidden="true" /></PortalPageLink>}
+        {selectedTaskIndex < visibleTasks.length - 1 ? <PortalPageLink href={stageHref(selectedTaskIndex + 1)}>Далее</PortalPageLink>
+          : nextStage ? <PortalPageLink href={`/portal?stage=${encodeURIComponent(nextStage.id)}`} data-next-stage={nextStage.id}>Следующий этап: {nextStage.title}</PortalPageLink>
+          : <PortalPageLink href="/portal">К моему плану</PortalPageLink>}
       </nav>}
     </div>}
     {wall.modal}

@@ -35,12 +35,12 @@ function ThemeCard({ id, object, objectHeight, label, title, line, href }: { id:
 export function FeatureBanner() {
   const permesso = GUIDE_TOPICS.find(item => item.id === "permesso")!;
   return <section className={styles.section} data-section="feature" aria-label="План и первые шаги в Италии">
-    <SceneCard title={<>Один шаг.<br />Понятный маршрут.</>} href="/plan" actionLabel="Составить мой план" caption="Ответь на вопросы о себе. План покажет, с чего начать и какой шаг будет следующим.">
+    <SceneCard title={<>Один шаг.<br />Понятный маршрут.</>} href="/plan" actionLabel="Составить мой план" action="Составить мой план" caption="Ответь на вопросы о себе. План покажет, с чего начать и какой шаг будет следующим.">
       <ul className={styles.cards} aria-label="Этапы маршрута">
         {GUIDE_STAGES.map((stage, index) => <ThemeCard key={stage.id} id={stage.id} {...STAGE_CARDS[index]} title={stage.title} line={stage.description} href={guideStageHref(stage.id)} />)}
       </ul>
     </SceneCard>
-    <SceneCard title={<>После визы<br />путь продолжается.</>} href={guideHref(permesso.id)} actionLabel={`Открыть гайд: ${permesso.title}`} caption="Первые формальности в новом городе. Выбирай одну тему, разбирайся с ней и переходи дальше.">
+    <SceneCard title={<>После визы<br />путь продолжается.</>} href={guideHref(permesso.id)} actionLabel={`Открыть гайд: ${permesso.title}`} action="Открыть гайд" caption="Первые формальности в новом городе. Выбирай одну тему, разбирайся с ней и переходи дальше.">
       <ul className={`${styles.cards} ${styles.cardsAlt}`} aria-label="Темы после приезда">
         {ARRIVAL_CARDS.map(card => { const topic = GUIDE_TOPICS.find(item => item.id === card.id)!; return <ThemeCard key={card.id} {...card} title={topic.title} line={topic.teaser} href={guideHref(card.id)} />; })}
       </ul>

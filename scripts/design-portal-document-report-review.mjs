@@ -262,7 +262,7 @@ try {
     const overview = page.locator('[data-portal-overview]');
     assert.doesNotMatch(await overview.innerText(), /Нужно уточнить/,'Review detail is not repeated in the checklist');
     assert.match(await overview.innerText(), /Банковские выписки|Подготовить банковские выписки/, 'Overview identifies the document rather than an opaque filename');
-    assert.equal((await overview.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),'Открыть итог проверки →');
+    assert.equal((await overview.locator('[data-road-open]').innerText()).replace(/\s+/g,' '),'Открыть итог проверки');
     await noOverflow(page, `Document summary ${width}px`);
     await portalDestination(page, 'План');
     const plan = page.locator('[data-portal-focus]');

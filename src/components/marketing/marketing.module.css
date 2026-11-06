@@ -163,8 +163,8 @@
 .route li { min-width: 0; font-size: 14px; }
 .route a { display: flex; align-items: center; gap: 10px; min-height: 44px; border-radius: 8px; }
 .route a:hover { color: var(--i-link); background: #fff0f3; }
-.route li a > span { display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border: 1px solid var(--i-line); border-radius: 50%; font-size:11px; }
-.route li:first-child a > span { background: var(--i-action); border-color: var(--i-action); color: #fff; }
+.route li a > span { display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; }
+.route li a > span img { filter: drop-shadow(0 2px 3px rgba(42,36,32,.12)); }
 .metrics { background: transparent; padding: 48px 24px; border-bottom: 1px solid var(--i-line); }
 .metricsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; max-width: 1100px; margin: auto; }
 .metric { text-align: center; }

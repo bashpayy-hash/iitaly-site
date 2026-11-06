@@ -4,6 +4,7 @@ import { AssessmentRoadmap } from "./AssessmentRoadmap";
 import type { Plan } from "@/lib/planBuilder";
 import { AppleButtonLink } from "@/components/apple/Button";
 import styles from "./plan-journey.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 /* Результат анкеты без повторов (owner, 5 Nov: «перепроверь перегрузы»):
    одна строка «что это», одна главная кнопка, шаги плитками. Ушли рамка
@@ -18,7 +19,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
       </p>
 
-      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете ↗︎</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
+      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
 
       <div className={styles.routeHeading}>
         <h2>С чего начать</h2>
@@ -27,7 +28,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       <AssessmentRoadmap plan={plan} />
 
       <details className={styles.reminders}>
-        <summary>
+        <summary className={disclosure.row}>
           Напоминания на телефоне
         </summary>
         <p className="mt-2 text-apple-body-sm text-cloud-body">

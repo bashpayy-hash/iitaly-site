@@ -27,7 +27,7 @@ export function GuideTile({ guide, index }: { guide: GuideCard; index: number })
     <p>{guide.teaser}</p>
     <div className={styles.actions}>
       <Link className={styles.primary} href={guideHref(guide.id)} data-guide-select={guide.id} aria-label={`Подробнее: ${guide.title}`} prefetch={false}>Подробнее</Link>
-      <Link className={styles.secondary} href={guideFirstPointHref(guide.id)} data-guide-steps={guide.id} aria-label={`Пошагово: ${guide.title}`} prefetch={false}>Пошагово<span aria-hidden="true">→</span></Link>
+      <Link className={styles.secondary} href={guideFirstPointHref(guide.id)} data-guide-steps={guide.id} aria-label={`Пошагово: ${guide.title}`} prefetch={false}>Пошагово</Link>
     </div>
   </article>;
 }

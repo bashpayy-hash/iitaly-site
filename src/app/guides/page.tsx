@@ -1,6 +1,5 @@
 import paper from "@/components/marketing/public-paper.module.css";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { GuideFrame, GuideReviewed } from "@/components/guides/GuidePage";
 import { GuideDirectory } from "@/components/guides/GuideDirectory";
 import { GuideHelperLink, GuideReadingContext } from "@/components/guides/GuideReadingContext";
@@ -18,7 +17,7 @@ export default function GuidesPage() {
     </div>
     <GuideDirectory />
     <div className={ui.indexFooter}>
-      <Link href="/changes-2026-27" className={ui.textLink}>Что изменилось в правилах 2026/27<ArrowUpRight size={16} aria-hidden="true" /></Link>
+      <Link href="/changes-2026-27" className={ui.textLink}>Что изменилось в правилах 2026/27</Link>
       <GuideHelperLink />
     </div>
   </GuideFrame>;

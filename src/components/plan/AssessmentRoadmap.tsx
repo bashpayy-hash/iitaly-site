@@ -1,17 +1,18 @@
 "use client";
 
-import { ArrowRight, ChevronDown, FileText } from "lucide-react";
 import { useStoryLocation } from "@/components/story/MediaSwitcher";
 import { SourceRefs } from "@/components/SourceRefs";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
 import { planStepOpen } from "@/lib/access";
 import type { Plan, PlanStep } from "@/lib/planBuilder";
 import styles from "./assessment-result.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
+import { WarmIcon } from "@/components/icons/WarmIcon";
 import { PlanStepTiles } from "./PlanStepTiles";
 
 function StepReferences({ step }: { step: PlanStep }) {
   return <details className={styles.references}>
-    <summary>Условия и официальные источники <ChevronDown size={16} aria-hidden="true" /></summary>
+    <summary className={disclosure.row}>Условия и официальные источники</summary>
     <p>{step.p}</p>
     {step.sources?.length ? <SourceRefs ids={step.sources} /> : null}
   </details>;
@@ -37,8 +38,8 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
   const open = planStepOpen(index);
   const wall = useWallPurchase("plan-step", !open);
   const forward = index < plan.steps.length - 1
-    ? <button type="button" className={open ? undefined : styles.quietNext} data-instruction-next onClick={() => select(index + 1)}>Далее<ArrowRight size={18} aria-hidden="true" /></button>
-    : <a className={open ? undefined : styles.quietNext} href="/portal">В личный кабинет<ArrowRight size={18} aria-hidden="true" /></a>;
+    ? <button type="button" className={open ? undefined : styles.quietNext} data-instruction-next onClick={() => select(index + 1)}>Далее</button>
+    : <a className={open ? undefined : styles.quietNext} href="/portal">В личный кабинет</a>;
   return <div className={styles.result} data-assessment-route>
     <PlanStepTiles steps={plan.steps.map((item, position) => ({ title: item.t, line: item.summary || item.p, locked: !planStepOpen(position) }))} index={index} href={href} onSelect={select}
       detail={position => position === index && <section className={styles.step} data-instruction-point={index + 1} data-step-locked={!open || undefined} aria-labelledby="plan-reading-heading">
@@ -47,7 +48,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
         {open ? <>
           <p className={styles.summary}>{step.summary || step.p}</p>
           <div data-assessment-next-action>
-            {step.action && <p className={styles.action}><ArrowRight size={18} aria-hidden="true" /><span>{step.action}</span></p>}
+            {step.action && <p className={styles.action}><span>{step.action}</span></p>}
             <StepReferences step={step} />
           </div>
         </> : <>
@@ -63,7 +64,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
         </nav>
       </section>} />
     <details className={styles.documents}>
-      <summary><FileText size={20} aria-hidden="true" /><span>Какие документы понадобятся</span><ChevronDown size={18} aria-hidden="true" /></summary>
+      <summary className={disclosure.row}><WarmIcon name="folder" size={26} /><span>Какие документы понадобятся</span></summary>
       <p>Это ориентир для сбора. Точный комплект зависит от программы и твоей ситуации; файлы ещё не проверены.</p>
       <ul>{plan.docs.map(doc => <li key={doc.n}><strong>{doc.n}</strong><p>{doc.d}</p></li>)}</ul>
     </details>

@@ -1,5 +1,7 @@
 "use client";
 
+import { WarmIcon } from "@/components/icons/WarmIcon";
+import { ObjectIcon } from "@/components/icons/ObjectIcon";
 import { documentOutcome } from "@/lib/portalDocument";
 
 import { useEffect, useId, useRef, useState } from "react";
@@ -14,8 +16,8 @@ import { PortalDocumentContext } from "@/components/portal/PortalDocumentContext
 import { PortalDocumentNotes } from "@/components/portal/PortalDocumentUpload";
 import { PortalUploadZone } from "@/components/portal/PortalUploadZone";
 import portalStyles from "@/components/portal/portal-document.module.css";
-import { ScanLine, ShieldCheck, Files, Check } from "lucide-react";
 import styles from "./plan-workspace.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
@@ -196,7 +198,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext} data-portal-inspector={portalInspector || undefined} data-inspector-state={portalInspector ? state.step : undefined}>
-        {!portalInspector && <p className={styles.auditBadge}><ShieldCheck aria-hidden="true" /> AI Document Audit · одна проверка бесплатно</p>}
+        {!portalInspector && <p className={styles.auditBadge}><WarmIcon name="lock" size={20} /> AI Document Audit · одна проверка бесплатно</p>}
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable, walled && !("file" in state))}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
@@ -243,10 +245,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       </fieldset>
 
         <ul className={styles.auditScope} aria-label="Что проверяем в файле">
-          <li><Check aria-hidden="true" /><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
-          <li><Check aria-hidden="true" /><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
-          <li><Check aria-hidden="true" /><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
-          <li><Check aria-hidden="true" /><span>Выписка: владелец, период и читаемость данных.</span></li>
+          <li><WarmIcon name="check" size={18} /><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
+          <li><WarmIcon name="check" size={18} /><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
+          <li><WarmIcon name="check" size={18} /><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
+          <li><WarmIcon name="check" size={18} /><span>Выписка: владелец, период и читаемость данных.</span></li>
         </ul>
       </div>
       <div className={styles.auditTool}>
@@ -290,7 +292,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             disabled={state.step === "reading" || unavailable || availabilityPending}
             onChange={(e) => accept(e.target.files?.[0])}
           />
-          <Files aria-hidden="true" />
+          <ObjectIcon name="folder" size={76} />
           <b className={styles.fileAction}>Выбрать документ</b>
           <small>или перетащи сюда<br />{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>
@@ -342,7 +344,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
 
       {state.step !== "checking" && state.step !== "reading" && state.step !== "done" && <button type="button" className={styles.example} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}>Проверить пример справки</button>}
       {showExample && <section className={styles.exampleResult} data-document-example aria-label="Пример разбора, не проверка твоего файла">
-        <h3><ScanLine size={19} aria-hidden="true" className="mr-2 inline" />Пример разбора справки</h3>
+        <h3><WarmIcon name="doc" size={22} className="mr-2 inline align-[-4px]" />Пример разбора справки</h3>
         <p>Демонстрация интерфейса. Это вымышленный пример, файл не отправлялся на ИИ-анализ.</p>
         <p><b>Нужно уточнить.</b> В примере не указан конкурс. Нельзя определить нужный год доходов.</p>
         <ul><li><b>Читаемость:</b> текст различим.</li><li><b>Комплект:</b> данные владельца и подпись видны.</li><li><b>Даты:</b> сверь год и период с bando своей программы.</li></ul>
@@ -396,7 +398,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
     <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
-          <ShieldCheck size={22} aria-hidden="true" />
+          <WarmIcon name="doc" size={24} />
           <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{portalStatus ? documentOutcome({ verdict: v, result }, applicationYear).label : LABEL[v] || "Результат"}</span>
           <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
         </div>
@@ -410,7 +412,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
         <p className="mt-1">{result.review.notice}</p>
         {result.review.referenceYear !== null && <p className="mt-1">Год доходов: {result.review.referenceYear}. Имущество — на 31 декабря {result.review.referenceYear}; допустимые альтернативы зависят от программы.</p>}
         <details className="mt-3 text-apple-caption">
-          <summary className="min-h-11 cursor-pointer py-3 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+          <summary className={`${disclosure.inline} min-h-11 py-3 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson`}>
             Официальные источники · сверены {result.review.verifiedOn.split("-").reverse().join(".")}
           </summary>
           <p className="mt-2 text-cloud-meta">Это дата сверки базы. Сайты учреждений не просматриваются заново при каждой проверке.</p>
@@ -470,7 +472,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
           <b>Что дальше</b>
           {result.nextSteps.map((n, i) => (
             <div key={i} className="mt-1 text-cloud-body">
-              → {n}
+              {n}
             </div>
           ))}
         </div>

@@ -42,7 +42,7 @@ try{
   // One mode: the draft on the original geometry. The original is a link to the official PDF, not a second tab.
   assert.equal(await page.getByRole('tab').count(),0,'No parallel original/editable modes');
   assert.equal(await page.locator('object[type="application/pdf"]').count(),0,'No embedded PDF with its own step guide');
-  assert.equal(await page.getByRole('link',{name:'Оригинал PDF ↗︎',exact:true}).getAttribute('href'),paper.OFFICIAL_PDF);
+  assert.equal(await page.getByRole('link',{name:'Оригинал PDF',exact:true}).getAttribute('href'),paper.OFFICIAL_PDF);
   for(const id of ['helpers','before-poste']) assert.equal(await page.locator(`a[href="#${id}"]`).count(),1,`Header links to #${id}`);
   assert.equal(await page.locator('#helpers h2').innerText(),'Коды и расчёты');assert.equal(await page.locator('#before-poste h2').innerText(),'Перед почтой');
   const editor=page.locator('[data-permesso-editor]');

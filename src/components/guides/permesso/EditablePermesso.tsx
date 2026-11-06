@@ -13,6 +13,7 @@ import { PermessoPaperSheet } from "./PermessoPaperSheet";
 import { AnswerSummary } from "./PermessoFieldHover";
 import { fieldAnswer } from "./permessoFieldAnswer";
 import { usePermessoRoute, pinPermessoField, usePermessoHint } from "./usePermessoRoute";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 type Draft = Record<string, string>;
 const STORAGE_KEY = "iitaly:permesso-paper-editor:v1";
@@ -157,7 +158,7 @@ export function EditablePermesso() {
         <aside className={light.scope} aria-label="Что важно знать">
           <p><b>Бланк остаётся главным источником.</b> Это учебный помощник, не замена инструкции Questura. Если foglio note твоего kit расходится с подсказкой, следуй бумажному kit и требованиям своей провинции.</p>
           <nav className={light.headLinks} aria-label="Оригинал и справка">
-            <a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF ↗︎</a>
+            <a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF</a>
             <a href="#helpers">Коды и расчёты ↓</a>
             <a href="#before-poste">Перед почтой ↓</a>
           </nav>
@@ -172,7 +173,7 @@ export function EditablePermesso() {
         {page > 3 && <p className={z.scopeNote}>Эти листы остаются в kit. Здесь — пропуски для сценария без семьи, не инструкция для семейного заявления.</p>}
         <div className={`${styles.workspace} ${z.workspace}`}>
           <div className={styles.document} data-fab-yield>
-            <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · страница {page} из 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF ↗︎</a></div>
+            <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · страница {page} из 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF</a></div>
             {!transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v) => {setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
             <div className={styles.documentFoot}>Оригинальные клетки и подписи не изменены. Это учебный черновик, не подача заявления.</div>
           </div>
@@ -195,7 +196,7 @@ export function EditablePermesso() {
             <div className={`${styles.fieldNav} ${light.fieldNav}`} title="Стрелки ↑ и ↓ переключают поля страницы"><button type="button" onClick={() => go(-1)} disabled={!previousField}>Назад</button><span>{applicable.includes(selected) ? `${applicable.indexOf(selected) + 1} / ${applicable.length}` : shortId(selected)}</span><button type="button" data-next-field onClick={() => go(1)}>{nextField ? "Дальше →" : "К проверке →"}</button></div>
             <p className={styles.upNext}>{nextField ? `Дальше: ${shortId(nextField)} — ${nextField.meta.ru}` : "Дальше: обзор черновика перед переносом на бумагу."}</p>
             <details className={light.detail} key={"detail-" + selectedId}><summary>Подробное пояснение</summary><dl className={styles.explanation}><div><dt>{status === "empty" ? "Почему пропустить" : "Откуда взять"}</dt><dd>{selected.meta.source}</dd></div><div id="permesso-value-format"><dt>Как писать</dt><dd>{selected.kind === "date" ? "Две цифры дня, две месяца, четыре года. Разделители уже есть на оригинальном бланке." : selected.kind === "split" ? "Заполняй части отдельно, как подписано на бумаге. Разделитель / уже напечатан." : selected.meta.format}</dd></div><div><dt>Не перепутай</dt><dd>{selected.meta.mistake}</dd></div></dl>{status === "verify" && <p className={styles.caution}>Значение в черновике не подтверждает правило. Перед переносом уточни его по своему kit / в Sportello Amico.</p>}</details>
-            {showExample && quickAnswer.example && <details className={light.samplePreview} key={"sample-" + selectedId}><summary>Пример по клеткам — не твои данные</summary><div className={light.sampleRows} data-rows={selected.kind === "text"}>{selected.runs.map((r,i) => <div className={light.sampleRun} key={i} aria-label={r.label || `Часть ${i + 1}`}>{Array.from({length:r.count},(_,k) => <span key={k}>{getPart(selected,quickAnswer.value,i)[k] || ""}</span>)}</div>)}</div></details>}
+            {showExample && quickAnswer.example && <details className={light.samplePreview} key={"sample-" + selectedId}><summary className={disclosure.row}>Пример по клеткам — не твои данные</summary><div className={light.sampleRows} data-rows={selected.kind === "text"}>{selected.runs.map((r,i) => <div className={light.sampleRun} key={i} aria-label={r.label || `Часть ${i + 1}`}>{Array.from({length:r.count},(_,k) => <span key={k}>{getPart(selected,quickAnswer.value,i)[k] || ""}</span>)}</div>)}</div></details>}
             <details className={styles.fieldJump}><summary>Перейти к полю на странице {page}</summary><div>{ALL_GUIDANCE_FIELDS.filter(f => f.page === page).map(f => <button type="button" key={f.id} onClick={() => chooseField(f,true)}>{shortId(f)} · {f.meta.ru}</button>)}</div></details>
           </aside>
         </div>

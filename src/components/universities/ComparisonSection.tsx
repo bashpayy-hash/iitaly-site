@@ -62,7 +62,7 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
           <div className={styles.selectionActions}>
             <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
             {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
-            {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне ↗︎</button>}
+            {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне</button>}
           </div>
           <div className={styles.viewModes} aria-label="Вид сравнения">
             <button type="button" aria-pressed={mode === "grid"} onClick={() => setMode("grid")}>Сетка</button>

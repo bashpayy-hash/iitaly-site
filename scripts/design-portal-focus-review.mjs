@@ -96,7 +96,7 @@ try {
     assert.equal(await page.locator('[data-task-check]').count(),0,'The overview marks nothing: completion lives on the step and stage pages');
     await noOverflow(page);await axe(page,`New local profile ${width}`);
     await page.screenshot({path:resolve(output,`guest-${width}.png`),fullPage:true,animations:'disabled'});
-    assert.equal((await page.locator('[data-now-open]').innerText()).replace(/\s+/g,' '),'Ответить на вопросы →');
+    assert.equal((await page.locator('[data-now-open]').innerText()).replace(/\s+/g,' '),'Ответить на вопросы');
     await page.locator('[data-now-open]').click();await page.locator('[data-plan-wizard]').waitFor();
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')||'{}').complete===true),false,'Completion opens the real questionnaire rather than faking saved answers');
     results.push({width,guest:true,lockedStages:5,realQuestionnaire:true});await context.close();

@@ -16,7 +16,7 @@ export function UniversityDecision({ universities, selection, showChoices = true
       <p className={styles.decisionTitle}>{primary ? <><Check size={18} aria-hidden="true" />Отличный выбор! Маршрут поступления (Flight Plan) адаптирован под {primary.name}</> : "Сравни условия и выбери основной вуз"}</p>
       <p>{primary ? `Основной вуз: ${primary.name}. Выбор сохранён на этом устройстве.` : universities.length ? "Нажми «Выбрать этот университет» у подходящего вуза. Затем перейди к плану." : "Добавь университеты в списках выше. После сравнения выбери, для какого вуза составлять план."}</p>
     </div>
-    {primary && <Link className={styles.planLink} href="/plan#questionnaire">Перейти в Мой план<span aria-hidden="true">→</span></Link>}
+    {primary && <Link className={styles.planLink} href="/plan#questionnaire">Перейти в Мой план</Link>}
     {showChoices && (universities.length > 0 ? <div className={styles.finalChoices} aria-label="Выбор основного университета">
       {universities.map(university => <button type="button" key={university.id} className={styles.chooseButton} aria-pressed={selection.primaryId === university.id} onClick={() => selection.onSelect(university.id)}>
         {selection.primaryId === university.id ? <Check size={16} aria-hidden="true" /> : null}

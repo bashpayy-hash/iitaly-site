@@ -7,6 +7,7 @@ import { Modal } from "@/components/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import ui from "./university-ui.module.css";
 import rules from "@/components/portal/portal-rules.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const PortalRules = dynamic(() => import("@/components/portal/PortalRules").then(module => module.PortalRules), {
   loading: () => <p role="status" className={rules.loading}>Загружаю справку…</p>,
@@ -83,7 +84,7 @@ export function UniModal({
 function UniversityRules() {
   const [open, setOpen] = useState(false);
   return <details className={rules.disclosure} data-portal-rules-disclosure onToggle={event => setOpen(event.currentTarget.open)}>
-    <summary>Актуальные правила и источники</summary>
+    <summary className={disclosure.row}>Актуальные правила и источники</summary>
     {open && <PortalRules />}
   </details>;
 }
