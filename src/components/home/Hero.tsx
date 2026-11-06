@@ -29,9 +29,13 @@ export function Hero() {
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
           <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <div className={assistant.entryActions}>
-            <AppleButtonLink href="/plan">Составить план бесплатно</AppleButtonLink>
+            {/* Owner, 6 Nov: «проверка документов — главная фишка сайта»:
+                она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}
+            <div className={assistant.entryButtons}>
+              <AppleButtonLink href="/plan">Составить план бесплатно</AppleButtonLink>
+              <AppleButtonLink href="/plan#document-check" variant="outlined" data-hero-document-check>Проверить документ</AppleButtonLink>
+            </div>
             <div className={assistant.entryAlternatives}>
-              <Link href="/plan#document-check">Проверить документ</Link>
               <Link href="/universities">Смотреть университеты</Link>
             </div>
           </div>

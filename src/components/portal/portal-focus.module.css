@@ -161,7 +161,7 @@ button.nowPrimary { border:0; cursor:pointer; }
 /* overflow:clip, не hidden: hidden делает плитку scroll-контейнером, и
    scroll-driven параллакс пейзажа мерил бы положение внутри плитки, а не в
    окне. */
-.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; aspect-ratio:1296 / 800; padding:28px 28px 0; border-radius:28px; background:#E9DCC6; text-align:center; overflow:clip; }
+.hero { position:relative; isolation:isolate; grid-area:hero; display:grid; justify-items:center; align-content:start; aspect-ratio:1296 / 800; padding:28px 28px clamp(160px,18vw,240px); border-radius:28px; background:#E9DCC6; text-align:center; overflow:clip; }
 .hero > * { max-width:100%; min-width:0; }
 /* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
    фоне, и Веспи должен реально ехать»). Кадр прижат к низу: дорога, по
@@ -194,13 +194,13 @@ button.nowPrimary { border:0; cursor:pointer; }
 
 @media(max-width:1100px) {
  .canvas[data-portal-page=overview] { margin-top:12px; }
- .hero { aspect-ratio:4 / 3; padding:24px 20px 0; }
+ .hero { aspect-ratio:4 / 3; padding:24px 20px clamp(160px,22vw,220px); }
 }
 @media(max-width:640px) {
  /* Телефон: пейзаж сверху во всю ширину плитки, панель с шагом заходит на
     него снизу, как лист — дорога и Веспи остаются над текстом. */
- .hero { display:block; aspect-ratio:auto; padding:0; border-radius:24px; background:#FFFDF9; }
- .heroScene { position:relative; inset:auto; aspect-ratio:4 / 3; }
+ .hero { display:block; justify-items:stretch; aspect-ratio:auto; padding:0; border-radius:24px; background:#FFFDF9; }
+ .heroScene { position:relative; inset:auto; width:100%; aspect-ratio:4 / 3; }
  .heroPanel { width:100%; margin-top:-28px; padding:24px 20px 22px; border-radius:24px 24px 0 0; box-shadow:none; }
  .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
  .canvas[data-portal-page=overview] .welcomeMeta { font-size:13px; }
