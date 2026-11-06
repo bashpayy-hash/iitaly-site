@@ -29,6 +29,23 @@ const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executableP
 const results = [];
 let activePage;
 try {
+  // Owner, 6 Nov: «Гайды и виза» from a scrolled page opened /guides at its
+  // footer. With smooth scrolling on (a laptop, motion allowed), every header
+  // link must land the new page at its top at once.
+  {
+    const context = await browser.newContext({ viewport: { width: 1600, height: 870 }, locale: 'ru-RU' });
+    await context.route('**/*', route => { const url = new URL(route.request().url()); if (url.pathname.startsWith('/api/')) return route.fulfill({ status: 503, json: { ok: false } }); return url.origin === origin ? route.continue() : route.abort(); });
+    const page = await context.newPage(); activePage = page;
+    for (const [from, to] of [['/', '/guides'], ['/prices', '/guides'], ['/guides/visa', '/guides'], ['/', '/prices']]) {
+      await page.goto(origin + from, { waitUntil: 'networkidle' });
+      await page.mouse.move(800, 500); await page.mouse.wheel(0, 1500); await page.waitForTimeout(500);
+      assert(await page.evaluate(() => scrollY) > 300, `${from} scrolled before the click`);
+      await page.locator(`header a[href="${to}"]`).first().click(); await page.waitForURL(`**${to}`);
+      await page.waitForTimeout(900);
+      assert.equal(await page.evaluate(() => Math.round(scrollY)), 0, `${from} → ${to} lands at the top`);
+    }
+    await context.close();
+  }
   for (const width of [1440, 768, 390, 320]) {
     const context = await browser.newContext({ viewport: { width, height: width < 600 ? 844 : 1000 }, reducedMotion: 'reduce', locale: 'ru-RU' });
     const chats = [], events = [], unexpected = [], errors = [];
