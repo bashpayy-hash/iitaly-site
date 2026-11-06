@@ -1,0 +1,14 @@
+/* Окно со сценой: 22px радиус внутри плитки 28px, без рамок и теней.
+   Движение — медленный дрейф камеры к Веспи (он всегда в левой половине
+   кадра) и тёплый блик, который раз в цикл проходит по сцене. */
+.scene { position:relative; overflow:hidden; margin:0; border-radius:22px; background:#EDE5D8; aspect-ratio:1024 / 560; isolation:isolate; }
+.photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:30% 45%; transform-origin:28% 50%; }
+.light { position:absolute; inset:-20% -40%; background:linear-gradient(105deg,transparent 40%,rgba(255,236,204,.22) 50%,transparent 60%); opacity:0; pointer-events:none; }
+@media (prefers-reduced-motion:no-preference) {
+  .photo { animation:scene-drift 20s cubic-bezier(.45,0,.55,1) infinite alternate; }
+  .light { animation:scene-light 10s cubic-bezier(.45,0,.55,1) 2s infinite; }
+}
+@keyframes scene-drift { from { transform:scale(1.04) translate(0,0); } to { transform:scale(1.12) translate(2%,-1.5%); } }
+@keyframes scene-light { 0% { opacity:0; transform:translateX(-30%); } 30% { opacity:1; } 60%,100% { opacity:0; transform:translateX(30%); } }
+@media (max-width:700px) { .scene { aspect-ratio:4 / 3; border-radius:18px; } }
+@media (forced-colors:active) { .scene { border:1px solid CanvasText; } .light { display:none; } }

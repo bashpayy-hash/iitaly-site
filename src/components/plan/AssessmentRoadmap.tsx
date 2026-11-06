@@ -7,7 +7,6 @@ import { planStepOpen } from "@/lib/access";
 import type { Plan, PlanStep } from "@/lib/planBuilder";
 import styles from "./assessment-result.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
-import { WarmIcon } from "@/components/icons/WarmIcon";
 import { PlanStepTiles } from "./PlanStepTiles";
 
 function StepReferences({ step }: { step: PlanStep }) {
@@ -64,7 +63,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
         </nav>
       </section>} />
     <details className={styles.documents}>
-      <summary className={disclosure.row}><WarmIcon name="folder" size={26} /><span>Какие документы понадобятся</span></summary>
+      <summary className={disclosure.row}><span>Какие документы понадобятся</span></summary>
       <p>Это ориентир для сбора. Точный комплект зависит от программы и твоей ситуации; файлы ещё не проверены.</p>
       <ul>{plan.docs.map(doc => <li key={doc.n}><strong>{doc.n}</strong><p>{doc.d}</p></li>)}</ul>
     </details>

@@ -114,7 +114,7 @@ try {
     assert.equal(await page.locator('[data-portal-hero] [data-portal-landscape]').count(),1,'The hero stands on an Italian landscape');
     assert.match(await page.locator('[data-now-deadline]').innerText(),/Лучше успеть до .*осталось 98 дней/);
     assert.match(await page.locator('[data-now-deadline]').innerText(),/Займёт ~3–7 дней/);
-    assert.equal(await page.locator('[data-now-deadline] [data-warm-icon]').count(),2,'Each fact carries its small icon');
+    assert.equal(await page.locator('[data-now-deadline] img,[data-now-deadline] svg').count(),0,'Facts are words, no emoji-like icons (owner, 6 Nov)');
     assert.equal(await page.locator('[data-now-ahead],[data-step-tile],[data-road-board],[data-stage-lineup],[data-flight-stop]').count(),0,'No dark board, duplicate step tile, lineup or flight line (owner, 5 Nov)');
     assert.equal(await page.locator('[data-road-stage]').count(),6);
     assert.equal(await page.locator('[data-task-check]').count(),0,'Overview shows the next task once, without a second completion control');
@@ -167,19 +167,22 @@ try {
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
     // Hero tile: greeting as the label, the next step as the headline, one
-    // plain line, small icon facts, one button; the landscape fills the lower
-    // part of the tile. Then «Весь путь», then «Ещё в кабинете», 12px apart.
+    // plain line, facts as words, one button; the landscape is a window in the
+    // lower part of the tile. Then «Весь путь», then «Ещё в кабинете», 12px apart.
     const route=await road(page).boundingBox(),more=await page.locator('[data-cabinet-more]').boundingBox();
     const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
     const now=await page.locator('[data-portal-now]').boundingBox();
     assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
-    assert(hero.y+hero.height-(now.y+now.height)>=100,'The landscape keeps real room under the step and its button');
     assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then «Весь путь» 12px below');
     assert(route.y+route.height<=more.y+1&&more.y-(route.y+route.height)<=13,'Then «Ещё в кабинете» 12px below');
-    const landscape=await page.locator('[data-portal-landscape]').boundingBox();
-    // The frame may be enlarged on phones (4 Nov: the scooter is scaled out of the
-    // right-aligned crop), so the photo covers the tile and the tile clips it.
-    assert(landscape.y<=hero.y+2&&landscape.y+landscape.height>=hero.y+hero.height-2&&landscape.x<=hero.x+2&&landscape.x+landscape.width>=hero.x+hero.width-2,'The landscape fills the hero tile');
+    // Owner, 6 Nov: «белое свечение… колхозно» — the text no longer sits on a
+    // white haze over the photo. The landscape is its own rounded window under
+    // the step and its button, inside the tile; the window clips the photo.
+    const landscape=await page.locator('[data-portal-landscape]').boundingBox(),scene=await page.locator('[data-portal-hero-scene]').boundingBox();
+    assert(scene.y>=now.y+now.height-1&&scene.y+scene.height<=hero.y+hero.height+1&&scene.x>=hero.x-1&&scene.x+scene.width<=hero.x+hero.width+1,'The landscape window sits under the step, inside the tile');
+    assert(scene.height>=140,'The landscape window has real room');
+    assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=scene.y+scene.height-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its window');
+    assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The window clips its landscape');
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape (clip, so the scroll-driven parallax measures against the window)');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),'28px');
@@ -190,7 +193,7 @@ try {
     await page.locator('[data-road-stage][aria-current=step]').click();
     assert.equal(await page.locator('[data-portal-page=stage]').count(),1);
     assert.equal(await page.locator('[data-task-check]').count(),1);
-    // The current step's card on its stage page: one plain line, icon facts, one button and a quiet «Уже сделано».
+    // The current step's card on its stage page: one plain line, facts as words, one button and a quiet «Уже сделано».
     const work=await page.locator('[data-portal-overview]').boundingBox();
     const card=await page.locator('[data-focus-task=translate]').boundingBox(),copy=await page.locator('[data-focus-row=translate] h3').boundingBox();
     const ready=await page.locator('[data-task-ready=translate]').boundingBox(),openButton=await page.locator('[data-portal-task=translate]').boundingBox();
@@ -201,7 +204,7 @@ try {
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
     assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),26);
     assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
-    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta] [data-warm-icon]').count(),2,'Date and duration carry small icons');assert.equal(await page.locator('[data-task-ready=translate]').innerText(),'Уже сделано');assert.equal((await page.locator('[data-portal-task=translate]').innerText()).replace(/\s+/g,' '),'Как подготовить');
+    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta] img,[data-focus-task=translate] [data-road-meta] svg').count(),0,'Date and duration are words (owner, 6 Nov: no emoji-like icons)');assert.equal(await page.locator('[data-task-ready=translate]').innerText(),'Уже сделано');assert.equal((await page.locator('[data-portal-task=translate]').innerText()).replace(/\s+/g,' '),'Как подготовить');
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.equal(await page.locator('[data-next-stage],[aria-label="Соседние этапы"]').count(),0,'Mid-stage pages link only to the neighbouring steps');
     assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),5);
