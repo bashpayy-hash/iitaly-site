@@ -603,3 +603,30 @@ aid kit) «поменяй, сделай красивее, с упором на �
   (kaleidoscope) and drew diamonds and blotches every 640 px; the header used
   a photo of paper (`zhol/bg_cream.jpg`). Both are gone from the cabinet: a
   flat canvas plus the seamless fractal grain.
+
+## Text over a calm scene on /plan, loops without jerks · 7 November 2026
+
+Owner, /plan screenshot: «здесь должен быть текст, а на фоне Веспи… фон менее
+карикатурный, более исторический, детализированный… текст посередине, на фоне
+чуть заблюрено»; «проблема с качеством на других анимациях не решена, есть
+обрывистость».
+
+- **/plan header.** One 28 px tile (24 px on phones) the width of the content:
+  a Renaissance loggia of an old university, pale stone, faded garland
+  frescoes, muted palette; Vespi writes at a walnut desk in the lower centre.
+  Badge, title and line sit in the middle above it. The blur behind the text is
+  baked into the poster and the loop (feathered ellipse, gaussian sigma 7 at
+  1920), so phones pay nothing; a soft light radial veil keeps the ink
+  readable on every frame. Loop `motion/plan-loggia-{1920.mp4,960.mp4,960.webm}`,
+  poster `scenes/plan-loggia-{960,1920}.webp`. The lemon courtyard is gone.
+- **Loops without jerks.** Every loop now starts and ends on the same frame
+  and the last 16 frames ease into the first: no ping-pong (clouds and leaves
+  no longer reverse) and no jump at the seam.
+  - Bologna (home hero) and the belvedere (home FAQ) are new Kling loops from
+    their own stills at 1752 px (were 1280 px at 400–850 kbit/s);
+    `widths={[960, 1752]}`.
+  - Tuscany (cabinet «Сейчас»): Vespi used to brake to a full stop for ~0.75 s
+    and jump back at the loop point. The frozen frames are cut and the braking
+    thinned so it rides through at a steady speed; the background around it is
+    blended into the first frame.
+- Diagnosis, jobs and hashes: design/illustrations/motion-2026-11-07.json.

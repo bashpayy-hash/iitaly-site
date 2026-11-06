@@ -46,27 +46,33 @@ export function PlanExplorer() {
 
   return (
     <>
-      <section data-section="plan-header" className="px-5 pt-9 pb-6 text-center sm:pt-14 sm:pb-9">
-        <div data-role="heading">
-          <AppleCaption as="p" className="warm-badge">Персональный маршрут</AppleCaption>
-          <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
-            Опиши свою <span className="warm-highlight">ситуацию</span>
-          </AppleHeading>
-        </div>
-        <p className="mx-auto mt-5 max-w-lg text-apple-body text-cloud-body">
-          {WIZ.length} вопросов, затем понятные шаги и список документов.
-          Бесплатно, без регистрации. Проверка файла доступна отдельно.
-        </p>
-        {/* Owner, 6 Nov (ночь): «там должен быть Веспи, делающий что-то, с
-           анимацией». Дворик с лимонами и фонтаном: Веспи пишет свой план и
-           думает. Картинка — постер и вся сцена при «меньше движения»;
-           петля Kling (первый кадр = последний) идёт поверх, только в кадре. */}
-        <div className={workspace.heroScene} data-plan-hero-scene>
-          <img className={workspace.heroArt} src="/illustrations/scenes/plan-courtyard-1600.webp"
-            srcSet="/illustrations/scenes/plan-courtyard-960.webp 960w, /illustrations/scenes/plan-courtyard-1600.webp 1600w"
-            sizes="(max-width: 1040px) calc(100vw - 40px), 1000px" width={1600} height={900} alt="" aria-hidden="true"
-            decoding="async" fetchPriority="high" draggable={false} data-plan-scene="courtyard" />
-          <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-courtyard" label="plan-courtyard" widths={[960, 1600]} webmWidths={[960]} />
+      <section data-section="plan-header" className={workspace.header}>
+        {/* Owner, 7 Nov: «текст должен быть посередине, а на фоне Веспи, чуть
+           заблюрено; фон менее кричащий, более исторический, детализированный».
+           Одна плитка: спокойная ренессансная лоджия старого университета,
+           Веспи пишет план за столом внизу по центру, текст — над ним по
+           центру. Размытие за текстом вшито в постер и в петлю (мягкий овал),
+           поэтому не стоит ничего на телефоне; светлая вуаль держит контраст.
+           Картинка — постер и вся сцена при «меньше движения». */}
+        <div className={workspace.hero}>
+          <div className={workspace.heroScene} data-plan-hero-scene aria-hidden="true">
+            <img className={workspace.heroArt} src="/illustrations/scenes/plan-loggia-1920.webp"
+              srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1920.webp 1920w"
+              sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1080} alt=""
+              decoding="async" fetchPriority="high" draggable={false} data-plan-scene="loggia" />
+            <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-loggia" label="plan-loggia" widths={[960, 1920]} webmWidths={[960]} />
+            <span className={workspace.heroVeil} />
+          </div>
+          <div className={workspace.heroCopy} data-role="heading">
+            <AppleCaption as="p" className="warm-badge">Персональный маршрут</AppleCaption>
+            <AppleHeading as="h1" className="mx-auto mt-3 max-w-xl">
+              Опиши свою <span className="warm-highlight">ситуацию</span>
+            </AppleHeading>
+            <p className="mx-auto mt-5 max-w-lg text-apple-body">
+              {WIZ.length} вопросов, затем понятные шаги и список документов.
+              Бесплатно, без регистрации. Проверка файла доступна отдельно.
+            </p>
+          </div>
         </div>
       </section>
 
