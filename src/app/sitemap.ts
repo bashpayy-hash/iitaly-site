@@ -3,7 +3,7 @@ import { GUIDE_STAGES, GUIDE_TOPICS, VISA_PARTS } from "@/components/guides/guid
 
 export const dynamic = "force-static";
 
-const BASE = "https://iitaly.kz";
+const BASE = "https://iitaly.net";
 /* /portal в карте сайта нет намеренно: страница помечена
    robots: { index: false } в своих метаданных, а карта сайта — это
    приглашение проиндексировать. Одновременно звать и запрещать —
