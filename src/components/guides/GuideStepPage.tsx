@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element -- Local riso art with explicit dimensions. */
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { GUIDE_TOPICS, guideHref, guidePoints, guideStageHref, stageForGuide } from "./guideCatalogue";
 import { guideArt } from "./guideArt";
 import { isGuideId } from "./guideJourney";
@@ -48,12 +47,12 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
         {helpId && <GuideActionLink id={helpId} />}
       </section>}
       <nav className={styles.pager} aria-label="Соседние шаги">
-        {previous ? <Link className={styles.pagerCard} href={previous.href} data-guide-step-prev><ArrowLeft size={18} aria-hidden="true" /><span><small>Назад</small>{previous.title}</span></Link>
-          : <Link className={styles.pagerCard} href={guideHref(id)}><ArrowLeft size={18} aria-hidden="true" /><span><small>К теме</small>{guide.title}</span></Link>}
-        {next ? <Link className={`${styles.pagerCard} ${styles.forward}`} href={next.href} data-guide-step-next><span><small>Дальше</small>{next.title}</span><ArrowRight size={18} aria-hidden="true" /></Link>
-          : <Link className={`${styles.pagerCard} ${styles.forward}`} href={guideHref(id)}><span><small>Готово</small>Вернуться к теме</span><ArrowRight size={18} aria-hidden="true" /></Link>}
+        {previous ? <Link className={styles.pagerCard} href={previous.href} data-guide-step-prev><span><small>Назад</small>{previous.title}</span></Link>
+          : <Link className={styles.pagerCard} href={guideHref(id)}><span><small>К теме</small>{guide.title}</span></Link>}
+        {next ? <Link className={`${styles.pagerCard} ${styles.forward}`} href={next.href} data-guide-step-next><span><small>Дальше</small>{next.title}</span></Link>
+          : <Link className={`${styles.pagerCard} ${styles.forward}`} href={guideHref(id)}><span><small>Готово</small>Вернуться к теме</span></Link>}
       </nav>
-      <footer className={ui.articleFooter}><GuideHelperLink id={helpId} /><Link href="/guides" className={ui.textLink}>Все темы<ArrowRight size={16} aria-hidden="true" /></Link></footer>
+      <footer className={ui.articleFooter}><GuideHelperLink id={helpId} /><Link href="/guides" className={ui.textLink}>Все темы</Link></footer>
     </article>
   </GuideFrame>;
 }

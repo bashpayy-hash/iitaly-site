@@ -175,7 +175,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 cities={filteredCities.size}
                 filtered={filtersActive}
               />
-              {!portalSelection && <Link href="/plan" className={ui.navigatorLink}>Подобрать по моей ситуации <span aria-hidden="true">↗︎</span></Link>}
+              {!portalSelection && <Link href="/plan" className={ui.navigatorLink}>Подобрать по моей ситуации</Link>}
             </div>
             {!portalSelection && cityShortcut}
           </div>
@@ -183,7 +183,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
           <div className={ui.quickUniversities} aria-label="Быстро добавить университет в сравнение">
             <span>В сравнение</span>
             {(activeCity ? cityUnis : filteredUnis.filter(university=>["unipd","unibo","polimi"].includes(university.id))).map(university=><button key={university.id} type="button" data-quick-compare={university.id} aria-pressed={compareIds.includes(university.id)} disabled={compareIds.length===3 && !compareIds.includes(university.id)} onClick={()=>toggleCompare(university.id)}>{compareIds.includes(university.id)?<Check size={15} aria-hidden="true" />:<Plus size={15} aria-hidden="true" />}{university.name}</button>)}
-            {compareIds.length>0 && <a href="#compare-universities" onClick={event=>{if(portalSelection){event.preventDefault();navigatePortal("/portal?view=plan&task=shortlist&part=compare");}}}>Сравнить {compareIds.length} из 3 <span aria-hidden="true">→</span></a>}
+            {compareIds.length>0 && <a href="#compare-universities" onClick={event=>{if(portalSelection){event.preventDefault();navigatePortal("/portal?view=plan&task=shortlist&part=compare");}}}>Сравнить {compareIds.length} из 3</a>}
           </div>
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
@@ -246,7 +246,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                     стипендии и факты о городе.
                   </p>
                   <button type="button" onClick={() => chooseCity("roma")} className={ui.primaryButton}>
-                    Начать с Рима <span aria-hidden="true">→</span>
+                    Начать с Рима
                   </button>
                   <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
                 </div>

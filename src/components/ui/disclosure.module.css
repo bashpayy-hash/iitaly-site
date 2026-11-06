@@ -1,0 +1,29 @@
+/* Один знак раскрытия на весь сайт (owner, 6 Nov: «убери эти маленькие
+   стрелки… топорно смотрятся»). Вместо шевронов и системных треугольников —
+   мягкий круг с плюсом, как в FAQ apple.com; открытый пункт превращает плюс
+   в минус поворотом вертикальной черты. Знак рисует сам summary (::after),
+   поэтому в разметке нет лишних элементов.
+   .row — строка во всю ширину, знак справа; .inline — знак сразу после текста.
+   Цвета берутся из --disclosure-ink / --disclosure-bg (на тёмном фоне их
+   переопределяет родитель). */
+.row,.inline { list-style:none; cursor:pointer; display:flex; align-items:center; gap:14px; -webkit-tap-highlight-color:transparent; }
+.row { justify-content:space-between; }
+.inline { justify-content:flex-start; }
+.row::-webkit-details-marker,.inline::-webkit-details-marker { display:none; }
+.row::marker,.inline::marker { content:""; }
+.row::after,.inline::after {
+  content:""; flex:none; width:26px; height:26px; border-radius:50%;
+  color:var(--disclosure-ink,#2A2420); background-color:var(--disclosure-bg,#F1ECE3);
+  background-image:linear-gradient(currentColor,currentColor),linear-gradient(currentColor,currentColor);
+  background-position:center; background-repeat:no-repeat;
+  background-size:10px 1.6px,1.6px 10px;
+  transition:background-size 240ms cubic-bezier(.22,1,.36,1),background-color 160ms cubic-bezier(.4,0,.2,1);
+}
+.inline::after { width:22px; height:22px; background-size:9px 1.5px,1.5px 9px; }
+details[open] > .row::after { background-size:10px 1.6px,1.6px 0; }
+details[open] > .inline::after { background-size:9px 1.5px,1.5px 0; }
+@media (hover:hover) and (pointer:fine) {
+  .row:hover::after,.inline:hover::after { background-color:var(--disclosure-bg-hover,#E7DFD2); }
+}
+@media (prefers-reduced-motion:reduce) { .row::after,.inline::after { transition:none; } }
+@media (forced-colors:active) { .row::after,.inline::after { background-color:Canvas; border:1px solid CanvasText; background-image:linear-gradient(CanvasText,CanvasText),linear-gradient(CanvasText,CanvasText); } }

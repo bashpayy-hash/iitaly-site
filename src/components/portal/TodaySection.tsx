@@ -41,7 +41,7 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, onOpenTask, }: 
     <div className={styles.overview} data-portal-overview>
       <a href="/portal?view=docs" className={styles.documentFeature} data-unlimited-documents onClick={event => followRow(event, onOpenDocuments)}>
         <h2>Твои документы</h2>
-        <span className={styles.featureLink}>Выбрать документ <span aria-hidden="true">→</span></span>
+        <span className={styles.featureLink}>Выбрать документ</span>
       </a>
       {fileTask && doc && outcome && <a
         className={styles.document}
@@ -60,12 +60,12 @@ export function TodaySection({ data, onOpenDoc, onOpenDocuments, onOpenTask, }: 
         <p className={styles.choiceNote}>Ориентиры подготовки, не дедлайны конкретного вуза.</p>
         {orientirs.map(row => <a key={row.id} href={portalTaskHref(data, row)} data-orientir-task={row.id} onClick={event => followRow(event, () => onOpenTask(row))}>
           <span>{taskTitle(row)}</span>
-          <span>{taskDate(row)} <span aria-hidden="true">→</span></span>
+          <span>{taskDate(row)}</span>
         </a>)}
       </section>}
       {next && <a className={styles.next} data-road-later href={portalTaskHref(data, next)} onClick={event => followRow(event, () => onOpenTask(next))}>
         <span className={styles.label}>Потом</span>
-        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>Посмотреть инструкцию заранее →</span></span>
+        <span className={styles.rowContent}>{taskTitle(next)}<span className={styles.choiceNote}>Посмотреть инструкцию заранее</span></span>
       </a>}
       </div>
     </div>

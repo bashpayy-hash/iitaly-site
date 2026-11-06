@@ -11,6 +11,7 @@ import { instructionIndex } from "./portalInstructionPages";
 import styles from "./portal-document.module.css";
 import pages from "./portal-pages.module.css";
 import { PortalPageLink, PortalPageNavigation, usePortalPart, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const CHECK_LABEL = { ok: "В порядке", warn: "Нужно уточнить", error: "Несоответствие", unknown: "Не подтверждено" };
 function dateLabel(value?: string) {
@@ -137,7 +138,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
       {!result && <p className={styles.meta}>От прошлой проверки остался только краткий итог. Подробности старого разбора восстановить нельзя.</p>}
       {canUpload && <p className={styles.meta}>Исходный файл не хранится в {storage === "local" ? "локальном профиле" : "кабинете"}. Для новой проверки выбери его на устройстве или загрузи исправленную версию.</p>}
       {outcome.kind === "approved" && <a href="/portal?view=docs" className={styles.fileArea} onClick={toDocuments}>Продолжить в документах</a>}
-      {canUpload && <PortalPageLink href={href("action")} className={outcome.kind === "approved" ? styles.textAction : styles.fileArea} data-document-prepare>{outcome.kind === "approved" ? "Проверить новую версию" : outcome.kind === "fix" || outcome.kind === "unreadable" ? "Загрузить исправленный файл" : "Уточнить параметры и загрузить файл"}<span aria-hidden="true"> →</span></PortalPageLink>}
+      {canUpload && <PortalPageLink href={href("action")} className={outcome.kind === "approved" ? styles.textAction : styles.fileArea} data-document-prepare>{outcome.kind === "approved" ? "Проверить новую версию" : outcome.kind === "fix" || outcome.kind === "unreadable" ? "Загрузить исправленный файл" : "Уточнить параметры и загрузить файл"}</PortalPageLink>}
       {!canUpload && readOnlyReason && <p className={styles.readOnly}>{readOnlyReason}</p>}
 
     </section>
@@ -155,9 +156,9 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
     </div>
     <div hidden={part !== "review"} data-report-details-page>
     <MediaSwitcher items={findingPages} index={findingIndex} onSelect={index => navigatePortal(findingHref(index))} href={findingHref} label="Пункты разбора" progressLabel="Пункт" lastAction={<PortalPageLink href={href(canUpload ? "action" : "result")}>{canUpload ? "Новая проверка" : "К результату"}</PortalPageLink>} />
-    {reviewExtra && <details className={styles.sources}><summary>Дополнительные сведения</summary>{reviewExtra}</details>}
+    {reviewExtra && <details className={styles.sources}><summary className={disclosure.row}>Дополнительные сведения</summary>{reviewExtra}</details>}
     <details className={styles.sources}>
-      <summary>Файл и сроки</summary>
+      <summary className={disclosure.row}>Файл и сроки</summary>
       <dl>
         {doc.fileName && <div><dt>Имя файла в разборе</dt><dd>{doc.fileName}</dd></div>}
         {checked && <div><dt>Дата проверки</dt><dd>{checked}</dd></div>}
@@ -168,7 +169,7 @@ export function PortalDocumentReport({ taskId, title, doc, onBack, backHref = "/
       <p className={styles.meta}>{storage === "local" ? "Полный разбор доступен в этой вкладке. В локальном профиле остаётся только краткий итог, без файла." : "В кабинете сохраняется последний разбор и имя файла. Копия самого документа не сохраняется."}</p>
     </details>
     {review && <details className={styles.sources}>
-      <summary>Источники и дата сверки правил</summary>
+      <summary className={disclosure.row}>Источники и дата сверки правил</summary>
       <p className={styles.meta}>База сверена {dateLabel(review.verifiedOn) || review.verifiedOn}. Это дата проверки базы; сайты учреждений не просматриваются заново при каждом разборе.</p>
       <ul>{review.sources.filter(source => /^https:\/\//.test(source.url)).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label}</a></li>)}</ul>
     </details>}

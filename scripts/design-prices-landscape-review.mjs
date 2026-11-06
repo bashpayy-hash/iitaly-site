@@ -82,6 +82,10 @@ async function preservedPricingCopy(base, head) {
     ['Расскажи о себе, и ИИ скажет, реально ли поступить и на что рассчитывать. Платить, чтобы это узнать, не нужно.','Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.'],
   ]);
   for(const to of wallCopy.values()) assert(after.includes(to),`Wall copy present: ${to}`);
+  // Owner 2026-11-06 («убери маленькие стрелки»): the decorative «→» between
+  // the free and paid cards is gone; every word stays.
+  const arrow=before.indexOf('→'); if(arrow>=0) before.splice(arrow,1);
+  assert(!after.includes('→'),'No decorative arrow between the price cards');
   assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')).map(value=>wallCopy.get(value)??value),after,'Pricing copy outside the approved repeated header, launch price and wall cards');
   const packageCard=head.locator('#main-package');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);

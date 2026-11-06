@@ -251,7 +251,8 @@ try {
       await settle(page, 4175, route);
       const afterText = await textInventory(page);
       if (route === '/prices') {
-        assertContentPreserved(beforeText.map(value => wallCopy.get(value) ?? value), afterText, `${route} ${width}px`);
+        // Owner 2026-11-06: the decorative «→» between the price cards is gone; every word stays.
+        assertContentPreserved(beforeText.filter(value => value !== '→').map(value => wallCopy.get(value) ?? value), afterText, `${route} ${width}px`);
         assert.match(afterText.join(' '), /Календарь дедлайнов с напоминаниями в Telegram/);
         assert.doesNotMatch(afterText.join(' '), /Telegram и на почту/);
       }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { PortalClient } from "@/lib/portalApi";
 import settings from "./portal-settings.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 export function HelpSection({
   client,
@@ -62,7 +63,7 @@ export function HelpSection({
 
   return (
     <details id="notifications" className={settings.reminders} data-telegram-status={tgEnabled ? "connected" : "disconnected"}>
-      <summary>{tgEnabled ? "Напоминания включены" : "Напоминания выключены"}</summary>
+      <summary className={disclosure.row}>{tgEnabled ? "Напоминания включены" : "Напоминания выключены"}</summary>
       <p>Telegram получает только напоминания по твоему маршруту — за 7, 3 и 1 день до важных дат.</p>
       <div>
         {!tgEnabled && !telegramUrl && (

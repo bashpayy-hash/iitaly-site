@@ -21,6 +21,7 @@ import { IllustrationBackdrop } from "@/components/illustration/IllustrationBack
 import { TUSCANY_HILLS } from "@/data/illustrations";
 import { RouteRibbon } from "@/components/RouteRibbon";
 import { Reveal } from "@/components/motion/Reveal";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 /**
  * Страница «что изменилось в 2026/27».
@@ -40,21 +41,8 @@ import { Reveal } from "@/components/motion/Reveal";
    раскрывающиеся строки (GOV.UK details): заголовок правила уже говорит
    главное, подробности и источник — по нажатию. Тексты и факты прежние;
    ушли номера «01–11», капс и моно-подписи по 11px. Поиск по странице
-   браузер раскрывает сам. */
-function Chevron() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 16 10"
-      className="h-2.5 w-4 shrink-0 text-sec-deep transition-transform duration-200 group-open:-rotate-180"
-    >
-      <path d="M1 1.5 8 8.5 15 1.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-const SUMMARY =
-  "flex cursor-pointer list-none items-center justify-between gap-4 rounded-[14px] py-4 marker:content-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red [&::-webkit-details-marker]:hidden";
+   браузер раскрывает сам. Знак раскрытия — общий плюс (ui/disclosure). */
+const SUMMARY = `${disclosure.row} rounded-[14px] py-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red`;
 const STATUS_TONE: Record<StatusKind, string> = {
   closed: "bg-[#F1ECE3] text-sec-deep",
   ahead: "bg-[#F6E7D2] text-warn-deep",
@@ -74,7 +62,7 @@ export function ChangesExplorer() {
         <RouteRibbon className="opacity-40" />
         <div className="relative mx-auto max-w-[900px]">
           <p className="text-sm font-medium text-sec-deep">
-            Казахстан → Италия · 2026/27 и 2027/28
+            Казахстан — Италия · 2026/27 и 2027/28
           </p>
           <h1 className="mt-2 font-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[44px] lg:text-[52px]">
             Поступление в Италию: актуальные правила
@@ -146,7 +134,6 @@ export function ChangesExplorer() {
                 <details className="group" data-change-rule>
                   <summary className={SUMMARY}>
                     <h3 className="font-display text-[17px] font-semibold leading-snug sm:text-lg">{c.title}</h3>
-                    <Chevron />
                   </summary>
                   <div className="pb-6">
                     {c.body.map((p, i) => (
@@ -290,7 +277,6 @@ export function ChangesExplorer() {
               <details key={f.q} className="group">
                 <summary className={SUMMARY}>
                   <span className="text-base font-semibold">{f.q}</span>
-                  <Chevron />
                 </summary>
                 <p className="pb-5 text-[15px] leading-relaxed text-ink-soft">{f.a}</p>
               </details>
@@ -308,7 +294,6 @@ export function ChangesExplorer() {
           <details className="group mt-4 border-y border-line" data-change-sources>
             <summary className={SUMMARY}>
               <span className="text-base font-semibold">Все ссылки на официальные страницы · {SOURCES.length}</span>
-              <Chevron />
             </summary>
             <ul className="space-y-2.5 pb-5 text-[15px]">
               {SOURCES.map((s) => (

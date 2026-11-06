@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import type { PermessoScenario } from "./permessoData";
 import { ORIGINAL_PAGES } from "./permessoOriginalGeometry";
 import styles from "./permesso-light.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 type Props = {
   scenario: PermessoScenario; page: number; entered: number; zoom: number;
@@ -47,7 +48,7 @@ export function PermessoWorkbenchControls(p: Props) {
         {p.page > 3 && <span className={styles.extraPage}>Стр. {p.page} · пропуск</span>}
       </nav>}
       <details ref={tools} className={styles.tools} data-workbench-tools>
-        <summary>Инструменты <span aria-hidden="true">⌄</span></summary>
+        <summary className={disclosure.inline}>Инструменты</summary>
         <div className={styles.toolPanel}>
           <section><h2>Черновик</h2><p>Сохраняется только по кнопке, на этом устройстве. Не сохраняй на общем компьютере.</p>
             <div className={styles.toolActions}><button type="button" onClick={() => run(p.onSave)}>Сохранить</button><button type="button" onClick={() => run(p.onRestore)}>Восстановить</button><button type="button" data-destructive onClick={() => run(p.onClear)}>Стереть</button></div>
@@ -60,7 +61,7 @@ export function PermessoWorkbenchControls(p: Props) {
             </div><label className={styles.hintToggle}><input type="checkbox" checked={p.hints} onChange={e => p.onHints(e.target.checked)} />Подсказки на листе</label></section>
             <section><h2>Страницы 4–8</h2><p>Пояснения к пропускам в сценарии без семьи. Листы остаются в kit.</p><div className={styles.toolActions}>{ORIGINAL_PAGES.slice(3).map(item => <button type="button" key={item.page} aria-current={p.page === item.page ? "page" : undefined} onClick={() => run(() => p.onPage(item.page))}>Стр. {item.page}</button>)}</div></section>
           </>}
-          <details className={styles.about}><summary>Что подготовить и что означают отметки</summary>
+          <details className={styles.about}><summary className={disclosure.row}>Что подготовить и что означают отметки</summary>
             <p>Бумажный kit, чёрная ручка, паспорт, codice fiscale, марка{p.scenario === "rinnovo" ? " и текущая карточка ВНЖ" : ""}.</p>
             <dl><div><dt>Заполняй</dt><dd>Внеси свои данные из документа.</dd></div><div><dt>Пропусти</dt><dd>Оставь поле пустым в этом сценарии.</dd></div><div><dt>Если есть</dt><dd>Заполняй только если это относится к тебе.</dd></div><div><dt>На почте</dt><dd>Самостоятельный ввод отключён.</dd></div><div><dt>Уточни</dt><dd>Сверь правило по kit перед переносом.</dd></div></dl>
             <p>Учебный черновик, не подача заявления. Страницы 1–3 — для первого студенческого ВНЖ или продления. Страницы 4–8 — только пояснения для сценария без семьи.</p>

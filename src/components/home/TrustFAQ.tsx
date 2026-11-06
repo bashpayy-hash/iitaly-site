@@ -6,6 +6,7 @@ import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import styles from "./trust-faq.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 /** Existing FAQ copy and analytics. Owner, 4 Nov: «на фон добавь один из
  *  пейзажей Италии с Веспи, где он воодушевлённо смотрит вдаль, на смотровой
@@ -62,11 +63,8 @@ export function TrustFAQ() {
                   if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
                 }}
               >
-                <summary className={styles.question}>
+                <summary className={`${styles.question} ${disclosure.row}`}>
                   {item.q}
-                  <svg aria-hidden viewBox="0 0 16 10" className={styles.chevron}>
-                    <path d="M1 1.5 8 8.5 15 1.5" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
                 </summary>
                 <p className={styles.answer}>{item.a}</p>
               </details>

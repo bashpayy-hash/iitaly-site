@@ -169,7 +169,7 @@ export function CityMatch({
               onClick={() => setStep(step - 1)}
               className="mt-4 text-sm text-ink-soft hover:text-ink"
             >
-              ← Назад
+              Назад
             </button>
           )}
         </div>

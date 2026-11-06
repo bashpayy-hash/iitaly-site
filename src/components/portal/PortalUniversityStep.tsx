@@ -7,6 +7,7 @@ import { taskDate, taskHelpDetails, taskTitle } from "@/lib/portalNavigation";
 import { shortlistNames, validShortlist } from "@/lib/portalShortlist";
 import styles from "./portal-universities.module.css";
 import { PortalBreadcrumbs, PortalPageNavigation, usePortalPageFocus, usePortalPart } from "./PortalPageNavigation";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const UniversitiesExplorer = dynamic(() => import("@/components/universities/UniversitiesExplorer").then(module => module.UniversitiesExplorer), {
   loading: () => <p role="status" className={styles.loading}>Загружаю карту и сравнение…</p>,
@@ -45,7 +46,7 @@ export function PortalUniversityStep({ data, task, selectedIds, busy, onSave, on
       <p className={styles.meta}>{[stage?.title, task.time || "15 мин"].filter(Boolean).join(" · ")}</p>
       {date && <p className={styles.meta}>{date} — это не срок конкретного вуза.</p>}
       <details className={styles.help} data-step-help>
-        <summary>Как выполнить этот шаг</summary>
+        <summary className={disclosure.row}>Как выполнить этот шаг</summary>
         <p id="portal-step-action-hint" data-step-action-hint>Сохрани выбранные вузы — кабинет покажет следующий шаг.</p>
         <p>Нажми «Выбрать университет» в карточке вуза, затем «Сохранить выбор» внизу экрана. Сравнение — отдельный инструмент: можно сопоставить до трёх вузов, не добавляя их в список.</p>
         <p id="portal-shortlist-storage">{localOnly ? "Список сохраняется на этом устройстве." : "Список сохраняется в профиле."}</p>

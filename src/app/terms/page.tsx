@@ -95,7 +95,7 @@ export default function TermsPage() {
 
             <div className="mt-12 flex flex-wrap gap-6 text-[15px] font-medium">
               <Link href="/privacy" className="text-ink underline underline-offset-4">Политика конфиденциальности</Link>
-              <Link href="/" className="text-ink underline underline-offset-4">← Вернуться на сайт</Link>
+              <Link href="/" className="text-ink underline underline-offset-4">Вернуться на сайт</Link>
             </div>
           </div>
         </section>

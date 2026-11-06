@@ -9,9 +9,10 @@ import { instructionIndex, portalInstructionPages } from "./portalInstructionPag
 import { PortalBreadcrumbs, PortalPageLink, PortalPageNavigation, usePortalPageFocus, usePortalPart, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import styles from "./portal-pages.module.css";
 import { MediaSwitcher } from "@/components/story/MediaSwitcher";
-import { CalendarDays, Clock } from "lucide-react";
+import { WarmIcon } from "@/components/icons/WarmIcon";
 import { PlainTerms } from "./PlainTerms";
 import { taskArtwork } from "@/components/story/StoryArtwork";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtra, defaultPart = "overview" }: {
   task: PortalTask; stage?: PortalStage; done: boolean; readOnly?: string; action: ReactNode; guideExtra?: ReactNode; defaultPart?: "overview" | "action";
@@ -32,7 +33,7 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
     <h1 id="portal-step-heading" className={part === "guide" ? styles.taskContext : styles.heading} tabIndex={-1}>{taskTitle(task)}</h1>
     {/* Факты значками (owner, 5 Nov: «маленькими символами»): дата, если она
         есть, и время, только если оно конкретное — без «Срок: По ситуации». */}
-    <p className={styles.meta}>{done && <span>Выполнено</span>}{!done && taskDate(task) && <span><CalendarDays size={14} strokeWidth={1.8} aria-hidden="true" />{taskDate(task)}</span>}{/\d/.test(task.time || TASK_META[task.id]?.min || "") && <span><Clock size={14} strokeWidth={1.8} aria-hidden="true" />Займёт {task.time || TASK_META[task.id]?.min}</span>}</p>
+    <p className={styles.meta}>{done && <span>Выполнено</span>}{!done && taskDate(task) && <span><WarmIcon name="calendar" size={24} />{taskDate(task)}</span>}{/\d/.test(task.time || TASK_META[task.id]?.min || "") && <span><WarmIcon name="clock" size={24} />Займёт {task.time || TASK_META[task.id]?.min}</span>}</p>
     <PortalPageNavigation active={part} items={[{ id:"overview",label:"Кратко",href:href("overview") },{ id:"guide",label:"Как выполнить",href:href("guide") },{ id:"action",label:actionLabel,href:href("action") }]} />
     {part === "overview" && <div className={styles.overviewStory}>
       <div><p className={styles.explanation}>{taskExplanation(task)}</p>
@@ -40,7 +41,7 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
       {readOnly && <p className={styles.note}>{readOnly}</p>}
       {!done && taskDate(task) && <p className={styles.note}>Ориентир подготовки, не срок конкретного вуза.</p>}
       {/* Одна главная кнопка; тихая ссылка остаётся только у документа, который уже на руках. */}
-      <div className={styles.next}><PortalPageLink className={styles.primary} href={readingHref(0)}>Как выполнить <span aria-hidden="true">→</span></PortalPageLink>
+      <div className={styles.next}><PortalPageLink className={styles.primary} href={readingHref(0)}>Как выполнить</PortalPageLink>
         {DOC_TASKS[task.id] && <PortalPageLink className={styles.quietLink} href={href("action")}>Документ уже готов — проверить</PortalPageLink>}</div></div>
     </div>}
     {part === "guide" && <div className={styles.body} data-portal-step-guide>
@@ -49,10 +50,10 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
         index={item} onSelect={index => navigatePortal(readingHref(index))} href={readingHref}
         headingId="portal-instruction-heading"
         firstAction={<PortalPageLink href={href("overview")}>Кратко</PortalPageLink>}
-        lastAction={<PortalPageLink data-instruction-next href={href("action")}>{DOC_TASKS[task.id] ? "Перейти к проверке" : "Перейти к действию"}<span aria-hidden="true">→</span></PortalPageLink>}
+        lastAction={<PortalPageLink data-instruction-next href={href("action")}>{DOC_TASKS[task.id] ? "Перейти к проверке" : "Перейти к действию"}</PortalPageLink>}
       />
       {last && guideExtra}
-      {sources.length > 0 && <details className={styles.readingSources}><summary>Официальные источники</summary><ul>{sources.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label} ↗︎</a></li>)}</ul></details>}
+      {sources.length > 0 && <details className={styles.readingSources}><summary className={disclosure.row}>Официальные источники</summary><ul>{sources.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label}</a></li>)}</ul></details>}
     </div>}
     {/* Keep the mounted action while reading: selected files and form answers stay intact. */}
     <div hidden={part !== "action"} data-task-action-page>

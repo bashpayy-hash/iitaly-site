@@ -1,7 +1,7 @@
 "use client";
 
+import { WarmIcon } from "@/components/icons/WarmIcon";
 import { useEffect, useRef, useState } from "react";
-import { Check } from "lucide-react";
 import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
@@ -196,8 +196,8 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           {step === "manual" && (
             <div>
               <div className="text-center">
-                <div aria-hidden className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green/10 text-green">
-                  <Check size={26} strokeWidth={2} />
+                <div aria-hidden className="mx-auto flex h-12 w-12 items-center justify-center">
+                  <WarmIcon name="check" size={44} />
                 </div>
                 <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">

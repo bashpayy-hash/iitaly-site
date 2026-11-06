@@ -5,6 +5,7 @@ import type { PermessoScenario } from "./permessoData";
 import { ORIGINAL_PAGES, PAPER, OFFICIAL_PDF, fieldWidth, getPart, editorMode, valueProblem, type EditorField } from "./permessoOriginalGeometry";
 import { expiryWarning, hasPaperValue, needsVerification, paperValue, transferSignature, transferSteps, type PaperValues, type TransferReceipt, type TransferStep } from "./permessoTransferModel";
 import styles from "./permesso-transfer.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const CHECKS = [
   "Сведения сверены с моими документами, а не с вымышленным примером.",
@@ -83,11 +84,11 @@ export function PermessoPaperTransfer({ active, scenario, values, today, onEdit,
       <h2 ref={headingRef} tabIndex={-1}>Перед почтой</h2>
       <p>Отметки описывают твой перенос, а не готовность заявления. Проверка формата не подтверждает правильность сведений или право на ВНЖ.</p>
       <div className={styles.summary}><strong>{copied} полей отмечены как перенесённые</strong><span>Без отметки: {outstanding.length}. Полей с неуточнённым правилом: {deferred.length}.</span></div>
-      {!!outstanding.length && <details open><summary>Что ещё не отмечено</summary><div className={styles.jumpList}>{outstanding.map(s => <button type="button" key={s.id} onClick={() => jump(steps.findIndex(x => x.id === s.id))}>Стр. {s.page} · {s.skip ? `Пропустить поля ${s.fields.map(f => f.id).join(", ")}` : `${fieldName(s.fields[0])}: ${s.fields[0].meta.ru}`}</button>)}</div></details>}
-      <details><summary>Что нужно уточнить отдельно ({deferred.length})</summary><div className={styles.jumpList}>{deferred.map(s => <button type="button" key={s.id} onClick={() => jump(steps.findIndex(x => x.id === s.id))}>{fieldName(s.fields[0])} · {s.fields[0].meta.ru}</button>)}</div><p>«Отложить» не означает «проверено». Не переносим неподтверждённое правило автоматически.</p></details>
+      {!!outstanding.length && <details open><summary className={disclosure.row}>Что ещё не отмечено</summary><div className={styles.jumpList}>{outstanding.map(s => <button type="button" key={s.id} onClick={() => jump(steps.findIndex(x => x.id === s.id))}>Стр. {s.page} · {s.skip ? `Пропустить поля ${s.fields.map(f => f.id).join(", ")}` : `${fieldName(s.fields[0])}: ${s.fields[0].meta.ru}`}</button>)}</div></details>}
+      <details><summary className={disclosure.row}>Что нужно уточнить отдельно ({deferred.length})</summary><div className={styles.jumpList}>{deferred.map(s => <button type="button" key={s.id} onClick={() => jump(steps.findIndex(x => x.id === s.id))}>{fieldName(s.fields[0])} · {s.fields[0].meta.ru}</button>)}</div><p>«Отложить» не означает «проверено». Не переносим неподтверждённое правило автоматически.</p></details>
       <fieldset className={styles.checklist}><legend>Проверяешь самостоятельно</legend>{CHECKS.map((label, i) => <label key={label}><input type="checkbox" checked={!!checks[i]} onChange={e => setChecks(previous => ({ ...previous, [i]: e.target.checked }))} /><span>{label}</span></label>)}</fieldset>
       <p className={styles.pagesNote}>Страницы 4–8 не вырывай. Этот помощник охватывает обычный студенческий сценарий без семьи, а не все специальные случаи.</p>
-      <div className={styles.sources}><a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинальный Modulo 1 ↗︎</a><a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Сверить официальные расходы ↗︎</a></div>
+      <div className={styles.sources}><a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинальный Modulo 1</a><a href="https://www.portaleimmigrazione.it/ITA/tabelleCosti.html" target="_blank" rel="noopener noreferrer">Сверить официальные расходы</a></div>
       <button type="button" className={styles.secondary} onClick={() => jump(Math.max(0, cursor))}>Назад к шагам</button>
     </div> : <>
       <div className={styles.stepLayout}>
@@ -106,9 +107,9 @@ export function PermessoPaperTransfer({ active, scenario, values, today, onEdit,
           <dl className={styles.explanation}><div><dt>{step.skip ? "Почему пусто" : "Откуда взять"}</dt><dd>{field.meta.source}</dd></div><div><dt>Как писать</dt><dd>{step.skip ? "Оставь группу пустой; далее переходи к следующему полю." : field.meta.format}</dd></div><div><dt>Не перепутай</dt><dd>{field.meta.mistake}</dd></div></dl>
         </div>
       </div>
-      <div className={styles.actions}><button type="button" onClick={() => setCursor(Math.max(0, cursor - 1))} disabled={!cursor}>← Назад</button><button type="button" data-transfer-confirm disabled={!canConfirm} onClick={mark}>{actionText}</button><button type="button" onClick={next}>Дальше без отметки →</button></div>
+      <div className={styles.actions}><button type="button" onClick={() => setCursor(Math.max(0, cursor - 1))} disabled={!cursor}>Назад</button><button type="button" data-transfer-confirm disabled={!canConfirm} onClick={mark}>{actionText}</button><button type="button" onClick={next}>Дальше без отметки</button></div>
       <p className={styles.next}>{cursor < steps.length - 1 ? `Далее: стр. ${steps[cursor + 1].page} · ${steps[cursor + 1].skip ? "группа, которую нужно пропустить" : steps[cursor + 1].fields[0].meta.ru}` : "Далее: самостоятельная проверка перед почтой."}</p>
-      <details className={styles.jump}><summary>Выбрать шаг или перейти к проверке</summary><div className={styles.jumpList}>{steps.map((s, i) => <button type="button" key={s.id} onClick={() => jump(i)} aria-current={i === cursor ? "step" : undefined}>Стр. {s.page} · {s.skip ? `Пропустить ${s.fields.map(f => f.id).join(", ")}` : `${fieldName(s.fields[0])}: ${s.fields[0].meta.ru}`}{isCurrent(s) ? " · отмечено" : ""}</button>)}</div><button type="button" className={styles.secondary} onClick={() => setFinished(true)}>Перед почтой</button></details>
+      <details className={styles.jump}><summary className={disclosure.row}>Выбрать шаг или перейти к проверке</summary><div className={styles.jumpList}>{steps.map((s, i) => <button type="button" key={s.id} onClick={() => jump(i)} aria-current={i === cursor ? "step" : undefined}>Стр. {s.page} · {s.skip ? `Пропустить ${s.fields.map(f => f.id).join(", ")}` : `${fieldName(s.fields[0])}: ${s.fields[0].meta.ru}`}{isCurrent(s) ? " · отмечено" : ""}</button>)}</div><button type="button" className={styles.secondary} onClick={() => setFinished(true)}>Перед почтой</button></details>
     </>}
   </section>;
 }

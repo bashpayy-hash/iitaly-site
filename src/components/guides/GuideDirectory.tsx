@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { ADMISSION_SOURCES } from "@/data/admissions";
 import { GUIDE_STAGES, GUIDE_TOPICS, guideHref, guideStageHref, stageForGuide } from "./guideCatalogue";
 import { isGuideId, openGuideHelper } from "./guideJourney";
@@ -62,9 +62,9 @@ export function GuideDirectory() {
     {/* Owner, 3 Nov: no caption over the band. The count is spoken only while
         searching (it answers the query); the section link appears with a section. */}
     <p className={terms.length ? styles.resultCount : "sr-only"} role="status">{terms.length ? `Найдено тем: ${matches.length}` : ""}</p>
-    {stage && <div className={styles.resultRow}><Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Раздел целиком: {stage.title}<ArrowRight size={15} aria-hidden="true" /></Link></div>}
+    {stage && <div className={styles.resultRow}><Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Раздел целиком: {stage.title}</Link></div>}
     {matches.length ? <section className={styles.explorer} aria-label="Темы справочника" data-guide-explorer>
       <GuideTiles key={matches.map(guide => guide.id).join()} guides={matches} variant="gallery" autoplay={!touched && !query && category === "all"} />
-    </section> : <section className={ui.directory}><h2>Такой темы не нашли</h2><p>Попробуй другое слово или выбери «Все темы».</p><button className={ui.textLink} type="button" onClick={()=>openGuideHelper(undefined,query)}>Спросить Веспи<ArrowRight size={17} aria-hidden="true" /></button></section>}
+    </section> : <section className={ui.directory}><h2>Такой темы не нашли</h2><p>Попробуй другое слово или выбери «Все темы».</p><button className={ui.textLink} type="button" onClick={()=>openGuideHelper(undefined,query)}>Спросить Веспи</button></section>}
   </>;
 }

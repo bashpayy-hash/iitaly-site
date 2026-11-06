@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
-import { Settings, FileText, MapPin } from "lucide-react";
+import { Settings, FileText } from "lucide-react";
+import { WarmIcon } from "@/components/icons/WarmIcon";
+import { ObjectIcon, type ObjectIconName } from "@/components/icons/ObjectIcon";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { VespiOutline } from "@/components/mascot/VespiOutline";
 import { usePlanDraft } from "@/lib/usePlanDraft";
@@ -45,6 +47,11 @@ function readLocation(): Location {
 /* Для чего документ — словами, без фильтров (owner, 5 Nov: «минимализм,
    поменьше кнопок»): пять карточек читаются без переключателей. */
 const PURPOSE_LABEL = { uni: "Нужен для вуза", dsu: "Нужен для стипендии DSU", visa: "Нужен для визы" } as const;
+/* Своя вещь у каждого документа (owner, 6 Nov: иконки с упором на реализм). */
+const DOCUMENT_OBJECT: Record<string, ObjectIconName> = {
+  apostille: "stamp-pad", translate: "translation", notary: "translation", cimea: "diploma", familyDocs: "folder",
+  iseeu: "coins", statements: "tax-card", insurance: "insurance", housing: "keys", universitaly: "envelope",
+};
 const DOCUMENT_INFO: Record<string, { purpose: "uni" | "dsu" | "visa"; where: string }> = {
   apostille: { purpose: "uni", where: "eGov / ЦОН · орган образования" },
   translate: { purpose: "uni", where: "Переводчик · способ заверения по инструкции получателя" },
@@ -175,7 +182,7 @@ export function LocalWorkspace() {
             travel={roadTravel} onTravelStart={() => setRoadTravel(undefined)} onSelectStage={selectStage}
             onOpenTask={openTask} onComplete={complete} onDocuments={() => navigate({ view: "docs", task: null, doc: null })} onSettings={() => navigate({ view: "settings", task: null, doc: null })} locked={locked} />}
           {showDetail && <>
-            {active.id === "profile" && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => { event.preventDefault(); if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: location.doc ? "docs" : "plan", task: null, doc: null }); }}>← Назад</a>}
+            {active.id === "profile" && <a className={styles.textLink} href={location.doc ? "/portal?view=docs" : "/portal?view=plan"} onClick={event => { event.preventDefault(); if (window.history.state?.portalBackHref) window.history.back(); else navigate({ view: location.doc ? "docs" : "plan", task: null, doc: null }); }}>Назад</a>}
             {locked(active) ? <LockedTaskPage task={active} stage={data.roadmap.find(stage => stage.tasks.some(task => task.id === active.id))} teaser={plan?.steps.find(step => step.t === active.t)?.summary} />
               : active.id === "profile" ? <><h1 className={styles.heading}>Твой план поступления</h1>{draft.complete ? <SavedProfileAnswers profile={data.client.profile || {}} answers={draft.answers} onEdit={() => updateDraft({ ...draft, step: 0, complete: false })} /> : <Wizard draft={draft} onDraftChange={updateDraft} onDone={answers => { feedback.prime(); updateDraft({ answers, step: 10, complete: true }); try { if (JSON.parse(localStorage.getItem("iitaly_plan_draft_v1") || "{}").complete) feedback.confirm("profile", "Анкета заполнена"); } catch {} navigate({ view: "today", task: null, doc: null }); }}/>}</>
               : active.id === "shortlist" && (!readOnly || data.done.shortlist) ? <PortalUniversityStep localOnly data={data} task={active} selectedIds={local.selectedIds} busy={false} onBack={() => navigate({ view: "plan", task: null, doc: null })} backHref="/portal?view=plan" onReopen={() => updateLocal({ ...local, done: { ...local.done, shortlist: false } })} onSave={async selectedIds => { feedback.prime(); const saved = saveLocal({ ...local, scope: localWorkspaceScope(draft, selectedIds), selectedIds, reviews: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? local.reviews : {}, done: JSON.stringify(selectedIds) === JSON.stringify(local.selectedIds) ? { ...local.done, shortlist: true } : { shortlist: true } }); if (!saved) return false; if (!data.done.shortlist) feedback.confirm("shortlist", taskTitle(active)); navigate({ view: "today", task: null, doc: null }); return true; }}/>
@@ -206,9 +213,9 @@ export function LocalWorkspace() {
             <div className={styles.vault}>{documents.map(task => {
               const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);
               return <a className={styles.docCard} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
-                <FileText size={25} aria-hidden="true"/><h3>{DOC_TASKS[task.id]}</h3>
+                <ObjectIcon name={DOCUMENT_OBJECT[task.id] || "folder"} size={52} className={styles.docObject} /><h3>{DOC_TASKS[task.id]}</h3>
                 {info && <p className={styles.docPurpose}>{PURPOSE_LABEL[info.purpose]}</p>}
-                {info && <p className={styles.docWhere}><MapPin size={14} strokeWidth={1.8} aria-hidden="true" />Где взять: {info.where}</p>}
+                {info && <p className={styles.docWhere}><WarmIcon name="pin" size={24} />Где взять: {info.where}</p>}
                 <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{data.docs[task.id] && outcome.action && <p>Что сделать: {outcome.action}</p>}
 
               </a>;

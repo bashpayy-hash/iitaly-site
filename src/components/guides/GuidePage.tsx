@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- Local riso art with explicit dimensions. */
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { ADMISSION_SOURCES, REVIEWED_AT, REVIEWED_LABEL, type SourceId } from "@/data/admissions";
 import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
@@ -13,6 +12,7 @@ import { guideArt } from "./guideArt";
 import { guideFacts } from "./guideFacts";
 import steps from "./guide-steps.module.css";
 import ui from "./guide-pages.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 export function GuideFrame({ children, narrow = false }: { children: ReactNode; narrow?: boolean }) {
   return <div className={ui.shell} data-guides-pages><MarketingLayout><div className={`${ui.container} ${narrow ? ui.narrow : ""}`}>{children}</div></MarketingLayout></div>;
@@ -31,8 +31,8 @@ export function GuideReviewed() {
 
 function GuideSources({ ids }: { ids: readonly SourceId[] }) {
   return <details className={ui.sources}>
-    <summary>Официальные источники</summary>
-    <ul>{ids.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label}<ArrowUpRight size={14} aria-hidden="true" /></a><p>{ADMISSION_SOURCES[id].scope}</p></li>)}</ul>
+    <summary className={disclosure.row}>Официальные источники</summary>
+    <ul>{ids.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label}</a><p>{ADMISSION_SOURCES[id].scope}</p></li>)}</ul>
   </details>;
 }
 
@@ -84,9 +84,9 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
       </div>
       <footer className={ui.articleFooter}>
         <GuideHelperLink id={helpId} />
-        {part ? <Link href="/guides/visa" className={ui.textLink}>К вопросам о визе<ArrowRight size={16} aria-hidden="true" /></Link>
-          : next ? <Link href={guideHref(next.id)} className={ui.textLink} data-guide-next-topic={next.id}>{next.title}<ArrowRight size={16} aria-hidden="true" /></Link>
-          : <Link href={guideStageHref(stage.id)} className={ui.textLink}>Все темы раздела<ArrowRight size={16} aria-hidden="true" /></Link>}
+        {part ? <Link href="/guides/visa" className={ui.textLink}>К вопросам о визе</Link>
+          : next ? <Link href={guideHref(next.id)} className={ui.textLink} data-guide-next-topic={next.id}>{next.title}</Link>
+          : <Link href={guideStageHref(stage.id)} className={ui.textLink}>Все темы раздела</Link>}
       </footer>
     </article>
   </GuideFrame>;

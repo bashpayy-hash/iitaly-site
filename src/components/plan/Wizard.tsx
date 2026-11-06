@@ -13,6 +13,7 @@ import styles from "./plan-workspace.module.css";
 import { questionArt } from "./questionArt";
 import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuChoice";
 import { revealElement } from "@/components/motion/scroll";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 /** UI explanations only: the questions, answer values and plan builder stay
  * unchanged. Grades describe the profile; they are not an admissions score. */
@@ -150,7 +151,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
             <AppleButton type="button" variant="filled" onClick={() => finish(false)} disabled={sending} className="w-full">Открыть мой план</AppleButton>
             <p className="mt-2 text-center text-apple-caption text-cloud-meta">Номер телефона не нужен.</p>
             <details className="mt-5 border-t border-white/15 pt-2">
-            <summary className="min-h-11 cursor-pointer py-3 text-apple-body-sm text-cloud-body">Оставить номер для связи</summary>
+            <summary className={`${disclosure.inline} min-h-11 py-3 text-apple-body-sm text-cloud-body`}>Оставить номер для связи</summary>
             <label className="mt-4 block">
               <span className="mb-2 block text-apple-body-sm font-medium text-cloud-white">Номер телефона для WhatsApp</span>
               <input
@@ -213,7 +214,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           onClick={() => { finishTransition(); stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
           className={`min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
         >
-          ← Назад
+          Назад
         </button>
       </div>
     </div>
@@ -279,7 +280,7 @@ function WizStep({
             {DSU_CHECKED.map(v => option(byValue(v)))}
             {option(byValue("other"), DSU_LABELS.otherKnown)}
             <p className={styles.optionsNote}>{DSU_CHECKED_NOTE}</p>
-            <button type="button" className={styles.optionsBack} onClick={() => toggleKnown(false)}>← Другие варианты</button>
+            <button type="button" className={styles.optionsBack} onClick={() => toggleKnown(false)}>Другие варианты</button>
           </> : <>
             {option(byValue("other"), DSU_LABELS.unknown)}
             <button type="button" className={styles.option} aria-expanded={false} data-dsu-known onClick={() => toggleKnown(true)}>

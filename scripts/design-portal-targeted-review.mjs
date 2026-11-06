@@ -92,7 +92,7 @@ try {
     assert.match(await page.locator('[data-portal-welcome] [data-saved-universities]').innerText(),/Bocconi/);
     assert.doesNotMatch(await page.locator('main').innerText(),/Выбраны в этом браузере|До подачи в/);
     const instruction=page.locator('[data-road-open]');
-    assert.equal((await instruction.innerText()).replace(/\s+/g,' '),data.docs?.apostille?'Открыть итог проверки →':'Как подготовить →','The button says what happens next');
+    assert.equal((await instruction.innerText()).replace(/\s+/g,' '),data.docs?.apostille?'Открыть итог проверки':'Как подготовить','The button says what happens next');
     assert.match(await instruction.getAttribute('href'),/view=plan&task=apostille/);
     assert.equal(await page.locator('[data-road-upload]').count(),0,'Upload lives inside the breakdown, keeping one action in the card');
     await capture(page,`overview-${width}`);

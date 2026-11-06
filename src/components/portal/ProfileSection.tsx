@@ -7,6 +7,7 @@ import { taskBlockedReason, taskTitle } from "@/lib/portalNavigation";
 import { portalTaskDone } from "@/lib/portalProgress";
 import navigation from "./portal-navigation.module.css";
 import settings from "./portal-settings.module.css";
+import disclosure from "@/components/ui/disclosure.module.css";
 
 const taskWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "задача" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 12 || count % 100 > 14) ? "задачи" : "задач";
 
@@ -105,7 +106,7 @@ export function ProfileSection({
           <p className={settings.tileLabel}>Список задач</p>
           <h3 id="settings-checklist-title" className={settings.tileTitle}><strong className={settings.figure}>{remainingTasks.length}</strong> {taskWord(remainingTasks.length)} впереди</h3>
           <details id="checklist" className={settings.disclosure}>
-            <summary>Скопировать с ориентирами</summary>
+            <summary className={disclosure.row}>Скопировать с ориентирами</summary>
             <p>Скопируй оставшиеся задачи с ориентирами по срокам, чтобы держать список под рукой.</p>
             {remainingTasks.length ? (
               <a href="/portal?view=settings#checklist" className={settings.textAction} onClick={(event) => { event.preventDefault(); void copyChecklist(); }}>
@@ -126,7 +127,7 @@ export function ProfileSection({
 
         <section className={`${settings.tile} ${settings.wide}`} data-settings-tile="delete">
           <details id="delete" className={settings.disclosure}>
-            <summary>Удалить данные кабинета</summary>
+            <summary className={disclosure.row}>Удалить данные кабинета</summary>
             <p>Профиль, прогресс, результаты проверок и Telegram-привязка будут удалены без восстановления.</p>
             <a href="/portal?view=settings#delete" className={settings.dangerAction} onClick={(event) => { event.preventDefault(); onDelete(); }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" /></svg>Удалить мои данные</a>
           </details>
