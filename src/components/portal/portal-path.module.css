@@ -3,11 +3,11 @@
    светлая плитка 28px, строки по 72px+, разделители 1px, у строки одна цель
    нажатия на всю ширину. Статус — словом, без капса (GOV.UK: капс в статусах
    читается хуже), цифры — обычным текстом «1 из 4», без нумерации этапов. */
-.path,.more { padding:32px 32px 12px; border-radius:28px; background:#FFFDF9; color:var(--ink); }
+.path { padding:32px 32px 12px; border-radius:28px; background:#FFFDF9; color:var(--ink); }
 .path:focus { outline:none; }
 .head { position:relative; display:grid; gap:12px; padding-bottom:22px; }
 .headTop { display:flex; align-items:flex-end; justify-content:space-between; gap:12px 24px; flex-wrap:wrap; }
-.head h2,.more h2 { margin:0; font:600 clamp(22px,2.2vw,28px)/1.15 var(--font-sans); letter-spacing:-.025em; text-wrap:balance; }
+.head h2 { margin:0; font:600 clamp(22px,2.2vw,28px)/1.15 var(--font-sans); letter-spacing:-.025em; text-wrap:balance; }
 .percent { display:flex; align-items:baseline; gap:8px; margin:0; color:var(--quiet); font-size:14px; }
 .percent strong { color:#1F6B47; font:600 clamp(30px,3vw,38px)/1 var(--font-sans); letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .count { margin:0; color:var(--quiet); font-size:15px; line-height:1.5; font-variant-numeric:tabular-nums; }
@@ -15,24 +15,27 @@
 .ahead { color:var(--quiet); }
 /* Полоса: дорожка, заливка, разрезы между этапами и бегунок. Рамка .meter
    обрезает по своему полю (overflow: clip) сдвинутую дорожку бегунка, чтобы
-   она не давала горизонтальной прокрутки; поле 11px оставляет бегунок
+   она не давала горизонтальной прокрутки; поле 13px оставляет бегунок
    целым на обоих концах. Заливка сплошная: в кабинете нет градиентов. */
-.meter { margin:0 -11px; padding:4px 11px 6px; overflow:hidden; overflow:clip; }
-.rail { position:relative; height:22px; }
-.bar { position:absolute; left:0; right:0; top:5px; display:block; height:12px; border-radius:999px; background:#EDE5D8; box-shadow:inset 0 1px 2px rgba(42,36,32,.08); overflow:hidden; }
+.meter { margin:0 -13px; padding:4px 13px 6px; overflow:hidden; overflow:clip; }
+.rail { position:relative; height:26px; }
+/* Owner, 6 Nov: «прогресс-бару не хватает видимости, сливается с фоном».
+   The open track is a warm mid tone with a hairline edge, the bar is 14px,
+   the knob 26px with a thicker ring. */
+.bar { position:absolute; left:0; right:0; top:6px; display:block; height:14px; border-radius:999px; background:#DDD0BC; box-shadow:inset 0 0 0 1px rgba(42,36,32,.10),inset 0 1px 2px rgba(42,36,32,.10); overflow:hidden; }
 .bar > span { position:absolute; inset:0; border-radius:inherit; background:#2F7A55; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transform:scaleX(var(--route-fill,0)); transform-origin:left; transition:transform var(--road-travel-duration,920ms) cubic-bezier(.22,1,.36,1); }
-.tick { position:absolute; top:5px; width:3px; height:12px; margin-left:-1.5px; background:#FFFDF9; }
-.knobTrack { position:absolute; left:0; right:0; top:0; height:22px; transform:translateX(calc(var(--route-fill,0) * 100%)); transition:transform var(--road-travel-duration,920ms) cubic-bezier(.22,1,.36,1); pointer-events:none; }
-.knob { position:absolute; left:-11px; top:0; width:22px; height:22px; border-radius:50%; background:#FFFDF9; box-shadow:inset 0 0 0 4px #2F7A55,0 2px 5px rgba(42,36,32,.18); }
+.tick { position:absolute; top:6px; width:3px; height:14px; margin-left:-1.5px; background:#FFFDF9; }
+.knobTrack { position:absolute; left:0; right:0; top:0; height:26px; transform:translateX(calc(var(--route-fill,0) * 100%)); transition:transform var(--road-travel-duration,920ms) cubic-bezier(.22,1,.36,1); pointer-events:none; }
+.knob { position:absolute; left:-13px; top:0; width:26px; height:26px; border-radius:50%; background:#FFFDF9; box-shadow:inset 0 0 0 5px #2F7A55,0 2px 6px rgba(42,36,32,.24); }
 .ends { display:flex; justify-content:space-between; gap:16px; margin:0; color:var(--quiet); font-size:13px; line-height:1.4; }
 .ends span:last-child { color:var(--ink); font-weight:500; }
 .feedback { display:inline-flex; align-items:center; gap:6px; min-height:20px; color:var(--status-green); font-size:13px; font-weight:600; }
 .feedback:empty { display:none; }
 .srOnly { position:absolute; width:1px; height:1px; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 
-.list,.moreList { margin:0; padding:0; list-style:none; }
+.list { margin:0; padding:0; list-style:none; }
 .row { border-top:1px solid var(--border); }
-.row > a,.row[data-road-locked],.moreList a { display:grid; grid-template-columns:56px minmax(0,1fr) auto; align-items:center; gap:16px; min-height:76px; padding:12px 4px; color:inherit; text-decoration:none; }
+.row > a,.row[data-road-locked] { display:grid; grid-template-columns:56px minmax(0,1fr) auto; align-items:center; gap:16px; min-height:76px; padding:12px 4px; color:inherit; text-decoration:none; }
 .row[data-road-locked] { grid-template-columns:56px minmax(0,1fr); color:var(--quiet); }
 .thumb { display:grid; place-items:center; width:56px; height:44px; }
 .thumb img { display:block; width:100%; height:100%; object-fit:contain; }
@@ -48,18 +51,30 @@
 .status small { color:var(--quiet); font-size:13px; font-variant-numeric:tabular-nums; }
 .row > a[aria-current=step] .text strong { color:var(--ink); }
 @media (hover:hover) and (pointer:fine) {
-  .row > a,.moreList a { border-radius:14px; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
-  .row > a:hover,.moreList a:hover { background:#F6F1E8; }
+  .row > a { border-radius:14px; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
+  .row > a:hover { background:#F6F1E8; }
 }
-.row > a:focus-visible,.moreList a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:14px; }
+.row > a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:14px; }
 
-/* «Ещё в кабинете»: три строки вместо трёх плиток с двумя пилюлями. */
-.more { padding-top:28px; }
-.more h2 { font-size:20px; margin-bottom:8px; }
-.moreList li { border-top:1px solid var(--border); }
-/* Owner, 6 Nov: no icons here — the text takes the whole row (the old 44px
-   icon column squeezed it to a sliver). */
-.moreList a { grid-template-columns:minmax(0,1fr); min-height:68px; }
+/* Главное в кабинете (owner, 6 Nov: проверка документов и напоминания —
+   главная фишка, «на первые планы»). Две светлые плитки 28px рядом, как
+   «Весь путь»: сцена Веспи сверху, название, статус и одна кнопка-пилюля.
+   Вся плитка — одна ссылка; на телефоне плитки идут одна под другой. */
+.features { grid-area:features; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; min-width:0; }
+.feature { display:grid; grid-template-rows:auto 1fr auto; gap:16px; min-width:0; padding:14px 14px 24px; border-radius:28px; background:#FFFDF9; color:var(--ink); text-decoration:none; }
+.featureScene { margin:0; aspect-ratio:16 / 7; }
+.featureCopy { display:grid; gap:4px; padding:4px 14px 0; min-width:0; }
+.featureCopy strong { font:600 clamp(20px,1.9vw,24px)/1.2 var(--font-sans); letter-spacing:-.02em; text-wrap:balance; }
+.featureCopy span { color:var(--quiet); font-size:15px; line-height:1.45; }
+.featureAction { justify-self:start; display:inline-flex; align-items:center; min-height:44px; margin:0 14px; padding:0 20px; border-radius:999px; background:#241F1C; color:#FFFDF9; font-size:15px; font-weight:600; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.2,0,0,1); }
+.feature[data-feature=reminders] .featureAction { background:transparent; color:var(--ink); box-shadow:inset 0 0 0 1.5px #241F1C; }
+.feature[data-feature=reminders][data-reminders-on] .featureAction { box-shadow:inset 0 0 0 1px var(--border); }
+@media (hover:hover) and (pointer:fine) {
+  .feature:hover .featureAction { background:#3A332E; }
+  .feature[data-feature=reminders]:hover .featureAction { background:#F1ECE3; }
+}
+.feature:active .featureAction { transform:scale(.97); }
+.feature:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 
 /* Пояснения слов — сноска с тонкой линией слева, без значков
    (owner, 6 Nov: «эмодзи перебор»). */
@@ -68,7 +83,12 @@
 .terms strong { color:var(--ink); font-weight:600; }
 
 @media(max-width:640px) {
-  .path,.more { padding:24px 16px 8px; border-radius:24px; }
+  .path { padding:24px 16px 8px; border-radius:24px; }
+  .features { grid-template-columns:minmax(0,1fr); }
+  .feature { padding:10px 10px 20px; border-radius:24px; gap:14px; }
+  .featureScene { aspect-ratio:16 / 9; }
+  .featureCopy { padding:2px 8px 0; }
+  .featureAction { margin:0 8px; }
   /* На телефоне статус встаёт строкой под описанием: текст этапа идёт во всю ширину. */
   .row > a,.row[data-road-locked] { grid-template-columns:44px minmax(0,1fr); gap:4px 12px; min-height:72px; padding:14px 0; }
   .row > a .status { grid-column:2; display:flex; align-items:center; justify-items:start; gap:8px; text-align:left; }
@@ -76,7 +96,6 @@
   .thumb { width:44px; height:36px; }
   .text strong { font-size:16px; }
   .text > span { font-size:13px; }
-  .moreList a { padding:10px 0; }
 }
 @media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack { transition:none !important; } }
-@media(forced-colors:active) { .path,.more { border:1px solid CanvasText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } }
+@media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } }

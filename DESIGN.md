@@ -512,3 +512,40 @@ Owner, on the live site from a phone: «на первом экране очен�
 - **No emoji-like icons.** The small object icons of the morning read as emoji at text size. Facts are words separated by a dot («Лучше успеть до 12 февраля · Займёт 15 мин»), word explanations are a footnote with a thin left rule, «Где взять:» is a bold label, «Готово» and «Шаг сохранён» are words, check lists use small green dots, the plan transition is two plain circles. Document cards and «Ещё в кабинете» rows carry no icons. Objects stay where they are the subject: the stage rows of «Весь путь», the document drop zone. `WarmIcon` and `ObjectIcon` remain in the code base, unused by the cabinet.
 - **No white glow.** The cabinet hero no longer fades the landscape into a white haze under the text: the text stands on paper, and the landscape is its own window (22 px radius, 4:3 on phones) with a crisp edge, so Vespi on the scooter is visible and the video loop keeps playing.
 - **Vespi at work, moving.** `src/components/illustration/StageScene.tsx` shows the scenes of design/illustrations/scenes-2026-11-04.json: the stage page opens with its stage's scene (Vespi choosing programmes, holding the diploma, stamping, sealing an envelope, saving coins, waiting with the passport, holding the keys), the documents page with Vespi stamping a sheet. Motion is a slow camera drift towards Vespi (20 s, alternate) and a warm light passing over the scene every 10 s — transform and opacity only; under reduced motion the frame stands still. The attribute is `data-stage-scene`, not `data-vespi-scene` (that one stays for mascot cut-outs, which the hero still must not carry).
+
+## Vespi rides, documents first, sharp on laptops · 6 November 2026 (evening)
+
+Owner, 6 Nov: «иллюстрация должна быть на фоне, и Веспи должен реально ехать»,
+«картинки ниже качеством, чем остальной сайт», «прогресс-бару не хватает
+видимости», «проверка документов должна выйти на первые планы — главная фишка
+наряду с уведомлениями».
+
+- **«Сейчас» stands on the landscape.** The Tuscan road is the background of
+  the whole hero tile (phones: on top, the panel overlaps it like a sheet).
+  The text sits on a solid `#FFFDF9` panel — never a haze or gradient over
+  the photo. The tile keeps a road band under the panel at every width.
+- **Vespi really rides.** `public/illustrations/motion/tuscany-ride-*` is a
+  12.8 s loop: two locked-camera MiniMax H3 clips (empty road → Vespi in
+  place; Vespi in place → empty road over the hill), joined with 0.25 s
+  fades on the identical frames. The empty road was made from the original
+  still: a GPT Image edit pasted back only where Vespi stood, so every other
+  pixel is the original. The loop starts on the poster frame, so the hand-over
+  from still to video does not jump. 1920 px H.264 for laptops, 960 px for
+  phones (VP9 960 as the fallback).
+- **Sharp on laptops.** `LivingLandscape` picks the first width that covers
+  window × pixel ratio (up to 2×); stills ship at 2400 px (Tuscany, Bologna,
+  belvedere) and the Vespi scenes at 1600 px (bytedance 4k upscales of the
+  1024 px originals). No image is stretched past its pixels at 125% scaling.
+- **Documents and reminders first.** Right under «Сейчас»: «Проверка
+  документов» (Vespi stamping, «Проверено N из M», «Проверить документ») and
+  «Напоминания о сроках» (Vespi with the notebook and the clock, status,
+  «Подключить Telegram»). «Ещё в кабинете» is gone; the saved universities
+  are already named in the greeting. On the home hero «Проверить документ»
+  is a second button next to «Составить план бесплатно», not a small link.
+- **Progress bar you can see.** Open track `#DDD0BC` with a hairline edge,
+  14 px bar, 26 px knob with a 5 px ring.
+- **No light sweeps.** The Vespi scenes keep their slow camera drift only;
+  the gradient light sweep is gone (no gradients inside the cabinet).
+- **Navigation lands at the top.** `<html data-scroll-behavior="smooth">`
+  and a Lenis glide that stops on a link click: a page opened from a
+  scrolled one starts at its top (was: /guides at its footer).

@@ -126,7 +126,7 @@ try {
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-portal-now] [data-road-step-title]').fontFamily,
         greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,grain:style('[data-portal-editorial]').backgroundImage,grainBlend:style('[data-portal-editorial]').backgroundBlendMode,
-        tileRadius:tile.borderRadius,tileBackground:tile.backgroundColor,moreRadius:style('[data-cabinet-more]').borderRadius};
+        tileRadius:tile.borderRadius,tileBackground:tile.backgroundColor,featureRadius:style('[data-cabinet-features] a').borderRadius};
     });
     assert.match(editorial.greeting,/Inter[ _]Tight/);assert.equal(editorial.count,editorial.title);assert.match(editorial.title,/Inter[ _]Tight/);
     assert.equal(editorial.greetingWeight,'600');assert.equal(editorial.countWeight,'600');
@@ -141,7 +141,7 @@ try {
     assert.match(editorial.grain,/^url\("data:image\/svg\+xml.*feTurbulence.*opacity='0\.06'/);assert.match(editorial.grainBlend,/^multiply/);
     // Owner, 5 Nov: «Весь путь» and «Ещё в кабинете» are light 28px tiles like the hero.
     assert.equal(editorial.tileRadius,width>640?'28px':'24px','The path tile shares the cabinet tile radius');assert.equal(editorial.tileBackground,'rgb(255, 253, 249)');
-    assert.equal(editorial.moreRadius,width>640?'28px':'24px');
+    assert.equal(editorial.featureRadius,width>640?'28px':'24px','Feature tiles share the cabinet tile radius');
     assert.equal(await page.locator('[data-portal-grain]').count(),0,'No fixed full-screen grain overlay');
     assert.equal(await page.locator('header a.logo-link').getAttribute('href'),'/');
     const fill=await road(page).evaluate(el=>Number(el.style.getPropertyValue('--route-fill')));
@@ -158,12 +158,19 @@ try {
     assert.equal(await page.locator('[data-portal-road] [data-road-stage]').evaluateAll(nodes=>nodes.filter(el=>{const r=el.closest('li').getBoundingClientRect();return [...el.querySelectorAll('strong,span,img')].some(n=>{const b=n.getBoundingClientRect();return b.width&&(b.left<r.left-1||b.right>r.right+1);});}).length),0,'Nothing in a row spills past its edge');
     assert.deepEqual(await page.locator('[data-road-stage] [data-state]').evaluateAll(nodes=>nodes.map(n=>n.querySelector('span').innerText.trim())),['Готово','Сейчас','Дальше','Дальше','Дальше','Начат заранее'],'Status words, sentence case');
     assert.doesNotMatch(await road(page).innerText(),/Этап\s*0\d|\b0[1-9]\b|ЭТАП/,'No stage codes like «01»');
-    assert.equal(await page.locator('[data-cabinet-more] [data-cabinet-tile]').count(),3,'Documents, universities and reminders are three rows');
-    assert.equal(await page.locator('[data-cabinet-more] a').count(),3,'One link per row');
-    // Owner, 6 Nov (phone screenshot «Доку/мент/ы»): with the icons gone the
-    // words take the whole row; a leftover icon column must not squeeze them.
-    assert.deepEqual(await page.locator('[data-cabinet-more] a').evaluateAll(links=>links.filter(a=>{const text=a.querySelector('strong').parentElement.getBoundingClientRect().width,row=a.getBoundingClientRect().width;return text<row*.7;}).map(a=>a.innerText.split('\n')[0])),[],'«Ещё в кабинете» text spans its row');
-    assert.deepEqual(await page.locator('[data-cabinet-more] strong').evaluateAll(nodes=>nodes.filter(n=>n.getClientRects().length&&n.getBoundingClientRect().height>parseFloat(getComputedStyle(n).lineHeight)*1.6).map(n=>n.innerText)),[],'Row titles stay on one line');
+    // Owner, 6 Nov: «проверка документов должна выйти на первые планы… главная
+    // фишка наряду с уведомлениями». Two tiles right under «Сейчас»: documents
+    // first, reminders second, each a Vespi scene, a status and one action.
+    assert.deepEqual(await page.locator('[data-cabinet-features] a').evaluateAll(links=>links.map(a=>a.dataset.feature)),['documents','reminders'],'Documents, then reminders');
+    assert.deepEqual(await page.locator('[data-cabinet-features] [data-stage-scene]').evaluateAll(nodes=>nodes.map(n=>n.dataset.stageScene)),['stamp','notebook'],'Each feature has its Vespi scene');
+    assert.equal(await page.locator('[data-cabinet-features] [data-feature-action]').count(),2,'One action per feature');
+    assert.match(await page.locator('[data-feature=documents] [data-feature-action]').innerText(),/^Проверить документ$/);
+    assert.match(await page.locator('[data-feature=documents]').innerText(),/Проверено \d+ из \d+/);
+    assert.match(await page.locator('[data-feature=reminders]').innerText(),/Напоминания о сроках/);
+    assert.equal(await page.locator('[data-cabinet-more]').count(),0,'No separate «Ещё в кабинете» list');
+    // Owner, 6 Nov (phone screenshot «Доку/мент/ы»): text never squeezes into a sliver.
+    assert.deepEqual(await page.locator('[data-cabinet-features] a').evaluateAll(links=>links.filter(a=>{const text=a.querySelector('strong').parentElement.getBoundingClientRect().width,row=a.getBoundingClientRect().width;return text<row*.7;}).map(a=>a.dataset.feature)),[],'Feature text spans its tile');
+    assert.deepEqual(await page.locator('[data-cabinet-features] strong').evaluateAll(nodes=>nodes.filter(n=>n.getBoundingClientRect().height>parseFloat(getComputedStyle(n).lineHeight)*1.6).map(n=>n.innerText)),[],'Feature titles stay on one line');
     assert(await page.getByRole('region',{name:'Весь путь до учёбы в Италии'}).isVisible());
     assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no separate box');
 
@@ -171,25 +178,35 @@ try {
     const surface=await page.locator('[data-portal-focus]').evaluate(el=>getComputedStyle(el).backgroundColor);
     assert.equal(surface,'rgba(0, 0, 0, 0)','The complete page is not enclosed in a white card');
     // Hero tile: greeting as the label, the next step as the headline, one
-    // plain line, facts as words, one button; the landscape is a window in the
-    // lower part of the tile. Then «Весь путь», then «Ещё в кабинете», 12px apart.
-    const route=await road(page).boundingBox(),more=await page.locator('[data-cabinet-more]').boundingBox();
+    // plain line, facts as words, one button — all on a solid paper panel.
+    // Owner, 6 Nov: «иллюстрация должна быть на фоне, и Веспи должен реально
+    // ехать»: the landscape (a loop where Vespi rides along the road) is the
+    // background of the whole tile; on phones it sits on top and the panel
+    // overlaps it like a sheet. No white haze or gradient over the photo.
+    // Then the two feature tiles, then «Весь путь», 12px apart.
+    const route=await road(page).boundingBox(),features=await page.locator('[data-cabinet-features]').boundingBox();
     const hero=await page.locator('[data-portal-hero]').boundingBox(),header=await page.locator('[data-portal-welcome]').boundingBox();
-    const now=await page.locator('[data-portal-now]').boundingBox();
+    const now=await page.locator('[data-portal-now]').boundingBox(),heroPanel=await page.locator('[data-portal-hero-panel]').boundingBox();
     assert(header.y>=hero.y&&header.y+header.height<=now.y+1,'The greeting labels the hero above the step');
-    assert(hero.y+hero.height<=route.y+1&&route.y-(hero.y+hero.height)<=13,'Hero tile, then «Весь путь» 12px below');
-    assert(route.y+route.height<=more.y+1&&more.y-(route.y+route.height)<=13,'Then «Ещё в кабинете» 12px below');
-    // Owner, 6 Nov: «белое свечение… колхозно» — the text no longer sits on a
-    // white haze over the photo. The landscape is its own rounded window under
-    // the step and its button, inside the tile; the window clips the photo.
+    assert(now.y>=heroPanel.y-1&&now.y+now.height<=heroPanel.y+heroPanel.height+1,'The step and its button stand on the panel');
+    assert(hero.y+hero.height<=features.y+1&&features.y-(hero.y+hero.height)<=13,'Hero tile, then the features 12px below');
+    assert(features.y+features.height<=route.y+1&&route.y-(features.y+features.height)<=13,'Then «Весь путь» 12px below');
+    const panelStyle=await page.locator('[data-portal-hero-panel]').evaluate(el=>{const s=getComputedStyle(el);return {bg:s.backgroundColor,image:s.backgroundImage};});
+    assert.deepEqual(panelStyle,{bg:'rgb(255, 253, 249)',image:'none'},'Solid paper panel, no haze');
     const landscape=await page.locator('[data-portal-landscape]').boundingBox(),scene=await page.locator('[data-portal-hero-scene]').boundingBox();
-    assert(scene.y>=now.y+now.height-1&&scene.y+scene.height<=hero.y+hero.height+1&&scene.x>=hero.x-1&&scene.x+scene.width<=hero.x+hero.width+1,'The landscape window sits under the step, inside the tile');
-    assert(scene.height>=140,'The landscape window has real room');
-    assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=scene.y+scene.height-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its window');
-    assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The window clips its landscape');
-    assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape (clip, so the scroll-driven parallax measures against the window)');
+    if(width>640){
+      assert(scene.y<=hero.y+1&&scene.y+scene.height>=hero.y+hero.height-1&&scene.x<=hero.x+1&&scene.x+scene.width>=hero.x+hero.width-1,'The landscape is the background of the whole tile');
+      assert(hero.y+hero.height-(heroPanel.y+heroPanel.height)>=120,'The road under the panel stays in view');
+    }else{
+      assert(Math.abs(scene.y-hero.y)<=1&&scene.width>=hero.width-1&&scene.height>=hero.width*.7,'On a phone the landscape sits on top of the tile');
+      assert(heroPanel.y<scene.y+scene.height&&heroPanel.y>=scene.y+scene.height-40,'The panel overlaps the landscape like a sheet');
+    }
+    assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=scene.y+scene.height-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its scene');
+    assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The scene clips its landscape');
+    assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape');
+    assert.equal(await page.locator('[data-living-landscape=tuscany-ride]').count(),1,'Vespi rides through the hero (a loop)');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
-    assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),'28px');
+    assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),width>640?'28px':'24px');
     assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');
     assert.doesNotMatch(await page.locator('[data-portal-focus]').innerText(),/Главный фокус сейчас|Что сделать:|Нужно уточнить|Ориентир подготовки|Пройденные этапы|Все документы|Правила поступления/);
     assert.equal(await page.locator('[data-vespi-scene=welcome]').count(),0,'No welcome figure on the overview (owner, 3 Nov)');

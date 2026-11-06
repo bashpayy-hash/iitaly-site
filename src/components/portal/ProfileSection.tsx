@@ -77,7 +77,7 @@ export function ProfileSection({
           <h2 id="portal-settings-heading" tabIndex={-1} className={`${settings.title} ${navigation.focusTarget}`}>Настройки</h2>
           <p className={settings.lead}>Профиль, напоминания и доступ к кабинету.</p>
         </div>
-        <img className={settings.scene} src="/illustrations/scenes/notebook-1024.webp" srcSet="/illustrations/scenes/notebook-640.webp 640w, /illustrations/scenes/notebook-1024.webp 1024w" sizes="(max-width: 900px) 100vw, 520px" width={1024} height={688} alt="" aria-hidden="true" decoding="async" data-settings-scene="notebook" />
+        <img className={settings.scene} src="/illustrations/scenes/notebook-1024.webp" srcSet="/illustrations/scenes/notebook-640.webp 640w, /illustrations/scenes/notebook-1024.webp 1024w, /illustrations/scenes/notebook-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 520px" width={1024} height={688} alt="" aria-hidden="true" decoding="async" data-settings-scene="notebook" />
       </header>
 
       <div className={settings.grid}>

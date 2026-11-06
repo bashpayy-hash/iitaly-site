@@ -48,7 +48,7 @@ export function TrustFAQ() {
         {/* Живой пейзаж (owner, 4 Nov): поверх кадра — видеопетля той же
             сцены, плащ Веспи и облака над Флоренцией в движении. */}
         <div className={styles.sceneBox} data-faq-scene>
-          <img className={styles.scene} src="/illustrations/landscapes/belvedere-1024.webp" srcSet="/illustrations/landscapes/belvedere-640.webp 640w, /illustrations/landscapes/belvedere-1024.webp 1024w, /illustrations/landscapes/belvedere-1600.webp 1600w" sizes="(max-width: 1344px) 100vw, 1216px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-faq-landscape="belvedere" />
+          <img className={styles.scene} src="/illustrations/landscapes/belvedere-1024.webp" srcSet="/illustrations/landscapes/belvedere-640.webp 640w, /illustrations/landscapes/belvedere-1024.webp 1024w, /illustrations/landscapes/belvedere-1600.webp 1600w, /illustrations/landscapes/belvedere-2400.webp 2400w" sizes="(max-width: 1344px) 100vw, 1216px" width={1024} height={688} alt="" aria-hidden="true" loading="lazy" decoding="async" data-faq-landscape="belvedere" />
           <LivingLandscape className={styles.scene} base="/illustrations/motion/belvedere" label="belvedere" />
         </div>
         <div className={styles.panel}>

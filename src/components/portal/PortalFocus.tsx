@@ -146,17 +146,27 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const nowTime = nowTask ? concreteTime(nowTask.time || TASK_META[nowTask.id]?.min) : "";
   const docsTasks = data.roadmap.flatMap(stage => stage.tasks).filter(task => DOC_TASKS[task.id]);
   const checkedDocs = docsTasks.filter(task => data.docs?.[task.id]).length;
-  const shortlistTask = data.roadmap.flatMap(stage => stage.tasks).find(task => task.id === "shortlist");
   const remindersOn = Boolean(data.client.tgLinked && data.client.notify?.telegram !== false);
   const nextStage = data.roadmap.slice(data.roadmap.indexOf(selected) + 1).find(stage => stage.tasks.length);
 
   return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
-    {/* Обзор кабинета (owner, 5 Nov: «минимализм Apple… нормальный поток
-        информации… не думай как я, думай как 11-классник»). Три блока, один
-        поток: «Сейчас» — один шаг и одна кнопка; «Весь путь» — пять этапов
-        простыми словами со статусом; «Ещё в кабинете» — три строки. Ничего не
-        показано дважды, у каждого блока одна цель нажатия на строку. */}
+    {/* Обзор кабинета (owner, 5–6 Nov: «минимализм Apple… думай как
+        11-классник»; «проверка документов и уведомления — главная фишка»).
+        Один поток: «Сейчас» — один шаг и одна кнопка на живом пейзаже; затем
+        «Проверка документов» и «Напоминания о сроках»; затем «Весь путь» —
+        этапы простыми словами со статусом. Ничего не показано дважды. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
+      {/* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
+          фоне, и Веспи должен реально ехать»): петля, где Веспи въезжает
+          слева, проезжает по дороге и уезжает за кипарисы к ферме; первый и
+          последний кадр — пустая дорога, шва нет. Текст — на сплошной кремовой
+          панели, без белой дымки поверх кадра. Картинка с Веспи — постер и всё,
+          что видят «меньше движения» и Save-Data. */}
+      <div className={styles.heroScene} data-portal-hero-scene>
+        <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1600.webp" srcSet="/illustrations/landscapes/tuscany-960.webp 960w, /illustrations/landscapes/tuscany-1600.webp 1600w, /illustrations/landscapes/tuscany-2400.webp 2400w" sizes="(max-width: 1360px) 100vw, 1296px" width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1920]} webmWidths={[960]} />
+      </div>
+      <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>
         <div className={styles.welcomeCopy}>
           <h1 id="portal-overview-heading" tabIndex={-1}>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
@@ -183,32 +193,33 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             : <a className={styles.nowPrimary} href={nowHref} data-now-open data-road-open data-road-action data-portal-task={nowTask.id} data-current-task="true" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{stepActionLabel(data, nowTask)}</a>}
         </div>}
       </aside>
-      {/* Пейзаж — отдельное окно под текстом, без белой дымки поверх кадра
-          (owner, 6 Nov: «белое свечение не нужно, выглядит колхозно»):
-          Веспи на скутере теперь виден целиком, видеопетля едет как раньше. */}
-      <div className={styles.heroScene} data-portal-hero-scene>
-        <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={916} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
-        {/* Живой пейзаж (owner, 4 Nov): видеопетля той же дороги; картинка выше остаётся постером. */}
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany" label="tuscany" />
       </div>
     </div>}
+    {/* Главное в кабинете (owner, 6 Nov: «проверка документов должна выйти на
+        первые планы, в этом главная фишка сайта наряду с уведомлениями»): сразу
+        под «Сейчас» — две плитки со сценой Веспи, статусом и одной кнопкой.
+        Выбранные вузы уже названы в приветствии, поэтому отдельной строки нет. */}
+    {!stagePage && <section className={path.features} aria-label="Главное в кабинете" data-cabinet-features>
+      <a className={path.feature} href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents data-feature="documents" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
+        <StageScene name="stamp" className={path.featureScene} />
+        <span className={path.featureCopy}>
+          <strong>Проверка документов</strong>
+          <span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span>
+        </span>
+        <span className={path.featureAction} data-feature-action>Проверить документ</span>
+      </a>
+      <a className={path.feature} href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders data-feature="reminders" data-reminders-on={remindersOn || undefined} onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
+        <StageScene name="notebook" className={path.featureScene} />
+        <span className={path.featureCopy}>
+          <strong>Напоминания о сроках</strong>
+          <span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span>
+        </span>
+        <span className={path.featureAction} data-feature-action>{remindersOn ? "Настроить" : "Подключить Telegram"}</span>
+      </a>
+    </section>}
     {!stagePage && <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} onSelectStage={onSelectStage} travel={travel} onTravelStart={onTravelStart} />
     </div>}
-    {!stagePage && <nav className={path.more} aria-labelledby="portal-more-heading" data-cabinet-more>
-      <h2 id="portal-more-heading">Ещё в кабинете</h2>
-      <ul className={path.moreList}>
-        <li><a href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
-          <span className={path.text}><strong>Документы</strong><span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span></span>
-         </a></li>
-        <li><a href={shortlistTask ? `/portal?view=plan&task=${encodeURIComponent(shortlistTask.id)}` : "/universities"} data-cabinet-tile="universities" data-cabinet-shortlist={shortlistTask ? "" : undefined} onClick={event => { if (!shortlistTask || !plainClick(event)) return; event.preventDefault(); onOpenTask(shortlistTask, "instruction"); }}>
-          <span className={path.text}><strong>Университеты</strong><span>{universities.length ? universities.map(university => university.name).join(" · ") : "Пока не выбраны"}</span></span>
-         </a></li>
-        <li><a href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
-          <span className={path.text}><strong>Напоминания о сроках</strong><span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span></span>
-         </a></li>
-      </ul>
-    </nav>}
     {/* Страница этапа (owner, 4 Nov: «перед глазами максимум один блок и один
         поинт»): хлебные крошки и одна плитка с одним шагом; внизу «Назад /
         Далее», на последнем шаге — переход к следующему этапу. */}

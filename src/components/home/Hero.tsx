@@ -22,16 +22,20 @@ export function Hero() {
     <section data-section="hero" className={styles.hero}>
       <div className={styles.heroScene} data-hero-scene>
         <div className={styles.heroSceneBox} aria-hidden="true">
-          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-1024.webp" srcSet="/illustrations/landscapes/bologna-640.webp 640w, /illustrations/landscapes/bologna-1024.webp 1024w, /illustrations/landscapes/bologna-1600.webp 1600w" sizes="100vw" width={1024} height={688} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna" />
+          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-1024.webp" srcSet="/illustrations/landscapes/bologna-640.webp 640w, /illustrations/landscapes/bologna-1024.webp 1024w, /illustrations/landscapes/bologna-1600.webp 1600w, /illustrations/landscapes/bologna-2400.webp 2400w" sizes="100vw" width={1024} height={688} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna" />
           <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna" label="bologna" />
         </div>
         <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
           <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <div className={assistant.entryActions}>
-            <AppleButtonLink href="/plan">Составить план бесплатно</AppleButtonLink>
+            {/* Owner, 6 Nov: «проверка документов — главная фишка сайта»:
+                она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}
+            <div className={assistant.entryButtons}>
+              <AppleButtonLink href="/plan">Составить план бесплатно</AppleButtonLink>
+              <AppleButtonLink href="/plan#document-check" variant="outlined" data-hero-document-check>Проверить документ</AppleButtonLink>
+            </div>
             <div className={assistant.entryAlternatives}>
-              <Link href="/plan#document-check">Проверить документ</Link>
               <Link href="/universities">Смотреть университеты</Link>
             </div>
           </div>

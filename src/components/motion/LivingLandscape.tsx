@@ -17,11 +17,18 @@ import styles from "./living-landscape.module.css";
  * на телефонах — 640px-версия; за кадром пауза. Пока первый кадр не пошёл,
  * видео прозрачно, так что стык с картинкой не виден.
  */
-export function LivingLandscape({ base, className = "", label }: {
-  /** Общее начало путей: `${base}-1280.mp4|webm` для экранов шире 640px,
-   *  `${base}-640.*` для телефонов. H.264 там, где он есть (Safari, Chrome),
-   *  иначе VP9 (сборки Chromium без проприетарных кодеков). */
+export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths }: {
+  /** Общее начало путей: `${base}-<ширина>.mp4|webm`. H.264 там, где он есть
+   *  (Safari, Chrome), иначе VP9 (сборки Chromium без проприетарных кодеков). */
   base: string;
+  /** Ширины файлов по возрастанию. Телефон (до 640px) берёт самую узкую,
+   *  остальные — первую, что покрывает ширину окна × плотность пикселей
+   *  (до 2×, с запасом 20%), иначе самую широкую: на ноутбуке с масштабом
+   *  125% петля не растягивается из 1280px (owner, 6 Nov: «картинки ниже
+   *  качеством, чем остальной сайт»). */
+  widths?: number[];
+  /** Ширины VP9-версий, если они есть не для всех `widths`. */
+  webmWidths?: number[];
   /** классы раскладки той же картинки (inset, object-fit, object-position) */
   className?: string;
   label: string;
@@ -29,6 +36,8 @@ export function LivingLandscape({ base, className = "", label }: {
   const reduced = useReducedMotion();
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  // Строковые ключи: новый массив на каждом рендере не перезапускает эффект.
+  const widthKey = widths.join(","), webmKey = (webmWidths ?? widths).join(",");
 
   useEffect(() => {
     const node = video.current;
@@ -41,8 +50,10 @@ export function LivingLandscape({ base, className = "", label }: {
         if (entry.isIntersecting) {
           if (!armed) {
             armed = true;
-            const format = node.canPlayType('video/mp4; codecs="avc1.640028"') ? "mp4" : "webm";
-            node.src = `${base}-${window.innerWidth <= 640 ? 640 : 1280}.${format}`;
+            const need = window.innerWidth <= 640 ? 0 : window.innerWidth * Math.min(window.devicePixelRatio || 1, 2) * .8;
+            const pick = (list: number[]) => list.find(width => width >= need) ?? list[list.length - 1];
+            const list = (key: string) => key.split(",").map(Number);
+            node.src = node.canPlayType('video/mp4; codecs="avc1.640028"') ? `${base}-${pick(list(widthKey))}.mp4` : `${base}-${pick(list(webmKey))}.webm`;
           }
           node.play().catch(() => {});
         } else if (armed) node.pause();
@@ -50,7 +61,7 @@ export function LivingLandscape({ base, className = "", label }: {
     }, { rootMargin: "120px 0px" });
     observer.observe(node);
     return () => observer.disconnect();
-  }, [reduced, base]);
+  }, [reduced, base, widthKey, webmKey]);
 
   // Пауза при включении «меньше движения»; onPause снимает проявление сам.
   useEffect(() => { if (reduced) video.current?.pause(); }, [reduced]);
