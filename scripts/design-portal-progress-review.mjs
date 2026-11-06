@@ -163,6 +163,10 @@ try{
     if([1440,390].includes(viewport.width)&&viewport.height!==667)await capture(page,`portal-plan-${viewport.width}`);
     await sticky(page);await axe(page,'Plan '+viewport.width);await portalDestination(page,'Обзор');
     if(viewport.width===1440){
+      // The overview moves focus to its heading one frame after it renders
+      // (usePortalPageFocus). Let that land first, or on a slow runner it can
+      // arrive after the focus below and Tab would start from the heading.
+      await page.waitForFunction(()=>document.activeElement?.id==='portal-overview-heading',null,{timeout:5000});
       await road(page).locator('[aria-current=step]').focus();
       // Owner, 5 Nov: stage rows are one list; Tab goes straight to the next stage.
       await page.keyboard.press('Tab');
