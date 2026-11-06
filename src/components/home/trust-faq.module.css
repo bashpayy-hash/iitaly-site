@@ -16,7 +16,7 @@
 }
 @keyframes faq-drift { from { transform:scale(1.12) translateY(-5%); } to { transform:scale(1.12) translateY(5%); } }
 .panel { grid-column:2; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:rgba(255,253,249,.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
-.eyebrow { margin:0; font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:#A33421; }
+.eyebrow { margin:0; font:600 13px/1.5 var(--font-sans); color:#A33421; }
 .title { margin:10px 0 18px; font:600 clamp(28px,3vw,40px)/1.1 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
 .list { border-top:1px solid #DCD5CA; }
 .item { border-bottom:1px solid #DCD5CA; }

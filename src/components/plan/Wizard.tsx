@@ -126,7 +126,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           <>
             {preview && (
               <div className="mb-6 rounded-apple-card border border-white/15 bg-frost p-4">
-                <p className="text-apple-caption font-semibold text-crimson uppercase">
+                <p className="text-[13px] font-semibold text-crimson">
                   Уже готово по твоим ответам
                 </p>
                 <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0]?.t}</p>

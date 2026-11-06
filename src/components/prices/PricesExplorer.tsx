@@ -124,7 +124,7 @@ export function PricesExplorer() {
                 ? "После подтверждённой оплаты Stripe личный кабинет создаётся автоматически. Код доступа появится сразу на странице подтверждения."
                 : "После подтверждения оплаты мы активируем личный кабинет с маршрутом. Он ведёт весь путь — от выбора программ до первых дней в Италии."}
             </p>
-            <p className="mt-5 text-apple-caption text-cloud-meta uppercase">
+            <p className="mt-5 text-[13px] text-cloud-meta">
               Доступ на весь цикл поступления, без ограничения по времени
             </p>
             <AppleButton
@@ -140,7 +140,7 @@ export function PricesExplorer() {
           </div>
 
           <div id="terms-and-refund" className={`${styles.termsBox} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
-            <b className="block text-apple-caption font-semibold text-green uppercase">
+            <b className="block text-[13px] font-semibold text-green">
               Гарантии и как мы снимаем риск
             </b>
             <div className="mt-3 divide-y divide-green/15">
@@ -182,7 +182,7 @@ export function PricesExplorer() {
             </p>
           </div>
 
-          <p id="expert-review" className={`${styles.anchorTarget} mt-10 text-apple-caption text-cloud-meta uppercase`}>
+          <p id="expert-review" className={`${styles.anchorTarget} mt-10 text-[13px] font-semibold text-cloud-meta`}>
             Если нужен живой человек
           </p>
           <p className="mt-2 text-apple-body-sm text-cloud-body">

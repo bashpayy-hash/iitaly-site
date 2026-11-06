@@ -13,7 +13,7 @@
 .card:nth-child(2) .cardLink,.cardsAlt .card:nth-child(odd) .cardLink { --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89; }
 .cardsAlt .card:nth-child(2) .cardLink { --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; }
 .copy { display:grid; gap:4px; width:100%; padding:24px 22px 0; }
-.copy small { font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:var(--tile-label); }
+.copy small { font:600 13px/1.5 var(--font-sans); color:var(--tile-label); }
 .copy strong { font-size:21px; font-weight:600; line-height:1.15; letter-spacing:-.02em; text-wrap:balance; }
 .copy span { font-size:14px; line-height:1.4; color:var(--tile-quiet); text-wrap:pretty; }
 /* Вещь темы стоит внизу плитки, по центру, не шире 68%. */

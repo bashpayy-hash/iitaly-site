@@ -42,7 +42,7 @@ export function CityPanel({
       <ul className={ui.cityFacts}>
         {facts.map((f, i) => (
           <li key={i} className={ui.cityFact}>
-            <span className={ui.factNumber} aria-hidden>{String(i + 1).padStart(2, "0")}</span>
+            <span className={ui.factNumber} aria-hidden />
             {f}
           </li>
         ))}

@@ -4,3 +4,5 @@
 @media (max-width: 639px) { .routeHeading h2 { font-size: 24px; } }
 
 .reminders { margin-top:20px; padding-block:8px; border-block:1px solid #DCD3C3; }.reminders summary { min-height:44px; padding-block:10px; font-size:16px; font-weight:500; cursor:pointer; }.reminders[open] { padding-bottom:20px; }
+
+.ready { max-width:60ch; margin:0; font-size:16px; line-height:1.55; color:var(--color-cloud-body); text-wrap:pretty; }

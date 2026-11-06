@@ -26,7 +26,7 @@
 .tile[data-flight-selected=true] .open::after { content:none; }
 .open:focus-visible { outline:2px solid var(--tile-label); outline-offset:4px; border-radius:6px; }
 
-.label { font:400 11px/1.5 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:var(--tile-label); overflow-wrap:anywhere; }
+.label { font:600 13px/1.5 var(--font-sans); color:var(--tile-label); overflow-wrap:anywhere; }
 .title { margin-top:8px; font-size:clamp(22px,2.2vw,27px); font-weight:600; line-height:1.12; letter-spacing:-.025em; text-wrap:balance; overflow-wrap:anywhere; }
 .line { margin-top:10px; max-width:38ch; font-size:15px; line-height:1.45; color:var(--tile-quiet); text-wrap:pretty; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .pill { display:inline-flex; align-items:center; min-height:40px; margin-top:18px; padding:9px 18px; border-radius:999px; background:var(--pill-bg); color:var(--pill-ink); font-size:14px; font-weight:500; line-height:1.2; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
@@ -72,6 +72,18 @@
   .tile { min-height:0; padding:28px 20px 0; }
   .title { font-size:22px; }
   .visual { height:160px; padding:20px 0 18px; }
+  /* Overload pass (owner, 5 Nov): on a phone eleven full-height tiles were
+     eight screens of scrolling. A closed tile keeps its label, title, one
+     line and object, but sits as a short row — text left, object right —
+     like the home page's route cards; the pill becomes a quiet text link.
+     The opened step keeps the full tile. */
+  .tile:not([data-flight-selected=true]) { display:grid; grid-template-columns:minmax(0,1fr) 84px; align-items:center; gap:0 14px; padding:22px 18px 22px 20px; }
+  .tile:not([data-flight-selected=true]) .title { font-size:19px; }
+  .tile:not([data-flight-selected=true]) .line { -webkit-line-clamp:2; font-size:14px; }
+  .tile:not([data-flight-selected=true]) .pill { min-height:0; margin-top:10px; padding:0; background:none; color:var(--tile-label); font-weight:600; }
+  .tile:not([data-flight-selected=true]) .pill::after { content:" ›"; }
+  .tile:not([data-flight-selected=true]) .visual { grid-column:2; grid-row:1; height:84px; margin:0; padding:0; align-items:center; }
+  .tile:not([data-flight-selected=true]) .visual img { max-width:100%; }
 }
 /* Motion: the tiles line up one after another (40ms apart); the opened step fades in. */
 @media (prefers-reduced-motion: no-preference) {
