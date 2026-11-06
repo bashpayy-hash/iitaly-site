@@ -5,4 +5,4 @@ Allow: /
 # а не в public/), но строка остаётся как страховка от случайного возврата.
 Disallow: /admin.html
 
-Sitemap: https://iitaly.kz/sitemap.xml
+Sitemap: https://iitaly.net/sitemap.xml

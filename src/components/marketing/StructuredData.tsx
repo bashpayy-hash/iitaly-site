@@ -20,7 +20,7 @@ export function StructuredData() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "IITALY",
-    url: "https://iitaly.kz",
+    url: "https://iitaly.net",
     areaServed: "KZ",
   };
 
@@ -28,14 +28,14 @@ export function StructuredData() {
     "@context": "https://schema.org",
     "@type": "Service",
     name: "IITALY — сопровождение поступления в Италию",
-    provider: { "@type": "Organization", name: "IITALY", url: "https://iitaly.kz" },
+    provider: { "@type": "Organization", name: "IITALY", url: "https://iitaly.net" },
     areaServed: "Kazakhstan",
     serviceType: "Сопровождение поступления в университеты Италии",
     offers: {
       "@type": "Offer",
       price: PRICE_MAIN,
       priceCurrency: "KZT",
-      url: "https://iitaly.kz/prices",
+      url: "https://iitaly.net/prices",
       availability: "https://schema.org/InStock",
     },
   };

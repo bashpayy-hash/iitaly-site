@@ -40,7 +40,7 @@ export function socialImage() {
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 24 }}>
           <div style={{ display: "flex", fontWeight: 700 }}>{fmtPrice(PRICE_MAIN)} KZT · разово</div>
-          <div style={{ display: "flex", color: "#686868" }}>iitaly.kz</div>
+          <div style={{ display: "flex", color: "#686868" }}>iitaly.net</div>
         </div>
       </div>
     ),

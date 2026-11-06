@@ -40,7 +40,7 @@ const interTight = Inter_Tight({
   display: "swap",
 });
 
-const siteUrl = "https://iitaly.kz";
+const siteUrl = "https://iitaly.net";
 const title = "IITALY — поступление в Италию ведёт ИИ";
 const description =
   "Поступление в Италию из Казахстана по понятному плану: подбор программ, расчёт шансов на стипендию DSU, "
