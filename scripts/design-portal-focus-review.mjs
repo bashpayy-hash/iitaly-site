@@ -160,6 +160,10 @@ try {
     assert.doesNotMatch(await road(page).innerText(),/Этап\s*0\d|\b0[1-9]\b|ЭТАП/,'No stage codes like «01»');
     assert.equal(await page.locator('[data-cabinet-more] [data-cabinet-tile]').count(),3,'Documents, universities and reminders are three rows');
     assert.equal(await page.locator('[data-cabinet-more] a').count(),3,'One link per row');
+    // Owner, 6 Nov (phone screenshot «Доку/мент/ы»): with the icons gone the
+    // words take the whole row; a leftover icon column must not squeeze them.
+    assert.deepEqual(await page.locator('[data-cabinet-more] a').evaluateAll(links=>links.filter(a=>{const text=a.querySelector('strong').parentElement.getBoundingClientRect().width,row=a.getBoundingClientRect().width;return text<row*.7;}).map(a=>a.innerText.split('\n')[0])),[],'«Ещё в кабинете» text spans its row');
+    assert.deepEqual(await page.locator('[data-cabinet-more] strong').evaluateAll(nodes=>nodes.filter(n=>n.getClientRects().length&&n.getBoundingClientRect().height>parseFloat(getComputedStyle(n).lineHeight)*1.6).map(n=>n.innerText)),[],'Row titles stay on one line');
     assert(await page.getByRole('region',{name:'Весь путь до учёбы в Италии'}).isVisible());
     assert.equal(await page.locator('[data-road-stage=docs]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Current stage has no separate box');
 

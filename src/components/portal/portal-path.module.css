@@ -57,9 +57,9 @@
 .more { padding-top:28px; }
 .more h2 { font-size:20px; margin-bottom:8px; }
 .moreList li { border-top:1px solid var(--border); }
-.moreList a { grid-template-columns:44px minmax(0,1fr); min-height:68px; }
-.moreIcon { display:grid; place-items:center; width:44px; height:44px; }
-.moreIcon img { display:block; width:44px; height:44px; filter:drop-shadow(0 2px 3px rgba(42,36,32,.12)); }
+/* Owner, 6 Nov: no icons here — the text takes the whole row (the old 44px
+   icon column squeezed it to a sliver). */
+.moreList a { grid-template-columns:minmax(0,1fr); min-height:68px; }
 
 /* Пояснения слов — сноска с тонкой линией слева, без значков
    (owner, 6 Nov: «эмодзи перебор»). */

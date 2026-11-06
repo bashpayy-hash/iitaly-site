@@ -27,7 +27,7 @@
 .open:focus-visible { outline:2px solid var(--tile-label); outline-offset:4px; border-radius:6px; }
 
 .label { font:600 13px/1.5 var(--font-sans); color:var(--tile-label); overflow-wrap:anywhere; }
-.title { margin-top:8px; font-size:clamp(22px,2.2vw,27px); font-weight:600; line-height:1.12; letter-spacing:-.025em; text-wrap:balance; overflow-wrap:anywhere; }
+.title { margin-top:8px; font-size:clamp(22px,2.2vw,27px); font-weight:600; line-height:1.12; letter-spacing:-.025em; text-wrap:balance; overflow-wrap:anywhere; -webkit-hyphens:auto; hyphens:auto; }
 .line { margin-top:10px; max-width:38ch; font-size:15px; line-height:1.45; color:var(--tile-quiet); text-wrap:pretty; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .pill { display:inline-flex; align-items:center; min-height:40px; margin-top:18px; padding:9px 18px; border-radius:999px; background:var(--pill-bg); color:var(--pill-ink); font-size:14px; font-weight:500; line-height:1.2; transition:background-color 160ms cubic-bezier(.4,0,.2,1),transform 120ms cubic-bezier(.4,0,.2,1); }
 /* Hover lives only on a real pointer (mobile-native, 5 Nov): touch fires a sticky hover on tap. */
@@ -83,6 +83,13 @@
   .tile:not([data-flight-selected=true]) .pill { min-height:0; margin-top:10px; padding:0; background:none; color:var(--tile-label); font-weight:600; }
   .tile:not([data-flight-selected=true]) .visual { grid-column:2; grid-row:1; height:84px; margin:0; padding:0; align-items:center; }
   .tile:not([data-flight-selected=true]) .visual img { max-width:100%; }
+}
+/* 320px phones: long Russian words («академические», «финансирование»)
+   broke mid-word next to the 84px object; a smaller object gives them room
+   and the title hyphenates where the browser can. */
+@media(max-width:360px) {
+  .tile:not([data-flight-selected=true]) { grid-template-columns:minmax(0,1fr) 64px; gap:0 10px; padding-right:14px; }
+  .tile:not([data-flight-selected=true]) .visual { height:64px; }
 }
 /* Motion: the tiles line up one after another (40ms apart); the opened step fades in. */
 @media (prefers-reduced-motion: no-preference) {
