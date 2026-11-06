@@ -166,14 +166,14 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         <p className={styles.percent} aria-hidden="true" data-road-percent><strong>{percent}%</strong><span>пройдено</span></p>
       </div>
       <p className={styles.count} data-road-count>Сделано <strong>{done}</strong> из {total} {stepWord(total)}{progress.ahead > 0 && <span className={styles.ahead}> · заранее {progress.ahead}</span>}</p>
-      <div className={styles.meter} aria-hidden="true" data-road-meter>
+      <div className={styles.meter} aria-hidden="true" data-road-meter><div className={styles.rail}>
         <span className={styles.bar}><span data-flight-fill data-road-bar /></span>
         {ticks.map(at => <i key={at} className={styles.tick} style={{ left: `${at}%` }} />)}
         <span className={styles.knobTrack}><span className={styles.knob} data-road-knob /></span>
-      </div>
+      </div></div>
       <p className={styles.ends} aria-hidden="true"><span>Старт</span><span>Учёба в Италии</span></p>
       <span className={styles.feedback} data-road-feedback data-visible={completion !== null ? "true" : "false"} role="status" aria-live="polite" aria-atomic="true">
-        {completion !== null && <><WarmIcon name="check" size={16} />{allComplete ? "Все шаги сохранены" : "Шаг сохранён"}</>}
+        {completion !== null && <><WarmIcon name="check" size={20} />{allComplete ? "Все шаги сохранены" : "Шаг сохранён"}</>}
       </span>
       <span className={styles.srOnly} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
     </div>
@@ -200,7 +200,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
             <span className={styles.thumb}><StageObject art={art} sizes="56px" /></span>
             <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
             <span className={styles.status} data-state={state} data-ahead={ahead || undefined}>
-              <span className={styles.badge}>{state === "done" && <WarmIcon name="check" size={15} />}{status}</span>
+              <span className={styles.badge}>{state === "done" && <WarmIcon name="check" size={18} />}{status}</span>
               <small>{stageDone} из {row.tasks.length}</small>
               {ahead && <span className={styles.srOnly} data-stage-ahead>заранее</span>}
             </span>

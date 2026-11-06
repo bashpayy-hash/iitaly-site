@@ -9,6 +9,6 @@ export function PlainTerms({ text, className = "" }: { text: string; className?:
   const terms = plainTerms(text);
   if (!terms.length) return null;
   return <ul className={`${styles.terms} ${className}`} data-plain-terms aria-label="Что значат слова">
-    {terms.map(item => <li key={item.term}><WarmIcon name="info" size={18} /><span><strong>{item.term}</strong> — {item.plain}</span></li>)}
+    {terms.map(item => <li key={item.term}><WarmIcon name="info" size={22} /><span><strong>{item.term}</strong> — {item.plain}</span></li>)}
   </ul>;
 }

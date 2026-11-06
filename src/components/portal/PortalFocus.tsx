@@ -119,8 +119,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
                 {description && <p className={styles.explainer} data-step-short-explainer>{description}</p>}
                 <PlainTerms text={`${taskTitle(row)} ${description}`} />
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><WarmIcon name="calendar" size={18} /><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
-                  {!done && time && <span><WarmIcon name="clock" size={18} />{time}</span>}
+                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><WarmIcon name="calendar" size={24} /><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
+                  {!done && time && <span><WarmIcon name="clock" size={24} />{time}</span>}
                 </div>
               </div>
             </div>
@@ -170,9 +170,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         {nowWhy && <p className={styles.nowWhy} data-step-short-explainer>{nowWhy}</p>}
         {nowTask && <PlainTerms text={`${taskTitle(nowTask)} ${nowWhy}`} className={styles.nowTerms} />}
         {nowTask && (days !== null || nowTime) && <ul className={styles.nowFacts} data-now-deadline>
-          {days !== null && <li data-overdue={days < 0}><WarmIcon name="calendar" size={20} />
+          {days !== null && <li data-overdue={days < 0}><WarmIcon name="calendar" size={26} />
             <span>{days > 0 ? <>Лучше успеть до <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time> · осталось {days} {dayWord(days)}</> : days < 0 ? <>Рекомендуемая дата прошла {Math.abs(days)} {dayWord(Math.abs(days))} назад</> : <>Лучше успеть сегодня</>}</span></li>}
-          {nowTime && <li><WarmIcon name="clock" size={20} /><span>Займёт {nowTime}</span></li>}
+          {nowTime && <li><WarmIcon name="clock" size={26} /><span>Займёт {nowTime}</span></li>}
         </ul>}
         {nowTask && <div className={styles.nowActions}>
           {isLockedTask(nowTask)

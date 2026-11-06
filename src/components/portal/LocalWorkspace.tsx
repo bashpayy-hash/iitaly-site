@@ -215,7 +215,7 @@ export function LocalWorkspace() {
               return <a className={styles.docCard} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
                 <ObjectIcon name={DOCUMENT_OBJECT[task.id] || "folder"} size={52} className={styles.docObject} /><h3>{DOC_TASKS[task.id]}</h3>
                 {info && <p className={styles.docPurpose}>{PURPOSE_LABEL[info.purpose]}</p>}
-                {info && <p className={styles.docWhere}><WarmIcon name="pin" size={18} />Где взять: {info.where}</p>}
+                {info && <p className={styles.docWhere}><WarmIcon name="pin" size={24} />Где взять: {info.where}</p>}
                 <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{data.docs[task.id] && outcome.action && <p>Что сделать: {outcome.action}</p>}
 
               </a>;

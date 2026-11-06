@@ -114,7 +114,7 @@ try {
     assert.equal(await page.locator('[data-portal-hero] [data-portal-landscape]').count(),1,'The hero stands on an Italian landscape');
     assert.match(await page.locator('[data-now-deadline]').innerText(),/Лучше успеть до .*осталось 98 дней/);
     assert.match(await page.locator('[data-now-deadline]').innerText(),/Займёт ~3–7 дней/);
-    assert.equal(await page.locator('[data-now-deadline] svg').count(),2,'Each fact carries its small icon');
+    assert.equal(await page.locator('[data-now-deadline] [data-warm-icon]').count(),2,'Each fact carries its small icon');
     assert.equal(await page.locator('[data-now-ahead],[data-step-tile],[data-road-board],[data-stage-lineup],[data-flight-stop]').count(),0,'No dark board, duplicate step tile, lineup or flight line (owner, 5 Nov)');
     assert.equal(await page.locator('[data-road-stage]').count(),6);
     assert.equal(await page.locator('[data-task-check]').count(),0,'Overview shows the next task once, without a second completion control');
@@ -201,7 +201,7 @@ try {
     assert.equal(await page.locator('[data-task-ready=translate]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Completion is a quiet text action');
     assert.equal(await page.locator('[data-task-check=translate] svg').evaluate(el=>el.getBoundingClientRect().width),26);
     assert.equal(await page.locator('[data-focus-task=translate] [data-step-short-explainer]').innerText(),'Получателю может понадобиться перевод документа и его приложений.');
-    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta] svg').count(),2,'Date and duration carry small icons');assert.equal(await page.locator('[data-task-ready=translate]').innerText(),'Уже сделано');assert.equal((await page.locator('[data-portal-task=translate]').innerText()).replace(/\s+/g,' '),'Как подготовить →');
+    assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').count(),2);assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta] [data-warm-icon]').count(),2,'Date and duration carry small icons');assert.equal(await page.locator('[data-task-ready=translate]').innerText(),'Уже сделано');assert.equal((await page.locator('[data-portal-task=translate]').innerText()).replace(/\s+/g,' '),'Как подготовить');
     assert.equal(await page.locator('[data-focus-task=translate] [data-road-meta]>*').evaluateAll(nodes=>nodes.every(el=>getComputedStyle(el).backgroundColor==='rgba(0, 0, 0, 0)')),true,'Dates and durations are text, not pills');
     assert.equal(await page.locator('[data-next-stage],[aria-label="Соседние этапы"]').count(),0,'Mid-stage pages link only to the neighbouring steps');
     assert.equal(await page.locator('[data-stage-switcher] [data-story-pill]').count(),5);
