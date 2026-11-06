@@ -151,7 +151,8 @@
 .journey { position: relative; max-width: 1216px; margin: auto; padding: 28px 36px; border: 1px solid var(--color-warm-line); border-radius: 28px 28px 0 0; background: #fff;  }
 .journeyHeader { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--i-line); }
 .journeyHeader p { margin-top: 4px; color: #6b6761; font-size: 13px; }
-.journeyLogo { font-size: 16px; font-weight: 600; letter-spacing: -.04em; }
+.journeyLogo { font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
+.journeyLabel { display: block; color: #6b6761; font-size: 15px; font-weight: 500; }
 .journeyBadge { color: #56524c; border: 1px solid var(--i-line); border-radius: 999px; padding: 6px 12px; font-size: 12px; white-space: nowrap; }
 .journeyBody { display: grid; grid-template-columns: 1.45fr 1fr; gap: 40px; padding: 30px 0; }
 .journeyBody h2 { margin-top: 9px; font-size: 32px; line-height: 1.15; font-weight: 600; letter-spacing: -.03em; }
@@ -161,10 +162,9 @@
 .scholarship small { font-size: 18px; }
 .route { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-top: 24px; border-top: 1px solid var(--i-line); list-style: none; }
 .route li { min-width: 0; font-size: 14px; }
-.route a { display: flex; align-items: center; gap: 10px; min-height: 44px; border-radius: 8px; }
+.route a { display: flex; align-items: center; min-height: 44px; border-radius: 8px; font-weight: 500; text-decoration: underline; text-decoration-color: var(--i-line); text-underline-offset: 5px; }
 .route a:hover { color: var(--i-link); background: #fff0f3; }
-.route li a > span { display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; }
-.route li a > span img { filter: drop-shadow(0 2px 3px rgba(42,36,32,.12)); }
+
 .metrics { background: transparent; padding: 48px 24px; border-bottom: 1px solid var(--i-line); }
 .metricsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; max-width: 1100px; margin: auto; }
 .metric { text-align: center; }
@@ -243,7 +243,7 @@
   .mobileMenu nav a { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--i-line); font-size: 18px; }
   .mobileMenu nav [aria-current="page"] { color: var(--i-link); font-weight:600; border-bottom-color:var(--i-signal); }
   .mobileMenu nav button { min-height: 44px; margin-top: 16px; color: var(--i-link); text-align: left; }
-  .heroCopy { text-align: left; padding: 0; }
+  .heroCopy { text-align: left; }
   .heroCopy .actions { justify-content: flex-start; }
   .campusArtwork { width: 100%; max-width: 480px; min-height: 0; margin: 0 auto; height: 210px; overflow: hidden; }
   .campusArtwork > picture > img { min-height: 0; height: 100%; object-fit: cover; object-position: 70% 64%; -webkit-mask-image: none; mask-image: none; }
@@ -264,7 +264,7 @@
   .scholarship { font-size: 32px; }
   .journeyBody p { font-size: 14px; }
   .route { grid-template-columns: repeat(2, 1fr); row-gap: 14px; padding-top: 18px; }
-  .route li { font-size: 13px; }
+  .route li { font-size: 15px; }
   .metrics { padding: 32px 20px; }
   .metricsGrid { grid-template-columns: repeat(2, 1fr); gap: 24px 16px; }
   .metricValue { font-size: 30px; }

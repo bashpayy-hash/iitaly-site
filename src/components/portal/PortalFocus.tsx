@@ -2,8 +2,8 @@
 /* eslint-disable @next/next/no-img-element -- Local task artwork with explicit dimensions. */
 
 import { useEffect, useRef, useState } from "react";
-import { WarmIcon } from "@/components/icons/WarmIcon";
-import { ObjectIcon } from "@/components/icons/ObjectIcon";
+import { StageScene, type StageSceneName } from "@/components/illustration/StageScene";
+import { stageKey, type PortalStageKey } from "./portalStageArt";
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS, TASK_META, fmtDate } from "@/lib/portalMeta";
 import { portalPosition, portalTaskHref, taskTitle } from "@/lib/portalNavigation";
@@ -48,6 +48,12 @@ function daysTo(task: PortalTask | null) {
 function dayWord(days: number) {
   return days % 10 === 1 && days % 100 !== 11 ? "день" : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 12 || days % 100 > 14) ? "дня" : "дней";
 }
+
+/* Сцена с Веспи у каждого этапа (owner, 6 Nov: «добавь иллюстрации, где
+   Веспи что-то делает, с анимациями»). */
+const STAGE_SCENE: Record<PortalStageKey, StageSceneName> = {
+  start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys",
+};
 
 export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings, locked }: Props) {
   const [data, setDisplayed] = useState(savedData);
@@ -119,8 +125,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
                 {description && <p className={styles.explainer} data-step-short-explainer>{description}</p>}
                 <PlainTerms text={`${taskTitle(row)} ${description}`} />
                 <div className={styles.metaBadges} data-road-meta={isCurrent || undefined}>
-                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><WarmIcon name="calendar" size={24} /><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
-                  {!done && time && <span><WarmIcon name="clock" size={24} />{time}</span>}
+                  {done ? <span className={styles.doneBadge}>Выполнено</span> : date && <span><time dateTime={row.deadline || undefined} data-overdue={(daysTo(row) ?? 0) < 0}>Лучше успеть до {date}</time></span>}
+                  {!done && time && <span>{time}</span>}
                 </div>
               </div>
             </div>
@@ -151,9 +157,6 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         простыми словами со статусом; «Ещё в кабинете» — три строки. Ничего не
         показано дважды, у каждого блока одна цель нажатия на строку. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
-      <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={916} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
-      {/* Живой пейзаж (owner, 4 Nov): видеопетля той же дороги; картинка выше остаётся постером. */}
-      <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany" label="tuscany" />
       <div className={styles.welcome} data-portal-welcome>
         <div className={styles.welcomeCopy}>
           <h1 id="portal-overview-heading" tabIndex={-1}>{firstName ? `Привет, ${firstName}!` : "Привет!"}</h1>
@@ -170,9 +173,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         {nowWhy && <p className={styles.nowWhy} data-step-short-explainer>{nowWhy}</p>}
         {nowTask && <PlainTerms text={`${taskTitle(nowTask)} ${nowWhy}`} className={styles.nowTerms} />}
         {nowTask && (days !== null || nowTime) && <ul className={styles.nowFacts} data-now-deadline>
-          {days !== null && <li data-overdue={days < 0}><WarmIcon name="calendar" size={26} />
+          {days !== null && <li data-overdue={days < 0}>
             <span>{days > 0 ? <>Лучше успеть до <time dateTime={nowTask.deadline || undefined}>{fmtDate(nowTask.deadline)}</time> · осталось {days} {dayWord(days)}</> : days < 0 ? <>Рекомендуемая дата прошла {Math.abs(days)} {dayWord(Math.abs(days))} назад</> : <>Лучше успеть сегодня</>}</span></li>}
-          {nowTime && <li><WarmIcon name="clock" size={26} /><span>Займёт {nowTime}</span></li>}
+          {nowTime && <li><span>Займёт {nowTime}</span></li>}
         </ul>}
         {nowTask && <div className={styles.nowActions}>
           {isLockedTask(nowTask)
@@ -180,6 +183,14 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             : <a className={styles.nowPrimary} href={nowHref} data-now-open data-road-open data-road-action data-portal-task={nowTask.id} data-current-task="true" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onOpenTask(nowTask, DOC_TASKS[nowTask.id] && !data.docs[nowTask.id] ? "instruction" : undefined); }}>{stepActionLabel(data, nowTask)}</a>}
         </div>}
       </aside>
+      {/* Пейзаж — отдельное окно под текстом, без белой дымки поверх кадра
+          (owner, 6 Nov: «белое свечение не нужно, выглядит колхозно»):
+          Веспи на скутере теперь виден целиком, видеопетля едет как раньше. */}
+      <div className={styles.heroScene} data-portal-hero-scene>
+        <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1024.webp" srcSet="/illustrations/landscapes/tuscany-640.webp 640w, /illustrations/landscapes/tuscany-1024.webp 1024w, /illustrations/landscapes/tuscany-1600.webp 1600w" sizes="(max-width: 1360px) 100vw, 1296px" width={916} height={688} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
+        {/* Живой пейзаж (owner, 4 Nov): видеопетля той же дороги; картинка выше остаётся постером. */}
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany" label="tuscany" />
+      </div>
     </div>}
     {!stagePage && <div className={styles.routeCard} data-route-card>
       <PortalRoad data={data} current={position.task} stage={position.stage} onSelectStage={onSelectStage} travel={travel} onTravelStart={onTravelStart} />
@@ -188,15 +199,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       <h2 id="portal-more-heading">Ещё в кабинете</h2>
       <ul className={path.moreList}>
         <li><a href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
-          <span className={path.moreIcon}><ObjectIcon name="folder" size={44} /></span>
           <span className={path.text}><strong>Документы</strong><span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span></span>
          </a></li>
         <li><a href={shortlistTask ? `/portal?view=plan&task=${encodeURIComponent(shortlistTask.id)}` : "/universities"} data-cabinet-tile="universities" data-cabinet-shortlist={shortlistTask ? "" : undefined} onClick={event => { if (!shortlistTask || !plainClick(event)) return; event.preventDefault(); onOpenTask(shortlistTask, "instruction"); }}>
-          <span className={path.moreIcon}><ObjectIcon name="cap" size={44} /></span>
           <span className={path.text}><strong>Университеты</strong><span>{universities.length ? universities.map(university => university.name).join(" · ") : "Пока не выбраны"}</span></span>
          </a></li>
         <li><a href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
-          <span className={path.moreIcon}><ObjectIcon name="alarm" size={44} /></span>
           <span className={path.text}><strong>Напоминания о сроках</strong><span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span></span>
          </a></li>
       </ul>
@@ -206,6 +214,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         Далее», на последнем шаге — переход к следующему этапу. */}
     {stagePage && <div className={styles.welcome}><PortalBreadcrumbs stage={selected} /></div>}
     {stagePage && <div className={styles.stageBody} data-portal-overview>
+      {selected && <StageScene name={STAGE_SCENE[stageKey(selected.id)]} className={styles.stageScene} priority />}
       <div className={styles.stageEyebrow}>
         <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
         {selectedTask && <span className={styles.stagePosition}>· шаг {selectedTaskIndex + 1} из {visibleTasks.length}</span>}

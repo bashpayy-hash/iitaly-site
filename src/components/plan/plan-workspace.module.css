@@ -53,12 +53,12 @@
   composes: paper from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr); gap:32px; padding:32px; background:#F4EFEA; border:1px solid rgba(20,20,19,.08); border-radius:32px; }
 .auditContext,.auditTool { min-width:0; }
 .auditBadge { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--color-cloud-body); }
-.auditBadge svg { flex-shrink:0; }
+
 .auditContext h2 { font:600 30px/1.15 var(--font-apple-display); letter-spacing:-.025em; margin-top:16px; max-width:13em; }
 .auditStatus { margin-top:16px; color:var(--color-cloud-body); font-size:14px; line-height:1.6; }
 .auditScope { display:grid; gap:12px; border-top:1px solid rgba(20,20,19,.08); padding-top:20px; margin-top:24px; font-size:13px; line-height:1.5; color:var(--color-cloud-body); }
 .auditScope li { display:flex; align-items:flex-start; gap:10px; }
-.auditScope img { flex-shrink:0; margin-top:0; }
+.auditScope li::before { content:""; flex:0 0 6px; height:6px; margin-top:7px; border-radius:50%; background:var(--color-green); }
 .dropzone { position:relative; display:flex; min-height:290px; cursor:pointer; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; text-align:center; border:2px dashed rgba(230,57,70,.3); border-radius:24px; background:white; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
 .dropzone:hover,.dropzone[data-drag=true] { background:var(--color-coral-soft); }
 .dropzone:focus-within { outline:2px solid var(--color-ink); outline-offset:4px; }

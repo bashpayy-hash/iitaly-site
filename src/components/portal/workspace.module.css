@@ -20,7 +20,9 @@
 .illustratedHeading { display:flex; align-items:center; justify-content:space-between; gap:24px; }
 .illustratedHeading > :first-child { min-width:0; flex:1; }
 .illustratedHeading > [data-portal-art] { width:184px; }
-@media(max-width:600px) { .illustratedHeading { position:relative; display:block; } .illustratedHeading h1 { padding-right:96px; min-height:64px; display:flex; align-items:center; } .illustratedHeading > [data-portal-art] { position:absolute; top:0; right:0; width:88px; } }
+/* Веспи ставит штамп (owner, 6 Nov): сцена справа от заголовка, на телефоне — под ним. */
+.docsScene { flex:0 0 min(360px,40%); }
+@media(max-width:600px) { .illustratedHeading { display:block; } .docsScene { margin:18px 0 16px; } }
 .coach {
   composes: paper from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,1fr); gap:24px; padding:28px; background:white; border:1px solid var(--color-warm-line); border-radius:28px;  }
 .coach [data-vespi-assistant] { padding:0; border:0; background:transparent; }
@@ -55,12 +57,11 @@
 .docCard {
   composes: paper from "../marketing/surface-depth.module.css"; display:flex; flex-direction:column; align-items:flex-start; padding:22px; border:1px solid var(--color-warm-line); background:white; border-radius:24px; min-width:0; }
 .docCard > svg { color:var(--color-cloud-body); margin-bottom:16px; }
-.docObject { display:block; margin:-4px 0 12px; filter:drop-shadow(0 3px 4px rgba(42,36,32,.14)); }
 .docCard h3 { font-size:17px; line-height:1.4; font-weight:600; }
 .docCard p { color:var(--color-cloud-body); font-size:13px; line-height:1.6; margin-top:10px; }
 .docCard .docPurpose { margin-top:6px; color:var(--portal-ink,#241F1C); font-weight:500; }
-.docCard .docWhere { display:flex; align-items:flex-start; gap:6px; }
-.docCard .docWhere svg { flex-shrink:0; margin-top:4px; color:var(--portal-accent-deep,#A33421); }
+.docCard .docWhere { display:block; }
+.docCard .docWhere strong { color:var(--color-cloud-white,#241F1C); font-weight:600; }
 .docCard .status { margin-top:auto; padding-top:18px; }
 .status { display:inline-flex; align-items:center; gap:6px; font-size:13px; line-height:1.5; }
 .status[data-kind=fix] { color:var(--color-red-deep); }

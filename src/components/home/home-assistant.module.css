@@ -17,6 +17,6 @@
   .entryActions { margin-top: 24px; }
   .entryActions > a { width: 100%; }
   .entryAlternatives { gap: 0 14px; margin-top: 6px; }
-  .entryAlternatives a { font-size: 13px; }
+  .entryAlternatives a { font-size: 15px; }
 }
 @media (max-width: 600px) { .priceInsight p { font-size: 14px; } }

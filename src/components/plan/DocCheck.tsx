@@ -1,6 +1,5 @@
 "use client";
 
-import { WarmIcon } from "@/components/icons/WarmIcon";
 import { ObjectIcon } from "@/components/icons/ObjectIcon";
 import { documentOutcome } from "@/lib/portalDocument";
 
@@ -198,7 +197,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext} data-portal-inspector={portalInspector || undefined} data-inspector-state={portalInspector ? state.step : undefined}>
-        {!portalInspector && <p className={styles.auditBadge}><WarmIcon name="lock" size={24} /> AI Document Audit · одна проверка бесплатно</p>}
+        {!portalInspector && <p className={styles.auditBadge}>AI Document Audit · одна проверка бесплатно</p>}
         <h2>Проверь документ перед подачей</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable, walled && !("file" in state))}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
@@ -245,10 +244,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       </fieldset>
 
         <ul className={styles.auditScope} aria-label="Что проверяем в файле">
-          <li><WarmIcon name="check" size={22} /><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
-          <li><WarmIcon name="check" size={22} /><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
-          <li><WarmIcon name="check" size={22} /><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
-          <li><WarmIcon name="check" size={22} /><span>Выписка: владелец, период и читаемость данных.</span></li>
+          <li><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
+          <li><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
+          <li><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
+          <li><span>Выписка: владелец, период и читаемость данных.</span></li>
         </ul>
       </div>
       <div className={styles.auditTool}>
@@ -344,7 +343,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
 
       {state.step !== "checking" && state.step !== "reading" && state.step !== "done" && <button type="button" className={styles.example} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}>Проверить пример справки</button>}
       {showExample && <section className={styles.exampleResult} data-document-example aria-label="Пример разбора, не проверка твоего файла">
-        <h3><WarmIcon name="doc" size={26} className="mr-2 inline align-[-6px]" />Пример разбора справки</h3>
+        <h3>Пример разбора справки</h3>
         <p>Демонстрация интерфейса. Это вымышленный пример, файл не отправлялся на ИИ-анализ.</p>
         <p><b>Нужно уточнить.</b> В примере не указан конкурс. Нельзя определить нужный год доходов.</p>
         <ul><li><b>Читаемость:</b> текст различим.</li><li><b>Комплект:</b> данные владельца и подпись видны.</li><li><b>Даты:</b> сверь год и период с bando своей программы.</li></ul>
@@ -398,7 +397,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
     <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
-          <WarmIcon name="doc" size={28} />
+          
           <span className={`rounded-apple-pill px-3 py-1 text-apple-caption font-semibold ${v === "error" ? "bg-red/10 text-red" : "bg-pebble text-cloud-white"}`}>{portalStatus ? documentOutcome({ verdict: v, result }, applicationYear).label : LABEL[v] || "Результат"}</span>
           <h3 id={headingId} className="break-words font-apple-display text-apple-subheading font-semibold text-cloud-white [overflow-wrap:anywhere]">{result.docTitle || "Документ"}</h3>
         </div>

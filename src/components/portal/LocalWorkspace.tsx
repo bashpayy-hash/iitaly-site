@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
 import { Settings, FileText } from "lucide-react";
-import { WarmIcon } from "@/components/icons/WarmIcon";
-import { ObjectIcon, type ObjectIconName } from "@/components/icons/ObjectIcon";
+import { StageScene } from "@/components/illustration/StageScene";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { VespiOutline } from "@/components/mascot/VespiOutline";
 import { usePlanDraft } from "@/lib/usePlanDraft";
@@ -31,7 +30,6 @@ import { localTaskLocked } from "@/lib/access";
 import { LockedTaskPage } from "@/components/access/LockedTaskPage";
 import { useViewEntrance } from "@/components/motion/useViewEntrance";
 import focusStyles from "./portal-focus.module.css";
-import { PortalArtwork } from "./PortalArtwork";
 import portal from "./portal.module.css";
 import styles from "./workspace.module.css";
 
@@ -47,11 +45,6 @@ function readLocation(): Location {
 /* Для чего документ — словами, без фильтров (owner, 5 Nov: «минимализм,
    поменьше кнопок»): пять карточек читаются без переключателей. */
 const PURPOSE_LABEL = { uni: "Нужен для вуза", dsu: "Нужен для стипендии DSU", visa: "Нужен для визы" } as const;
-/* Своя вещь у каждого документа (owner, 6 Nov: иконки с упором на реализм). */
-const DOCUMENT_OBJECT: Record<string, ObjectIconName> = {
-  apostille: "stamp-pad", translate: "translation", notary: "translation", cimea: "diploma", familyDocs: "folder",
-  iseeu: "coins", statements: "tax-card", insurance: "insurance", housing: "keys", universitaly: "envelope",
-};
 const DOCUMENT_INFO: Record<string, { purpose: "uni" | "dsu" | "visa"; where: string }> = {
   apostille: { purpose: "uni", where: "eGov / ЦОН · орган образования" },
   translate: { purpose: "uni", where: "Переводчик · способ заверения по инструкции получателя" },
@@ -208,14 +201,14 @@ export function LocalWorkspace() {
               </>} />}
           </>}
           {location.view === "docs" && !showDetail && <>
-            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <a className={styles.textLink} href="/plan#document-check">«Мой план»</a>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><PortalArtwork placement="documents" /></div>
+            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <a className={styles.textLink} href="/plan#document-check">«Мой план»</a>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><StageScene name="stamp" className={styles.docsScene} priority /></div>
             {!documents.length && <div className={styles.paper}><h2>Сначала уточним твой маршрут</h2><p>После анкеты здесь появятся документы по твоей ситуации. Поздние этапы откроются по мере выполнения текущих шагов.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "profile"); if (task) openTask(task); }}>Заполнить анкету</a></div>}
             <div className={styles.vault}>{documents.map(task => {
               const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);
               return <a className={styles.docCard} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
-                <ObjectIcon name={DOCUMENT_OBJECT[task.id] || "folder"} size={52} className={styles.docObject} /><h3>{DOC_TASKS[task.id]}</h3>
+                <h3>{DOC_TASKS[task.id]}</h3>
                 {info && <p className={styles.docPurpose}>{PURPOSE_LABEL[info.purpose]}</p>}
-                {info && <p className={styles.docWhere}><WarmIcon name="pin" size={24} />Где взять: {info.where}</p>}
+                {info && <p className={styles.docWhere}><strong>Где взять:</strong> {info.where}</p>}
                 <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{data.docs[task.id] && outcome.action && <p>Что сделать: {outcome.action}</p>}
 
               </a>;

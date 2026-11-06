@@ -61,10 +61,10 @@
 .moreIcon { display:grid; place-items:center; width:44px; height:44px; }
 .moreIcon img { display:block; width:44px; height:44px; filter:drop-shadow(0 2px 3px rgba(42,36,32,.12)); }
 
-/* Незнакомые слова шага: маленький значок «i» и одна строка на слово. */
-.terms { display:grid; gap:6px; margin:14px 0 0; padding:0; list-style:none; }
-.terms li { display:flex; align-items:flex-start; gap:9px; color:var(--quiet); font-size:13px; line-height:1.5; text-align:left; }
-.terms li img { flex-shrink:0; margin-top:1px; }
+/* Пояснения слов — сноска с тонкой линией слева, без значков
+   (owner, 6 Nov: «эмодзи перебор»). */
+.terms { display:grid; gap:6px; margin:16px 0 0; padding:2px 0 2px 12px; border-left:2px solid #E6D9C4; list-style:none; }
+.terms li { color:var(--quiet); font-size:14px; line-height:1.5; text-align:left; }
 .terms strong { color:var(--ink); font-weight:600; }
 
 @media(max-width:640px) {

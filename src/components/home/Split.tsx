@@ -8,7 +8,6 @@ export function Split() {
   return (
     <section data-section="split" className={`${styles.university} ${paper.surface}`}>
       <PaperTexture dark />
-      <span className={styles.eyebrow}>Интерактивная карта</span>
       <h2 className={styles.universityTitle}>Одна Италия.<br /><span>Твой собственный выбор.</span></h2>
       <p>Найди свой университет: цены по ISEE, тесты, дедлайны и стипендия региона.</p>
       <div className={styles.universityNumbers}><div><b>43</b><small>университета</small></div><div><b>30</b><small>городов</small></div></div>

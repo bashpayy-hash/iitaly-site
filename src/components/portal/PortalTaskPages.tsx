@@ -9,7 +9,6 @@ import { instructionIndex, portalInstructionPages } from "./portalInstructionPag
 import { PortalBreadcrumbs, PortalPageLink, PortalPageNavigation, usePortalPageFocus, usePortalPart, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import styles from "./portal-pages.module.css";
 import { MediaSwitcher } from "@/components/story/MediaSwitcher";
-import { WarmIcon } from "@/components/icons/WarmIcon";
 import { PlainTerms } from "./PlainTerms";
 import { taskArtwork } from "@/components/story/StoryArtwork";
 import disclosure from "@/components/ui/disclosure.module.css";
@@ -33,7 +32,7 @@ export function PortalTaskPages({ task, stage, done, readOnly, action, guideExtr
     <h1 id="portal-step-heading" className={part === "guide" ? styles.taskContext : styles.heading} tabIndex={-1}>{taskTitle(task)}</h1>
     {/* Факты значками (owner, 5 Nov: «маленькими символами»): дата, если она
         есть, и время, только если оно конкретное — без «Срок: По ситуации». */}
-    <p className={styles.meta}>{done && <span>Выполнено</span>}{!done && taskDate(task) && <span><WarmIcon name="calendar" size={24} />{taskDate(task)}</span>}{/\d/.test(task.time || TASK_META[task.id]?.min || "") && <span><WarmIcon name="clock" size={24} />Займёт {task.time || TASK_META[task.id]?.min}</span>}</p>
+    <p className={styles.meta}>{done && <span>Выполнено</span>}{!done && taskDate(task) && <span>{taskDate(task)}</span>}{/\d/.test(task.time || TASK_META[task.id]?.min || "") && <span>Займёт {task.time || TASK_META[task.id]?.min}</span>}</p>
     <PortalPageNavigation active={part} items={[{ id:"overview",label:"Кратко",href:href("overview") },{ id:"guide",label:"Как выполнить",href:href("guide") },{ id:"action",label:actionLabel,href:href("action") }]} />
     {part === "overview" && <div className={styles.overviewStory}>
       <div><p className={styles.explanation}>{taskExplanation(task)}</p>
