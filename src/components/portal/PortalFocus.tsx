@@ -218,7 +218,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       </a>
     </section>}
     {!stagePage && <div className={styles.routeCard} data-route-card>
-      <PortalRoad data={data} current={position.task} stage={position.stage} onSelectStage={onSelectStage} travel={travel} onTravelStart={onTravelStart} />
+      <PortalRoad data={data} current={position.task} stage={position.stage} onSelectStage={onSelectStage} travel={travel} onTravelStart={onTravelStart} locked={locked} />
     </div>}
     {/* Страница этапа (owner, 4 Nov: «перед глазами максимум один блок и один
         поинт»): хлебные крошки и одна плитка с одним шагом; внизу «Назад /

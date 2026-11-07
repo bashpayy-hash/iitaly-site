@@ -682,3 +682,48 @@ Owner, three screenshots: «когда мышку на правую сторон
     closer the pointer is to an edge, the faster the next topics come in, and
     the row never jerks into motion or stops dead». Allowed patterns: none.
 - Jobs, masks and hashes: design/illustrations/motion-2026-11-07b.json.
+
+## Icons a step more conceptual, a Duolingo path in the cabinet · 7 November 2026 (evening)
+
+Owner: «по иконкам сделай редизайн… чуть более концептуальными, чем они
+сейчас… сохраняй нотки реализма»; «в личном кабинете как будто прогресс в
+Duolingo: путь, и там отображаются степы, которые надо будет выполнять».
+
+- **Object icons.** All 18 objects (guides, /plan questionnaire and steps,
+  home cards, cabinet task pages) and the 8 small `WarmIcon`s are re-rendered
+  in one semi-conceptual style. The set now sits between the old studio
+  objects and the conceptual stage icons, which are unchanged.
+  - Materials stay real: leather, brass, paper, wax.
+  - Forms are simplified and softly rounded.
+  - The composition carries the idea: a balance scale for ISEE, speech
+    bubbles over a book for translation, two seals for parental consent, a
+    magnifier on the diploma, a key with a residence card.
+  - The palette is cream, sand, terracotta, sage and brass.
+  - Same file names and the exact old frames, so no layout moves.
+  - Manifest: design/illustrations/objects-2026-11-07.json.
+- **Path of steps (cabinet, «Весь путь»).** Under each stage heading its steps
+  run as circles along a gentle snake: a sine through the whole route, so the
+  path flows from stage to stage.
+  - **The trail.** An SVG in amplitude units with non-scaling strokes. It is
+    green where walked and dotted ahead.
+  - **States:**
+    - done — green circle with a check;
+    - current — larger terracotta circle with a star and a soft ring, its
+      label led by a «Сейчас» chip;
+    - ahead — cream circle;
+    - later stage or unavailable — pale circle;
+    - behind the local access wall — a lock.
+  - **Depth.** Circles get it from a solid bottom edge, not a gradient (no
+    gradients in the cabinet). They sink 4px when pressed and lift 2px on
+    hover; with reduced motion they do neither.
+  - **Links.** The whole row (circle and step title) is one link to that
+    step's page (`/portal?stage=…&step=…`).
+  - **Keyboard.** Tab order runs from a stage heading through its steps to
+    the next stage.
+  - **Layout.** On a laptop the snake is centred (±96px, column at most
+    760px) with titles outside the curve. On a phone the snake keeps to a
+    left column (±34px) with titles to its right.
+  - Preview stages before the questionnaire show two pale circles that are
+    not links.
+  - The percentage bar, the stage headings and their status words and
+    counts are unchanged.

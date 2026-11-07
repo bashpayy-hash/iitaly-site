@@ -8,6 +8,8 @@ import styles from "./portal-path.module.css";
 import { plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
 import { STAGE_PLAIN } from "./plainWords";
+import { taskTitle } from "@/lib/portalNavigation";
+import { navigatePortal } from "./PortalPageNavigation";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
 const PREVIEW_ART: PortalStageKey[] = ["start", "docs", "apply", "dsu", "visa", "arrival"];
@@ -49,13 +51,44 @@ const stepWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "ш
    «Сейчас», «Дальше», «Готово». Вся строка — одна ссылка на страницу этапа;
    кнопок и номеров нет. Сохранённый шаг двигает полосу и пишет «Шаг сохранён»
    (только после подтверждённой записи, как раньше). */
-export function PortalRoad({ data, current, stage, onSelectStage, travel, onTravelStart }: {
+/* Дорожка шагов как в Duolingo (owner, 7 Nov: «в личном кабинете как
+   прогресс в Duolingo: путь, и там отображаются степы, которые надо будет
+   выполнять»). Под каждым этапом его шаги идут кружками по плавной змейке
+   (синус через весь путь, этап за этапом), между кружками — дорожка: зелёная
+   там, где пройдено, пунктир впереди. Сделанный шаг — зелёный кружок с
+   галочкой, текущий — крупный терракотовый со звездой и плашкой «Сейчас»,
+   следующие — светлые, закрытые до оплаты — с замком. Название шага стоит
+   рядом с кружком; вся строка — одна ссылка на страницу шага. Кружки
+   «объёмные» за счёт сплошной тени снизу, без градиентов. */
+const snake = (index: number) => Math.round(Math.sin(index * Math.PI / 3) * 100) / 100;
+
+function NodeGlyph({ state }: { state: "done" | "current" | "todo" | "later" | "locked" }) {
+  if (state === "done") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5.5 12.5 4 4 9-9.5" /></svg>;
+  if (state === "locked") return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="10.5" width="12" height="9" rx="2.2" /><path d="M8.8 10.5V8.2a3.2 3.2 0 0 1 6.4 0v2.3" /></svg>;
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4.6 2.2 4.5 4.9.7-3.55 3.47.84 4.9L12 15.86l-4.39 2.31.84-4.9L4.9 9.8l4.9-.7Z" /></svg>;
+}
+
+function StepTrail({ offsets, states }: { offsets: number[]; states: string[] }) {
+  if (offsets.length < 2) return null;
+  // Units: x in amplitudes (-1..1), y in rows; CSS sizes the box (--rows × --row).
+  return <svg className={styles.trail} viewBox={`-1 0 2 ${offsets.length}`} preserveAspectRatio="none" style={{ "--rows": offsets.length } as CSSProperties} aria-hidden="true" focusable="false">
+    {offsets.slice(1).map((x, i) => {
+      const walked = states[i] === "done" && (states[i + 1] === "done" || states[i + 1] === "current");
+      return <path key={i} data-walked={walked || undefined} vectorEffect="non-scaling-stroke"
+        d={`M ${offsets[i]} ${i + .5} C ${offsets[i]} ${i + 1} ${x} ${i + 1} ${x} ${i + 1.5}`} />;
+    })}
+  </svg>;
+}
+
+export function PortalRoad({ data, current, stage, onSelectStage, travel, onTravelStart, locked: lockedTask }: {
   data: PortalData;
   current: PortalTask | null;
   stage: PortalStage | null;
   onSelectStage?: (stageId: string) => void;
   travel?: RoadTravel;
   onTravelStart?: () => void;
+  /** Шаги за стеной доступа локального профиля: кружок с замком. */
+  locked?: (task: PortalTask) => boolean;
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
@@ -190,6 +223,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
     </div>
     {stages.length > 0 && <ol className={styles.list} aria-label="Этапы маршрута">
       {stages.map((row, index) => {
+        const phase = stages.slice(0, index).reduce((sum, item) => sum + Math.max(item.tasks.length, 2), 0);
         const locked = !row.tasks.length;
         const preview = row.id.startsWith("preview-stage-");
         const key = stageKey(row.id);
@@ -202,11 +236,23 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const ahead = !opened && stageDone > 0;
         const status = state === "done" ? "Готово" : isCurrent ? "Сейчас" : ahead ? "Начат заранее" : "Дальше";
         if (locked) return <li key={row.id} className={styles.row} data-road-locked data-road-stage-state="future">
-          <span className={styles.thumb}><StageMark stage={art} locked /></span>
-          <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
+          <div className={styles.unitHead}>
+            <span className={styles.thumb}><StageMark stage={art} locked /></span>
+            <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
+          </div>
+          <div className={styles.steps} aria-hidden="true" data-road-ghost>
+            <StepTrail offsets={[snake(phase), snake(phase + 1)]} states={["later", "later"]} />
+            {[0, 1].map(i => <span key={i} className={styles.step} style={{ "--x": snake(phase + i) } as CSSProperties} data-node-state="later" data-side={snake(phase + i) < 0 ? "left" : "right"}>
+              <span className={styles.node}><NodeGlyph state="later" /></span>
+            </span>)}
+          </div>
         </li>;
-        return <li key={row.id} className={styles.row}>
-          <a href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
+        const stepStates = row.tasks.map(task => portalTaskDone(data, task) ? "done" as const : task.id === current?.id ? "current" as const
+          : lockedTask?.(task) ? "locked" as const : opened && task.available !== false ? "todo" as const : "later" as const);
+        const offsets = row.tasks.map((_, i) => snake(phase + i));
+        const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "закрыт до оплаты" };
+        return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
+          <a className={styles.unitHead} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>
             <span className={styles.thumb}><StageMark stage={art} /></span>
             <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
@@ -215,8 +261,20 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
               <small>{stageDone} из {row.tasks.length}</small>
               {ahead && <span className={styles.srOnly} data-stage-ahead>заранее</span>}
             </span>
-           
           </a>
+          <ol className={styles.steps} aria-label={`Шаги: ${title}`} data-road-steps={row.id}>
+            <StepTrail offsets={offsets} states={stepStates} />
+            {row.tasks.map((task, i) => {
+              const nodeState = stepStates[i], href = `/portal?stage=${encodeURIComponent(row.id)}&step=${encodeURIComponent(task.id)}`;
+              return <li key={task.id} className={styles.step} style={{ "--x": offsets[i] } as CSSProperties} data-node-state={nodeState} data-side={offsets[i] < 0 ? "left" : "right"}>
+                <a href={href} data-road-node={task.id} aria-current={nodeState === "current" ? "true" : undefined}
+                  onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(href); }}>
+                  <span className={styles.node}><NodeGlyph state={nodeState} /></span>
+                  <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
+                </a>
+              </li>;
+            })}
+          </ol>
         </li>;
       })}
     </ol>}

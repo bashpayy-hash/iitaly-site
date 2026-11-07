@@ -35,8 +35,46 @@
 
 .list { margin:0; padding:0; list-style:none; }
 .row { border-top:1px solid var(--border); }
-.row > a,.row[data-road-locked] { display:grid; grid-template-columns:56px minmax(0,1fr) auto; align-items:center; gap:16px; min-height:76px; padding:12px 4px; color:inherit; text-decoration:none; }
-.row[data-road-locked] { grid-template-columns:56px minmax(0,1fr); color:var(--quiet); }
+.row > .unitHead { display:grid; grid-template-columns:56px minmax(0,1fr) auto; align-items:center; gap:16px; min-height:76px; padding:12px 4px; color:inherit; text-decoration:none; }
+.row[data-road-locked] > .unitHead { grid-template-columns:56px minmax(0,1fr); color:var(--quiet); }
+
+/* Дорожка шагов как в Duolingo (owner, 7 Nov). Кружки идут змейкой вокруг
+   оси --center с размахом --amp; дорожка — SVG в единицах размаха
+   (viewBox -1..1 по горизонтали), растянутый на ширину 2×--amp, линия
+   толщиной без искажений (non-scaling-stroke). Подписи — снаружи змейки
+   на компьютере, справа от колонки на телефоне. «Объём» кружка — сплошная
+   тень снизу (--edge), при нажатии кружок опускается. Без градиентов. */
+.steps { --center:50%; --amp:96px; --node:64px; --row:92px; position:relative; max-width:760px; margin:2px auto 22px; padding:0; list-style:none; }
+.trail { position:absolute; top:0; left:calc(var(--center) - var(--amp)); width:calc(var(--amp) * 2); height:calc(var(--rows, 1) * var(--row)); overflow:visible; pointer-events:none; }
+.trail path { fill:none; stroke:#CFC1AC; stroke-width:5px; stroke-linecap:round; stroke-dasharray:1 11; }
+.trail path[data-walked] { stroke:#2F7A55; stroke-width:6px; stroke-dasharray:none; }
+.step { position:relative; height:var(--row); }
+.step > a { position:absolute; inset:0; display:block; color:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
+.step > a:focus-visible { outline:none; }
+.node { --edge:#DCCFBD; --size:var(--node); position:absolute; top:50%; left:calc(var(--center) + var(--x, 0) * var(--amp)); display:grid; place-items:center; width:var(--size); height:var(--size); margin:calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  border-radius:50%; background:#F4EEE5; color:#B5A58F; box-shadow:inset 0 0 0 2px #DCCFBD,0 5px 0 var(--edge);
+  transition:transform 140ms cubic-bezier(.2,0,0,1),box-shadow 140ms cubic-bezier(.2,0,0,1),background-color 320ms cubic-bezier(.4,0,.2,1); }
+.node svg { width:46%; height:46%; fill:currentColor; stroke:none; }
+.step[data-node-state=done] .node { --edge:#1D5A3C; background:#2F7A55; color:#FFFDF9; box-shadow:0 5px 0 var(--edge); }
+.step[data-node-state=done] .node svg { fill:none; stroke:currentColor; stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round; }
+.step[data-node-state=current] .node { --edge:#8B2B1C; --size:calc(var(--node) + 12px); background:var(--accent,#B83A27); color:#FFFDF9; box-shadow:0 6px 0 var(--edge),0 0 0 8px #F6DFD6; }
+.step[data-node-state=later] .node { --edge:#E3DBCF; background:#F1ECE4; color:#D2C7B7; box-shadow:0 5px 0 var(--edge); }
+.step[data-node-state=locked] .node { --edge:#E3DBCF; background:#F1ECE4; color:#8A7F72; box-shadow:0 5px 0 var(--edge); }
+.step[data-node-state=locked] .node svg { fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.step > a:active .node { transform:translateY(4px); box-shadow:0 1px 0 var(--edge); }
+.step[data-node-state=current] > a:active .node { box-shadow:0 2px 0 var(--edge),0 0 0 8px #F6DFD6; }
+.step > a:focus-visible .node { outline:3px solid var(--accent,#B83A27); outline-offset:5px; }
+.stepLabel { position:absolute; top:50%; display:grid; gap:6px; justify-items:start; transform:translateY(-50%); color:var(--ink); font-size:15px; font-weight:500; line-height:1.35; text-wrap:pretty; overflow-wrap:anywhere; }
+.step[data-side=right] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 22px); right:0; text-align:left; }
+.step[data-side=left] .stepLabel { right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 22px); left:0; justify-items:end; text-align:right; }
+.step[data-node-state=current] .stepLabel { font-weight:600; }
+.step[data-node-state=later] .stepLabel,.step[data-node-state=locked] .stepLabel,.step[data-node-state=todo] .stepLabel { color:var(--quiet); }
+.nowChip { display:inline-flex; align-items:center; min-height:22px; padding:0 9px; border-radius:999px; background:var(--accent,#B83A27); color:#FFFDF9; font-size:12px; font-weight:600; letter-spacing:.01em; }
+@media (hover:hover) and (pointer:fine) {
+  .step > a:hover .node { transform:translateY(-2px); }
+  .step > a:hover .stepLabel > span:not(.nowChip):not(.srOnly) { text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px; }
+}
+.steps[data-road-ghost] { margin-top:-6px; }
 .thumb { display:grid; place-items:center; width:56px; height:52px; }
 .thumb img { display:block; width:100%; height:100%; object-fit:contain; }
 .row[data-road-locked] .thumb img { opacity:.55; filter:grayscale(.6); }
@@ -90,12 +128,15 @@
   .featureCopy { padding:2px 8px 0; }
   .featureAction { margin:0 8px; }
   /* На телефоне статус встаёт строкой под описанием: текст этапа идёт во всю ширину. */
-  .row > a,.row[data-road-locked] { grid-template-columns:44px minmax(0,1fr); gap:4px 12px; min-height:72px; padding:14px 0; }
+  .row > .unitHead { grid-template-columns:44px minmax(0,1fr); gap:4px 12px; min-height:72px; padding:14px 0; }
   .row > a .status { grid-column:2; display:flex; align-items:center; justify-items:start; gap:8px; text-align:left; }
-  .row[data-road-locked] { grid-template-columns:44px minmax(0,1fr); }
+  .row[data-road-locked] > .unitHead { grid-template-columns:44px minmax(0,1fr); }
+  /* На телефоне змейка уходит в левую колонку, подписи — справа от неё. */
+  .steps { --center:72px; --amp:34px; --node:54px; --row:84px; }
+  .step[data-side] .stepLabel { left:calc(var(--center) + var(--amp) + var(--node) / 2 + 18px); right:0; justify-items:start; text-align:left; font-size:14px; }
   .thumb { width:44px; height:40px; }
   .text strong { font-size:16px; }
   .text > span { font-size:13px; }
 }
-@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack { transition:none !important; } }
-@media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } }
+@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:hover .node,.step > a:active .node { transform:none; } }
+@media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }

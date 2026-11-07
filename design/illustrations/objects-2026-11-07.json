@@ -1,0 +1,368 @@
+{
+ "date": "2026-11-07",
+ "request": "Owner, 7 Nov: «по иконкам сделай редизайн… сделай их чуть более концептуальными, чем они сейчас… сохраняй нотки реализма».",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, transparent background; objects 4:3, small icons 1:1",
+ "promptTemplate": "Semi-conceptual object icon, halfway between a premium product photograph and a refined 3D app icon: [concept]. Slightly simplified, idealized forms with softly rounded edges and fewer, cleaner details than a photograph, while keeping real material cues: [materials]. Soft even studio light from the upper left, gentle ambient occlusion, a small soft contact shadow directly under the object. Warm palette of cream, sand, terracotta red, deep sage green and brushed brass. Three-quarter view from slightly above, centred. Fully transparent background with crisp clean silhouette edges: no glow, no halo, no white rim, no backdrop. No text, letters, numbers, logos, emblems, flags, people or hands. (Small icons add: a bold simple silhouette that stays readable at 24 pixels.)",
+ "position": "Between the 6 Nov studio objects (guides) and the conceptual cabinet stage icons (stages/*, unchanged): real materials, simplified forms, and an idea carried by the composition (a balance scale for ISEE, speech bubbles over a book for translation, two seals for parental consent, a magnifier on the diploma for recognition).",
+ "processing": "Trimmed, fitted (contain) into the exact old frames so no layout moves: objects 480xH (H unchanged per name) with 6px air, WebP q84/alpha92 at 480 and 240; small icons 128x128 with 4px air, WebP q88/alpha95. Reviewed on #FFFDF9 and at 24/32px: no text, numerals, emblems, flags or people; light semi-transparent edge pixels at most 316 (calendar), no halo.",
+ "items": [
+  {
+   "name": "passport",
+   "job": "f78ed754-b643-4690-893e-c6343e43744f",
+   "concept": "a burgundy passport with a cream visa card tucked between its pages and a terracotta ribbon bookmark",
+   "files": [
+    {
+     "file": "public/illustrations/objects/passport-480.webp",
+     "sha256": "86bc01e7383083c252904eab17072369df026a45a415f17082e690617676705a"
+    },
+    {
+     "file": "public/illustrations/objects/passport-240.webp",
+     "sha256": "46a7031b7dfb5be51f7f5ccf5d06e67861f7b6849a2ab6f704f64c23962eee96"
+    }
+   ]
+  },
+  {
+   "name": "coins",
+   "job": "ab60e857-06be-4007-82c6-b01e96fb5b59",
+   "concept": "a small brushed-brass balance scale, a stack of brass coins on one pan and a folded cream document on the other",
+   "files": [
+    {
+     "file": "public/illustrations/objects/coins-480.webp",
+     "sha256": "bbe335242f296134637daf061b38d5aa76aaa9cdc12b9b6a677282c8e30eabd5"
+    },
+    {
+     "file": "public/illustrations/objects/coins-240.webp",
+     "sha256": "1780ddee107e9a5d2fbb5a52119b413ceb709639d8663365e3b02412afdee606"
+    }
+   ]
+  },
+  {
+   "name": "translation",
+   "job": "e9e8f536-fdc7-47f2-8d19-b353e7d5a3f9",
+   "concept": "an open book with two empty rounded speech bubbles rising from its pages, one cream and one terracotta, and a slim fountain pen",
+   "files": [
+    {
+     "file": "public/illustrations/objects/translation-480.webp",
+     "sha256": "7cc30c2a6163e83ca4fa6bf2dc787b59ae26c634daf3bf5cbfe3e42281e6b5ae"
+    },
+    {
+     "file": "public/illustrations/objects/translation-240.webp",
+     "sha256": "ef682722cb43694d41934774fbd5ce75d116a480a8cfa37aa75f3722247b6962"
+    }
+   ]
+  },
+  {
+   "name": "alarm",
+   "job": "5686fa7e-3fab-4fae-8f40-96a7be581601",
+   "concept": "a cream alarm clock with two small brushed-brass bells and short feet, a plain cream face with two slim dark hands and no numerals, a small terracotta hammer between the bells",
+   "files": [
+    {
+     "file": "public/illustrations/objects/alarm-480.webp",
+     "sha256": "a6c5f94e8d9d4e8f051a77a0d925487b0847f6ec71e6670990af816957b86ca3"
+    },
+    {
+     "file": "public/illustrations/objects/alarm-240.webp",
+     "sha256": "bd969f8dbf730e6b32ab0f3b1d74dc7e80270ac79f350b95f5315b1a2224c967"
+    }
+   ]
+  },
+  {
+   "name": "books",
+   "job": "207e7226-94aa-4eb8-9319-00da5deb13e3",
+   "concept": "a neat stack of three closed books with cream, deep sage green and terracotta cloth covers, a slim brass bookmark clip on the top book",
+   "files": [
+    {
+     "file": "public/illustrations/objects/books-480.webp",
+     "sha256": "000edc10194ddcddbc8a99cb5b67e922ff813093b865b3ba82a4be69bb9c88e9"
+    },
+    {
+     "file": "public/illustrations/objects/books-240.webp",
+     "sha256": "0b2020a72eb473d72555c187187969bc8c441ce829ea78d4eb1ee5981ab70c8c"
+    }
+   ]
+  },
+  {
+   "name": "cap",
+   "job": "91ca6462-2ac1-4a5b-9c64-c3fa3b92a976",
+   "concept": "a black graduation cap with a terracotta tassel resting on two closed cream books",
+   "files": [
+    {
+     "file": "public/illustrations/objects/cap-480.webp",
+     "sha256": "81f29cc707b1a71ff81503d9f6788c5a1e28ee44fa3fd0db7c2113a4556f40b0"
+    },
+    {
+     "file": "public/illustrations/objects/cap-240.webp",
+     "sha256": "6f4eeda1574d762420690266a1f50bd4ae961817489e0c39601882ae333315fc"
+    }
+   ]
+  },
+  {
+   "name": "diploma",
+   "job": "c4379bd1-a93a-4759-aff5-80059dd859ee",
+   "concept": "a rolled cream diploma tied with a terracotta satin ribbon and a round wax seal, a small brass magnifying glass leaning against it",
+   "files": [
+    {
+     "file": "public/illustrations/objects/diploma-480.webp",
+     "sha256": "8d3571ba3d27cf10441f678ebbd44e1350f7bbc688c23d6c72a587be1513af18"
+    },
+    {
+     "file": "public/illustrations/objects/diploma-240.webp",
+     "sha256": "fd7a74c14fb075df4eae68f72b16328c2682420631eb47e01f070bcff2bf0198"
+    }
+   ]
+  },
+  {
+   "name": "envelope",
+   "job": "b887deba-7eab-431d-a7e3-ac53b43d2eb3",
+   "concept": "a cream envelope with three small blank cream document cards fanning out of it, tied with a terracotta string, a tiny wooden house figure standing beside it",
+   "files": [
+    {
+     "file": "public/illustrations/objects/envelope-480.webp",
+     "sha256": "ebb8a17781cda1efae4179d9034e5065cdae279fc7a9c2dae7e33e111d07ebc0"
+    },
+    {
+     "file": "public/illustrations/objects/envelope-240.webp",
+     "sha256": "9a62b0f08db0f31aa7d05d530a057385755ceaae28fe04a8b84623d02d70f917"
+    }
+   ]
+  },
+  {
+   "name": "folder",
+   "job": "92733c05-c9c8-4289-9f18-190403ee6624",
+   "concept": "a kraft paper document folder closed with a terracotta elastic band, the edge of a cream sheet peeking out, a small round deep sage green badge with a white check mark clipped to its corner",
+   "files": [
+    {
+     "file": "public/illustrations/objects/folder-480.webp",
+     "sha256": "dbafad62a9168f9d247b5b38517b9542f423b332a447ece988b6ce5d6c864946"
+    },
+    {
+     "file": "public/illustrations/objects/folder-240.webp",
+     "sha256": "1d046d607a6e3080ae43b8b103242c62904c1729cc0c1d8cd9789539be9ad19d"
+    }
+   ]
+  },
+  {
+   "name": "insurance",
+   "job": "3a4ea3fd-542e-444f-b786-d99127f21e45",
+   "concept": "a tan leather suitcase with brass clasps, a plain cream shield-shaped tag hanging from its handle and a stethoscope with a terracotta tube resting on the lid (no cross emblem)",
+   "files": [
+    {
+     "file": "public/illustrations/objects/insurance-480.webp",
+     "sha256": "37b3b9bc56323daa8b267b8cdd174301f748e7780920d37bba875f83d5e81c85"
+    },
+    {
+     "file": "public/illustrations/objects/insurance-240.webp",
+     "sha256": "546184d5477a9db1184f402f4837d505dc41a1e13b993e2b3e46335636ac127b"
+    }
+   ]
+  },
+  {
+   "name": "keys",
+   "job": "3d593acf-fe7d-45e8-84f3-b45cdbd5dbfd",
+   "concept": "a brass key on a ring with a terracotta leather tag and a small blank cream card with rounded corners and a plain deep sage green square on it, attached to the same ring",
+   "files": [
+    {
+     "file": "public/illustrations/objects/keys-480.webp",
+     "sha256": "55b583a1671c5400411b77d3d966db9c11f19b4346cc4924ce68cd8da112f4b6"
+    },
+    {
+     "file": "public/illustrations/objects/keys-240.webp",
+     "sha256": "1204a8f5d5b820979b5194f82867bc009a5e9b553c5ca6d0ae7e9484e3d1157c"
+    }
+   ]
+  },
+  {
+   "name": "map",
+   "job": "5b710ff9-cb46-49ef-921e-e9f12efd66fb",
+   "concept": "a folded cream map with a softly drawn dotted path ending at a terracotta pin, a small brass compass resting on one panel",
+   "files": [
+    {
+     "file": "public/illustrations/objects/map-480.webp",
+     "sha256": "daa513486e0055ffb058f8bb1005dfdb6a5181bdfea18d1086b8b0d39763aa08"
+    },
+    {
+     "file": "public/illustrations/objects/map-240.webp",
+     "sha256": "aa7c1354430c7e26a9535b88e8fde91e55c361764f77e7763f1c00dcef0e3803"
+    }
+   ]
+  },
+  {
+   "name": "military",
+   "job": "daa56dc1-0183-4768-a60b-5ae6f0af0ab6",
+   "concept": "two plain brushed-steel tags on a ball chain resting on a folded cream document tied with a deep sage green ribbon",
+   "files": [
+    {
+     "file": "public/illustrations/objects/military-480.webp",
+     "sha256": "98ddddfd0515ad1c896195bc42f07262f4952eaded28d2da3c6d4c517e88885d"
+    },
+    {
+     "file": "public/illustrations/objects/military-240.webp",
+     "sha256": "cbf3083c2099fb738d3d10021d9edf2ae9084fd3bbe5cd28ad4d461690042ee7"
+    }
+   ]
+  },
+  {
+   "name": "minors",
+   "job": "dec43929-5323-4b80-86ca-379a1895ca29",
+   "concept": "a folded cream document tied with a terracotta ribbon and closed with two round wax seals side by side, one terracotta and one deep sage green",
+   "files": [
+    {
+     "file": "public/illustrations/objects/minors-480.webp",
+     "sha256": "5596d76399fbf7240e46158a6671d3613f7bf8dcace0b575b7fc48bce6e5448c"
+    },
+    {
+     "file": "public/illustrations/objects/minors-240.webp",
+     "sha256": "60e3f40ed9f2ca84b2f841862170816fc86c7ee676f34c7b9028c2a318ee7790"
+    }
+   ]
+  },
+  {
+   "name": "permesso-kit",
+   "job": "0bee1a6d-0ef4-4d21-bfb3-6104ed55dd0c",
+   "concept": "a mustard-yellow paper envelope with a cream form sheet peeking out of it and a slim terracotta pen lying across",
+   "files": [
+    {
+     "file": "public/illustrations/objects/permesso-kit-480.webp",
+     "sha256": "86acb91482478ba5dba4a416b2f137cb5dd213d39b47043942f9676242fe2491"
+    },
+    {
+     "file": "public/illustrations/objects/permesso-kit-240.webp",
+     "sha256": "1907deb95934afb0f605dcdc815db77da980b05ab246b386fa1e8b0ad368aee1"
+    }
+   ]
+  },
+  {
+   "name": "stamp-pad",
+   "job": "3f648388-aa22-4c30-b0a6-c081a438745c",
+   "concept": "a wooden-handled rubber stamp standing on a cream document card that carries one plain round terracotta stamp mark (a ring, nothing inside it)",
+   "files": [
+    {
+     "file": "public/illustrations/objects/stamp-pad-480.webp",
+     "sha256": "6422d1cc5d08487745a2604c116664d5df7d46a1d5f32d690ae40b0bf0887ad5"
+    },
+    {
+     "file": "public/illustrations/objects/stamp-pad-240.webp",
+     "sha256": "ea54c740a9fb7a3c835745cf682133d791688970ea7070f57314078c8d31fc85"
+    }
+   ]
+  },
+  {
+   "name": "tax-card",
+   "job": "5f9040b9-4a7e-4b5a-bacb-111a8cfdc192",
+   "concept": "a deep sage green plastic card with a small brass chip lying on a blank cream form with a few soft lines",
+   "files": [
+    {
+     "file": "public/illustrations/objects/tax-card-480.webp",
+     "sha256": "4dcf575ecbc317219ac2ad874e8d5642feb1bf83780b6f4427c9ea2a39d279db"
+    },
+    {
+     "file": "public/illustrations/objects/tax-card-240.webp",
+     "sha256": "2a8a3127c04403334e4a28c3788b978a8b06d3adacfd5941b565fce384509d0e"
+    }
+   ]
+  },
+  {
+   "name": "tests",
+   "job": "765abe37-6898-47e9-81ad-3787a70a7e70",
+   "concept": "a wooden clipboard holding an answer sheet with rows of rounded empty bubbles, a terracotta pencil and a small brass hourglass beside it",
+   "files": [
+    {
+     "file": "public/illustrations/objects/tests-480.webp",
+     "sha256": "efecc762e438949a990984e0cb8696d0faba7828467d439a3499166495516040"
+    },
+    {
+     "file": "public/illustrations/objects/tests-240.webp",
+     "sha256": "38ea2dbec4aeb7ff83ab87232179590cc4c5ac27f9f73ca3204867d08936cf81"
+    }
+   ]
+  },
+  {
+   "name": "icon-calendar",
+   "job": "a29bfbd1-37d8-4028-947b-c34c71022c77",
+   "concept": "a small tear-off desk calendar with two brass rings and a terracotta top band, blank cream pages",
+   "files": [
+    {
+     "file": "public/illustrations/icons/calendar.webp",
+     "sha256": "4c95b36b1bf1d9424f07a15e53ba36817fd1ec91416dc643a57b627b116f77b5"
+    }
+   ]
+  },
+  {
+   "name": "icon-clock",
+   "job": "8e6346e8-e5a8-4e3e-997e-bf0f1aacc692",
+   "concept": "a small cream alarm clock with two brass bells, a plain face with two slim hands and no numerals",
+   "files": [
+    {
+     "file": "public/illustrations/icons/clock.webp",
+     "sha256": "f0ef6e5fdb257f41d54320235fa9347bf8d527e8d8f4b84edddaf19051aa6979"
+    }
+   ]
+  },
+  {
+   "name": "icon-explain",
+   "job": "a358e31b-1fcd-40ea-8259-7aac324d06c8",
+   "concept": "a brass magnifying glass with a dark wooden handle, the lens catching a soft highlight",
+   "files": [
+    {
+     "file": "public/illustrations/icons/explain.webp",
+     "sha256": "ec1d22ad3ff44c48863076b07c472fc498bf5203b2231b9060cfd599151beca6"
+    }
+   ]
+  },
+  {
+   "name": "icon-folder",
+   "job": "24e5c021-8952-4391-9241-c9b4eb91d49d",
+   "concept": "a kraft paper folder closed with a terracotta elastic band",
+   "files": [
+    {
+     "file": "public/illustrations/icons/folder.webp",
+     "sha256": "60dbb8340d1434c3e0b44fe278f1db55dd111fff1bc1a37b9449c65d081adf17"
+    }
+   ]
+  },
+  {
+   "name": "icon-lock",
+   "job": "016d3bc9-fd67-48ce-9ecb-d9151dafb9f9",
+   "concept": "a rounded brass padlock with a simple keyhole",
+   "files": [
+    {
+     "file": "public/illustrations/icons/lock.webp",
+     "sha256": "2ed92e37cba48acd6fe748180b9969f3e83c4cbad6e71c4cbb8d61b29533532b"
+    }
+   ]
+  },
+  {
+   "name": "icon-pin",
+   "job": "af05b70a-e1f4-4aba-8a2a-e9d9e70a3267",
+   "concept": "a terracotta round-headed map pin standing in a small folded cream map",
+   "files": [
+    {
+     "file": "public/illustrations/icons/pin.webp",
+     "sha256": "bdd876c05c9c144d9a771ca0b045822c256d51e96cd2c8e48618deac1b3a6664"
+    }
+   ]
+  },
+  {
+   "name": "icon-sheet",
+   "job": "4b09e579-ab56-45e2-9c7c-86d4159b7381",
+   "concept": "a cream paper sheet with a brass paper clip, a terracotta line at the top and a few soft grey lines",
+   "files": [
+    {
+     "file": "public/illustrations/icons/sheet.webp",
+     "sha256": "cab899002f0f2b025f2a83d6da37dd185047bbf9444dd698f79220da64920489"
+    }
+   ]
+  },
+  {
+   "name": "icon-done",
+   "job": "79ff25ca-7f8b-420d-932a-7f5b3a1c3ba1",
+   "concept": "a round deep sage green wax seal with a raised check mark",
+   "files": [
+    {
+     "file": "public/illustrations/icons/done.webp",
+     "sha256": "88fc8ff9e7f43ccbf1a53aede2de13b13901b910c964ce51476c36ce83871bac"
+    }
+   ]
+  }
+ ]
+}
