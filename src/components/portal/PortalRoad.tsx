@@ -10,7 +10,6 @@ import { stageKey, type PortalStageKey } from "./portalStageArt";
 import { STAGE_PLAIN } from "./plainWords";
 import { taskTitle } from "@/lib/portalNavigation";
 import { navigatePortal } from "./PortalPageNavigation";
-import { planStepArt } from "@/components/plan/planStepArt";
 
 const PREVIEW_STAGES = ["Выбор программы", "Документы", "Поступление", "Стипендия DSU", "Виза", "После приезда"];
 const PREVIEW_ART: PortalStageKey[] = ["start", "docs", "apply", "dsu", "visa", "arrival"];
@@ -54,39 +53,25 @@ const stepWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "ш
    (только после подтверждённой записи, как раньше). */
 /* Дорожка шагов как в Duolingo (owner, 7 Nov: «в личном кабинете как
    прогресс в Duolingo: путь, и там отображаются степы, которые надо будет
-   выполнять»; затем «наброски неплохие, но всё ещё сыро… максимально приятно
-   глазу»). Под каждым этапом его шаги идут медальонами по плавной змейке
-   (синус через весь путь, этап за этапом); дорожка между ними зелёная там,
-   где пройдено, и точками впереди. В каждом медальоне — вещь шага из общего
-   набора (анкета — планшет, апостиль — штамп, перевод — книга с репликами,
-   жильё — ключи…), поэтому путь читается картинками, а не одинаковыми
-   звёздами. Статус — маленький значок у края: зелёная галочка (сделано),
-   замок (за стеной доступа); текущий шаг крупнее, в терракотовом кольце,
-   с мягко расходящейся волной и плашкой «Сейчас» у названия. Будущие этапы
-   приглушены. Объём — мягкая тень со смещением и внутренний скос, без
-   градиентов. Вся строка — одна ссылка на страницу шага. */
+   выполнять»; «наброски неплохие, но всё ещё сыро… максимально приятно
+   глазу»; вещь в каждом шаге — «перебор эмодзи»). Под каждым этапом его шаги
+   идут медальонами по плавной змейке (синус через весь путь, этап за этапом);
+   дорожка между ними зелёная там, где пройдено, и точками впереди. Внутри
+   медальона только знак состояния, без картинок: сделано — зелёный с
+   галочкой; сейчас — крупный терракотовый со звездой (одна на весь путь),
+   кольцом и мягкой волной; дальше — чистый бумажный с маленькой точкой;
+   за стеной доступа — замок; поздние этапы приглушены. Объём — кайма,
+   внутренний скос и мягкая тень со смещением, без градиентов. Вся строка —
+   одна ссылка на страницу шага. */
 const snake = (index: number) => Math.round(Math.sin(index * Math.PI / 3) * 100) / 100;
 
 type NodeState = "done" | "current" | "todo" | "later" | "locked";
 
-/* Вещь шага: сначала по id задачи, иначе по названию (те же правила, что у
-   шагов плана на /plan), иначе карта маршрута. */
-const STEP_ART: Record<string, string> = {
-  profile: "tests", shortlist: "cap", path12: "diploma", chances: "coins", checkDocs: "folder",
-  apostille: "stamp-pad", translate: "translation", notary: "minors", cimea: "diploma", universitaly: "envelope",
-  familyDocs: "envelope", iseeu: "coins", money: "coins", statements: "tax-card", housing: "keys",
-  insurance: "insurance", kit: "permesso-kit", blsSlot: "passport",
-};
-function stepArt(task: PortalTask) {
-  const byTitle = planStepArt(taskTitle(task));
-  const name = STEP_ART[task.id] || byTitle.art;
-  return { name, src: `/illustrations/objects/${name}-240.webp` };
-}
-
-function StatusBadge({ state }: { state: NodeState }) {
-  if (state === "done") return <span className={styles.nodeBadge} data-badge="done" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12.5 3.8 3.8L18 8" /></svg></span>;
-  if (state === "locked") return <span className={styles.nodeBadge} data-badge="locked" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6.5" y="11" width="11" height="8" rx="2" /><path d="M9 11V9a3 3 0 0 1 6 0v2" /></svg></span>;
-  return null;
+function NodeMark({ state }: { state: NodeState }) {
+  if (state === "done") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="done"><path d="m6 12.6 3.9 3.9L18.2 8" /></svg>;
+  if (state === "current") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="current"><path d="m12 4.4 2.25 4.6 5.05.72-3.65 3.57.86 5.04L12 15.95l-4.51 2.38.86-5.04L4.7 9.72l5.05-.73Z" /></svg>;
+  if (state === "locked") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="locked"><rect x="6.5" y="10.8" width="11" height="8.4" rx="2.1" /><path d="M9 10.8V8.9a3 3 0 0 1 6 0v1.9" /></svg>;
+  return <span className={styles.nodeDot} aria-hidden="true" />;
 }
 
 function StepTrail({ offsets, states }: { offsets: number[]; states: string[] }) {
@@ -269,7 +254,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
           <div className={styles.steps} aria-hidden="true" data-road-ghost>
             <StepTrail offsets={[snake(phase), snake(phase + 1)]} states={["later", "later"]} />
             {[0, 1].map(i => <span key={i} className={styles.step} style={{ "--x": snake(phase + i) } as CSSProperties} data-node-state="later" data-side={snake(phase + i) < 0 ? "left" : "right"}>
-              <span className={styles.node} />
+              <span className={styles.node}><NodeMark state="later" /></span>
             </span>)}
           </div>
         </li>;
@@ -291,14 +276,11 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
           <ol className={styles.steps} aria-label={`Шаги: ${title}`} data-road-steps={row.id}>
             <StepTrail offsets={offsets} states={stepStates} />
             {row.tasks.map((task, i) => {
-              const nodeState = stepStates[i], art = stepArt(task), href = `/portal?stage=${encodeURIComponent(row.id)}&step=${encodeURIComponent(task.id)}`;
+              const nodeState = stepStates[i], href = `/portal?stage=${encodeURIComponent(row.id)}&step=${encodeURIComponent(task.id)}`;
               return <li key={task.id} className={styles.step} style={{ "--x": offsets[i] } as CSSProperties} data-node-state={nodeState} data-side={offsets[i] < 0 ? "left" : "right"}>
                 <a href={href} data-road-node={task.id} aria-current={nodeState === "current" ? "true" : undefined}
                   onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(href); }}>
-                  <span className={styles.node} data-fresh={task.id === freshId || undefined}>
-                    <img src={art.src} width={240} height={180} alt="" aria-hidden="true" data-step-object={art.name} loading="lazy" decoding="async" draggable={false} />
-                    <StatusBadge state={nodeState} />
-                  </span>
+                  <span className={styles.node} data-fresh={task.id === freshId || undefined}><NodeMark state={nodeState} /></span>
                   <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
                 </a>
               </li>;

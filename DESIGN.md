@@ -728,25 +728,25 @@ Duolingo: путь, и там отображаются степы, которы�
   - The percentage bar, the stage headings and their status words and
     counts are unchanged.
 - **Polish (same evening, owner: «наброски неплохие, но всё ещё сыро…
-  максимально приятно глазу»; impeccable `polish`).**
-  - **Medallions.** Each circle is now a paper medallion carrying the step's
-    own object from the shared set: the questionnaire is a clipboard, the
-    apostille a stamp, translation a book with speech bubbles, notarisation a
-    document with seals, recognition a diploma under a magnifier, housing the
-    keys. Mapping: by task id, else the /plan step rules on the title, else
-    the map.
-  - **Status.** A small badge at the edge: a green check for done, a lock
-    behind the access wall. Done medallions get a green rim. Later stages
-    show their object faded.
-  - **Current step.** Larger, inside a terracotta ring. One soft wave
-    spreads from it and fades every 3 s.
+  максимально приятно глазу»; impeccable `polish`).** A first pass put each
+  step's object inside its circle. The owner answered «для каждого шага —
+  перебор эмодзи», so circles carry only a state mark.
+  - **Marks:**
+    - done — solid green with a check;
+    - current — larger solid terracotta with a star, the only star on the
+      path;
+    - ahead — clean paper with a small dot;
+    - behind the access wall — a lock;
+    - later stages — faded paper.
+  - **Current step.** One soft wave spreads from it and fades every 3 s.
   - **Current stage.** Sits on a warm band (`#FBF4EC`) as the «you are
     here» region.
-  - **Depth.** A thin rim, an inner bottom bevel and a soft offset shadow.
-    No block shadow, no gradient. Hover lifts 3px; press sinks 2px.
+  - **Depth.** A thin rim, a blurred inner bevel and a soft offset shadow.
+    No block shadow, no gradient, no one-sided stripe (the impeccable
+    detector reports nothing). Hover lifts 3px; press sinks 2px.
   - **Completion.** The step just saved settles in (scale .82→1,
     exponential ease-out, no overshoot) and its check fades up. This is the
     path's one authored moment.
   - **Reduced motion.** No wave, no settle, no lift.
-  - **Sizes.** Laptop: ±104px snake, 68px medallions (86px current), 100px
-    rows. Phone: left column, 58px medallions, 90px rows.
+  - **Sizes.** Laptop: ±104px snake, 64px circles (80px current), 96px
+    rows. Phone: left column, 56px circles, 88px rows.

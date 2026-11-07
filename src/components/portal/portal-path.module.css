@@ -39,51 +39,51 @@
 .row[data-road-locked] > .unitHead { grid-template-columns:56px minmax(0,1fr); color:var(--quiet); }
 
 /* Дорожка шагов как в Duolingo (owner, 7 Nov; полировка — «максимально
-   приятно глазу»). Медальоны идут змейкой вокруг оси --center с размахом
-   --amp; дорожка — SVG в единицах размаха (viewBox -1..1), растянутый на
-   2×--amp, линия без искажений (non-scaling-stroke): зелёная сплошная там,
-   где пройдено, тёплые точки впереди. Медальон — бумажный диск с вещью шага,
-   тонкой каймой, внутренним скосом снизу и мягкой тенью со смещением (без
-   градиентов и без жёсткой «блочной» тени). Сделанный — зелёная кайма и
-   галочка у края; текущий — крупнее, терракотовое кольцо и одна волна,
-   которая мягко расходится и гаснет; будущие этапы — приглушённая вещь.
-   Подписи — снаружи змейки на компьютере, справа от колонки на телефоне. */
-.steps { --center:50%; --amp:104px; --node:68px; --row:100px; position:relative; max-width:780px; margin:6px auto 26px; padding:0; list-style:none; }
+   приятно глазу»; без вещей в шагах — «перебор эмодзи»). Медальоны идут
+   змейкой вокруг оси --center с размахом --amp; дорожка — SVG в единицах
+   размаха (viewBox -1..1), растянутый на 2×--amp, линия без искажений
+   (non-scaling-stroke): зелёная сплошная там, где пройдено, тёплые точки
+   впереди. Медальон — диск с каймой, внутренним скосом снизу и мягкой тенью
+   со смещением (без градиентов и без жёсткой «блочной» тени). Внутри только
+   знак: галочка, звезда текущего шага, точка, замок. Текущий — крупнее,
+   с кольцом и одной волной, которая мягко расходится и гаснет. Подписи —
+   снаружи змейки на компьютере, справа от колонки на телефоне. */
+.steps { --center:50%; --amp:104px; --node:64px; --row:96px; position:relative; max-width:780px; margin:6px auto 26px; padding:0; list-style:none; }
 .trail { position:absolute; top:0; left:calc(var(--center) - var(--amp)); width:calc(var(--amp) * 2); height:calc(var(--rows, 1) * var(--row)); overflow:visible; pointer-events:none; }
 .trail path { fill:none; stroke:#D6C8B2; stroke-width:5px; stroke-linecap:round; stroke-dasharray:.5 12; }
 .trail path[data-walked] { stroke:#3A8560; stroke-width:6px; stroke-dasharray:none; }
 .step { position:relative; height:var(--row); }
 .step > a { position:absolute; inset:0; display:block; color:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
 .step > a:focus-visible { outline:none; }
-.node { --size:var(--node); --rim:#E4D8C6; position:absolute; top:50%; left:calc(var(--center) + var(--x, 0) * var(--amp)); display:grid; place-items:center; width:var(--size); height:var(--size); margin:calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
-  border-radius:50%; background:#FFFDF9;
-  box-shadow:inset 0 0 0 1.5px var(--rim),inset 0 -5px 0 rgba(42,36,32,.06),0 10px 18px -10px rgba(58,40,24,.42),0 2px 4px -1px rgba(58,40,24,.14);
-  transition:transform 180ms cubic-bezier(.2,0,0,1),box-shadow 180ms cubic-bezier(.2,0,0,1); }
-.node img { width:80%; height:80%; object-fit:contain; pointer-events:none; user-select:none; transition:opacity 320ms cubic-bezier(.4,0,.2,1),filter 320ms cubic-bezier(.4,0,.2,1); }
-.step[data-node-state=done] .node { --rim:#3A8560; background:#F1F7F2; }
-.step[data-node-state=current] .node { --size:calc(var(--node) + 18px); --rim:var(--accent,#B83A27); background:#FFFDF9;
-  box-shadow:inset 0 0 0 3px var(--rim),inset 0 -6px 0 rgba(42,36,32,.06),0 14px 24px -12px rgba(120,40,20,.45),0 3px 6px -2px rgba(58,40,24,.16); }
-.step[data-node-state=current] .node::after { content:""; position:absolute; inset:-7px; border-radius:50%; border:2px solid var(--accent,#B83A27); opacity:.22; pointer-events:none; }
-.step[data-node-state=later] .node,.step[data-node-state=locked] .node { --rim:#E9E0D3; background:#F6F2EB; box-shadow:inset 0 0 0 1.5px var(--rim),0 6px 12px -10px rgba(58,40,24,.35); }
-.step[data-node-state=later] .node img,.step[data-node-state=locked] .node img { opacity:.5; filter:grayscale(.45) saturate(.85); }
-.nodeBadge { position:absolute; right:-3px; bottom:-1px; display:grid; place-items:center; width:24px; height:24px; border-radius:50%; background:#3A8560; color:#FFFDF9; box-shadow:0 0 0 2.5px #FFFDF9,0 3px 6px -2px rgba(30,60,40,.4); }
-.nodeBadge svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
-.nodeBadge[data-badge=locked] { background:#7C7166; }
-.nodeBadge[data-badge=locked] svg { stroke-width:2; }
-.step > a:active .node { transform:translateY(2px) scale(.98); box-shadow:inset 0 0 0 1.5px var(--rim),inset 0 -3px 0 rgba(42,36,32,.06),0 4px 8px -6px rgba(58,40,24,.4); }
+.node { --size:var(--node); --rim:#E1D4C1; position:absolute; top:50%; left:calc(var(--center) + var(--x, 0) * var(--amp)); display:grid; place-items:center; width:var(--size); height:var(--size); margin:calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  border-radius:50%; background:#FFFDF9; color:#B9A88F;
+  box-shadow:inset 0 0 0 1.5px var(--rim),inset 0 -8px 12px -8px rgba(42,36,32,.12),0 10px 18px -10px rgba(58,40,24,.42),0 2px 4px -1px rgba(58,40,24,.14);
+  transition:transform 180ms cubic-bezier(.2,0,0,1),box-shadow 180ms cubic-bezier(.2,0,0,1),background-color 320ms cubic-bezier(.4,0,.2,1); }
+.node svg { width:44%; height:44%; }
+.node svg[data-mark=done] { fill:none; stroke:currentColor; stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round; }
+.node svg[data-mark=current] { width:46%; height:46%; fill:currentColor; }
+.node svg[data-mark=locked] { width:40%; height:40%; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.nodeDot { width:10px; height:10px; border-radius:50%; background:currentColor; opacity:.55; }
+.step[data-node-state=done] .node { --rim:#2F7550; background:#3A8560; color:#FFFDF9;
+  box-shadow:inset 0 0 0 1.5px var(--rim),inset 0 -10px 14px -8px rgba(10,40,24,.35),0 10px 18px -10px rgba(25,70,45,.55),0 2px 4px -1px rgba(25,70,45,.2); }
+.step[data-node-state=current] .node { --size:calc(var(--node) + 16px); --rim:#9E3020; background:var(--accent,#B83A27); color:#FFFDF9;
+  box-shadow:inset 0 0 0 1.5px var(--rim),inset 0 -12px 16px -10px rgba(70,16,8,.38),0 14px 24px -12px rgba(120,40,20,.55),0 3px 6px -2px rgba(58,40,24,.18); }
+.step[data-node-state=current] .node::after { content:""; position:absolute; inset:-8px; border-radius:50%; border:2px solid var(--accent,#B83A27); opacity:.25; pointer-events:none; }
+.step[data-node-state=later] .node { --rim:#E9E0D3; background:#F6F2EB; color:#CDBFAB; box-shadow:inset 0 0 0 1.5px var(--rim),0 6px 12px -10px rgba(58,40,24,.35); }
+.step[data-node-state=locked] .node { --rim:#E3D9CB; background:#F6F2EB; color:#7C7166; box-shadow:inset 0 0 0 1.5px var(--rim),0 6px 12px -10px rgba(58,40,24,.35); }
+.step > a:active .node { transform:translateY(2px) scale(.98); }
 .step > a:focus-visible .node { outline:3px solid var(--accent,#B83A27); outline-offset:6px; }
 .stepLabel { position:absolute; top:50%; display:grid; gap:6px; justify-items:start; max-width:300px; transform:translateY(-50%); color:var(--ink); font-size:15px; font-weight:500; line-height:1.38; letter-spacing:-.005em; text-wrap:pretty; overflow-wrap:anywhere; }
 .step[data-side=right] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 24px); right:0; text-align:left; }
 .step[data-side=left] .stepLabel { right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 24px); left:auto; justify-items:end; text-align:right; }
 .step[data-node-state=current] .stepLabel { font-size:16px; font-weight:600; }
-.step[data-node-state=current][data-side=right] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 34px); }
-.step[data-node-state=current][data-side=left] .stepLabel { right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 34px); }
+.step[data-node-state=current][data-side=right] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 32px); }
+.step[data-node-state=current][data-side=left] .stepLabel { right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 32px); }
 .step[data-node-state=done] .stepLabel { color:#5D564E; }
 .step[data-node-state=later] .stepLabel,.step[data-node-state=locked] .stepLabel { color:var(--quiet); }
 .nowChip { display:inline-flex; align-items:center; min-height:22px; padding:0 10px; border-radius:999px; background:var(--accent,#B83A27); color:#FFFDF9; font-size:12px; font-weight:600; letter-spacing:.01em; }
 @media (hover:hover) and (pointer:fine) {
-  .step > a:hover .node { transform:translateY(-3px); box-shadow:inset 0 0 0 1.5px var(--rim),inset 0 -5px 0 rgba(42,36,32,.06),0 16px 24px -12px rgba(58,40,24,.45),0 3px 6px -2px rgba(58,40,24,.16); }
-  .step[data-node-state=current] > a:hover .node { box-shadow:inset 0 0 0 3px var(--rim),inset 0 -6px 0 rgba(42,36,32,.06),0 20px 30px -14px rgba(120,40,20,.5),0 3px 6px -2px rgba(58,40,24,.16); }
+  .step > a:hover .node { transform:translateY(-3px); }
   .step > a:hover .stepLabel > span:not(.nowChip):not(.srOnly) { text-decoration:underline; text-decoration-color:rgba(20,20,19,.35); text-underline-offset:4px; text-decoration-thickness:1px; }
 }
 /* Текущий этап — тёплая подложка вокруг заголовка и его шагов: «ты здесь». */
@@ -91,17 +91,16 @@
 .row[data-road-unit-state=current] + .row { border-top-color:transparent; }
 .row[data-road-unit-state=current] .step[data-node-state=later] .node,.row[data-road-unit-state=current] .step[data-node-state=locked] .node { background:#FFFDF9; }
 .steps[data-road-ghost] { margin-top:-6px; }
-.steps[data-road-ghost] .node { --rim:#ECE4D8; background:#F6F2EB; box-shadow:inset 0 0 0 1.5px var(--rim); }
 @media (prefers-reduced-motion:no-preference) {
   /* Одна волна у текущего шага: мягко расходится и гаснет, раз в 3 секунды. */
   .step[data-node-state=current] .node::after { animation:node-wave 3s cubic-bezier(.22,1,.36,1) infinite; }
   /* Только что сохранённый шаг: медальон мягко встаёт на место (экспонента, без перелёта), галочка проявляется. */
   .node[data-fresh] { animation:node-settle 620ms cubic-bezier(.16,1,.3,1) both; }
-  .node[data-fresh] .nodeBadge { animation:badge-in 420ms 240ms cubic-bezier(.16,1,.3,1) both; }
+  .node[data-fresh] svg { animation:mark-in 420ms 220ms cubic-bezier(.16,1,.3,1) both; }
 }
 @keyframes node-wave { 0% { transform:scale(.94); opacity:.4; } 70%,100% { transform:scale(1.22); opacity:0; } }
 @keyframes node-settle { from { transform:scale(.82); } to { transform:none; } }
-@keyframes badge-in { from { transform:scale(0); } to { transform:none; } }
+@keyframes mark-in { from { transform:scale(.4); opacity:0; } to { transform:none; opacity:1; } }
 .thumb { display:grid; place-items:center; width:56px; height:52px; }
 .thumb img { display:block; width:100%; height:100%; object-fit:contain; }
 .row[data-road-locked] .thumb img { opacity:.55; filter:grayscale(.6); }
@@ -159,7 +158,7 @@
   .row > a .status { grid-column:2; display:flex; align-items:center; justify-items:start; gap:8px; text-align:left; }
   .row[data-road-locked] > .unitHead { grid-template-columns:44px minmax(0,1fr); }
   /* На телефоне змейка уходит в левую колонку, подписи — справа от неё. */
-  .steps { --center:74px; --amp:30px; --node:58px; --row:90px; }
+  .steps { --center:74px; --amp:30px; --node:56px; --row:88px; }
   .step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--amp) + var(--node) / 2 + 22px); right:0; }
   .row[data-road-unit-state=current] { margin:0 -10px; padding:0 10px 4px; border-radius:20px; }
   .step[data-side] .stepLabel { left:calc(var(--center) + var(--amp) + var(--node) / 2 + 18px); right:0; max-width:none; justify-items:start; text-align:left; font-size:14px; }
@@ -167,5 +166,5 @@
   .text strong { font-size:16px; }
   .text > span { font-size:13px; }
 }
-@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node,.node img { transition:none !important; } .step > a:hover .node,.step > a:active .node { transform:none; } }
+@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:hover .node,.step > a:active .node { transform:none; } }
 @media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }
