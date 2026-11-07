@@ -64,8 +64,8 @@ try {
   await part('3').fill('UPDATED TEST');await launch();
   assert.equal(await guide.getByText('Этот шаг уже отмечен для текущего значения.',{exact:true}).count(),0,'Changed answer invalidates receipt');
   await guide.locator('[data-transfer-confirm]').click();assert.equal(await guide.locator('[data-transfer-confirm]').isDisabled(),true,'Empty required field is never marked as copied');
-  await page.locator('#helpers').getByRole('combobox',{name:'Код типа обучения для поля 16'}).selectOption('24');await guide.waitFor();
-  assert.match(await guide.locator('[data-transfer-progress]').innerText(),/3 из/,'Using the reference below keeps in-tab transfer progress');
+  assert.equal(await page.locator('#helpers').count(),0,'References live on their own pages, not under the form');await guide.waitFor();
+  assert.match(await guide.locator('[data-transfer-progress]').innerText(),/3 из/,'Transfer progress stays while the guide is open');
   await guide.getByRole('button',{name:'Вернуться к бланку',exact:true}).click();await loaded();
   assert.equal((await part('3').inputValue()).trimEnd(),'UPDATED TEST');
   const nav=editor.getByRole('navigation',{name:'Страницы электронного бланка'});

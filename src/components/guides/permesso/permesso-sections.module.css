@@ -1,0 +1,53 @@
+/* Разделы Modulo 1: Бланк · Коды и расчёты · Перед почтой. Та же светлая
+   гамма, что у бланка (permesso-light.module.css): фон #FAF8F5, текст
+   #242321, акцент #8b2939. Навигация — вкладки с подчёркиванием во всю
+   ширину; на телефоне три вкладки помещаются в строку без прокрутки. */
+.sections {
+  display: flex; gap: 0 28px; margin-bottom: 26px; border-bottom: 1px solid #ddd9d1;
+  font-family: var(--font-sans);
+}
+.sections a {
+  display: inline-flex; align-items: center; min-height: 46px; margin-bottom: -1px;
+  border-bottom: 2px solid transparent; color: #66635d; font-size: 15px; text-decoration: none;
+  transition: color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1);
+}
+.sections a[aria-current="page"] { border-bottom-color: #8b2939; color: #242321; font-weight: 550; }
+@media (hover: hover) and (pointer: fine) { .sections a:not([aria-current]):hover { color: #242321; } }
+.sections a:focus-visible { outline: 2px solid #574331; outline-offset: 2px; border-radius: 4px; }
+
+.page {
+  padding: 34px 24px 88px; background: #FAF8F5;
+  color: #242321; font-family: var(--font-sans);
+}
+.page > * { max-width: 1200px; margin-left: auto; margin-right: auto; }
+.page *, .page *::before, .page *::after { box-sizing: border-box; }
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 40px; margin-bottom: 28px; }
+.page > .sections, .page > .head { margin-left: auto; margin-right: auto; }
+.head h1 { margin: 0; font: 600 32px/1.15 var(--font-apple-display); letter-spacing: -.025em; }
+.head p { max-width: 620px; margin: 8px 0 0; color: #66635d; font-size: 15px; line-height: 1.5; }
+
+.scenarios { display: flex; flex: none; padding: 3px; border: 1px solid #d7d3ca; border-radius: 9px; background: #efeeeb; }
+.scenarios button {
+  min-height: 40px; padding: 8px 14px; border: 0; border-radius: 6px; background: transparent;
+  color: #66635d; font: inherit; font-size: 14px; white-space: nowrap; cursor: pointer;
+  transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1);
+}
+.scenarios button[aria-pressed="true"] { background: #fffdf9; color: #242321; box-shadow: 0 1px 2px #392d2314; }
+.scenarios button:focus-visible { outline: 2px solid #574331; outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .head { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .sections { gap: 0 18px; }
+  .sections a { font-size: 14px; }
+  .page { padding: 18px 16px 64px; }
+  .page > .sections { margin-bottom: 20px; }
+  .head { margin-bottom: 20px; }
+  .head h1 { font-size: 28px; }
+  .head p { font-size: 14px; }
+  .scenarios button { font-size: 13px; padding-inline: 12px; }
+}
+@media (max-width: 360px) { .sections { gap: 0 14px; } .sections a { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .sections a, .scenarios button { transition: none; } }
+@media (forced-colors: active) { .sections a[aria-current="page"] { border-bottom-color: CanvasText; } }

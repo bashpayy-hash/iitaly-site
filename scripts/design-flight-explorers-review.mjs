@@ -140,7 +140,7 @@ try{
     assert.equal(await page.locator('[data-scene-card]').count(),2);
     assert.equal(await page.locator('[data-scene-card] [data-scene-photo]').count(),6,'Three theme tiles per scene');
     assert.equal(await page.locator('[data-scene-card] button').count(),0,'Nothing to switch: every theme is visible');
-    assert.match(await page.locator('[data-scene-card]').nth(1).innerText(),/Официальный налоговый код/);
+    assert.match(await page.locator('[data-scene-card]').nth(1).innerText(),/Личный налоговый номер в Италии/);
     // The card images are lazy: bring the scenes on screen and decode them before checking.
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.evaluate(async()=>{const images=[...document.querySelectorAll('[data-scene-card] img')];for(const img of images)img.loading='eager';await Promise.all(images.map(img=>img.decode().catch(()=>{})));});

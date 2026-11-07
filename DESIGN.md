@@ -750,3 +750,58 @@ Duolingo: путь, и там отображаются степы, которы�
   - **Reduced motion.** No wave, no settle, no lift.
   - **Sizes.** Laptop: ±104px snake, 64px circles (80px current), 96px
     rows. Phone: left column, 56px circles, 88px rows.
+
+## Modulo 1 in three sections, a quiet hint on phones · 7 November 2026 (night)
+
+Owner: «по первому скрину всё хорошо, но формулировки странные… страховка и
+поездки просто переформулируй»; «в мобильном приложении… карта лагает»;
+«в Permesso, когда открываешь Modulo 1, слишком много информации, надо её
+разбить дальше по блокам, или даже на другие сайты… и ещё там всё друг на
+друга наслаивается».
+
+- **Home cards.** Two teasers in `guides.ts` now read as plain statements of
+  what the topic is:
+  - codice fiscale — «Личный налоговый номер в Италии. Выдают бесплатно — в
+    Agenzia delle Entrate или через консульство.»;
+  - health-travel — «Как оформить медицину на время учёбы и куда можно
+    ездить, пока ждёшь карточку ВНЖ.»
+  An arrival card shows its small label only when it differs from the title,
+  so «Permesso / Permesso di soggiorno» and «Codice fiscale / Codice fiscale»
+  no longer repeat. Stage cards keep their labels.
+- **Cabinet path on phones.** Ghost circles of preview stages are block
+  boxes of one row height, so they no longer slide under the next heading.
+- **Modulo 1 is three sections**, one tab row on top of each:
+  «Бланк · Коды и расчёты · Перед почтой».
+  - `/guides/permesso-modulo-1` — the trainer only. The reference sheet
+    that used to follow the form (four tools and three checklists) is gone
+    from this page.
+  - `/guides/permesso-modulo-1/kody` — one tool at a time: tabs on the left
+    (a 2×2 grid on phones) and the tool in one card. The tool is in the
+    address (`?tool=16|25|sigla|paese`), arrow keys move between tabs, and
+    each tool keeps what was typed while you switch.
+  - `/guides/permesso-modulo-1/pochta` — three checklist cards («На бумаге»,
+    the scenario's documents, «Деньги»), the sources and the cheat sheet.
+  - The scenario (`?scenario=rinnovo`) travels between sections; the
+    reference pages have their own switch.
+  - The draft lives in tab memory while you move between sections (not in
+    storage: a reload still clears it; saving is still only by the button).
+    «Бланк» brings you back to the page and field you left.
+  - A field that needs a reference (16, 19, 25, provinces, 35, 36) links
+    from its panel straight to the right tool. In the cabinet the trainer
+    shows no section tabs and these links open in a new tab.
+  - The two pointers in the data that said «ниже» now name the section.
+    The guard allows exactly those two strings; every rule stays byte-exact.
+  - The disclaimer «Бланк остаётся главным источником» folds to one line;
+    the text inside is unchanged.
+- **No layering on phones.**
+  - The tap hint is a sheet across the bottom of the screen, or across the
+    top when the field is low. It never covers the field.
+  - It carries only the status, the answer, one line and «Не пиши». The
+    source, the cells and the caption stay in the field panel.
+  - No hint card covers the sticky site header or the stuck workbar on any
+    screen.
+  - On phones the workbar (scenario, pages, tools) no longer sticks over
+    the paper. It stays on its own layer, so the «Инструменты» menu opens
+    above the sheet, and the opened menu first lifts to just under the site
+    header so none of its items fall off the screen.
+  - The onboarding line says «Нажми» on touch screens instead of «Наведи».

@@ -26,7 +26,9 @@ const ARRIVAL_CARDS = [
 function ThemeCard({ id, object, objectHeight, label, title, line, href }: { id: string; object: string; objectHeight: number; label: string; title: string; line: string; href: string }) {
   return <li className={styles.card}>
     <Link className={styles.cardLink} href={href} data-scene-photo={id}>
-      <span className={styles.copy}><small>{label}</small><strong>{title}</strong><span>{line}</span></span>
+      {/* Ярлык над названием — только когда он что-то добавляет (owner, 7 Nov:
+          «Codice fiscale / Codice fiscale» читалось странно). */}
+      <span className={styles.copy}>{label && label !== title && !title.startsWith(label) && <small>{label}</small>}<strong>{title}</strong><span>{line}</span></span>
       <span className={styles.object}><img src={`/illustrations/objects/${object}-480.webp`} srcSet={`/illustrations/objects/${object}-240.webp 240w, /illustrations/objects/${object}-480.webp 480w`} sizes="(max-width: 640px) 60vw, 280px" width={480} height={objectHeight} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
     </Link>
   </li>;

@@ -13,7 +13,7 @@ const BASE = "https://iitaly.net";
 const ROUTES = ["", "/universities", "/plan", "/prices", "/guides", "/changes-2026-27", "/privacy", "/terms",
   ...GUIDE_STAGES.map(stage=>`/guides/stages/${stage.id}`),
   ...GUIDE_TOPICS.map(guide=>`/guides/${guide.id}`),
-  ...VISA_PARTS.map(part=>`/guides/visa/${part.id}`), "/guides/permesso-modulo-1",
+  ...VISA_PARTS.map(part=>`/guides/visa/${part.id}`), "/guides/permesso-modulo-1", "/guides/permesso-modulo-1/kody", "/guides/permesso-modulo-1/pochta",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ClipboardEvent } from "react";
+import { useEffect, useRef, useState, type ClipboardEvent, type ReactNode } from "react";
+import Link from "next/link";
 import { type PermessoScenario } from "./permessoData";
 import { ALL_GUIDANCE_FIELDS, EDITOR_FIELDS, OFFICIAL_PDF, capacity, editorMode, getPart, setPart, normalize, valueProblem, type EditorField } from "./permessoOriginalGeometry";
 import { PermessoPaperTransfer } from "./PermessoPaperTransfer";
@@ -12,7 +13,8 @@ import { PermessoWorkbenchControls } from "./PermessoWorkbenchControls";
 import { PermessoPaperSheet } from "./PermessoPaperSheet";
 import { AnswerSummary } from "./PermessoFieldHover";
 import { fieldAnswer } from "./permessoFieldAnswer";
-import { usePermessoRoute, pinPermessoField, usePermessoHint } from "./usePermessoRoute";
+import { usePermessoRoute, pinPermessoField, usePermessoHint, rememberDraft, rememberTrainerSearch, rememberedDraft } from "./usePermessoRoute";
+import { PERMESSO_FIELD_TOOL, PERMESSO_TOOLS, PermessoSectionNav, permessoSectionHref } from "./PermessoSections";
 import disclosure from "@/components/ui/disclosure.module.css";
 
 type Draft = Record<string, string>;
@@ -25,12 +27,15 @@ const STATES = { write: "Заполняй", empty: "Пропусти", ifExists:
 const shortId = (f: EditorField) => /^\d+$/.test(f.id) ? `Поле ${f.id}` : "Шапка бланка";
 const smooth = (): ScrollBehavior => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
-export function EditablePermesso() {
+/** embedded — внутри кабинета (PortalPermessoStep): без вкладок разделов
+    сверху, а справочники открываются в новой вкладке, чтобы задача кабинета
+    оставалась на месте. */
+export function EditablePermesso({ embedded = false }: { embedded?: boolean }) {
   const route = usePermessoRoute();
   const scenario = route.scenario, selected = route.field, selectedId = selected.id, page = selected.page;
   const onboarding = usePermessoHint();
   const [showExample, setShowExample] = useState(false);
-  const [values, setValues] = useState<Draft>({});
+  const [values, setValues] = useState<Draft>(rememberedDraft);
   const [hints, setHints] = useState(true);
   const [zoom, setZoom] = useState(1);
   const [message, setMessage] = useState("");
@@ -44,6 +49,8 @@ export function EditablePermesso() {
   const reviewSection = useRef<HTMLElement>(null);
   const transferLaunch = useRef<HTMLButtonElement>(null);
   useEffect(() => { try { localStorage.removeItem(RETIRED_TRAINER_KEY); } catch { /* Storage can be unavailable in restricted modes. */ } }, []);
+  useEffect(() => { rememberDraft(values); }, [values]);
+  useEffect(() => { rememberTrainerSearch(route.search); }, [route.search]);
   const status = editorMode(selected, scenario);
   const applicable = EDITOR_FIELDS.filter(f => editorMode(f,scenario) !== "empty");
   const selectedIndex = ALL_GUIDANCE_FIELDS.indexOf(selected);
@@ -51,6 +58,7 @@ export function EditablePermesso() {
   const problem = valueProblem(selected, currentValue);
   const expiry = expiryWarning(selected, currentValue, today);
   const quickAnswer = fieldAnswer(selected, scenario, currentValue, showExample);
+  const fieldTool = status !== "empty" ? PERMESSO_TOOLS.find(tool => tool.id === PERMESSO_FIELD_TOOL[selected.id]) : undefined;
   const entered = applicable.filter(f => !["8","9"].includes(f.id) && Boolean(values[f.id]?.replace(/[\s/]/g,""))).length;
   const nextField = applicable.find(f => ALL_GUIDANCE_FIELDS.indexOf(f) > selectedIndex);
   const previousField = [...applicable].reverse().find(f => ALL_GUIDANCE_FIELDS.indexOf(f) < selectedIndex);
@@ -147,8 +155,9 @@ export function EditablePermesso() {
       {/* Один режим вместо двух вкладок. Вкладка «Оригинал» показывала тот же
           бланк встроенным PDF со своим пошаговым гидом («1 из 9»), а черновик —
           своим («1 / 55»): два параллельных маршрута по одним и тем же полям.
-          Оригинал теперь — ссылка на официальный PDF, справочник — под
-          бланком (PermessoHelpers). */}
+          Оригинал теперь — ссылка на официальный PDF. Справочники («Коды и
+          расчёты», «Перед почтой») — отдельные разделы (PermessoSections). */}
+      {!embedded && <PermessoSectionNav current="blank" />}
       <header className={light.heading}>
         <div>
           <h1>Заполни Modulo 1</h1>
@@ -156,12 +165,10 @@ export function EditablePermesso() {
           <p className={light.prep}><span>Перед началом</span> Kit · чёрная ручка · паспорт · codice fiscale{scenario === "rinnovo" ? " · карточка ВНЖ" : ""} · marca da bollo €16</p>
         </div>
         <aside className={light.scope} aria-label="Что важно знать">
-          <p><b>Бланк остаётся главным источником.</b> Это учебный помощник, не замена инструкции Questura. Если foglio note твоего kit расходится с подсказкой, следуй бумажному kit и требованиям своей провинции.</p>
-          <nav className={light.headLinks} aria-label="Оригинал и справка">
-            <a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF</a>
-            <a href="#helpers">Коды и расчёты ↓</a>
-            <a href="#before-poste">Перед почтой ↓</a>
-          </nav>
+          {/* Оговорка свёрнута до одной строки (owner, 7 Nov: «слишком много
+              информации»): на телефоне она одна занимала полэкрана над бланком. */}
+          <details className={light.scopeNote}><summary className={disclosure.row}><b>Бланк остаётся главным источником.</b></summary><p>Это учебный помощник, не замена инструкции Questura. Если foglio note твоего kit расходится с подсказкой, следуй бумажному kit и требованиям своей провинции.</p></details>
+          <p className={light.headLinks}><a href={OFFICIAL_PDF} target="_blank" rel="noopener noreferrer">Оригинал PDF</a></p>
         </aside>
       </header>
       <PermessoWorkbenchControls scenario={scenario} page={page} entered={entered} zoom={zoom} hints={hints} showExample={showExample} transferOpen={transferOpen} onScenario={chooseScenario} onPage={choosePage} onSave={save} onRestore={restore} onClear={() => setClearConfirm(true)} onExample={() => setShowExample(!showExample)} onPersonal={personal} onHints={setHints} onZoom={() => setZoom(zoom === 1 ? (window.matchMedia("(max-width: 600px)").matches ? 2.5 : 1.6) : 1)} />
@@ -169,7 +176,7 @@ export function EditablePermesso() {
       {clearConfirm && <div className={styles.confirm} role="group" aria-label="Подтверждение очистки"><span>Удалить введённые данные и сохранённую копию?</span><button type="button" onClick={clear}>Да, стереть</button><button type="button" onClick={() => setClearConfirm(false)}>Отмена</button></div>}
       <PermessoPaperTransfer key={scenario + ":" + transferEpoch} active={transferOpen} scenario={scenario} values={values} today={today} onClose={closeTransfer} onEdit={editTransfer} />
       <div hidden={transferOpen}>
-        {onboarding.visible && <div className={z.onboarding}><span>Наведи на любую строку — скажу, писать или пропустить</span><button type="button" aria-label="Больше не показывать подсказку" onClick={onboarding.dismiss}>×</button></div>}
+        {onboarding.visible && <div className={z.onboarding}><span><span className={z.onPointer}>Наведи на</span><span className={z.onTouch}>Нажми на</span> любую строку — скажу, писать или пропустить</span><button type="button" aria-label="Больше не показывать подсказку" onClick={onboarding.dismiss}>×</button></div>}
         {page > 3 && <p className={z.scopeNote}>Эти листы остаются в kit. Здесь — пропуски для сценария без семьи, не инструкция для семейного заявления.</p>}
         <div className={`${styles.workspace} ${z.workspace}`}>
           <div className={styles.document} data-fab-yield>
@@ -181,6 +188,7 @@ export function EditablePermesso() {
             <div className={styles.inspectorTop}><span>Стр. {page} · {shortId(selected)}</span><strong data-state={status}>{STATES[status]}</strong></div>
             <h2>{selected.meta.ru}</h2><p className={styles.italian}>{selected.meta.it}</p>
             <div className={light.quick}><AnswerSummary field={selected} answer={quickAnswer} detail /></div>
+            {fieldTool && <SectionLink embedded={embedded} className={light.toolLink} href={permessoSectionHref("kody", scenario, "tool=" + fieldTool.id)} data-field-tool={fieldTool.id}>Справочник: {fieldTool.title}</SectionLink>}
             <div className={styles.fieldEditor} key={selectedId}>
               {selected.kind === "signature" ? <p className={styles.caution}>Здесь будет подпись на бумаге. Ввод имени не является подписью. Момент подписания уточни по инструкции своего kit.</p>
                 : status === "post" ? <p className={styles.caution}>Этот участок заполняется на почте. В режиме «Мои данные» ввод отключён.</p>
@@ -202,7 +210,17 @@ export function EditablePermesso() {
         </div>
         <div className={light.finishBar}><div><b>Черновик заполнен?</b><p>Переноси на бумагу по одному полю, с крупными буквами и отметками.</p></div><button type="button" ref={transferLaunch} onClick={() => setTransferOpen(true)}>Переносим на бумагу</button></div>
         <section ref={reviewSection} className={styles.reviewSection} aria-label="Проверка черновика"><button type="button" className={styles.reviewToggle} aria-expanded={review} onClick={() => setReview(!review)}>Проверить черновик <span>{review ? "−" : "+"}</span></button>{review && <div className={styles.reviewBody}><h2>Перед переносом на бумагу</h2><p>Это проверка заполненности и формата, не юридическая проверка документов или готовности заявления.</p>{issues.length ? <ul>{issues.map(f => <li key={f.id}><button type="button" onClick={() => chooseField(f,true)}><b>Стр. {f.page} · {shortId(f)} — {f.meta.ru}</b><span>{valueProblem(f,valueFor(f)) || "Пока не заполнено"}</span></button></li>)}</ul> : <p>В проверяемых полях нет пропусков или ошибок формата. Это не подтверждает правильность сведений.</p>}{!!expiryNotices.length && <ul data-review-date-warnings>{expiryNotices.map(item => <li key={item.field.id}><button type="button" onClick={() => chooseField(item.field,true)}><b>{shortId(item.field)} · проверить срок документа</b><span>{item.warning}</span></button></li>)}</ul>}<p>Отдельно сверь поля «Уточни», набор приложений и порядок подписания. Семейные и другие специальные случаи не охвачены этим студенческим сценарием.</p></div>}</section>
+        <nav className={light.nextSections} aria-label="Справочники Modulo 1">
+          <SectionLink embedded={embedded} href={permessoSectionHref("kody", scenario)}><b>Коды и расчёты</b><span>Поле 16, поле 25, провинция, страна</span></SectionLink>
+          <SectionLink embedded={embedded} href={permessoSectionHref("pochta", scenario)}><b>Перед почтой</b><span>Бумага, документы и расходы</span></SectionLink>
+        </nav>
       </div>
     </div>
   );
+}
+
+function SectionLink({ embedded, href, className, children, ...data }: { embedded: boolean; href: string; className?: string; children: ReactNode; "data-field-tool"?: string }) {
+  return embedded
+    ? <a className={className} href={href} target="_blank" rel="noopener" {...data}>{children}</a>
+    : <Link className={className} href={href} {...data}>{children}</Link>;
 }

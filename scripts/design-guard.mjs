@@ -291,10 +291,17 @@ for (const path of [
   'src/lib/usePlanDraft.ts',
   'src/components/universities/comparison-model.ts',
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
-  'src/components/guides/permesso/permessoData.ts',
   'src/components/guides/permesso/permessoTransferModel.ts',
   'package.json','package-lock.json','next.config.ts','netlify.toml',
 ]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
+// 2026-11-07 (owner: Modulo 1 «слишком много информации… разбить… на другие
+// сайты»): the code widget and the sheet calculator moved from under the form
+// to the «Коды и расчёты» page, so two pointers say where they are now.
+// Every rule, code, mode and example in permessoData.ts stays byte-exact.
+const permessoPointers = source => source
+  .replace('Выбери код в разделе «Коды и расчёты».', 'Выбери код в виджете ниже.')
+  .replace('Калькулятор в разделе «Коды и расчёты» — только ориентир.', 'Калькулятор ниже — только ориентир.');
+assert.equal(permessoPointers(readFileSync('src/components/guides/permesso/permessoData.ts','utf8')), permessoPointers(execFileSync('git',['show',`${base}:src/components/guides/permesso/permessoData.ts`],{encoding:'utf8'})), 'permessoData.ts: only the two moved-reference pointers may change');
 // The shared Modulo 1 serif stack may be extracted into exactly one token;
 // every existing global rule and palette token remains byte-for-byte unchanged.
 // The mono token is exempt as well (2026-11-04: it now points at Onest — the

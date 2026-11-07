@@ -14,6 +14,9 @@
 .onboarding { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; color:#6d6259; font-size:12px; line-height:1.4; }
 .onboarding button { width:44px; height:44px; flex:0 0 44px; border:0; background:transparent; border-radius:8px; font:inherit; font-size:22px; color:#77695d; cursor:pointer; }
 .onboarding button:hover { background:#efe9e2; }
+/* На сенсорном экране навести нельзя — та же строка говорит «Нажми». */
+.onTouch { display:none; }
+@media (hover:none) and (pointer:coarse) { .onPointer { display:none; } .onTouch { display:inline; } }
 .quickInspector { margin-top:16px; padding:16px; border:1px solid #e4d8d0; border-radius:12px; background:#fffdf9; }
 .legend { display:flex; flex-wrap:wrap; gap:8px 16px; margin:0 0 10px; color:#6e625a; font-size:11px; }
 .legend span { display:inline-flex; align-items:center; gap:5px; }
@@ -21,7 +24,7 @@
 .legend span[data-state="empty"] i { border-style:dashed; border-color:#948d85; }
 .legend span[data-state="verify"] i,.legend span[data-state="post"] i { border-color:#a78041; background:#f5ead2; }
 .legend span[data-state="ifExists"] i { border-style:dotted; }
-.scopeNote { margin:0 0 12px; border-left:2px solid #b68b66; padding:8px 12px; color:#6a5848; font-size:12px; line-height:1.5; }
+.scopeNote { margin:0 0 12px; border-radius:10px; padding:10px 14px; background:#f6efe6; color:#6a5848; font-size:12px; line-height:1.5; }
 .choiceSelect { display:grid; gap:6px; }
 .choiceSelect label { display:flex; align-items:center; gap:10px; min-height:44px; padding:8px; border:1px solid #ded7d0; border-radius:8px; font-size:14px; cursor:pointer; }
 .choiceSelect input { width:18px; height:18px; accent-color:#8b2939; }

@@ -9,8 +9,6 @@
 .embedded [data-permesso-editor] h2 { font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; }
 .embedded [data-workbench-bar] { top: var(--portal-chrome-height, 64px); background: var(--portal-surface); }
 .embedded [data-permesso-inspector] { top: calc(var(--portal-chrome-height, 64px) + 92px); }
-.embedded > div:has(> :global(#helpers)) { padding: 0; background: transparent; }
-.embedded :is(:global(#helpers), :global(#before-poste)) h2 { font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; }
 
 /* The portal has a sidebar; available content width is smaller than the
    viewport. Adapt only the surrounding controls to that available width. */
