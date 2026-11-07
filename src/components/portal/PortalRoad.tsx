@@ -63,7 +63,16 @@ const stepWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "ш
    за стеной доступа — замок; поздние этапы приглушены. Объём — кайма,
    внутренний скос и мягкая тень со смещением, без градиентов. Вся строка —
    одна ссылка на страницу шага. */
-const snake = (index: number) => Math.round(Math.sin(index * Math.PI / 3) * 100) / 100;
+/* Ровность (owner, 7 Nov: «иногда кружочки стоят криво»). Раньше смещение
+   шло одной синусоидой через весь путь, и у каждого этапа выпадала своя
+   фаза: где-то пара кружков стояла прямо, где-то уходила вправо, где-то
+   влево — на телефоне это читалось как ошибка выравнивания. Теперь каждый
+   этап — одна симметричная дуга: начинается и кончается на оси, выгибается
+   посередине, соседние этапы выгибаются в разные стороны. Два кружка стоят
+   ровно друг под другом. На телефоне ось одна для всех кружков
+   (portal-path.module.css), без изгибов. */
+const arc = (count: number, unit: number) => Array.from({ length: count }, (_, k) =>
+  count < 3 ? 0 : Math.round((unit % 2 ? -1 : 1) * Math.sin(Math.PI * k / (count - 1)) * 100) / 100);
 
 type NodeState = "done" | "current" | "todo" | "later" | "locked";
 
@@ -234,7 +243,6 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
     </div>
     {stages.length > 0 && <ol className={styles.list} aria-label="Этапы маршрута">
       {stages.map((row, index) => {
-        const phase = stages.slice(0, index).reduce((sum, item) => sum + Math.max(item.tasks.length, 2), 0);
         const locked = !row.tasks.length;
         const preview = row.id.startsWith("preview-stage-");
         const key = stageKey(row.id);
@@ -252,15 +260,15 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
             <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
           </div>
           <div className={styles.steps} aria-hidden="true" data-road-ghost>
-            <StepTrail offsets={[snake(phase), snake(phase + 1)]} states={["later", "later"]} />
-            {[0, 1].map(i => <span key={i} className={styles.step} style={{ "--x": snake(phase + i) } as CSSProperties} data-node-state="later" data-side={snake(phase + i) < 0 ? "left" : "right"}>
+            <StepTrail offsets={arc(2, index)} states={["later", "later"]} />
+            {arc(2, index).map((x, i) => <span key={i} className={styles.step} style={{ "--x": x } as CSSProperties} data-node-state="later" data-side={x < 0 ? "left" : "right"}>
               <span className={styles.node}><NodeMark state="later" /></span>
             </span>)}
           </div>
         </li>;
         const stepStates: NodeState[] = row.tasks.map(task => portalTaskDone(data, task) ? "done" : task.id === current?.id ? "current"
           : lockedTask?.(task) ? "locked" : opened && task.available !== false ? "todo" : "later");
-        const offsets = row.tasks.map((_, i) => snake(phase + i));
+        const offsets = arc(row.tasks.length, index);
         const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "закрыт до оплаты" };
         return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
           <a className={styles.unitHead} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}

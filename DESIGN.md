@@ -805,3 +805,28 @@ Owner: «по первому скрину всё хорошо, но формул
     above the sheet, and the opened menu first lifts to just under the site
     header so none of its items fall off the screen.
   - The onboarding line says «Нажми» on touch screens instead of «Наведи».
+
+## The path stands straight · 7 November 2026 (late)
+
+Owner, on the phone (screenshot of later stages): «иногда вот эти вот
+кружочки стоят криво… просто убрать неровности».
+
+- **Cause.** The offset of each circle was one sine through the whole route
+  (`sin(i·π/3)`), so every stage got whatever phase it landed on: one pair
+  straight, the next leaning right, the next left. On a phone the swing was
+  30px against 56px circles — less than half a circle, which reads as a
+  misalignment, not a curve.
+- **Each stage is one arc.** It starts and ends on the axis and bulges in the
+  middle: `sin(π·k/(n−1))`. Neighbouring stages bulge to opposite sides. A
+  stage of two circles — every preview stage before the questionnaire —
+  stands straight.
+- **Phones: one straight axis.**
+  - Every circle sits on one axis; the left edge of a circle meets the
+    start of its stage title (icon 44px + gap 12px).
+  - The trail collapses onto the axis: same dotted line, same green walked
+    segments.
+  - Labels form one column to the right.
+- Colours, sizes, marks, links and motion are unchanged.
+- `design-portal-progress-review` now asserts:
+  - on phones, one axis for every circle and its edge on the title;
+  - on wider screens, each arc starts and ends on the same axis.
