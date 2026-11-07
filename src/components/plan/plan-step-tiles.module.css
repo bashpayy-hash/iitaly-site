@@ -23,8 +23,10 @@
   position:relative; display:grid; grid-template-columns:minmax(0,1fr) 168px; align-items:center; gap:0 24px; min-width:0;
   padding:26px 28px; border-radius:28px; background:var(--tile-bg); color:var(--tile-ink);
   scroll-margin-top:112px;
-  transition:box-shadow 320ms cubic-bezier(.4,0,.2,1);
 }
+/* The hover ring lives on a pseudo-element and fades on opacity, so the tile
+   itself is never repainted while the mouse moves. */
+.tile::after { content:""; position:absolute; inset:0; border-radius:inherit; box-shadow:inset 0 0 0 1px #D9CBB6; opacity:0; transition:opacity 320ms cubic-bezier(.4,0,.2,1); pointer-events:none; }
 .tile > * { max-width:100%; min-width:0; }
 
 /* Номер шага на линии, слева от плитки. */
@@ -46,7 +48,7 @@
 /* Hover lives only on a real pointer (mobile-native, 5 Nov): touch fires a sticky hover on tap. */
 @media (hover: hover) and (pointer: fine) {
   .tile:hover .pill { background:var(--pill-bg-hover); }
-  .tile:not([data-flight-selected=true]):hover { box-shadow:inset 0 0 0 1px #D9CBB6; }
+  .tile:not([data-flight-selected=true]):hover::after { opacity:1; }
 }
 .tile:active .pill { transform:scale(.97); }
 

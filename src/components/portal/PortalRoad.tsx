@@ -171,9 +171,12 @@ function placeScenery(stages: { id: string; count: number; side: "left" | "right
 
 function Scenery({ place, reached, as: Tag = "li" }: { place: SceneryPlace; reached: boolean; as?: "li" | "span" }) {
   const { name, width, height } = place.art;
+  // Beside closed road the piece is a pre-rendered warm grey (`-grey` files,
+  // same frame), not a CSS filter: nothing is recoloured per frame.
+  const file = reached ? name : `${name}-grey`;
   return <Tag className={styles.scenery} aria-hidden="true" data-road-scenery={name} data-side={place.side} data-scenery-state={reached ? "reached" : "ahead"}
     data-scenery-shape={height > width ? "tall" : "wide"}>
-    <img src={`/illustrations/scenery/${name}-280.webp`} srcSet={`/illustrations/scenery/${name}-280.webp 280w, /illustrations/scenery/${name}-560.webp 560w`}
+    <img src={`/illustrations/scenery/${file}-280.webp`} srcSet={`/illustrations/scenery/${file}-280.webp 280w, /illustrations/scenery/${file}-560.webp 560w`}
       sizes="(max-width: 640px) 168px, 260px" width={width} height={height} alt="" loading="lazy" decoding="async" draggable={false} data-road-scenery-art />
   </Tag>;
 }

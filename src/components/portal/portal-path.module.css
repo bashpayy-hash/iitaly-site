@@ -117,7 +117,9 @@
 .scenery img { position:absolute; top:calc(var(--scene-h) / -2); width:min(260px, calc(50% - var(--node) / 2 - 56px)); height:var(--scene-h); object-fit:contain; user-select:none; -webkit-user-drag:none; }
 .scenery[data-side=left] img { right:calc(50% + var(--node) / 2 + 40px); object-position:right bottom; }
 .scenery[data-side=right] img { left:calc(50% + var(--node) / 2 + 40px); object-position:left bottom; }
-.scenery[data-scenery-state=ahead] img { filter:grayscale(1) sepia(.18) brightness(1.04); opacity:.5; }
+/* Закрытое впереди — заранее отрисованные серые версии (-grey), а не
+   фильтр на лету: фильтр на девяти картинках с анимацией прокрутки стоил
+   видеокарте по кадру на каждую. */
 @media (prefers-reduced-motion:no-preference) {
   /* Макет «подъезжает», когда дорога доходит до него при прокрутке: мягко
      поднимается на 24px и проявляется. Только прокруткой, без таймеров;

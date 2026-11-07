@@ -16,8 +16,9 @@
 .navigation :is(a,button) { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 22px; border:1px solid transparent; border-radius:999px; font-size:14px; font-weight:600; line-height:1.4; text-decoration:none; cursor:pointer; }
 .navigation .back { color:var(--story-ink); background:transparent; border-color:var(--story-border); }
 .navigation .next,.navigation a:last-child { color:#FAF9F3; background:var(--story-action); }
-.navigation :is(button,a):hover { filter:brightness(.95); }
-.navigation button:disabled { cursor:default; color:var(--story-quiet); background:transparent; border-color:var(--story-border); opacity:.55; filter:none; }
+.navigation .back:hover { background:rgba(53,43,40,.06); }
+.navigation .next:hover,.navigation a:last-child:hover { background:color-mix(in srgb, var(--story-action) 90%, #000); }
+.navigation button:disabled { cursor:default; color:var(--story-quiet); background:transparent; border-color:var(--story-border); opacity:.55; }
 .switcher :is(a,button):focus-visible,.pills :is(a,button):focus-visible { outline:2px solid var(--story-action, #352B28); outline-offset:3px; }
 @keyframes pointEnter { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 @media(max-width:700px) {
