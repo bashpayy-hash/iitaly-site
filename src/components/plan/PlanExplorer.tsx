@@ -57,10 +57,10 @@ export function PlanExplorer() {
         <div className={workspace.hero}>
           <div className={workspace.heroScene} data-plan-hero-scene aria-hidden="true">
             <img className={workspace.heroArt} src="/illustrations/scenes/plan-loggia-1920.webp"
-              srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1920.webp 1920w"
+              srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1920.webp 1920w, /illustrations/scenes/plan-loggia-2560.webp 2560w"
               sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1080} alt=""
               decoding="async" fetchPriority="high" draggable={false} data-plan-scene="loggia" />
-            <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-loggia" label="plan-loggia" widths={[960, 1920]} webmWidths={[960]} />
+            <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-loggia" label="plan-loggia" widths={[960, 1600, 2560]} webmWidths={[960]} />
             <span className={workspace.heroVeil} />
           </div>
           <div className={workspace.heroCopy} data-role="heading">

@@ -14,8 +14,16 @@ import styles from "./living-landscape.module.css";
  * Картинка остаётся в DOM и грузится первой — она и постер, и единственное,
  * что видят prefers-reduced-motion, экономия трафика (Save-Data) и браузеры
  * без автоплея. Видео подхватывается только когда плитка в зоне видимости,
- * на телефонах — 640px-версия; за кадром пауза. Пока первый кадр не пошёл,
+ * на телефонах — 960px-версия; за кадром пауза. Пока первый кадр не пошёл,
  * видео прозрачно, так что стык с картинкой не виден.
+ *
+ * Свет не прыгает (owner, 7 Nov: «освещение резко меняется просто так»):
+ * картинка — это первый кадр петли, а неподвижная часть каждого кадра взята
+ * из той же картинки, двигаются только Веспи, листва и фонари
+ * (design/illustrations/motion-2026-11-07b.json). Файлы помечены BT.709 с
+ * кривой sRGB, поэтому Chrome и Safari выводят их тем же цветом, что и WebP.
+ * Проявившись один раз, видео остаётся поверх картинки и на паузе: за кадром
+ * оно просто стоит на текущем кадре, и при возвращении нет второго перехода.
  */
 export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths }: {
   /** Общее начало путей: `${base}-<ширина>.mp4|webm`. H.264 там, где он есть
@@ -63,10 +71,11 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     return () => observer.disconnect();
   }, [reduced, base, widthKey, webmKey]);
 
-  // Пауза при включении «меньше движения»; onPause снимает проявление сам.
+  // «Меньше движения»: пауза и обратно к картинке (CSS тоже прячет видео).
   useEffect(() => { if (reduced) video.current?.pause(); }, [reduced]);
+  const shown = playing && !reduced;
 
-  return <video ref={video} className={`${className} ${styles.motion} ${playing ? styles.playing : ""}`} muted loop playsInline preload="none"
-    aria-hidden="true" tabIndex={-1} data-living-landscape={label} data-playing={playing || undefined}
-    onPlaying={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={() => setPlaying(false)} />;
+  return <video ref={video} className={`${className} ${styles.motion} ${shown ? styles.playing : ""}`} muted loop playsInline preload="none"
+    aria-hidden="true" tabIndex={-1} data-living-landscape={label} data-playing={shown || undefined}
+    onPlaying={() => setPlaying(true)} onError={() => setPlaying(false)} />;
 }

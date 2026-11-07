@@ -23,7 +23,7 @@ export function Hero() {
       <div className={styles.heroScene} data-hero-scene>
         <div className={styles.heroSceneBox} aria-hidden="true">
           <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-1024.webp" srcSet="/illustrations/landscapes/bologna-640.webp 640w, /illustrations/landscapes/bologna-1024.webp 1024w, /illustrations/landscapes/bologna-1600.webp 1600w, /illustrations/landscapes/bologna-2400.webp 2400w" sizes="100vw" width={1024} height={688} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna" />
-          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna" label="bologna" widths={[960, 1752]} webmWidths={[960]} />
+          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna" label="bologna" widths={[960, 1600, 2400]} webmWidths={[960]} />
         </div>
         <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>

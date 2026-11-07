@@ -19,7 +19,14 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
      сторону курсора (до 28px), а вещь каждой карточки наклоняется за ним и
      приподнимается, чем ближе курсор. Переменные --drift, --lean-x, --lean-y
      и --near читает CSS карточек; касания, клавиатура и prefers-reduced-motion
-     видят неподвижный ряд. */
+     видят неподвижный ряд.
+   - glide (owner, 7 Nov: «когда мышку на правую сторону переводишь, чтобы она
+     автоматически постепенно и плавно переходила на следующие»): у края ряда
+     (крайние ~18% ширины) лента сама едет в ту сторону. Скорость растёт с
+     глубиной курсора в зоне по плавной кривой, разгон и торможение — по
+     экспоненте (~0,4 с), у конца ряда лента тормозит мягко, а когда мышь
+     уходит, ряд с той же скоростью докатывается до карточки по ходу движения
+     (пружина без перелёта) и встаёт на неё — без остановки и отката назад. */
 export function GuideCarousel({ label, titles, variant = "row", autoplay = false, tone = "dark", fit = "window", drift = false, arrowLabels = ["Предыдущая тема", "Следующая тема"], children }: {
   label: string;
   titles: string[];
@@ -38,30 +45,6 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
   const trackRef = useRef<HTMLUListElement>(null);
   const driftFrame = useRef(0);
   const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
-  const onDrift = (x: number, y: number) => {
-    const track = trackRef.current;
-    if (!drift || !track || reducedMotion()) return;
-    cancelAnimationFrame(driftFrame.current);
-    driftFrame.current = requestAnimationFrame(() => {
-      const box = track.getBoundingClientRect();
-      track.style.setProperty("--drift", String(clamp(0.5 - (x - box.left) / box.width, 0.5) * 2));
-      for (const slide of track.children as HTMLCollectionOf<HTMLElement>) {
-        const rect = slide.getBoundingClientRect();
-        const dx = (x - (rect.left + rect.width / 2)) / rect.width, dy = (y - (rect.top + rect.height / 2)) / rect.height;
-        slide.style.setProperty("--lean-x", String(clamp(dx, 1.5)));
-        slide.style.setProperty("--lean-y", String(clamp(dy, 1)));
-        slide.style.setProperty("--near", String(Math.max(0, 1 - Math.abs(dx))));
-      }
-    });
-  };
-  const endDrift = () => {
-    cancelAnimationFrame(driftFrame.current);
-    const track = trackRef.current;
-    if (!track) return;
-    track.style.removeProperty("--drift");
-    for (const slide of track.children as HTMLCollectionOf<HTMLElement>) for (const name of ["--lean-x", "--lean-y", "--near"]) slide.style.removeProperty(name);
-  };
-  useEffect(() => () => cancelAnimationFrame(driftFrame.current), []);
   // Card asked for by a dot, an arrow or autoplay. Wins over the scroll
   // position until the visitor scrolls the row themselves.
   const requested = useRef<number | null>(null);
@@ -80,6 +63,101 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
     const slides = [...track.children] as HTMLElement[];
     const base = slides[0]?.offsetLeft ?? 0, max = track.scrollWidth - track.clientWidth;
     return slides.map(slide => Math.min(Math.max(slide.offsetLeft - base, 0), max));
+  }, []);
+
+  const lean = (x: number, y: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const box = track.getBoundingClientRect();
+    track.style.setProperty("--drift", String(clamp(0.5 - (x - box.left) / box.width, 0.5) * 2));
+    for (const slide of track.children as HTMLCollectionOf<HTMLElement>) {
+      const rect = slide.getBoundingClientRect();
+      const dx = (x - (rect.left + rect.width / 2)) / rect.width, dy = (y - (rect.top + rect.height / 2)) / rect.height;
+      slide.style.setProperty("--lean-x", String(clamp(dx, 1.5)));
+      slide.style.setProperty("--lean-y", String(clamp(dy, 1)));
+      slide.style.setProperty("--near", String(Math.max(0, 1 - Math.abs(dx))));
+    }
+  };
+  // Edge glide: a velocity that eases toward the speed asked by the cursor.
+  // When the cursor leaves the edge the row does not stop dead or roll back:
+  // a critically damped spring carries the current speed onto the card the
+  // row would have reached, in the direction it was going.
+  const glide = useRef({ frame: 0, last: 0, v: 0, want: 0, x: 0, y: 0, over: false, pos: -1, target: -1 });
+  const GLIDE_TOP = 520, GLIDE_EASE = 0.4, LAND = 6;
+  const glideTarget = (x: number) => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    const box = track.getBoundingClientRect(), zone = Math.min(260, Math.max(96, box.width * 0.18));
+    const depth = x > box.right - zone ? (x - (box.right - zone)) / zone : x < box.left + zone ? -((box.left + zone) - x) / zone : 0;
+    const d = Math.min(1, Math.abs(depth));
+    return Math.sign(depth) * GLIDE_TOP * d * d * (3 - 2 * d);
+  };
+  const landing = (x: number, v: number) => {
+    const pos = positions(), projected = x + v * GLIDE_EASE;
+    const ahead = Math.abs(v) > 60 ? pos.filter(p => (v > 0 ? p >= x - 0.5 : p <= x + 0.5)) : pos;
+    const list = ahead.length ? ahead : pos;
+    return list.reduce((best, p) => Math.abs(p - projected) < Math.abs(best - projected) ? p : best, list[0] ?? x);
+  };
+  const glideStep = (now: number) => {
+    const g = glide.current, track = trackRef.current;
+    if (!track) return;
+    const dt = Math.min(0.05, g.last ? (now - g.last) / 1000 : 1 / 60);
+    g.last = now;
+    const max = track.scrollWidth - track.clientWidth, x = track.scrollLeft;
+    // Sub-pixel position kept here: browsers that round scrollLeft would
+    // otherwise stall at slow speeds. A scroll by the visitor resets it.
+    if (g.pos < 0 || Math.abs(g.pos - x) > 1.5) g.pos = x;
+    const gliding = track.dataset.gliding !== undefined;
+    if (g.want) {
+      g.target = -1;
+      g.v += (g.want - g.v) * (1 - Math.exp(-dt / GLIDE_EASE));
+      const room = g.v > 0 ? max - g.pos : g.pos;
+      const v = g.v * Math.min(1, Math.max(0, room) / 180);
+      if (Math.abs(v) > 0.5 && room > 0.5) {
+        if (!gliding) { track.dataset.gliding = ""; requested.current = null; setPlaying(false); }
+        g.pos = Math.min(max, Math.max(0, g.pos + v * dt));
+        track.scrollLeft = g.pos;
+        if (g.over) lean(g.x, g.y);
+      } else if (room <= 0.5) g.v = 0;
+      if (room > 0.5) { g.frame = requestAnimationFrame(glideStep); return; }
+    } else if (gliding) {
+      if (g.target < 0) g.target = landing(g.pos, g.v);
+      g.v += (LAND * LAND * (g.target - g.pos) - 2 * LAND * g.v) * dt;
+      g.pos += g.v * dt;
+      if (Math.abs(g.target - g.pos) > 0.5 || Math.abs(g.v) > 5) {
+        track.scrollLeft = g.pos;
+        if (g.over) lean(g.x, g.y);
+        g.frame = requestAnimationFrame(glideStep);
+        return;
+      }
+      track.scrollLeft = g.target;
+      delete track.dataset.gliding;
+    }
+    g.frame = 0; g.v = 0; g.last = 0; g.pos = -1; g.target = -1;
+  };
+  const startGlide = () => { if (!glide.current.frame) { glide.current.last = 0; glide.current.frame = requestAnimationFrame(glideStep); } };
+  const onDrift = (x: number, y: number) => {
+    const track = trackRef.current;
+    if (!drift || !track || reducedMotion()) return;
+    const g = glide.current;
+    g.x = x; g.y = y; g.over = true;
+    g.want = glideTarget(x);
+    if (g.want || trackRef.current?.dataset.gliding !== undefined) startGlide();
+    cancelAnimationFrame(driftFrame.current);
+    driftFrame.current = requestAnimationFrame(() => lean(x, y));
+  };
+  const endDrift = () => {
+    cancelAnimationFrame(driftFrame.current);
+    glide.current.want = 0; glide.current.over = false;
+    if (trackRef.current?.dataset.gliding !== undefined) startGlide();
+    const track = trackRef.current;
+    if (!track) return;
+    track.style.removeProperty("--drift");
+    for (const slide of track.children as HTMLCollectionOf<HTMLElement>) for (const name of ["--lean-x", "--lean-y", "--near"]) slide.style.removeProperty(name);
+  };
+  useEffect(() => {
+    const g = glide.current;
+    return () => { cancelAnimationFrame(driftFrame.current); cancelAnimationFrame(g.frame); };
   }, []);
 
   const sync = useCallback(() => {
@@ -147,7 +225,13 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
     if (index >= 0) goTo(index);
   };
   // The visitor took the row: their scroll position decides, autoplay stops.
-  const takeOver = () => { requested.current = null; setPlaying(false); };
+  const takeOver = () => {
+    requested.current = null; setPlaying(false);
+    // A drag, a swipe or the wheel beats the glide; snapping comes back.
+    const g = glide.current;
+    cancelAnimationFrame(g.frame); g.frame = 0; g.v = 0; g.want = 0; g.last = 0; g.pos = -1; g.target = -1;
+    if (trackRef.current) delete trackRef.current.dataset.gliding;
+  };
   const advance = () => {
     if (active >= count - 1) { setPlaying(false); setEnded(true); }
     else goTo(active + 1);
