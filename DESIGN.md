@@ -869,3 +869,62 @@ Owner, on the phone: «я хочу, чтобы это был общий путь
   - one segment between every pair of neighbouring stops and no dividers;
   - on phones, one axis and one label column;
   - on desktop, stations on one axis and arcs that start and end on it.
+
+## Italy along the road · 7 November 2026 (night)
+
+Owner, on the cabinet path: «можно добавить какие-то дизайн-решения…
+иллюстрации… Веспи, но не везде, не на каждом шагу… не прям левитирующие
+иконки… итальянские места, достопримечательности… чтобы это было
+пространство… через 2–3».
+
+- **A world, not icons.** The road now runs through a small handmade Italy.
+  Each piece is a tabletop miniature from the same toy world as Vespi
+  (matte clay, felt trees, resin water):
+  - Colosseum;
+  - Florence Cathedral;
+  - the Rialto Bridge with a gondola;
+  - the Leaning Tower;
+  - the two towers of Bologna;
+  - a Tuscan farmhouse with a cypress lane.
+
+  Every third piece is Vespi at work instead of a place: reading a map by
+  the scooter, tossing a coin into the Trevi Fountain, then an espresso
+  with the suitcase on arrival. Manifest:
+  design/illustrations/scenery-2026-11-07.json.
+- **Grounded.**
+  - Every piece stands on its own patch of ground with a contact shadow.
+    There is no pedestal or floating island; an Amalfi cliff rendered as an
+    island was rejected for that reason.
+  - On the page, all pieces sit on one bottom line (`object-position: …
+    bottom`) instead of hovering at random heights.
+- **Where.**
+  - Between two steps of one stage, on the side without labels.
+  - At most every third stop, counting stations and step circles.
+  - A stage's labels now all stand outside its curve, ends included, so the
+    other side is free.
+  - Desktop:
+    - the piece sits close to the axis, at most 260×190px;
+    - it adds no height, so steps keep their 96px rhythm.
+  - Phones:
+    - each piece gets its own 136px band in the label column;
+    - the road passes it on the same straight axis.
+- **Colour follows the road.**
+  - Beside walked or open road the piece is in colour.
+  - Beside closed road it is grey, like the road itself
+    (`grayscale + sepia`, opacity .5).
+- **Motion.** Scrolling to a piece makes it rise 24px and fade in; it is
+  driven by `animation-timeline: view()`, with no timers. The reveal ends
+  once the piece is fully in view (`entry 5% → entry 100%`), so even the
+  last piece at the very end of the page arrives whole. Under reduced
+  motion, or where scroll timelines are not supported, it simply stands.
+- **Decorative only.**
+  - `aria-hidden`, empty alt text, no pointer events.
+  - Never inside a step circle or a stage link.
+- **Reviews.**
+  - `design-portal-progress-review` asserts:
+    - scenery only from `/illustrations/scenery/`;
+    - at least three stops between pieces;
+    - no piece over a title, label, station or circle;
+    - every piece inside the road.
+  - `design-vespi-system-review` allows Vespi on the road only as
+    decorative scenery.

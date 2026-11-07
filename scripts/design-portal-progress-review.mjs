@@ -104,12 +104,20 @@ async function railContract(page,data,compact){
   assert.equal(await progress.getAttribute('aria-valuetext'),`${done} из ${tasks.length} шагов`);
   // Owner, 5 Nov: each row of «Весь путь» carries a small stage object; never a mascot.
   // Owner, 6 Nov: the «Готово» seal is a small object icon too ([data-warm-icon]).
-  assert.equal(await road(page).locator('img:not([data-stage-object]):not([data-warm-icon])').count(),0,'Progress is data, not a repeated mascot');
+  // Owner, 7 Nov (later): scenery beside the road — Italian landmarks and, now and then, Vespi at work
+  // («не на каждом шагу, а через 2–3»). It is the only other picture on the road and stays decorative.
+  assert.equal(await road(page).locator('img:not([data-stage-object]):not([data-warm-icon]):not([data-road-scenery-art])').count(),0,'Progress is data, not a repeated mascot');
   // Owner, 7 Nov: an object in every step circle is «перебор эмодзи» — circles carry only a state mark.
-  assert.equal(await road(page).locator('[data-road-steps] img').count(),0,'Step circles hold no pictures');
+  assert.equal(await road(page).locator('[data-road-node] img, [data-road-stage] [data-road-scenery-art]').count(),0,'Step circles and stage links hold no scenery');
+  for(const scene of await road(page).locator('[data-road-scenery]').all()){
+    assert.equal(await scene.getAttribute('aria-hidden'),'true','Scenery is decorative');
+    assert.equal(await scene.locator('a,button,[tabindex]').count(),0,'Scenery is never a control');
+    assert.match(await scene.locator('img').getAttribute('src'),/^\/illustrations\/scenery\/[a-z-]+-280\.webp$/,'Scenery comes from the landmark set');
+    assert.equal(await scene.locator('img').getAttribute('alt'),'','Scenery has empty alt text');
+  }
   // Owner, 6 Nov (night): conceptual stage icons in the cabinet, physical objects in the guides.
   for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+-(128|256)\.webp$/,'Stage rows use the conceptual icon set');
-  assert.equal(await road(page).locator('img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
+  assert.equal(await road(page).locator('img:not([data-road-scenery-art])').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
     const stageDone=stage.tasks.filter(complete).length;
@@ -137,11 +145,23 @@ async function railContract(page,data,compact){
       segments:wrap.querySelectorAll('[data-road-line] path').length,
       titles:[...wrap.querySelectorAll('li strong')].map(el=>el.getBoundingClientRect().left),
       labels:[...wrap.querySelectorAll('[data-road-steps] > [data-node-state] > a > span:nth-child(2)')].map(el=>el.getBoundingClientRect().left),
-      dividers:[...wrap.querySelectorAll(':scope > ol > li')].filter(li=>parseFloat(getComputedStyle(li).borderTopWidth)>0).length};
+      dividers:[...wrap.querySelectorAll(':scope > ol > li')].filter(li=>parseFloat(getComputedStyle(li).borderTopWidth)>0).length,
+      // Stops and scenery in document order: how many stops stand between two pieces of scenery.
+      order:[...wrap.querySelectorAll('[data-road-point],[data-road-scenery]')].map(el=>el.hasAttribute('data-road-scenery')?'S':'P').join(''),
+      scenery:[...wrap.querySelectorAll('[data-road-scenery] img')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,ahead:el.parentElement.dataset.sceneryState==='ahead'};}),
+      text:[...wrap.querySelectorAll('li strong,.text > span,[data-road-steps] > [data-node-state] > a > span:nth-child(2),[data-road-point]')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,what:el.textContent.trim().slice(0,30)||el.dataset.roadPoint};}),
+      wrapRight:wrap.getBoundingClientRect().right,wrapLeft:wrap.getBoundingClientRect().left};
   });
   if(route){
     assert.equal(route.segments,route.points.length-1,'One continuous road: a segment between every pair of stops');
     assert.equal(route.dividers,0,'No dividers break the road between stages');
+    // Scenery: never closer than every third stop, never over a title, label or circle, never off the tile.
+    const gaps=route.order.split('S').slice(1,-1).map(run=>run.length);
+    for(const gap of gaps)assert(gap>=3,`Scenery stands at most every third stop (${route.order})`);
+    for(const s of route.scenery){
+      assert(s.left>=route.wrapLeft-0.5&&s.right<=route.wrapRight+0.5,'Scenery stays inside the road');
+      for(const t of route.text)assert(s.right<=t.left+0.5||s.left>=t.right-0.5||s.bottom<=t.top+0.5||s.top>=t.bottom-0.5,`Scenery never covers «${t.what}»`);
+    }
     const stations=route.points.filter(p=>p.state.startsWith('station-'));
     if(await page.evaluate(()=>innerWidth<=640)){
       for(const p of route.points)assert(Math.abs(p.x-route.points[0].x)<0.6,`Phone stops share one axis (${p.x} vs ${route.points[0].x})`);

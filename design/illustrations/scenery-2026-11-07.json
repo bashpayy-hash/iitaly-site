@@ -1,0 +1,123 @@
+{
+ "date": "2026-11-07",
+ "request": "Owner, 7 Nov (late): «можно добавить дизайн-решения, иллюстрации… Веспи, но не везде, не на каждом шагу… не прям левитирующие иконки… итальянские места, достопримечательности… чтобы это было пространство… не на каждом шагу, а через 2–3».",
+ "use": "Scenery beside the cabinet road (PortalRoad, «Весь путь»): between two steps of one stage, on the side without labels, at most every third stop; grey where the road is still closed.",
+ "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 1k, 4:3, transparent background",
+ "references": "Vespi pieces pass the three identity references as image_references: ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5, 0f6d7ac4-4e85-4761-9765-753f578eec1e. Landmarks use no reference.",
+ "landmarkTemplate": "A handmade miniature diorama of [subject], like a lovingly crafted tabletop model for a stop-motion film: [materials: matte clay with gentle hand-sculpted imperfections, felt and wool trees, resin water]. It stands on a low irregular patch of real ground, [ground], whose edges fade softly to nothing, so it reads as a place beside a road rather than an icon: no pedestal, no base plate, no floating island, no cut-out slab. Gentle contact shadow. Soft warm late-morning daylight from the upper left, three-quarter view from slightly above, centred with a little air around it. Warm palette of cream, sand, terracotta red, olive and sage green. Isolated on a fully transparent background with clean edges, no glow, no halo, no sky, no backdrop. No people, no figures, no text, letters, signs, numbers, logos or flags.",
+ "vespiTemplate": "The exact same handmade toy character as in the reference images (Vespi): almost smooth cream cotton body with fine fibers and a few loose seam threads, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, [face], olive-green felt cape collar with one red button. [scene, on a low irregular patch of ground whose edges fade softly to nothing: no pedestal, no base plate, no floating island] Gentle contact shadows. Soft warm daylight from the upper left, three-quarter view from slightly above, like a premium stop-motion set. Isolated on a fully transparent background with clean edges, no glow, no halo, no sky, no backdrop. No text, letters, numbers, logos or flags, no other characters.",
+ "processing": "Cropped to the alpha bounding box (alpha > 4%) plus 10px, exported as WebP q86 with alpha at 280 and 560 px wide (public/illustrations/scenery/); 1168x880 masters as WebP q92 in design/illustrations/source/scenery/.",
+ "rejected": [
+  {
+   "name": "amalfi",
+   "job": "ea1ccf19-9ddc-4949-8595-2013c0fd80b6",
+   "why": "A cliff island in the sea reads as a floating island («не левитирующие»)."
+  }
+ ],
+ "items": [
+  {
+   "name": "vespi-map",
+   "job": "ee72350f-7627-4ed2-98ea-eb9bf1aef589",
+   "vespi": true,
+   "subject": "Vespi by a parked red scooter and a cypress, unfolding a blank paper map before setting off",
+   "files": [
+    "public/illustrations/scenery/vespi-map-280.webp",
+    "public/illustrations/scenery/vespi-map-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/vespi-map.webp"
+  },
+  {
+   "name": "colosseum",
+   "job": "bcfc365d-ca78-4159-84d4-88e3910034ec",
+   "vespi": false,
+   "subject": "the Colosseum with two felt umbrella pines on dry grass and pale paving",
+   "files": [
+    "public/illustrations/scenery/colosseum-280.webp",
+    "public/illustrations/scenery/colosseum-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/colosseum.webp"
+  },
+  {
+   "name": "duomo",
+   "job": "ebf6587e-2c26-4e51-a2a2-1a2ae7dd97a2",
+   "vespi": false,
+   "subject": "Florence Cathedral: Brunelleschi's dome and Giotto's bell tower on a cobblestone piazza",
+   "files": [
+    "public/illustrations/scenery/duomo-280.webp",
+    "public/illustrations/scenery/duomo-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/duomo.webp"
+  },
+  {
+   "name": "vespi-trevi",
+   "job": "a1be3f42-daf3-4ba3-b8bd-985ef4af2f2c",
+   "vespi": true,
+   "subject": "Vespi tossing a gold coin into a miniature Trevi Fountain",
+   "files": [
+    "public/illustrations/scenery/vespi-trevi-280.webp",
+    "public/illustrations/scenery/vespi-trevi-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/vespi-trevi.webp"
+  },
+  {
+   "name": "venice",
+   "job": "991f4464-3582-40b2-803b-a8fdceba49a9",
+   "vespi": false,
+   "subject": "the Rialto Bridge over a short canal with a moored gondola and two pastel houses",
+   "files": [
+    "public/illustrations/scenery/venice-280.webp",
+    "public/illustrations/scenery/venice-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/venice.webp"
+  },
+  {
+   "name": "pisa",
+   "job": "fc691e54-1a21-4b77-be09-b49c3b7cced1",
+   "vespi": false,
+   "subject": "the Leaning Tower with a corner of the cathedral on a felt lawn",
+   "files": [
+    "public/illustrations/scenery/pisa-280.webp",
+    "public/illustrations/scenery/pisa-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/pisa.webp"
+  },
+  {
+   "name": "vespi-espresso",
+   "job": "07f6238c-c660-4c8e-b4e4-41936f17b17b",
+   "vespi": true,
+   "subject": "Vespi just arrived: espresso at a café table, a tan suitcase and a potted lemon tree",
+   "files": [
+    "public/illustrations/scenery/vespi-espresso-280.webp",
+    "public/illustrations/scenery/vespi-espresso-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/vespi-espresso.webp"
+  },
+  {
+   "name": "bologna",
+   "job": "0449594f-cf39-4d64-9803-49904aaa9e71",
+   "vespi": false,
+   "subject": "the two towers of Bologna over a short street of porticoes",
+   "files": [
+    "public/illustrations/scenery/bologna-280.webp",
+    "public/illustrations/scenery/bologna-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/bologna.webp"
+  },
+  {
+   "name": "tuscany",
+   "job": "dc901671-e2ca-432c-9bd5-72ac3601dd72",
+   "vespi": false,
+   "subject": "a stone farmhouse on a rounded hill with a cypress lane, olives and a wool wheat field",
+   "files": [
+    "public/illustrations/scenery/tuscany-280.webp",
+    "public/illustrations/scenery/tuscany-560.webp"
+   ],
+   "master": "design/illustrations/source/scenery/tuscany.webp"
+  }
+ ],
+ "rules": [
+  "No people, text, signs, flags or logos; Vespi is the only character.",
+  "Every piece stands on its own patch of ground with a contact shadow; nothing floats.",
+  "Warm palette only; water is the one cool note."
+ ]
+}
