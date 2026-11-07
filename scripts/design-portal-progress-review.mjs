@@ -105,6 +105,8 @@ async function railContract(page,data,compact){
   // Owner, 5 Nov: each row of «Весь путь» carries a small stage object; never a mascot.
   // Owner, 6 Nov: the «Готово» seal is a small object icon too ([data-warm-icon]).
   assert.equal(await road(page).locator('img:not([data-stage-object]):not([data-warm-icon])').count(),0,'Progress is data, not a repeated mascot');
+  // Owner, 7 Nov: an object in every step circle is «перебор эмодзи» — circles carry only a state mark.
+  assert.equal(await road(page).locator('[data-road-steps] img').count(),0,'Step circles hold no pictures');
   // Owner, 6 Nov (night): conceptual stage icons in the cabinet, physical objects in the guides.
   for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+-(128|256)\.webp$/,'Stage rows use the conceptual icon set');
   assert.equal(await road(page).locator('img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
@@ -116,6 +118,13 @@ async function railContract(page,data,compact){
     assert.equal(await link.getAttribute('data-road-stage-state'),openStages.includes(stage)&&stageDone===stage.tasks.length?'done':await link.getAttribute('aria-current')==='step'?'current':'future');
     assert.equal(await link.evaluate(n=>n.tagName),'A');if(await link.isVisible())assert(await link.evaluate(n=>n.getBoundingClientRect().height>=44),'Touchable stage link');assert.match(await link.getAttribute('href'),/^\/portal\?stage=/);
   }
+  // Owner, 7 Nov: «как прогресс в Duolingo» — every stage carries its steps as
+  // circles on a path, in route order; done circles match saved progress.
+  for(const stage of data.roadmap.filter(row=>row.tasks.length)){
+    assert.deepEqual(await road(page).locator(`[data-road-steps="${stage.id}"] [data-road-node]`).evaluateAll(nodes=>nodes.map(n=>n.getAttribute('data-road-node'))),stage.tasks.map(task=>task.id),'One circle per step, in route order');
+    for(const task of stage.tasks)if(complete(task))assert.equal(await road(page).locator(`[data-road-node="${task.id}"]`).evaluate(n=>n.closest('[data-node-state]').getAttribute('data-node-state')),'done','A saved step is a done circle');
+  }
+  assert(await road(page).locator('[data-road-node][aria-current=true]').count()<=1,'At most one current circle');
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}
   await noOverflow(page);await oneFace(page,'Route');
 }
@@ -169,8 +178,12 @@ try{
       // (usePortalPageFocus). Let that land first, or on a slow runner it can
       // arrive after the focus below and Tab would start from the heading.
       await page.waitForFunction(()=>document.activeElement?.id==='portal-overview-heading',null,{timeout:5000});
-      await road(page).locator('[aria-current=step]').focus();
-      // Owner, 5 Nov: stage rows are one list; Tab goes straight to the next stage.
+      const currentStage=road(page).locator('[data-road-stage][aria-current=step]');
+      await currentStage.focus();
+      // Owner, 7 Nov (Duolingo path): a stage heading is followed by its own step
+      // circles in route order, then the next stage heading. Native Tab order.
+      const stageId=await currentStage.getAttribute('data-road-stage'),stageTasks=data.roadmap.find(row=>row.id===stageId).tasks.map(task=>task.id);
+      for(const id of stageTasks){await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-road-node')),id,'Step circles follow their stage in route order');}
       await page.keyboard.press('Tab');
       assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-road-stage')),'documents','Stage links follow native keyboard order');
       await page.keyboard.press('Enter');
