@@ -52,7 +52,7 @@
 .trail { position:absolute; top:0; left:calc(var(--center) - var(--amp)); width:calc(var(--amp) * 2); height:calc(var(--rows, 1) * var(--row)); overflow:visible; pointer-events:none; }
 .trail path { fill:none; stroke:#D6C8B2; stroke-width:5px; stroke-linecap:round; stroke-dasharray:.5 12; }
 .trail path[data-walked] { stroke:#3A8560; stroke-width:6px; stroke-dasharray:none; }
-.step { position:relative; height:var(--row); }
+.step { position:relative; display:block; height:var(--row); }
 .step > a { position:absolute; inset:0; display:block; color:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
 .step > a:focus-visible { outline:none; }
 .node { --size:var(--node); --rim:#E1D4C1; position:absolute; top:50%; left:calc(var(--center) + var(--x, 0) * var(--amp)); display:grid; place-items:center; width:var(--size); height:var(--size); margin:calc(var(--size) / -2) 0 0 calc(var(--size) / -2);

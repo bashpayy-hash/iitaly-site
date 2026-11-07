@@ -18,7 +18,14 @@
 .edit { width:100%; min-height:44px; margin-top:14px; border:1px solid #8b2939; border-radius:8px; padding:9px 12px; background:#8b2939; color:#fffdf9; font:inherit; font-size:14px; cursor:pointer; }
 .preview button:focus-visible { outline:2px solid #8b2939; outline-offset:2px; }
 .close:hover { background:#f2ebe5; }
-.preview[data-touch="true"] { border-radius:16px; padding:18px; }
+/* Телефон: лист во всю ширину у края экрана (PermessoFieldHover), только
+   статус, ответ, строка и «Не пиши» — около 200px вместо половины экрана. */
+.preview[data-touch="true"] { border-radius:18px; padding:14px 16px 16px; box-shadow:0 12px 36px #392d2326,0 1px 3px #392d2314; }
+.preview[data-touch="true"] .close { right:4px; top:4px; }
+.preview[data-touch="true"] .answer { margin-top:8px; font-size:20px; white-space:normal; overflow-wrap:anywhere; }
+.preview[data-touch="true"] .hint { font-size:14px; line-height:1.45; }
+.preview[data-touch="true"] .trap { font-size:13px; }
+.preview[data-touch="true"] .edit { margin-top:12px; }
 @media (forced-colors:active) { .preview,.status,.edit { border:1px solid CanvasText; } }
 /* Global reduced-motion gives all elements a .15s transition. This reading layer
    must not interpolate layout or inherited visibility while it measures the anchor. */

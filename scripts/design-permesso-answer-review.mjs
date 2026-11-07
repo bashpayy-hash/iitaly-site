@@ -57,6 +57,11 @@ try{
   }else{
    await zone('32').scrollIntoViewIfNeeded();const before=await p.evaluate(()=>scrollY);await zone('32').tap();await help('32').waitFor({state:'visible'});
    assert.equal(query(),'32');assert.equal(await help('32').getAttribute('role'),'dialog');assert.equal(await p.evaluate(()=>scrollY),before,'Tap does not move the paper');assert((await zone('32').boundingBox()).height>=44);await noOverlap('32');
+   // 2026-11-07 (owner: «всё друг на друга наслаивается»): a compact sheet at the screen edge, never over the site header.
+   const sheet32=await help('32').boundingBox(),headerBottom=await p.evaluate(()=>document.querySelector('[data-marketing-surface] > header')?.getBoundingClientRect().bottom||0);
+   assert(sheet32.y>=headerBottom-1,'Touch help stays below the sticky header');assert(sheet32.height<=300,`Touch help is compact (${Math.round(sheet32.height)}px)`);
+   assert.doesNotMatch(await help('32').innerText(),/Откуда:/,'Source line lives in the field panel, not the touch sheet');
+   assert.notEqual(await p.evaluate(()=>getComputedStyle(document.querySelector('[data-workbench-bar]')).position),'sticky','Phone workbar does not stick over the paper');
    assert.equal(await editor.locator('[data-editor-field="32"] input').inputValue(),'','Tap does not invent a personal code');
    if(width===390)await p.screenshot({path:resolve(out,'answer-tap-390.png'),animations:'disabled'});
    await help('32').getByRole('button',{name:'Закрыть подсказку'}).tap();const b=await zone('34').boundingBox(),old=p.url();

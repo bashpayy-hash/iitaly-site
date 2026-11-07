@@ -1,7 +1,8 @@
 /* Scoped to the existing editor. The official paper, site header and tokens are untouched. */
 .light { padding-top:24px; }
 /* Шапка в две колонки: слева задача и что подготовить, справа — оговорка
-   и ссылки на оригинал PDF и справочник под бланком. */
+   и ссылка на оригинал PDF. Справочники — отдельные разделы над шапкой
+   (PermessoSections: Бланк · Коды и расчёты · Перед почтой). */
 .heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,400px); gap:14px 48px; align-items:end; margin:0 auto 22px; }
 .heading h1 { margin:0; font:600 32px/1.15 var(--font-apple-display); letter-spacing:-.025em; color:#242321; }
 .heading p { margin:8px 0 0; color:#66635d; font-size:14px; line-height:1.5; }
@@ -10,6 +11,8 @@
 .scope { padding-left:20px; border-left:1px solid #ddd9d1; }
 .heading .scope p { margin:0; color:#66635d; font-size:12px; line-height:1.55; }
 .scope b { color:#242321; font-weight:500; }
+.scopeNote > summary { min-height:44px; font-size:13px; }
+.heading .scopeNote p { margin:2px 0 6px; }
 .headLinks { display:flex; flex-wrap:wrap; gap:0 18px; margin-top:4px; }
 .headLinks a { display:inline-flex; align-items:center; min-height:44px; color:#8b2939; font-size:13px; text-decoration:none; }
 .headLinks a:hover { text-decoration:underline; text-underline-offset:3px; }
@@ -59,6 +62,16 @@
 .light .choices label { border:0; border-radius:0; padding:10px 2px; min-height:46px; }
 .light .choices label + label { border-top:1px solid #e9e4dd; }
 .light .choices label:has(input:checked) { color:#7c2735; }
+/* Поле, которому нужен справочник (16, 19, 25, провинции, страны), ведёт
+   прямо в нужный инструмент раздела «Коды и расчёты». */
+.toolLink { display:inline-flex; align-items:center; min-height:44px; margin-top:4px; color:#8b2939; font-size:13px; text-decoration:underline; text-decoration-color:#8b293966; text-underline-offset:3px; }
+.toolLink:hover { text-decoration-color:currentColor; }
+.nextSections { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:32px; }
+.nextSections a { display:grid; gap:4px; padding:18px 20px; border:1px solid #e4ddd3; border-radius:16px; background:#fffdf9; color:#242321; text-decoration:none; transition:border-color 160ms cubic-bezier(.4,0,.2,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
+.nextSections b { font-size:16px; font-weight:550; }
+.nextSections span { color:#66635d; font-size:13px; line-height:1.45; }
+@media (hover:hover) and (pointer:fine) { .nextSections a:hover { border-color:#cfc7bd; background:#fff; } }
+@media (prefers-reduced-motion:reduce) { .nextSections a { transition:none; } }
 .finishBar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-top:24px; border-top:1px solid #ddd9d1; padding:22px 0 0; }
 .finishBar b { display:block; font-size:15px; font-weight:500; }
 .finishBar p { margin:5px 0 0; max-width:560px; color:#6d6962; font-size:13px; line-height:1.5; }
@@ -73,4 +86,4 @@
 /* The source form is the only printed grid. No CSS reflow of its cell geometry. */
 @media (max-width:1100px) { .workbar { gap:12px; } .light .pages button { padding-inline:8px; } .light .scenarios button { padding-inline:10px; } }
 @media (max-width:900px) { .heading { grid-template-columns:1fr; align-items:start; } .scope { padding:0; border-left:0; } .workbar { grid-template-columns:1fr auto; gap:6px 12px; } .pages { grid-row:2; grid-column:1/-1; justify-content:flex-start; } .tools { grid-row:1; grid-column:2; } .scenarios { justify-self:start; } .light .inspector { position:static; } .extraPage { margin-left:auto; } }
-@media (max-width:600px) { .heading { margin-bottom:16px; } .headLinks { gap:0 14px; } .heading h1 { font-size:28px; } .heading p { font-size:13px; } .workbar { top:60px; padding-block:6px; gap:3px 8px; } .light .scenarios button { font-size:12px; padding:6px 9px; min-height:38px; } .tools > summary { padding:7px 9px; font-size:12px; } .light .pages button { flex:1; justify-content:center; padding:6px; font-size:12px; min-height:44px; } .extraPage { font-size:11px; } .toolPanel { padding:16px; max-height:calc(100dvh - 138px); } .contextLine { font-size:11px; padding-block:7px; } .light .inspector { padding:18px; } .finishBar { align-items:stretch; flex-direction:column; gap:12px; } .exampleNotice { padding:8px 10px; font-size:12px; } }
+@media (max-width:600px) { .heading { margin-bottom:16px; } .headLinks { gap:0 14px; } .heading h1 { font-size:28px; } .heading p { font-size:13px; } .workbar { position:relative; top:auto; padding-block:6px; gap:3px 8px; } .nextSections { grid-template-columns:1fr; } .light .scenarios button { font-size:12px; padding:6px 9px; min-height:38px; } .tools > summary { padding:7px 9px; font-size:12px; } .light .pages button { flex:1; justify-content:center; padding:6px; font-size:12px; min-height:44px; } .extraPage { font-size:11px; } .tools { scroll-margin-top:calc(var(--portal-chrome-height, 61px) + 8px); } .toolPanel { padding:16px; max-height:calc(100dvh - 138px); } .contextLine { font-size:11px; padding-block:7px; } .light .inspector { padding:18px; } .finishBar { align-items:stretch; flex-direction:column; gap:12px; } .exampleNotice { padding:8px 10px; font-size:12px; } }

@@ -43,8 +43,12 @@ try{
   assert.equal(await page.getByRole('tab').count(),0,'No parallel original/editable modes');
   assert.equal(await page.locator('object[type="application/pdf"]').count(),0,'No embedded PDF with its own step guide');
   assert.equal(await page.getByRole('link',{name:'Оригинал PDF',exact:true}).getAttribute('href'),paper.OFFICIAL_PDF);
-  for(const id of ['helpers','before-poste']) assert.equal(await page.locator(`a[href="#${id}"]`).count(),1,`Header links to #${id}`);
-  assert.equal(await page.locator('#helpers h2').innerText(),'Коды и расчёты');assert.equal(await page.locator('#before-poste h2').innerText(),'Перед почтой');
+  // 2026-11-07: the references are their own sections, not a long tail under the form.
+  const sections=page.getByRole('navigation',{name:'Разделы Modulo 1'});
+  assert.deepEqual(await sections.getByRole('link').allInnerTexts(),['Бланк','Коды и расчёты','Перед почтой']);
+  assert.equal(await sections.locator('[aria-current="page"]').innerText(),'Бланк');
+  assert.equal(await page.locator('#helpers, #before-poste').count(),0,'No reference sheet under the form');
+  assert.equal(await page.locator('a[href^="#"]').filter({hasText:/↓/}).count(),0,'No arrow anchor links');
   const editor=page.locator('[data-permesso-editor]');
   const loaded=()=>editor.locator('[data-sheet-page][data-ready="true"]').waitFor();
   await loaded();await page.evaluate(()=>document.fonts.ready);
@@ -65,8 +69,23 @@ try{
   assert.equal(await editor.locator('[data-panel-input]').inputValue(),'TEST STUDENT');
   await part('3',1).fill('SECOND ROW');
   assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
-  await page.locator('a[href="#helpers"]').click();await page.locator('#helpers').getByRole('combobox',{name:'Код типа обучения для поля 16'}).selectOption('31');
-  assert.equal(await part('3',1).inputValue(),'SECOND ROW','Draft survives using the reference below the form');
+  await sections.getByRole('link',{name:'Коды и расчёты',exact:true}).click();await page.waitForURL(/\/guides\/permesso-modulo-1\/kody/);
+  const codes=page.locator('[data-permesso-reference="kody"]');
+  assert.equal(await codes.getByRole('tab',{selected:true}).innerText(),'Код в поле 16');
+  assert.equal(await codes.locator('[role="tabpanel"]:visible').count(),1,'One tool at a time');
+  await codes.getByRole('combobox',{name:'Код типа обучения для поля 16'}).selectOption('31');
+  await codes.getByRole('tab',{name:'Поле 25 · сколько листов'}).click();
+  assert.equal(new URL(page.url()).searchParams.get('tool'),'25');assert.match(await codes.locator('[role="tabpanel"]:visible h2').innerText(),/Поле 25/);
+  await codes.getByRole('tab',{name:'Поле 25 · сколько листов'}).press('ArrowRight');
+  assert.equal(await codes.getByRole('tab',{selected:true}).innerText(),'Сигла провинции','Arrow keys move between tools');
+  await codes.getByRole('tab',{name:'Код в поле 16'}).click();
+  assert.equal(await codes.getByRole('combobox',{name:'Код типа обучения для поля 16'}).inputValue(),'31','Tool state survives switching tools');
+  await noOverflow();
+  if([1440,390].includes(width)) await shot(`codes-${width}.png`);
+  assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null,'Moving between sections writes nothing to storage');
+  await page.getByRole('navigation',{name:'Разделы Modulo 1'}).getByRole('link',{name:'Бланк',exact:true}).click();await page.waitForURL(/\/guides\/permesso-modulo-1(\?|$)/);await loaded();
+  assert.equal(await part('3',1).inputValue(),'SECOND ROW','Draft survives a visit to the references (tab memory)');
+  assert.equal((await part('3').inputValue()).trimEnd(),'TEST STUDENT');
   assert.deepEqual(await editor.locator('[data-editor-field="16"] input').evaluateAll(nodes=>nodes.filter(n=>n.value.trim()).length),0,'A code picked in the reference is never copied into the draft');
   const geometry=await editor.locator('[data-editor-field="3"][data-part="0"]').evaluate(el=>{const s=el.closest('[data-sheet-page]').getBoundingClientRect(),r=el.getBoundingClientRect();return {x:(r.x-s.x)/s.width*595,y:(r.y-s.y)/s.height*842,ratio:s.height/s.width};});
   assert(Math.abs(geometry.x-45.23)<.08 && Math.abs(geometry.y-220.14)<.08,'Inputs must be registered to original PDF points');
@@ -122,7 +141,14 @@ try{
   await editor.getByRole('button',{name:'Да, стереть',exact:true}).click();
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),null);
   await noOverflow();assert.deepEqual(errors,[],'No runtime/hydration errors');assert.deepEqual(unsafe,[],'Editor must not submit private data or hit production APIs');
-  results.push({width,passed:true,checks:'single mode; official PDF link; local verified pages; reference below the form; direct input; exact coordinates; spaces/multiline; mode retention; explicit pin; skipped-field and cross-page guidance; date format; radio/checkbox exclusivity; explicit save/restore/clear; URL reload; overflow/zoom; no real API calls'});
+  await page.goto('http://127.0.0.1:4194/guides/permesso-modulo-1/pochta?scenario=rinnovo',{waitUntil:'networkidle'});
+  const poste=page.locator('[data-permesso-reference="pochta"]');
+  assert.deepEqual(await poste.locator('h2').allInnerTexts(),['На бумаге','Для продления','Деньги']);
+  await poste.getByRole('button',{name:/Первое ВНЖ Rilascio/}).click();assert.equal(await poste.locator('h2').nth(1).innerText(),'Для первого ВНЖ');
+  assert.equal(new URL(page.url()).searchParams.get('scenario'),'rilascio');
+  assert.match(await poste.getByRole('link',{name:'Коды и расчёты',exact:true}).getAttribute('href'),/\/kody$/);
+  await noOverflow();if([1440,390].includes(width)) await shot(`poste-${width}.png`);
+  results.push({width,passed:true,checks:'single mode; official PDF link; local verified pages; references as separate sections (tabs, one tool at a time, draft kept in tab memory); direct input; exact coordinates; spaces/multiline; mode retention; explicit pin; skipped-field and cross-page guidance; date format; radio/checkbox exclusivity; explicit save/restore/clear; URL reload; overflow/zoom; no real API calls'});
   await context.close();
  }
 }catch(error){

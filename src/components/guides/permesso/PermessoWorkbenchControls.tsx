@@ -47,7 +47,10 @@ export function PermessoWorkbenchControls(p: Props) {
         {ORIGINAL_PAGES.slice(0, 3).map(item => <button type="button" key={item.page} aria-label={`Страница ${item.page}: ${item.title}`} aria-current={p.page === item.page ? "page" : undefined} onClick={() => p.onPage(item.page)}><b>{item.page}</b><span>{["Заявление", "Данные", "Адрес"][item.page - 1]}</span></button>)}
         {p.page > 3 && <span className={styles.extraPage}>Стр. {p.page} · пропуск</span>}
       </nav>}
-      <details ref={tools} className={styles.tools} data-workbench-tools>
+      {/* На телефоне панель не липнет к верху (permesso-light.module.css), поэтому
+          открытое меню сначала поднимается под шапку сайта — иначе его нижние
+          пункты уходили за край экрана, а верхние — под шапку. */}
+      <details ref={tools} className={styles.tools} data-workbench-tools onToggle={event => { if (event.currentTarget.open && window.matchMedia("(max-width: 600px)").matches) event.currentTarget.scrollIntoView({ block: "start", behavior: "auto" }); }}>
         <summary className={disclosure.inline}>Инструменты</summary>
         <div className={styles.toolPanel}>
           <section><h2>Черновик</h2><p>Сохраняется только по кнопке, на этом устройстве. Не сохраняй на общем компьютере.</p>

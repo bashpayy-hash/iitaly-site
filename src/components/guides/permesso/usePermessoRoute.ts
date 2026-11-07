@@ -30,6 +30,34 @@ export function pinPermessoField(f: EditorField, scenario: PermessoScenario, rep
   window.history[replace ? "replaceState" : "pushState"](window.history.state, "", url.pathname + url.search + url.hash);
   window.dispatchEvent(new Event(EVENT));
 }
+/** Replace one query parameter without a new history entry (scenario or tool on the reference pages). */
+export function setPermessoParam(key: string, value: string) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(key, value);
+  if (url.search === window.location.search) return;
+  window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  window.dispatchEvent(new Event(EVENT));
+}
+/* Память вкладки на время переходов между разделами Modulo 1 (Бланк ·
+   Коды и расчёты · Перед почтой). Раньше справочники жили под бланком, и
+   черновик не терялся, пока человек сверял код. Теперь это отдельные
+   страницы: введённое держится в памяти открытой вкладки — не в
+   localStorage, — и перезагрузка или закрытие вкладки стирают его, как и
+   раньше. Сохранение на устройстве — по-прежнему только по кнопке. */
+const tabMemory: { values: Record<string, string>; search: string; worker: boolean } = { values: {}, search: "", worker: false };
+export function rememberedDraft() { return { ...tabMemory.values }; }
+export function rememberDraft(values: Record<string, string>) { tabMemory.values = { ...values }; }
+export function rememberTrainerSearch(search: string) { tabMemory.search = search; }
+/** «Я официально работаю и кладу Modulo 2» из «Кодов и расчётов» — для шпаргалки «Перед почтой» (поле 24). */
+export function rememberedWorker() { return tabMemory.worker; }
+export function rememberWorker(worker: boolean) { tabMemory.worker = worker; }
+/** Где человек остановился в бланке: та же страница и поле, текущий сценарий. */
+export function trainerHref(scenario: PermessoScenario) {
+  const params = new URLSearchParams(tabMemory.search);
+  if (scenario === "rinnovo") params.set("scenario", "rinnovo"); else if (params.has("scenario")) params.set("scenario", "rilascio");
+  const query = params.toString();
+  return "/guides/permesso-modulo-1" + (query ? "?" + query : "");
+}
 const HINT_KEY = "iitaly:permesso-hover-onboarding:dismissed";
 const HINT_EVENT = "iitaly:permesso-hover-onboarding";
 function subscribeHint(notify: () => void) {
