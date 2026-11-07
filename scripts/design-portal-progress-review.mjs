@@ -125,24 +125,35 @@ async function railContract(page,data,compact){
     for(const task of stage.tasks)if(complete(task))assert.equal(await road(page).locator(`[data-road-node="${task.id}"]`).evaluate(n=>n.closest('[data-node-state]').getAttribute('data-node-state')),'done','A saved step is a done circle');
   }
   assert(await road(page).locator('[data-road-node][aria-current=true]').count()<=1,'At most one current circle');
-  // Owner, 7 Nov: «иногда кружочки стоят криво». Each stage is one arc that starts and ends on the axis
-  // (two circles stand straight); on phones every circle sits on one axis, its left edge on the stage title.
-  const units=await road(page).evaluate(root=>[...root.querySelectorAll('[data-road-steps],[data-road-ghost]')].map(list=>{
-    const nodes=[...list.querySelectorAll(':scope > [data-node-state]')].map(step=>{const node=step.querySelector(':scope > a > span, :scope > span');const r=node.getBoundingClientRect();return {x:r.left+r.width/2,left:r.left,state:step.getAttribute('data-node-state')};});
-    return {nodes,title:list.closest('li').querySelector('strong').getBoundingClientRect().left};
-  }).filter(unit=>unit.nodes.length));
-  if(!units.length){/* no path on this screen (empty roadmap or compact header) */}
-  else if(await page.evaluate(()=>innerWidth<=640)){
-    const axis=units[0].nodes[0].x;
-    for(const unit of units)for(const node of unit.nodes){
-      assert(Math.abs(node.x-axis)<0.6,`Phone circles share one axis (${node.x} vs ${axis})`);
-      if(node.state!=='current')assert(Math.abs(node.left-unit.title)<1.1,`Phone circle edge meets the stage title (${node.left} vs ${unit.title})`);
+  // Owner, 7 Nov: «иногда кружочки стоят криво»; then «хочу, чтобы это был общий путь, и остальное серым».
+  // One road through every stop: stations and step circles in route order, no dividers between stages,
+  // one continuous line (one segment between each pair of neighbours). On phones every stop sits on one
+  // axis and all titles form one column; on wider screens each stage arc starts and ends on its station's axis.
+  const route=await road(page).evaluate(root=>{
+    const wrap=root.querySelector('[data-road-line]')?.parentElement;
+    if(!wrap)return null;
+    const centre=el=>{const r=el.getBoundingClientRect();return {x:r.left+r.width/2,left:r.left};};
+    return {points:[...wrap.querySelectorAll('[data-road-point]')].map(el=>({...centre(el),state:el.dataset.roadPoint})),
+      segments:wrap.querySelectorAll('[data-road-line] path').length,
+      titles:[...wrap.querySelectorAll('li strong')].map(el=>el.getBoundingClientRect().left),
+      labels:[...wrap.querySelectorAll('[data-road-steps] > [data-node-state] > a > span:nth-child(2)')].map(el=>el.getBoundingClientRect().left),
+      dividers:[...wrap.querySelectorAll(':scope > ol > li')].filter(li=>parseFloat(getComputedStyle(li).borderTopWidth)>0).length};
+  });
+  if(route){
+    assert.equal(route.segments,route.points.length-1,'One continuous road: a segment between every pair of stops');
+    assert.equal(route.dividers,0,'No dividers break the road between stages');
+    const stations=route.points.filter(p=>p.state.startsWith('station-'));
+    if(await page.evaluate(()=>innerWidth<=640)){
+      for(const p of route.points)assert(Math.abs(p.x-route.points[0].x)<0.6,`Phone stops share one axis (${p.x} vs ${route.points[0].x})`);
+      for(const left of [...route.titles,...route.labels])assert(Math.abs(left-route.titles[0])<1.1,`Phone titles and labels form one column (${left} vs ${route.titles[0]})`);
+    }else{
+      for(const s of stations)assert(Math.abs(s.x-stations[0].x)<0.6,'Every station sits on the same axis');
+      // Each stage arc leaves its station on the axis and returns to it before the next station.
+      route.points.forEach((p,i)=>{if(!p.state.startsWith('station-'))return;const nodes=[];for(let k=i+1;k<route.points.length&&!route.points[k].state.startsWith('station-');k++)nodes.push(route.points[k]);
+        if(nodes.length){assert(Math.abs(nodes[0].x-p.x)<0.6,'A stage arc starts on its station axis');assert(Math.abs(nodes.at(-1).x-p.x)<0.6,'A stage arc returns to the axis');}});
     }
-  }else for(const unit of units){
-    const first=unit.nodes[0].x,last=unit.nodes.at(-1).x;
-    assert(Math.abs(first-last)<0.6,'A stage arc starts and ends on the axis');
-    assert(Math.abs(first-units[0].nodes[0].x)<0.6,'Every stage starts on the same axis');
   }
+
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}
   await noOverflow(page);await oneFace(page,'Route');
 }

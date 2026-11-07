@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal-path.module.css";
@@ -83,16 +83,47 @@ function NodeMark({ state }: { state: NodeState }) {
   return <span className={styles.nodeDot} aria-hidden="true" />;
 }
 
-function StepTrail({ offsets, states }: { offsets: number[]; states: string[] }) {
-  if (offsets.length < 2) return null;
-  // Units: x in amplitudes (-1..1), y in rows; CSS sizes the box (--rows × --row).
-  return <svg className={styles.trail} viewBox={`-1 0 2 ${offsets.length}`} preserveAspectRatio="none" style={{ "--rows": offsets.length } as CSSProperties} aria-hidden="true" focusable="false">
-    {offsets.slice(1).map((x, i) => {
-      const walked = states[i] === "done" && (states[i + 1] === "done" || states[i + 1] === "current");
-      return <path key={i} data-walked={walked || undefined} vectorEffect="non-scaling-stroke"
-        d={`M ${offsets[i]} ${i + .5} C ${offsets[i]} ${i + 1} ${x} ${i + 1} ${x} ${i + 1.5}`} />;
-    })}
-  </svg>;
+/* Одна дорога (owner, 7 Nov: «хочу, чтобы это был общий путь, и просто
+   остальное было серым, чем вот эти по одному маленькие степы, разделённые
+   таким образом»). Раньше у каждого этапа была своя короткая дорожка, а между
+   этапами — разделитель. Теперь одна линия идёт от первого шага до последнего
+   через все остановки-этапы: точки берутся из реальных центров значков этапов
+   и кружков шагов (data-road-point), поэтому линия всегда попадает в них — и в
+   дуге на компьютере, и на прямой оси телефона. Пройденное — сплошное
+   зелёное, открытое впереди — тёплые точки, всё, что ещё закрыто, — серые
+   точки. Рисуется прямо в SVG без перерисовки React; пересчёт — при смене
+   размеров и данных. */
+const reachedPoint = (state: string) => state === "done" || state === "current" || state === "station-done" || state === "station-current";
+const palePoint = (state: string) => state === "later" || state === "locked" || state === "ghost" || state === "station-later" || state === "station-locked";
+function segmentState(from: string, to: string) {
+  if (reachedPoint(from) && reachedPoint(to) && from !== "current") return "walked";
+  return palePoint(from) || palePoint(to) ? "later" : "open";
+}
+function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SVGSVGElement | null>, version: unknown) {
+  useLayoutEffect(() => {
+    const root = wrap.current, svg = line.current;
+    if (!root || !svg) return;
+    const half = (n: number) => Math.round(n * 2) / 2;
+    const draw = () => {
+      const box = root.getBoundingClientRect();
+      const points = Array.from(root.querySelectorAll<HTMLElement>("[data-road-point]")).map(el => {
+        const r = el.getBoundingClientRect();
+        return { x: half(r.left + r.width / 2 - box.left), y: half(r.top + r.height / 2 - box.top), state: el.dataset.roadPoint || "" };
+      });
+      svg.setAttribute("viewBox", `0 0 ${half(box.width)} ${half(box.height)}`);
+      svg.replaceChildren(...points.slice(1).map((to, i) => {
+        const from = points[i], mid = half((from.y + to.y) / 2), path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${from.x} ${from.y} C ${from.x} ${mid} ${to.x} ${mid} ${to.x} ${to.y}`);
+        path.setAttribute("data-state", segmentState(from.state, to.state));
+        return path;
+      }));
+    };
+    draw();
+    const resize = new ResizeObserver(draw);
+    resize.observe(root);
+    document.fonts?.ready.then(draw).catch(() => {});
+    return () => resize.disconnect();
+  }, [wrap, line, version]);
 }
 
 export function PortalRoad({ data, current, stage, onSelectStage, travel, onTravelStart, locked: lockedTask }: {
@@ -210,6 +241,9 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
   const currentAt = route.findIndex(task => task.id === current?.id);
   const freshId = completion !== null ? (currentAt < 0 ? route : route.slice(0, currentAt)).filter(task => portalTaskDone(data, task)).at(-1)?.id : undefined;
   const percent = total > 0 ? Math.round(done / total * 100) : 0;
+  const roadRef = useRef<HTMLDivElement>(null), lineRef = useRef<SVGSVGElement>(null);
+  const roadVersion = `${stages.map(row => `${row.id}:${row.tasks.map(task => portalTaskDone(data, task) ? 1 : lockedTask?.(task) ? 2 : 0).join("")}`).join("|")}#${current?.id}#${stage?.id}`;
+  useRouteLine(roadRef, lineRef, roadVersion);
   // Stage boundaries cut the bar into segments, one per stage, sized by its steps.
   const ticks: number[] = [];
   if (!awaitingProfile && total > 0) {
@@ -241,7 +275,9 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
       </span>
       <span className={styles.srOnly} role="progressbar" aria-label="Выполненные шаги маршрута" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={done} aria-valuetext={`${done} из ${total} шагов`} />
     </div>
-    {stages.length > 0 && <ol className={styles.list} aria-label="Этапы маршрута">
+    {stages.length > 0 && <div className={styles.road} ref={roadRef}>
+    <svg className={styles.roadLine} ref={lineRef} aria-hidden="true" focusable="false" data-road-line />
+    <ol className={styles.list} aria-label="Этапы маршрута">
       {stages.map((row, index) => {
         const locked = !row.tasks.length;
         const preview = row.id.startsWith("preview-stage-");
@@ -256,13 +292,12 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const status = state === "done" ? "Готово" : isCurrent ? "Сейчас" : ahead ? "Начат заранее" : "Дальше";
         if (locked) return <li key={row.id} className={styles.row} data-road-locked data-road-stage-state="future">
           <div className={styles.unitHead}>
-            <span className={styles.thumb}><StageMark stage={art} locked /></span>
+            <span className={styles.thumb} data-road-point="station-locked"><StageMark stage={art} locked /></span>
             <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
           </div>
           <div className={styles.steps} aria-hidden="true" data-road-ghost>
-            <StepTrail offsets={arc(2, index)} states={["later", "later"]} />
             {arc(2, index).map((x, i) => <span key={i} className={styles.step} style={{ "--x": x } as CSSProperties} data-node-state="later" data-side={x < 0 ? "left" : "right"}>
-              <span className={styles.node}><NodeMark state="later" /></span>
+              <span className={styles.node} data-road-point="ghost"><NodeMark state="later" /></span>
             </span>)}
           </div>
         </li>;
@@ -273,7 +308,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
           <a className={styles.unitHead} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>
-            <span className={styles.thumb}><StageMark stage={art} /></span>
+            <span className={styles.thumb} data-road-point={state === "future" && !opened ? "station-later" : `station-${state}`}><StageMark stage={art} /></span>
             <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
             <span className={styles.status} data-state={state} data-ahead={ahead || undefined}>
               <span className={styles.badge}>{status}</span>
@@ -282,13 +317,12 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
             </span>
           </a>
           <ol className={styles.steps} aria-label={`Шаги: ${title}`} data-road-steps={row.id}>
-            <StepTrail offsets={offsets} states={stepStates} />
             {row.tasks.map((task, i) => {
               const nodeState = stepStates[i], href = `/portal?stage=${encodeURIComponent(row.id)}&step=${encodeURIComponent(task.id)}`;
               return <li key={task.id} className={styles.step} style={{ "--x": offsets[i] } as CSSProperties} data-node-state={nodeState} data-side={offsets[i] < 0 ? "left" : "right"}>
                 <a href={href} data-road-node={task.id} aria-current={nodeState === "current" ? "true" : undefined}
                   onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(href); }}>
-                  <span className={styles.node} data-fresh={task.id === freshId || undefined}><NodeMark state={nodeState} /></span>
+                  <span className={styles.node} data-road-point={nodeState} data-fresh={task.id === freshId || undefined}><NodeMark state={nodeState} /></span>
                   <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
                 </a>
               </li>;
@@ -296,6 +330,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
           </ol>
         </li>;
       })}
-    </ol>}
+    </ol>
+    </div>}
   </section>;
 }

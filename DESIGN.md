@@ -830,3 +830,42 @@ Owner, on the phone (screenshot of later stages): «иногда вот эти �
 - `design-portal-progress-review` now asserts:
   - on phones, one axis for every circle and its edge on the title;
   - on wider screens, each arc starts and ends on the same axis.
+
+## One road through the whole route · 7 November 2026 (late evening)
+
+Owner, on the phone: «я хочу, чтобы это был общий путь, и просто остальное
+было серым, чем вот эти по одному маленькие степы, которые разделены таким
+образом».
+
+- **One road.** One line runs from the first step to the last, through every
+  stage. `PortalRoad` draws it in a single SVG from the measured centres of
+  the stops (`data-road-point`): stage stations and step circles in route
+  order. The line always meets them, both on the desktop arcs and on the
+  straight phone axis. It is redrawn when the size or the progress changes,
+  without re-rendering React.
+- **Stages are stops on the road.** The stage object sits in a disc on the
+  same axis as the steps; the disc is larger than a step circle. The rim
+  says the state:
+  - green — done;
+  - terracotta — current;
+  - cream — ahead;
+  - grey disc with a faded object — closed.
+
+  The title, its line and the status chip with «1 из 4» stand to the right,
+  in the same column as the step labels. The whole stop is one link, as
+  before.
+- **No dividers.** The rules between stages are gone. Only the warm band of
+  the current stage («ты здесь») remains, and the road runs through it.
+- **The rest is grey.**
+  - Walked — solid green.
+  - Open ahead — warm dots.
+  - Not open yet (preview stages, later or locked steps) — pale grey dots,
+    pale circles and grey stations.
+- **Layout.**
+  - Phones: one axis 40px from the edge; all titles and labels in one column.
+  - Desktop: a centred column with arcs that leave each station on the axis
+    and return to it.
+- `design-portal-progress-review` asserts:
+  - one segment between every pair of neighbouring stops and no dividers;
+  - on phones, one axis and one label column;
+  - on desktop, stations on one axis and arcs that start and end on it.
