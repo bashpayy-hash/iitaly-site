@@ -104,7 +104,9 @@ async function railContract(page,data,compact){
   assert.equal(await progress.getAttribute('aria-valuetext'),`${done} из ${tasks.length} шагов`);
   // Owner, 5 Nov: each row of «Весь путь» carries a small stage object; never a mascot.
   // Owner, 6 Nov: the «Готово» seal is a small object icon too ([data-warm-icon]).
-  assert.equal(await road(page).locator('img:not([data-stage-object]):not([data-warm-icon])').count(),0,'Progress is data, not a repeated mascot');
+  // Owner, 7 Nov (polish): each step circle carries its own object from the shared set.
+  assert.equal(await road(page).locator('img:not([data-stage-object]):not([data-warm-icon]):not([data-step-object])').count(),0,'Progress is data, not a repeated mascot');
+  for (const src of await road(page).locator('img[data-step-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/objects\/[a-z0-9-]+-240\.webp$/,'Step circles use the shared object set');
   // Owner, 6 Nov (night): conceptual stage icons in the cabinet, physical objects in the guides.
   for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+-(128|256)\.webp$/,'Stage rows use the conceptual icon set');
   assert.equal(await road(page).locator('img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
