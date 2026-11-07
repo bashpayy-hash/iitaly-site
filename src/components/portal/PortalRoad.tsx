@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
-import { type CSSProperties, type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type CSSProperties, Fragment, type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
 import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal-path.module.css";
@@ -126,6 +126,58 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
   }, [wrap, line, version]);
 }
 
+/* Пейзаж вдоль дороги (owner, 7 Nov: «чтобы это было пространство, и в этом
+   пространстве как будто были достопримечательности, или где-то Веспи что-то
+   сделал, но не на каждом шагу, а через 2–3»; «не прям левитирующие иконки»).
+   Рядом с дорогой, на свободной стороне дуги, стоят игрушечные макеты
+   Италии ручной работы — из того же мира, что и сам Веспи: Колизей, Дуомо,
+   Венеция, Пиза, Болонья, Тоскана; каждый третий раз вместо места — Веспи за
+   делом (с картой у мопеда, монетка в фонтан Треви, эспрессо с чемоданом).
+   Каждый макет стоит на своём клочке земли с тенью, без подставки и парения
+   (design/illustrations/scenery-2026-11-07.json). Ставятся между двумя шагами
+   одного этапа, не чаще чем раз в три остановки. Пройденная и открытая часть
+   пути — в цвете, ещё закрытая — серая, как и сама дорога. Картинки
+   декоративные: не ссылки, не в кружках шагов, скрыты от чтения с экрана. */
+const SCENERY = [
+  { name: "vespi-map", width: 560, height: 459 },
+  { name: "colosseum", width: 560, height: 401 },
+  { name: "duomo", width: 560, height: 439 },
+  { name: "vespi-trevi", width: 560, height: 448 },
+  { name: "venice", width: 560, height: 384 },
+  { name: "pisa", width: 560, height: 684 },
+  { name: "vespi-espresso", width: 560, height: 463 },
+  { name: "bologna", width: 560, height: 668 },
+  { name: "tuscany", width: 560, height: 380 },
+] as const;
+const SCENERY_EVERY = 3;
+
+type SceneryPlace = { art: (typeof SCENERY)[number]; side: "left" | "right" };
+
+/** Where the scenery stands: after step `i` of a stage, keyed `${stageId}:${i}`. */
+function placeScenery(stages: { id: string; count: number; side: "left" | "right" }[]) {
+  const places = new Map<string, SceneryPlace>();
+  let since = 1, used = 0;
+  for (const row of stages) {
+    since++;
+    for (let i = 0; i < row.count; i++) {
+      since++;
+      if (since < SCENERY_EVERY || i === row.count - 1) continue;
+      places.set(`${row.id}:${i}`, { art: SCENERY[used++ % SCENERY.length], side: row.side });
+      since = 0;
+    }
+  }
+  return places;
+}
+
+function Scenery({ place, reached, as: Tag = "li" }: { place: SceneryPlace; reached: boolean; as?: "li" | "span" }) {
+  const { name, width, height } = place.art;
+  return <Tag className={styles.scenery} aria-hidden="true" data-road-scenery={name} data-side={place.side} data-scenery-state={reached ? "reached" : "ahead"}
+    data-scenery-shape={height > width ? "tall" : "wide"}>
+    <img src={`/illustrations/scenery/${name}-280.webp`} srcSet={`/illustrations/scenery/${name}-280.webp 280w, /illustrations/scenery/${name}-560.webp 560w`}
+      sizes="(max-width: 640px) 168px, 260px" width={width} height={height} alt="" loading="lazy" decoding="async" draggable={false} data-road-scenery-art />
+  </Tag>;
+}
+
 export function PortalRoad({ data, current, stage, onSelectStage, travel, onTravelStart, locked: lockedTask }: {
   data: PortalData;
   current: PortalTask | null;
@@ -244,6 +296,10 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
   const roadRef = useRef<HTMLDivElement>(null), lineRef = useRef<SVGSVGElement>(null);
   const roadVersion = `${stages.map(row => `${row.id}:${row.tasks.map(task => portalTaskDone(data, task) ? 1 : lockedTask?.(task) ? 2 : 0).join("")}`).join("|")}#${current?.id}#${stage?.id}`;
   useRouteLine(roadRef, lineRef, roadVersion);
+  // The free side of a stage is the one without step labels: labels go left only
+  // where the stage arc bulges left, so the scenery stands on the right there.
+  const scenery = placeScenery(stages.map((row, index) => ({ id: row.id, count: row.tasks.length || 2,
+    side: arc(row.tasks.length || 2, index).some(x => x < 0) ? "right" : "left" })));
   // Stage boundaries cut the bar into segments, one per stage, sized by its steps.
   const ticks: number[] = [];
   if (!awaitingProfile && total > 0) {
@@ -253,7 +309,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
 
   return <section className={styles.path}
     style={{ "--road-travel-duration": `${ROAD_TRAVEL_MS}ms`, "--route-fill": motion.position / 100 } as CSSProperties}
-    data-portal-road data-road-path tabIndex={-1} data-road-navigation-only="true" data-road-static="true" data-road-mascot="none"
+    data-portal-road data-road-path tabIndex={-1} data-road-navigation-only="true" data-road-static="true" data-road-mascot="scenery"
     data-current-step={current?.id} data-road-done={done} data-road-total={total} data-road-ahead={progress.ahead}
     data-traveling={motion.moving ? "true" : "false"} data-road-moving={motion.moving ? "true" : "false"}
     data-road-transition={motion.transition ? "true" : "false"} data-road-feedback-active={completion !== null ? "true" : "false"}
@@ -296,14 +352,23 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
             <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
           </div>
           <div className={styles.steps} aria-hidden="true" data-road-ghost>
-            {arc(2, index).map((x, i) => <span key={i} className={styles.step} style={{ "--x": x } as CSSProperties} data-node-state="later" data-side={x < 0 ? "left" : "right"}>
-              <span className={styles.node} data-road-point="ghost"><NodeMark state="later" /></span>
-            </span>)}
+            {arc(2, index).map((x, i) => {
+              const place = scenery.get(`${row.id}:${i}`);
+              return <Fragment key={i}>
+                <span className={styles.step} style={{ "--x": x } as CSSProperties} data-node-state="later" data-side={x < 0 ? "left" : "right"}>
+                  <span className={styles.node} data-road-point="ghost"><NodeMark state="later" /></span>
+                </span>
+                {place && <Scenery place={place} reached={false} as="span" />}
+              </Fragment>;
+            })}
           </div>
         </li>;
         const stepStates: NodeState[] = row.tasks.map(task => portalTaskDone(data, task) ? "done" : task.id === current?.id ? "current"
           : lockedTask?.(task) ? "locked" : opened && task.available !== false ? "todo" : "later");
         const offsets = arc(row.tasks.length, index);
+        // All labels of a stage stand outside its curve, the ends included, so
+        // the other side stays free for the scenery.
+        const labelSide = offsets.some(x => x < 0) ? "left" : "right";
         const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "закрыт до оплаты" };
         return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
           <a className={styles.unitHead} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
@@ -319,13 +384,17 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
           <ol className={styles.steps} aria-label={`Шаги: ${title}`} data-road-steps={row.id}>
             {row.tasks.map((task, i) => {
               const nodeState = stepStates[i], href = `/portal?stage=${encodeURIComponent(row.id)}&step=${encodeURIComponent(task.id)}`;
-              return <li key={task.id} className={styles.step} style={{ "--x": offsets[i] } as CSSProperties} data-node-state={nodeState} data-side={offsets[i] < 0 ? "left" : "right"}>
-                <a href={href} data-road-node={task.id} aria-current={nodeState === "current" ? "true" : undefined}
-                  onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(href); }}>
-                  <span className={styles.node} data-road-point={nodeState} data-fresh={task.id === freshId || undefined}><NodeMark state={nodeState} /></span>
-                  <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
-                </a>
-              </li>;
+              const place = scenery.get(`${row.id}:${i}`);
+              return <Fragment key={task.id}>
+                <li className={styles.step} style={{ "--x": offsets[i] } as CSSProperties} data-node-state={nodeState} data-side={labelSide}>
+                  <a href={href} data-road-node={task.id} aria-current={nodeState === "current" ? "true" : undefined}
+                    onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(href); }}>
+                    <span className={styles.node} data-road-point={nodeState} data-fresh={task.id === freshId || undefined}><NodeMark state={nodeState} /></span>
+                    <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
+                  </a>
+                </li>
+                {place && <Scenery place={place} reached={segmentState(nodeState, stepStates[i + 1]) !== "later"} />}
+              </Fragment>;
             })}
           </ol>
         </li>;

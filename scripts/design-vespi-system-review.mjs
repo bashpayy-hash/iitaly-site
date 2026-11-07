@@ -377,8 +377,10 @@ try {
     if (!baseline) {
       await checkWordmark(page);
       // Owner, 5 Nov: «Весь путь» shows one small stage object per row; no mascot and no stage scene.
-      assert.equal(await page.locator('[data-portal-road] img:not([data-stage-object])').count(),0,'Progress has no mascot image, only stage objects');
-      assert.equal(await page.locator('[data-portal-road] img').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
+      // Owner, 7 Nov (later): scenery beside the road — landmarks and, every third time, Vespi at work.
+      assert.equal(await page.locator('[data-portal-road] img:not([data-stage-object]):not([data-road-scenery-art])').count(),0,'Progress has no mascot image beyond the roadside scenery');
+      assert.equal(await page.locator('[data-portal-road] img:not([data-road-scenery-art])').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
+      assert.equal(await page.locator('[data-portal-road] [data-road-scenery]:not([aria-hidden=true])').count(),0,'Roadside scenery is decorative');
       assert.equal(await page.locator('[data-board-scene]').count(),0,'The stage scene board is gone (owner, 5 Nov: one calm flow)');
       assert(await page.locator('[data-portal-overview] [data-road-open]').isVisible(),'Overview exposes the active breakdown action');
       assert.equal(await page.locator('[data-portal-now] [data-portal-task=shortlist]').count(),1,'University selection is the one action in «Сейчас» and opens the actual selection flow');

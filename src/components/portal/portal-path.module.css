@@ -106,6 +106,28 @@
 @keyframes node-wave { 0% { transform:scale(.94); opacity:.4; } 70%,100% { transform:scale(1.22); opacity:0; } }
 @keyframes node-settle { from { transform:scale(.82); } to { transform:none; } }
 @keyframes mark-in { from { transform:scale(.4); opacity:0; } to { transform:none; opacity:1; } }
+/* Пейзаж вдоль дороги (owner, 7 Nov: «чтобы это было пространство, и в нём
+   как будто достопримечательности, или Веспи что-то сделал, но не на каждом
+   шагу, а через 2–3»; «не прям левитирующие иконки»). Макет стоит на стыке
+   двух шагов, на свободной от подписей стороне, у самой оси. Своей высоты у
+   строки нет, поэтому шаги не раздвигаются. Все макеты стоят нижним краем на
+   одной линии — на земле, а не в воздухе. Впереди закрытое — серое, как
+   сама дорога. */
+.scenery { --scene-h:190px; position:relative; display:block; height:0; pointer-events:none; }
+.scenery img { position:absolute; top:calc(var(--scene-h) / -2); width:min(260px, calc(50% - var(--node) / 2 - 56px)); height:var(--scene-h); object-fit:contain; user-select:none; -webkit-user-drag:none; }
+.scenery[data-side=left] img { right:calc(50% + var(--node) / 2 + 40px); object-position:right bottom; }
+.scenery[data-side=right] img { left:calc(50% + var(--node) / 2 + 40px); object-position:left bottom; }
+.scenery[data-scenery-state=ahead] img { filter:grayscale(1) sepia(.18) brightness(1.04); opacity:.5; }
+@media (prefers-reduced-motion:no-preference) {
+  /* Макет «подъезжает», когда дорога доходит до него при прокрутке: мягко
+     поднимается на 24px и проявляется. Только прокруткой, без таймеров;
+     заканчивается, как только макет целиком в кадре, — и у самого конца
+     страницы тоже. */
+  @supports (animation-timeline: view()) {
+    .scenery img { animation:scenery-arrive both cubic-bezier(.22,1,.36,1); animation-timeline:view(); animation-range:entry 5% entry 100%; }
+  }
+}
+@keyframes scenery-arrive { from { opacity:0; translate:0 24px; } }
 /* Остановка-этап: тот же диск с каймой, что у шагов, только крупнее и со
    значком этапа внутри. Пройден — зелёная кайма, текущий — терракотовая,
    закрытый — серый диск с приглушённым значком. */
@@ -175,6 +197,10 @@
   .step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--station) / 2 + var(--gap)); right:0; }
   .row[data-road-unit-state=current] { margin:0 -10px; padding:0 10px 4px; border-radius:20px; }
   .step[data-side] .stepLabel { left:calc(var(--center) + var(--station) / 2 + var(--gap)); right:0; max-width:none; justify-items:start; text-align:left; font-size:14px; }
+  /* Макет — своя полоса между шагами, в колонке подписей: дорога идёт мимо
+     по той же оси. */
+  .scenery { --scene-h:124px; height:136px; }
+  .scenery[data-side] img { top:6px; left:calc(var(--center) + var(--station) / 2 + var(--gap)); right:auto; width:min(176px, calc(100% - var(--center) - var(--station) / 2 - var(--gap))); object-position:left bottom; }
   .text strong { font-size:16px; }
   .text > span { font-size:13px; }
 }
