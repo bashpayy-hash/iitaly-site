@@ -47,6 +47,13 @@
   pointer-events: none;
 }
 @supports not (backdrop-filter: blur(1px)) { .chrome { background: var(--color-cream); } }
+/* Phones scroll on the compositor; a blurred header strip is re-rendered on
+   every scroll frame at 3× density and is the one thing that can make that
+   scrolling stutter (owner, 7 Nov). Touch devices get solid cream, as the
+   cabinet header already does. */
+@media (hover: none) and (pointer: coarse) {
+  .chrome { background: var(--color-cream); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
 @media (prefers-reduced-transparency: reduce), (forced-colors: active) {
   .chrome { background: var(--color-cream); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .paper::before, .paper::after, .chrome::after { display: none; }

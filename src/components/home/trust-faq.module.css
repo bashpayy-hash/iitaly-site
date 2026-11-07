@@ -15,7 +15,9 @@
   }
 }
 @keyframes faq-drift { from { transform:scale(1.12) translateY(-5%); } to { transform:scale(1.12) translateY(5%); } }
-.panel { grid-column:2; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:rgba(255,253,249,.94); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+/* Solid paper over the loop: a frosted panel re-blurs every video frame and
+   its tint follows the light behind it (owner, 7 Nov). */
+.panel { grid-column:2; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:#FFFDF9; }
 .eyebrow { margin:0; font:600 13px/1.5 var(--font-sans); color:#A33421; }
 .title { margin:10px 0 18px; font:600 clamp(28px,3vw,40px)/1.1 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
 .list { border-top:1px solid #DCD5CA; }
@@ -28,7 +30,7 @@
   .tile { grid-template-columns:minmax(0,1fr); align-items:stretch; min-height:0; }
   .sceneBox { position:relative; z-index:0; aspect-ratio:4 / 3; }
   .scene { object-position:26% 62%; }
-  .panel { grid-column:1; margin:0; padding:28px 24px 12px; border-radius:0; background:#FAF6EE; backdrop-filter:none; -webkit-backdrop-filter:none; }
+  .panel { grid-column:1; margin:0; padding:28px 24px 12px; border-radius:0; background:#FAF6EE; }
 }
 @media(max-width:640px) {
   .section { padding:0 20px 64px; }

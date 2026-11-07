@@ -910,8 +910,8 @@ Owner, on the cabinet path: «можно добавить какие-то диз
     - the road passes it on the same straight axis.
 - **Colour follows the road.**
   - Beside walked or open road the piece is in colour.
-  - Beside closed road it is grey, like the road itself
-    (`grayscale + sepia`, opacity .5).
+  - Beside closed road it is grey, like the road itself: a pre-rendered
+    warm-grey copy of the same frame (`-grey` files), not a live filter.
 - **Motion.** Scrolling to a piece makes it rise 24px and fade in; it is
   driven by `animation-timeline: view()`, with no timers. The reveal ends
   once the piece is fully in view (`entry 5% → entry 100%`), so even the
@@ -928,3 +928,62 @@ Owner, on the cabinet path: «можно добавить какие-то диз
     - every piece inside the road.
   - `design-vespi-system-review` allows Vespi on the road only as
     decorative scenery.
+
+
+## Smooth where it stuttered, light that holds still · 7 November 2026 (night, later)
+
+Owner: «исправь анимации на сайте, в некоторых местах они подлагивают, в
+некоторых местах освещение плохо; пройдись по дизайну, чтобы не было
+неровностей».
+
+Measured first: on a Pixel 7 emulation at 6× CPU every route scrolls at
+p95 17 ms with at most 4% slow frames, so the main thread is not where the
+stutter comes from. What remained was work the GPU had to redo on every
+frame, and scrolling itself being driven by JavaScript on laptops.
+
+- **Native scrolling everywhere.** The Lenis glide (home, /plan, /prices,
+  /guides on mouse devices) is gone. It moved the page from a
+  requestAnimationFrame loop, so every wheel tick depended on the main
+  thread keeping 60 fps while videos, pins and scroll-driven animations
+  ran; any busy frame showed as a stutter. The browser's own scrolling
+  runs off the main thread. `scroll-behavior: smooth` stays for anchors
+  and the `data-scroll-behavior` attribute still lands navigation at the
+  top. GSAP ScrollTrigger (the /prices heading pin, the home scrub effects)
+  listens to native scrolling as before. `LenisProvider.tsx` is deleted;
+  the `lenis` package stays installed only until the next dependency pass.
+- **No frosted glass over a playing loop.** The home hero panel and the
+  FAQ panel were 94% paper with `backdrop-filter: blur(14px)` over the
+  Bologna and belvedere loops: the blur was recomputed on every video frame
+  and the panel's tint followed the light moving behind it, which is the
+  «освещение меняется» the owner kept seeing. Both panels are solid
+  `#FFFDF9` now, as the cabinet hero panel already was.
+- **No blurred header on phones.** The marketing header keeps its frosted
+  strip on mouse devices; on touch devices (`hover: none`) it is solid
+  cream, like the cabinet header. A blurred sticky strip is re-rendered on
+  every compositor scroll frame at 3× density and was the one effect that
+  could make phone scrolling hitch.
+- **Compositor-only motion.**
+  - Guides strip countdown: the fill slides in on `transform` inside a
+    clipped pill instead of animating `clip-path`.
+  - Comparison deck: the big university code rises 10 px instead of
+    animating `letter-spacing` (a reflow per frame).
+  - Plan step tiles: the hover ring is a pseudo-element fading on
+    `opacity`; the tile's `box-shadow` is no longer transitioned.
+  - Story navigation: hover darkens the colour instead of a
+    `filter: brightness()`.
+  - Road scenery: the closed-road pieces are pre-rendered warm-grey WebPs
+    (`-grey-280/560`), so nine filtered images no longer animate through a
+    filter.
+- **Video light re-verified.** Frame 0 of every loop against its poster:
+  mean difference under 1/255 in red and green, 1–3/255 in blue, luminance
+  within 1/255, on desktop and phone (`harness/light.mjs`). The loops no
+  longer change the light; the panels above them did.
+- **Evenness.**
+  - /universities: the comparison section was a peach-to-mint gradient
+    whose cool end broke the warm palette; it is one flat sand band
+    (`#F6EEE4`) now, and its two greenish greys became the site's warm
+    quiet greys.
+  - Everything else checked at 390, 834 and 1440 (home, /plan, /guides,
+    a topic, a step, /universities, /prices, /terms, 404, the cabinet
+    overview, stage, step pages): no horizontal overflow, one column
+    rhythm, one pill style.

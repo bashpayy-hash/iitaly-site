@@ -6,7 +6,6 @@ import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlayGate } from "@/components/PaperOverlayGate";
-import { LenisProvider } from "@/components/motion/LenisProvider";
 import { RouteEntrance } from "@/components/motion/RouteEntrance";
 
 // Единственная гарнитура продукта — variable, один файл на весь диапазон
@@ -82,8 +81,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       // Next 16 keeps CSS smooth scrolling during route changes unless told
       // otherwise: a new page then rolled up from the previous scroll position
-      // and, with Lenis on, stuck at the bottom (owner, 6 Nov: /guides opened
-      // at its footer). This attribute makes navigation land at the top at once.
+      // (owner, 6 Nov: /guides opened at its footer). This attribute makes
+      // navigation land at the top at once. Scrolling itself is native
+      // everywhere since 7 Nov (owner: «анимации подлагивают»): the Lenis
+      // glide drove every wheel tick through JavaScript, so any busy frame
+      // showed as a stutter; the browser's own scrolling runs off the main
+      // thread and never does.
       data-scroll-behavior="smooth"
       className={`${onest.variable} ${interTight.variable} h-full antialiased`}
     >
@@ -99,7 +102,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           >
             Перейти к содержимому
           </a>
-          <LenisProvider />
           <RouteEntrance />
           {children}
           <PaperOverlayGate />

@@ -99,7 +99,10 @@
   }
 }
 @keyframes hero-scene-drift { from { transform: scale(1.12) translateY(-5%); } to { transform: scale(1.12) translateY(5%); } }
-.heroPanel { grid-column: 2; margin: 48px var(--hero-gutter) 48px 24px; padding: 40px 40px 32px; border-radius: 28px; background: rgba(255,253,249,.94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+/* Solid paper, no frosted glass: a translucent blurred panel over a playing
+   loop re-blurs every frame and its tint shifts with the light behind it
+   (owner, 7 Nov: «освещение плохо… подлагивают»). */
+.heroPanel { grid-column: 2; margin: 48px var(--hero-gutter) 48px 24px; padding: 40px 40px 32px; border-radius: 28px; background: #FFFDF9; }
 .heroPanel .heroTitle { font-size: clamp(36px, 3.4vw, 52px); }
 .heroPanel .heroDescription { font-size: 18px; }
 @media (prefers-reduced-motion: no-preference) {
