@@ -1,0 +1,128 @@
+{
+  "date": "2026-11-07",
+  "request": "Owner, 7 Nov (/plan screenshot): «вот это должен быть текст, а на фоне Веспи… фон менее карикатурный, более исторический, детализированный, слишком кричащий… текст посередине, на фоне чуть заблюрено»; «проблема с качеством на других анимациях не решена, есть обрывистость».",
+  "diagnosis": {
+    "tuscany-ride": "Vespi braked to a full stop for ~0.75 s at the loop point (frames 288–306 frozen at the same x) and the loop then jumped back ~4% of the width; seam frame difference 3× the median.",
+    "bologna": "Ping-pong loop, 1280 px at ~400 kbit/s (soft and blocky on a 1440 laptop at 125%); seam jump 8× the median, stop-and-go inside.",
+    "belvedere": "1280 px at ~850 kbit/s, seam jump 2× the median.",
+    "plan-courtyard": "Motion on twos in places (every other frame held), loud saturated colours."
+  },
+  "items": [
+    {
+      "name": "plan-loggia",
+      "use": "/plan header behind the centred title",
+      "still": {
+        "model": "gpt_image_2_6, 2k, 16:9, mascot references ab833075…, a448f972…",
+        "job": "c1bbadf9-8a4b-4ac3-aad4-79c5df3e72a3",
+        "scene": "Renaissance loggia of a historic university courtyard, pale sandstone, faded garland frescoes, muted palette; Vespi writes at a walnut desk in the lower centre",
+        "rejected": [
+          {
+            "job": "050c7aba-fe8f-43d6-8e3f-9cce80893b85",
+            "why": "library: frescoes with human figures (no people in illustrations)"
+          }
+        ]
+      },
+      "loop": {
+        "model": "kling4_0 1080p 8 s, still as start and end frame",
+        "job": "d0536fce-9e1a-4ed0-a43c-09e97c2fdfc3"
+      },
+      "processing": "duplicate last frame dropped, last 16 frames blended into the first; a soft gaussian blur (sigma 7 at 1920) baked behind the title through a feathered ellipse; poster = loop frame 0"
+    },
+    {
+      "name": "bologna",
+      "use": "home welcome hero",
+      "loop": {
+        "model": "kling4_0 1080p 8 s, the bologna still (a033124a…) as start and end frame",
+        "job": "5c1d7019-6fa7-4cb4-9dd6-855a7aba35a9"
+      },
+      "processing": "1752 px native, last 16 frames blended into the first; replaces the 4 Nov ping-pong (8b3eacef…)"
+    },
+    {
+      "name": "belvedere",
+      "use": "home FAQ tile",
+      "loop": {
+        "model": "kling4_0 1080p 8 s, the belvedere still (6a397266…) as start and end frame, no birds",
+        "job": "21c5c7b8-2737-4e96-b14c-f87df36b8116"
+      },
+      "processing": "1752 px native, last 16 frames blended into the first; replaces the 4 Nov ping-pong (f52fff34…)"
+    },
+    {
+      "name": "tuscany-ride",
+      "use": "cabinet «Сейчас»",
+      "processing": "Re-timed from the 6 Nov 1920 file: the 18 frozen frames and every other braking frame dropped so Vespi passes the poster point at a steady ~1.5 px/frame (helmet tracking), then the background outside a feathered ellipse around Vespi blended over the last 6 frames into frame 0; 281 frames. Poster frame unchanged."
+    }
+  ],
+  "transfer": "Higgsfield sandbox: AV1 (SVT, CRF 35, 10-bit) masters carried over as grayscale PNG parts and rebuilt byte for byte; here: ffmpeg loop building, H.264 high (CRF 21–22 full width, 23–24 at 960), VP9 CRF 33 at 960, faststart, no audio.",
+  "files": [
+    {
+      "file": "public/illustrations/motion/plan-loggia-1920.mp4",
+      "bytes": 590072,
+      "sha256": "87e4996cf60ee656fb339bb438cc41bdfe1224b7876eb10a4551deb75c7136b1"
+    },
+    {
+      "file": "public/illustrations/motion/plan-loggia-960.mp4",
+      "bytes": 163483,
+      "sha256": "c338c28ff59ca2fe25f2c48e4cc838066c1d66f578127289620155a1d8a1dbe7"
+    },
+    {
+      "file": "public/illustrations/motion/plan-loggia-960.webm",
+      "bytes": 182803,
+      "sha256": "f18d5c899d87b5b410247579771878601773cff72e57fdadac2377de57a6fd5e"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-1752.mp4",
+      "bytes": 623927,
+      "sha256": "21d959b88e5da2cbfb302c84b2d6a2ccb4c89cb5ded441dfa7d2e784f3d57f2e"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-960.mp4",
+      "bytes": 210800,
+      "sha256": "868d034ee64ccf1954e0b2f2b7811d8c9dc34b58933d5a90071e4f9e55ecf2d5"
+    },
+    {
+      "file": "public/illustrations/motion/bologna-960.webm",
+      "bytes": 222891,
+      "sha256": "48120a26d420c2e1ec252937784ee6a19139860d4452bc3c2fd372d890043f8b"
+    },
+    {
+      "file": "public/illustrations/motion/belvedere-1752.mp4",
+      "bytes": 843687,
+      "sha256": "028d9b68e12e6a89cb72c8edbad530c98b1201211414e1612fe27f33ab9ba1f3"
+    },
+    {
+      "file": "public/illustrations/motion/belvedere-960.mp4",
+      "bytes": 317411,
+      "sha256": "98e1fb5767f7dde6b15faa1a4e5b43bb341aea2cc0449b6ff36f2a10f0b507c1"
+    },
+    {
+      "file": "public/illustrations/motion/belvedere-960.webm",
+      "bytes": 369571,
+      "sha256": "c541fc01bb79c4eb652752b3303de861516d619da5315a7df7aa65508cfa5827"
+    },
+    {
+      "file": "public/illustrations/motion/tuscany-ride-1920.mp4",
+      "bytes": 4913588,
+      "sha256": "9ea10608e8bd7d606a73b1b8cdccde5b953084dba1e5772140c910b9c45fbb2b"
+    },
+    {
+      "file": "public/illustrations/motion/tuscany-ride-960.mp4",
+      "bytes": 1061613,
+      "sha256": "eefb2dd2ec9dd10276c3ce3761486337523fb1446ac7152ddc88a962c116cc0a"
+    },
+    {
+      "file": "public/illustrations/motion/tuscany-ride-960.webm",
+      "bytes": 780092,
+      "sha256": "96a4455b328b0d2eaff0b192b36873365624f70b5ad68aeeffca6737a8061769"
+    },
+    {
+      "file": "public/illustrations/scenes/plan-loggia-1920.webp",
+      "bytes": 120172,
+      "sha256": "365b636d9a6014a6420f9dee3da465e5bb9f3652c4ae40d8d77742188fb8d4b1"
+    },
+    {
+      "file": "public/illustrations/scenes/plan-loggia-960.webp",
+      "bytes": 44824,
+      "sha256": "151727deca61689759d29c67ce454a1dc32d5525547a335a9def6f400e15a172"
+    }
+  ]
+}
