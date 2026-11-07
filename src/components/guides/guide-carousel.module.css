@@ -92,3 +92,8 @@
 }
 @media(prefers-reduced-motion:reduce) { .dot,.dot::before,.round { transition:none; } }
 @media(forced-colors:active) { .dot::before { background:ButtonText; } .dot[aria-current=true]::before { background:Highlight; } .round { border:1px solid ButtonText; } }
+
+/* Edge glide (GuideCarousel.tsx): while the row rolls under the cursor the
+   snap and the smooth scroll step aside, the script moves it frame by frame
+   and lands it on a card with a spring before snapping comes back. */
+.track[data-gliding] { scroll-snap-type:none; scroll-behavior:auto; }

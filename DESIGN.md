@@ -630,3 +630,55 @@ Owner, /plan screenshot: «здесь должен быть текст, а на 
     thinned so it rides through at a steady speed; the background around it is
     blended into the first frame.
 - Diagnosis, jobs and hashes: design/illustrations/motion-2026-11-07.json.
+
+## Light that holds, a strip that rolls on its own · 7 November 2026 (later)
+
+Owner, three screenshots: «когда мышку на правую сторону переводишь, чтобы она
+автоматически постепенно и плавно переходила на следующие»; home hero
+«анимация чуть топорная, качество плохое, и освещение резко меняется просто
+так»; /plan «белое освещение меняется на тёмное просто так».
+
+- **Why the light jumped.** The video faded in over a poster that was not its
+  own first frame, and the files were encoded with the BT.601 matrix but no
+  matrix tag. Browsers that read untagged HD video as BT.709 showed it warmer
+  or darker than the WebP underneath, so every fade-in, and every return after
+  scrolling away, changed the light. The Bologna and belvedere posters were also
+  the sharper original stills, so the picture softened when the loop appeared.
+- **Loops now.** Each loop is rebuilt from the raw Kling clip:
+  - the duplicate end frame dropped and the last 16 frames eased into the first;
+  - interpolated to 30 fps, which plays evenly on 60 Hz screens (24 fps
+    judders);
+  - laid over its sharp still. Only what really moves comes from the video
+    (Vespi, its shadow, the lantern, the cypress, leaves, the olive tree on
+    /plan); the rest of every frame is the still itself, so stone and sky
+    never boil;
+  - the video areas are matched to the still in colour and sharpened toward its
+    detail.
+  - Every file is tagged BT.709 matrix and primaries with the sRGB transfer, so
+    Chrome and Safari show the same colour as the WebP.
+  - Each poster is frame 0 of its loop, so the fade-in is invisible.
+  - Widths: `[960, 1600, 2400]` (bologna, belvedere, tuscany-ride),
+    `[960, 1600, 2560]` (plan-loggia). VP9 960 for Chromium builds without
+    H.264.
+- **No second fade.** Once a loop has appeared it stays over the poster; off
+  screen it pauses on its current frame and resumes there. Reduced motion
+  still hides it and shows the poster.
+- **Guides strip glides.** With a mouse near either edge of the dark band
+  (outer 18% of its width, 96–260 px), the row rolls that way on its own.
+  - Speed follows the cursor's depth in the zone on a smoothstep up to
+    520 px/s.
+  - It speeds up and slows down exponentially (τ 0.4 s), and eases out over
+    the last 180 px before the end of the row.
+  - When the cursor leaves, a critically damped spring (ω 6/s) carries the
+    current speed onto the card the row would have reached, in the direction
+    it was going: no dead stop, no roll back. Snapping returns on landing; a
+    drag, swipe or wheel cancels the glide at once.
+  - Measured at 1440×900: at most 9 px per frame, and the per-frame step never
+    changes by more than 1 px from one frame to the next.
+  - Touch, keyboard and reduced motion keep the plain row. Dots and ▶ are
+    unchanged.
+  - Interaction thesis (written by the genjutsu `cast` method; unvalidated,
+    since the owner asked for no questions): «the band follows the eye: the
+    closer the pointer is to an edge, the faster the next topics come in, and
+    the row never jerks into motion or stops dead». Allowed patterns: none.
+- Jobs, masks and hashes: design/illustrations/motion-2026-11-07b.json.

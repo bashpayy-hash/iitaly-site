@@ -1,0 +1,213 @@
+{
+ "date": "2026-11-07",
+ "request": "Owner, 7 Nov (three screenshots): home hero «анимация чуть топорная, качество плохое, и освещение резко меняется просто так»; /plan «белое освещение меняется на тёмное просто так».",
+ "diagnosis": {
+  "colour": "Previous encodes used the BT.601 matrix with no matrix tag (transfer and primaries tagged BT.709). Browsers that read untagged HD video as BT.709, and apply the BT.709 transfer, render it warmer/darker than the sRGB WebP poster, so each fade-in changed the light. Bologna video Y mean 111.4 vs 107.7 for the same frame encoded with the BT.709 matrix.",
+  "poster": "Bologna and belvedere posters were the original stills (Laplacian variance 164 vs 33 for the video around Vespi): the scene softened as the loop faded in, and faded back to the poster on every pause.",
+  "content": "Raw Kling clips are stable in brightness (frame mean within 0.6 levels over 8 s); static stone, plaster and roofs boil slightly from frame to frame."
+ },
+ "method": [
+  "raw Kling clip decoded with the BT.709 matrix; duplicate end frame dropped; last 16 frames eased linearly into frame 0 (exact float blend)",
+  "hqdn3d 0:0:3:3 then minterpolate to 30 fps (mci, aobmc, bidir, vsbmc), the wrap interpolated from the last frame into frame 0; 192 -> 240 frames",
+  "affine registration of the still onto frame 0 (OpenCV ECC, residual under 0.3 px)",
+  "motion mask = per-pixel temporal std > 1.5 levels at quarter size, cleaned, grown, feathered; optionally limited to boxes where Kling only adds wobble outside",
+  "every output frame = still outside the mask, video (colour-matched to the still, unsharp toward its detail) inside",
+  "H.264 high (CRF 19/20/22 at the widths), one keyframe per loop, VP9 CRF 31 at 960; tagged BT.709 matrix and primaries, sRGB transfer (iec61966-2-1), tv range",
+  "posters = frame 0 of the composite, WebP q84 (>=1600) / q82"
+ ],
+ "items": [
+  {
+   "name": "bologna",
+   "use": "home welcome hero",
+   "loop": "kling4_0 5c1d7019-6fa7-4cb4-9dd6-855a7aba35a9",
+   "still": "landscapes/bologna-2400 (a033124a…)",
+   "moving": "Vespi, its shadow, the swinging lantern",
+   "mask_coverage": "15%",
+   "files": [
+    {
+     "file": "public/illustrations/motion/bologna-1600.mp4",
+     "bytes": 683464,
+     "sha256": "ca8fa210c90a0abbf40e3c47176df1eaea1c81fec84f9f22edf2f3133b3b533d"
+    },
+    {
+     "file": "public/illustrations/motion/bologna-2400.mp4",
+     "bytes": 1601778,
+     "sha256": "e33c6c5d5af08ff1164ebb6777abd3c57688fd14543c621fe036835158274bf6"
+    },
+    {
+     "file": "public/illustrations/motion/bologna-960.mp4",
+     "bytes": 246830,
+     "sha256": "5f0659920bc59f6dbc1138883b772e571f37ae7754485c46d1caa6041e2926ef"
+    },
+    {
+     "file": "public/illustrations/motion/bologna-960.webm",
+     "bytes": 190535,
+     "sha256": "d5e5af764e56b439019066da220f73a7d94ff57a22dad09248018c69daba8125"
+    },
+    {
+     "file": "public/illustrations/landscapes/bologna-1024.webp",
+     "bytes": 84370,
+     "sha256": "2a3ba4e7d12c7541af284cd3ba14166c968bd45ef971a8568d0eb5779f6b7e69"
+    },
+    {
+     "file": "public/illustrations/landscapes/bologna-1600.webp",
+     "bytes": 169936,
+     "sha256": "fca8ad42d0f0c22515e91d9db29b04cfd282fa058b3ed624f2530c08c2513d3e"
+    },
+    {
+     "file": "public/illustrations/landscapes/bologna-2400.webp",
+     "bytes": 272498,
+     "sha256": "d0bf9415605c2ed35b68247ef017f4c33aec8ba4e6aafd6abbec022023428fe0"
+    },
+    {
+     "file": "public/illustrations/landscapes/bologna-640.webp",
+     "bytes": 41836,
+     "sha256": "4faed045ee4fd334ba164d229360e71fa88099e5217e9363668e7194335007d6"
+    }
+   ]
+  },
+  {
+   "name": "belvedere",
+   "use": "home FAQ tile",
+   "loop": "kling4_0 21c5c7b8-2737-4e96-b14c-f87df36b8116",
+   "still": "landscapes/belvedere-2400 (6a397266…)",
+   "moving": "cypress, Vespi waving, foreground leaves (parapet and roofs kept from the still: Kling texture boil)",
+   "mask_coverage": "22%",
+   "files": [
+    {
+     "file": "public/illustrations/motion/belvedere-1600.mp4",
+     "bytes": 1147905,
+     "sha256": "1c2ed79185ecfd404ab64cedfb095bd856e6057d89d31599a3bbc08de4d0c96f"
+    },
+    {
+     "file": "public/illustrations/motion/belvedere-2400.mp4",
+     "bytes": 2738845,
+     "sha256": "c81ccbc7dff000f71de201c1a918bff956772342e16a81258510a5d5d6046f6e"
+    },
+    {
+     "file": "public/illustrations/motion/belvedere-960.mp4",
+     "bytes": 463001,
+     "sha256": "3643522c78672e92c20230c63840366346a509380306abf7aacce301c4d37304"
+    },
+    {
+     "file": "public/illustrations/motion/belvedere-960.webm",
+     "bytes": 311292,
+     "sha256": "384219a2b697be39d92bcf281898e7b96d676cd255e4d3b1be42db26a0c21a81"
+    },
+    {
+     "file": "public/illustrations/landscapes/belvedere-1024.webp",
+     "bytes": 120002,
+     "sha256": "2bd061c757df8da3aeaf14a506fc3a2c91cf94df5ed8c352f649f8696f7ed9e9"
+    },
+    {
+     "file": "public/illustrations/landscapes/belvedere-1600.webp",
+     "bytes": 239024,
+     "sha256": "65b7b5898b5375dd463c3880afbbcd51159d5f1a185670c3991e9e709ee5de5c"
+    },
+    {
+     "file": "public/illustrations/landscapes/belvedere-2400.webp",
+     "bytes": 359504,
+     "sha256": "56f55712c7c4789671f0ec224910d52b27dfbb1cc64eff313f55e326dae6a672"
+    },
+    {
+     "file": "public/illustrations/landscapes/belvedere-640.webp",
+     "bytes": 61256,
+     "sha256": "b891ddf8fa133d56d51f1440fae311f9b2a0418a9e912c0827bab695a07f46da"
+    }
+   ]
+  },
+  {
+   "name": "plan-loggia",
+   "use": "/plan header",
+   "loop": "kling4_0 d0536fce-9e1a-4ed0-a43c-09e97c2fdfc3",
+   "still": "c1bbadf9-8a4b-4ac3-aad4-79c5df3e72a3 (2688x1520)",
+   "moving": "Vespi at the desk, the olive tree (the right-hand door kept from the still: Kling wobble)",
+   "mask_coverage": "14%",
+   "blur": "feathered ellipse behind the title, gaussian sigma 9.33 at 2560",
+   "files": [
+    {
+     "file": "public/illustrations/motion/plan-loggia-1600.mp4",
+     "bytes": 616797,
+     "sha256": "42417d67db449d70bf256abdae0b285edc03b354fdac9fcb3ab721d26e953e77"
+    },
+    {
+     "file": "public/illustrations/motion/plan-loggia-2560.mp4",
+     "bytes": 1655171,
+     "sha256": "5a15327a209f3d82705d4736beed72278aff39fc04d349cd91747d7acc3ec039"
+    },
+    {
+     "file": "public/illustrations/motion/plan-loggia-960.mp4",
+     "bytes": 207443,
+     "sha256": "351e49041ecc79c5a1307b46bdce5e19932f904609a64bdb98ae20997802a906"
+    },
+    {
+     "file": "public/illustrations/motion/plan-loggia-960.webm",
+     "bytes": 154840,
+     "sha256": "878fd7bc22c018affb5e26388575068bacc427ab1eeaa885a2ed209317238582"
+    },
+    {
+     "file": "public/illustrations/scenes/plan-loggia-1920.webp",
+     "bytes": 190164,
+     "sha256": "acbfd965dad49623699eb96f9bf1f321447fbcca6f4af758bfcc43448a2d4982"
+    },
+    {
+     "file": "public/illustrations/scenes/plan-loggia-2560.webp",
+     "bytes": 280402,
+     "sha256": "cdbc5ab60906b1183074fd53a9fa9a53ad87705da2844fb4cb46122a0864d61c"
+    },
+    {
+     "file": "public/illustrations/scenes/plan-loggia-960.webp",
+     "bytes": 56760,
+     "sha256": "63df3ab381bb61d76030b2ee85277d75a81c88785fbe3bf7d3986ee645b5d2a0"
+    }
+   ]
+  },
+  {
+   "name": "tuscany-ride",
+   "use": "cabinet «Сейчас»",
+   "loop": "7 Nov retimed 30 fps master (from kling4_0 9de26546-79d4-4fc6-9596-4f41abda9d26)",
+   "still": "landscapes/tuscany-2400 (51c7c070…)",
+   "moving": "Vespi on the road, cypresses, fields",
+   "mask_coverage": "60%",
+   "note": "colour offset of 1.5–3 levels against the poster corrected",
+   "files": [
+    {
+     "file": "public/illustrations/motion/tuscany-ride-1600.mp4",
+     "bytes": 2614254,
+     "sha256": "e627e230ac84e5ae58d9e00dba6ed7146dc9ed14933bdbcf56a079667a177c38"
+    },
+    {
+     "file": "public/illustrations/motion/tuscany-ride-2400.mp4",
+     "bytes": 5436104,
+     "sha256": "b1d1b42d237f14e3e7212a4ddea28085e5752e4591fb606d152551f96da40cca"
+    },
+    {
+     "file": "public/illustrations/motion/tuscany-ride-960.mp4",
+     "bytes": 718504,
+     "sha256": "98949bc664c60e688eed2aacc7d148b8f3ff64ff1be22bc27a94420c5203f248"
+    },
+    {
+     "file": "public/illustrations/motion/tuscany-ride-960.webm",
+     "bytes": 730876,
+     "sha256": "c5bbe8514db3ae97899d71f8ab0812f02ee96b168fe4b1b76807373a4f893ace"
+    },
+    {
+     "file": "public/illustrations/landscapes/tuscany-1600.webp",
+     "bytes": 232778,
+     "sha256": "52fbaef098b7ac7b4e2013faa9e772ffdef105b4f8425c2e14ca88912c981806"
+    },
+    {
+     "file": "public/illustrations/landscapes/tuscany-2400.webp",
+     "bytes": 386902,
+     "sha256": "c791691272cd8ef4707bc32405ce5d59d95730689e9ab3604d93c31643b4bf35"
+    },
+    {
+     "file": "public/illustrations/landscapes/tuscany-960.webp",
+     "bytes": 106272,
+     "sha256": "b6cb83130f1356539b111115e8480604251935b890836bab136420c06cff060c"
+    }
+   ]
+  }
+ ],
+ "tools": "ffmpeg 30 fps interpolation and encodes; OpenCV/numpy compositing; static motion audit from the genjutsu skill pack (athevon/genjutsu, design-audit) run on the touched files"
+}

@@ -256,7 +256,8 @@ CHROME_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
 В каждом отчёте сразу давать ссылку на Netlify: превью PR
 (`https://deploy-preview-<номер>--iitaly.netlify.app/<страница>`) и, после
 слияния, живой сайт (`https://iitaly.net/<страница>`; owner, 6 Nov: «у меня
-новый домен появился, учти»).
+новый домен появился, учти»). Ссылка обязательна в **каждом** финальном
+ответе (owner, 7 Nov: «всегда давай ссылку при финальном ответе»).
 Для нового домена бэкенд должен его знать: на Railway в `ALLOWED_ORIGINS`
 нужны `https://iitaly.net` и `https://www.iitaly.net` (иначе браузер на
 iitaly.net не получит ответы API — кабинет по коду, проверка документа,
