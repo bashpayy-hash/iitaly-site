@@ -125,6 +125,24 @@ async function railContract(page,data,compact){
     for(const task of stage.tasks)if(complete(task))assert.equal(await road(page).locator(`[data-road-node="${task.id}"]`).evaluate(n=>n.closest('[data-node-state]').getAttribute('data-node-state')),'done','A saved step is a done circle');
   }
   assert(await road(page).locator('[data-road-node][aria-current=true]').count()<=1,'At most one current circle');
+  // Owner, 7 Nov: «иногда кружочки стоят криво». Each stage is one arc that starts and ends on the axis
+  // (two circles stand straight); on phones every circle sits on one axis, its left edge on the stage title.
+  const units=await road(page).evaluate(root=>[...root.querySelectorAll('[data-road-steps],[data-road-ghost]')].map(list=>{
+    const nodes=[...list.querySelectorAll(':scope > [data-node-state]')].map(step=>{const node=step.querySelector(':scope > a > span, :scope > span');const r=node.getBoundingClientRect();return {x:r.left+r.width/2,left:r.left,state:step.getAttribute('data-node-state')};});
+    return {nodes,title:list.closest('li').querySelector('strong').getBoundingClientRect().left};
+  }).filter(unit=>unit.nodes.length));
+  if(!units.length){/* no path on this screen (empty roadmap or compact header) */}
+  else if(await page.evaluate(()=>innerWidth<=640)){
+    const axis=units[0].nodes[0].x;
+    for(const unit of units)for(const node of unit.nodes){
+      assert(Math.abs(node.x-axis)<0.6,`Phone circles share one axis (${node.x} vs ${axis})`);
+      if(node.state!=='current')assert(Math.abs(node.left-unit.title)<1.1,`Phone circle edge meets the stage title (${node.left} vs ${unit.title})`);
+    }
+  }else for(const unit of units){
+    const first=unit.nodes[0].x,last=unit.nodes.at(-1).x;
+    assert(Math.abs(first-last)<0.6,'A stage arc starts and ends on the axis');
+    assert(Math.abs(first-units[0].nodes[0].x)<0.6,'Every stage starts on the same axis');
+  }
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}
   await noOverflow(page);await oneFace(page,'Route');
 }

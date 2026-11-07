@@ -157,11 +157,18 @@
   .row > .unitHead { grid-template-columns:44px minmax(0,1fr); gap:4px 12px; min-height:72px; padding:14px 0; }
   .row > a .status { grid-column:2; display:flex; align-items:center; justify-items:start; gap:8px; text-align:left; }
   .row[data-road-locked] > .unitHead { grid-template-columns:44px minmax(0,1fr); }
-  /* На телефоне змейка уходит в левую колонку, подписи — справа от неё. */
-  .steps { --center:74px; --amp:30px; --node:56px; --row:88px; }
-  .step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--amp) + var(--node) / 2 + 22px); right:0; }
+  /* На телефоне путь — одна прямая ось: дуги шириной в полкружка читались
+     как кривое выравнивание («иногда кружочки стоят криво»). Ось стоит так,
+     что левый край кружка совпадает с началом заголовка этапа (иконка 44px +
+     зазор 12px), подписи — одной колонкой справа. Дорожка сжата в линию по
+     оси: те же отрезки, тот же зелёный пройденный путь, без изгибов. */
+  .steps { --center:84px; --node:56px; --row:88px; }
+  .node { left:var(--center); }
+  .trail { left:calc(var(--center) - .1px); width:.2px; }
+  .step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--node) / 2 + 26px); right:0; }
+  /* Все подписи — одной колонкой, по краю увеличенного кружка «Сейчас». */
   .row[data-road-unit-state=current] { margin:0 -10px; padding:0 10px 4px; border-radius:20px; }
-  .step[data-side] .stepLabel { left:calc(var(--center) + var(--amp) + var(--node) / 2 + 18px); right:0; max-width:none; justify-items:start; text-align:left; font-size:14px; }
+  .step[data-side] .stepLabel { left:calc(var(--center) + var(--node) / 2 + 26px); right:0; max-width:none; justify-items:start; text-align:left; font-size:14px; }
   .thumb { width:44px; height:40px; }
   .text strong { font-size:16px; }
   .text > span { font-size:13px; }
