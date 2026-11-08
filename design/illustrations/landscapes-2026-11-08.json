@@ -1,0 +1,58 @@
+{
+ "date": "2026-11-08",
+ "request": "Owner, 8 Nov (home screenshot): «колонны в Болонье — это нормально, но я бы хотел, чтобы он там сидел, и ветерок дул, читал бы газету, пил бы эспрессо и ел бы круассан… всё это прогони через Higgsfield».",
+ "model": "gpt_image_2_5 (Higgsfield), variant flare, quality high, 2k, 3:2, mascot references ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5, 0f6d7ac4-4e85-4761-9765-753f578eec1e; the chosen frame upscaled to 4k (bytedance_image_upscale)",
+ "scene": {
+  "name": "bologna-cafe",
+  "use": "home welcome hero (replaces the 3–4 Nov «bologna» walk: public/illustrations/landscapes/bologna-* and motion/bologna-* removed)",
+  "job": "13027cab-4b55-4cec-bdcc-b30adeddbf5c",
+  "upscaleJob": "28696af7-a24b-4e22-9ece-458aa7bc5416",
+  "prompt": "Editorial travel photograph, 35mm, photorealistic: an empty terracotta portico arcade in Bologna in warm evening light, the colonnade receding to the right, hanging iron lanterns, long soft shadows on the worn stone floor. In the lower left third of the frame a tiny café corner: a small round marble bistro table with a slim iron base and a bentwood café chair. The exact same handmade cotton toy character as in the references (…) sits on the chair and reads an open newspaper held in both paws, calm and content; on the table a tiny white espresso cup on a saucer with a faint curl of steam and a small plate with a golden Italian cornetto brioche. A light breeze lifts one corner of the newspaper. The newspaper shows only soft out-of-focus grey columns of print and small blurred picture blocks, with no legible letters or words. Clearly a soft toy placed in the real place. No text, no signs, no flags, no other people, no logos.",
+  "review": "Reviewed at 2048 px and in 1:1 crops: the newspaper carries only grey print texture and two blurred picture blocks, no legible letters; no people, signs, flags or logos; Vespi's helmet, collar and button match the references; cup, saucer and cornetto on the table; the lower-left third of the frame.",
+  "master": "design/illustrations/source/landscapes/bologna-cafe-vespi.jpg (2048×1360, JPEG q82 of the PNG result)",
+  "upscaleMaster": "design/illustrations/source/landscapes/bologna-cafe-vespi-4k.jpg (4096×2723, JPEG q82 of the 4k result)",
+  "rejected": [
+   {
+    "job": "2a53dd74-b768-4877-b35d-ed61c4302749",
+    "why": "closer, low camera: a large newspaper with a headline-like word fragment; Vespi's legs cut by the table"
+   },
+   {
+    "job": "76fcd3fd-7c28-45c3-8f4c-910fe75ce77e",
+    "why": "sipping espresso with the newspaper folded on the table: lovely, but the reading pose is the still; the sip and the bite live in the loop"
+   }
+  ]
+ },
+ "processing": "Posters are frame 0 of the composited loop (see motion-2026-11-08.json), WebP q84 at 2400 and 1600, q82 at 1024 and 640.",
+ "files": [
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-1024.webp",
+   "bytes": 81376,
+   "sha256": "0ed99941c8ffed0006bf209acbc02eb4b9f18f08abee77bdbf7dc086f8f29837"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-1600.webp",
+   "bytes": 158580,
+   "sha256": "ad74fd4cc1ea81197db7828d3781e2bf6d3085c1e064ae20110c31a2d7c05880"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-2400.webp",
+   "bytes": 256026,
+   "sha256": "e944e3fdfb072c2b91d3a9786c51302a663207d4a9e0d92cf59f181af08c821a"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-640.webp",
+   "bytes": 43468,
+   "sha256": "5797c00a91a36f64947789789422715c89e3c45f14e6fd8627f306195484923f"
+  },
+  {
+   "file": "design/illustrations/source/landscapes/bologna-cafe-vespi-4k.jpg",
+   "bytes": 796586,
+   "sha256": "d155497d46d11402b24e7ba3d520bfbba219fcfa40dd0d74e12f88e3e783256a"
+  },
+  {
+   "file": "design/illustrations/source/landscapes/bologna-cafe-vespi.jpg",
+   "bytes": 332313,
+   "sha256": "88f0588933fcbeef79671f967681a93b47c2c9db0a565818754a6e7638f2f9de"
+  }
+ ]
+}

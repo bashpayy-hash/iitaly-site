@@ -208,11 +208,16 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             <select value={context.profile}
               onChange={e => updateContext({ profile: e.target.value as DocumentReviewContext["profile"] })}
               className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
-              <option value="general">Не знаю / другая программа</option>
-              <option value="bocconi">Bocconi · ISU / ISEEU</option>
-              <option value="piemonte">EDISU Piemonte</option>
-              <option value="toscana">DSU Toscana</option>
-              <option value="ergo">ER.GO · Emilia-Romagna</option>
+              {/* Owner, 8 Nov: основной вариант — общий DSU; отдельные конкурсы
+                  только там, где правила отличаются (их подтверждает база
+                  сервера). Значение general — то, что сервер и принимает. */}
+              <option value="general">DSU · общие правила</option>
+              <optgroup label="Свои правила конкурса">
+                <option value="bocconi">Bocconi · ISU / ISEEU</option>
+                <option value="piemonte">EDISU Piemonte</option>
+                <option value="toscana">DSU Toscana</option>
+                <option value="ergo">ER.GO · Emilia-Romagna</option>
+              </optgroup>
             </select>
           </label>
           <label className="min-w-0 text-apple-caption text-cloud-body">
@@ -238,7 +243,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
           {context.academicYear === "2027/28"
             ? "Правила 2027/28 в этой базе пока не подтверждены окончательно. Доступна проверка содержания файла."
             : context.profile === "general" || context.academicYear === "unspecified" || context.applicantScope === "unspecified"
-              ? "Без уточнения заявки проверим содержание. Год доходов и обязательное оформление оценим только для подходящего профиля."
+              ? "Пока конкурс, год или ситуация не уточнены, проверим содержание по общим правилам DSU. Год доходов и обязательное оформление оценим только для конкурса со своими правилами."
               : "Применим правила выбранной программы 2026/27 для указанной ситуации. Источники покажем в результате."}
         </p>
       </fieldset>
@@ -291,7 +296,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             disabled={state.step === "reading" || unavailable || availabilityPending}
             onChange={(e) => accept(e.target.files?.[0])}
           />
-          <ObjectIcon name="folder" size={76} />
+          <ObjectIcon name="folder-quiet" size={60} />
           <b className={styles.fileAction}>Выбрать документ</b>
           <small>или перетащи сюда<br />{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>

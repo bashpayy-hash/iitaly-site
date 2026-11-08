@@ -54,11 +54,15 @@ export function TrustFAQ() {
         <div className={styles.panel}>
           <p className={styles.eyebrow}>Прежде чем платить</p>
           <h2 id="home-faq-title" className={styles.title}>Можно ли нам доверять</h2>
+          {/* Один открытый вопрос за раз и плавное раскрытие (owner, 8 Nov:
+              «очень топорно… иллюстрация увеличивается по мере того, как
+              нажимаешь»): плитка держит высоту, кадр со смотровой не растёт. */}
           <div className={styles.list}>
             {FAQ.map((item) => (
               <details
                 key={item.q}
                 className={styles.item}
+                name="home-faq"
                 onToggle={(e) => {
                   if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
                 }}

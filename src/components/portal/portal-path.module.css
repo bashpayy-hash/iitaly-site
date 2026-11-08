@@ -175,7 +175,11 @@
    Вся плитка — одна ссылка; на телефоне плитки идут одна под другой. */
 .features { grid-area:features; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; min-width:0; }
 .feature { display:grid; grid-template-rows:auto 1fr auto; gap:16px; min-width:0; padding:14px 14px 24px; border-radius:28px; background:#FFFDF9; color:var(--ink); text-decoration:none; }
-.feature .featureScene { margin:0; aspect-ratio:16 / 7; }
+/* Сцены плиток 16:10 (owner, 8 Nov: «Веспи полностью не входит в кадр»):
+   в 16:7 сцена со штампом резала шлем. Её кадр прижат к верху и дрейфует
+   от верхнего края, чтобы и крайнее положение камеры не срезало шлем. */
+.feature .featureScene { margin:0; aspect-ratio:16 / 10; }
+.feature .featureScene[data-stage-scene=stamp] img { object-position:50% 0; transform-origin:50% 0; }
 .featureCopy { display:grid; gap:4px; padding:4px 14px 0; min-width:0; }
 .featureCopy strong { font:600 clamp(20px,1.9vw,24px)/1.2 var(--font-sans); letter-spacing:-.02em; text-wrap:balance; }
 .featureCopy span { color:var(--quiet); font-size:15px; line-height:1.45; }
@@ -199,7 +203,7 @@
   .path { padding:24px 16px 8px; border-radius:24px; }
   .features { grid-template-columns:minmax(0,1fr); }
   .feature { padding:10px 10px 20px; border-radius:24px; gap:14px; }
-  .feature .featureScene { aspect-ratio:16 / 9; }
+  .feature .featureScene { aspect-ratio:16 / 10; }
   .featureCopy { padding:2px 8px 0; }
   .featureAction { margin:0 8px; }
   /* На телефоне та же змейка, уже (±88px), как дорожка Duolingo: подписи

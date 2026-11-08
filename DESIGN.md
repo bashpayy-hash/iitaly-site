@@ -1023,3 +1023,59 @@ Owner, on a tablet: «хотелось бы, чтобы здесь всё был
   jump wider than ¾ of the amplitude between neighbours, and that no
   circle, station, title, caption or piece of scenery overlaps another or
   leaves the road.
+
+## Sitting under the portico, a FAQ that holds still · 8 November 2026 (afternoon)
+
+Owner, five screenshots: the FAQ «очень топорно… иллюстрация увеличивается
+по мере того, как нажимаешь»; the /plan title «наводишь мышку — цвет
+меняется, всё лагает»; the document check «почему нет основного DSU… если
+есть различия, то только тогда»; the cabinet tile «Веспи полностью не
+входит в кадр»; and the first screen: «колонны в Болонье — это нормально,
+но я бы хотел, чтобы он там сидел, ветерок дул, читал газету, пил эспрессо
+и ел круассан… через Higgsfield».
+
+- **The welcome scene is a café.** Vespi sits on a bentwood chair at a
+  small marble table under the Bologna arcade, newspaper in both paws (grey
+  print texture only, no letters), espresso and a cornetto on the table.
+  The still is GPT Image 2.5 (flare, 2k, the mascot references), upscaled
+  to 4k for the 2400 poster; the loop is Kling 4.0 at 1080p for 10 s with
+  the still as first and last frame: a page turns, a sip, a bite, the
+  breeze in the newspaper and the collar, the lanterns barely swaying. Two
+  loops were generated and the calmer one kept; the raw clip has no cuts
+  (largest consecutive-frame difference 1.9/255 at 320 px) and its light
+  holds within 2.6/255 over the 10 s. Built with the 7 November pipeline
+  (`motion-2026-11-08.json`): still outside the motion mask, video inside,
+  30 fps, BT.709 + sRGB tags, poster = frame 0. The walking scene and its
+  files are gone.
+- **The FAQ tile keeps its height.** The panel with an open answer used to
+  stretch the tile, and `object-fit: cover` scaled the belvedere with it.
+  The desktop tile is now 840px tall for good, one question is open at a
+  time (`<details name>`), and the longest answer (731px of panel) fits
+  with room; the panel scrolls itself only if a browser renders larger
+  type. Answers slide open and closed over 320 ms through
+  `::details-content` (height 0 → auto with `interpolate-size`), the same
+  curve as the plus sign; browsers without it keep the instant toggle.
+  Phones were never affected: the scene is its own 4:3 box there.
+- **A flat accent over the video.** On /plan the word «ситуацию» was
+  gradient text (`background-clip: text`) sitting on the living scene; no
+  `:hover` rule, animation or style recalculation fires on hover in a
+  headless run, so the remaining moving part under the pointer was that
+  text mask over a video layer, which Chrome re-rasterises and briefly
+  shows in the fallback colour. The word is plain `#E63946` there now.
+  Elsewhere the brand gradient stays (it sits on paper, not video).
+- **Cabinet tiles are 16:10.** The «Проверка документов» and «Напоминания»
+  scenes were 16:7, which cut the helmet of the stamping Vespi; at 16:10
+  both fit, and the stamp scene is anchored to the top with its camera
+  drift growing from the top edge, so the far end of the drift keeps the
+  helmet too. Phones use the same ratio.
+- **DSU first in the document check.** The program list opens with
+  «DSU · общие правила» and groups the four competitions with their own
+  verified rules (Bocconi ISU/ISEEU, EDISU Piemonte, DSU Toscana, ER.GO)
+  under «Свои правила конкурса». It is a label change: the server's
+  allowlist knows exactly these five profiles, and `general` is what it
+  already applied to any other DSU file. The helper line under the selects
+  says the same in the new words.
+- **A quieter folder.** The drop zone's folder is a pre-rendered 30 %
+  saturation copy (`objects/folder-quiet-240.webp`), 60px, at .85 opacity
+  and without its drop shadow. The colourful original remains for the
+  guides and the cabinet.
