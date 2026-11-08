@@ -63,16 +63,17 @@ const stepWord = (count: number) => count % 10 === 1 && count % 100 !== 11 ? "ш
    за стеной доступа — замок; поздние этапы приглушены. Объём — кайма,
    внутренний скос и мягкая тень со смещением, без градиентов. Вся строка —
    одна ссылка на страницу шага. */
-/* Ровность (owner, 7 Nov: «иногда кружочки стоят криво»). Раньше смещение
-   шло одной синусоидой через весь путь, и у каждого этапа выпадала своя
-   фаза: где-то пара кружков стояла прямо, где-то уходила вправо, где-то
-   влево — на телефоне это читалось как ошибка выравнивания. Теперь каждый
-   этап — одна симметричная дуга: начинается и кончается на оси, выгибается
-   посередине, соседние этапы выгибаются в разные стороны. Два кружка стоят
-   ровно друг под другом. На телефоне ось одна для всех кружков
-   (portal-path.module.css), без изгибов. */
-const arc = (count: number, unit: number) => Array.from({ length: count }, (_, k) =>
-  count < 3 ? 0 : Math.round((unit % 2 ? -1 : 1) * Math.sin(Math.PI * k / (count - 1)) * 100) / 100);
+/* Змейка (owner, 8 Nov: «в формате ландшафта… подлиннее и побольше… как
+   реально в Duolingo, извилисто»). Все остановки — этапы и шаги подряд —
+   лежат на одной синусоиде с периодом в восемь остановок: 0, .71, 1, .71,
+   0, −.71, −1, −.71. Размах большой (portal-path.module.css: --amp), поэтому
+   изгиб читается как дорога, а не как кривое выравнивание: именно мелкий
+   сдвиг в полкружка владелец называл «криво» (7 Nov). Крайние точки (±1) —
+   карманы, в них стоит пейзаж. На телефоне та же змейка, только уже. */
+const SNAKE_PERIOD = 8;
+const snake = (i: number) => Math.round(Math.sin(2 * Math.PI * i / SNAKE_PERIOD) * 100) / 100;
+/** Which side of the road is «outside» at stop `i`: the side the curve is heading to. */
+const outside = (i: number): "left" | "right" => Math.sin(2 * Math.PI * (i + 0.5) / SNAKE_PERIOD) >= 0 ? "right" : "left";
 
 type NodeState = "done" | "current" | "todo" | "later" | "locked";
 
@@ -153,20 +154,18 @@ const SCENERY_EVERY = 3;
 
 type SceneryPlace = { art: (typeof SCENERY)[number]; side: "left" | "right" };
 
-/** Where the scenery stands: after step `i` of a stage, keyed `${stageId}:${i}`. */
-function placeScenery(stages: { id: string; count: number; side: "left" | "right" }[]) {
-  const places = new Map<string, SceneryPlace>();
-  let since = 1, used = 0;
-  for (const row of stages) {
-    since++;
-    for (let i = 0; i < row.count; i++) {
-      since++;
-      if (since < SCENERY_EVERY || i === row.count - 1) continue;
-      places.set(`${row.id}:${i}`, { art: SCENERY[used++ % SCENERY.length], side: row.side });
-      since = 0;
-    }
-  }
-  return places;
+/** The scenery stands in the pockets of the snake: at a step on an extreme
+ *  point (x = ±1) the far half of the road is empty, so the piece goes there,
+ *  on the side opposite the circle. Never at a station (its text is there)
+ *  and never closer than three stops to the last piece. */
+function sceneryPlanner() {
+  let last = -SCENERY_EVERY, used = 0;
+  return (point: number): SceneryPlace | undefined => {
+    const x = snake(point);
+    if (Math.abs(x) < 1 || point - last < SCENERY_EVERY) return undefined;
+    last = point;
+    return { art: SCENERY[used++ % SCENERY.length], side: x > 0 ? "left" : "right" };
+  };
 }
 
 function Scenery({ place, reached, as: Tag = "li" }: { place: SceneryPlace; reached: boolean; as?: "li" | "span" }) {
@@ -299,10 +298,10 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
   const roadRef = useRef<HTMLDivElement>(null), lineRef = useRef<SVGSVGElement>(null);
   const roadVersion = `${stages.map(row => `${row.id}:${row.tasks.map(task => portalTaskDone(data, task) ? 1 : lockedTask?.(task) ? 2 : 0).join("")}`).join("|")}#${current?.id}#${stage?.id}`;
   useRouteLine(roadRef, lineRef, roadVersion);
-  // The free side of a stage is the one without step labels: labels go left only
-  // where the stage arc bulges left, so the scenery stands on the right there.
-  const scenery = placeScenery(stages.map((row, index) => ({ id: row.id, count: row.tasks.length || 2,
-    side: arc(row.tasks.length || 2, index).some(x => x < 0) ? "right" : "left" })));
+  // One running index along the whole route: stations and steps in order.
+  // Render is synchronous, so the counter and the scenery planner are safe here.
+  let point = 0;
+  const sceneryAt = sceneryPlanner();
   // Stage boundaries cut the bar into segments, one per stage, sized by its steps.
   const ticks: number[] = [];
   if (!awaitingProfile && total > 0) {
@@ -349,32 +348,32 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const state = opened && !locked && stageDone === row.tasks.length ? "done" : isCurrent ? "current" : "future";
         const ahead = !opened && stageDone > 0;
         const status = state === "done" ? "Готово" : isCurrent ? "Сейчас" : ahead ? "Начат заранее" : "Дальше";
-        if (locked) return <li key={row.id} className={styles.row} data-road-locked data-road-stage-state="future">
-          <div className={styles.unitHead}>
-            <span className={styles.thumb} data-road-point="station-locked"><StageMark stage={art} locked /></span>
-            <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
-          </div>
-          <div className={styles.steps} aria-hidden="true" data-road-ghost>
-            {arc(2, index).map((x, i) => {
-              const place = scenery.get(`${row.id}:${i}`);
-              return <Fragment key={i}>
-                <span className={styles.step} style={{ "--x": x } as CSSProperties} data-node-state="later" data-side={x < 0 ? "left" : "right"}>
-                  <span className={styles.node} data-road-point="ghost"><NodeMark state="later" /></span>
-                </span>
-                {place && <Scenery place={place} reached={false} as="span" />}
-              </Fragment>;
-            })}
-          </div>
-        </li>;
+        if (locked) {
+          const station = point++;
+          return <li key={row.id} className={styles.row} data-road-locked data-road-stage-state="future">
+            <div className={styles.unitHead} style={{ "--x": snake(station) } as CSSProperties} data-side={outside(station)}>
+              <span className={styles.thumb} data-road-point="station-locked"><StageMark stage={art} locked /></span>
+              <span className={styles.text}><strong>{title}</strong><span>Откроется после анкеты</span></span>
+            </div>
+            <div className={styles.steps} aria-hidden="true" data-road-ghost>
+              {[0, 1].map(i => {
+                const at = point++, place = sceneryAt(at);
+                return <Fragment key={i}>
+                  <span className={styles.step} style={{ "--x": snake(at) } as CSSProperties} data-node-state="later" data-side={outside(at)}>
+                    <span className={styles.node} data-road-point="ghost"><NodeMark state="later" /></span>
+                  </span>
+                  {place && <Scenery place={place} reached={false} as="span" />}
+                </Fragment>;
+              })}
+            </div>
+          </li>;
+        }
         const stepStates: NodeState[] = row.tasks.map(task => portalTaskDone(data, task) ? "done" : task.id === current?.id ? "current"
           : lockedTask?.(task) ? "locked" : opened && task.available !== false ? "todo" : "later");
-        const offsets = arc(row.tasks.length, index);
-        // All labels of a stage stand outside its curve, the ends included, so
-        // the other side stays free for the scenery.
-        const labelSide = offsets.some(x => x < 0) ? "left" : "right";
+        const station = point++;
         const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "закрыт до оплаты" };
         return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
-          <a className={styles.unitHead} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
+          <a className={styles.unitHead} style={{ "--x": snake(station) } as CSSProperties} data-side={outside(station)} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>
             <span className={styles.thumb} data-road-point={state === "future" && !opened ? "station-later" : `station-${state}`}><StageMark stage={art} /></span>
             <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
@@ -387,16 +386,16 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
           <ol className={styles.steps} aria-label={`Шаги: ${title}`} data-road-steps={row.id}>
             {row.tasks.map((task, i) => {
               const nodeState = stepStates[i], href = `/portal?stage=${encodeURIComponent(row.id)}&step=${encodeURIComponent(task.id)}`;
-              const place = scenery.get(`${row.id}:${i}`);
+              const at = point++, place = sceneryAt(at);
               return <Fragment key={task.id}>
-                <li className={styles.step} style={{ "--x": offsets[i] } as CSSProperties} data-node-state={nodeState} data-side={labelSide}>
+                <li className={styles.step} style={{ "--x": snake(at) } as CSSProperties} data-node-state={nodeState} data-side={outside(at)}>
                   <a href={href} data-road-node={task.id} aria-current={nodeState === "current" ? "true" : undefined}
                     onClick={event => { if (!plainClick(event)) return; event.preventDefault(); navigatePortal(href); }}>
                     <span className={styles.node} data-road-point={nodeState} data-fresh={task.id === freshId || undefined}><NodeMark state={nodeState} /></span>
-                    <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
+                    <span className={styles.stepLabel}>{nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">Сейчас</span>}<span className={styles.stepTitle}>{taskTitle(task)}</span><span className={styles.srOnly}> — {stepWords[nodeState]}</span></span>
                   </a>
                 </li>
-                {place && <Scenery place={place} reached={segmentState(nodeState, stepStates[i + 1]) !== "later"} />}
+                {place && <Scenery place={place} reached={!palePoint(nodeState)} />}
               </Fragment>;
             })}
           </ol>

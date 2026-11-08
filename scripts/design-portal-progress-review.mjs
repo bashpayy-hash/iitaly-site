@@ -31,7 +31,12 @@ const road=page=>page.locator('[data-portal-road]');
 const detail=page=>page.locator('[data-step-detail]');
 async function go(page,name){await portalDestination(page,name);}
 async function capture(page,name){await sharp(await page.screenshot({animations:'disabled'})).webp({quality:82}).toFile(resolve(output,name+'.webp'));}
-async function noOverflow(page){assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No page-wide horizontal scrolling');}
+async function noOverflow(page){
+  // On failure, name the viewport and the widest offenders so the cause is in the log, not in a guess.
+  const report=await page.evaluate(()=>({over:document.documentElement.scrollWidth-innerWidth,width:innerWidth,path:location.search,
+    offenders:[...document.querySelectorAll('body *')].filter(el=>{const b=el.getBoundingClientRect();return b.right>innerWidth+0.5&&b.width>0;}).slice(0,5).map(el=>`${el.tagName}.${(el.className||'').toString().split(' ')[0]} r=${Math.round(el.getBoundingClientRect().right)}`)}));
+  assert.equal(report.over>1,false,`No page-wide horizontal scrolling (${report.width}px${report.path}: ${report.over}px over; ${report.offenders.join(' | ')})`);
+}
 async function axe(page,label){
   await page.addScriptTag({path:resolve(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,targets:v.nodes.map(n=>n.target)})));
@@ -133,10 +138,10 @@ async function railContract(page,data,compact){
     for(const task of stage.tasks)if(complete(task))assert.equal(await road(page).locator(`[data-road-node="${task.id}"]`).evaluate(n=>n.closest('[data-node-state]').getAttribute('data-node-state')),'done','A saved step is a done circle');
   }
   assert(await road(page).locator('[data-road-node][aria-current=true]').count()<=1,'At most one current circle');
-  // Owner, 7 Nov: «иногда кружочки стоят криво»; then «хочу, чтобы это был общий путь, и остальное серым».
-  // One road through every stop: stations and step circles in route order, no dividers between stages,
-  // one continuous line (one segment between each pair of neighbours). On phones every stop sits on one
-  // axis and all titles form one column; on wider screens each stage arc starts and ends on its station's axis.
+  // Owner, 7 Nov: «хочу, чтобы это был общий путь, и остальное серым»; 8 Nov: «как реально в Duolingo,
+  // извилисто… подлиннее и побольше». One road through every stop (stations and step circles in route
+  // order, no dividers, one segment between each pair of neighbours) that winds across the column on every
+  // width: a real amplitude, several crossings of the centre line, and nothing standing on anything else.
   const route=await road(page).evaluate(root=>{
     const wrap=root.querySelector('[data-road-line]')?.parentElement;
     if(!wrap)return null;
@@ -149,7 +154,7 @@ async function railContract(page,data,compact){
       // Stops and scenery in document order: how many stops stand between two pieces of scenery.
       order:[...wrap.querySelectorAll('[data-road-point],[data-road-scenery]')].map(el=>el.hasAttribute('data-road-scenery')?'S':'P').join(''),
       scenery:[...wrap.querySelectorAll('[data-road-scenery] img')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,ahead:el.parentElement.dataset.sceneryState==='ahead'};}),
-      text:[...wrap.querySelectorAll('li strong,.text > span,[data-road-steps] > [data-node-state] > a > span:nth-child(2),[data-road-point]')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,what:el.textContent.trim().slice(0,30)||el.dataset.roadPoint};}),
+      text:[...wrap.querySelectorAll('.text,.status,[data-road-steps] > [data-node-state] > a > span:nth-child(2),[data-road-point]')].map(el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,what:el.textContent.trim().slice(0,30)||el.dataset.roadPoint};}),
       wrapRight:wrap.getBoundingClientRect().right,wrapLeft:wrap.getBoundingClientRect().left};
   });
   if(route){
@@ -158,20 +163,22 @@ async function railContract(page,data,compact){
     // Scenery: never closer than every third stop, never over a title, label or circle, never off the tile.
     const gaps=route.order.split('S').slice(1,-1).map(run=>run.length);
     for(const gap of gaps)assert(gap>=3,`Scenery stands at most every third stop (${route.order})`);
-    for(const s of route.scenery){
-      assert(s.left>=route.wrapLeft-0.5&&s.right<=route.wrapRight+0.5,'Scenery stays inside the road');
-      for(const t of route.text)assert(s.right<=t.left+0.5||s.left>=t.right-0.5||s.bottom<=t.top+0.5||s.top>=t.bottom-0.5,`Scenery never covers «${t.what}»`);
-    }
-    const stations=route.points.filter(p=>p.state.startsWith('station-'));
-    if(await page.evaluate(()=>innerWidth<=640)){
-      for(const p of route.points)assert(Math.abs(p.x-route.points[0].x)<0.6,`Phone stops share one axis (${p.x} vs ${route.points[0].x})`);
-      for(const left of [...route.titles,...route.labels])assert(Math.abs(left-route.titles[0])<1.1,`Phone titles and labels form one column (${left} vs ${route.titles[0]})`);
-    }else{
-      for(const s of stations)assert(Math.abs(s.x-stations[0].x)<0.6,'Every station sits on the same axis');
-      // Each stage arc leaves its station on the axis and returns to it before the next station.
-      route.points.forEach((p,i)=>{if(!p.state.startsWith('station-'))return;const nodes=[];for(let k=i+1;k<route.points.length&&!route.points[k].state.startsWith('station-');k++)nodes.push(route.points[k]);
-        if(nodes.length){assert(Math.abs(nodes[0].x-p.x)<0.6,'A stage arc starts on its station axis');assert(Math.abs(nodes.at(-1).x-p.x)<0.6,'A stage arc returns to the axis');}});
-    }
+    // The snake: every stop lies on one sine through the route (period 8), so the offsets from the
+    // centre line are large, smooth and cross it again and again; two stops never jump across the column.
+    const centre=(route.wrapLeft+route.wrapRight)/2,offsets=route.points.map(p=>p.x-centre);
+    const amp=Math.max(...offsets.map(Math.abs)),phone=await page.evaluate(()=>innerWidth<=640);
+    // Narrow phones (320px) wind less, but still by at least 18% of the column.
+    assert(amp>=Math.min(phone?80:90,(route.wrapRight-route.wrapLeft)*0.18),`The road really winds (amplitude ${Math.round(amp)}px)`);
+    const signs=offsets.filter(o=>Math.abs(o)>1).map(Math.sign);
+    if(route.points.length>=6)assert(signs.slice(1).filter((s,i)=>s!==signs[i]).length>=Math.floor(route.points.length/6),'The road crosses the centre line again and again');
+    // A sine with period 8 moves at most sin(45°) of its amplitude between stops; a route shorter than one
+    // period may not reach the full amplitude, so there the bound is the largest offset seen.
+    offsets.slice(1).forEach((o,i)=>assert(Math.abs(o-offsets[i])<=(route.points.length>=8?amp*0.75:amp)+1,'Neighbouring stops never jump across the column'));
+    // Nothing stands on anything else: circles, stations, titles, step labels and scenery keep apart.
+    const boxes=[...route.text,...route.scenery.map((s,i)=>({...s,what:'scenery '+i}))];
+    for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const a=boxes[i],b=boxes[j];
+      assert(!(a.left<b.right-0.5&&b.left<a.right-0.5&&a.top<b.bottom-0.5&&b.top<a.bottom-0.5),`«${a.what}» and «${b.what}» overlap`);}
+    for(const t of boxes)assert(t.left>=route.wrapLeft-0.5&&t.right<=route.wrapRight+0.5,`«${t.what}» stays inside the road`);
   }
 
   if(compact){assert.equal(await road(page).getAttribute('data-road-navigation-only'),'true');assert.equal(await road(page).locator('[data-road-step-title],[data-road-open],img[data-vespi]').count(),0,'Header repeats no task/face');assert((await road(page).boundingBox()).height<=await page.evaluate(()=>innerHeight*.4),'Counts and navigation leave most of the viewport for the task');}

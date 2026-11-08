@@ -39,14 +39,24 @@
    оси, что и шаги (значок в диске --station), название и статус — справа,
    в одной колонке с подписями шагов. Линию рисует PortalRoad по реальным
    центрам остановок и кружков (.roadLine). */
-.road { --center:50%; --amp:104px; --node:64px; --row:96px; --station:68px; --gap:22px; position:relative; }
+/* Змейка по всей ширине (owner, 8 Nov: «как реально в Duolingo, извилисто…
+   подлиннее и побольше»). Размах --amp растёт с шириной колонки: на узкой
+   колонке 96px, на широкой 170px; снаружи изгиба всегда остаётся место под
+   подписи (см. .stepLabel), внутри — карман под пейзаж. */
+.road { --center:50%; --amp:clamp(96px, calc(50% - 310px), 170px); --node:64px; --row:116px; --station:72px; --gap:22px; position:relative; }
 .roadLine { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
 .roadLine path { fill:none; stroke:#D6C8B2; stroke-width:5px; stroke-linecap:round; stroke-dasharray:.5 12; }
 .roadLine path[data-state=walked] { stroke:#3A8560; stroke-width:6px; stroke-dasharray:none; }
 .roadLine path[data-state=later] { stroke:#E6DED1; }
 .list { margin:0; padding:0; list-style:none; }
-.row > .unitHead { display:grid; grid-template-columns:calc(var(--center) + var(--station) / 2 + var(--gap)) minmax(0,1fr); grid-template-areas:"station text" "station status"; align-content:center; row-gap:6px; max-width:780px; min-height:calc(var(--row) + 8px); margin:0 auto; padding:12px 0; color:inherit; text-decoration:none; }
-.row[data-road-locked] > .unitHead { grid-template-areas:"station text"; color:var(--quiet); }
+/* Остановка-этап стоит на змейке (--x), название и статус — снаружи
+   изгиба, с той же стороны, что подписи шагов; внутри остаётся карман. */
+.row > .unitHead { position:relative; display:block; max-width:1040px; min-height:calc(var(--station) + 32px); margin:0 auto; padding:16px 0; color:inherit; text-decoration:none; }
+.row[data-road-locked] > .unitHead { color:var(--quiet); }
+.unitHead[data-side=right] :is(.text,.status) { margin-left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--station) / 2 + var(--gap)); }
+.unitHead[data-side=left] :is(.text,.status) { margin-left:auto; margin-right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--station) / 2 + var(--gap)); text-align:right; }
+.unitHead[data-side=left] .text { justify-items:end; }
+.unitHead[data-side=left] .status { justify-content:flex-end; }
 
 /* Дорожка шагов как в Duolingo (owner, 7 Nov; полировка — «максимально
    приятно глазу»; без вещей в шагах — «перебор эмодзи»). Медальоны идут
@@ -58,7 +68,7 @@
    знак: галочка, звезда текущего шага, точка, замок. Текущий — крупнее,
    с кольцом и одной волной, которая мягко расходится и гаснет. Подписи —
    снаружи змейки на компьютере, справа от колонки на телефоне. */
-.steps { position:relative; max-width:780px; margin:0 auto; padding:0; list-style:none; }
+.steps { position:relative; max-width:1040px; margin:0 auto; padding:0; list-style:none; }
 .step { position:relative; display:block; height:var(--row); }
 .step > a { position:absolute; inset:0; display:block; color:inherit; text-decoration:none; -webkit-tap-highlight-color:transparent; }
 .step > a:focus-visible { outline:none; }
@@ -80,7 +90,7 @@
 .step[data-node-state=locked] .node { --rim:#E3D9CB; background:#F6F2EB; color:#7C7166; box-shadow:inset 0 0 0 1.5px var(--rim),0 6px 12px -10px rgba(58,40,24,.35); }
 .step > a:active .node { transform:translateY(2px) scale(.98); }
 .step > a:focus-visible .node { outline:3px solid var(--accent,#B83A27); outline-offset:6px; }
-.stepLabel { position:absolute; top:50%; display:grid; gap:6px; justify-items:start; max-width:300px; transform:translateY(-50%); color:var(--ink); font-size:15px; font-weight:500; line-height:1.38; letter-spacing:-.005em; text-wrap:pretty; overflow-wrap:anywhere; }
+.stepLabel { position:absolute; top:50%; display:grid; gap:6px; justify-items:start; max-width:min(300px, calc(50% - var(--amp) - var(--node) / 2 - 40px)); transform:translateY(-50%); color:var(--ink); font-size:15px; font-weight:500; line-height:1.38; letter-spacing:-.005em; text-wrap:pretty; overflow-wrap:anywhere; }
 .step[data-side=right] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 24px); right:0; text-align:left; }
 .step[data-side=left] .stepLabel { right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 24px); left:auto; justify-items:end; text-align:right; }
 .step[data-node-state=current] .stepLabel { font-size:16px; font-weight:600; }
@@ -113,10 +123,13 @@
    строки нет, поэтому шаги не раздвигаются. Все макеты стоят нижним краем на
    одной линии — на земле, а не в воздухе. Впереди закрытое — серое, как
    сама дорога. */
-.scenery { --scene-h:190px; position:relative; display:block; height:0; pointer-events:none; }
-.scenery img { position:absolute; top:calc(var(--scene-h) / -2); width:min(260px, calc(50% - var(--node) / 2 - 56px)); height:var(--scene-h); object-fit:contain; user-select:none; -webkit-user-drag:none; }
-.scenery[data-side=left] img { right:calc(50% + var(--node) / 2 + 40px); object-position:right bottom; }
-.scenery[data-side=right] img { left:calc(50% + var(--node) / 2 + 40px); object-position:left bottom; }
+/* Пейзаж стоит в кармане змейки: напротив крайнего кружка, по центру его
+   ряда (строка пейзажа без высоты — она идёт сразу за кружком). Ширина не
+   доходит до подписей соседних кружков на другой стороне. */
+.scenery { --scene-h:200px; position:relative; display:block; height:0; pointer-events:none; }
+.scenery img { position:absolute; top:calc(var(--row) * -0.5 - var(--scene-h) / 2); width:min(280px, calc(50% + 0.71 * var(--amp) - 72px)); height:var(--scene-h); object-fit:contain; user-select:none; -webkit-user-drag:none; }
+.scenery[data-side=left] img { right:calc(50% - 0.71 * var(--amp) + 56px); object-position:right bottom; }
+.scenery[data-side=right] img { left:calc(50% - 0.71 * var(--amp) + 56px); object-position:left bottom; }
 /* Закрытое впереди — заранее отрисованные серые версии (-grey), а не
    фильтр на лету: фильтр на девяти картинках с анимацией прокрутки стоил
    видеокарте по кадру на каждую. */
@@ -133,18 +146,17 @@
 /* Остановка-этап: тот же диск с каймой, что у шагов, только крупнее и со
    значком этапа внутри. Пройден — зелёная кайма, текущий — терракотовая,
    закрытый — серый диск с приглушённым значком. */
-.thumb { --rim:#E1D4C1; grid-area:station; position:relative; justify-self:end; align-self:center; display:grid; place-items:center; width:var(--station); height:var(--station); margin-right:var(--gap); border-radius:50%; background:#FFFDF9;
+.thumb { --rim:#E1D4C1; position:absolute; top:50%; left:calc(var(--center) + var(--x, 0) * var(--amp)); display:grid; place-items:center; width:var(--station); height:var(--station); margin:calc(var(--station) / -2) 0 0 calc(var(--station) / -2); border-radius:50%; background:#FFFDF9;
   box-shadow:inset 0 0 0 1.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
 .thumb img { display:block; width:70%; height:70%; object-fit:contain; }
 .unitHead[data-road-stage-state=done] .thumb { --rim:#3A8560; box-shadow:inset 0 0 0 2.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
 .unitHead[data-road-stage-state=current] .thumb { --rim:var(--accent,#B83A27); box-shadow:inset 0 0 0 2.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
 .row[data-road-locked] .thumb { --rim:#E9E0D3; background:#F6F2EB; }
 .row[data-road-locked] .thumb img { opacity:.55; filter:grayscale(.6); }
-.text { grid-area:text; align-self:end; display:grid; gap:3px; min-width:0; }
-.row[data-road-locked] .text { align-self:center; }
+.text { display:grid; gap:3px; max-width:440px; min-width:0; }
 .text strong { font-size:17px; font-weight:600; line-height:1.3; letter-spacing:-.01em; overflow-wrap:anywhere; }
 .text > span { color:var(--quiet); font-size:14px; line-height:1.45; text-wrap:pretty; overflow-wrap:anywhere; }
-.status { grid-area:status; align-self:start; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+.status { display:flex; align-items:center; gap:8px; margin-top:6px; white-space:nowrap; }
 .badge { display:inline-flex; align-items:center; gap:4px; min-height:24px; padding:2px 10px; border-radius:999px; background:#F1ECE3; color:var(--quiet); font-size:13px; font-weight:500; }
 .status[data-state=current] .badge { background:var(--accent); color:var(--on-dark); }
 .status[data-state=done] .badge { background:#E3F0E8; color:#1F6B47; }
@@ -190,21 +202,33 @@
   .feature .featureScene { aspect-ratio:16 / 9; }
   .featureCopy { padding:2px 8px 0; }
   .featureAction { margin:0 8px; }
-  /* На телефоне путь — одна прямая ось у левого края: дуги шириной в
-     полкружка читались как кривое выравнивание («иногда кружочки стоят
-     криво»). Остановки-этапы и кружки шагов — на этой оси, все подписи
-     (названия этапов и шагов) — одной колонкой справа. */
-  .road { --center:40px; --node:56px; --row:88px; --station:64px; --gap:20px; }
-  .node { left:var(--center); }
-  .step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--station) / 2 + var(--gap)); right:0; }
+  /* На телефоне та же змейка, уже (±88px), как дорожка Duolingo: подписи
+     шагов стоят под кружками по центру (до трёх строк), названия этапов —
+     с внутренней стороны изгиба, где есть место, пейзаж — в кармане
+     напротив крайнего кружка. */
+  .road { --center:50%; --amp:clamp(60px, calc(50% - 79px), 88px); --node:60px; --row:148px; --station:64px; --gap:16px; }
+  .row > .unitHead { padding:24px 0; }
+  /* Тёплая подложка текущего этапа заканчивается с воздухом под подписью его последнего шага. */
+  .row[data-road-unit-state=current] { padding-bottom:40px; }
   .row[data-road-unit-state=current] { margin:0 -10px; padding:0 10px 4px; border-radius:20px; }
-  .step[data-side] .stepLabel { left:calc(var(--center) + var(--station) / 2 + var(--gap)); right:0; max-width:none; justify-items:start; text-align:left; font-size:14px; }
-  /* Макет — своя полоса между шагами, в колонке подписей: дорога идёт мимо
-     по той же оси. */
-  .scenery { --scene-h:124px; height:136px; }
-  .scenery[data-side] img { top:6px; left:calc(var(--center) + var(--station) / 2 + var(--gap)); right:auto; width:min(176px, calc(100% - var(--center) - var(--station) / 2 - var(--gap))); object-position:left bottom; }
+  .step[data-side] .stepLabel,.step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp)); right:auto; top:calc(50% + var(--node) / 2 + 8px); width:140px; max-width:140px; gap:4px; justify-items:center; transform:translateX(-50%); text-align:center; font-size:13px; line-height:1.3; }
+  .stepTitle { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden; }
+  .step[data-node-state=current] .stepTitle { -webkit-line-clamp:3; }
+  /* Название этапа — с внутренней стороны изгиба: кружок справа — текст слева, и наоборот. */
+  .unitHead[data-side=right] :is(.text,.status) { margin-left:auto; margin-right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--station) / 2 + var(--gap)); text-align:right; }
+  .unitHead[data-side=right] .text { justify-items:end; }
+  .unitHead[data-side=right] .status { justify-content:flex-end; }
+  .unitHead[data-side=left] :is(.text,.status) { margin-left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--station) / 2 + var(--gap)); margin-right:0; text-align:left; }
+  .unitHead[data-side=left] .text { justify-items:start; }
+  .unitHead[data-side=left] .status { justify-content:flex-start; }
   .text strong { font-size:16px; }
   .text > span { font-size:13px; }
+  /* У остановки на пересечении оси места мало с обеих сторон: статус переносится. */
+  .status { flex-wrap:wrap; row-gap:4px; white-space:normal; }
+  .scenery { --scene-h:124px; }
+  .scenery img { width:min(176px, calc(50% + 0.71 * var(--amp) - 92px)); }
+  .scenery[data-side=right] img { left:calc(50% - 0.71 * var(--amp) + 84px); object-position:left center; }
+  .scenery[data-side=left] img { right:calc(50% - 0.71 * var(--amp) + 84px); object-position:right center; }
 }
 @media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:hover .node,.step > a:active .node { transform:none; } }
 @media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }
