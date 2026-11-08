@@ -1,49 +1,59 @@
 {
  "date": "2026-11-08",
- "request": "Owner, 8 Nov: the café scene for the home hero, «анимацию конкретно перепроверяй до конца, чтобы было нормально».",
+ "request": "Owner, 8 Nov: the café scene for the home hero, «анимацию конкретно перепроверяй до конца, чтобы было нормально»; evening: «пусть он только попивает кофеёк, круассан брать не обязательно, это сложно анимировать» and «свет не должен меняться на протяжении всего».",
  "loop": {
-  "model": "kling4_0, image-to-video, 1080p, 10 s, aspect auto, the bologna-cafe still as start and end frame; two variants generated, variant B kept",
-  "job": "8f380a7d-80ef-4f83-8a81-a7201340c5e2",
+  "model": "kling4_0, image-to-video, 1080p, 8 s, aspect auto, the bologna-cafe still as start and end frame; two variants generated, the smoother one kept",
+  "job": "f27990c1-3ec7-40a8-a2c5-4ce8e6b4671c",
   "rejected": [
    {
+    "job": "159cb7f5-f23d-4259-8e78-d1aaf5ed660e",
+    "why": "same actions, a sharper hand movement (largest consecutive-frame difference 1.84 vs 1.21 at 320 px)"
+   },
+   {
+    "job": "8f380a7d-80ef-4f83-8a81-a7201340c5e2",
+    "why": "the morning loop (10 s: page turn, sip, bite of the brioche) — shipped briefly, superseded the same evening on the owner's word: only the coffee"
+   },
+   {
     "job": "1dc9c7c1-34e7-4ca7-857c-14eca728961e",
-    "why": "puts the newspaper on the table to drink and picks it up again: a bigger state change across the loop; consecutive-frame difference median 0.66 vs 0.45 and more arcade boil (right half std 0.67 vs 0.55)"
+    "why": "morning variant A: puts the newspaper down to drink and picks it up again, more arcade boil"
    }
   ],
-  "prompt": "Locked-off camera, no camera movement, no zoom, photorealistic. The handmade cotton toy sits at the small marble café table under the Bologna arcade and reads its newspaper: it slowly turns a page, lifts the tiny espresso cup, takes a sip and sets it back on the saucer, breaks a small piece off the golden brioche and nibbles it, then returns to reading, content. A gentle evening breeze stirs the corner of the newspaper and its green felt collar; the hanging iron lanterns sway very slightly; a faint wisp of steam rises from the cup; soft shimmer of warm light on the stone floor. The toy, the table, the chair and the arcade stay exactly as in the image; calm, slow, natural motion; no new objects, no people, no text; it ends in the same pose it starts in.",
-  "raw": "1764×1172, 24 fps, 241 frames (last duplicates the first), BT.709; brightness range 2.6 levels over 10 s, no cuts (max consecutive-frame difference 1.9 levels at 320 px)"
+  "prompt": "Locked-off camera, no camera movement, no zoom, photorealistic, constant lighting throughout with no flicker and no exposure change. The handmade cotton toy sits at the small marble café table under the Bologna arcade and reads its newspaper; after a moment it lowers the paper a little with one paw, lifts the tiny espresso cup with the other, takes a slow unhurried sip, sets the cup back on its saucer and returns to reading, content. The brioche stays on its plate untouched. A gentle evening breeze stirs the corner of the newspaper and its green felt collar; the hanging iron lanterns sway very slightly; a faint wisp of steam rises from the cup. The toy, the table, the chair and the arcade stay exactly as in the image; calm, slow, natural motion; no new objects, no people, no text; it ends in the same pose it starts in.",
+  "raw": "1764×1172, 24 fps, 193 frames (last duplicates the first), BT.709; brightness range 2.1 levels over 8 s, no cuts (max consecutive-frame difference 1.21 levels at 320 px)"
  },
  "method": [
-  "same pipeline as 7 Nov (motion-2026-11-07b.json): raw clip decoded with the BT.709 matrix, duplicate end frame dropped, last 16 frames eased into frame 0, hqdn3d 0:0:3:3, minterpolate to 30 fps with the wrap interpolated (240 -> 300 frames)",
+  "same pipeline as 7 Nov (motion-2026-11-07b.json): raw clip decoded with the BT.709 matrix, duplicate end frame dropped, last 16 frames eased into frame 0, hqdn3d 0:0:3:3, minterpolate to 30 fps with the wrap interpolated (192 -> 240 frames)",
   "affine registration of the 4k still onto frame 0 (OpenCV ECC); motion mask = temporal std > 1.5 at quarter size, grown and feathered; every frame = still outside the mask, colour-matched video inside",
-  "H.264 high CRF 19/20/22 at 2400/1600/960, one keyframe per loop (GOP 300), VP9 CRF 31 at 960; tagged BT.709 matrix and primaries, sRGB transfer, tv range; posters = frame 0 of the 2400 composite"
+  "H.264 high CRF 19/20/22 at 2400/1600/960, one keyframe per loop (GOP 240), VP9 CRF 31 at 960; tagged BT.709 matrix and primaries, sRGB transfer, tv range; posters = frame 0 of the 2400 composite",
+  "reveal (LivingLandscape, 8 Nov evening): the loop loads with preload=auto, its first frame is shown paused over the poster, fades in over 2.4 s at opacity .999 (no hardware overlay plane), and only then plays — the poster-to-video handover is still to still"
  ],
  "checks": {
-  "master": "1764×1172 → 300 frames at 30 fps (prep.py K=16)",
-  "composite": "2400×1594; ECC residual affine [[0.99989,0.00018,-0.264],[-0.00007,1.00012,-0.091]] px; motion mask 32.6 % (Vespi, newspaper, table, the two lantern groups), colour offset [-1.34,-0.76,0.34], unsharp 0.75 toward the still (Laplacian variance 48 → 106 vs still 97)",
-  "loop": "seam last→first 52.1 dB PSNR in the 2400 encode (median step 34 dB); largest consecutive-frame difference 1.67/255 at 480 px; static arcade temporal std 0.18/255",
-  "files": "H.264 2400/1600/960 CRF 19/20/22 GOP 300, VP9 960 CRF 31; all tagged bt709 matrix+primaries, iec61966-2-1 transfer, tv range"
+  "master": "1764×1172 → 240 frames at 30 fps (prep.py K=16)",
+  "composite": "2400×1594; ECC residual affine [[0.99985,0.0002,-0.273],[-0.00006,1.00009,-0.094]] px; motion mask 29.2 % (Vespi, newspaper, cup, table, the lantern group), colour offset [-1.26,-0.89,0.36], unsharp 0.50 toward the still (Laplacian variance 52 → 92 vs still 103)",
+  "loop": "seam last→first 57.0 dB PSNR in the composite; consecutive-frame difference median 0.26, largest 1.06/255 at 480 px; mean luminance range 1.99/255 over 8 s (Vespi moving), largest frame-to-frame mean change 0.19/255; static arcade temporal std 0.30/255",
+  "files": "H.264 2400/1600/960 CRF 19/20/22 GOP 240, VP9 960 CRF 31; all tagged bt709 matrix+primaries, iec61966-2-1 transfer, tv range",
+  "reveal": "browser: first frame shown paused at t=0 after ~0.4 s, opacity .99 at 2.5 s, playback from 2.9 s; frame 0 vs poster within 0.8/255 of luminance (home) and 0.1/255 (/plan)"
  },
  "files": [
   {
    "file": "public/illustrations/motion/bologna-cafe-1600.mp4",
-   "bytes": 1619036,
-   "sha256": "156926a5e7203723225bdbefe648de12bc68548c173b696e8b7a144d65cd78c2"
+   "bytes": 1136577,
+   "sha256": "fc29d8d5b48ece3fe22cdb421bf36c1be3798c9c2370f355064ed1cb30d385a2"
   },
   {
    "file": "public/illustrations/motion/bologna-cafe-2400.mp4",
-   "bytes": 3878236,
-   "sha256": "a9875cdb542b28f1bb33a951b0e71b7556735ca13a435b36eaf4eabf019e8cfe"
+   "bytes": 2630329,
+   "sha256": "4b9faa4bd43a92bb442ded14ab8ddc27886db7ab9de9c7be3fcec9e084cbfb21"
   },
   {
    "file": "public/illustrations/motion/bologna-cafe-960.mp4",
-   "bytes": 563663,
-   "sha256": "3616add6cb41a5b4b0e09d80c44f6dae7ef43e882cb2bdc6cd595a046ce76c6b"
+   "bytes": 403396,
+   "sha256": "b37824da8e3eda0b3c32589d71fd4d46dd8ddfdd69c3fafc292616c407d6366b"
   },
   {
    "file": "public/illustrations/motion/bologna-cafe-960.webm",
-   "bytes": 519502,
-   "sha256": "6369c747fcd360ea94018d4ef4234c8afcf587b6b2c94c63133c74377a54de2f"
+   "bytes": 352627,
+   "sha256": "5901df7f5d3445cd8e4ff05476a86c114c04dc2bd6b4b776868f75f7ea003a76"
   }
  ]
 }

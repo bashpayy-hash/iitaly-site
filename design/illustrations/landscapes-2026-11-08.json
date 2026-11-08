@@ -26,23 +26,23 @@
  "files": [
   {
    "file": "public/illustrations/landscapes/bologna-cafe-1024.webp",
-   "bytes": 81376,
-   "sha256": "0ed99941c8ffed0006bf209acbc02eb4b9f18f08abee77bdbf7dc086f8f29837"
+   "bytes": 80082,
+   "sha256": "49d3e9fe2376b3fcdc1d554796033fe0665bbc1308fe462d36cc0d038f204186"
   },
   {
    "file": "public/illustrations/landscapes/bologna-cafe-1600.webp",
-   "bytes": 158580,
-   "sha256": "ad74fd4cc1ea81197db7828d3781e2bf6d3085c1e064ae20110c31a2d7c05880"
+   "bytes": 153238,
+   "sha256": "bf90ffa9488e38fc07784e5b81f68dee7c39422c88e86259b633c5c932167aab"
   },
   {
    "file": "public/illustrations/landscapes/bologna-cafe-2400.webp",
-   "bytes": 256026,
-   "sha256": "e944e3fdfb072c2b91d3a9786c51302a663207d4a9e0d92cf59f181af08c821a"
+   "bytes": 251028,
+   "sha256": "7a190a8adb3939fdbee68987659280f4d6ce6f6250bb473a0779e2a687db6d77"
   },
   {
    "file": "public/illustrations/landscapes/bologna-cafe-640.webp",
-   "bytes": 43468,
-   "sha256": "5797c00a91a36f64947789789422715c89e3c45f14e6fd8627f306195484923f"
+   "bytes": 42278,
+   "sha256": "4dcdf01361a81c072aee2b1f11e980325878da8e986c94a7d1b310ed0a9afe18"
   },
   {
    "file": "design/illustrations/source/landscapes/bologna-cafe-vespi-4k.jpg",
