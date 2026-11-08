@@ -6,13 +6,17 @@ import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import Link from "next/link";
 import assistant from "./home-assistant.module.css";
 
-/* Первый экран — welcome (owner, 4 Nov): Веспи идёт с рюкзачком по аркаде
-   Болоньи в вечернем свете (Higgsfield, design/illustrations/landscapes-
-   2026-11-03.json, сцена «bologna»), поверх кадра — та же видеопетля, что
-   у пейзажей кабинета и FAQ (motion-2026-11-04.json): лямки и воротник на
-   ветру, мерцание света, пыль в лучах. Текст и действия — на кремовой
-   панели справа, как панель FAQ; на телефоне кадр сверху, панель под ним.
-   Тексты прежние. Пример маршрута ниже не меняется.
+/* Первый экран — welcome (owner, 4 Nov): Веспи в аркаде Болоньи в вечернем
+   свете; поверх кадра — видеопетля той же сцены, как у пейзажей кабинета и
+   FAQ. Текст и действия — на кремовой панели справа, как панель FAQ; на
+   телефоне кадр сверху, панель под ним. Тексты прежние. Пример маршрута
+   ниже не меняется.
+   Сцена 8 Nov (owner: «чтобы он там сидел, ветерок дул, читал газету, пил
+   эспрессо, ел круассан»): Веспи за мраморным столиком кафе под портиком —
+   газета в лапах (без читаемых букв), эспрессо и корнетто на столе
+   (Higgsfield, design/illustrations/landscapes-2026-11-08.json, сцена
+   «bologna-cafe»); петля (motion-2026-11-08.json): переворачивает страницу,
+   отпивает, надкусывает, ветерок в газете и воротнике, фонари чуть качаются.
    Разгрузка (owner, 5–6 Nov): без строки «Короткий опрос · …», без пилюль
    («От идеи до Италии», «Из Казахстана — в Италию», «Начнём с главного»),
    без ссылки на правила под кнопкой (она в подвале), без номеров и значков
@@ -22,8 +26,8 @@ export function Hero() {
     <section data-section="hero" className={styles.hero}>
       <div className={styles.heroScene} data-hero-scene>
         <div className={styles.heroSceneBox} aria-hidden="true">
-          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-1024.webp" srcSet="/illustrations/landscapes/bologna-640.webp 640w, /illustrations/landscapes/bologna-1024.webp 1024w, /illustrations/landscapes/bologna-1600.webp 1600w, /illustrations/landscapes/bologna-2400.webp 2400w" sizes="100vw" width={1024} height={688} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna" />
-          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna" label="bologna" widths={[960, 1600, 2400]} webmWidths={[960]} />
+          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-cafe-1024.webp" srcSet="/illustrations/landscapes/bologna-cafe-640.webp 640w, /illustrations/landscapes/bologna-cafe-1024.webp 1024w, /illustrations/landscapes/bologna-cafe-1600.webp 1600w, /illustrations/landscapes/bologna-cafe-2400.webp 2400w" sizes="100vw" width={1024} height={680} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna-cafe" />
+          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna-cafe" label="bologna-cafe" widths={[960, 1600, 2400]} webmWidths={[960]} />
         </div>
         <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
