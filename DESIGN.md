@@ -987,3 +987,39 @@ frame, and scrolling itself being driven by JavaScript on laptops.
     a topic, a step, /universities, /prices, /terms, 404, the cabinet
     overview, stage, step pages): no horizontal overflow, one column
     rhythm, one pill style.
+
+## The road winds across the whole column · 8 November 2026
+
+Owner, on a tablet: «хотелось бы, чтобы здесь всё было более в формате
+ландшафта… можно сделать подлиннее и побольше… если по факту можно
+добавить степы, то да, если нет, то нет… чтобы, как реально в Duolingo,
+извилисто было».
+
+- **One sine through every stop.** Stations and step circles take one
+  running index along the route and sit at `sin(2π·i/8)` of the amplitude:
+  0, .71, 1, .71, 0, −.71, −1, −.71. The road line is still drawn from the
+  measured centres, so it follows the snake exactly.
+- **A real amplitude, on every width.** Desktop `--amp` is
+  `clamp(96px, 50% − 310px, 170px)` of a column up to 1040px wide; phones
+  use ±88px around the centre. The 7 November «crooked» complaint came from
+  half-circle offsets; a full-width snake reads as a road, so the straight
+  phone axis is gone.
+- **Longer and bigger, with the same steps.** Rows grew from 96 to 116px
+  (phones 88 → 148), stations from 68 to 72px. No step was invented: the
+  route has exactly the steps the plan has.
+- **Labels.**
+  - Desktop: step titles and station text stand outside the bend, on the
+    side the curve is heading to (`data-side`), at most
+    `min(300px, 50% − amp − node/2 − 40px)` wide.
+  - Phones: step titles are centred captions under the circles (13px, up
+    to four lines), station text sits inside the bend where the room is.
+- **Scenery in the pockets.** A piece stands opposite a circle on an
+  extreme point (x = ±1), centred on its row, never at a station and never
+  closer than three stops to the last piece. It ends before the
+  neighbouring circles (`50% ∓ 0.71·amp ± 56px`) and, on phones, before the
+  neighbours' captions, so nothing overlaps.
+- **Review.** `design-portal-progress-review` now asserts, on every width:
+  amplitude of at least 80–90px, repeated crossings of the centre line, no
+  jump wider than ¾ of the amplitude between neighbours, and that no
+  circle, station, title, caption or piece of scenery overlaps another or
+  leaves the road.
