@@ -1,9 +1,14 @@
 /* FAQ главной на пейзаже (owner, 4 Nov): плитка 28px во всю колонку, фото со
    смотровой площадки Флоренции и Веспи, смотрящим вдаль, закрывает плитку;
    вопросы — на кремовой панели справа, чтобы Веспи и город оставались видны.
-   На телефоне фото сверху, панель под ним на кремовом. */
+   На телефоне фото сверху, панель под ним на кремовом.
+   Высота плитки фиксирована (owner, 8 Nov: «иллюстрация увеличивается по
+   мере того, как нажимаешь»): раньше панель с раскрытым ответом тянула
+   плитку вверх, и кадр с object-fit:cover масштабировался. Теперь открыт
+   один вопрос за раз (details name); 840px хватает и самому длинному ответу
+   (731px на 1440), а на случай крупных шрифтов панель прокручивается сама. */
 .section { max-width:1280px; margin:0 auto; padding:0 32px 80px; }
-.tile { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,600px); align-items:center; min-height:720px; overflow:clip; border-radius:28px; background:#2A2420; color:#141413; }
+.tile { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,600px); align-items:center; height:840px; overflow:clip; border-radius:28px; background:#2A2420; color:#141413; }
 .sceneBox { position:absolute; inset:0; z-index:-1; overflow:clip; }
 .scene { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:18% 62%; }
 /* Живой пейзаж (owner, 4 Nov): кадр и видеопетля чуть отстают от прокрутки
@@ -17,7 +22,7 @@
 @keyframes faq-drift { from { transform:scale(1.12) translateY(-5%); } to { transform:scale(1.12) translateY(5%); } }
 /* Solid paper over the loop: a frosted panel re-blurs every video frame and
    its tint follows the light behind it (owner, 7 Nov). */
-.panel { grid-column:2; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:#FFFDF9; }
+.panel { grid-column:2; max-height:760px; overflow-y:auto; overscroll-behavior:contain; margin:40px 40px 40px 0; padding:36px 36px 20px; border-radius:24px; background:#FFFDF9; }
 .eyebrow { margin:0; font:600 13px/1.5 var(--font-sans); color:#A33421; }
 .title { margin:10px 0 18px; font:600 clamp(28px,3vw,40px)/1.1 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
 .list { border-top:1px solid #DCD5CA; }
@@ -26,11 +31,18 @@
 .question::-webkit-details-marker { display:none; }
 .question:focus-visible { outline:2px solid #A33421; outline-offset:4px; border-radius:4px; }
 .answer { max-width:60ch; margin:0 0 18px; color:#3F3933; font-size:15px; line-height:1.55; }
+/* Раскрытие (owner, 8 Nov: «очень топорно»): ответ выезжает за 320 мс тем же
+   ходом, что и знак «плюс»; закрытие — тем же путём назад. Где
+   ::details-content не поддерживается, раскрытие прежнее, мгновенное. */
+.item { interpolate-size: allow-keywords; }
+.item::details-content { height:0; overflow:clip; transition:height 320ms cubic-bezier(.22,1,.36,1), content-visibility 320ms allow-discrete; }
+.item[open]::details-content { height:auto; }
+@media (prefers-reduced-motion:reduce) { .item::details-content { transition:none; } }
 @media(max-width:1023px) {
-  .tile { grid-template-columns:minmax(0,1fr); align-items:stretch; min-height:0; }
+  .tile { grid-template-columns:minmax(0,1fr); align-items:stretch; height:auto; }
   .sceneBox { position:relative; z-index:0; aspect-ratio:4 / 3; }
   .scene { object-position:26% 62%; }
-  .panel { grid-column:1; margin:0; padding:28px 24px 12px; border-radius:0; background:#FAF6EE; }
+  .panel { grid-column:1; max-height:none; overflow:visible; margin:0; padding:28px 24px 12px; border-radius:0; background:#FAF6EE; }
 }
 @media(max-width:640px) {
   .section { padding:0 20px 64px; }
