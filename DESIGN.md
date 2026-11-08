@@ -1079,3 +1079,35 @@ Owner, five screenshots: the FAQ «очень топорно… иллюстра
   saturation copy (`objects/folder-quiet-240.webp`), 60px, at .85 opacity
   and without its drop shadow. The colourful original remains for the
   guides and the cabinet.
+
+## Light that stays · 8 November 2026 (evening)
+
+Owner, after the café hero went live: «анимация уже хорошо, но всё ещё есть
+резкая перемена света, что на главной, что на „Опиши свою ситуацию“… свет не
+должен меняться на протяжении всего. И пусть он только попивает кофеёк,
+круассан брать не обязательно».
+
+- **Where the light jumped.** Not inside the loops: the home loop's mean
+  luminance moves 2.6/255 over ten seconds and /plan's 0.5/255, both
+  because Vespi moves, and both seams measure above 50 dB. It jumped at the
+  handover from the poster to the video. The video used to appear while
+  already playing, over 900 ms, so a half-transparent Vespi moved over the
+  frozen poster, and any difference between how the browser renders an
+  image and a video (near zero in a software decode, a few percent on a GPU
+  with hardware decoding or an HDR display) read as a change of light.
+- **The handover is still to still.** `LivingLandscape` now loads the loop
+  with `preload="auto"`, waits for the first frame, shows it paused over
+  the poster (the poster *is* that frame), fades it in over 2.4 s and only
+  then calls `play()`. Nothing moves during the fade, and a residual
+  difference of a percent spread over 2.4 s is below what the eye reads as
+  a change. Offscreen the loop pauses on its current frame as before.
+- **No overlay plane.** The revealed video sits at `opacity: .999`, not 1:
+  Chrome does not promote such a video to a hardware overlay, where
+  Windows (and HDR pipelines in particular) convert the colour themselves
+  and differently from the page. The frame stays in the page compositor,
+  converted the same way the poster is.
+- **The café loop only sips.** A new 8 s Kling 4.0 loop on the same still:
+  Vespi lowers the newspaper, lifts the espresso, takes a slow sip, puts
+  the cup back and returns to reading; the cornetto stays on its plate.
+  Same pipeline and checks as the morning loop (`motion-2026-11-08.json`
+  now records this one; the bite version is listed as superseded).

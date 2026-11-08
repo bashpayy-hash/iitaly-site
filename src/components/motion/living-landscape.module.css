@@ -1,6 +1,12 @@
 /* Видеопетля поверх картинки той же сцены: раскладку (inset, cover,
    object-position, масштаб на телефоне) даёт класс картинки, здесь — только
    проявление, когда первый кадр пошёл. */
-.motion { opacity:0; transition:opacity 900ms cubic-bezier(.4,0,.2,1); pointer-events:none; }
-.playing { opacity:1; }
+/* Проявление 2,4 с (owner, 8 Nov: «резкая перемена света»): первый кадр
+   стоит, пока не проявится, поэтому фейд идёт из неподвижного в неподвижное,
+   и разница конвейеров картинки и видео растягивается до незаметной.
+   Непрозрачность .999, а не 1: Chrome не выносит такое видео в аппаратный
+   overlay-слой, где Windows (особенно с HDR) переводит цвет сам и иначе, чем
+   страницу, — кадр остаётся в общем композиторе, тем же цветом, что постер. */
+.motion { opacity:0; transition:opacity 2400ms cubic-bezier(.4,0,.2,1); pointer-events:none; }
+.playing { opacity:.999; }
 @media (prefers-reduced-motion:reduce) { .motion { display:none; } }
