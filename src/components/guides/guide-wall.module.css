@@ -1,0 +1,31 @@
+/* Стена гайдов: тёплая бумажная плашка без теней и градиентов, та же
+   чёрная пилюля покупки, что на /plan; две тихие ссылки рядом. */
+.wall { display:grid; gap:16px; margin-top:16px; padding:22px 24px; border:1px solid #E4DCCF; border-radius:20px; background:#FFFDF9; }
+.flat { margin-top:0; padding:0; border:0; border-radius:0; background:none; }
+.lockedStep .wall { max-width:68ch; }
+.note { margin:0; max-width:62ch; font-size:15px; line-height:1.6; color:#3F3933; }
+.actions { display:flex; flex-wrap:wrap; align-items:center; gap:4px 20px; }
+.buy { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:12px 22px; border:1px solid #141413; border-radius:999px; background:#141413; color:#FFFDF9; font:500 15px/1.2 var(--font-sans); cursor:pointer; transition:background-color 160ms cubic-bezier(.4,0,.2,1), transform 120ms cubic-bezier(.2,0,0,1); }
+.buy:hover { background:#383630; }
+.buy:active { transform:scale(.98); }
+.buy:focus-visible,.link:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
+.link { display:inline-flex; align-items:center; min-height:44px; color:#57514B; font-size:14px; line-height:1.4; text-decoration:underline; text-underline-offset:4px; }
+.link:hover { color:#141413; text-decoration-thickness:2px; }
+/* Пункты закрытого шага: столько же строк, сколько в разборе, без текста. */
+.ghost { display:grid; gap:12px; max-width:68ch; margin:0; padding:0; list-style:none; }
+.ghost li { display:grid; grid-template-columns:36px minmax(0,1fr); gap:14px; align-items:center; padding:18px 20px; border-radius:16px; background:#F1ECE3; }
+.ghost li > span { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:#D9D0C2; color:#FAF6EE; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; }
+.ghost li > div { display:grid; gap:8px; }
+.ghost i { display:block; height:10px; border-radius:999px; background:#E2D9CB; }
+.ghost i + i { width:64%; }
+.ghost li:nth-child(n+2) { opacity:.72; }
+.ghost li:nth-child(n+3) { opacity:.48; }
+@media(max-width:600px) {
+  .wall:not(.flat) { padding:18px; }
+  .actions { flex-direction:column; align-items:stretch; }
+  .buy { width:100%; }
+  .ghost li { grid-template-columns:30px minmax(0,1fr); gap:12px; padding:16px; }
+  .ghost li > span { width:28px; height:28px; font-size:13px; }
+}
+@media(prefers-reduced-motion:reduce) { .buy { transition:none; } .buy:active { transform:none; } }
+@media(forced-colors:active) { .wall { border-color:CanvasText; } }

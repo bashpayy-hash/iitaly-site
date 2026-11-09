@@ -4,10 +4,12 @@ import Link from "next/link";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { ADMISSION_SOURCES, REVIEWED_AT, REVIEWED_LABEL, type SourceId } from "@/data/admissions";
 import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
-import { GUIDE_TOPICS, VISA_PARTS, guideHref, guideStageHref, stageForGuide, type VisaPart } from "./guideCatalogue";
+import { GUIDE_TOPICS, VISA_PARTS, guideHref, guidePoints, guideStageHref, stageForGuide, type VisaPart } from "./guideCatalogue";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { VisaSection } from "./VisaSection";
-import { GuideStepCards } from "./GuideStepCards";
+import { GuideStepCards, type GuideStepCard } from "./GuideStepCards";
+import { guideStepOpen } from "./guideAccess";
+import { guideTeaser } from "./guideText";
 import { guideArt } from "./guideArt";
 import { guideFacts } from "./guideFacts";
 import steps from "./guide-steps.module.css";
@@ -34,6 +36,11 @@ function GuideSources({ ids }: { ids: readonly SourceId[] }) {
     <summary className={disclosure.row}>Официальные источники</summary>
     <ul>{ids.map(id => <li key={id}><a href={ADMISSION_SOURCES[id].href} target="_blank" rel="noopener noreferrer">{ADMISSION_SOURCES[id].label}</a><p>{ADMISSION_SOURCES[id].scope}</p></li>)}</ul>
   </details>;
+}
+
+/** Step cards as the visitor may see them: a closed step carries no teaser. */
+function stepCards(id: string): GuideStepCard[] {
+  return guidePoints(id).map((point, index) => ({ title: point.title, href: point.href, teaser: guideStepOpen(id, index + 1) ? guideTeaser(point.text) : undefined }));
 }
 
 export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPart }) {
@@ -68,7 +75,10 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         </dl>
       </section>}
       <div className={ui.readingBody}>
-        {id === "visa" ? <VisaSection part={visaPart} /> : <GuideStepCards id={id} />}
+        {id === "visa" ? <>
+          <VisaSection part={visaPart} />
+          {!part && <GuideStepCards id="visa" points={stepCards("visa")} />}
+        </> : <GuideStepCards id={id} points={stepCards(id)} />}
         {id === "permesso" && <section className={ui.note}>
           <h2>Актуальная ремарка к тренажёру</h2>
           <p>Poste отдельно указывает €16 за marca da bollo, €30 за приём kit и €30,46 за электронную карточку; дополнительный contributo зависит от длительности и типа permesso. Для rinnovo требования также зависят от кода 24 / 31 — сверяй свой тип на Portale Immigrazione и у Questura.</p>

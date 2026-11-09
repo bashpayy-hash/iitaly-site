@@ -6,6 +6,14 @@ import { rememberWorker, rememberedWorker, setPermessoParam, usePermessoRoute } 
 import { PERMESSO_TOOLS, PermessoReferenceFrame, type PermessoToolId } from "./PermessoSections";
 import styles from "./permesso-helpers.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
+import { usePaidDevice } from "@/components/access/usePaidDevice";
+import { GuideWall } from "../GuideWall";
+import { FREE_PERMESSO_TOOLS } from "../guideAccess";
+
+/* Owner, 9 Nov (guideAccess.ts): до оплаты открыты код для поля 16 и сигла
+   провинции, в «Перед почтой» — «На бумаге» и «Деньги». Остальное — название
+   и стена. Устройство с оплаченным кабинетом видит всё. */
+const TOOL_WALL = "Этот справочник откроется после оплаты вместе с листами 2 и 3 бланка, переносом на бумагу и остальными разборами. Один платёж, без подписки.";
 
 /* Справочники Modulo 1 — каждый на своей странице (owner, 7 Nov: «слишком
    много информации… разбить по блокам, или даже на другие сайты»).
@@ -33,6 +41,8 @@ export function PermessoCodes() {
   const { scenario, search } = usePermessoRoute();
   const requested = new URLSearchParams(search).get("tool");
   const active: PermessoToolId = PERMESSO_TOOLS.find(tool => tool.id === requested)?.id ?? "16";
+  const paid = usePaidDevice();
+  const toolLocked = (id: PermessoToolId) => !paid && !FREE_PERMESSO_TOOLS.includes(id);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const [requestCode, setRequestCode] = useState("");
   const [currentCardCode, setCurrentCardCode] = useState("");
@@ -104,6 +114,7 @@ export function PermessoCodes() {
 
         <section role="tabpanel" id="permesso-panel-25" aria-labelledby="permesso-tool-25" hidden={active !== "25"} className={styles.panel}>
           <h2>Поле 25 · сколько листов</h2>
+          {toolLocked("25") ? active === "25" && <GuideWall place="permesso" flat note={TOOL_WALL} /> : <>
           <p>8 страниц Modulo 1 + реальные листы A4, которые кладёшь в конверт.</p>
           <div className={styles.copyList}>
             {COPY_KEYS.map(([key, label]) => {
@@ -127,6 +138,7 @@ export function PermessoCodes() {
             </label>
           )}
           <div className={styles.total}><span>Ориентир для поля 25 · проверь перед переносом</span><strong>{padTwo(8 + extraSheets)}</strong></div>
+          </>}
         </section>
 
         <section role="tabpanel" id="permesso-panel-sigla" aria-labelledby="permesso-tool-sigla" hidden={active !== "sigla"} className={styles.panel}>
@@ -140,11 +152,13 @@ export function PermessoCodes() {
 
         <section role="tabpanel" id="permesso-panel-paese" aria-labelledby="permesso-tool-paese" hidden={active !== "paese"} className={styles.panel}>
           <h2>Код страны</h2>
+          {toolLocked("paese") ? active === "paese" && <GuideWall place="permesso" flat note={TOOL_WALL} /> : <>
           <input type="search" aria-label="Страна или код страны" value={countryQuery} onChange={(e) => setCountryQuery(e.target.value)} placeholder="Казахстан, KAZ…" />
           <div className={styles.lookupList}>
             {filteredCountries.map(([code, country]) => <button type="button" key={code} onClick={() => setCountryQuery(code)}><b>{code}</b><span>{country}</span></button>)}
           </div>
           <p className={styles.note}>Поля 35 и 36 независимы. Если Tabella 3 твоего kit показывает другое — используй kit.</p>
+          </>}
         </section>
       </div>
     </PermessoReferenceFrame>
@@ -153,6 +167,7 @@ export function PermessoCodes() {
 
 export function PermessoPoste() {
   const { scenario } = usePermessoRoute();
+  const paid = usePaidDevice();
   const [worker] = useState(rememberedWorker);
   // Поле 24 пустое, пока человек не отметил, что работает и кладёт Modulo 2.
   const emptyFields = TRAINER_SECTIONS.flatMap((section) => section.fields)
@@ -170,7 +185,10 @@ export function PermessoPoste() {
           "Ошибся — лучше взять чистый бланк; корректор не использовать.",
           "Не заклеивай конверт заранее.",
         ]} />
-        <Checklist title={scenario === "rilascio" ? "Для первого ВНЖ" : "Для продления"} items={scenario === "rilascio" ? [
+        {!paid ? <section className={styles.checklist} data-permesso-locked-checklist>
+          <h2>{scenario === "rilascio" ? "Для первого ВНЖ" : "Для продления"}</h2>
+          <GuideWall place="permesso" flat note="Какие копии и документы класть в конверт для твоего сценария и что оставить пустым — откроется после оплаты вместе с листами 2 и 3 бланка. Один платёж, без подписки." />
+        </section> : <Checklist title={scenario === "rilascio" ? "Для первого ВНЖ" : "Для продления"} items={scenario === "rilascio" ? [
           "Подать в течение 8 дней после въезда.",
           "Копии паспорта, визы и штампа въезда.",
           "Документ о зачислении, который использовался для визы.",
@@ -180,7 +198,7 @@ export function PermessoPoste() {
           "Документ о продолжении обучения / экзаменах — по правилам твоего типа permesso.",
           "Страховка на новый срок.",
           "Подтверждение финансовых средств.",
-        ]} />
+        ]} />}
         <Checklist title="Деньги" items={[
           "Marca da bollo: €16.",
           "Poste за приём kit: €30.",
@@ -196,11 +214,11 @@ export function PermessoPoste() {
         <a href="https://www.portaleimmigrazione.it/ITA/tabellauffpostali.html" target="_blank" rel="noopener noreferrer">Portale Immigrazione · codici</a>
       </div>
 
-      <details className={styles.cheatSheet}>
+      {paid && <details className={styles.cheatSheet}>
         <summary className={disclosure.row}>Шпаргалка: что оставить пустым в сценарии {scenario === "rilascio" ? "RILASCIO" : "RINNOVO"}</summary>
         <p>Поля / блоки: {emptyFields.join(", ")}. Страницы 4–8 также не заполняй в сценарии студента без семьи.</p>
         <small>Это учебная шпаргалка, а не замена foglio note бумажного kit.</small>
-      </details>
+      </details>}
     </PermessoReferenceFrame>
   );
 }

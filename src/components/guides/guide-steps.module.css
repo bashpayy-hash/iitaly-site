@@ -19,6 +19,9 @@
 .title { margin-top:18px; font-size:22px; font-weight:600; line-height:1.15; letter-spacing:-.025em; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .teaser { margin-top:10px; font-size:15px; line-height:1.45; color:#57514B; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
 .item[data-tone=dark] .teaser { color:#CFC6BA; }
+/* Закрытый шаг (owner, 9 Nov): тихая пометка вместо первого предложения. */
+.locked { align-self:flex-start; margin-top:12px; padding:5px 12px; border-radius:999px; background:rgba(36,31,28,.08); font:500 13px/1.4 var(--font-sans); color:#57514B; }
+.item[data-tone=dark] .locked { background:rgba(250,246,238,.12); color:#CFC6BA; }
 .plus { position:absolute; right:18px; bottom:18px; display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:#241F1C; color:#FAF6EE; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
 .item[data-tone=dark] .plus { background:#FAF6EE; color:#241F1C; }
 .card:hover .plus { transform:rotate(90deg); }
