@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ClipboardEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { type PermessoScenario } from "./permessoData";
-import { ALL_GUIDANCE_FIELDS, EDITOR_FIELDS, OFFICIAL_PDF, capacity, editorMode, getPart, setPart, normalize, valueProblem, type EditorField } from "./permessoOriginalGeometry";
+import { ALL_GUIDANCE_FIELDS, EDITOR_FIELDS, OFFICIAL_PDF, ORIGINAL_PAGES, PAPER, capacity, editorMode, getPart, setPart, normalize, valueProblem, type EditorField } from "./permessoOriginalGeometry";
 import { PermessoPaperTransfer } from "./PermessoPaperTransfer";
 import { expiryWarning } from "./permessoTransferModel";
 import styles from "./permesso-editor.module.css";
@@ -16,6 +16,10 @@ import { fieldAnswer } from "./permessoFieldAnswer";
 import { usePermessoRoute, pinPermessoField, usePermessoHint, rememberDraft, rememberTrainerSearch, rememberedDraft } from "./usePermessoRoute";
 import { PERMESSO_FIELD_TOOL, PERMESSO_TOOLS, PermessoSectionNav, permessoSectionHref } from "./PermessoSections";
 import disclosure from "@/components/ui/disclosure.module.css";
+import { paidDeviceNow, usePaidDevice } from "@/components/access/usePaidDevice";
+import { useWallPurchase } from "@/components/access/useWallPurchase";
+import { GuideWall } from "../GuideWall";
+import { FREE_PERMESSO_PAGES } from "../guideAccess";
 
 type Draft = Record<string, string>;
 const STORAGE_KEY = "iitaly:permesso-paper-editor:v1";
@@ -33,6 +37,13 @@ const smooth = (): ScrollBehavior => window.matchMedia("(prefers-reduced-motion:
 export function EditablePermesso({ embedded = false }: { embedded?: boolean }) {
   const route = usePermessoRoute();
   const scenario = route.scenario, selected = route.field, selectedId = selected.id, page = selected.page;
+  /* Owner, 9 Nov (guideAccess.ts): before payment the application sheet and
+     the sheets a student leaves empty are open; sheets 2–3 and the transfer
+     to paper wait for the route. Inside the cabinet nothing is closed here. */
+  const paid = usePaidDevice();
+  const pageLocked = !embedded && !paid && !FREE_PERMESSO_PAGES.includes(page);
+  const transferLocked = !embedded && !paid;
+  const transferWall = useWallPurchase("permesso", transferLocked && !paidDeviceNow());
   const onboarding = usePermessoHint();
   const [showExample, setShowExample] = useState(false);
   const [values, setValues] = useState<Draft>(rememberedDraft);
@@ -176,9 +187,9 @@ export function EditablePermesso({ embedded = false }: { embedded?: boolean }) {
       {clearConfirm && <div className={styles.confirm} role="group" aria-label="Подтверждение очистки"><span>Удалить введённые данные и сохранённую копию?</span><button type="button" onClick={clear}>Да, стереть</button><button type="button" onClick={() => setClearConfirm(false)}>Отмена</button></div>}
       <PermessoPaperTransfer key={scenario + ":" + transferEpoch} active={transferOpen} scenario={scenario} values={values} today={today} onClose={closeTransfer} onEdit={editTransfer} />
       <div hidden={transferOpen}>
-        {onboarding.visible && <div className={z.onboarding}><span><span className={z.onPointer}>Наведи на</span><span className={z.onTouch}>Нажми на</span> любую строку — скажу, писать или пропустить</span><button type="button" aria-label="Больше не показывать подсказку" onClick={onboarding.dismiss}>×</button></div>}
+        {onboarding.visible && !pageLocked && <div className={z.onboarding}><span><span className={z.onPointer}>Наведи на</span><span className={z.onTouch}>Нажми на</span> любую строку — скажу, писать или пропустить</span><button type="button" aria-label="Больше не показывать подсказку" onClick={onboarding.dismiss}>×</button></div>}
         {page > 3 && <p className={z.scopeNote}>Эти листы остаются в kit. Здесь — пропуски для сценария без семьи, не инструкция для семейного заявления.</p>}
-        <div className={`${styles.workspace} ${z.workspace}`}>
+        {pageLocked ? <LockedSheet page={page} /> : <div className={`${styles.workspace} ${z.workspace}`}>
           <div className={styles.document} data-fab-yield>
             <div className={styles.documentBar}><span>Mod. 209 · Modulo 1 · страница {page} из 8</span><a href={OFFICIAL_PDF + "#page=" + page} target="_blank" rel="noopener noreferrer">Сверить с PDF</a></div>
             {!transferOpen && <PermessoPaperSheet key={page} page={page} selectedId={selectedId} values={values} scenario={scenario} hints={hints} zoom={zoom} showExample={showExample} onSelect={chooseField} onChange={(f,i,v) => {setShowExample(false);changePart(f,i,v);}} onPaste={paste} onToggle={toggle} onEditLarge={editLarge} />}
@@ -207,8 +218,9 @@ export function EditablePermesso({ embedded = false }: { embedded?: boolean }) {
             {showExample && quickAnswer.example && <details className={light.samplePreview} key={"sample-" + selectedId}><summary className={disclosure.row}>Пример по клеткам — не твои данные</summary><div className={light.sampleRows} data-rows={selected.kind === "text"}>{selected.runs.map((r,i) => <div className={light.sampleRun} key={i} aria-label={r.label || `Часть ${i + 1}`}>{Array.from({length:r.count},(_,k) => <span key={k}>{getPart(selected,quickAnswer.value,i)[k] || ""}</span>)}</div>)}</div></details>}
             <details className={styles.fieldJump}><summary>Перейти к полю на странице {page}</summary><div>{ALL_GUIDANCE_FIELDS.filter(f => f.page === page).map(f => <button type="button" key={f.id} onClick={() => chooseField(f,true)}>{shortId(f)} · {f.meta.ru}</button>)}</div></details>
           </aside>
-        </div>
-        <div className={light.finishBar}><div><b>Черновик заполнен?</b><p>Переноси на бумагу по одному полю, с крупными буквами и отметками.</p></div><button type="button" ref={transferLaunch} onClick={() => setTransferOpen(true)}>Переносим на бумагу</button></div>
+        </div>}
+        {transferLocked ? <div className={light.finishBar} data-permesso-transfer-locked><div><b>Черновик заполнен?</b><p>Перенос на бумагу по одному полю откроется с маршрутом, вместе с листами 2 и 3.</p></div><button type="button" className={light.finishBuy} data-wall-buy data-wall-place="permesso" aria-haspopup="dialog" onClick={transferWall.open}>{transferWall.label}</button>{transferWall.modal}</div>
+          : <div className={light.finishBar}><div><b>Черновик заполнен?</b><p>Переноси на бумагу по одному полю, с крупными буквами и отметками.</p></div><button type="button" ref={transferLaunch} onClick={() => setTransferOpen(true)}>Переносим на бумагу</button></div>}
         <section ref={reviewSection} className={styles.reviewSection} aria-label="Проверка черновика"><button type="button" className={styles.reviewToggle} aria-expanded={review} onClick={() => setReview(!review)}>Проверить черновик <span>{review ? "−" : "+"}</span></button>{review && <div className={styles.reviewBody}><h2>Перед переносом на бумагу</h2><p>Это проверка заполненности и формата, не юридическая проверка документов или готовности заявления.</p>{issues.length ? <ul>{issues.map(f => <li key={f.id}><button type="button" onClick={() => chooseField(f,true)}><b>Стр. {f.page} · {shortId(f)} — {f.meta.ru}</b><span>{valueProblem(f,valueFor(f)) || "Пока не заполнено"}</span></button></li>)}</ul> : <p>В проверяемых полях нет пропусков или ошибок формата. Это не подтверждает правильность сведений.</p>}{!!expiryNotices.length && <ul data-review-date-warnings>{expiryNotices.map(item => <li key={item.field.id}><button type="button" onClick={() => chooseField(item.field,true)}><b>{shortId(item.field)} · проверить срок документа</b><span>{item.warning}</span></button></li>)}</ul>}<p>Отдельно сверь поля «Уточни», набор приложений и порядок подписания. Семейные и другие специальные случаи не охвачены этим студенческим сценарием.</p></div>}</section>
         <nav className={light.nextSections} aria-label="Справочники Modulo 1">
           <SectionLink embedded={embedded} href={permessoSectionHref("kody", scenario)}><b>Коды и расчёты</b><span>Поле 16, поле 25, провинция, страна</span></SectionLink>
@@ -217,6 +229,19 @@ export function EditablePermesso({ embedded = false }: { embedded?: boolean }) {
       </div>
     </div>
   );
+}
+
+/** Sheets 2–3 before payment: the official page itself, its title and the wall. */
+function LockedSheet({ page }: { page: number }) {
+  const sheet = ORIGINAL_PAGES.find(item => item.page === page);
+  return <section className={light.lockedSheet} data-permesso-locked-page={page} aria-labelledby="permesso-locked-sheet">
+    {/* eslint-disable-next-line @next/next/no-img-element -- The official blank page, a local static file. */}
+    <img src={sheet?.url} alt="" width={PAPER.width} height={PAPER.height} loading="lazy" decoding="async" />
+    <div>
+      <h2 id="permesso-locked-sheet">Лист {page}{sheet ? ` · ${sheet.title}` : ""}</h2>
+      <GuideWall place="permesso" flat note="Пояснения к каждому полю этого листа, ввод черновика и перенос на бумагу откроются после оплаты. Открыты первый лист — само заявление — и листы 4–8, которые студент оставляет пустыми. Один платёж, без подписки." />
+    </div>
+  </section>;
 }
 
 function SectionLink({ embedded, href, className, children, ...data }: { embedded: boolean; href: string; className?: string; children: ReactNode; "data-field-tool"?: string }) {

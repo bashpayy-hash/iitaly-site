@@ -6,6 +6,9 @@ import { isGuideId } from "./guideJourney";
 import { GuideBreadcrumbs, GuideFrame, GuideReviewed } from "./GuidePage";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { guideSentences } from "./guideText";
+import { guideStepOpen } from "./guideAccess";
+import { GuideSentences } from "./GuideSentences";
+import { GuideLockedStep } from "./GuideLockedStep";
 import ui from "./guide-pages.module.css";
 import styles from "./guide-step-page.module.css";
 
@@ -14,7 +17,9 @@ import styles from "./guide-step-page.module.css";
    шагов и переходами «назад / дальше». На последнем шаге — действие темы.
    Owner, 4 Nov (скрин с телефона): без «Шаг 02 из 04» и «Шаг 02» на карточках
    перехода — над заголовком стоит тема, место шага показывают точки, в хлебных
-   крошках и на карточках перехода — названия шагов. */
+   крошках и на карточках перехода — названия шагов.
+   Owner, 9 Nov: закрытый шаг (guideAccess.ts) показывает название, столько
+   же пустых пунктов и стену; текст разбора в HTML не попадает. */
 export function GuideStepPage({ id, step }: { id: string; step: number }) {
   const guide = GUIDE_TOPICS.find(topic => topic.id === id)!;
   const stage = stageForGuide(id)!;
@@ -22,6 +27,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
   const point = points[step - 1];
   const previous = points[step - 2], next = points[step];
   const sentences = guideSentences(point.text);
+  const open = guideStepOpen(id, step);
   const art = guideArt(id);
   const helpId = isGuideId(id) ? id : undefined;
   return <GuideFrame narrow>
@@ -36,9 +42,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
         </div>
         <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" decoding="async" />
       </header>
-      {sentences.length > 1 ? <ol className={styles.sentences} data-guide-step-body>
-        {sentences.map((sentence, index) => <li key={index}><span aria-hidden="true">{index + 1}</span><p>{sentence}</p></li>)}
-      </ol> : <p className={styles.single} data-guide-step-body>{point.text}</p>}
+      {open ? <GuideSentences sentences={sentences} text={point.text} /> : <GuideLockedStep id={id} step={step} count={sentences.length} />}
       <nav className={styles.dots} aria-label="Шаги темы">
         {points.map((item, index) => <Link key={item.href} href={item.href} aria-current={index + 1 === step ? "step" : undefined} title={item.title} aria-label={`Шаг ${index + 1}: ${item.title}`}><span /></Link>)}
       </nav>

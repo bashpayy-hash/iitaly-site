@@ -39,6 +39,8 @@ const key='iitaly:permesso-paper-editor:v1';
 try {
  for (const width of [1440,1024,768,390,360]) {
   const context=await browser.newContext({viewport:{width,height:1000},hasTouch:width<600,isMobile:width<600,reducedMotion:'reduce',locale:'ru-RU'});
+  // Owner 9 Nov (guideAccess.ts): before payment sheets 2–3, the transfer and two of four tools are closed. This review exercises the whole trainer on a device that holds a paid cabinet; design-guides-access-review.mjs covers the free view.
+  await context.addInitScript(()=>localStorage.setItem('iitaly_portal_code','review-paid'));
   const errors=[],writes=[];
   await context.route('**/*',async route=>{const request=route.request(),url=new URL(request.url());if(url.hostname==='127.0.0.1')return route.continue();if(request.method()!=='GET'||request.postData())writes.push(url.origin+url.pathname);return route.abort();});
   const page=await context.newPage();activePage=page;page.setDefaultTimeout(12000);page.on('pageerror',e=>errors.push(e.message));

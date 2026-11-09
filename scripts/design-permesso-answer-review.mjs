@@ -27,6 +27,8 @@ const results=[];let activePage;
 try{
  for(const[width,touch]of[[1440,false],[1024,false],[768,false],[390,true],[360,true]]){
   const context=await browser.newContext({viewport:{width,height:1000},hasTouch:touch,isMobile:touch,locale:'ru-RU',reducedMotion:'reduce'});
+  // Owner 9 Nov (guideAccess.ts): before payment sheets 2–3, the transfer and two of four tools are closed. This review exercises the whole trainer on a device that holds a paid cabinet; design-guides-access-review.mjs covers the free view.
+  await context.addInitScript(()=>localStorage.setItem('iitaly_portal_code','review-paid'));
   const errors=[],writes=[];
   await context.route('**/*',route=>{const r=route.request(),u=new URL(r.url());if(u.hostname==='127.0.0.1')return route.continue();if(r.method()!=='GET'||r.postData())writes.push(u.origin+u.pathname);return route.abort();});
   const p=await context.newPage();activePage=p;p.setDefaultTimeout(15000);p.on('pageerror',e=>errors.push(e.message));

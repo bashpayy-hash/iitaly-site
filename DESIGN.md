@@ -1162,3 +1162,50 @@ Owner, five screenshots: «на первой странице всё равно 
   to the next step (`scroll-margin-top` keeps it under the cabinet chrome).
   Opening the cabinet still starts with the Tuscany scene and «Сейчас твой
   шаг»; steps saved on a stage page stay on that page.
+
+## Guides: about 40% open, the rest with the route · 9 November 2026
+
+Owner: «не даем ли мы слишком много информации в гайдах и визе… дай где-то
+40% того, что есть… что-то одно из такого ценного, что-то по фигне, мелочи…
+дальше открыть уже надо платить». The cut lives in
+`src/components/guides/guideAccess.ts`; the purchase is the same as on /plan
+(`useWallPurchase`, «Открыть маршрут за 10 990 ₸», the /prices form).
+
+- **The rule.** Each topic opens one step with real use (a sum, a deadline,
+  where to start) and, in the larger topics, one small detail. Steps where a
+  person decides for their own case (which set of documents, which years of
+  certificates, which procedure, how to renew) open with the route. 17 of 41
+  steps are open (≈41% of steps, 38% of the words). Topic headers, facts,
+  cautions and official sources stay open everywhere.
+- **Visa.** Key facts, the VFS link and the funds calculator stay open. In
+  «Когда подавать» the first two points, in «Документы для визы» passport and
+  form, Universitaly and fees, in «Перед подачей» the origin of funds: 6 of
+  18 points. Closed points keep their title in the pills; their text is the
+  wall sentence, and the checklist mark still works on every document.
+- **Modulo 1.** The application sheet and the sheets a student leaves empty
+  stay open; sheets 2–3 show the official page, its title and the wall
+  instead of the field guidance; «Переносим на бумагу» becomes the purchase.
+  «Коды и расчёты» opens the field 16 code and the province sigla; the
+  sheet count and the country code are closed. «Перед почтой» keeps «На
+  бумаге» and «Деньги»; the scenario checklist and the skip cheat sheet wait.
+- **How a closed place looks.** A closed step card keeps its pips and title
+  and says «Откроется с маршрутом» in a quiet pill instead of the first
+  sentence; the row header says how many are open. A closed step page keeps
+  the title, the topic object, the dots and the pager, and shows as many
+  empty numbered rows as the step has, fading down, then the wall: one
+  sentence, the black pill with the price, «Что входит и возврат 7 дней» and
+  «Уже оплачено — войти» (/portal?view=login). Inside a card that already has
+  a border (Modulo 1, «Перед почтой», a tool panel) the wall is flat.
+- **Nothing closed reaches the page.** The server cuts the step cards and
+  the step pages: closed text is in neither the HTML nor the page data, and a
+  closed step's description says only that it opens with the route, so no
+  paywall markup is needed. A device that holds a paid cabinet
+  (`iitaly_portal_code`, `usePaidDevice`) loads the closed text as a
+  separate module and sees everything; the cabinet's embedded trainer is
+  never cut. `wall_seen` carries only the place (`guide-step`, `visa`,
+  `permesso`) and is not sent by a paid device or a hidden tab.
+- **Checks.** `scripts/design-guides-access-review.mjs` reads every step as
+  a paid device, then as a guest: the share, the absence of closed text in
+  the export and in descriptions, one wall per closed place, the same
+  purchase form, the visa points, the Modulo 1 sheets, transfer and tools,
+  and the phone fit. The Modulo 1 reviews run as a paid device.

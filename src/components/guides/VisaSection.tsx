@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
@@ -9,19 +9,30 @@ import { VG_PER_YEAR, VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMEL
 import type { VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
 import { GuidePointSwitcher } from "./GuidePointSwitcher";
-import { GuideStepCards } from "./GuideStepCards";
+import { GuideWall } from "./GuideWall";
+import { GUIDE_WALL_NOTE, visaPointOpen, type VisaPointsPart } from "./guideAccess";
+import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitcher";
 
+/* Виза (owner, 9 Nov): ключевые факты, ссылка на VFS и калькулятор средств
+   открыты; в сроках, документах и проверке перед подачей открыты отдельные
+   пункты (guideAccess.ts), у остальных — название и стена. Карточки частей
+   рисует GuidePage. */
 export function VisaSection({ part }: { part?: VisaPart }) {
   if (part === "funds") return <GuaranteeCalculator />;
   if (part === "documents") return <VisaChecklist />;
-  if (part === "timeline") return <GuidePointSwitcher rows={VISA_TIMELINE.map(step => ({ label:step.t, value:step.p }))} subject="calendar" />;
-  if (part === "before-application") return <GuidePointSwitcher rows={VISA_REJECT_REASONS.map((reason, index) => ({ label:`Перед подачей · ${index + 1}`, value:reason }))} subject="envelope" />;
+  if (part === "timeline") return <VisaPoints part="timeline" rows={VISA_TIMELINE.map(step => ({ label:step.t, value:step.p }))} subject="calendar" />;
+  if (part === "before-application") return <VisaPoints part="before-application" rows={VISA_REJECT_REASONS.map((reason, index) => ({ label:`Перед подачей · ${index + 1}`, value:reason }))} subject="envelope" />;
   return <>
     <a className={ui.textLink} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer">Официальный VFS для Италии в Казахстане</a>
     <dl className={ui.visaFacts}>{VISA_KEY_FACTS.map(fact=><div key={fact.label}><dt>{fact.value}</dt><dd>{fact.label}</dd></div>)}</dl>
-    <GuideStepCards id="visa" />
   </>;
+}
+
+function VisaPoints({ part, rows, subject }: { part: VisaPointsPart; rows: { label: string; value: string }[]; subject: "calendar" | "envelope" }) {
+  const paid = usePaidDevice();
+  return <GuidePointSwitcher subject={subject} rows={rows.map((row, index): { label: string; value: string; content?: ReactNode } =>
+    paid || visaPointOpen(part, index + 1) ? row : { label: row.label, value: GUIDE_WALL_NOTE, content: <GuideWall place="visa" note={null} /> })} />;
 }
 
 function GuaranteeCalculator() {
@@ -44,6 +55,7 @@ function GuaranteeCalculator() {
 }
 
 function VisaChecklist() {
+  const paid = usePaidDevice();
   const [done, setDone] = useState<Set<number>>(new Set());
   const { index, href, select } = useStoryLocation("point", VISA_DOCS.length);
 
@@ -70,7 +82,11 @@ function VisaChecklist() {
         />
       </div>
       <p className="mt-3 text-[13px] leading-5 text-stone-600">Отметки помогают собрать пакет и не являются решением о готовности к визе. Последний пункт применяется только к несовершеннолетним.</p>
-      <MediaSwitcher items={VISA_DOCS.map((document, position) => ({ id:String(position), title:document.title, text:document.desc, subject:"folder", label:String(position + 1).padStart(2, "0"), content:<button type="button" aria-pressed={done.has(position)} className={ui.checkItem} onClick={() => toggle(position)}><Check size={18} aria-hidden="true" />{done.has(position) ? "Собрано — снять отметку" : "Отметить собранным"}</button> }))} index={index} onSelect={select} href={href} label="Документы визового пакета" progressLabel="Документ" lastAction={<Link href="/guides/visa">К вопросам о визе</Link>} />
+      <MediaSwitcher items={VISA_DOCS.map((document, position) => {
+        const open = paid || visaPointOpen("documents", position + 1);
+        const check = <button type="button" aria-pressed={done.has(position)} className={ui.checkItem} onClick={() => toggle(position)}><Check size={18} aria-hidden="true" />{done.has(position) ? "Собрано — снять отметку" : "Отметить собранным"}</button>;
+        return { id:String(position), title:document.title, text:open ? document.desc : GUIDE_WALL_NOTE, subject:"folder", label:String(position + 1).padStart(2, "0"), content:open ? check : <>{check}<GuideWall place="visa" note={null} /></> };
+      })} index={index} onSelect={select} href={href} label="Документы визового пакета" progressLabel="Документ" lastAction={<Link href="/guides/visa">К вопросам о визе</Link>} />
 
     </div>
   );
