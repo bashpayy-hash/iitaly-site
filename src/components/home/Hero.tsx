@@ -25,7 +25,7 @@ export function Hero() {
   return (
     <section data-section="hero" className={styles.hero}>
       <div className={styles.heroScene} data-hero-scene>
-        <div className={styles.heroSceneBox} aria-hidden="true">
+        <div className={styles.heroSceneBox} aria-hidden="true" data-living="hold">
           <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-cafe-1024.webp" srcSet="/illustrations/landscapes/bologna-cafe-640.webp 640w, /illustrations/landscapes/bologna-cafe-1024.webp 1024w, /illustrations/landscapes/bologna-cafe-1600.webp 1600w, /illustrations/landscapes/bologna-cafe-2400.webp 2400w" sizes="100vw" width={1024} height={680} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna-cafe" />
           <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna-cafe" label="bologna-cafe" widths={[960, 1600, 2400]} webmWidths={[960]} />
         </div>

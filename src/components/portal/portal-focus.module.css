@@ -13,7 +13,7 @@
 .welcome h1 { margin:0 0 12px; font:600 clamp(32px,3.2vw,44px)/1.12 var(--font-sans); letter-spacing:-.02em; }
 .welcomeMeta { margin:0; color:var(--quiet); font-size:13px; line-height:1.6; }
 .welcomeMeta:empty { display:none; }
-.routeCard { grid-area:route; min-width:0; padding:8px 0 0; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.routeCard { grid-area:route; min-width:0; padding:8px 0 0; border:0; border-radius:0; background:transparent; box-shadow:none; scroll-margin-top:calc(var(--portal-chrome-height, 72px) + 16px); }
 /* Плитка этапа — тот же радиус 28px, что у плиток обзора и документов
    (полировка, 4 ноября); раньше была единственной карточкой на 16px. */
 .stageBody { grid-area:tasks; min-width:0; padding:30px 32px 12px; border:1px solid var(--border); border-radius:28px; background:var(--card); }
@@ -101,13 +101,27 @@ button.nowPrimary { border:0; cursor:pointer; }
  .taskActions { grid-column:1 / -1; width:100%; margin-top:4px; }.primary,.markReady { width:100%; min-height:44px; font-size:13px; }
 }
 .soundSetting { display:flex; align-items:center; gap:10px; min-height:48px; font-size:15px; margin-top:24px; }.soundSetting input { width:18px; height:18px; accent-color:var(--status-green); }
-.confirmation { pointer-events:none; position:fixed; z-index:85; top:80px; left:50%; transform:translateX(-50%); width:min(460px,calc(100vw - 32px)); }
-.confirmationBody { display:flex; align-items:center; gap:14px; padding:14px 18px; border:1px solid var(--border); border-radius:16px; background:var(--card); animation:confirmationIn .35s ease-out; }
-.confirmationBody strong { display:block; color:var(--ink); font-size:15px; }.confirmationBody span { display:block; font-size:13px; line-height:1.4; color:var(--quiet); margin-top:3px; }
+/* Плашка награды (owner, 9 Nov: «без анимации, топорно»): белая пилюля с
+   мягкой тенью под шапкой кабинета; Веспи со штампом в тёплом кружке слева,
+   справа — ярлык, шаг и счёт этапа. Вход: сверху вниз с лёгким перелётом и
+   «пристукиванием» Веспи; уход: вверх и в прозрачность. Только transform и
+   opacity. */
+.confirmation { pointer-events:none; position:fixed; z-index:85; top:calc(var(--portal-chrome-height, 72px) + 12px); left:50%; transform:translateX(-50%); width:min(440px,calc(100vw - 24px)); }
+.confirmationBody { display:flex; align-items:center; gap:14px; padding:10px 20px 10px 10px; border:1px solid #E8E0D4; border-radius:24px; background:#FFFDF9; box-shadow:0 14px 34px rgba(42,36,32,.16),0 2px 6px rgba(42,36,32,.08); transform-origin:50% 0; animation:confirmationIn 420ms cubic-bezier(.22,1.2,.36,1) both; }
+.confirmationBody[data-leaving] { animation:confirmationOut 240ms cubic-bezier(.4,0,1,1) both; }
+.rewardVespi { flex:none; display:grid; place-items:center; width:64px; height:64px; border-radius:20px; background:#F3EADC; overflow:hidden; }
+.rewardVespi img { width:58px; height:auto; animation:rewardStamp 520ms cubic-bezier(.34,1.56,.64,1) 140ms both; }
+.rewardCopy { display:grid; gap:2px; min-width:0; }
+.rewardLabel { margin:0; color:#A33421; font-size:12px; font-weight:600; line-height:1.3; letter-spacing:.01em; }
+.confirmationBody strong { display:block; color:var(--ink); font-size:16px; font-weight:600; line-height:1.25; letter-spacing:-.01em; }
+.rewardTitle,.rewardTally { display:block; overflow:hidden; color:var(--quiet); font-size:13px; line-height:1.4; text-overflow:ellipsis; white-space:nowrap; }
+.rewardTally { font-size:12px; }
+@keyframes confirmationOut { to { opacity:0; transform:translateY(-14px) scale(.97); } }
+@keyframes rewardStamp { 0% { opacity:0; transform:translateY(-10px) scale(.7) rotate(-8deg); } 60% { opacity:1; transform:translateY(2px) scale(1.06) rotate(2deg); } 100% { opacity:1; transform:none; } }
 .successIcon { flex-shrink:0; stroke:var(--status-green); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
 .successIcon circle,.successIcon path { stroke-dasharray:100; stroke-dashoffset:100; animation:drawSuccess .4s ease forwards; }.successIcon path { animation-delay:.18s; }
-@keyframes drawSuccess { to { stroke-dashoffset:0; } }@keyframes confirmationIn { from { opacity:0; transform:translateY(-5px); }to { opacity:1; transform:translateY(0); } }
-@media(prefers-reduced-motion:reduce) { .primary span { transition:none!important; }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.pips a[data-just-stamped=true] span,.pips a span,.confirmationBody,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
+@keyframes drawSuccess { to { stroke-dashoffset:0; } }@keyframes confirmationIn { from { opacity:0; transform:translateY(-18px) scale(.96); }to { opacity:1; transform:none; } }
+@media(prefers-reduced-motion:reduce) { .primary span { transition:none!important; }.roundCheck[data-just-saved=true],.roundCheck[data-just-saved=true] path,.pips a[data-just-stamped=true] span,.pips a span,.confirmationBody,.confirmationBody[data-leaving],.rewardVespi img,.successIcon circle,.successIcon path { animation:none; }.roundCheck[data-done=true] path,.successIcon circle,.successIcon path { stroke-dashoffset:0; } }
 @media(forced-colors:active) { .roundCheck[data-done=true]::before,.pips a[data-stamped=true] span,.pips a[aria-current=step] span { background:Highlight; }.roundCheck[data-done=true] { color:HighlightText; }.pips a span { border:1px solid CanvasText; } }
 
 /* Overview shows one next task; each stage has a separate reading surface. */
@@ -169,6 +183,15 @@ button.nowPrimary { border:0; cursor:pointer; }
    которой Веспи въезжает слева и уезжает к ферме, идёт под панелью. Никакой
    дымки и перехода в бумагу — текст стоит на сплошной панели. */
 .heroScene { position:absolute; inset:0; z-index:0; overflow:hidden; background:#E9DCC6; }
+/* Сцена над сгибом ждёт первый кадр видео (owner, 9 Nov: «на первой странице
+   всё равно меняется освещение»): пока data-living="hold", вместо картинки —
+   ровный средний цвет сцены (он же подложка и при проявлении видео), затем за 450 мс проявляется сразу видео; картинка
+   показывается только если видео не пришло (still) или при «меньше движения»
+   и без JS. См. LivingLandscape. */
+.heroScene { background:#9C7146; }
+.heroScene[data-living="hold"] > img, .heroScene[data-living="video"] > img { opacity:0; }
+.heroScene[data-living-fade] > img { transition:opacity 450ms cubic-bezier(.4,0,.2,1); }
+@media (prefers-reduced-motion:reduce), (scripting:none) { .heroScene > img { opacity:1 !important; } }
 .heroArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:50% 100%; }
 .heroPanel { position:relative; z-index:1; display:grid; justify-items:center; width:min(100%,600px); padding:26px 32px 28px; border-radius:24px; background:#FFFDF9; box-shadow:0 1px 2px rgba(42,36,32,.08),0 14px 36px rgba(42,36,32,.14); }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }

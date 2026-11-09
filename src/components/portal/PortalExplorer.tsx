@@ -311,13 +311,22 @@ export function PortalExplorer() {
     document.getElementById("portal-step-heading")?.focus({ preventScroll: true });
   }, [section, openTaskId]);
 
+  /* После сохранённого шага — сразу к прогрессу (owner, 9 Nov: «возвращает на
+     анимацию с Веспи в Тоскане… должно сразу на прогресс-бар переходить;
+     при самом первом открытии юзер видит Веспи, а после шагов нет нужды
+     смотреть на это снова»). Обзор открывается на «Весь путь»: прогресс и
+     дорожка, по которой Веспи едет к следующему шагу. Пейзаж остаётся
+     выше — открытие кабинета по-прежнему начинается с него. */
   useEffect(() => {
     if (!completionFocusPending.current || section !== "today" || editingProfile || !data?.client.onboardingComplete) return;
+    if (selectedStageId) { completionFocusPending.current = false; return; }
     const road = document.querySelector<HTMLElement>("[data-portal-road]");
     if (!road) return;
+    const card = road.closest<HTMLElement>("[data-route-card]") || road;
+    card.scrollIntoView({ block: "start", behavior: "instant" });
     road.focus({ preventScroll: true });
     completionFocusPending.current = false;
-  }, [section, editingProfile, data]);
+  }, [section, editingProfile, data, selectedStageId]);
 
   useEffect(() => {
     if (section !== "docs" || openDocument || !documentReturnFocus.current) return;
