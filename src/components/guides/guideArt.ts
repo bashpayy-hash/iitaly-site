@@ -7,6 +7,12 @@
    нотки реализма») — полуконцептуальный набор: настоящие материалы,
    упрощённые формы и смысл в композиции (весы для ISEE, реплики над книгой
    для перевода), design/illustrations/objects-2026-11-07.json.
+   С 9 ноября (owner: «иконки немного не по теме… DSU — что-то с деньгами,
+   Codice fiscale — больше бумажку, не везде конвертики, более реальное»):
+   монеты с пачкой купюр для DSU/ISEEU, бумажное свидетельство для Codice
+   fiscale, домик на стопке справок для «Справок семьи», ручка с подписанным
+   листом для «Если ещё нет 18», книжка с жетонами для воинского учёта —
+   design/illustrations/objects-2026-11-09.json.
    Картинки декоративные (alt=""): смысл несут заголовок и тизер темы. */
 const ART: Record<string, { name: string; height: number }> = {
   education: { name: "diploma", height: 357 },
@@ -14,7 +20,7 @@ const ART: Record<string, { name: string; height: number }> = {
   apostille: { name: "stamp-pad", height: 371 },
   translation: { name: "translation", height: 351 },
   cimea: { name: "folder", height: 338 },
-  con: { name: "envelope", height: 362 },
+  con: { name: "family-docs", height: 362 },
   iseeu: { name: "coins", height: 367 },
   visa: { name: "passport", height: 359 },
   minors: { name: "minors", height: 371 },

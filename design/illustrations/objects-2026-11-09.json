@@ -1,0 +1,116 @@
+{
+ "date": "2026-11-09",
+ "request": "Owner, 9 Nov (guides screenshots): «иконки немного идут не по теме. Там, где DSU, ISEEU, сделай просто иконку, связанную с деньгами. Codice fiscale — больше такую бумажку. И другие сделай не просто везде конвертики, а более такое реальное».",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, transparent background, 4:3; two concepts per topic, one kept",
+ "promptTemplate": "Semi-conceptual object icon, halfway between a premium product photograph and a refined 3D app icon: [concept]. Slightly simplified, idealized forms with softly rounded edges and fewer, cleaner details than a photograph, while keeping real material cues: [materials]. Soft even studio light from the upper left, gentle ambient occlusion, a small soft contact shadow directly under the object. Warm palette of cream, sand, terracotta red, deep sage green and brushed brass. Three-quarter view from slightly above, centred. Fully transparent background with crisp clean silhouette edges: no glow, no halo, no white rim, no backdrop. No text, letters, numbers, logos, emblems, flags, people or hands. (Small icons add: a bold simple silhouette that stays readable at 24 pixels.)",
+ "processing": "Trimmed, fitted (inside 468×(H−12)) and centred in the exact old 480×H frames, so no layout moves; WebP q84/alpha92 at 480 and 240. Reviewed at full size and on #2A2420 and #FFFDF9: no text, numerals, currency symbols, portraits, emblems, flags or people; the signature is an abstract loop.",
+ "items": [
+  {
+   "name": "coins",
+   "topics": "DSU и ISEEU (guides), budget question and finance steps on /plan",
+   "job": "561725f1-0cc3-43b5-b2ae-07bad8cb087b",
+   "concept": "a stack of five brushed-brass coins with plain faces beside a bundle of folded cream and sage banknotes held by a terracotta paper band",
+   "rejected": {
+    "job": "bed9d240-0ea2-4bf8-9a4d-dab1c605025b",
+    "why": "open terracotta coin purse: reads as a wallet rather than money at tile size"
+   },
+   "replaces": "balance scale with coins and a folded document (7 Nov)"
+  },
+  {
+   "name": "tax-card",
+   "topics": "Codice fiscale (guides, home banner, /plan step)",
+   "job": "56fa4520-4eb9-43df-b326-584dfa02bd21",
+   "concept": "a single cream paper certificate with a sage band, soft blank lines, a round terracotta ink stamp, an embossed blind seal and a brass paper clip",
+   "rejected": {
+    "job": "710840de-403e-427e-b44c-644353c1f34e",
+    "why": "two clipped certificates: too close to the family-certificates object"
+   },
+   "replaces": "green plastic card with a chip on a form (7 Nov)"
+  },
+  {
+   "name": "family-docs",
+   "topics": "Справки семьи (guides «con»; the envelope stays for the consulate step and the DSU-region question on /plan)",
+   "job": "2dd9fb48-f19a-4413-8658-abf4d04f0237",
+   "concept": "a small wooden house model with a terracotta roof on a short stack of certificates held by a brass binder clip",
+   "rejected": {
+    "job": "37e52be4-d384-45ff-a263-1dfed9cf5692",
+    "why": "open ring binder with the house: busier silhouette"
+   },
+   "replaces": "envelope with cards and a tiny house (7 Nov), still used elsewhere as «envelope»"
+  },
+  {
+   "name": "minors",
+   "topics": "Если ещё нет 18 (guides, age question and under-18 step on /plan)",
+   "job": "7d556e1b-28ca-4cae-8781-208b7bbb7cc4",
+   "concept": "a black-and-brass fountain pen across a sheet with an abstract signature loop, a terracotta notary stamp and a small sage wax seal",
+   "rejected": {
+    "job": "19dbd553-aaed-46ac-8fce-284039c1c877",
+    "why": "two signature lines whose loops read almost like letters"
+   },
+   "replaces": "folded document with two wax seals (7 Nov)"
+  },
+  {
+   "name": "military",
+   "topics": "Воинский учёт в Казахстане (guides, conscription step on /plan)",
+   "job": "c2337cb4-7fe6-464f-ba71-cb1b3db78073",
+   "concept": "a small olive-green cloth-bound booklet with brass corners and two plain steel identity tags on a ball chain",
+   "rejected": {
+    "job": "1d1c24fc-be20-4ea3-862f-bfa62f62e905",
+    "why": "half-open booklet: the tags hang off the frame at 240px"
+   },
+   "replaces": "folded document with dog tags and a green ribbon (7 Nov)"
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/objects/coins-480.webp",
+   "bytes": 36470,
+   "sha256": "30ad97edff4b69a650f72e87183c406b04940714c79968905b5f48c0f658aa80"
+  },
+  {
+   "file": "public/illustrations/objects/coins-240.webp",
+   "bytes": 13484,
+   "sha256": "3093a42c96c4e18880a48a0852fd8d6e54667280bf6d772e5200e8de9bb029ef"
+  },
+  {
+   "file": "public/illustrations/objects/tax-card-480.webp",
+   "bytes": 22512,
+   "sha256": "b52b8014b0fcde2ad992cdf68d61b71e3ac1f9304d521e4fac2d7a6290605f42"
+  },
+  {
+   "file": "public/illustrations/objects/tax-card-240.webp",
+   "bytes": 9144,
+   "sha256": "9dbabfeda6f6d8e0ffdad447a939e301081d831bd8a3432dbf9600a6655cfd28"
+  },
+  {
+   "file": "public/illustrations/objects/family-docs-480.webp",
+   "bytes": 23342,
+   "sha256": "925b64139e0c742e1029428f76aebbc19180e304fcf23d79fb59de0759041fe3"
+  },
+  {
+   "file": "public/illustrations/objects/family-docs-240.webp",
+   "bytes": 10056,
+   "sha256": "6f94391ab86b68b9c3d32149987bccf28b9caf9c3a0559b8a8a6fdcd30d3580d"
+  },
+  {
+   "file": "public/illustrations/objects/minors-480.webp",
+   "bytes": 25496,
+   "sha256": "986429a7a6526d14a7158f77d5ba4382c10b8925b399cbbbbf8879675b08651b"
+  },
+  {
+   "file": "public/illustrations/objects/minors-240.webp",
+   "bytes": 10932,
+   "sha256": "9102a9586235af82707a31a79f8f74aa04d06ad1886fded4782dea0dd102f6c5"
+  },
+  {
+   "file": "public/illustrations/objects/military-480.webp",
+   "bytes": 28934,
+   "sha256": "6be6e8a0f8561f7cbefe5366b39b444d9a5bf496bf2602ef636ec76f4378cfa9"
+  },
+  {
+   "file": "public/illustrations/objects/military-240.webp",
+   "bytes": 9704,
+   "sha256": "9705f4dc7334dad8c5d320bb6677be01386d3bea025e33820b6b86bc18ec2414"
+  }
+ ]
+}

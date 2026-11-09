@@ -1111,3 +1111,54 @@ Owner, after the café hero went live: «анимация уже хорошо, �
   the cup back and returns to reading; the cornetto stays on its plate.
   Same pipeline and checks as the morning loop (`motion-2026-11-08.json`
   now records this one; the bite version is listed as superseded).
+
+## Light that never switches, objects that say the topic · 9 November 2026
+
+Owner, five screenshots: «на первой странице всё равно меняется освещение»;
+«иконки немного не по теме: DSU, ISEEU — что-то с деньгами, Codice fiscale —
+больше бумажку, не везде конвертики»; «уведомление в личном кабинете без
+анимации, выглядит топорно»; «после шагов возвращает на анимацию с Веспи в
+Тоскане — нужно сразу на прогресс-бар; при первом открытии пусть видит
+Веспи, а потом нет нужды смотреть снова и снова».
+
+- **The source never changes on screen.** A browser draws an image and a
+  video through different paths. On Windows a video often goes through the
+  graphics card's video processor, where the driver (adaptive contrast,
+  «enhance video», RTX Video HDR) changes brightness and colour and the
+  image path does not; no cross-fade hides that, which is why the slow
+  reveal of 8 November was still seen. `LivingLandscape` now follows one
+  rule: the picture on screen is never swapped for the other source.
+  - **Scenes above the fold** (home, /plan, cabinet) are rendered with
+    `data-living="hold"`: until the first video frame arrives the tile shows
+    the scene's average colour (`#9B5C3A`, `#AB9078`, `#9C7146`), then the
+    video itself fades in over 450 ms. The still is never painted on screen.
+    Measured from first paint: the colour at ~0.26 s, the video full at
+    ~0.8 s, then steady. If the loop has not arrived in 1.4 s the still
+    fades in instead and stays.
+  - **Scenes below** (the FAQ belvedere) show the still; the loop loads a
+    screen and a half ahead and replaces the still only while the tile is
+    off screen. Scrolling to the FAQ finds the loop already in place.
+  - «Меньше движения», Save-Data and no JavaScript (`scripting: none`) see
+    the still, as before.
+- **Guide objects on topic** (`objects-2026-11-09.json`, same
+  semi-conceptual set and frames as 7 November): DSU и ISEEU — a stack of
+  brass coins and a banded bundle of banknotes; Codice fiscale — a single
+  paper certificate with a stamp and a blind seal; Справки семьи — a wooden
+  house on clipped certificates; Если ещё нет 18 — a fountain pen on a
+  signed sheet with a notary stamp; Воинский учёт — an olive cloth booklet
+  with identity tags. No envelope is left in the guides strip; the envelope
+  object stays for the consulate step on /plan.
+- **A reward that arrives and leaves.** The cabinet's «Штамп получен» notice
+  had no styles for its Vespi and text, so the pose rendered at full size.
+  It is now a cream pill under the cabinet header (24px radius, soft
+  shadow): Vespi in a warm 64px tile, a terracotta label, the step and the
+  stage count. It drops in over 420 ms with a slight overshoot, Vespi lands
+  with a small stamp bounce, and after 2.2 s it rises out over 240 ms;
+  the last reward stays mounted during the exit, so it never vanishes in
+  one frame. Transform and opacity only; «меньше движения» shows it still.
+- **Back to the progress after a step.** A step saved on its own page, or a
+  document whose check completes a step, returns to the overview scrolled
+  to «Весь путь»: the percentage, the bar and the road where Vespi drives
+  to the next step (`scroll-margin-top` keeps it under the cabinet chrome).
+  Opening the cabinet still starts with the Tuscany scene and «Сейчас твой
+  шаг»; steps saved on a stage page stay on that page.

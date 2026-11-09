@@ -55,7 +55,7 @@ export function PlanExplorer() {
            поэтому не стоит ничего на телефоне; светлая вуаль держит контраст.
            Картинка — постер и вся сцена при «меньше движения». */}
         <div className={workspace.hero}>
-          <div className={workspace.heroScene} data-plan-hero-scene aria-hidden="true">
+          <div className={workspace.heroScene} data-plan-hero-scene aria-hidden="true" data-living="hold">
             <img className={workspace.heroArt} src="/illustrations/scenes/plan-loggia-1920.webp"
               srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1920.webp 1920w, /illustrations/scenes/plan-loggia-2560.webp 2560w"
               sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1080} alt=""

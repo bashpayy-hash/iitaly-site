@@ -1,12 +1,11 @@
 /* Видеопетля поверх картинки той же сцены: раскладку (inset, cover,
    object-position, масштаб на телефоне) даёт класс картинки, здесь — только
-   проявление, когда первый кадр пошёл. */
-/* Проявление 2,4 с (owner, 8 Nov: «резкая перемена света»): первый кадр
-   стоит, пока не проявится, поэтому фейд идёт из неподвижного в неподвижное,
-   и разница конвейеров картинки и видео растягивается до незаметной.
+   видимость видео по состоянию родителя (data-living, см. LivingLandscape).
    Непрозрачность .999, а не 1: Chrome не выносит такое видео в аппаратный
-   overlay-слой, где Windows (особенно с HDR) переводит цвет сам и иначе, чем
-   страницу, — кадр остаётся в общем композиторе, тем же цветом, что постер. */
-.motion { opacity:0; transition:opacity 2400ms cubic-bezier(.4,0,.2,1); pointer-events:none; }
-.playing { opacity:.999; }
+   overlay-слой, где Windows переводит цвет сам и иначе, чем страницу.
+   Плавность — только при проявлении на экране (data-living-fade); подмена
+   за кадром мгновенная. */
+.motion { opacity:0; pointer-events:none; }
+:global([data-living="video"]) > .motion { opacity:.999; }
+:global([data-living-fade]) > .motion { transition:opacity 450ms cubic-bezier(.4,0,.2,1); }
 @media (prefers-reduced-motion:reduce) { .motion { display:none; } }

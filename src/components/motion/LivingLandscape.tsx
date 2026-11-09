@@ -1,32 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "./MotionProvider";
 import styles from "./living-landscape.module.css";
 
-/** Длительность проявления первого кадра поверх картинки (как в CSS). */
-const REVEAL_MS = 2400;
+/** Сколько сцена над сгибом ждёт первый кадр видео, прежде чем показать картинку. */
+const HOLD_MS = 1400;
+
+type LivingState = "hold" | "still" | "video";
 
 /**
  * Живой пейзаж (owner, 4 Nov: «заигрывать с пейзажами и Веспи — визитная
- * карточка сайта»). Поверх статичной картинки сцены лежит короткая
- * видеопетля той же сцены (Higgsfield image-to-video, пинг-понг, без звука,
- * design/illustrations/motion-2026-11-04.json): плащ Веспи шевелится на
- * ветру, трава и кипарисы качаются, облака плывут над Флоренцией.
+ * карточка сайта»): поверх картинки сцены — короткая видеопетля той же сцены
+ * (Higgsfield, design/illustrations/motion-*.json). Картинка остаётся в DOM:
+ * её видят «меньше движения», Save-Data, браузеры без автоплея и без JS.
  *
- * Картинка остаётся в DOM и грузится первой — она и постер, и единственное,
- * что видят prefers-reduced-motion, экономия трафика (Save-Data) и браузеры
- * без автоплея. Видео подхватывается только когда плитка в зоне видимости,
- * на телефонах — 960px-версия; за кадром пауза. Пока первый кадр не пошёл,
- * видео прозрачно, так что стык с картинкой не виден.
+ * Свет не меняется на глазах (owner, 7–9 Nov: «резкая перемена света, что
+ * на главной, что на „Опиши ситуацию“»). Картинку и видео браузер выводит
+ * разными путями: на Windows видео часто проходит через видеопроцессор
+ * видеокарты, где драйвер (адаптивный контраст, «улучшение видео», RTX HDR)
+ * меняет яркость и цвет, а картинку — нет. Никакой кроссфейд это не прячет.
+ * Поэтому источник никогда не меняется, пока сцена на экране:
  *
- * Свет не прыгает (owner, 7 Nov: «освещение резко меняется просто так»):
- * картинка — это первый кадр петли, а неподвижная часть каждого кадра взята
- * из той же картинки, двигаются только Веспи, листва и фонари
- * (design/illustrations/motion-2026-11-07b.json). Файлы помечены BT.709 с
- * кривой sRGB, поэтому Chrome и Safari выводят их тем же цветом, что и WebP.
- * Проявившись один раз, видео остаётся поверх картинки и на паузе: за кадром
- * оно просто стоит на текущем кадре, и при возвращении нет второго перехода.
+ * - Сцена над сгибом (родитель рендерит её с `data-living="hold"`): до
+ *   первого кадра видео в плитке ровный цвет сцены, затем за 450 мс
+ *   проявляется сразу видео. Картинку человек на экране не видит вовсе.
+ *   Если видео не пришло за 1,4 с, проявляется картинка.
+ * - Остальные сцены показывают картинку, видео грузится заранее (за полтора
+ *   экрана) и подменяет её, только пока сцена за экраном.
+ *
+ * Состояние пишется в `data-living` родителя: CSS родителя прячет или
+ * показывает свою картинку, CSS этого модуля — видео. За кадром видео стоит
+ * на паузе на текущем кадре, при возвращении продолжает с него.
  */
 export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths }: {
   /** Общее начало путей: `${base}-<ширина>.mp4|webm`. H.264 там, где он есть
@@ -34,9 +39,8 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
   base: string;
   /** Ширины файлов по возрастанию. Телефон (до 640px) берёт самую узкую,
    *  остальные — первую, что покрывает ширину окна × плотность пикселей
-   *  (до 2×, с запасом 20%), иначе самую широкую: на ноутбуке с масштабом
-   *  125% петля не растягивается из 1280px (owner, 6 Nov: «картинки ниже
-   *  качеством, чем остальной сайт»). */
+   *  (до 2×, с запасом 20%), иначе самую широкую (owner, 6 Nov: «картинки
+   *  ниже качеством, чем остальной сайт»). */
   widths?: number[];
   /** Ширины VP9-версий, если они есть не для всех `widths`. */
   webmWidths?: number[];
@@ -46,58 +50,93 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
 }) {
   const reduced = useReducedMotion();
   const video = useRef<HTMLVideoElement>(null);
-  // shown — первый кадр уже на экране и проявляется поверх картинки.
-  const [shown, setShown] = useState(false);
   // Строковые ключи: новый массив на каждом рендере не перезапускает эффект.
   const widthKey = widths.join(","), webmKey = (webmWidths ?? widths).join(",");
 
-  /* Свет не меняется (owner, 8 Nov: «всё ещё резкая перемена света, что на
-     главной, что на /plan»). Раньше видео проявлялось уже на ходу: за 900 мс
-     поверх неподвижной картинки двигался полупрозрачный Веспи, а любое
-     расхождение цветового конвейера картинки и видео (у GPU с аппаратным
-     декодированием и HDR оно заметнее, чем у headless-замеров) читалось как
-     скачок освещения. Теперь видео сначала стоит на первом кадре — он и есть
-     постер, — проявляется за 2,4 с из неподвижного в неподвижное и только
-     потом запускается. Разницу в доли процента глаз за это время не ловит. */
   useEffect(() => {
     const node = video.current;
-    if (!node || reduced) return;
+    const scene = node?.parentElement;
+    if (!node || !scene) return;
+    const held = scene.dataset.living === "hold";
+    const settle = (state: LivingState, fade: boolean) => {
+      scene.dataset.living = state;
+      if (fade) scene.dataset.livingFade = ""; else delete scene.dataset.livingFade;
+      if (state === "video") node.dataset.playing = "true"; else delete node.dataset.playing;
+    };
+    const restore = () => { if (held) scene.dataset.living = "hold"; else delete scene.dataset.living; delete scene.dataset.livingFade; delete node.dataset.playing; };
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    if (connection?.saveData) return;
-    let armed = false, visible = false, revealed = false, timer: number | undefined;
-    const start = () => { if (visible && revealed) node.play().catch(() => {}); };
+    if (reduced || connection?.saveData) {
+      node.pause();
+      settle("still", false);
+      return restore;
+    }
+
+    const box = node.getBoundingClientRect();
+    let visible = box.bottom > 0 && box.top < window.innerHeight;
+    let armed = false, ready = false, swapped = false, holding = held;
+    let holdTimer: number | undefined;
+
+    const load = () => {
+      if (armed) return;
+      armed = true;
+      const need = window.innerWidth <= 640 ? 0 : window.innerWidth * Math.min(window.devicePixelRatio || 1, 2) * .8;
+      const pick = (list: number[]) => list.find(width => width >= need) ?? list[list.length - 1];
+      const list = (key: string) => key.split(",").map(Number);
+      node.preload = "auto";
+      node.src = node.canPlayType('video/mp4; codecs="avc1.640028"') ? `${base}-${pick(list(widthKey))}.mp4` : `${base}-${pick(list(webmKey))}.webm`;
+    };
+    const swap = (fade: boolean) => {
+      swapped = true;
+      settle("video", fade);
+      if (visible) node.play().catch(() => {});
+    };
     const onFirstFrame = () => {
-      if (revealed) return;
-      revealed = true;
-      setShown(true);
-      timer = window.setTimeout(start, REVEAL_MS + 100);
+      if (ready) return;
+      ready = true;
+      if (holding) { holding = false; window.clearTimeout(holdTimer); swap(true); }
+      else if (!visible) swap(false);
+    };
+    const onError = () => {
+      if (holding) { holding = false; window.clearTimeout(holdTimer); }
+      swapped = false;
+      settle("still", visible);
     };
     node.addEventListener("loadeddata", onFirstFrame);
-    const observer = new IntersectionObserver(entries => {
+    node.addEventListener("error", onError);
+
+    if (held) {
+      holdTimer = window.setTimeout(() => {
+        if (!holding) return;
+        holding = false;
+        settle("still", true);
+      }, HOLD_MS);
+      load();
+      if (node.readyState >= 2) onFirstFrame();
+    } else settle("still", false);
+
+    // Загрузка — заранее, за полтора экрана; подмена — только вне экрана.
+    const near = new IntersectionObserver(entries => { if (entries.some(entry => entry.isIntersecting)) load(); }, { rootMargin: "150% 0px" });
+    const seen = new IntersectionObserver(entries => {
       for (const entry of entries) {
         visible = entry.isIntersecting;
-        if (visible) {
-          if (!armed) {
-            armed = true;
-            const need = window.innerWidth <= 640 ? 0 : window.innerWidth * Math.min(window.devicePixelRatio || 1, 2) * .8;
-            const pick = (list: number[]) => list.find(width => width >= need) ?? list[list.length - 1];
-            const list = (key: string) => key.split(",").map(Number);
-            node.preload = "auto";
-            node.src = node.canPlayType('video/mp4; codecs="avc1.640028"') ? `${base}-${pick(list(widthKey))}.mp4` : `${base}-${pick(list(webmKey))}.webm`;
-            if (node.readyState >= 2) onFirstFrame();
-          } else start();
-        } else if (armed) node.pause();
+        if (swapped) {
+          if (visible) node.play().catch(() => {}); else node.pause();
+        } else if (!visible && ready && !holding) swap(false);
       }
-    }, { rootMargin: "120px 0px" });
-    observer.observe(node);
-    return () => { observer.disconnect(); node.removeEventListener("loadeddata", onFirstFrame); window.clearTimeout(timer); };
+    });
+    near.observe(node);
+    seen.observe(node);
+    return () => {
+      near.disconnect();
+      seen.disconnect();
+      node.removeEventListener("loadeddata", onFirstFrame);
+      node.removeEventListener("error", onError);
+      window.clearTimeout(holdTimer);
+      node.pause();
+      restore();
+    };
   }, [reduced, base, widthKey, webmKey]);
 
-  // «Меньше движения»: пауза и обратно к картинке (CSS тоже прячет видео).
-  useEffect(() => { if (reduced) video.current?.pause(); }, [reduced]);
-  const visible = shown && !reduced;
-
-  return <video ref={video} className={`${className} ${styles.motion} ${visible ? styles.playing : ""}`} muted loop playsInline preload="none"
-    aria-hidden="true" tabIndex={-1} data-living-landscape={label} data-playing={visible || undefined}
-    onPlaying={() => setShown(true)} onError={() => setShown(false)} />;
+  return <video ref={video} className={`${className} ${styles.motion}`} muted loop playsInline preload="none"
+    aria-hidden="true" tabIndex={-1} data-living-landscape={label} />;
 }
