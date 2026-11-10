@@ -21,6 +21,12 @@
 .stop[data-locked]:not([data-state=current]) .node { border-style:dashed; background:#F1ECE3; color:#6A625A; }
 .stop[data-locked]:not([data-state=current]) .name { color:#6A625A; }
 .stop[data-locked][data-state=done] .node { border-style:solid; border-color:#B83A27; background:#B83A27; color:#FFFDF9; }
+/* Отмечено посетителем — зелёный медальон с галочкой, как в кабинете. */
+.stop[data-checked] .node,.stop[data-checked][data-locked] .node { border:1.5px solid #2F7550; background:#3A8560; color:#FFFDF9; }
+.stop[data-checked][data-state=current] .node { border-width:2.5px; box-shadow:0 0 0 5px rgba(58,133,96,.18); }
+/* Плотный путь: только кружки, названия — в подсказке и для чтения с экрана. */
+.path[data-dense] { --stop-min:52px; }
+.path[data-dense] .name { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 @media (hover:hover) and (pointer:fine) {
   .stop:hover .node { border-color:#8A8174; }
   .stop[data-state=done]:hover .node,.stop[data-state=current]:hover .node { border-color:#A33421; }

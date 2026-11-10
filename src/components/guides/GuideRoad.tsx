@@ -169,7 +169,7 @@ export function GuideRoad({ id, heading, stations, showStations = true, scenery 
               <img src={station.mark.src} srcSet={station.mark.srcSet} sizes="56px" width={station.mark.width} height={station.mark.height} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} />
             </span>
             <span className={styles.text} data-road-text><strong>{station.title}</strong><span>{station.text}</span></span>
-            <span className={styles.status} data-state={state}><span className={styles.badge}>{status}</span><small>{stationRead} из {stationKeys.length}</small></span>
+            <span className={styles.status} data-state={state} data-road-status><span className={styles.badge}>{status}</span><small>{stationRead} из {stationKeys.length}</small></span>
           </>;
           return <li key={station.id} className={styles.row} data-road-unit={station.id} data-road-unit-state={showStations ? state : undefined}>
             {showStations && (station.href

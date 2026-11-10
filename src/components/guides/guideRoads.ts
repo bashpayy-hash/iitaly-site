@@ -50,10 +50,19 @@ export function visaRoad(): GuideRoadStation[] {
 
 /** /guides: three sections as stations, every topic as a stop. */
 export function guidesRoad(): GuideRoadStation[] {
-  return GUIDE_STAGES.map(stage => ({ id: stage.id, title: stage.title, text: stage.description, href: guideStageHref(stage.id), mark: stageMark(STAGE_MARK[stage.id]),
+  return GUIDE_STAGES.map(stage => stageStation(stage.id));
+}
+
+/** A section page: the same station as on /guides, with its topics. */
+export function stageRoad(id: string): GuideRoadStation[] {
+  return [stageStation(id)];
+}
+
+function stageStation(id: string): GuideRoadStation {
+  return [GUIDE_STAGES.find(item => item.id === id)!].map(stage => ({ id: stage.id, title: stage.title, text: stage.description, href: guideStageHref(stage.id), mark: stageMark(STAGE_MARK[stage.id]),
     steps: stage.ids.map(id => {
       const inner = id === "visa" ? VISA_PARTS.flatMap(part => visaSteps(part.id)) : topicSteps(id);
       return { key: `topic/${id}`, title: GUIDE_TOPICS.find(topic => topic.id === id)!.title, href: guideHref(id), locked: false,
         keys: inner.flatMap(step => step.keys), openKeys: inner.flatMap(step => step.openKeys) };
-    }) }));
+    }) }))[0];
 }

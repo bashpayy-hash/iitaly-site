@@ -7,5 +7,10 @@
 .tail { height:56px; list-style:none; }
 @media (max-width:640px) {
   .guideRoad [data-road-unit-state=current] { padding-bottom:56px; }
+  /* Проход по неровностям (10 Nov): на телефоне у станции остаются название и
+     статус одной строкой; описание в колонке шириной с ладонь рвалось на
+     слоги. Оно есть на странице раздела. */
+  .guideRoad [data-road-text] > span { display:none; }
+  .guideRoad [data-road-status] { flex-wrap:nowrap; white-space:nowrap; }
   .tail { height:40px; }
 }

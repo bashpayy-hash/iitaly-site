@@ -12,6 +12,8 @@ export type StoryItem = { id: string; title: string; text: string; subject?: Sto
   short?: string;
   /** Closed before payment: the path shows a lock on this stop. */
   locked?: boolean;
+  /** Marked done by the visitor: the path shows a green check. */
+  checked?: boolean;
   /** An object on the point's topic, beside its text. */
   art?: StoryArt };
 const subscribe = (callback: () => void) => {
@@ -79,7 +81,7 @@ export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAct
   const last = index === items.length - 1;
   if (!item) return null;
   return <div className={styles.switcher} data-media-switcher>
-    {nav === "path" && href ? <StoryPath stops={items.map(entry => ({ id: entry.id, title: entry.short || entry.title, locked: entry.locked }))} index={index} href={href} onSelect={onSelect} label={label} noun={progressLabel} caption={pathCaption} /> : <>
+    {nav === "path" && href ? <StoryPath stops={items.map(entry => ({ id: entry.id, title: entry.short || entry.title, locked: entry.locked, checked: entry.checked }))} index={index} href={href} onSelect={onSelect} label={label} noun={progressLabel} caption={pathCaption} /> : <>
       <StoryPills items={items} index={index} onSelect={onSelect} href={href} label={label} panelId={panelId} />
       <p className={styles.position} role="status">{progressLabel} {index + 1} из {items.length}</p>
     </>}
