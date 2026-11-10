@@ -132,8 +132,10 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
    сделал, но не на каждом шагу, а через 2–3»; «не прям левитирующие иконки»).
    Рядом с дорогой, на свободной стороне дуги, стоят игрушечные макеты
    Италии ручной работы — из того же мира, что и сам Веспи: Колизей, Дуомо,
-   Венеция, Пиза, Болонья, Тоскана; каждый третий раз вместо места — Веспи за
-   делом (с картой у мопеда, монетка в фонтан Треви, эспрессо с чемоданом).
+   Венеция, Пиза, Болонья, Тоскана; через раз вместо места — Веспи за
+   делом (с картой у мопеда, монетка в фонтан Треви, с веслом в гондоле под
+   Риальто — owner, 10 Nov: «добавь веспи на гондоле», — эспрессо с
+   чемоданом). Два Веспи подряд не стоят: макеты с ним чередуются с местами.
    Каждый макет стоит на своём клочке земли с тенью, без подставки и парения
    (design/illustrations/scenery-2026-11-07.json). Ставятся между двумя шагами
    одного этапа, не чаще чем раз в три остановки. Пройденная и открытая часть
@@ -142,9 +144,9 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
 const SCENERY = [
   { name: "vespi-map", width: 560, height: 459 },
   { name: "colosseum", width: 560, height: 401 },
-  { name: "duomo", width: 560, height: 439 },
   { name: "vespi-trevi", width: 560, height: 448 },
-  { name: "venice", width: 560, height: 384 },
+  { name: "duomo", width: 560, height: 439 },
+  { name: "vespi-gondola", width: 560, height: 401 },
   { name: "pisa", width: 560, height: 684 },
   { name: "vespi-espresso", width: 560, height: 463 },
   { name: "bologna", width: 560, height: 668 },

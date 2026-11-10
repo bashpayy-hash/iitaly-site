@@ -882,15 +882,18 @@ Owner, on the cabinet path: «можно добавить какие-то диз
   (matte clay, felt trees, resin water):
   - Colosseum;
   - Florence Cathedral;
-  - the Rialto Bridge with a gondola;
   - the Leaning Tower;
   - the two towers of Bologna;
   - a Tuscan farmhouse with a cypress lane.
 
-  Every third piece is Vespi at work instead of a place: reading a map by
-  the scooter, tossing a coin into the Trevi Fountain, then an espresso
-  with the suitcase on arrival. Manifest:
-  design/illustrations/scenery-2026-11-07.json.
+  Every other piece is Vespi at work instead of a place: reading a map by
+  the scooter, tossing a coin into the Trevi Fountain, rowing a gondola
+  under the Rialto Bridge, then an espresso with the suitcase on arrival.
+  Vespi pieces alternate with places, so two never stand in a row.
+  Manifest: design/illustrations/scenery-2026-11-07.json.
+  - 10 November, owner: «здесь добавь веспи на гондоле». The Rialto piece
+    was redrawn with Vespi in the gondola; the bridge, the houses and the
+    canal follow the old frame, which was passed as a reference.
 - **Grounded.**
   - Every piece stands on its own patch of ground with a contact shadow.
     There is no pedestal or floating island; an Amalfi cliff rendered as an
