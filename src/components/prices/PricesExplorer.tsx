@@ -55,7 +55,7 @@ export function PricesExplorer() {
     <>
       <PricesHero onBuy={() => openBuy("Поступление под ключ", PRICE_MAIN)} />
 
-      <section className={`${heroArt.packages} px-5 py-10`}>
+      <section className={`${heroArt.packages} px-5 py-10 md:px-6`}>
         <div className="mx-auto max-w-[900px]">
           <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row">
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>

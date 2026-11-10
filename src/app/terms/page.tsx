@@ -14,16 +14,16 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <MarketingLayout>
-        <section className="px-5 py-10 sm:py-14" data-legal-page>
+        <section className="px-5 md:px-6 py-10 sm:py-14" data-legal-page>
           <div className="mx-auto max-w-[760px]">
-            <h1 className="font-display text-[36px]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
+            <h1 className="font-apple-display text-[36px]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
               Условия сервиса
             </h1>
             <p className="mt-3 text-[13px] text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
 
             <div className="mt-10 space-y-8 text-[16px] leading-[1.6] text-ink-soft [&_b]:text-ink">
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Что такое IITALY</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Что такое IITALY</h2>
                 <p className="mt-2">
                   IITALY — цифровой сервис сопровождения поступления в Италию: подбор программ,
                   персональный маршрут, дедлайны, чек-листы, проверка документов, материалы по DSU,
@@ -33,7 +33,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Цена и оплата</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Цена и оплата</h2>
                 <p className="mt-2">
                   Основной пакет стоит <b>{priceLabel(PRICE_MAIN)}</b> разово.{" "}
                   {STRIPE_ENABLED
@@ -43,7 +43,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Когда открывается кабинет</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Когда открывается кабинет</h2>
                 <p className="mt-2">
                   {STRIPE_ENABLED
                     ? "Для основного пакета личный кабинет и персональный маршрут создаются автоматически после подтверждённого webhook Stripe. Код доступа показывается на странице подтверждения оплаты."
@@ -53,7 +53,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Что не гарантируется</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Что не гарантируется</h2>
                 <p className="mt-2">
                   IITALY не гарантирует поступление, выдачу визы, стипендию DSU, решение CIMEA или
                   иной результат третьей стороны. ИИ может ошибаться. Ответственность сервиса —
@@ -63,7 +63,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Возврат</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Возврат</h2>
                 <p className="mt-2">
                   В течение <b>7 календарных дней с оплаты</b> можно запросить полный возврат,{" "}
                   {STRIPE_ENABLED
@@ -77,7 +77,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Дополнительная помощь человека</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Дополнительная помощь человека</h2>
                 <p className="mt-2">
                   Отдельные проверки и консультации живого эксперта, если они указаны на странице
                   цен, не входят в основной пакет и оплачиваются отдельно.
@@ -85,7 +85,7 @@ export default function TermsPage() {
               </section>
 
               <section>
-                <h2 className="font-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Пользователи младше 18 лет</h2>
+                <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">Пользователи младше 18 лет</h2>
                 <p className="mt-2">
                   Если пользователю нет 18 лет, оплату и существенные решения по документам
                   следует согласовывать с законным представителем.

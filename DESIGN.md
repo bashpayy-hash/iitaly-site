@@ -1299,3 +1299,32 @@ for overflow, clipped text and edges that do not line up.
   another kind.
 - **/prices on a phone.** The «43 университета» cell had 74px for an 84px
   word; the three stat cells take 6px side padding below `sm`.
+
+## One gutter, one title face, one button · 10 November 2026 (night, later)
+
+Owner: «по всем неровностям… по всему сайту». Every public route and the
+cabinet measured at 1440, 1024, 768 and 390: the left edge of the header
+logo, the page title and the footer logo, the title face and scale, and the
+primary buttons.
+
+- **One gutter.** Content now starts where the header logo starts: 32px,
+  and above 1280px the 1216px column ((100vw − 1216px) / 2); 24px from 768
+  to 899px; 20px on a phone. Before, the footer sat on its own formula (24px
+  at 1024, 24px on a phone), /universities and Modulo 1 used a 1200px column
+  (8px inside the logo at 1440, 24px at 1024, 12–16px on a phone), the guide
+  column kept 32px on tablets, /plan stood at 120 and 144px, and the legal,
+  «Изменения 2026/27», /prices, payment and 404 sections kept 20px on
+  tablets. Centred pages (/plan cover copy, /prices hero, payment, 404) keep
+  their centred columns; the /plan cover stays almost full-width (8px) on a
+  phone. The cabinet keeps its own aligned chrome (12px on a phone).
+- **One title face.** Page titles on /privacy, /terms, «Изменения 2026/27»
+  and 404 used `font-display` (Onest, the body face); they now use the
+  display face like every other title. A guide step title was 56px in the
+  text face because `.contentPage .main h1` outranked it; it now matches its
+  topic title (clamp(30px, 3.6vw, 46px), display face), and topic, section
+  and visa titles moved from 38px to the same scale.
+- **One primary button.** «Назад / Далее» in the point switcher used 14px
+  semibold next to the 15px medium purchase pill; both are 15px medium now,
+  and the guide action pill no longer grows to 49px.
+- **Path names** use the whole width of their stop, up to three lines, and
+  break between words, not inside them.

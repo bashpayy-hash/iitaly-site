@@ -52,7 +52,7 @@ const STATUS_TONE: Record<StatusKind, string> = {
 export function ChangesExplorer() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-[#DCD5CA] bg-cream px-5 pt-10 pb-8 sm:pt-14">
+      <section className="relative overflow-hidden border-b border-[#DCD5CA] bg-cream px-5 md:px-6 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="guides" grain />
         <IllustrationBackdrop
           asset={TUSCANY_HILLS}
@@ -64,7 +64,7 @@ export function ChangesExplorer() {
           <p className="text-sm font-medium text-sec-deep">
             Казахстан — Италия · 2026/27 и 2027/28
           </p>
-          <h1 className="mt-2 font-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[44px] lg:text-[52px]">
+          <h1 className="mt-2 font-apple-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[44px] lg:text-[52px]">
             Поступление в Италию: актуальные правила
           </h1>
 
@@ -99,9 +99,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- статусы --- */}
-      <section className="px-5 py-12 sm:py-16">
+      <section className="px-5 md:px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Главные статусы на {VERIFIED_AT_HUMAN}
           </h2>
           <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -120,9 +120,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- одиннадцать правил: оглавление из раскрывающихся строк --- */}
-      <section className="border-t border-[#DCD5CA] bg-paper px-5 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] bg-paper px-5 md:px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Что учитывать при подаче
           </h2>
           <p className="mt-3 text-base text-ink-soft">
@@ -133,7 +133,7 @@ export function ChangesExplorer() {
               <li key={c.n}>
                 <details className="group" data-change-rule>
                   <summary className={SUMMARY}>
-                    <h3 className="font-display text-[17px] font-semibold leading-snug sm:text-lg">{c.title}</h3>
+                    <h3 className="font-apple-display text-[17px] font-semibold leading-snug sm:text-lg">{c.title}</h3>
                   </summary>
                   <div className="pb-6">
                     {c.body.map((p, i) => (
@@ -166,7 +166,7 @@ export function ChangesExplorer() {
                               className="rounded-[20px] bg-[#F1ECE3] px-5 py-4"
                             >
                               <p className="text-[13px] font-semibold text-sec-deep">{m.lang}</p>
-                              <b className="mt-1 block font-display text-base">{m.title}</b>
+                              <b className="mt-1 block font-apple-display text-base">{m.title}</b>
                               {m.body.map((p, i) => (
                                 <p key={i} className="mt-2.5 text-sm text-ink-soft">
                                   {p}
@@ -196,9 +196,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- маршруты --- */}
-      <section className="border-t border-[#DCD5CA] px-5 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] px-5 md:px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Маршруты поступления
           </h2>
 
@@ -267,9 +267,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- FAQ --- */}
-      <section className="border-t border-[#DCD5CA] bg-paper px-5 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] bg-paper px-5 md:px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Частые вопросы
           </h2>
           <div className="mt-6 divide-y divide-line border-y border-line" data-change-faq>
@@ -286,9 +286,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- источники и дисклеймер --- */}
-      <section className="border-t border-[#DCD5CA] px-5 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] px-5 md:px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-[900px]">
-          <h2 className="font-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
             Первичные источники
           </h2>
           <details className="group mt-4 border-y border-line" data-change-sources>

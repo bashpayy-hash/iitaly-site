@@ -113,7 +113,7 @@ export function PaymentSuccess() {
   }
 
   return (
-    <section className="px-5 py-16 sm:py-24">
+    <section className="px-5 py-16 sm:py-24 md:px-6">
       <div className="mx-auto max-w-[620px] rounded-3xl border border-warm-line bg-warm-white p-6 text-center sm:rounded-[28px] sm:p-10" aria-busy={view.kind === "checking"}>
         {view.kind === "activated" ? (
           <>

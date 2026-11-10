@@ -69,7 +69,9 @@
 @media (min-width:1200px) { .carousel[data-fit=window] .track { --n:4; } }
 @media (min-width:1600px) { .carousel[data-fit=window] .track { --n:5; } }
 @media (min-width:2000px) { .carousel[data-fit=window] .track { --n:6; } }
-@media (max-width:760px) { .carousel[data-fit=window] .track { --gutter:20px; } .carousel[data-fit=column] .track { --gap:12px; } }
+@media (max-width:899px) { .carousel[data-fit=window] .track { --gutter:24px; } }
+@media (max-width:767px) { .carousel[data-fit=window] .track { --gutter:20px; } }
+@media (max-width:760px) { .carousel[data-fit=column] .track { --gap:12px; } }
 @container (min-width:440px) { .carousel[data-fit=column] .track { --n:2; } }
 @container (min-width:640px) { .carousel[data-fit=column] .track { --n:3; } }
 @container (min-width:900px) { .carousel[data-fit=column] .track { --n:4; } }

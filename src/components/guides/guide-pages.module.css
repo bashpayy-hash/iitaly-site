@@ -32,7 +32,7 @@
 .breadcrumbs a { display:inline-flex; align-items:center; min-height:44px; text-decoration:underline; text-underline-offset:4px; }
 .articleHeader { margin-bottom:32px; }
 .article { position:relative; }
-.shell .articleHeader h1 { margin:0 0 16px; max-width:30ch; font:600 38px/1.16 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
+.shell .articleHeader h1 { margin:0 0 16px; max-width:30ch; font:600 clamp(30px,3.6vw,46px)/1.08 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
 .articleHeader h1:focus { outline:none; }
 .readingBody { min-width:0; }
 .lead,.note { max-width:72ch; font-size:16px; line-height:1.7; color:#3F3933; }
@@ -53,7 +53,7 @@
 .sources p { max-width:65ch; font-size:13px; line-height:1.5; }
 .nextAction { margin-top:32px; }
 .nextAction > p:first-child { max-width:65ch; color:#57514B; font-size:16px; line-height:1.6; margin-bottom:16px; }
-.primary { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 22px; border:1px solid #141413; border-radius:999px; background:#141413; color:#fff; font-size:15px; font-weight:500; text-decoration:none; }
+.primary { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 22px; border:1px solid #141413; border-radius:999px; background:#141413; color:#fff; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
 .primary:hover { background:#383630; }
 .actionNote { margin-top:12px; max-width:65ch; color:#57514B; font-size:13px; line-height:1.5; }
 .textLink { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 0; color:#141413; font-size:14px; line-height:1.5; text-align:left; text-decoration:underline; text-underline-offset:4px; }
@@ -77,7 +77,7 @@
 .shell main input { caret-color:#352B28; }
 @media(max-width:600px) {
  .container { padding:22px 20px 52px; }.indexHeader { padding-top:8px; }.shell .indexHeader h1 { font-size:34px; }.intro { font-size:16px; }
- .shell .articleHeader h1 { font-size:29px; }.articleHeader { margin-bottom:24px; }.breadcrumbs { margin-bottom:18px; }
+ .shell .articleHeader h1 { font-size:28px; }.articleHeader { margin-bottom:24px; }.breadcrumbs { margin-bottom:18px; }
  .search { margin-top:24px; }.directory { margin-top:28px; }.stageList a { padding:24px 0; }.stageList strong { font-size:23px; }.stageList span>span { font-size:14px; }
  .facts > div { grid-template-columns:minmax(0,1fr); gap:8px; padding:20px 0; }
  .facts dd,.lead,.note { font-size:15px; }.primary { width:100%; }.articleFooter { flex-direction:column; align-items:flex-start; margin-top:28px; gap:8px; }
@@ -94,3 +94,8 @@
 @media(max-width:700px) { .fundsLayout { grid-template-columns:minmax(0,1fr); gap:12px; } .fundsArt { order:-1; width:140px; } }
 /* Дорога на главной гайдов (owner, 10 Nov): после галереи тем, по колонке. */
 .indexRoad { max-width:1216px; margin:48px auto 0; padding-inline:max(0px, calc((100% - 1216px) / 2)); }
+/* Один отступ на весь сайт (owner, 10 Nov: «по всем неровностям… по всему
+   сайту»): край контента стоит там же, где логотип в шапке — 32px, а шире
+   1280px по колонке 1216px; 24px на планшете (768–899); 20px на телефоне. */
+@media(max-width:899px) { .container { padding-left:24px; padding-right:24px; } }
+@media(max-width:767px) { .container { padding-left:20px; padding-right:20px; } }

@@ -62,7 +62,7 @@
 .portalLink { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: #141413; white-space: nowrap; }
 .portalLink span { margin-left: 6px; color: #75716b; }
 .mobileMenu { display: none; }
-.footer { padding: 56px max(24px, calc((100vw - 1216px)/2)) 28px; background: transparent; color: #6b6761; font-size: 13px; line-height: 1.6; }
+.footer { padding: 56px max(32px, calc((100vw - 1216px)/2)) 28px; background: transparent; color: #6b6761; font-size: 13px; line-height: 1.6; }
 .footerTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 36px; padding-bottom: 40px; }
 .footerTagline { margin: 16px 0 8px; color: #141413; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
 .footer nav { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 40px; padding-top: 10px; }
@@ -326,3 +326,9 @@
 .header[data-portal-header=true] .mobileMenu summary::-webkit-details-marker { display:none; }
 .header[data-portal-header=true] .mobileMenu nav { position:absolute; top:100%; inset-inline:0; display:grid; padding:12px 24px 24px; background:#FEFAF4; border-bottom:1px solid #E2DDD3; }
 .header[data-portal-header=true] .mobileMenu nav a { display:flex; justify-content:space-between; min-height:44px; padding:15px 0; border-bottom:1px solid #E2DDD3; font-size:18px; }
+/* Один отступ на весь сайт (owner, 10 Nov: «по всем неровностям… по всему
+   сайту»): край контента стоит там же, где логотип в шапке — 32px, а шире
+   1280px по колонке 1216px; 24px на планшете (768–899); 20px на телефоне. */
+@media (max-width: 1023px) { .heroPanel { padding-inline: 32px; } }
+@media (max-width: 899px) { .footer, .heroPanel { padding-inline: 24px; } }
+@media (max-width: 767px) { .footer, .heroPanel { padding-inline: 20px; } }
