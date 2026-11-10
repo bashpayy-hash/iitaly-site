@@ -75,14 +75,15 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
 }
 
 /* Те же макеты Италии, что вдоль дороги кабинета (scenery-2026-11-07.json):
-   в кармане изгиба, не чаще чем раз в три остановки; рядом с закрытым — серые. */
+   в кармане изгиба, не чаще чем раз в три остановки; рядом с закрытым — серые.
+   Макеты с Веспи чередуются с местами, двух подряд нет. */
 const SCENERY = [
   { name: "colosseum", width: 560, height: 401 },
   { name: "vespi-map", width: 560, height: 459 },
   { name: "duomo", width: 560, height: 439 },
-  { name: "venice", width: 560, height: 384 },
-  { name: "vespi-trevi", width: 560, height: 448 },
+  { name: "vespi-gondola", width: 560, height: 401 },
   { name: "pisa", width: 560, height: 684 },
+  { name: "vespi-trevi", width: 560, height: 448 },
   { name: "tuscany", width: 560, height: 380 },
   { name: "vespi-espresso", width: 560, height: 463 },
   { name: "bologna", width: 560, height: 668 },

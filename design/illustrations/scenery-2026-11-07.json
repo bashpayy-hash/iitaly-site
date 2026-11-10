@@ -60,15 +60,17 @@
    "master": "design/illustrations/source/scenery/vespi-trevi.webp"
   },
   {
-   "name": "venice",
-   "job": "991f4464-3582-40b2-803b-a8fdceba49a9",
-   "vespi": false,
-   "subject": "the Rialto Bridge over a short canal with a moored gondola and two pastel houses",
+   "name": "vespi-gondola",
+   "job": "3262a674-a9c9-4dec-8d95-5cda8df4d69a",
+   "vespi": true,
+   "date": "2026-11-10",
+   "request": "Owner, 10 Nov: «здесь добавь веспи на гондоле» (the Rialto piece on the cabinet road).",
+   "subject": "Vespi standing in a black gondola with a long oar under the Rialto Bridge; the bridge, the two pastel houses and the resin canal follow the previous venice piece, passed as the fourth image reference (job 991f4464-3582-40b2-803b-a8fdceba49a9) after the three Vespi identity references",
    "files": [
-    "public/illustrations/scenery/venice-280.webp",
-    "public/illustrations/scenery/venice-560.webp"
+    "public/illustrations/scenery/vespi-gondola-280.webp",
+    "public/illustrations/scenery/vespi-gondola-560.webp"
    ],
-   "master": "design/illustrations/source/scenery/venice.webp"
+   "master": "design/illustrations/source/scenery/vespi-gondola.webp"
   },
   {
    "name": "pisa",
@@ -119,5 +121,17 @@
   "No people, text, signs, flags or logos; Vespi is the only character.",
   "Every piece stands on its own patch of ground with a contact shadow; nothing floats.",
   "Warm palette only; water is the one cool note."
+ ],
+ "replaced": [
+  {
+   "name": "venice",
+   "job": "991f4464-3582-40b2-803b-a8fdceba49a9",
+   "vespi": false,
+   "subject": "the Rialto Bridge over a short canal with a moored gondola and two pastel houses",
+   "files": [],
+   "master": "design/illustrations/source/scenery/venice.webp",
+   "replacedBy": "vespi-gondola",
+   "why": "Replaced on 10 Nov by the same bridge with Vespi rowing a gondola; the public files were removed, the master stays."
+  }
  ]
 }
