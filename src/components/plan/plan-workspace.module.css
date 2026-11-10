@@ -31,7 +31,7 @@
   .heroVeil { background:radial-gradient(ellipse 80% 40% at 50% 26%, rgba(250,248,244,.8), rgba(250,248,244,.42) 60%, rgba(250,248,244,0) 100%); }
 }
 @media (forced-colors:active) { .hero { border:1px solid CanvasText; } .heroScene { display:none; } }
-.tools { max-width:1200px; width:100%; margin:auto; padding:28px 24px 72px; }
+.tools { max-width:1280px; width:100%; margin:auto; padding:28px 32px 72px; }
 .questionnaire { min-width:0; margin:0; scroll-margin-top:112px; outline:none; }
 .document { scroll-margin-top:112px; }
 .heading { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
@@ -143,3 +143,12 @@
 @keyframes answer-in { from { opacity:0; translate:0 8px; } to { opacity:1; translate:0 0; } }
 @keyframes object-in { from { opacity:0; translate:0 16px; scale:.97; } to { opacity:1; translate:0 0; scale:1; } }
 @keyframes mark-in { from { opacity:0; scale:.4; } to { opacity:1; scale:1; } }
+/* Один отступ на весь сайт (owner, 10 Nov: «по всем неровностям… по всему
+   сайту»): обложка и колонка анкеты стоят по краю логотипа в шапке — 32px,
+   шире 1280px по колонке 1216px; 24px на планшете. На телефоне обложка
+   остаётся почти во всю ширину (8px), колонка — 20px, как раньше. */
+.header { padding-left:32px; padding-right:32px; }
+.hero { width:min(100%,1216px); }
+@media (max-width:899px) { .header { padding-left:24px; padding-right:24px; } .tools { padding-left:24px; padding-right:24px; } }
+@media (max-width:767px) { .tools { padding-left:20px; padding-right:20px; } }
+@media (max-width:640px) { .header { padding-left:8px; padding-right:8px; } }

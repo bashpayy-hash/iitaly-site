@@ -2,6 +2,11 @@
    пункты, точки всех шагов и две карточки-перехода внизу. */
 .header { display:grid; grid-template-columns:minmax(0,1fr) 220px; align-items:center; gap:24px; margin-bottom:28px; }
 .header h1 { margin:8px 0 0; font-size:clamp(30px,3.6vw,46px); font-weight:600; line-height:1.06; letter-spacing:-.03em; text-wrap:balance; }
+/* Проход по неровностям (10 Nov): общее правило контентных страниц
+   (.contentPage .main h1, 56px текстовым начертанием) перебивало заголовок
+   шага — он выходил крупнее заголовка темы и другим шрифтом. Шаг держит
+   ту же шкалу и тот же заголовочный шрифт, что тема над ним. */
+[data-guides-pages] article .header h1 { font:600 clamp(30px,3.6vw,46px)/1.06 var(--font-apple-display); letter-spacing:-.03em; }
 .header h1:focus { outline:none; }
 .position { margin:0; font:600 13px/1.5 var(--font-sans); color:#A33421; }
 .art { width:100%; height:auto; }
@@ -32,6 +37,7 @@
 @media(max-width:700px) {
   .header { grid-template-columns:minmax(0,1fr) 120px; gap:12px; }
   .header h1 { font-size:28px; }
+  [data-guides-pages] article .header h1 { font-size:28px; }
   .sentences li { grid-template-columns:30px minmax(0,1fr); gap:12px; padding:16px; }
   .sentences li > span { width:28px; height:28px; font-size:13px; }
   .sentences p { font-size:16px; }
