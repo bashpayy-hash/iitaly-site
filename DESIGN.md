@@ -1209,3 +1209,37 @@ Owner: «не даем ли мы слишком много информации 
   the export and in descriptions, one wall per closed place, the same
   purchase form, the visa points, the Modulo 1 sheets, transfer and tools,
   and the phone fit. The Modulo 1 reviews run as a paid device.
+
+## Guides and visa on a progress path · 10 November 2026
+
+Owner (screenshot of the visa pills): «сделай эти ответвления в гайдах и визе
+в формате пути, который как прогресс-бар, так будет намного нагляднее,
+местами добавляй иллюстрации по теме обязательно».
+
+- **One path component** (`src/components/story/StoryPath.tsx`). Stops share
+  the width on one 4px line; the line is filled in terracotta up to the
+  current stop, so the path is the progress bar. Passed stops are filled,
+  the current one has a terracotta ring, the next ones are paper circles.
+  A stop closed before payment shows a lock in a dashed circle instead of
+  its number. Above the path are «Пункт 2 из 5» and one caption: «Открыто 2
+  из 5 · остальные — с маршрутом» for a guest, «Всё открыто: на этом
+  устройстве выполнен вход в кабинет» on a device with a paid cabinet (so the
+  owner sees why nothing is closed). Names sit under the stops; on a phone
+  only the circles remain and the heading below names the point. Arrow keys
+  move between stops; the fill eases over 480 ms, nothing moves with
+  «меньше движения».
+- **Where it stands.** Visa «Когда подавать», «Документы для визы» and «Перед
+  подачей» (`MediaSwitcher nav="path"`) instead of the pill row; every step
+  page of a topic, under the header, instead of the dots at the bottom.
+  «Перед подачей» uses short stop names (Средства, Жильё, Валидация и
+  документы, Сроки) because its titles only repeat the number.
+- **A road over the step cards.** On a topic page and on /guides/visa a line
+  runs above the cards with a numbered stop per card; the segment into a
+  closed step is dashed and its stop carries the lock. It replaces the pips
+  inside the cards.
+- **Objects on the topic of each point** (existing set, no new art): timeline
+  — cap, coins, passport, alarm clock, permesso kit; documents — passport,
+  cap, diploma, translation book, coins, keys, insurance case, receipt,
+  signed sheet; before submitting — coins, keys, diploma, alarm clock; the
+  funds calculator — coins. The object stands to the right of the point's
+  text (220px) and above it on a phone (140px), rising in with the point.
