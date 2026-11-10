@@ -1,0 +1,11 @@
+/* Дорога гайдов поверх стилей дороги кабинета (portal-path.module.css):
+   только то, что у гайдов иначе. Подписи переносятся по слогам, а не по
+   букве; у подсвеченного раздела на телефоне хватает места под подпись его
+   последнего шага; макет у последней остановки короткой дороги не выходит
+   за плитку. */
+.guideRoad [data-road-text] > span,.guideRoad [data-road-step-title] { overflow-wrap:break-word; hyphens:auto; }
+.tail { height:56px; list-style:none; }
+@media (max-width:640px) {
+  .guideRoad [data-road-unit-state=current] { padding-bottom:56px; }
+  .tail { height:40px; }
+}

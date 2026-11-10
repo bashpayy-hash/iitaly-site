@@ -92,3 +92,5 @@
 .fundsLayout { display:grid; grid-template-columns:minmax(0,1fr) minmax(160px,220px); align-items:center; gap:36px; }
 .fundsArt { display:block; width:100%; height:auto; pointer-events:none; user-select:none; }
 @media(max-width:700px) { .fundsLayout { grid-template-columns:minmax(0,1fr); gap:12px; } .fundsArt { order:-1; width:140px; } }
+/* Дорога на главной гайдов (owner, 10 Nov): после галереи тем, по колонке. */
+.indexRoad { max-width:1216px; margin:48px auto 0; padding-inline:max(0px, calc((100% - 1216px) / 2)); }

@@ -1243,3 +1243,36 @@ Owner (screenshot of the visa pills): «сделай эти ответвлени
   signed sheet; before submitting — coins, keys, diploma, alarm clock; the
   funds calculator — coins. The object stands to the right of the point's
   text (220px) and above it on a phone (140px), rising in with the point.
+
+## The guides road, in the cabinet's format · 10 November 2026 (later)
+
+Owner, with a screenshot of the cabinet road: «я имею в виду в этом формате».
+The guides and the visa now use the same road as «Весь путь» in the cabinet,
+with the same styles (`portal-path.module.css`, imported read-only by
+`src/components/guides/GuideRoad.tsx`): medallions on a sine snake, station
+stops with an object, a line through the real centres of the stops, and the
+cabinet's Italian landmarks in the pockets of the curve (grey beside closed
+road).
+
+- **Where.** /guides ends with «Весь путь по гайдам и визе»: three sections as
+  stations (the cabinet's stage marks), the 13 topics as stops. /guides/visa
+  shows «Путь по визе»: four parts as stations (alarm clock, coins, folder,
+  stamp), all 19 points as stops. Each topic page shows «Разбор по шагам» as
+  its own short road, without a station (the header is the topic); it
+  replaces the row of step cards. Point and step pages keep the compact
+  horizontal path from earlier today.
+- **What the medallions mean.** Reading, not tasks: read — green with a
+  check; «Начни здесь» / «Читать дальше» — the large terracotta medallion
+  with the star (one per road); open — paper with a dot; closed before
+  payment — the lock. A topic stop on the /guides road is read when every
+  page of it this visitor may read is read. The bar above counts every page
+  of the road, closed ones too: «Прочитано 1 из 3 · открыто 1, ещё 2 — с
+  маршрутом»; a device with a paid cabinet reads «всё открыто: на этом
+  устройстве выполнен вход в кабинет» and sees no locks.
+- **What is stored.** `iitaly_guides_read_v1` in localStorage holds only page
+  keys such as `con/2` or `visa/timeline/3`; nothing is sent anywhere. A
+  closed page is never marked read for a guest.
+- **Differences from the cabinet** live in `guide-road.module.css`: syllable
+  hyphenation instead of letter breaks, room under the last label of the
+  highlighted section on a phone, and a short tail when a landmark stands at
+  the last stop of a short road.

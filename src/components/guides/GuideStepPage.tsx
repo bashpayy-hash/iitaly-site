@@ -10,6 +10,7 @@ import { guideStepOpen } from "./guideAccess";
 import { GuideSentences } from "./GuideSentences";
 import { GuideLockedStep } from "./GuideLockedStep";
 import { GuideStepPath } from "./GuideStepPath";
+import { GuideReadMark } from "./GuideReadMark";
 import ui from "./guide-pages.module.css";
 import styles from "./guide-step-page.module.css";
 
@@ -46,6 +47,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
         <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" decoding="async" />
       </header>
       <div className={styles.path}><GuideStepPath index={step - 1} stops={points.map((item, index) => ({ title: item.title, href: item.href, locked: !guideStepOpen(id, index + 1) }))} /></div>
+      <GuideReadMark readKey={`${id}/${step}`} open={open} />
       {open ? <GuideSentences sentences={sentences} text={point.text} /> : <GuideLockedStep id={id} step={step} count={sentences.length} />}
       {!next && <section className={styles.finish} aria-label="Тема разобрана">
         <p>Это последний шаг темы «{guide.title}».</p>

@@ -1,50 +1,5 @@
-/* Ряд шагов темы: карточки со скруглением 28px, светлая и тёмная поочерёдно;
-   ряд — общая карусель (guide-carousel.module.css): до краёв окна, первая
-   карточка по колонке, стрелки справа. Плоско, без теней.
-   Owner, 4 Nov (скрин с телефона: «что за 01, 02 — тупо так обозначать»):
-   вместо метки «Шаг 01» и крупной цифры — точки положения шага сверху,
-   название и первое предложение разбора; плюс в углу ведёт на страницу. */
-.steps { margin:28px 0 8px; }
-.head { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 16px; margin-bottom:16px; }
-.head h2 { margin:0; font-size:clamp(24px,2.6vw,32px); font-weight:600; line-height:1.1; letter-spacing:-.03em; }
-.head p { margin:0; font:500 14px/1.5 var(--font-sans); color:#57514B; }
-.card { position:relative; display:flex; flex-direction:column; height:100%; min-height:300px; padding:24px 22px 72px; border-radius:28px; background:#F1ECE3; color:#241F1C; text-decoration:none; overflow:hidden; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
-.item[data-tone=dark] .card { background:#2A2420; color:#FAF6EE; }
-.card:hover { transform:translateY(-4px); }
-.pips { display:flex; align-items:center; gap:4px; }
-.pips i { display:block; width:8px; height:8px; border-radius:999px; background:rgba(36,31,28,.16); }
-.pips i[data-on] { width:22px; border-radius:4px; background:#B83A27; }
-.item[data-tone=dark] .pips i { background:rgba(250,246,238,.22); }
-.item[data-tone=dark] .pips i[data-on] { background:#F29A89; }
-.title { margin-top:2px; font-size:22px; font-weight:600; line-height:1.15; letter-spacing:-.025em; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-.teaser { margin-top:10px; font-size:15px; line-height:1.45; color:#57514B; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
-.item[data-tone=dark] .teaser { color:#CFC6BA; }
-/* Закрытый шаг (owner, 9 Nov): тихая пометка вместо первого предложения. */
-/* Дорога над карточками (owner, 10 Nov): узел шага на линии; линия каждого
-   шага уходит вправо через зазор ряда (--gap карусели) к следующему узлу. */
-.stopCard { display:grid; grid-template-rows:auto 1fr; height:100%; }
-.stopRow { position:relative; display:flex; align-items:center; height:34px; margin-bottom:14px; padding-left:22px; }
-.stopRow::before { content:""; position:absolute; top:50%; left:0; right:calc(-1 * var(--gap, 24px)); height:4px; margin-top:-2px; border-radius:2px; background:#E4DCCF; }
-.item:first-child .stopRow::before { left:39px; }
-.item:last-child .stopRow::before { right:calc(100% - 39px); }
-.item:only-child .stopRow::before { display:none; }
-.item:has(+ .item[data-locked]) .stopRow::before { height:0; margin-top:-1.5px; border-top:3px dashed #D6CCBC; border-radius:0; background:none; }
-.stopNode { position:relative; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:#B83A27; color:#FFFDF9; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; }
-.item[data-locked] .stopNode { border:1.5px dashed #CFC6B7; background:#F1ECE3; color:#6A625A; }
-.locked { align-self:flex-start; margin-top:12px; padding:5px 12px; border-radius:999px; background:rgba(36,31,28,.08); font:500 13px/1.4 var(--font-sans); color:#57514B; }
-.item[data-tone=dark] .locked { background:rgba(250,246,238,.12); color:#CFC6BA; }
-.plus { position:absolute; right:18px; bottom:18px; display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:#241F1C; color:#FAF6EE; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
-.item[data-tone=dark] .plus { background:#FAF6EE; color:#241F1C; }
-.card:hover .plus { transform:rotate(90deg); }
-.card:active { transform:translateY(-1px) scale(.985); transition-duration:120ms; }
-.card:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
-@media(max-width:600px) {
-  .card { min-height:280px; padding-bottom:68px; }
-  .title { font-size:20px; }
-}
-@media(prefers-reduced-motion:reduce) { .card,.plus { transition:none; } .card:hover,.card:active { transform:none; } .card:hover .plus { transform:none; } }
-@media(forced-colors:active) { .card { border:1px solid CanvasText; } }
-
+/* Страница темы: шапка, факты. Шаги темы с 10 Nov — дорога (GuideRoad.tsx,
+   стили дороги кабинета), а не ряд карточек. */
 /* Шапка темы: текст слева, вещь темы справа (вещь из общего набора,
    objects-2026-11-04.json). Под шапкой — блок фактов как у Apple (owner,
    4 Nov): крупное значение, под ним мелкая подпись; рядом с лид-абзацем

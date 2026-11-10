@@ -81,14 +81,13 @@ try{
     assert.equal(await page.locator('[data-guide-select=permesso]').getAttribute('href'),'/guides/permesso');
     const nav=await context.newPage();nav.on('pageerror',e=>errors.push(e.message));
     await nav.goto(origin+'/guides/permesso',{waitUntil:'networkidle'});
-    // The topic page is a row of step cards; each step has its own page.
+    // The topic page is a road of steps (owner 10 Nov, the cabinet's format); each step has its own page.
     const steps=nav.locator('[data-guide-step-card]');
     await steps.first().waitFor();
     assert((await steps.count())>1);
     // Owner, 4 Nov (phone screenshot): no «Шаг 01»-style labels or big numerals.
-    // Owner, 10 Nov: a road runs above the cards, one stop per step, instead of pips.
-    assert.equal(await nav.locator('[data-guide-steps-row] [data-guide-road-stop]').count(),await steps.count(),'Every step card stands on the road');
-    assert.doesNotMatch(await nav.locator('[data-guide-steps-row]').innerText(),/Шаг \d|\b0\d\b/,'Cards carry titles and teasers, not numerals');
+    assert.equal(await nav.locator('[data-guide-road=permesso] [data-road-point]').count(),await steps.count(),'Every step is a stop on the road');
+    assert.doesNotMatch(await nav.locator('[data-guide-road=permesso] ol').first().innerText(),/Шаг \d|\b0\d\b/,'Stops carry titles, not numerals');
     await steps.nth(1).click();await nav.waitForURL('**/guides/permesso/2');
     await nav.locator('[data-instruction-point="2"]').waitFor();
     assert.doesNotMatch(await nav.locator('article').innerText(),/Шаг 0\d|\bиз 0\d\b/,'The step page names the topic and the neighbouring steps, not zero-padded numbers');

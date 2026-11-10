@@ -10,6 +10,8 @@ import type { VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
 import { GuidePointSwitcher, type GuidePointRow } from "./GuidePointSwitcher";
 import { objectFrame } from "./guideArt";
+import { BEFORE_SHORT } from "./guideRoads";
+import { GuideReadMark } from "./GuideReadMark";
 import { GuideWall } from "./GuideWall";
 import { GUIDE_WALL_NOTE, visaPointOpen, type VisaPointsPart } from "./guideAccess";
 import { usePaidDevice } from "@/components/access/usePaidDevice";
@@ -28,8 +30,6 @@ const art = (name: ArtName) => objectFrame(name, ART_HEIGHT[name]);
 const TIMELINE_ART: ArtName[] = ["cap", "coins", "passport", "alarm", "permesso-kit"];
 const DOCUMENT_ART: ArtName[] = ["passport", "cap", "diploma", "translation", "coins", "keys", "insurance", "tax-card", "minors"];
 const BEFORE_ART: ArtName[] = ["coins", "keys", "diploma", "alarm"];
-/** Short stop names for «Перед подачей», whose titles only repeat the number. */
-const BEFORE_SHORT = ["Средства", "Жильё", "Валидация и документы", "Сроки"];
 
 /** What the path says above the stops: how much is open, or why all of it is. */
 function accessCaption(paid: boolean, open: number, total: number) {
@@ -37,7 +37,7 @@ function accessCaption(paid: boolean, open: number, total: number) {
   return open < total ? `Открыто ${open} из ${total} · остальные — с маршрутом` : undefined;
 }
 export function VisaSection({ part }: { part?: VisaPart }) {
-  if (part === "funds") return <GuaranteeCalculator />;
+  if (part === "funds") return <><GuideReadMark readKey="visa/funds/1" open /><GuaranteeCalculator /></>;
   if (part === "documents") return <VisaChecklist />;
   if (part === "timeline") return <VisaPoints part="timeline" rows={VISA_TIMELINE.map((step, index) => ({ label:step.t, value:step.p, art:art(TIMELINE_ART[index]) }))} subject="calendar" />;
   if (part === "before-application") return <VisaPoints part="before-application" rows={VISA_REJECT_REASONS.map((reason, index) => ({ label:`Перед подачей · ${index + 1}`, value:reason, short:BEFORE_SHORT[index], art:art(BEFORE_ART[index]) }))} subject="envelope" />;
@@ -49,9 +49,10 @@ export function VisaSection({ part }: { part?: VisaPart }) {
 
 function VisaPoints({ part, rows, subject }: { part: VisaPointsPart; rows: GuidePointRow[]; subject: "calendar" | "envelope" }) {
   const paid = usePaidDevice();
+  const { index } = useStoryLocation("point", rows.length);
   const open = rows.filter((_, index) => visaPointOpen(part, index + 1)).length;
-  return <GuidePointSwitcher subject={subject} caption={accessCaption(paid, open, rows.length)} rows={rows.map((row, index): GuidePointRow =>
-    paid || visaPointOpen(part, index + 1) ? row : { ...row, value: GUIDE_WALL_NOTE, locked: true, content: <GuideWall place="visa" note={null} /> })} />;
+  return <><GuideReadMark readKey={`visa/${part}/${index + 1}`} open={visaPointOpen(part, index + 1)} /><GuidePointSwitcher subject={subject} caption={accessCaption(paid, open, rows.length)} rows={rows.map((row, index): GuidePointRow =>
+    paid || visaPointOpen(part, index + 1) ? row : { ...row, value: GUIDE_WALL_NOTE, locked: true, content: <GuideWall place="visa" note={null} /> })} /></>;
 }
 
 function GuaranteeCalculator() {
@@ -93,6 +94,7 @@ function VisaChecklist() {
 
   return (
     <div>
+      <GuideReadMark readKey={`visa/documents/${index + 1}`} open={visaPointOpen("documents", index + 1)} />
       <div className="flex items-center justify-between text-[13px] leading-5 font-semibold text-stone-600">
         <span>
           {done.size} из {VISA_DOCS.length} собрано
