@@ -9,6 +9,7 @@ import { guideSentences } from "./guideText";
 import { guideStepOpen } from "./guideAccess";
 import { GuideSentences } from "./GuideSentences";
 import { GuideLockedStep } from "./GuideLockedStep";
+import { GuideStepPath } from "./GuideStepPath";
 import ui from "./guide-pages.module.css";
 import styles from "./guide-step-page.module.css";
 
@@ -19,7 +20,9 @@ import styles from "./guide-step-page.module.css";
    перехода — над заголовком стоит тема, место шага показывают точки, в хлебных
    крошках и на карточках перехода — названия шагов.
    Owner, 9 Nov: закрытый шаг (guideAccess.ts) показывает название, столько
-   же пустых пунктов и стену; текст разбора в HTML не попадает. */
+   же пустых пунктов и стену; текст разбора в HTML не попадает.
+   Owner, 10 Nov: под шапкой — путь-прогресс по шагам темы вместо ряда точек
+   внизу; закрытые шаги на пути несут замок. */
 export function GuideStepPage({ id, step }: { id: string; step: number }) {
   const guide = GUIDE_TOPICS.find(topic => topic.id === id)!;
   const stage = stageForGuide(id)!;
@@ -42,10 +45,8 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
         </div>
         <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" decoding="async" />
       </header>
+      <div className={styles.path}><GuideStepPath index={step - 1} stops={points.map((item, index) => ({ title: item.title, href: item.href, locked: !guideStepOpen(id, index + 1) }))} /></div>
       {open ? <GuideSentences sentences={sentences} text={point.text} /> : <GuideLockedStep id={id} step={step} count={sentences.length} />}
-      <nav className={styles.dots} aria-label="Шаги темы">
-        {points.map((item, index) => <Link key={item.href} href={item.href} aria-current={index + 1 === step ? "step" : undefined} title={item.title} aria-label={`Шаг ${index + 1}: ${item.title}`}><span /></Link>)}
-      </nav>
       {!next && <section className={styles.finish} aria-label="Тема разобрана">
         <p>Это последний шаг темы «{guide.title}».</p>
         {helpId && <GuideActionLink id={helpId} />}

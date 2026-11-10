@@ -16,10 +16,21 @@
 .pips i[data-on] { width:22px; border-radius:4px; background:#B83A27; }
 .item[data-tone=dark] .pips i { background:rgba(250,246,238,.22); }
 .item[data-tone=dark] .pips i[data-on] { background:#F29A89; }
-.title { margin-top:18px; font-size:22px; font-weight:600; line-height:1.15; letter-spacing:-.025em; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.title { margin-top:2px; font-size:22px; font-weight:600; line-height:1.15; letter-spacing:-.025em; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .teaser { margin-top:10px; font-size:15px; line-height:1.45; color:#57514B; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
 .item[data-tone=dark] .teaser { color:#CFC6BA; }
 /* Закрытый шаг (owner, 9 Nov): тихая пометка вместо первого предложения. */
+/* Дорога над карточками (owner, 10 Nov): узел шага на линии; линия каждого
+   шага уходит вправо через зазор ряда (--gap карусели) к следующему узлу. */
+.stopCard { display:grid; grid-template-rows:auto 1fr; height:100%; }
+.stopRow { position:relative; display:flex; align-items:center; height:34px; margin-bottom:14px; padding-left:22px; }
+.stopRow::before { content:""; position:absolute; top:50%; left:0; right:calc(-1 * var(--gap, 24px)); height:4px; margin-top:-2px; border-radius:2px; background:#E4DCCF; }
+.item:first-child .stopRow::before { left:39px; }
+.item:last-child .stopRow::before { right:calc(100% - 39px); }
+.item:only-child .stopRow::before { display:none; }
+.item:has(+ .item[data-locked]) .stopRow::before { height:0; margin-top:-1.5px; border-top:3px dashed #D6CCBC; border-radius:0; background:none; }
+.stopNode { position:relative; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; background:#B83A27; color:#FFFDF9; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums; }
+.item[data-locked] .stopNode { border:1.5px dashed #CFC6B7; background:#F1ECE3; color:#6A625A; }
 .locked { align-self:flex-start; margin-top:12px; padding:5px 12px; border-radius:999px; background:rgba(36,31,28,.08); font:500 13px/1.4 var(--font-sans); color:#57514B; }
 .item[data-tone=dark] .locked { background:rgba(250,246,238,.12); color:#CFC6BA; }
 .plus { position:absolute; right:18px; bottom:18px; display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:#241F1C; color:#FAF6EE; transition:transform 320ms cubic-bezier(.22,1,.36,1); }

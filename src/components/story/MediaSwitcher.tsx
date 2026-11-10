@@ -2,9 +2,18 @@
 
 import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { type StorySubject } from "./StoryArtwork";
+import { StoryPath } from "./StoryPath";
 import styles from "./story.module.css";
 
-export type StoryItem = { id: string; title: string; text: string; subject?: StorySubject; label?: string; content?: ReactNode };
+/** A local object frame (src/components/guides/guideArt.ts objectFrame). */
+export type StoryArt = { src: string; srcSet?: string; width: number; height: number };
+export type StoryItem = { id: string; title: string; text: string; subject?: StorySubject; label?: string; content?: ReactNode;
+  /** A shorter name for the path stop, when the title repeats («Перед подачей · 2»). */
+  short?: string;
+  /** Closed before payment: the path shows a lock on this stop. */
+  locked?: boolean;
+  /** An object on the point's topic, beside its text. */
+  art?: StoryArt };
 const subscribe = (callback: () => void) => {
   window.addEventListener("popstate", callback);
   return () => window.removeEventListener("popstate", callback);
@@ -57,9 +66,11 @@ export function StoryPills({ items, index, onSelect, href, label, panelId }: {
 }
 
 /** Only the active point mounts. Forms belong outside this changing panel. */
-export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAction, firstAction, label = "Пункты инструкции", progressLabel = "Шаг", headingAs = "h2" }: {
+export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAction, firstAction, label = "Пункты инструкции", progressLabel = "Шаг", headingAs = "h2", nav = "pills", pathCaption }: {
   items: StoryItem[]; index: number; onSelect: (index: number) => void; href?: (index: number) => string;
   headingId?: string; lastAction?: ReactNode; firstAction?: ReactNode; label?: string; progressLabel?: string; headingAs?: "h1" | "h2" | "h3";
+  /** "path": the points stand on a progress path (guides and visa, owner 10 Nov). */
+  nav?: "pills" | "path"; pathCaption?: ReactNode;
 }) {
   const generatedId = useId();
   const panelId = `${generatedId}-panel`;
@@ -68,14 +79,18 @@ export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAct
   const last = index === items.length - 1;
   if (!item) return null;
   return <div className={styles.switcher} data-media-switcher>
-    <StoryPills items={items} index={index} onSelect={onSelect} href={href} label={label} panelId={panelId} />
-    <p className={styles.position} role="status">{progressLabel} {index + 1} из {items.length}</p>
-    <section id={panelId} className={styles.frame} key={item.id} role={href ? "region" : "tabpanel"} aria-labelledby={href ? headingId || `${generatedId}-heading` : `${panelId}-tab-${index}`} data-instruction-point={index + 1}>
+    {nav === "path" && href ? <StoryPath stops={items.map(entry => ({ id: entry.id, title: entry.short || entry.title, locked: entry.locked }))} index={index} href={href} onSelect={onSelect} label={label} noun={progressLabel} caption={pathCaption} /> : <>
+      <StoryPills items={items} index={index} onSelect={onSelect} href={href} label={label} panelId={panelId} />
+      <p className={styles.position} role="status">{progressLabel} {index + 1} из {items.length}</p>
+    </>}
+    <section id={panelId} className={styles.frame} data-with-art={Boolean(item.art) || undefined} key={item.id} role={href ? "region" : "tabpanel"} aria-labelledby={href ? headingId || `${generatedId}-heading` : `${panelId}-tab-${index}`} data-instruction-point={index + 1}>
       <div className={styles.copy}>
         <Heading id={headingId || `${generatedId}-heading`} tabIndex={-1}>{item.title}</Heading>
         <p>{item.text}</p>
         {item.content}
       </div>
+      {/* eslint-disable-next-line @next/next/no-img-element -- Local object art with explicit dimensions. */}
+      {item.art && <img className={styles.pointArt} src={item.art.src} srcSet={item.art.srcSet} sizes="(max-width: 700px) 140px, 220px" width={item.art.width} height={item.art.height} alt="" decoding="async" />}
     </section>
     <nav className={styles.navigation} data-fab-yield aria-label="Переход между пунктами">
       {index > 0 ? <button type="button" className={styles.back} onClick={() => onSelect(index - 1)}>Назад</button> : firstAction || <button type="button" className={styles.back} disabled>Назад</button>}

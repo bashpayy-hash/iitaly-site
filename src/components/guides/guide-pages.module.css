@@ -87,3 +87,8 @@
 
 .checkItem { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:44px; margin-top:24px; padding:10px 18px; border:1px solid #DCD3C3; border-radius:999px; font-size:14px; color:#241F1C; background:#FBF9F3; cursor:pointer; }
 .checkItem[aria-pressed=true] { color:#FAF9F3; background:#356450; border-color:#356450; }
+/* Средства на учёбу (owner, 10 Nov: иллюстрации по теме): калькулятор слева,
+   монеты с пачкой купюр справа; на телефоне предмет над калькулятором. */
+.fundsLayout { display:grid; grid-template-columns:minmax(0,1fr) minmax(160px,220px); align-items:center; gap:36px; }
+.fundsArt { display:block; width:100%; height:auto; pointer-events:none; user-select:none; }
+@media(max-width:700px) { .fundsLayout { grid-template-columns:minmax(0,1fr); gap:12px; } .fundsArt { order:-1; width:140px; } }

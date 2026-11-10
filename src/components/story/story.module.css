@@ -6,6 +6,10 @@
 .position { margin:18px 0 12px; color:var(--story-quiet); font-size:13px; line-height:1.5; font-variant-numeric:tabular-nums; }
 .frame { display:grid; grid-template-columns:minmax(0,1fr); align-items:center; gap:36px; min-height:180px; padding:20px 0 28px; opacity:1; transform:translateY(0); transition:opacity 320ms cubic-bezier(.4,0,.2,1),transform 320ms cubic-bezier(.22,1,.36,1); animation:pointEnter 320ms cubic-bezier(.22,1,.36,1) both; }
 .copy { min-width:0; }
+/* Пункт с предметом по теме (гайды и виза, owner 10 Nov): текст слева,
+   предмет справа; на телефоне предмет над текстом, небольшой. */
+.frame[data-with-art] { grid-template-columns:minmax(0,1fr) minmax(160px,220px); }
+.pointArt { display:block; width:100%; height:auto; justify-self:end; pointer-events:none; user-select:none; animation:pointObject 420ms 60ms cubic-bezier(.22,1,.36,1) both; }
 .copy :is(h1,h2,h3) { max-width:22ch; margin:0 0 20px; color:var(--story-ink); font-size:clamp(26px,2.8vw,36px); font-weight:600; line-height:1.08; letter-spacing:-.02em; text-wrap:balance; overflow-wrap:anywhere; }
 .copy :is(h1,h2,h3):focus { outline:none; }
 .copy > p { max-width:68ch; margin:0; color:var(--story-quiet); font-size:18px; line-height:1.6; }
@@ -21,8 +25,9 @@
 .navigation button:disabled { cursor:default; color:var(--story-quiet); background:transparent; border-color:var(--story-border); opacity:.55; }
 .switcher :is(a,button):focus-visible,.pills :is(a,button):focus-visible { outline:2px solid var(--story-action, #352B28); outline-offset:3px; }
 @keyframes pointEnter { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes pointObject { from { opacity:0; translate:0 16px; scale:.96; } to { opacity:1; translate:0 0; scale:1; } }
 @media(max-width:700px) {
- .frame { grid-template-columns:minmax(0,1fr); gap:12px; min-height:0; padding:20px 0 24px; }.copy :is(h1,h2,h3) { font-size:30px; margin-bottom:14px; }.copy > p { font-size:16px; }.artwork { max-width:200px; }.navigation { gap:10px; }.navigation :is(a,button) { padding-inline:16px; }.navigation .next,.navigation a:last-child { flex:1; }.pills :is(a,button) { font-size:13px; padding-inline:15px; }
+ .frame,.frame[data-with-art] { grid-template-columns:minmax(0,1fr); gap:12px; min-height:0; padding:20px 0 24px; }.pointArt { order:-1; justify-self:start; width:140px; }.copy :is(h1,h2,h3) { font-size:30px; margin-bottom:14px; }.copy > p { font-size:16px; }.artwork { max-width:200px; }.navigation { gap:10px; }.navigation :is(a,button) { padding-inline:16px; }.navigation .next,.navigation a:last-child { flex:1; }.pills :is(a,button) { font-size:13px; padding-inline:15px; }
 }
-@media(prefers-reduced-motion:reduce) { .frame,.pills :is(a,button) { animation:none; transition:none; } }
+@media(prefers-reduced-motion:reduce) { .frame,.pills :is(a,button),.pointArt { animation:none; transition:none; } }
 @media print { .pills,.navigation { display:none; }.frame { animation:none; } }

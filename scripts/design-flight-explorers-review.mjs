@@ -85,9 +85,9 @@ try{
     const steps=nav.locator('[data-guide-step-card]');
     await steps.first().waitFor();
     assert((await steps.count())>1);
-    // Owner, 4 Nov (phone screenshot): no «Шаг 01»-style labels or big numerals;
-    // each card shows its pips, title and the first sentence of the step.
-    assert.equal(await steps.locator('[data-step-pips]').count(),await steps.count(),'Every step card shows its pips');
+    // Owner, 4 Nov (phone screenshot): no «Шаг 01»-style labels or big numerals.
+    // Owner, 10 Nov: a road runs above the cards, one stop per step, instead of pips.
+    assert.equal(await nav.locator('[data-guide-steps-row] [data-guide-road-stop]').count(),await steps.count(),'Every step card stands on the road');
     assert.doesNotMatch(await nav.locator('[data-guide-steps-row]').innerText(),/Шаг \d|\b0\d\b/,'Cards carry titles and teasers, not numerals');
     await steps.nth(1).click();await nav.waitForURL('**/guides/permesso/2');
     await nav.locator('[data-instruction-point="2"]').waitFor();

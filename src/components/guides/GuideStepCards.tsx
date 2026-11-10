@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Lock, Plus } from "lucide-react";
 import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { GuideCarousel } from "./GuideCarousel";
 import styles from "./guide-steps.module.css";
@@ -20,7 +20,10 @@ export type GuideStepCard = { title: string; href: string;
    карусель, что у тем: уходит до краёв окна, первая карточка по колонке.
    Owner, 9 Nov: карточки приходят с сервера уже раскроенными. У закрытого
    шага вместо первого предложения — «Откроется с маршрутом»; устройство с
-   оплаченным кабинетом подгружает первые предложения отдельно. */
+   оплаченным кабинетом подгружает первые предложения отдельно.
+   Owner, 10 Nov («в формате пути, который как прогресс-бар»): над карточками
+   идёт дорога — номер шага на линии, у закрытого шага замок и пунктир к нему.
+   Она заменила точки внутри карточек. */
 export function GuideStepCards({ id, points }: { id: string; points: GuideStepCard[] }) {
   const router = useRouter();
   const paid = usePaidDevice();
@@ -49,14 +52,16 @@ export function GuideStepCards({ id, points }: { id: string; points: GuideStepCa
       {points.map((point, index) => {
         const teaser = point.teaser ?? (paid ? teasers?.[index] : undefined);
         const locked = point.teaser === undefined && !paid;
-        return <li key={point.href} className={styles.item} data-tone={index % 2 ? "dark" : "light"}>
+        return <li key={point.href} className={styles.item} data-tone={index % 2 ? "dark" : "light"} data-locked={locked || undefined}>
+          <div className={styles.stopCard}>
+          <span className={styles.stopRow} aria-hidden="true" data-guide-road-stop={index + 1}><span className={styles.stopNode}>{locked ? <Lock size={14} strokeWidth={2.4} /> : index + 1}</span></span>
           <Link className={styles.card} href={point.href} data-guide-step-card={index + 1} data-guide-step-locked={locked || undefined} data-visa-part={id === "visa" ? point.href.split("/").pop() : undefined}
             aria-label={`Шаг ${index + 1} из ${points.length}: ${point.title}${locked ? " — откроется с маршрутом" : ""}`}>
-            <span className={styles.pips} aria-hidden="true" data-step-pips>{points.map((_, pip) => <i key={pip} data-on={pip === index || undefined} />)}</span>
             <span className={styles.title}>{point.title}</span>
             {locked ? <span className={styles.locked}>Откроется с маршрутом</span> : teaser && <span className={styles.teaser}>{teaser}</span>}
             <span className={styles.plus} aria-hidden="true"><Plus size={18} strokeWidth={2.2} /></span>
           </Link>
+          </div>
         </li>;
       })}
     </GuideCarousel>

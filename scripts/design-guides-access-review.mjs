@@ -74,6 +74,8 @@ try {
   assert.equal(await paid.page.locator('[data-guide-step-locked]').count(), 0, 'Paid: no closed card');
   await visit(paid.page, '/guides/visa/documents?point=4');
   assert.equal(await paid.page.locator('[data-wall-buy]').count(), 0);
+  assert.equal(await paid.page.locator('[data-path-stop][data-locked]').count(), 0, 'Paid: no lock on the path');
+  assert.match(await paid.page.locator('[data-path-caption]').innerText(), /вход в кабинет/, 'Paid: the path says why all is open');
   await visit(paid.page, '/guides/permesso-modulo-1?scenario=rilascio&page=2');
   await paid.page.locator('[data-sheet-page]').first().waitFor();
   assert.equal(await paid.page.locator('[data-permesso-locked-page], [data-permesso-transfer-locked]').count(), 0, 'Paid: the whole trainer');
@@ -114,6 +116,18 @@ try {
     const hits = exported.filter(([, html]) => html.includes(probe)).map(([path]) => path.slice(root.length));
     assert.deepEqual(hits, [], `Closed text stays out of the export: «${probe}»`);
   }
+  // Owner 10 Nov: the step and visa points stand on a progress path; closed stops carry a lock.
+  await visit(guest.page, '/guides/iseeu/2');
+  assert.equal(await guest.page.locator('[data-story-path] [data-path-stop]').count(), 5);
+  assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][aria-current=step]').getAttribute('data-path-stop'), '1');
+  assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 3, 'Three closed stops of five');
+  assert.match(await guest.page.locator('[data-path-caption]').innerText(), /Открыто 2 из 5/);
+  await visit(guest.page, '/guides/visa/timeline?point=2');
+  assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 3);
+  assert.equal(await guest.page.locator('[data-instruction-point] img').count(), 1, 'The point carries an object on its topic');
+  await guest.page.locator('[data-path-stop="3"]').click();
+  await guest.page.waitForURL('**point=4');
+  assert.equal(await guest.page.locator('[data-wall-buy][data-wall-place="visa"]').count(), 1, 'A closed stop opens its wall');
   // Topic page: open cards keep their first sentence, closed ones say how they open.
   await visit(guest.page, '/guides/education');
   assert.match(await guest.page.locator('[data-guide-steps-row] p').first().innerText(), /2 открыты, остальные — с маршрутом/);
