@@ -100,18 +100,12 @@ function VisaChecklist() {
           {done.size} из {VISA_DOCS.length} собрано
         </span>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone-100">
-        <div
-          className="h-full origin-left rounded-full bg-[#141413] transition-transform duration-300 ease-out motion-reduce:transition-none"
-          style={{ transform: `scaleX(${done.size / VISA_DOCS.length})` }}
-        />
-      </div>
       <p className="mt-3 text-[13px] leading-5 text-stone-600">Отметки помогают собрать пакет и не являются решением о готовности к визе. Последний пункт применяется только к несовершеннолетним.</p>
       <div className="mt-7">
       <MediaSwitcher items={VISA_DOCS.map((document, position) => {
         const open = paid || visaPointOpen("documents", position + 1);
         const check = <button type="button" aria-pressed={done.has(position)} className={ui.checkItem} onClick={() => toggle(position)}><Check size={18} aria-hidden="true" />{done.has(position) ? "Собрано — снять отметку" : "Отметить собранным"}</button>;
-        return { id:String(position), title:document.title, text:open ? document.desc : GUIDE_WALL_NOTE, subject:"folder" as const, label:String(position + 1).padStart(2, "0"), locked:!open, art:art(DOCUMENT_ART[position]), content:open ? check : <>{check}<GuideWall place="visa" note={null} /></> };
+        return { id:String(position), title:document.title, text:open ? document.desc : GUIDE_WALL_NOTE, subject:"folder" as const, label:String(position + 1).padStart(2, "0"), locked:!open, checked:done.has(position), art:art(DOCUMENT_ART[position]), content:open ? check : <>{check}<GuideWall place="visa" note={null} /></> };
       })} index={index} onSelect={select} href={href} label="Документы визового пакета" progressLabel="Документ" nav="path"
         pathCaption={accessCaption(paid, VISA_DOCS.filter((_, position) => visaPointOpen("documents", position + 1)).length, VISA_DOCS.length)} lastAction={<Link href="/guides/visa">К вопросам о визе</Link>} />
       </div>

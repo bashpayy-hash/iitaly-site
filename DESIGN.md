@@ -1276,3 +1276,26 @@ road).
   hyphenation instead of letter breaks, room under the last label of the
   highlighted section on a phone, and a short tail when a landmark stands at
   the last stop of a short road.
+
+## A pass over the rough spots · 10 November 2026 (night)
+
+Owner: «пройдись по неровностям». Every key route at 1440 and 390, checked
+for overflow, clipped text and edges that do not line up.
+
+- **Step pages.** The reading boxes, the empty rows of a closed step and its
+  wall now span the column, like the «Назад / Дальше» cards under them; the
+  line length is held by the text (68ch), not by a shorter box.
+- **Dense paths.** A path with more than six stops (visa documents) shows
+  only its circles: names were cut into syllables at 90px. The names stay in
+  the tooltip and for screen readers; the heading below names the point.
+- **One progress on visa documents.** The faint «собрано» bar under the
+  count is gone; a collected document is a green medallion with a check on
+  the path itself, as a finished step on the cabinet road.
+- **Road stations on a phone** keep the title and one status line («Сейчас ·
+  0 из 8»); the description, which broke into syllables in a palm-wide
+  column, stays on the section page.
+- **Section pages** (/guides/stages/…) end with the same road as the station
+  they open from on /guides, so following a station never lands on a page of
+  another kind.
+- **/prices on a phone.** The «43 университета» cell had 74px for an 84px
+  word; the three stat cells take 6px side padding below `sm`.

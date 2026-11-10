@@ -94,7 +94,7 @@ export function PricesExplorer() {
                 { v: "43", l: "университета" },
                 { v: "30", l: "городов" },
               ].map((s) => (
-                <div key={s.l} className="px-3 py-2.5 text-center sm:px-4">
+                <div key={s.l} className="px-1.5 py-2.5 text-center sm:px-4">
                   <p className="font-apple-display text-lg font-semibold text-cloud-white">{s.v}</p>
                   <p className="mt-0.5 text-apple-caption text-cloud-meta">{s.l}</p>
                 </div>

@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { Check, Lock } from "lucide-react";
 import styles from "./story-path.module.css";
 
-export type PathStop = { id: string; title: string; locked?: boolean };
+export type PathStop = { id: string; title: string; locked?: boolean;
+  /** Marked done by the visitor (a collected document): a green check, as on the cabinet road. */
+  checked?: boolean };
 
 /* Путь вместо ряда пилюль (owner, 10 Nov: «сделай эти ответвления в гайдах и
    визе в формате пути, который как прогресс-бар, так намного нагляднее»).
@@ -14,7 +16,11 @@ export type PathStop = { id: string; title: string; locked?: boolean };
    светлые; закрытая до оплаты остановка вместо номера несёт замок. Над путём —
    «Пункт 2 из 5» и короткая подпись (что открыто). Остановки — ссылки: с
    onSelect путь листает пункты на месте, без него ведёт на страницу шага.
-   Стрелки ← → переходят между остановками. */
+   Стрелки ← → переходят между остановками.
+   Проход по неровностям (10 Nov): на плотном пути (больше шести остановок)
+   названия не режутся по слогам — их прячет путь, они остаются в подсказке и
+   для чтения с экрана, а пункт называет заголовок ниже. Отмеченная
+   посетителем остановка — зелёная с галочкой, как пройденный шаг в кабинете. */
 export function StoryPath({ stops, index, href, onSelect, label, noun = "Пункт", caption }: {
   stops: PathStop[]; index: number; href: (index: number) => string; onSelect?: (index: number) => void;
   label: string; noun?: string; caption?: ReactNode;
@@ -28,7 +34,7 @@ export function StoryPath({ stops, index, href, onSelect, label, noun = "Пун�
     box.scrollLeft = Math.max(0, current.offsetLeft + current.offsetWidth / 2 - box.clientWidth / 2);
   }, [index]);
   const style = { "--n": count, "--at": count > 1 ? index / (count - 1) : 1 } as CSSProperties;
-  return <nav className={styles.path} aria-label={label} data-story-path style={style} onKeyDown={event => {
+  return <nav className={styles.path} aria-label={label} data-story-path data-dense={count > 6 || undefined} style={style} onKeyDown={event => {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     const from = Number((event.target as HTMLElement).closest<HTMLElement>("[data-path-stop]")?.dataset.pathStop);
     if (!Number.isInteger(from)) return;
@@ -47,13 +53,13 @@ export function StoryPath({ stops, index, href, onSelect, label, noun = "Пун�
           {stops.map((stop, position) => {
             const state = position < index ? "done" : position === index ? "current" : "next";
             const body = <>
-              <span className={styles.node} aria-hidden="true">{stop.locked ? <Lock size={14} strokeWidth={2.4} /> : position + 1}</span>
+              <span className={styles.node} aria-hidden="true">{stop.checked ? <Check size={16} strokeWidth={2.8} /> : stop.locked ? <Lock size={14} strokeWidth={2.4} /> : position + 1}</span>
               <span className={styles.name}>{stop.title}</span>
             </>;
             const common = {
-              className: styles.stop, "data-path-stop": position, "data-state": state, "data-locked": stop.locked || undefined,
+              className: styles.stop, "data-path-stop": position, "data-state": state, "data-locked": stop.locked || undefined, "data-checked": stop.checked || undefined, title: stop.title,
               "aria-current": position === index ? "step" as const : undefined,
-              "aria-label": `${noun} ${position + 1} из ${count}: ${stop.title}${stop.locked ? " — откроется с маршрутом" : ""}`,
+              "aria-label": `${noun} ${position + 1} из ${count}: ${stop.title}${stop.checked ? " — отмечено" : ""}${stop.locked ? " — откроется с маршрутом" : ""}`,
             };
             return <li key={stop.id}>
               {onSelect ? <a {...common} href={href(position)} onClick={event => {
