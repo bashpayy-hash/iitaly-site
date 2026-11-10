@@ -70,8 +70,8 @@ try {
   }
   assert.equal(await paid.page.locator('[data-wall-buy]').count(), 0, 'A paid device sees no wall');
   await visit(paid.page, '/guides/con');
-  assert.match(await paid.page.locator('[data-guide-steps-row] p').first().innerText(), /каждый на своей странице/);
-  assert.equal(await paid.page.locator('[data-guide-step-locked]').count(), 0, 'Paid: no closed card');
+  assert.match(await paid.page.locator('[data-guide-road=con] [data-path-caption]').innerText(), /всё открыто/);
+  assert.equal(await paid.page.locator('[data-guide-road] [data-node-locked]').count(), 0, 'Paid: no lock on the road');
   await visit(paid.page, '/guides/visa/documents?point=4');
   assert.equal(await paid.page.locator('[data-wall-buy]').count(), 0);
   assert.equal(await paid.page.locator('[data-path-stop][data-locked]').count(), 0, 'Paid: no lock on the path');
@@ -130,8 +130,27 @@ try {
   assert.equal(await guest.page.locator('[data-wall-buy][data-wall-place="visa"]').count(), 1, 'A closed stop opens its wall');
   // Topic page: open cards keep their first sentence, closed ones say how they open.
   await visit(guest.page, '/guides/education');
-  assert.match(await guest.page.locator('[data-guide-steps-row] p').first().innerText(), /2 открыты, остальные — с маршрутом/);
-  assert.equal(await guest.page.locator('[data-guide-step-card][data-guide-step-locked]').count(), 3);
+  assert.match(await guest.page.locator('[data-guide-road=education] [data-path-caption]').innerText(), /открыто 2, ещё 3 — с маршрутом/);
+  assert.equal(await guest.page.locator('[data-guide-road=education] [data-node-locked]').count(), 3, 'Closed steps carry a lock on the road');
+  // The guest above has read every open step: both open stops are green, nothing is left to read.
+  assert.equal(await guest.page.locator('[data-guide-road=education] [data-node-state=done]').count(), 2);
+  // A fresh visitor: the first open step is «начни здесь»; reading it moves the star on.
+  const fresh = await contextFor({ paid: false });
+  await visit(fresh.page, '/guides/education');
+  assert.equal(await fresh.page.locator('[data-guide-road=education] [data-road-node="education/1"]').getAttribute('aria-current'), 'step');
+  await visit(fresh.page, '/guides/education/1');
+  await visit(fresh.page, '/guides/education');
+  assert.equal(await fresh.page.locator('[data-guide-road=education] [data-node-state=done]').count(), 1);
+  assert.equal(await fresh.page.locator('[data-guide-road=education] [data-road-node="education/5"]').getAttribute('aria-current'), 'step', 'The next open step is «читать дальше»');
+  assert.deepEqual(await fresh.page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_guides_read_v1'))), ['education/1'], 'Only page keys are stored');
+  await fresh.context.close();
+  await visit(guest.page, '/guides/visa');
+  assert.equal(await guest.page.locator('[data-guide-road=visa] [data-road-node]').count(), 19, 'The visa road holds every point');
+  assert.equal(await guest.page.locator('[data-guide-road=visa] [data-road-stage]').count(), 4);
+  assert.equal(await guest.page.locator('[data-guide-road=visa] [data-node-locked]').count(), 12);
+  await visit(guest.page, '/guides');
+  assert.equal(await guest.page.locator('[data-guide-road=guides] [data-road-node]').count(), 13, 'The guides road: every topic');
+  await visit(guest.page, '/guides/education');
   await guest.page.screenshot({ path: resolve(output, 'topic-guest.png'), fullPage: true });
   // The wall opens the same purchase as /plan.
   await visit(guest.page, '/guides/con/2');
