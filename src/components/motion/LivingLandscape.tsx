@@ -40,8 +40,14 @@ import styles from "./living-landscape.module.css";
  * бы рывками. Холст с альфой не считается «непрозрачным» для отсечения, так
  * что видео остаётся в отрисовке и кадры идут с родной частотой.
  *
- * «Меньше движения», Save-Data и без JS — только картинка. За экраном петля
- * стоит на паузе на текущем кадре и продолжает с него.
+ * Петля не спорит с картинкой за канал (11 Nov, owner: «максимально
+ * оптимизируй сайт»): файл видео запрашивается только после события load
+ * страницы, когда картинка сцены, стили и шрифты уже пришли. Раньше 200–400 КБ
+ * видео качались одновременно с главной картинкой, и на медленной сети она
+ * появлялась позже (Lighthouse, телефон: загрузка картинки главной 3,3 с).
+ *
+ * «Меньше движения», Save-Data, сеть 2G и без JS — только картинка. За
+ * экраном петля стоит на паузе на текущем кадре и продолжает с него.
  */
 export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths }: {
   /** Общее начало путей: `${base}-<ширина>.mp4|webm`. H.264 там, где он есть
@@ -68,8 +74,8 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     const node = video.current;
     const paint = canvas.current;
     if (!node || !paint) return;
-    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    if (reduced || connection?.saveData) {
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    if (reduced || connection?.saveData || /2g$/.test(connection?.effectiveType ?? "")) {
       node.pause();
       return;
     }
@@ -104,14 +110,18 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
       delete paint.dataset.shown;
       delete node.dataset.shown;
     };
-    const load = () => {
-      if (armed) return;
-      armed = true;
+    const request = () => {
       const need = window.innerWidth <= 640 ? 0 : window.innerWidth * Math.min(window.devicePixelRatio || 1, 2) * .8;
       const pick = (list: number[]) => list.find(width => width >= need) ?? list[list.length - 1];
       const list = (key: string) => key.split(",").map(Number);
       node.preload = "auto";
       node.src = node.canPlayType('video/mp4; codecs="avc1.640028"') ? `${base}-${pick(list(widthKey))}.mp4` : `${base}-${pick(list(webmKey))}.webm`;
+    };
+    const load = () => {
+      if (armed) return;
+      armed = true;
+      if (document.readyState === "complete") request();
+      else window.addEventListener("load", request, { once: true });
     };
     // Кадр-картинка готов: холст размером с кадр, кадр на холст, холст и
     // спрятанное под ним видео — в одной задаче, то есть в одном кадре экрана.
@@ -143,6 +153,7 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     return () => {
       near.disconnect();
       seen.disconnect();
+      window.removeEventListener("load", request);
       node.removeEventListener("loadeddata", reveal);
       node.removeEventListener("error", onError);
       hide();

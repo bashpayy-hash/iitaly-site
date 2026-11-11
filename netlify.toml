@@ -7,9 +7,48 @@
   NEXT_PUBLIC_BACKEND_URL = "https://web-production-9faf3.up.railway.app"
   NEXT_PUBLIC_STRIPE_ENABLED = "true"
 
+# Заголовки безопасности (owner, 11 Nov 2026: «максимально оптимизируй сайт и
+# make sure что он безопасный»).
+#
+# Content-Security-Policy: страница грузит скрипты, стили, шрифты, картинки и
+# видео только со своего домена, а запросы шлёт только себе и бэкенду.
+# - script-src и style-src с 'unsafe-inline': статический экспорт Next.js
+#   кладёт данные страницы во встроенные <script>, у каждой страницы свои, а
+#   значок Netlify собирает себя во встроенном iframe. Без этого сайт не
+#   запустится. Чужие скрипты при этом всё равно не загрузятся.
+# - connect-src: адрес бэкенда должен совпадать с NEXT_PUBLIC_BACKEND_URL
+#   выше. Меняешь один — меняй другой, иначе браузер заблокирует запросы.
+# - img-src data: — бумажная текстура в CSS; blob: — на случай предпросмотра
+#   файла перед отправкой.
+# - frame-ancestors 'self' дублирует X-Frame-Options для новых браузеров.
+# Оплата Stripe — обычный переход на checkout.stripe.com, политика его не
+# касается. Cross-Origin-Opener-Policy намеренно не ставим: он может
+# сбросить sessionStorage при возврате со Stripe, а в нём лежит номер заказа.
+#
+# Permissions-Policy: сайту не нужны камера, микрофон и геолокация; файл
+# документа выбирается обычным полем выбора файла.
 [[headers]]
   for = "/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "SAMEORIGIN"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self'; connect-src 'self' https://web-production-9faf3.up.railway.app; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), browsing-topics=()"
+
+# Кэш в браузере. Netlify по умолчанию отдаёт всё с max-age=0: браузер перед
+# каждым использованием спрашивает сервер, не изменился ли файл.
+# - /_next/static/* — скрипты, стили и шрифты сборки. В имени каждого файла
+#   хэш содержимого: изменился файл — изменилось имя. Поэтому год и immutable.
+# - /fonts/* — файлы с версией в имени (см. src/app/tenge.css), то же правило.
+# Картинки и видео в /illustrations сюда не входят намеренно: их не раз
+# перерисовывали под тем же именем, и долгий кэш показывал бы старую версию.
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

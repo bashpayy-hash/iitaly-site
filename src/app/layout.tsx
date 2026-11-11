@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Onest, Inter_Tight } from "next/font/google";
 import "./globals.css";
+import "./tenge.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatWidget } from "@/components/chat/ChatWidget";
@@ -15,9 +16,17 @@ import { RouteEntrance } from "@/components/motion/RouteEntrance";
 // курсивов) — набор, который на разных экранах читался как склейка
 // нескольких чужих дизайн-систем. Иерархия теперь строится весом и
 // размером внутри одной гарнитуры (см. Typography.tsx), а не сменой шрифта.
+//
+// subsets — это список того, что грузится заранее (preload), а не того, что
+// доступно: next/font всё равно кладёт в CSS правила для всех подмножеств, и
+// браузер берёт нужное по unicode-range. cyrillic-ext (казахские Ә, Ғ, Қ, Ң,
+// Ө, Ү, Һ) в текстах сайта не встречается ни разу, а его два файла (26 и
+// 10 КБ) качались с высоким приоритетом на каждой странице и спорили за
+// канал с главной картинкой (замер 11 Nov). Теперь они грузятся только когда
+// такая буква появится на экране — например, в имени в кабинете.
 const onest = Onest({
   variable: "--font-onest",
-  subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  subsets: ["latin", "cyrillic"],
   display: "swap",
 });
 
@@ -35,7 +44,7 @@ const onest = Onest({
 // iPhone победит она, здесь только надёжный фолбэк для всех остальных.
 const interTight = Inter_Tight({
   variable: "--font-inter-tight",
-  subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  subsets: ["latin", "cyrillic"],
   display: "swap",
 });
 

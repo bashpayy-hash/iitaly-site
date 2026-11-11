@@ -1367,3 +1367,46 @@ Owner, two screenshots (home and /plan): «здесь проблема в ани
   WebP takes to arrive.
 - «Меньше движения», Save-Data and no JavaScript see the still, as before.
   Offscreen the loop pauses on its current frame.
+
+## Speed and safety pass · 11 November 2026 (evening)
+
+Owner: «теперь максимально оптимизируй сайт и make sure что он безопасный».
+Nothing here changes how a page looks; screenshots of the price lines are
+byte-identical before and after.
+
+Measured first (Lighthouse 12, phone, the live site): performance 77–90,
+LCP 3.6–5.2 s. On the home page the hero picture took 3.3 s to download
+because it shared the connection with six preloaded fonts, a seventh 88 KB
+font and the hero video.
+
+- **Fonts.** `subsets` in `layout.tsx` is the preload list, not the list of
+  what exists. `cyrillic-ext` is not used by any text on the site, yet its
+  two files (26 and 10 KB) were preloaded on every page; they now load only
+  if such a letter appears. The «₸» sign sits in `latin-ext`, so one price
+  pulled 88 KB of Inter Tight (28 KB of Onest in body text); `tenge.css`
+  serves the same glyph from two files under 1 KB.
+- **The loop waits for the page.** `LivingLandscape` requests its video
+  after the `load` event, so it no longer competes with the scene's still.
+  On a 2G connection there is no loop, as with Save-Data.
+- **Browser cache.** `/_next/static/*` and `/fonts/*` are cached for a year
+  (`immutable`): their names change with their content. Pictures and videos
+  under `/illustrations` keep revalidating on purpose — they have been
+  redrawn under the same name more than once. A file that should be cached
+  for long needs a version in its name.
+- **Headers.** A Content-Security-Policy (own origin plus the backend for
+  requests; inline scripts stay allowed because the static export and the
+  Netlify badge need them) and a Permissions-Policy. Checked on 19 pages in a
+  browser with the badge script injected: no violations. The backend address
+  in the policy must match `NEXT_PUBLIC_BACKEND_URL`.
+- **Dependencies.** Next.js 16.3.4 → 16.4.6 (a critical advisory covered
+  16.0.0–16.4.0) and `npm audit fix`. No critical or high findings remain;
+  seven moderate ones are in the linter's tooling and never reach the site.
+- **Checkout link.** The buy dialog follows the payment link only if it is
+  `https:`.
+- **Not fixed here, the owner's to do.** The backend does not answer
+  `https://iitaly.net` (no `Access-Control-Allow-Origin`; it does answer
+  `https://iitaly.netlify.app`), so on the main domain the cabinet by code,
+  the document check, the assistant, analytics and payment are blocked by
+  the browser. Railway needs `https://iitaly.net` and
+  `https://www.iitaly.net` in `ALLOWED_ORIGINS` and
+  `SITE_URL=https://iitaly.net`.

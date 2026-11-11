@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync, existsSync } from 'node:fs';
 
 const base = process.argv[2];
@@ -262,7 +263,25 @@ const approvedGamifiedPortalPaths = new Set([
   'src/components/portal/PlainTerms.tsx',
   'src/components/portal/portal-path.module.css',
 ]);
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
+// 2026-11-11 (owner: «максимально оптимизируй сайт и make sure что он
+// безопасный»). Three contracts get one approved revision each, named by the
+// SHA-256 of the committed file; anything else must still match the base.
+// - netlify.toml: response headers only — Content-Security-Policy,
+//   Permissions-Policy, a year of browser cache for hashed build files and
+//   /fonts. Build command, publish directory and environment are unchanged.
+// - package.json, package-lock.json: next and eslint-config-next 16.3.4 →
+//   16.4.6 (npm audit: a critical advisory covers 16.0.0–16.4.0) and
+//   `npm audit fix` inside the existing ranges (sharp, source-map-js, zod,
+//   brace-expansion). No dependency was added or removed.
+// Once this revision is the base, the files are byte-exact again: a later
+// change needs its own approval here, with the request that asked for it.
+const approvedRevisions = {
+  'netlify.toml': 'adb2e27004bf12e7736d480aed35b712d3538f986396c5ee27c12d0d7c5df80d',
+  'package.json': 'd74d6adecb14d27226f9cd938b5dbaeda9c6febdfa6c3bef273e40a640a02728',
+  'package-lock.json': '9c0180c872d7a336ad95c28dd0f272fb9f770c0f71b535a25e38e9b99d5942e0',
+};
+const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
+assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedRevision(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 10990;/);
 // User-approved launch price: only the main amount may change; the optional
@@ -293,7 +312,7 @@ for (const path of [
   'src/components/guides/permesso/permessoOriginalGeometry.ts',
   'src/components/guides/permesso/permessoTransferModel.ts',
   'package.json','package-lock.json','next.config.ts','netlify.toml',
-]) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
+]) if (!approvedRevision(path)) assert.equal(readFileSync(path,'utf8'),execFileSync('git',['show',`${base}:${path}`],{encoding:'utf8'}),`${path}: presentation changes must preserve this contract`);
 // 2026-11-07 (owner: Modulo 1 «слишком много информации… разбить… на другие
 // сайты»): the code widget and the sheet calculator moved from under the form
 // to the «Коды и расчёты» page, so two pointers say where they are now.

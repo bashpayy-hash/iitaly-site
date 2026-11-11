@@ -80,9 +80,21 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
         setStep("form");
         return;
       }
+      // Адрес страницы оплаты приходит с бэкенда, и браузер уходит по нему
+      // целиком. Переходим только по https-ссылке (11 Nov, проверка
+      // безопасности): так ответ сервера не может подсунуть javascript: или
+      // data: и выполнить код на нашей странице с данными формы.
+      let checkout: URL | null = null;
+      try { checkout = new URL(result.url); } catch {}
+      if (checkout?.protocol !== "https:") {
+        inFlight.current = false;
+        setError("Не удалось открыть Stripe Checkout.");
+        setStep("form");
+        return;
+      }
       track("order_submitted", { product: product.name, price: product.price, provider: "stripe" });
       track("lead_submitted", { product: product.name, price: product.price, from: "buy_modal" });
-      window.location.assign(result.url);
+      window.location.assign(checkout.href);
       return;
     }
 
