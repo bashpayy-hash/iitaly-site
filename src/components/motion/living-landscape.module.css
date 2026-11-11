@@ -1,11 +1,10 @@
-/* Видеопетля поверх картинки той же сцены: раскладку (inset, cover,
-   object-position, масштаб на телефоне) даёт класс картинки, здесь — только
-   видимость видео по состоянию родителя (data-living, см. LivingLandscape).
-   Непрозрачность .999, а не 1: Chrome не выносит такое видео в аппаратный
-   overlay-слой, где Windows переводит цвет сам и иначе, чем страницу.
-   Плавность — только при проявлении на экране (data-living-fade); подмена
-   за кадром мгновенная. */
-.motion { opacity:0; pointer-events:none; }
-:global([data-living="video"]) > .motion { opacity:.999; }
-:global([data-living-fade]) > .motion { transition:opacity 450ms cubic-bezier(.4,0,.2,1); }
-@media (prefers-reduced-motion:reduce) { .motion { display:none; } }
+/* Живой пейзаж (см. LivingLandscape): раскладку (inset, cover,
+   object-position, сдвиг по прокрутке) даёт класс картинки — тот же у видео и
+   у холста, поэтому все три лежат пиксель в пиксель.
+   На экран выходит только холст: он появляется сразу, без перехода, потому
+   что его первый кадр и есть картинка под ним. Видео лежит под холстом
+   видимым (иначе Chrome обновляет его кадры раз в 250 мс), но закрыто им
+   целиком и до появления холста не показывается вовсе. */
+.source, .paint { opacity:0; pointer-events:none; }
+.source[data-shown], .paint[data-shown] { opacity:1; }
+@media (prefers-reduced-motion:reduce) { .source, .paint { display:none; } }

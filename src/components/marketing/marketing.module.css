@@ -92,15 +92,14 @@
    стоит на месте. */
 .heroScene { --hero-gutter: max(32px, calc((100vw - 1216px)/2)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 580px); align-items: center; min-height: min(720px, 84vh); overflow: clip; background: #2A2420; color: #141413; }
 .heroSceneBox { position: absolute; inset: 0; z-index: -1; overflow: clip; }
-/* Сцена над сгибом ждёт первый кадр видео (owner, 9 Nov: «на первой странице
-   всё равно меняется освещение»): пока data-living="hold", вместо картинки —
-   ровный средний цвет сцены (он же подложка и при проявлении видео), затем за 450 мс проявляется сразу видео; картинка
-   показывается только если видео не пришло (still) или при «меньше движения»
-   и без JS. См. LivingLandscape. */
-.heroSceneBox { background: #9B5C3A; }
-.heroSceneBox[data-living="hold"] > img, .heroSceneBox[data-living="video"] > img { opacity: 0; }
-.heroSceneBox[data-living-fade] > img { transition: opacity 450ms cubic-bezier(.4,0,.2,1); }
-@media (prefers-reduced-motion: reduce), (scripting: none) { .heroSceneBox > img { opacity: 1 !important; } }
+/* Картинка сцены видна с первого кадра страницы, петля ложится поверх неё
+   холстом с тем же кадром (см. LivingLandscape; owner, 11 Nov: «резко
+   картинка светлеет… резко белое свечение темнеет — исправь раз и
+   навсегда»). Заглушка 9 Nov — ровный «средний цвет» вместо картинки до
+   видео — сама и была этим скачком. Подложка ниже видна только доли
+   секунды, пока картинка грузится: средний цвет кадра в линейном свете,
+   то есть столько же света, сколько у самой картинки. */
+.heroSceneBox { background: #A66B4C; }
 .heroLandscape { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 30% 62%; }
 @supports (animation-timeline: view()) {
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {

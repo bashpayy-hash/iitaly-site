@@ -1331,3 +1331,39 @@ primary buttons.
   and the guide action pill no longer grows to 49px.
 - **Path names** use the whole width of their stop, up to three lines, and
   break between words, not inside them.
+
+## Light that never changes, drawn on a canvas · 11 November 2026
+
+Owner, two screenshots (home and /plan): «здесь проблема в анимации в том,
+что резко картинка светлеет, а на втором скрине — резко белое свечение
+темнеет; исправь это раз и навсегда».
+
+- **What it was.** The 9 November hold. Above the fold the scene first
+  showed a flat «average colour» instead of the still, then the video faded
+  in over 450 ms. Measured on the owner's screen (ASUS OLED laptop, AMD
+  graphics, Chrome 157), in the same run and the same crop: the hold at
+  Y 104, the scene at Y 116, so the picture brightened every time. On /plan
+  the white veil under the title first lay on flat beige, so the glow
+  darkened when the loggia arrived. The loops themselves are steady
+  (Higgsfield ffmpeg, signalstats on the shipped files): largest
+  frame-to-frame step 0.18/255, seams 0.02–0.11/255.
+- **A measurement withdrawn.** An earlier reading in this session put the
+  `<video>` 5–7 levels above the still. That comparison took the still in
+  «меньше движения», where the hero has no 1.12 scroll scale, so the crops
+  differed. Measured inside one window with the same crop, image, canvas
+  and video agree within 0.3 (Y 114.7 / 114.6 / 114.9).
+- **The rule now.** The still is on screen from the first paint, and a
+  `<video>` is never on screen. `LivingLandscape` draws the loop's frames on
+  a `<canvas>` over the still: the browser converts and colour-manages a
+  canvas exactly like an image, with no hardware overlay or driver video
+  processing in between, whatever the graphics card. The canvas appears with
+  frame 0, which is the still (PSNR 36–41 dB on all four scenes), so the
+  handover cannot be seen; then the loop plays. The video stays under the
+  canvas, covered by it: an invisible (`opacity: 0`) video is refreshed only
+  every 250 ms in Chrome and the canvas would stutter.
+- **Before the still loads** the tile shows the still's average colour in
+  linear light (the same amount of light as the picture): `#A66B4C` home,
+  `#AF9782` /plan, `#AD8057` cabinet. It is seen only for the moment the
+  WebP takes to arrive.
+- «Меньше движения», Save-Data and no JavaScript see the still, as before.
+  Offscreen the loop pauses on its current frame.
