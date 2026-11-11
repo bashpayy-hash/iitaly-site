@@ -1,0 +1,31 @@
+/* Знак «₸» (U+20B8) лежит в подмножестве latin-ext обоих шрифтов. Из-за
+   одной цены в тексте («10 990 ₸») браузер качал целиком latin-ext Inter
+   Tight — 88 КБ с наивысшим приоритетом на главной и на /prices (замер
+   Lighthouse 11 Nov) — и 28 КБ latin-ext Onest там, где цена стоит в обычном
+   тексте. Других знаков из latin-ext на сайте нет.
+
+   Здесь тот же глиф, вырезанный из тех же файлов (fonttools, ось wght
+   100–900 сохранена): 860 и 956 байт. Правила названы теми же семействами,
+   что и у next/font, и стоят после них: для пересекающихся unicode-range
+   побеждает правило, объявленное последним, поэтому «₸» берётся отсюда, а
+   latin-ext не запрашивается вовсе. Вид знака не меняется.
+
+   Файлы лежат в public/fonts с версией в имени (кэш на год, netlify.toml):
+   новое содержимое — новое имя. Если next/font сменит имя семейства, знак
+   просто снова возьмётся из latin-ext; ничего не сломается. */
+@font-face {
+  font-family: "Inter Tight";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-tight-tenge-v1.woff2") format("woff2");
+  unicode-range: U+20B8;
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/onest-tenge-v1.woff2") format("woff2");
+  unicode-range: U+20B8;
+}
