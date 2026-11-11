@@ -4,34 +4,44 @@ import { useEffect, useRef } from "react";
 import { useReducedMotion } from "./MotionProvider";
 import styles from "./living-landscape.module.css";
 
-/** Сколько сцена над сгибом ждёт первый кадр видео, прежде чем показать картинку. */
-const HOLD_MS = 1400;
-
-type LivingState = "hold" | "still" | "video";
-
 /**
  * Живой пейзаж (owner, 4 Nov: «заигрывать с пейзажами и Веспи — визитная
- * карточка сайта»): поверх картинки сцены — короткая видеопетля той же сцены
- * (Higgsfield, design/illustrations/motion-*.json). Картинка остаётся в DOM:
- * её видят «меньше движения», Save-Data, браузеры без автоплея и без JS.
+ * карточка сайта»): короткая видеопетля той же сцены, что и картинка под ней
+ * (Higgsfield, design/illustrations/motion-*.json).
  *
- * Свет не меняется на глазах (owner, 7–9 Nov: «резкая перемена света, что
- * на главной, что на „Опиши ситуацию“»). Картинку и видео браузер выводит
- * разными путями: на Windows видео часто проходит через видеопроцессор
- * видеокарты, где драйвер (адаптивный контраст, «улучшение видео», RTX HDR)
- * меняет яркость и цвет, а картинку — нет. Никакой кроссфейд это не прячет.
- * Поэтому источник никогда не меняется, пока сцена на экране:
+ * Свет не меняется никогда (owner, 7, 8, 9 и 11 Nov: «резкая перемена света»;
+ * 11 Nov: «на главной резко картинка светлеет, на „Опиши ситуацию“ резко белое
+ * свечение темнеет — исправь раз и навсегда»). Что не сработало и почему:
  *
- * - Сцена над сгибом (родитель рендерит её с `data-living="hold"`): до
- *   первого кадра видео в плитке ровный цвет сцены, затем за 450 мс
- *   проявляется сразу видео. Картинку человек на экране не видит вовсе.
- *   Если видео не пришло за 1,4 с, проявляется картинка.
- * - Остальные сцены показывают картинку, видео грузится заранее (за полтора
- *   экрана) и подменяет её, только пока сцена за экраном.
+ * - 7 Nov — тег матрицы BT.709 в файлах. Теги верны (bt709 / sRGB / tv), но
+ *   скачок остался.
+ * - 8 Nov — медленный кроссфейд картинка → видео 2,4 с, `opacity: .999`
+ *   против аппаратного overlay. Разница путей всё равно видна.
+ * - 9 Nov — картинку над сгибом не показывать вовсе: ровный «средний цвет»
+ *   сцены, потом за 450 мс видео. Этот цвет сам и стал скачком: на экране
+ *   владельца (ASUS OLED, AMD, Chrome 157) в одном замере и одном кадрировании
+ *   — заглушка Y 104, сцена Y 116; на /plan белая вуаль сначала лежала на
+ *   ровном бежевом. Сами петли ровные: шаг кадр-к-кадру до 0,18/255.
+ * - Разница видео и картинки на этом экране не подтверждена: замер «видео на
+ *   5–7 уровней светлее» сравнивал разное кадрирование (у «меньше движения»
+ *   нет масштаба 1.12) и снят; внутри одного окна картинка, холст и видео
+ *   совпадают в пределах 0,3. Но на других видеокартах драйвер (overlay,
+ *   «улучшение видео», RTX Video HDR) может менять видео, а картинку — нет.
  *
- * Состояние пишется в `data-living` родителя: CSS родителя прячет или
- * показывает свою картинку, CSS этого модуля — видео. За кадром видео стоит
- * на паузе на текущем кадре, при возвращении продолжает с него.
+ * Поэтому `<video>` на экран не выходит никогда. Кадры петли рисуются в
+ * `<canvas>`: холст браузер ведёт тем же путём, что и картинку (свой перевод
+ * YUV → RGB, профиль экрана, без overlay). Картинка видна с первого кадра
+ * страницы; холст ложится поверх неё первым кадром петли, который и есть эта
+ * картинка (PSNR 36–41 дБ на всех четырёх сценах, 11 Nov), — подмены не
+ * видно, свет один и тот же от начала до конца.
+ *
+ * Видео стоит под холстом в полной непрозрачности, но закрыто им: невидимое
+ * (`opacity: 0`) видео Chrome обновляет раз в 250 мс, и петля на холсте шла
+ * бы рывками. Холст с альфой не считается «непрозрачным» для отсечения, так
+ * что видео остаётся в отрисовке и кадры идут с родной частотой.
+ *
+ * «Меньше движения», Save-Data и без JS — только картинка. За экраном петля
+ * стоит на паузе на текущем кадре и продолжает с него.
  */
 export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths }: {
   /** Общее начало путей: `${base}-<ширина>.mp4|webm`. H.264 там, где он есть
@@ -50,32 +60,50 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
 }) {
   const reduced = useReducedMotion();
   const video = useRef<HTMLVideoElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   // Строковые ключи: новый массив на каждом рендере не перезапускает эффект.
   const widthKey = widths.join(","), webmKey = (webmWidths ?? widths).join(",");
 
   useEffect(() => {
     const node = video.current;
-    const scene = node?.parentElement;
-    if (!node || !scene) return;
-    const held = scene.dataset.living === "hold";
-    const settle = (state: LivingState, fade: boolean) => {
-      scene.dataset.living = state;
-      if (fade) scene.dataset.livingFade = ""; else delete scene.dataset.livingFade;
-      if (state === "video") node.dataset.playing = "true"; else delete node.dataset.playing;
-    };
-    const restore = () => { if (held) scene.dataset.living = "hold"; else delete scene.dataset.living; delete scene.dataset.livingFade; delete node.dataset.playing; };
+    const paint = canvas.current;
+    if (!node || !paint) return;
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
     if (reduced || connection?.saveData) {
       node.pause();
-      settle("still", false);
-      return restore;
+      return;
     }
+    const context = paint.getContext("2d");
+    if (!context) return;
 
+    const frameCallback = typeof node.requestVideoFrameCallback === "function";
     const box = node.getBoundingClientRect();
     let visible = box.bottom > 0 && box.top < window.innerHeight;
-    let armed = false, ready = false, swapped = false, holding = held;
-    let holdTimer: number | undefined;
+    let armed = false, shown = false, running = false, handle = 0;
 
+    const draw = () => context.drawImage(node, 0, 0, paint.width, paint.height);
+    const cancel = () => { if (frameCallback) node.cancelVideoFrameCallback(handle); else cancelAnimationFrame(handle); };
+    const next = () => { handle = frameCallback ? node.requestVideoFrameCallback(tick) : requestAnimationFrame(tick); };
+    function tick() {
+      if (!running) return;
+      try { draw(); } catch { hide(); return; }
+      next();
+    }
+    const start = () => {
+      if (!shown || running || !visible) return;
+      running = true;
+      // Автоплей запрещён (режим энергосбережения iOS) — на холсте остаётся
+      // кадр-картинка, и это то же самое, что видит «меньше движения».
+      node.play().catch(() => { running = false; cancel(); });
+      next();
+    };
+    const stop = () => { running = false; cancel(); node.pause(); };
+    const hide = () => {
+      stop();
+      shown = false;
+      delete paint.dataset.shown;
+      delete node.dataset.shown;
+    };
     const load = () => {
       if (armed) return;
       armed = true;
@@ -85,43 +113,29 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
       node.preload = "auto";
       node.src = node.canPlayType('video/mp4; codecs="avc1.640028"') ? `${base}-${pick(list(widthKey))}.mp4` : `${base}-${pick(list(webmKey))}.webm`;
     };
-    const swap = (fade: boolean) => {
-      swapped = true;
-      settle("video", fade);
-      if (visible) node.play().catch(() => {});
+    // Кадр-картинка готов: холст размером с кадр, кадр на холст, холст и
+    // спрятанное под ним видео — в одной задаче, то есть в одном кадре экрана.
+    const reveal = () => {
+      if (shown || !node.videoWidth) return;
+      paint.width = node.videoWidth;
+      paint.height = node.videoHeight;
+      try { draw(); } catch { return; }
+      shown = true;
+      paint.dataset.shown = "";
+      node.dataset.shown = "";
+      start();
     };
-    const onFirstFrame = () => {
-      if (ready) return;
-      ready = true;
-      if (holding) { holding = false; window.clearTimeout(holdTimer); swap(true); }
-      else if (!visible) swap(false);
-    };
-    const onError = () => {
-      if (holding) { holding = false; window.clearTimeout(holdTimer); }
-      swapped = false;
-      settle("still", visible);
-    };
-    node.addEventListener("loadeddata", onFirstFrame);
+    const onError = () => hide();
+    node.addEventListener("loadeddata", reveal);
     node.addEventListener("error", onError);
 
-    if (held) {
-      holdTimer = window.setTimeout(() => {
-        if (!holding) return;
-        holding = false;
-        settle("still", true);
-      }, HOLD_MS);
-      load();
-      if (node.readyState >= 2) onFirstFrame();
-    } else settle("still", false);
-
-    // Загрузка — заранее, за полтора экрана; подмена — только вне экрана.
+    if (visible) load();
+    // Загрузка — заранее, за полтора экрана; за экраном петля на паузе.
     const near = new IntersectionObserver(entries => { if (entries.some(entry => entry.isIntersecting)) load(); }, { rootMargin: "150% 0px" });
     const seen = new IntersectionObserver(entries => {
       for (const entry of entries) {
         visible = entry.isIntersecting;
-        if (swapped) {
-          if (visible) node.play().catch(() => {}); else node.pause();
-        } else if (!visible && ready && !holding) swap(false);
+        if (visible) start(); else stop();
       }
     });
     near.observe(node);
@@ -129,14 +143,15 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     return () => {
       near.disconnect();
       seen.disconnect();
-      node.removeEventListener("loadeddata", onFirstFrame);
+      node.removeEventListener("loadeddata", reveal);
       node.removeEventListener("error", onError);
-      window.clearTimeout(holdTimer);
-      node.pause();
-      restore();
+      hide();
     };
   }, [reduced, base, widthKey, webmKey]);
 
-  return <video ref={video} className={`${className} ${styles.motion}`} muted loop playsInline preload="none"
-    aria-hidden="true" tabIndex={-1} data-living-landscape={label} />;
+  return <>
+    <video ref={video} className={`${className} ${styles.source}`} muted loop playsInline preload="none"
+      aria-hidden="true" tabIndex={-1} data-living-landscape={label} />
+    <canvas ref={canvas} className={`${className} ${styles.paint}`} aria-hidden="true" data-living-canvas={label} />
+  </>;
 }

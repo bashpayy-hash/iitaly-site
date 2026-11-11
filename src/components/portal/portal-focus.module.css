@@ -183,15 +183,14 @@ button.nowPrimary { border:0; cursor:pointer; }
    которой Веспи въезжает слева и уезжает к ферме, идёт под панелью. Никакой
    дымки и перехода в бумагу — текст стоит на сплошной панели. */
 .heroScene { position:absolute; inset:0; z-index:0; overflow:hidden; background:#E9DCC6; }
-/* Сцена над сгибом ждёт первый кадр видео (owner, 9 Nov: «на первой странице
-   всё равно меняется освещение»): пока data-living="hold", вместо картинки —
-   ровный средний цвет сцены (он же подложка и при проявлении видео), затем за 450 мс проявляется сразу видео; картинка
-   показывается только если видео не пришло (still) или при «меньше движения»
-   и без JS. См. LivingLandscape. */
-.heroScene { background:#9C7146; }
-.heroScene[data-living="hold"] > img, .heroScene[data-living="video"] > img { opacity:0; }
-.heroScene[data-living-fade] > img { transition:opacity 450ms cubic-bezier(.4,0,.2,1); }
-@media (prefers-reduced-motion:reduce), (scripting:none) { .heroScene > img { opacity:1 !important; } }
+/* Картинка сцены видна с первого кадра страницы, петля ложится поверх неё
+   холстом с тем же кадром (см. LivingLandscape; owner, 11 Nov: «резко
+   картинка светлеет… резко белое свечение темнеет — исправь раз и
+   навсегда»). Заглушка 9 Nov — ровный «средний цвет» вместо картинки до
+   видео — сама и была этим скачком. Подложка ниже видна только доли
+   секунды, пока картинка грузится: средний цвет кадра в линейном свете,
+   то есть столько же света, сколько у самой картинки. */
+.heroScene { background:#AD8057; }
 .heroArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:50% 100%; }
 .heroPanel { position:relative; z-index:1; display:grid; justify-items:center; width:min(100%,600px); padding:26px 32px 28px; border-radius:24px; background:#FFFDF9; box-shadow:0 1px 2px rgba(42,36,32,.08),0 14px 36px rgba(42,36,32,.14); }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }
