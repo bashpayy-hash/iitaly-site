@@ -4,7 +4,7 @@ import "./globals.css";
 import "./tenge.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
-import { ChatWidget } from "@/components/chat/ChatWidget";
+import { ChatMount } from "@/components/chat/ChatMount";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlayGate } from "@/components/PaperOverlayGate";
 import { RouteEntrance } from "@/components/motion/RouteEntrance";
@@ -114,7 +114,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <RouteEntrance />
           {children}
           <PaperOverlayGate />
-          <ChatWidget />
+          {/* Кнопка чата сразу, код чата после загрузки страницы — см. ChatMount. */}
+          <ChatMount />
         </MotionProvider>
       </body>
     </html>

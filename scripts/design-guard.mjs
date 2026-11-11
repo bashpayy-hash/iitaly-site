@@ -281,7 +281,18 @@ const approvedRevisions = {
   'package-lock.json': '9c0180c872d7a336ad95c28dd0f272fb9f770c0f71b535a25e38e9b99d5942e0',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
-assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedRevision(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
+// 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll
+// animation library, after «максимально оптимизируй сайт»). The chat code
+// now arrives after the page: ChatMount keeps the launcher in the HTML and
+// loads ChatWidget when the browser is free or the chat is asked for.
+// Loading only — ChatWidget.tsx, its messages, limits, context events and
+// API calls are untouched; launcherFace.ts holds the launcher classes that
+// ChatLauncher and ChatMount now share.
+const approvedChatLoadingPaths = new Set([
+  'src/components/chat/ChatMount.tsx',
+  'src/components/chat/launcherFace.ts',
+]);
+assert.deepEqual(changed.filter(path => protectedPaths.test(path) && !approvedRevision(path) && !approvedChatLoadingPaths.has(path) && !approvedPresentationPaths.has(path) && !approvedReminderUiPaths.has(path) && !approvedAdmissionsPaths.has(path) && !approvedLaunchPaths.has(path) && !approvedGamifiedPortalPaths.has(path)), [], 'Protected source or contract changed.');
 const pricing = readFileSync('src/data/pricing.ts', 'utf8');
 assert.match(pricing, /PRICE_MAIN = 10990;/);
 // User-approved launch price: only the main amount may change; the optional
