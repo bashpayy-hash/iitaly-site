@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import { PortalExplorer } from "@/components/portal/PortalExplorer";
+import { PORTAL_HERO } from "./hero-image";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/portal" },
@@ -12,5 +14,7 @@ export const metadata: Metadata = {
 export default function PortalPage() {
   // <main> ставит сам PortalExplorer: у экрана входа над ним шапка сайта,
   // а у кабинета — своя боковая навигация.
+  // Картинка шапки качается сразу, параллельно со скриптами (см. hero-image.ts).
+  preload(PORTAL_HERO.src, { as: "image", imageSrcSet: PORTAL_HERO.srcSet, imageSizes: PORTAL_HERO.sizes, fetchPriority: "high" });
   return <PortalExplorer />;
 }

@@ -1435,3 +1435,30 @@ home 254 → 160 KB, /prices 259 → 166, /plan 257 → 205, /guides 237 → 186
   without «меньше движения». A phone never downloads them.
 - Anything new in the root layout is on every page. A component that most
   visitors never open should be loaded the same way.
+
+## The cabinet's picture first, the carousel on demand · 12 November 2026
+
+Owner: «Да, сделай» — a third speed pass, for the cabinet and the guides,
+the two pages the first two passes helped least (Lighthouse, phone: the
+cabinet 77 → 80 with LCP still 5.2 s, the guides 83 → 84). Nothing looks
+different.
+
+- **A claim withdrawn.** On 11 November the loop's `<video>` was left
+  visible under the canvas, on the assumption that Chrome refreshes an
+  invisible video only every 250 ms. Measured on 12 November: with
+  `opacity: 0` the canvas still gets 29–30 new frames a second (home, /plan,
+  cabinet). The visible video had a cost instead: in the cabinet the browser
+  took it for the page's largest element, so LCP waited for the video to
+  download. The video is now never painted; it is only the source of frames.
+- **The cabinet's hero picture loads with the scripts, not after them.** The
+  cabinet is drawn by JavaScript, so the browser learned about the picture
+  only once the scripts had run (2.7 s of waiting on a simulated phone).
+  `page.tsx` now preloads it; `app/portal/hero-image.ts` keeps the preload
+  and the `<img>` on the same addresses and sizes.
+- **The guides carousel.** All 13 tile pictures (about 365 KB) were fetched
+  at once and competed with the first tile, the page's main picture on a
+  phone. The first tile is high priority, the first four load at once, the
+  rest when the carousel is scrolled toward them. Checked: four requests
+  before any swipe, all thirteen after swiping to the end.
+- **Left as is, measured.** The cabinet's feature scenes are 389 px wide on
+  a phone and correctly take the 1024 px file on a 2–3× screen.

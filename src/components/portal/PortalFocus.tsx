@@ -19,6 +19,7 @@ import { stepActionLabel } from "./plainWords";
 import path from "./portal-path.module.css";
 
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
+import { PORTAL_HERO } from "@/app/portal/hero-image";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
 
 /* Время шага в чипе показываем, только когда оно конкретное («15 мин»). */
@@ -163,7 +164,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           панели, без белой дымки поверх кадра. Картинка с Веспи — постер и всё,
           что видят «меньше движения» и Save-Data. */}
       <div className={styles.heroScene} data-portal-hero-scene>
-        <img className={styles.heroArt} src="/illustrations/landscapes/tuscany-1600.webp" srcSet="/illustrations/landscapes/tuscany-960.webp 960w, /illustrations/landscapes/tuscany-1600.webp 1600w, /illustrations/landscapes/tuscany-2400.webp 2400w" sizes="(max-width: 1360px) 100vw, 1296px" width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
+        <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
         <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} />
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
