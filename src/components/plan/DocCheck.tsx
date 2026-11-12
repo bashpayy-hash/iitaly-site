@@ -213,7 +213,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             Программа
             <select value={context.profile}
               onChange={e => updateContext({ profile: e.target.value as DocumentReviewContext["profile"] })}
-              className="mt-1 block min-h-11 w-full rounded-[20px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              className="mt-1 block min-h-11 w-full rounded-[16px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
               {/* Owner, 8 Nov: основной вариант — общий DSU; отдельные конкурсы
                   только там, где правила отличаются (их подтверждает база
                   сервера). Значение general — то, что сервер и принимает. */}
@@ -228,7 +228,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             Учебный год заявки
             <select value={context.academicYear}
               onChange={e => updateContext({ academicYear: e.target.value as DocumentReviewContext["academicYear"] })}
-              className="mt-1 block min-h-11 w-full rounded-[20px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              className="mt-1 block min-h-11 w-full rounded-[16px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
               <option value="unspecified">Ещё не определился</option>
               <option value="2026/27">2026/27</option>
               <option value="2027/28">2027/28</option>
