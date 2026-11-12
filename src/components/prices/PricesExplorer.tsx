@@ -88,13 +88,16 @@ export function PricesExplorer() {
           <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
             <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Что включено</h2>
             <p className="mt-2 text-apple-body-sm text-cloud-body">Весь маршрут поступления в одном кабинете</p>
-            <div className="mt-5 grid grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-[16px] border border-white/10">
+            <div className="mt-5 grid grid-cols-[repeat(3,minmax(min-content,1fr))] divide-x divide-white/10 overflow-hidden rounded-[16px] border border-white/10">
               {[
                 { v: "28", l: "шагов в маршруте" },
                 { v: "43", l: "университета" },
                 { v: "30", l: "городов" },
               ].map((s) => (
-                <div key={s.l} className="px-1.5 py-2.5 text-center sm:px-4">
+                // Узкий отступ ячейки на телефоне: на 320px колонка 76px, и слово
+                // «университета» вылезало из ячейки (аудит 12 Nov). Мягкий перенос
+                // не годится: он меняет текст, а design-content сверяет тексты.
+                <div key={s.l} className="px-0.5 py-2.5 text-center sm:px-4">
                   <p className="font-apple-display text-lg font-semibold text-cloud-white">{s.v}</p>
                   <p className="mt-0.5 text-apple-caption text-cloud-meta">{s.l}</p>
                 </div>

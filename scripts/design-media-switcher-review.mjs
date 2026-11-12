@@ -87,8 +87,12 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           const comparison = page.locator('#compare-universities');
           assert.equal(await page.locator('[data-university-page]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgba(0, 0, 0, 0)');
           // Owner 2026-11-03: an empty place offers no «Выбрать» button and stands straight.
+          // Owner 2026-11-12 («сравнение не прям юзер френдли»): with nothing chosen there is one
+          // start panel with quick-add buttons instead of three empty boxes.
           assert.equal(await comparison.locator('[data-deck-choose]').count(), 0, 'Nothing to choose before a university is added');
-          assert.deepEqual(await comparison.locator('[data-deck-empty]').evaluateAll(nodes => nodes.map(n => getComputedStyle(n).transform)), ['none', 'none', 'none'], 'Empty places are not tilted');
+          const empties = await comparison.locator('[data-deck-empty]').evaluateAll(nodes => nodes.map(n => getComputedStyle(n).transform));
+          assert(empties.length === 1 && empties.every(value => value === 'none'), 'One straight start panel');
+          assert.equal(await comparison.locator('[data-deck-add]').count(), 3, 'Three quick-add buttons');
           await comparison.getByLabel('Университет 1', { exact:true }).selectOption('unipd');
           await comparison.locator('[data-deck-choose=unipd]').click();
           assert.match(await comparison.locator('[data-university-decision]').innerText(), /Основной вуз.*Padova/s);

@@ -138,6 +138,22 @@ try {
     const ctaBox = await primary.boundingBox();
     assert(ctaBox && ctaBox.y + ctaBox.height < 900, 'Free plan action visible in first viewport');
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `${width}: horizontal overflow`);
+    // Owner, 12 Nov 2026 (screenshot on a wide monitor): «ну это уже совсем не серьезно».
+    // The panel used to shrink as the gutter grew: 204px at 1920, 80px at 2560.
+    if (width === 1440) for (const wide of [1920, 2560]) {
+      const widePage = await browser.newPage({ viewport: { width: wide, height: 1200 }, reducedMotion: 'reduce' });
+      await settle(widePage, 4175);
+      const fit = await widePage.evaluate(() => {
+        const panel = document.querySelector('[data-hero-panel]'), title = panel.querySelector('h1');
+        const buttons = [...panel.querySelectorAll('a[data-fab-yield], a[data-hero-document-check]')].map(b => Math.round(b.getBoundingClientRect().height));
+        return { panel: panel.getBoundingClientRect().width, titleOverflow: title.scrollWidth - title.clientWidth, buttons, sideways: document.documentElement.scrollWidth > innerWidth + 1 };
+      });
+      assert(fit.panel >= 400, `${wide}: hero panel keeps its width (${fit.panel}px)`);
+      assert(fit.titleOverflow <= 1, `${wide}: hero title stays inside its panel`);
+      assert(fit.buttons.every(h => h <= 56), `${wide}: hero buttons stay on one line (${fit.buttons})`);
+      assert.equal(fit.sideways, false, `${wide}: horizontal overflow`);
+      await widePage.close();
+    }
     const accents = page.locator('[data-italian-accent]');
     assert.equal(await accents.count(), 0,'The removed landing pricing section leaves no detached decorative accent');
     let visible = 0;

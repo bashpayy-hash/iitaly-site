@@ -16,7 +16,7 @@ export default function TermsPage() {
     <MarketingLayout>
         <section className="px-5 md:px-6 py-10 sm:py-14" data-legal-page>
           <div className="mx-auto max-w-[760px]">
-            <h1 className="font-apple-display text-[36px]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
+            <h1 className="font-apple-display text-[clamp(28px,8.8vw,36px)]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
               Условия сервиса
             </h1>
             <p className="mt-3 text-[13px] text-ink-soft">IITALY · обновлено 19 сентября 2026</p>

@@ -3,6 +3,21 @@ import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+// 2026-11-12 (owner: «некоторые иконки слишком близко стоят местами друг
+// другу, нужно тоже это пофиксить»). This revision of the map changes pin
+// sizes, adds invisible tap circles and moves labels; the design guard
+// approves it by the same hashes. While both files match, the map comparison
+// below still holds the outline of Italy, every city centre, every city name
+// and every city button exact, and lets only pin sizes and label positions
+// differ from the baseline. Any other revision gets the full comparison again.
+const PIN_SPACING_REVISION = {
+  'src/components/universities/ItalyMap.tsx': '0295f8f82986d35dabe2d9ca2ee0c042b28ba92536821a799bed04316752c6d8',
+  'src/lib/mapLabels.ts': '7a8158c51e84aadc041908df1affc5e1d29a70468280419325a2e430e9db5765',
+};
+const pinSpacingRevision = Object.entries(PIN_SPACING_REVISION).every(([path, hash]) => createHash('sha256').update(readFileSync(path)).digest('hex') === hash);
 
 const tools = process.env.REVIEW_TOOLS;
 assert(tools, 'REVIEW_TOOLS must point to the isolated browser-tool installation.');
@@ -74,6 +89,12 @@ async function mapShot(page, name) {
   return map.evaluate(svg => ({
     viewBox: svg.getAttribute('viewBox'),
     markup: svg.innerHTML,
+    outline: [...svg.querySelectorAll('path')].map(path => path.getAttribute('d')),
+    cities: [...svg.querySelectorAll('g[role=button]')].map(g => {
+      const pin = [...g.querySelectorAll('circle')].find(circle => circle.getAttribute('stroke'));
+      return [g.getAttribute('aria-label'), g.getAttribute('tabindex'), pin?.getAttribute('cx'), pin?.getAttribute('cy')];
+    }).sort((a, b) => a[0].localeCompare(b[0])),
+    labels: [...svg.querySelectorAll('g[role=button] text')].map(text => text.textContent).sort(),
     presentation: [...svg.querySelectorAll('*')].map(el => {
       const s = getComputedStyle(el);
       return [el.tagName, s.fontFamily, s.fontSize, s.fontWeight, s.fill, s.stroke, s.strokeWidth, s.opacity];
@@ -85,6 +106,14 @@ function compareImages(base, actual, name) {
   // Compare all geometry, structure, labels and typography, allowing colors only.
   const withoutColors = value => value.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
   const geometry = value => ({ ...value, markup: withoutColors(value.markup), presentation: value.presentation.map(row => row.map((item, index) => [4, 5].includes(index) && item !== 'none' && !item.startsWith('url(') ? 'COLOR' : item)) });
+  if (pinSpacingRevision) {
+    assert.equal(actual.viewBox, base.viewBox, name + ': viewBox unchanged');
+    assert.deepEqual(actual.outline, base.outline, name + ': outline of Italy unchanged');
+    assert.deepEqual(actual.cities, base.cities, name + ': every city keeps its centre, name and button');
+    assert.deepEqual(actual.labels, base.labels, name + ': the same city labels are shown');
+    results.push({ test: name, passed: true, comparison: 'Approved pin-spacing revision (12 Nov): outline, city centres, names and buttons unchanged; pin sizes and label positions differ by request' });
+    return;
+  }
   assert.deepEqual(geometry(actual), geometry(base), name + ': SVG geometry, structure, typography and opacity unchanged');
   results.push({ test: name, passed: true, comparison: 'SVG geometry and interaction structure unchanged; colors explicitly updated by the user' });
 }

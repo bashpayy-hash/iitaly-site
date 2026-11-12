@@ -40,7 +40,7 @@ export function MarketingFooter() {
           <a href={OFFICIAL_SOURCES.lazioDsu.href} target="_blank" rel="noopener noreferrer">DiSCo Lazio 2026/27</a>.
           {" "}Ответы ИИ могут содержать ошибки.
         </p>
-        <span className="flex flex-wrap gap-4">
+        <span className={styles.footerLegal}>
           <Link href="/terms" prefetch={false}>Условия сервиса</Link>
           <Link href="/privacy" prefetch={false}>Политика конфиденциальности</Link>
         </span>
