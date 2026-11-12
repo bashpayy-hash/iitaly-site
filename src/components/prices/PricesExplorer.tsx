@@ -91,7 +91,9 @@ export function PricesExplorer() {
             <div className="mt-5 grid grid-cols-3 divide-x divide-white/10 overflow-hidden rounded-[16px] border border-white/10">
               {[
                 { v: "28", l: "шагов в маршруте" },
-                { v: "43", l: "университета" },
+                // Мягкий перенос: на 320px колонка 76px, и слово целиком вылезало
+                // из ячейки (аудит 12 Nov). Текст тот же, перенос только по нужде.
+                { v: "43", l: "универ\u00ADситета" },
                 { v: "30", l: "городов" },
               ].map((s) => (
                 <div key={s.l} className="px-1.5 py-2.5 text-center sm:px-4">

@@ -19,7 +19,7 @@ export default function NotFound() {
         <div className="mx-auto flex max-w-[640px] flex-col items-center text-center">
           <Vespa pose="404" className="h-40 w-auto sm:h-48" />
           <p className="mt-8 text-[13px] font-semibold text-[#A33421]">Ошибка 404</p>
-          <h1 className="mt-3 font-apple-display text-[36px]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">Такой страницы нет</h1>
+          <h1 className="mt-3 font-apple-display text-[clamp(28px,8.8vw,36px)]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">Такой страницы нет</h1>
           <p className="mt-4 max-w-md text-[17px] leading-[1.5] text-ink-soft">
             Ссылка устарела или адрес введён с ошибкой. Сама система
             поступления на месте — вот куда можно вернуться.

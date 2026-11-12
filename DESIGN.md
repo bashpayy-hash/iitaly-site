@@ -1500,3 +1500,39 @@ covering neighbours by 3–7 units, labels on pins), 0 now.
 - Vespi no longer peeks over the Ionian corner of the map; he holds the map
   in the empty comparison instead.
 - `design-university-review` now fails if pins or labels crowd again.
+
+## Wide screens and narrow ones: a site-wide evenness pass · 12 November 2026
+
+Owner, screenshot of the home page on a wide monitor: «ну это уже совсем не
+серьезно, пройдись по всему сайту и убирай неровности».
+
+Every check so far ran at 1440 and below; the owner's screen (3840 px at
+200 %, browser zoomed out) gives the site a window over 1900 px. Audited 19
+pages at 320, 390, 768, 1024, 1280, 1440, 1920 and 2560 in a browser: page
+scrolling sideways, text outside its box or the screen, framed panels
+narrower than their text, buttons wrapping into three lines, tap targets.
+
+- **Home hero.** The panel column was capped at 580 px while the right
+  gutter grew with the screen, so the panel was 524 px at 1280, 444 at
+  1440, 204 at 1920 and 80 at 2560: the title spilled out, the buttons
+  broke into three lines. The column is now panel + 24 + gutter, and the
+  panel is 460 px at every width. From 1920 the scene grows in height with
+  the width (37.5vw), so a 2560 screen crops it like 1920 does instead of
+  cutting off Vespi's helmet.
+- **320 px.** /privacy, /terms and 404 titles scale down (clamp 28–36 px):
+  «конфиденциальности» pushed the page 20 px sideways. The Modulo 1
+  trainer's «Инструменты» moves to its own line and its panel opens from
+  the left edge (it scrolled the page and then opened off screen). The
+  /prices «43 университета» cell gets a soft hyphen.
+- **Cabinet.** The scenery after the last step of the stage in focus stuck
+  50–60 px out of the stage's band at every width; the band now leaves room.
+- **Footer.** «Условия сервиса» and «Политика конфиденциальности» are 44 px
+  tall on phones (were 21).
+- **Left as they are, measured.** Long answer tiles on /plan and the
+  optional service on /prices wrap by design; Modulo 1 paper fields are a
+  replica of the form; the guides road at 320 px overflows its own column
+  by 6 px into empty space without touching anything.
+- `design-accents-review` now also opens the home page at 1920 and 2560.
+- `design-review` compares the map against `main`; for the approved
+  pin-spacing revision it holds the outline, every city centre, name and
+  button exact and lets only pin sizes and label positions differ.

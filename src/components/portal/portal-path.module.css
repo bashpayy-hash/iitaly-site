@@ -127,6 +127,10 @@
    ряда (строка пейзажа без высоты — она идёт сразу за кружком). Ширина не
    доходит до подписей соседних кружков на другой стороне. */
 .scenery { --scene-h:200px; position:relative; display:block; height:0; pointer-events:none; }
+/* Макет после последнего шага этапа в фокусе вылезал на 50–60 px ниже его
+   полосы (аудит 12 Nov, на всех ширинах). Картинка центрована в промежутке
+   между шагами: под ней нужно (высота макета − шаг) / 2 и воздух. */
+.row[data-road-unit-state=current]:has(> .steps > .scenery:last-child) { padding-bottom:max(4px, calc((200px - var(--row)) / 2 + 32px)); }
 .scenery img { position:absolute; top:calc(var(--row) * -0.5 - var(--scene-h) / 2); width:min(280px, calc(50% + 0.71 * var(--amp) - 72px)); height:var(--scene-h); object-fit:contain; user-select:none; -webkit-user-drag:none; }
 .scenery[data-side=left] img { right:calc(50% - 0.71 * var(--amp) + 56px); object-position:right bottom; }
 .scenery[data-side=right] img { left:calc(50% - 0.71 * var(--amp) + 56px); object-position:left bottom; }

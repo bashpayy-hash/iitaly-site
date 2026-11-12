@@ -67,6 +67,10 @@
 .footerTagline { margin: 16px 0 8px; color: #141413; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
 .footer nav { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 40px; padding-top: 10px; }
 .footer nav a { display: flex; align-items: center; min-height: 44px; font-size: 14px; }
+/* «Условия сервиса» и «Политика» внизу были высотой 21px — пальцем не попасть
+   (аудит 12 Nov, 320–390px). Та же высота 44px, что у ссылок меню подвала. */
+.footerLegal { display: flex; flex-wrap: wrap; column-gap: 16px; }
+.footerLegal a { display: inline-flex; align-items: center; min-height: 44px; }
 .footer a:hover { color: #141413; text-decoration: underline; text-underline-offset: 4px; }
 .finePrint { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; border-top: 1px solid var(--i-line); padding-top: 24px; }
 .finePrint p { max-width: 640px; }
@@ -90,7 +94,15 @@
    4:3, панель под ним на кремовом. Текст появляется одной короткой
    последовательностью (520 мс, шаг 60 мс); с prefers-reduced-motion всё
    стоит на месте. */
-.heroScene { --hero-gutter: max(32px, calc((100vw - 1216px)/2)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 580px); align-items: center; min-height: min(720px, 84vh); overflow: clip; background: #2A2420; color: #141413; }
+/* Ширина панели не зависит от ширины экрана (owner, 12 Nov: «ну это уже совсем
+   не серьезно» — скриншот на широком мониторе). Раньше правая колонка была до
+   580px, а поле справа (--hero-gutter) росло с экраном и съедало её: панель
+   524px на 1280, 444 на 1440, 204 на 1920, 80 на 2560 — заголовок вылезал,
+   кнопки ломались в три строки. Теперь колонка = панель + 24 + поле, и сама
+   панель всегда --hero-panel. */
+/* С 1920px сцена растёт в высоту вместе с шириной (37.5vw = 720 на 1920): на
+   2560 при 720px кадр 3,5:1 срезал шлем Веспи сверху. */
+.heroScene { --hero-gutter: max(32px, calc((100vw - 1216px)/2)); --hero-panel: 460px; position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, calc(var(--hero-panel) + 24px + var(--hero-gutter))); align-items: center; min-height: min(max(720px, 37.5vw), 84vh); overflow: clip; background: #2A2420; color: #141413; }
 .heroSceneBox { position: absolute; inset: 0; z-index: -1; overflow: clip; }
 /* Картинка сцены видна с первого кадра страницы, петля ложится поверх неё
    холстом с тем же кадром (см. LivingLandscape; owner, 11 Nov: «резко
