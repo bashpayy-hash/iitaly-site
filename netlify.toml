@@ -7,6 +7,32 @@
   NEXT_PUBLIC_BACKEND_URL = "https://web-production-9faf3.up.railway.app"
   NEXT_PUBLIC_STRIPE_ENABLED = "true"
 
+# Обход CORS (owner, 12 Nov 2026: «Сделай обход»). Сервер на Railway отвечает
+# с заголовками CORS только https://iitaly.netlify.app, поэтому на основном
+# домене браузер прятал от сайта ответы сервера: проверка документа, вход в
+# кабинет, чат и оплата не работали ни у кого.
+# - /backend/* — тот же сервер через Netlify: браузер видит запрос на свой
+#   домен, CORS не нужен. Сайт на iitaly.net ходит сюда (src/lib/backend.ts).
+#   Netlify ждёт ответа до 26 секунд; проверка документа укладывается
+#   (фото — 11 с, замер 12 Nov).
+# - iitaly.netlify.app → iitaly.net навсегда: после оплаты Stripe возвращает
+#   на SITE_URL сервера (сейчас iitaly.netlify.app), а номер заказа лежит во
+#   вкладке на iitaly.net. Переадресация приводит покупателя туда, где заказ.
+#   Превью (deploy-preview-…) это правило не трогает.
+# Когда на Railway добавят https://iitaly.net в ALLOWED_ORIGINS и выставят
+# SITE_URL=https://iitaly.net, оба правила можно снять.
+[[redirects]]
+  from = "https://iitaly.netlify.app/*"
+  to = "https://iitaly.net/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/backend/*"
+  to = "https://web-production-9faf3.up.railway.app/:splat"
+  status = 200
+  force = true
+
 # Заголовки безопасности (owner, 11 Nov 2026: «максимально оптимизируй сайт и
 # make sure что он безопасный»).
 #

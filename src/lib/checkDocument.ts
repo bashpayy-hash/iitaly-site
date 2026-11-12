@@ -154,6 +154,10 @@ export async function checkDocument(payload: DocPayload, hint?: string, context?
   }
 
   if (!data || typeof data !== "object") {
+    // Прокси Netlify на iitaly.net ждёт сервер до 26 секунд и не берёт
+    // слишком большое тело запроса; оба ответа приходят его HTML-страницей.
+    if (res.status === 504) throw new DocCheckError("server", "Проверка шла дольше обычного и оборвалась. Файл остался выбран — попробуй ещё раз; если повторится, раздели PDF на части.", 504, undefined, true);
+    if (res.status === 413) throw new DocCheckError("server", "Файл слишком большой для отправки. Сожми PDF или раздели его на части и проверь по одной.", 413, undefined, false);
     throw new DocCheckError(
       "server",
       `Сервер ответил не по формату (код ${res.status}). Попробуй ещё раз через минуту.`,

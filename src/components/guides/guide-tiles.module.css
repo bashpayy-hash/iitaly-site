@@ -36,12 +36,10 @@
 .tile h2 { align-self:start; max-width:15ch; margin:12px 0 0; font-size:24px; font-weight:600; line-height:1.1; letter-spacing:-.025em; text-wrap:balance; }
 .tile p { align-self:start; max-width:30ch; margin:10px 0 0; color:#CFC6BA; font-size:15px; line-height:1.45; text-wrap:pretty; }
 .actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px 18px; margin-top:20px; }
-.primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
+.primary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
 .primary { padding:10px 22px; background:#FAF6EE; color:#2A2420; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
 .primary:hover { background:#EAD7BB; }
-.secondary { gap:6px; padding:10px 4px; color:#FAF6EE; text-underline-offset:5px; }
-.secondary:hover { text-decoration:underline; }
-.primary:focus-visible,.secondary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
+.primary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
 
 @media(max-width:760px) {
   .band { padding:40px 0 34px; }
