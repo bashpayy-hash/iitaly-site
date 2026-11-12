@@ -8,9 +8,9 @@
 .band { position:relative; padding:52px 0 44px; background:#2A2420; color:#FAF6EE; box-shadow:0 0 0 100vmax #2A2420; clip-path:inset(0 -100vmax); }
 
 /* Строки всех карточек на одних линиях: сцена, название, суть, действия. */
-.band [data-guide-carousel] ul { --rows:4; }
+.band [data-guide-carousel] ul { --rows:5; }
 .slide { min-width:0; }
-.tile { display:grid; grid-row:span 4; grid-template-rows:subgrid; justify-items:center; min-width:0; text-align:center; }
+.tile { display:grid; grid-row:span 5; grid-template-rows:subgrid; justify-items:center; min-width:0; text-align:center; }
 
 /* Вещь стоит на полосе: по центру, на общей базовой линии, без рамки. */
 /* Owner, 3 Nov: «иконки слишком большие» — a 180px stage, objects at most 78% wide. */
@@ -29,7 +29,11 @@
 /* Клавиатура и касания: подъём вещи только у карточки в фокусе. */
 .tile:focus-within .art { transform:translateY(-12px); }
 
-.tile h2 { align-self:start; max-width:15ch; margin:22px 0 0; font-size:24px; font-weight:600; line-height:1.1; letter-spacing:-.025em; text-wrap:balance; }
+/* Бесплатно / с маршрутом — над названием (owner, 12 Nov). */
+.access { display:inline-flex; align-items:center; align-self:start; gap:6px; margin:20px 0 0; padding:5px 12px; border-radius:999px; font-size:13px; font-weight:500; line-height:1.2; }
+.access[data-guide-access=free] { background:rgba(126,190,150,.18); color:#BFE3CB; }
+.access[data-guide-access=paid] { background:rgba(250,246,238,.08); color:#CFC6BA; }
+.tile h2 { align-self:start; max-width:15ch; margin:12px 0 0; font-size:24px; font-weight:600; line-height:1.1; letter-spacing:-.025em; text-wrap:balance; }
 .tile p { align-self:start; max-width:30ch; margin:10px 0 0; color:#CFC6BA; font-size:15px; line-height:1.45; text-wrap:pretty; }
 .actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px 18px; margin-top:20px; }
 .primary,.secondary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }

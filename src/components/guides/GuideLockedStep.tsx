@@ -29,6 +29,6 @@ export function GuideLockedStep({ id, step, count, lead = null }: { id: string; 
     <ol className={styles.ghost} aria-hidden="true" start={lead ? 2 : 1}>
       {Array.from({ length: hidden }, (_, index) => <li key={index}><span>{index + (lead ? 2 : 1)}</span><div><i /><i /></div></li>)}
     </ol>
-    {!paid && <GuideWall place="guide-step" note={`Дальше ещё ${hidden} ${pointsWord(hidden)}: что именно сделать, суммы, сроки и ссылки. Откроются с маршрутом вместе с остальными гайдами, визой и проверкой документов — один платёж, не подписка.`} />}
+    {!paid && <GuideWall place="guide-step" note={`${lead ? "Дальше ещё" : "В разборе"} ${hidden} ${pointsWord(hidden)}: что именно сделать, суммы, сроки и ссылки. Откроются с маршрутом вместе с остальными гайдами, визой и проверкой документов — один платёж, не подписка.`} />}
   </div>;
 }

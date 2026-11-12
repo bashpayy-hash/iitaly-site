@@ -13,12 +13,10 @@ export function PortalDocumentContext({ value, onChange, disabled }: {
         <label>Стипендиальная программа
           <select value={value.profile} onChange={e => onChange({ ...value, profile: e.target.value as DocumentReviewContext["profile"] })}>
             <option value="general">DSU · общие правила</option>
-            <optgroup label="Свои правила конкурса">
-              <option value="bocconi">Bocconi · ISU / ISEEU</option>
-              <option value="piemonte">EDISU Piemonte</option>
-              <option value="toscana">DSU Toscana</option>
-              <option value="ergo">ER.GO · Emilia-Romagna</option>
-            </optgroup>
+            <option value="bocconi">Bocconi · ISU / ISEEU</option>
+            <option value="piemonte">EDISU Piemonte</option>
+            <option value="toscana">DSU Toscana</option>
+            <option value="ergo">ER.GO · Emilia-Romagna</option>
           </select>
         </label>
         <label>Учебный год заявки

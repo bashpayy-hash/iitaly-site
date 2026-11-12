@@ -17,8 +17,8 @@
 .headLinks a { display:inline-flex; align-items:center; min-height:44px; color:#8b2939; font-size:13px; text-decoration:none; }
 .headLinks a:hover { text-decoration:underline; text-underline-offset:3px; }
 .workbar { position:sticky; top:64px; z-index:30; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:24px; padding:10px 0; border-block:1px solid #ddd9d1; background:#FAF8F5; }
-.scenarios { display:flex; padding:3px; border:1px solid #d7d3ca; border-radius:9px; background:#efeeeb; }
-.light .scenarios button { min-height:38px; border:0; border-radius:6px; padding:8px 12px; background:transparent; font-size:13px; color:#66635d; white-space:nowrap; }
+.scenarios { display:flex; padding:3px; border:1px solid #d7d3ca; border-radius:999px; background:#efeeeb; }
+.light .scenarios button { min-height:38px; border:0; border-radius:999px; padding:8px 12px; background:transparent; font-size:13px; color:#66635d; white-space:nowrap; }
 .light .scenarios button[aria-pressed="true"] { background:#fffdf9; color:#242321; }
 .pages { display:flex; justify-content:center; align-items:center; gap:4px; min-width:0; }
 .light .pages button { display:flex; align-items:center; gap:7px; min-height:44px; padding:8px 12px; border:0; border-bottom:2px solid transparent; background:transparent; color:#6d6962; font-size:13px; }
@@ -26,7 +26,7 @@
 .light .pages button[aria-current="page"] { border-bottom-color:#8b2939; color:#242321; }
 .extraPage { padding:6px; color:#6d6962; font-size:12px; white-space:nowrap; }
 .tools { position:relative; }
-.tools > summary { display:flex; align-items:center; justify-content:center; gap:10px; min-height:44px; padding:8px 12px; border:1px solid #d7d3ca; border-radius:8px; color:#45413b; background:#fffdf9; font-size:13px; list-style:none; cursor:pointer; }
+.tools > summary { display:flex; align-items:center; justify-content:center; gap:10px; min-height:44px; padding:8px 12px; border:1px solid #d7d3ca; border-radius:999px; color:#45413b; background:#fffdf9; font-size:13px; list-style:none; cursor:pointer; }
 .tools > summary::-webkit-details-marker { display:none; }
 .tools[open] > summary { border-color:#9f9285; }
 .toolPanel { position:absolute; top:calc(100% + 8px); right:0; width:350px; max-width:calc(100vw - 32px); max-height:calc(100dvh - 160px); overflow:auto; overscroll-behavior:contain; padding:20px; border:1px solid #d7d0c7; border-radius:12px; background:#fffdf9; box-shadow:0 8px 28px #392d2314; }
@@ -34,7 +34,7 @@
 .toolPanel h2 { margin:0; font-size:13px; font-weight:550; }
 .toolPanel p { margin:6px 0 12px; color:#6d6962; font-size:12px; line-height:1.5; }
 .toolActions { display:flex; flex-wrap:wrap; gap:6px; }
-.light .toolActions button { min-height:44px; padding:8px 10px; border:1px solid #ded8cf; border-radius:7px; background:transparent; color:#45413b; font-size:12px; }
+.light .toolActions button { min-height:44px; padding:8px 10px; border:1px solid #ded8cf; border-radius:999px; background:transparent; color:#45413b; font-size:12px; }
 .light .toolActions button:hover { background:#f2eee7; }
 .light .toolActions button[data-destructive] { color:#8b2939; }
 .light .toolActions button[aria-current="page"],.light .toolActions button[aria-pressed="true"] { border-color:#a88b81; color:#8b2939; }
@@ -75,7 +75,7 @@
 .finishBar { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-top:24px; border-top:1px solid #ddd9d1; padding:22px 0 0; }
 .finishBar b { display:block; font-size:15px; font-weight:500; }
 .finishBar p { margin:5px 0 0; max-width:560px; color:#6d6962; font-size:13px; line-height:1.5; }
-.light .finishBar button { flex-shrink:0; min-height:46px; padding:10px 16px; border:1px solid #cfc7bd; border-radius:8px; background:transparent; color:#45413b; font-size:13px; }
+.light .finishBar button { flex-shrink:0; min-height:46px; padding:10px 16px; border:1px solid #cfc7bd; border-radius:999px; background:transparent; color:#45413b; font-size:13px; }
 .light .finishBar button:hover { background:#efeeeb; }
 .samplePreview { margin:12px 0 0; border-top:1px solid #e7e2da; padding-top:8px; }
 .samplePreview summary { display:flex; align-items:center; min-height:44px; color:#6d6259; font-size:12px; cursor:pointer; }

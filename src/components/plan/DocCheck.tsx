@@ -48,7 +48,7 @@ type State =
 
 function inspectorMessage(step: State["step"], availabilityPending: boolean, unavailable: boolean, walled = false) {
   if (availabilityPending) return "Сначала проверю, доступна ли ИИ-сверка.";
-  if (unavailable) return "Проверка временно недоступна. Это не замечание к твоему документу.";
+  if (unavailable) return "Проверка временно недоступна. Это не замечание к твоему документу и не связано с оплатой.";
   if (walled) return "Бесплатная проверка одного файла уже использована на этом устройстве. Следующие документы проверяются в кабинете.";
   if (step === "reading") return "Читаю выбранный файл. Проверка начнётся после твоего подтверждения.";
   if (step === "checking") return "Проверяю содержание и применимые требования. Покажу итог, замечания и что делать дальше.";
@@ -213,24 +213,22 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             Программа
             <select value={context.profile}
               onChange={e => updateContext({ profile: e.target.value as DocumentReviewContext["profile"] })}
-              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              className="mt-1 block min-h-11 w-full rounded-[20px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
               {/* Owner, 8 Nov: основной вариант — общий DSU; отдельные конкурсы
                   только там, где правила отличаются (их подтверждает база
                   сервера). Значение general — то, что сервер и принимает. */}
               <option value="general">DSU · общие правила</option>
-              <optgroup label="Свои правила конкурса">
-                <option value="bocconi">Bocconi · ISU / ISEEU</option>
-                <option value="piemonte">EDISU Piemonte</option>
-                <option value="toscana">DSU Toscana</option>
-                <option value="ergo">ER.GO · Emilia-Romagna</option>
-              </optgroup>
+              <option value="bocconi">Bocconi · ISU / ISEEU</option>
+              <option value="piemonte">EDISU Piemonte</option>
+              <option value="toscana">DSU Toscana</option>
+              <option value="ergo">ER.GO · Emilia-Romagna</option>
             </select>
           </label>
           <label className="min-w-0 text-apple-caption text-cloud-body">
             Учебный год заявки
             <select value={context.academicYear}
               onChange={e => updateContext({ academicYear: e.target.value as DocumentReviewContext["academicYear"] })}
-              className="mt-1 block min-h-11 w-full rounded-apple-input border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
+              className="mt-1 block min-h-11 w-full rounded-[20px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">
               <option value="unspecified">Ещё не определился</option>
               <option value="2026/27">2026/27</option>
               <option value="2027/28">2027/28</option>
@@ -263,10 +261,13 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       </div>
       <div className={styles.auditTool}>
 
-      {(availabilityPending || unavailable) && <div role="status" className="mt-5 border border-white/15 p-4 text-apple-body-sm text-cloud-body">
+      {(availabilityPending || unavailable) && <div role="status" className="mt-5 rounded-[20px] border border-white/15 p-4 text-apple-body-sm text-cloud-body">
         <b className="block text-cloud-white">{availabilityPending ? "Проверяем доступность ИИ…" : "Проверка документов пока недоступна"}</b>
         {unavailable && <>
           <p className="mt-2">{availability.error}</p>
+          {/* Owner, 12 Nov: в инкогнито решил, что проверка закрыта, потому что
+              не оплачено. Причина другая (сервер не ответил), и это надо сказать. */}
+          <p className="mt-2" data-document-check-free-note>Это не связано с оплатой: одна проверка бесплатна для всех и останется за тобой, когда сервис ответит.</p>
           {"file" in state && <p className="mt-2">Выбранный файл остаётся в этой вкладке, пока страница открыта.</p>}
           <AppleButton type="button" variant="outlined" size="sm" className="mt-3" onClick={refreshAvailability} disabled={availabilityPending}>Проверить доступность</AppleButton>
         </>}
@@ -274,7 +275,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
 
       {portalInspector && <p className="text-apple-body-sm text-cloud-body">Новая проверка заменит текущий разбор. Исходный файл остаётся только в открытой форме.</p>}
       {walled && !("file" in state) ? (
-        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-apple-input border border-white/15 p-4" data-document-walled>
+        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-[20px] border border-white/15 p-4" data-document-walled>
           <AppleButton type="button" variant="filled" size="sm" onClick={wall.open} data-wall-buy data-wall-place="document-check" aria-haspopup="dialog">{wall.label}</AppleButton>
           <span className="text-apple-caption text-cloud-meta">Бесплатная проверка одного файла использована. В кабинете — проверки без лимита и повторные версии.</span>
         </div>
@@ -307,7 +308,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
           <small>или перетащи сюда<br />{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>
       ) : (
-        <div className="mt-5 flex items-start gap-3 rounded-apple-input border border-white/15 p-4 sm:items-center sm:gap-4">
+        <div className="mt-5 flex items-start gap-3 rounded-[20px] border border-white/15 p-4 sm:items-center sm:gap-4">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -368,7 +369,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
 
       <div aria-live="polite" className="mt-5">
         {(state.step === "error" || state.step === "retry") && !unavailable && (
-          <div role="alert" className="border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
+          <div role="alert" className="rounded-[16px] border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
             {state.message}
             {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}
           </div>
@@ -414,7 +415,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
   const locked = !paid && (fixCount > 0 || Boolean(result.nextSteps?.length));
   const fixWall = useWallPurchase("document-fixes", locked);
   return (
-    <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
+    <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-[20px] border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
           
@@ -474,7 +475,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
           {result.problems.map((p, i) => (
             <div
               key={i}
-              className={`border px-3 py-2.5 text-apple-body-sm text-cloud-white ${
+              className={`rounded-[16px] border px-3 py-2.5 text-apple-body-sm text-cloud-white ${
                 p.severity === "critical" ? "border-red bg-red/5" : "border-warn bg-warn/5"
               }`}
             >

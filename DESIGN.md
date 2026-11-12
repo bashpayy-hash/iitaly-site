@@ -1627,3 +1627,50 @@ overviews and the guides road showed no difference between free and paid.
   carries a lock, and its model beside the road is the grey copy. The
   topic page still opens. «Начни здесь» stands on the first place a guest
   can read (the visa calculator).
+
+## The first five guides free, and one design code · 12 November 2026 (evening)
+
+Owner, with three screenshots (/guides in incognito, the document check
+saying it is unavailable, the program list open on /plan): «в гайдах и
+везде сделай бесплатными вот эти вот только первые 4, возможно, 5 гайдов
+и виз, и потом дальше типа скажи, а вот дальше плати… проверка
+документов должна быть за деньги, но хотя бы одну бесплатную попытку
+давай всем… сделай так, чтобы на всём сайте был такой общий дизайн-код,
+потому что иногда он слишком квадратный, иногда слишком круглый… шрифт
+другой».
+
+**Guides.** The first five topics on the band and the road are open in
+full: education, tests, apostille, translation, DoV/CIMEA. The other eight
+and every visa point show only titles; the visa facts and the funds
+calculator stay open. Every card on the band says «Бесплатно» or «С
+маршрутом»; the road locks the paid topics; each overview says what is
+free and what the route opens. The first-sentence teaser of the afternoon
+is gone: after the free five, the answer is «дальше — с маршрутом».
+
+**The document check.** It was not closed by payment: the backend still
+does not answer https://iitaly.net (CORS), so nobody on the main domain
+reaches the one free check. The unavailable state now says so: «Это не
+связано с оплатой: одна проверка бесплатна для всех».
+
+**The design code, measured first** (every page at 1440 and 390):
+
+- Three faces were in use: SF Pro / Inter Tight on most text, Onest on
+  163 text nodes (bento labels, wall buttons, the road heading, the
+  compare buttons, most of the Modulo 1 trainer), Inter Tight in the
+  cabinet. On Windows the owner saw Inter Tight next to Onest. Inside the
+  page surface `--font-sans`, `--font-display` and `--font-mono` now lead
+  to the Apple stack (`marketing.module.css`), so every component that
+  asked for «the sans» gets the same face. The universities map keeps
+  Onest: its label widths are measured for it.
+- Radii had 20 values. The scale now: 999px for every button, toggle and
+  chip; 16px for fields and small inner boxes; 20px for inner cards,
+  walls and bento cells; 28px for cards and sections (24px on phones).
+  0px stays only on list rows and the paper form's own fields.
+- The square fields on /plan were a bug: `rounded-apple-input` named a
+  token that does not exist, so the selects, the walled box and the
+  result got no radius at all. The unavailable notice had none either.
+- The cabinet's buttons were 12px rectangles while the rest of the site
+  used pills; the trainer used 6–10px. Both now follow the scale.
+- The program list used `<optgroup>`: Windows draws its label in bold and
+  indents the options, which is the uneven text in the screenshot. The
+  options are one flat list now (on /plan and in the cabinet).

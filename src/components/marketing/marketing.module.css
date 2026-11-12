@@ -1,5 +1,13 @@
 /* These tokens inherit only inside MarketingLayout, never through :root. */
+/* Один шрифт на всём сайте (owner, 12 Nov: «шрифт другой»): токены
+   --font-sans/--font-display/--font-mono внутри страниц ведут на тот же стек,
+   что заголовки и текст, — SF Pro на устройствах Apple, Inter Tight на
+   остальных. Раньше часть подписей, кнопок стен и ячеек брала Onest. Карта
+   вузов остаётся на Onest: ширина её подписей измерена под этот шрифт. */
 .surface {
+  --font-sans: var(--font-apple-text);
+  --font-display: var(--font-apple-display);
+  --font-mono: var(--font-apple-text);
   --color-cloud-white: #141413;
   --color-cloud-body: #56524c;
   --color-cloud-meta: #6b6761;
@@ -19,6 +27,7 @@
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+.surface [data-map-frame] { --font-sans: var(--font-onest), "Helvetica Neue", Arial, sans-serif; }
 .surface :where(h1, h2, h3) { text-transform: none; text-wrap: balance; }
 .surface :where(h2) { font-size: clamp(34px, 4vw, 52px); line-height: 1.08; letter-spacing: -.03em; font-weight: 600; }
 .surface :where(p) { text-wrap: pretty; }

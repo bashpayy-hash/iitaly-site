@@ -7,7 +7,7 @@
 .topbar > div { display: grid; gap: 6px; }
 .topbar span { color: #66635d; font-size: 12px; }
 .topbar b { font-size: 18px; font-weight: 500; }
-.topbar button, .secondary { border: 1px solid #cbc7bf; border-radius: 8px; background: #fff; color: #373734; padding: 10px 14px; }
+.topbar button, .secondary { border: 1px solid #cbc7bf; border-radius:999px; background: #fff; color: #373734; padding: 10px 14px; }
 .privacy { font-size: 12px; line-height: 1.55; color: #66635d; margin: 14px 0 20px; max-width: 760px; }
 .progressRow { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #55534e; font-size: 12px; font-variant-numeric: tabular-nums; }
 .progress { width: 100%; display: block; height: 4px; margin: 10px 0 28px; appearance: none; border: 0; background: #e7e6e1; accent-color: #373734; }
