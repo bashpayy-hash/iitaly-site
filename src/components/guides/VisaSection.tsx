@@ -4,8 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { VISA_GUARANTEE_LABEL } from "@/data/changes2026";
-import { ADMISSION_SOURCES } from "@/data/admissions";
-import { VG_PER_YEAR, VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/data/guides";
+import { VG_PER_YEAR, VISA_DOCS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/data/guides";
 import type { VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
 import { GuidePointSwitcher, type GuidePointRow } from "./GuidePointSwitcher";
@@ -19,8 +18,8 @@ import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitche
 
 /* Виза (owner, 9 Nov): ключевые факты, ссылка на VFS и калькулятор средств
    открыты; в сроках, документах и проверке перед подачей открыты отдельные
-   пункты (guideAccess.ts), у остальных — название и стена. Карточки частей
-   рисует GuidePage.
+   пункты (guideAccess.ts), у остальных — название и стена. Ключевые факты
+   и ссылку на VFS рисует бенто обзора (GuideOverview.tsx, owner 12 Nov).
    Owner, 10 Nov: пункты стоят на пути-прогрессе, у каждого — предмет по его
    теме из общего набора (будильник — сроки, монеты — средства, паспорт —
    VFS, шапочка — вуз, ключи — жильё, конверт-кит — permesso). */
@@ -42,10 +41,7 @@ export function VisaSection({ part }: { part?: VisaPart }) {
   if (part === "documents") return <VisaChecklist />;
   if (part === "timeline") return <VisaPoints part="timeline" rows={VISA_TIMELINE.map((step, index) => ({ label:step.t, value:step.p, art:art(TIMELINE_ART[index]) }))} subject="calendar" />;
   if (part === "before-application") return <VisaPoints part="before-application" rows={VISA_REJECT_REASONS.map((reason, index) => ({ label:`Перед подачей · ${index + 1}`, value:reason, short:BEFORE_SHORT[index], art:art(BEFORE_ART[index]) }))} subject="envelope" />;
-  return <>
-    <a className={ui.textLink} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer">Официальный VFS для Италии в Казахстане</a>
-    <dl className={ui.visaFacts}>{VISA_KEY_FACTS.map(fact=><div key={fact.label}><dt>{fact.value}</dt><dd>{fact.label}</dd></div>)}</dl>
-  </>;
+  return null;
 }
 
 function VisaPoints({ part, rows, subject }: { part: VisaPointsPart; rows: GuidePointRow[]; subject: "calendar" | "envelope" }) {

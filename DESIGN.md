@@ -1575,3 +1575,39 @@ paid is how exactly, in your case, by which date, with a check.
   открыта первая фраза»), not «открыто 0».
 - Every new wall is the same purchase (`useWallPurchase`), with new
   analytics places `chat` and `document-fixes`.
+
+## Bento for spheres, guides and the visa · 12 November 2026
+
+Owner, with a Lamossa Studio screenshot from godly.design: «информацию в
+личных кабинетах по конкретным сферам и в гайдах и визе нужно подавать в
+такой вот форме … так намного лучше смотрится»; then «Да, делай бенто».
+
+**The form, taken from the reference:** a light tray with a 32px radius;
+inside, white cells of different sizes (24px radius). Every cell has a dark
+pill icon on top and its value, label and note anchored to the bottom. One
+cell is the action, with a dot texture fading from its corner. One wide
+cell carries a list (the reference's awards; here the official sources or
+the steps of a stage).
+
+**Where:** `src/components/ui/Bento.tsx` + `bento.module.css`, used by
+- the guide topic overview (`GuideOverview.tsx`): four facts, the next
+  action, the official sources and the note. The same texts that stood in
+  a column under the road; the action now stands above the steps;
+- the visa overview: the three key facts, the official VFS link, the funds
+  calculator as the action, sources and the note;
+- the cabinet stage page (`PortalFocus.tsx`): the stage scene, the stage
+  cell (steps done, title, the one-line description), the current step —
+  unchanged inside its cell, with its pips and Back / Next — all steps of
+  the stage as a list, and the document check when the stage has
+  documents.
+
+**The grid is measured on the tray, not the window** (container queries):
+under 560px one column, up to 900px six, wider twelve. The caller gives
+every cell its span at each width, so no grid has a hole: with the action,
+facts go three in a row and the fourth sits beside the wide action; the
+sources and the note mirror that row. Without an action the facts go two
+by two. On a phone the facts become rows (icon left, text right).
+
+Colours are the site's own: tray `#EFE9DF`, cells `#FFFDF9`, dark icon
+`#1F1A17`; the cabinet passes its beige, card and ink tokens through
+`--bento-*`. Icons are lucide, the family the site already uses.
