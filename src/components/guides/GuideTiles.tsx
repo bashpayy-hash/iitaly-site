@@ -3,7 +3,9 @@ import Link from "next/link";
 import type { GuideCard } from "@/data/guides";
 import { guideFirstPointHref, guideHref } from "./guideCatalogue";
 import { guideArt } from "./guideArt";
+import { Lock, LockOpen } from "lucide-react";
 import { GuideCarousel } from "./GuideCarousel";
+import { guideFree } from "./guideAccess";
 import styles from "./guide-tiles.module.css";
 
 /* Тема на полосе (owner, 3 Nov: Busy Bee Honey + apple.com): вещь стоит на
@@ -28,6 +30,11 @@ export function GuideTile({ guide, index }: { guide: GuideCard; index: number })
         // спорили с первой (Lighthouse, телефон, 12 Nov).
         fetchPriority={index === 0 ? "high" : index < 2 ? "auto" : "low"} loading={index < 4 ? "eager" : "lazy"} />
     </Link>
+    {/* Owner, 12 Nov: «первые 5 гайдов бесплатно… а вот дальше плати» —
+        метка над названием говорит это на каждой карточке. */}
+    <p className={styles.access} data-guide-access={guideFree(guide.id) ? "free" : "paid"}>
+      {guideFree(guide.id) ? <><LockOpen size={14} strokeWidth={2} aria-hidden="true" />Бесплатно</> : <><Lock size={14} strokeWidth={2} aria-hidden="true" />С маршрутом</>}
+    </p>
     <h2 id={`tile-${guide.id}`}>{guide.title}</h2>
     <p>{guide.teaser}</p>
     <div className={styles.actions}>

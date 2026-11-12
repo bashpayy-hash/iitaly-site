@@ -26,9 +26,9 @@
 .head h1 { margin: 0; font: 600 32px/1.15 var(--font-apple-display); letter-spacing: -.025em; }
 .head p { max-width: 620px; margin: 8px 0 0; color: #66635d; font-size: 15px; line-height: 1.5; }
 
-.scenarios { display: flex; flex: none; padding: 3px; border: 1px solid #d7d3ca; border-radius: 9px; background: #efeeeb; }
+.scenarios { display: flex; flex: none; padding: 3px; border: 1px solid #d7d3ca; border-radius:999px; background: #efeeeb; }
 .scenarios button {
-  min-height: 40px; padding: 8px 14px; border: 0; border-radius: 6px; background: transparent;
+  min-height: 40px; padding: 8px 14px; border: 0; border-radius:999px; background: transparent;
   color: #66635d; font: inherit; font-size: 14px; white-space: nowrap; cursor: pointer;
   transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1);
 }

@@ -1,12 +1,13 @@
-// Owner 12 Nov 2026 («мы даём слишком много информации бесплатно… надо
-// продумать, где именно сколько дать, чтобы уже брали и покупали»): the
-// guide wall. A guest reads the title and the first sentence of every step
-// and visa point (a single-sentence point stays closed whole), one sample
-// topic in full (Codice fiscale), the visa key facts and the funds
-// calculator, the first Modulo 1 sheet and two of four reference tools. Every
-// closed place shows the same purchase as /plan. Closed text beyond the first
-// sentence is never in the static HTML, the page data or the description. A
-// device that holds a paid cabinet reads everything. (9 Nov: about 40% open.)
+// Owner 12 Nov 2026, evening («сделай бесплатными только первые 4,
+// возможно, 5 гайдов… и потом дальше скажи, а вот дальше плати»): the guide
+// wall. A guest reads the first five topics in full (education, tests,
+// apostille, translation, cimea); every other topic and every visa point
+// shows only its title. The visa key facts, the funds calculator, the first
+// Modulo 1 sheet and two of four reference tools stay open. Every closed
+// place shows the same purchase as /plan; closed text is never in the static
+// HTML, the page data or the description. A device that holds a paid cabinet
+// reads everything. (Earlier on 12 Nov: the first sentence of every step and
+// one sample topic; 9 Nov: about 40% open.)
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -83,9 +84,9 @@ try {
   assert.equal(await paid.page.locator('[data-guide-dose=paid]').count(), 1, 'Paid: the overview says why all is open');
   assert.equal(await paid.page.locator('[data-wall-buy]').count(), 0);
   // «Глазами того, кто ещё не оплатил»: ?guest=1 shows the walls on a paid device for this tab; ?guest=0 returns.
-  await visit(paid.page, '/guides/education/2?guest=1');
+  await visit(paid.page, '/guides/con/2?guest=1');
   assert.equal(await paid.page.locator('[data-wall-buy][data-wall-place="guide-step"]').count(), 1, 'Guest view shows the step wall');
-  await visit(paid.page, '/guides/education/3');
+  await visit(paid.page, '/guides/con/1');
   assert.equal(await paid.page.locator('[data-wall-buy][data-wall-place="guide-step"]').count(), 1, 'Guest view lasts for the tab');
   await visit(paid.page, '/guides/education?guest=0');
   assert.equal(await paid.page.locator('[data-guide-dose=paid]').count(), 1, '?guest=0 returns to the paid view');
@@ -107,14 +108,8 @@ try {
     if (locked) {
       closed.push(step);
       assert.equal(await guest.page.locator('[data-guide-step-body]').count(), 0, `${step.path}: no body before payment`);
-      const lead = await guest.page.locator('[data-guide-step-lead]').count();
-      assert.equal(lead, step.items > 1 ? 1 : 0, `${step.path}: a lead only when the step has more than one sentence`);
-      if (lead) {
-        const shown = (await guest.page.locator('[data-guide-step-lead] p').innerText()).replace(/…$/, '');
-        assert(step.text.split('\n')[0].startsWith(shown), `${step.path}: the lead is the first sentence`);
-        step.lead = true;
-      }
-      assert.equal(await guest.page.locator('[data-guide-step-locked] li').count(), Math.max(1, step.items - lead), `${step.path}: empty points for the rest of the step`);
+      assert.equal(await guest.page.locator('[data-guide-step-lead]').count(), 0, `${step.path}: a closed step shows no sentence of its text`);
+      assert.equal(await guest.page.locator('[data-guide-step-locked] li').count(), Math.max(1, step.items), `${step.path}: an empty line for every point`);
       assert.equal(await guest.page.locator('[data-wall-buy][data-wall-place="guide-step"]').count(), 1, `${step.path}: one wall`);
       const description = await guest.page.locator('meta[name="description"]').getAttribute('content');
       assert.match(description, /Разбор откроется с маршрутом/, `${step.path}: neutral description`);
@@ -124,12 +119,12 @@ try {
       assert.equal((await guest.page.locator('[data-guide-step-body]').innerText()).replace(/^\d+\n/gm, '').trim(), step.text);
     }
   }
-  assert.deepEqual(open.map(step => step.path).sort(), steps.filter(step => step.path.startsWith('/guides/codice/')).map(step => step.path).sort(), `Only the sample topic is open in full (${open.length}/${steps.length})`);
+  const freeTopic = /^\/guides\/(education|tests|apostille|translation|cimea)\//;
+  assert.deepEqual(open.map(step => step.path).sort(), steps.filter(step => freeTopic.test(step.path)).map(step => step.path).sort(), `Only the first five topics are open in full (${open.length}/${steps.length})`);
   const exported = [];
   const walk = async dir => { for (const name of await readdir(dir)) { const path = join(dir, name); if ((await stat(path)).isDirectory()) await walk(path); else if (/\.(html|txt)$/.test(name) && /guides/.test(path)) exported.push([path, await readFile(path, 'utf8')]); } };
   await walk(root);
   for (const step of closed) for (const [position, line] of step.text.split('\n').entries()) {
-    if (position === 0 && step.lead) continue; // the first sentence is public on purpose
     const probe = line.trim().slice(0, 48);
     // Short lines prove nothing; the permesso cost badge quotes this one figure on purpose.
     if (probe.length < 24 || /для взрослого при сроке свыше 3 месяцев/.test(probe)) continue;
@@ -140,32 +135,32 @@ try {
   await visit(guest.page, '/guides/iseeu/2');
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop]').count(), 5);
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][aria-current=step]').getAttribute('data-path-stop'), '1');
-  assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 5, 'Every stop is closed outside the sample topic');
-  assert.match(await guest.page.locator('[data-path-caption]').innerText(), /Открыта первая фраза каждого шага/);
+  assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 5, 'Every stop is closed outside the first five topics');
+  assert.match(await guest.page.locator('[data-path-caption]').innerText(), /Разбор этой темы — с маршрутом/);
   await visit(guest.page, '/guides/visa/timeline?point=2');
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 5);
   assert.equal(await guest.page.locator('[data-instruction-point] img').count(), 1, 'The point carries an object on its topic');
   await guest.page.locator('[data-path-stop="3"]').click();
   await guest.page.waitForURL('**point=4');
   assert.equal(await guest.page.locator('[data-wall-buy][data-wall-place="visa"]').count(), 1, 'A closed stop opens its wall');
-  // Topic page: every step closed, the caption says what is open; nothing counts as read.
+  // A closed topic: every step closed, the caption says so; nothing counts as read.
+  await visit(guest.page, '/guides/con');
+  assert.match(await guest.page.locator('[data-guide-road=con] [data-path-caption]').innerText(), /разбор этой темы — с маршрутом/);
+  assert.equal(await guest.page.locator('[data-guide-road=con] [data-node-locked]').count(), await guest.page.locator('[data-guide-road=con] [data-road-node]').count(), 'Closed steps carry a lock on the road');
+  assert.equal(await guest.page.locator('[data-guide-road=con] [data-node-state=done]').count(), 0);
+  // A free topic: the guest above has read every step, all are green and none is locked.
   await visit(guest.page, '/guides/education');
-  assert.match(await guest.page.locator('[data-guide-road=education] [data-path-caption]').innerText(), /у каждого шага открыта первая фраза/);
-  assert.equal(await guest.page.locator('[data-guide-road=education] [data-node-locked]').count(), 5, 'Closed steps carry a lock on the road');
-  assert.equal(await guest.page.locator('[data-guide-road=education] [data-node-state=done]').count(), 0);
-  // The sample topic: the guest above has read both steps, both are green.
-  await visit(guest.page, '/guides/codice');
-  assert.equal(await guest.page.locator('[data-guide-road=codice] [data-node-locked]').count(), 0, 'The sample topic has no lock');
-  assert.equal(await guest.page.locator('[data-guide-road=codice] [data-node-state=done]').count(), 2);
-  // A fresh visitor: the first step of the sample is «начни здесь»; reading it moves the star on.
+  assert.equal(await guest.page.locator('[data-guide-road=education] [data-node-locked]').count(), 0, 'A free topic has no lock');
+  assert.equal(await guest.page.locator('[data-guide-road=education] [data-node-state=done]').count(), 5);
+  // A fresh visitor: the first step of a free topic is «начни здесь»; reading it moves the star on.
   const fresh = await contextFor({ paid: false });
-  await visit(fresh.page, '/guides/codice');
-  assert.equal(await fresh.page.locator('[data-guide-road=codice] [data-road-node="codice/1"]').getAttribute('aria-current'), 'step');
-  await visit(fresh.page, '/guides/codice/1');
-  await visit(fresh.page, '/guides/codice');
-  assert.equal(await fresh.page.locator('[data-guide-road=codice] [data-node-state=done]').count(), 1);
-  assert.equal(await fresh.page.locator('[data-guide-road=codice] [data-road-node="codice/2"]').getAttribute('aria-current'), 'step', 'The next open step is «читать дальше»');
-  assert.deepEqual(await fresh.page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_guides_read_v1'))), ['codice/1'], 'Only page keys are stored');
+  await visit(fresh.page, '/guides/education');
+  assert.equal(await fresh.page.locator('[data-guide-road=education] [data-road-node="education/1"]').getAttribute('aria-current'), 'step');
+  await visit(fresh.page, '/guides/education/1');
+  await visit(fresh.page, '/guides/education');
+  assert.equal(await fresh.page.locator('[data-guide-road=education] [data-node-state=done]').count(), 1);
+  assert.equal(await fresh.page.locator('[data-guide-road=education] [data-road-node="education/2"]').getAttribute('aria-current'), 'step', 'The next open step is «читать дальше»');
+  assert.deepEqual(await fresh.page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_guides_read_v1'))), ['education/1'], 'Only page keys are stored');
   await fresh.context.close();
   await visit(guest.page, '/guides/visa');
   assert.equal(await guest.page.locator('[data-guide-road=visa] [data-road-node]').count(), 19, 'The visa road holds every point');
@@ -194,7 +189,10 @@ try {
     assert.equal(await guest.page.locator('[data-guide-dose=guest] [data-wall-buy][data-wall-place="guide-overview"]').count(), 1, `${path}: free and paid side by side`);
   }
   await visit(guest.page, '/guides');
-  assert.equal(await guest.page.locator('[data-guide-road=guides] [data-node-locked]').count(), 11, 'The guides road locks every topic whose steps are all closed');
+  assert.equal(await guest.page.locator('[data-guide-road=guides] [data-node-locked]').count(), 7, 'The guides road locks every topic after the first five (the visa keeps its calculator)');
+  // Owner, 12 Nov: «первые 5 гайдов бесплатно… а вот дальше плати» — every card says which it is.
+  assert.equal(await guest.page.locator('[data-guide-tile] [data-guide-access=free]').count(), 5, 'Five cards say «Бесплатно»');
+  assert.equal(await guest.page.locator('[data-guide-tile] [data-guide-access=paid]').count(), 8, 'The rest say «С маршрутом»');
   await visit(guest.page, '/guides/visa/documents?point=4');
   assert.equal(await guest.page.getByRole('button', { name: 'Отметить собранным' }).count(), 1, 'The checklist itself stays usable');
   // Modulo 1: the application sheet open, sheets 2–3 and the transfer closed, two of four tools open.
@@ -230,7 +228,7 @@ try {
   }
   await phone.page.screenshot({ path: resolve(output, 'pochta-phone.png'), fullPage: true });
   await phone.context.close();
-  results.push({ passed: true, open: `${open.length}/${steps.length}`, checks: 'paid device reads all; guest reads first sentences and the sample topic; closed text absent from export and descriptions; wall per closed place; same purchase; visa points; Modulo 1 sheets, transfer and tools; wall_seen only for guests; phone fit' });
+  results.push({ passed: true, open: `${open.length}/${steps.length}`, checks: 'paid device reads all; guest reads the first five topics in full; closed text absent from export and descriptions; wall per closed place; same purchase; visa points; Modulo 1 sheets, transfer and tools; wall_seen only for guests; phone fit' });
 } finally {
   await browser.close();
   server.close();

@@ -176,7 +176,7 @@
 }
 .cityShortcut { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 20px 0 24px; }
 .cityShortcut label { font-size: 14px; font-weight: 600; }
-.cityShortcut select { min-height: 46px; max-width: 100%; min-width: 240px; border: 1px solid #d7d3cd; border-radius: 8px; padding: 10px 36px 10px 12px; background: #fff; color: #141413; font: inherit; font-size: 16px; }
+.cityShortcut select { min-height: 46px; max-width: 100%; min-width: 240px; border: 1px solid #d7d3cd; border-radius:16px; padding: 10px 36px 10px 12px; background: #fff; color: #141413; font: inherit; font-size: 16px; }
 .cityShortcut select:focus-visible { outline: 2px solid #141413; outline-offset: 4px; }
 .cityResult { scroll-margin-top: 88px; }
 @media (max-width: 639px) { .cityShortcut { align-items: stretch; gap: 8px; } .cityShortcut label, .cityShortcut select { width: 100%; } }
@@ -214,7 +214,7 @@
 .embedded .textButton { color: var(--u-body); }
 .embedded :is(.eyebrow, .mapCaption, .scholarship, .tag, .compareToggle, .compareBarLabel, .compareChip, .factNumber) { font-size: 13px; }
 .embedded .uniOpen { min-height: 44px; }
-.shortlistToggle { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 9px 12px; border: 1px solid var(--u-line); border-radius: 12px; background: #fff; color: var(--u-ink); font-size: 14px; font-weight: 500; cursor: pointer; }
+.shortlistToggle { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 9px 12px; border: 1px solid var(--u-line); border-radius:999px; background: #fff; color: var(--u-ink); font-size: 14px; font-weight: 500; cursor: pointer; }
 .shortlistToggle:has(:checked) { border-color: #141413; background: #faf8f5; }
 .uniCard .shortlistToggle { width: 100%; }
 .embeddedCompareBar { position: static; margin-top: 16px; padding: 18px 0; border-bottom: 1px solid var(--u-line); background: transparent; backdrop-filter: none; }

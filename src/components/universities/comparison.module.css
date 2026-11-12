@@ -8,7 +8,7 @@
 .selectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .selector { min-width: 0; }
 .selector > label > span { display: block; margin-bottom: 9px; color: #6b6761; font-size: 12px; }
-.selector select { display: block; width: 100%; min-width: 0; padding: 13px 32px 13px 12px; border: 1px solid #cecac4; border-radius: 12px; background: #fff; color: #141413; font-size: 16px; text-overflow: ellipsis; }
+.selector select { display: block; width: 100%; min-width: 0; padding: 13px 32px 13px 12px; border: 1px solid #cecac4; border-radius:16px; background: #fff; color: #141413; font-size: 16px; text-overflow: ellipsis; }
 .section :where(button,select,input):focus-visible, .comparison :where(select,input):focus-visible, .tableScroll:focus-visible { outline: 2px solid #141413; outline-offset: 4px; }
 .selectionActions { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 16px 0 24px; font-size: 13px; color: #6b6761; }
 .selectionActions button { min-height: 40px; padding: 8px 16px; border: 1px solid #e7e4df; border-radius: 999px; background: #fff; color: #141413; text-underline-offset: 4px; }

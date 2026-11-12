@@ -1,39 +1,30 @@
-import { guideSentences, guideTeaser } from "./guideText";
 /* Что из гайдов и визы открыто до оплаты.
 
-   Owner, 12 Nov 2026: «мы даём слишком много информации бесплатно… надо
-   продумать, где именно сколько дать, чтобы уже брали и покупали». До этого
-   (9 Nov, «дай где-то 40%») целиком были открыты 17 шагов из 41 и 6 пунктов
-   визы из 18 — то самое «как сделать», за которое мы берём деньги.
+   Owner, 12 Nov 2026, вечер: «в гайдах и везде сделай бесплатными вот эти
+   вот только первые 4, возможно, 5 гайдов и виз, и потом дальше типа скажи,
+   а вот дальше плати». Открыты целиком первые пять тем справочника — те,
+   что стоят первыми на полосе и на дороге: аттестат, тесты, апостиль,
+   перевод, DoV/CIMEA. У остальных восьми тем и у пунктов визы видны только
+   названия; разбор — с маршрутом. Ключевые факты визы и калькулятор средств
+   открыты по-прежнему (owner, 9 Nov). Тренажёр Modulo 1 без изменений.
 
-   Правило теперь одно: бесплатно — понять, что это и зачем; платно — как
-   именно, в твоём случае, к какому сроку. Поэтому:
-   - у каждого шага и пункта видны название и первая фраза (leadOf), разбор
-     целиком — с маршрутом. Если в пункте одна фраза, она и есть разбор:
-     такой пункт показывает только название;
-   - одна тема открыта целиком как образец того, что за стеной:
-     «Codice fiscale» — нужна всем, конкретная, но не ядро поступления;
-   - в визе открыты ключевые факты и калькулятор средств, пункты сроков,
-     документов и проверки перед подачей — названия и первая фраза;
-   - тренажёр Modulo 1 без изменений.
-   Закрытый текст по-прежнему не попадает ни в HTML, ни в описание страницы:
-   первая фраза — часть страницы, остальное подгружается только на
-   устройстве с оплаченным кабинетом (usePaidDevice). Номера пунктов
-   считаются с единицы, как в адресах /guides/<тема>/<шаг>. */
-export const SAMPLE_GUIDE = "codice";
+   До этого (12 Nov, днём) у каждого шага была открыта первая фраза и одна
+   тема целиком как образец; ещё раньше (9 Nov) — около 40% шагов.
+   Закрытый текст не попадает ни в HTML, ни в описание страницы: он
+   подгружается только на устройстве с оплаченным кабинетом (usePaidDevice).
+   Номера пунктов считаются с единицы, как в адресах /guides/<тема>/<шаг>. */
+export const FREE_GUIDES: readonly string[] = ["education", "tests", "apostille", "translation", "cimea"];
+
+/** The whole topic is open before payment (one of the first five). */
+export function guideFree(id: string): boolean {
+  return FREE_GUIDES.includes(id);
+}
 
 /** A step of a guide topic is open before payment. Visa parts are open pages
  *  with their own points (FREE_VISA_POINTS). */
 export function guideStepOpen(id: string, step: number): boolean {
   if (id === "visa") return true;
-  return id === SAMPLE_GUIDE && step >= 1;
-}
-
-/** The public lead of a closed step or point: its first sentence, but only
- *  when there is more after it — a one-sentence point is the whole answer. */
-export function leadOf(text: string): string | null {
-  const sentences = guideSentences(text);
-  return sentences.length > 1 ? guideTeaser(text, 180) : null;
+  return guideFree(id) && step >= 1;
 }
 
 export const FREE_VISA_POINTS = {

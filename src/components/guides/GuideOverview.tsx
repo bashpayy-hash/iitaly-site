@@ -7,7 +7,7 @@ import { guideFacts } from "./guideFacts";
 import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
 import { GuideActionLink } from "./GuideReadingContext";
 import { GUIDE_TOPICS, VISA_PARTS } from "./guideCatalogue";
-import { guideStepOpen } from "./guideAccess";
+import { FREE_GUIDES, guideFree } from "./guideAccess";
 import { GuideDose } from "./GuideDose";
 import ui from "./guide-pages.module.css";
 import steps from "./guide-steps.module.css";
@@ -23,18 +23,23 @@ import steps from "./guide-steps.module.css";
 const LONG_VALUE = 22;
 
 const points = (n: number) => n % 10 === 1 && n % 100 !== 11 ? "пункта" : "пунктов";
+const pointsNom = (n: number) => n % 10 === 1 && n % 100 !== 11 ? "пункт" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? "пункта" : "пунктов";
 const topics = (n: number) => n % 10 === 1 && n % 100 !== 11 ? "тема" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? "темы" : "тем";
 const VISA_POINTS = VISA_TIMELINE.length + VISA_DOCS.length + VISA_REJECT_REASONS.length;
 const ROUTE_TAIL = "Один платёж, не подписка.";
 
+const FREE_TITLES = FREE_GUIDES.map(id => GUIDE_TOPICS.find(topic => topic.id === id)!.title);
+const PAID_TOPICS = GUIDE_TOPICS.filter(topic => topic.id !== "visa" && !guideFree(topic.id)).length;
+
 /** Что в теме открыто сейчас и что откроется с маршрутом — словами ячейки дозирования. */
 function topicDose(guide: GuideCard) {
-  const total = guide.rows.length, open = guide.rows.filter((_, index) => guideStepOpen(guide.id, index + 1)).length;
-  if (open === total) {
-    const others = GUIDE_TOPICS.filter(topic => topic.id !== guide.id && topic.id !== "visa").length;
-    return { free: "Вся тема целиком — как образец того, что открывает маршрут.", paid: `Остальные ${others} ${topics(others)}, ${VISA_POINTS} пунктов визы, тренажёр Modulo 1 и проверка документов без лимита. ${ROUTE_TAIL}` };
-  }
-  return { free: `Название и первая фраза каждого из ${total} ${points(total)} разбора.`, paid: `Полный разбор: что именно сделать, суммы, сроки и ссылки. Вместе с остальными гайдами, визой, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}` };
+  const total = guide.rows.length;
+  if (guideFree(guide.id)) return {
+    free: `Вся тема целиком: ${total} ${pointsNom(total)} разбора. Это один из ${FREE_GUIDES.length} бесплатных гайдов.`,
+    paid: `Ещё ${PAID_TOPICS} ${topics(PAID_TOPICS)}, ${VISA_POINTS} пунктов визы, тренажёр Modulo 1 и проверка документов без лимита. ${ROUTE_TAIL}` };
+  return {
+    free: `Названия ${total} ${points(total)} разбора. Целиком бесплатны первые ${FREE_GUIDES.length} гайдов: ${FREE_TITLES.map(title => `«${title}»`).join(", ")}.`,
+    paid: `Полный разбор этой темы: что именно сделать, суммы, сроки и ссылки. Вместе с остальными гайдами, визой, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}` };
 }
 
 function Fact({ icon, value, label, known = true, span, ...data }: { icon: LucideIcon; value: string; label: string; known?: boolean; span: BentoSpan } & { [key: `data-${string}`]: string | boolean | undefined }) {
@@ -106,7 +111,7 @@ export function VisaOverview({ guide, note }: { guide: GuideCard; note: string }
       </div>
       <div className={bento.actions}><Link href={`/guides/visa/${funds.id}`} className={ui.primary}>Посчитать в тенге</Link></div>
     </BentoCell>
-    <GuideDose place="guide-overview" span={{ md: 6 }} free={`Ключевые факты, ссылка на VFS, калькулятор средств и первая фраза каждого из ${VISA_POINTS} пунктов.`}
+    <GuideDose place="guide-overview" span={{ md: 6 }} free={`Ключевые факты, ссылка на VFS, калькулятор средств и названия ${VISA_POINTS} пунктов.`}
       paid={`Все ${VISA_POINTS} пунктов подробно: когда подавать, документы для визы, проверка перед подачей. Вместе с гайдами, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}`} />
     <Closing ids={guide.sources} note={note} />
   </Bento>;

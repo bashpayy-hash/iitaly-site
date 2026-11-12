@@ -25,8 +25,8 @@ import type { PortalData, PortalTask } from "./portalApi";
    - проверка документа: вердикт и замечания открыты, «что делать» и
      «что дальше» — с маршрутом (DocResult в plan/DocCheck.tsx);
    - /plan: названия документов открыты, пояснения к ним — с маршрутом;
-   - гайды и виза: название и первая фраза каждого шага, одна тема
-     целиком как образец (src/components/guides/guideAccess.ts). */
+   - гайды и виза: первые пять тем целиком, у остальных и у пунктов визы
+     только названия (вечер 12 Nov, src/components/guides/guideAccess.ts). */
 
 export const FREE_PLAN_STEPS = 1;
 export const FREE_DOCUMENT_CHECKS = 1;
