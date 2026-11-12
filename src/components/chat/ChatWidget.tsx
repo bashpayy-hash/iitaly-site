@@ -8,7 +8,6 @@ import {
   askedCount,
   bumpAsked,
   FREE_LIMIT,
-  leadCaptured,
   markLeadCaptured,
   sendChatMessage,
   type ChatMessage,
@@ -24,6 +23,8 @@ import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
 import { VespiVideoAvatar } from "@/components/mascot/VespiVideoAvatar";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import placement from "./chat-placement.module.css";
+import { paidDeviceNow } from "@/components/access/usePaidDevice";
+import { useWallPurchase } from "@/components/access/useWallPurchase";
 
 interface Msg {
   who: "user" | "ai";
@@ -271,7 +272,8 @@ export function ChatWidget() {
     const text = (overrideText ?? input).trim();
     if (!text || busy) return;
 
-    if (askedCount() >= FREE_LIMIT && !leadCaptured()) {
+    // Лимит снимает только оплаченный кабинет, не номер телефона (chat.ts).
+    if (askedCount() >= FREE_LIMIT && !paidDeviceNow()) {
       setInput("");
       setShowLead(true);
       track("chat_limit_reached");
@@ -317,15 +319,12 @@ export function ChatWidget() {
       bumpAsked();
       setMessages((m) => [...m, { who: "ai", text: reply }]);
       const left = FREE_LIMIT - askedCount();
-      if (!leadCaptured() && left > 0 && left <= 3) {
+      if (!paidDeviceNow() && left === 1) {
         setMessages((m) => [
           ...m,
           {
             who: "ai",
-            text:
-              left === 1
-                ? "Остался один бесплатный вопрос. Дальше оставь номер — свяжемся по твоему поступлению. Напоминания о дедлайнах подключаются отдельно в Telegram из кабинета."
-                : `Бесплатных вопросов осталось: ${left}`,
+            text: "Остался один бесплатный вопрос. Без лимита я отвечаю с маршрутом — один платёж, не подписка.",
           },
         ]);
       }
@@ -490,7 +489,7 @@ export function ChatWidget() {
                   </span>
                 </div>
               )}
-              {showLead && <LeadForm onDone={() => setShowLead(false)} />}
+              {showLead && <ChatWall />}
             </div>
 
             <div className={`flex shrink-0 gap-2 p-3 ${calmMode ? "border-t border-[#e7e4df]" : "border-t-2 border-ink"}`}>
@@ -525,7 +524,40 @@ export function ChatWidget() {
   );
 }
 
-function LeadForm({ onDone }: { onDone: () => void }) {
+/* Стена помощника (owner, 12 Nov: «слишком много информации бесплатно»).
+   Та же покупка, что в гайдах и на /plan; номер можно оставить, чтобы с
+   тобой связались, но лимит он больше не снимает. */
+function ChatWall() {
+  const wall = useWallPurchase("chat");
+  const [lead, setLead] = useState(false);
+  return (
+    <div className="rounded-lg border-2 border-ink bg-cream p-4 text-sm" data-chat-wall>
+      <b className="block">Бесплатные вопросы закончились</b>
+      <p className="mt-1 text-ink-soft">
+        Без лимита я отвечаю с маршрутом: личный план по шагам, проверка каждого
+        документа и напоминания о сроках. Один платёж, не подписка.
+      </p>
+      <button
+        type="button"
+        data-wall-buy
+        data-wall-place="chat"
+        aria-haspopup="dialog"
+        onClick={wall.open}
+        className="mt-2.5 min-h-11 w-full rounded-pill border-2 border-ink bg-ink px-4 py-2.5 text-sm font-semibold text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+      >
+        {wall.label}
+      </button>
+      <div className="mt-1 flex flex-wrap gap-x-4">
+        <a href="/portal?view=login" className="inline-flex min-h-11 items-center underline underline-offset-4">Уже оплачено — войти</a>
+        {!lead && <button type="button" onClick={() => setLead(true)} className="min-h-11 underline underline-offset-4">Оставить номер — перезвоним</button>}
+      </div>
+      {lead && <div className="mt-2"><LeadForm onDone={() => {}} title="Оставь номер" /></div>}
+      {wall.modal}
+    </div>
+  );
+}
+
+function LeadForm({ onDone, title = "Бесплатные вопросы закончились" }: { onDone: () => void; title?: string }) {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -568,7 +600,7 @@ function LeadForm({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="rounded-lg border-2 border-ink bg-cream p-4 text-sm">
-      <b className="block">Бесплатные вопросы закончились</b>
+      <b className="block">{title}</b>
       <p className="mt-1 text-ink-soft">
         Оставь номер — свяжемся по твоему поступлению и ответим на оставшиеся
         вопросы. Напоминания о дедлайнах включаются отдельно в Telegram. Без спама.

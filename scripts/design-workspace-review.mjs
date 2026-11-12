@@ -182,7 +182,11 @@ try {
     assert.equal(calls.filter(path=>path==='/api/check-document').length,1);
     assert.match(await page.evaluate(()=>localStorage.getItem('iitaly_free_check_v1')),/^\["[a-z0-9]{1,16}"\]$/,'The free check stores one hashed fingerprint');
     assert.doesNotMatch(JSON.stringify(await page.evaluate(()=>({...localStorage}))),/synthetic-qa|Синтетический результат|PERSONAL DATA/,'Raw files and report text are not persisted');
-    assert.equal(await doc.locator('[data-wall-buy]').count(),0,'The checked file keeps its result and may be rechecked');
+    assert.equal(await doc.locator('[data-wall-buy][data-wall-place="document-check"]').count(),0,'The checked file keeps its result and may be rechecked');
+    // Owner, 12 Nov: the free check gives the verdict and the list of problems;
+    // «что делать» and «что дальше» open with the route.
+    assert.equal(await doc.locator('[data-document-fixes-locked] [data-wall-buy][data-wall-place="document-fixes"]').count(),1,'The next steps of a free check are behind the wall');
+    assert.doesNotMatch(await doc.innerText(),/Сверь заявку/,'A guest does not read the next steps');
     assert(await doc.getByRole('button',{name:'Проверить ещё раз',exact:true}).isVisible());
     await doc.getByRole('button',{name:'Выбрать другой',exact:true}).click();
     await doc.locator('[data-wall-buy][data-wall-place="document-check"]').waitFor();

@@ -10,6 +10,12 @@ import { checkDocument, getDocumentAvailability, DocCheckError, type DocCheckRes
 import { track } from "@/lib/track";
 import { FREE_DOCUMENT_CHECKS, documentFingerprint, recordFreeCheck, useFreeChecks } from "@/lib/access";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
+import { usePaidDevice } from "@/components/access/usePaidDevice";
+
+const plural = (n: number, one: string, few: string, many: string) => {
+  const mod10 = n % 10, mod100 = n % 100;
+  return mod10 === 1 && mod100 !== 11 ? one : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14) ? few : many;
+};
 import { AppleButton } from "@/components/apple/Button";
 import { PortalDocumentContext } from "@/components/portal/PortalDocumentContext";
 import { PortalDocumentNotes } from "@/components/portal/PortalDocumentUpload";
@@ -398,6 +404,15 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
   const headingId = useId();
   const resultRef = useRef<HTMLDivElement>(null);
   useEffect(() => { resultRef.current?.focus({ preventScroll: true }); }, []);
+  /* Бесплатная проверка показывает вердикт и что не так, но не как это
+     исправить (owner, 12 Nov: «мы даём слишком много информации
+     бесплатно»): «Что делать» по каждому замечанию и «Что дальше» — в
+     маршруте, вместе с повторными проверками исправленного файла. На
+     устройстве с оплаченным кабинетом видно всё, как раньше. */
+  const paid = usePaidDevice();
+  const fixCount = result.problems?.filter(problem => problem.fix).length ?? 0;
+  const locked = !paid && (fixCount > 0 || Boolean(result.nextSteps?.length));
+  const fixWall = useWallPurchase("document-fixes", locked);
   return (
     <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-apple-input border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
       <header className={styles.resultHead} data-document-assistant="done">
@@ -465,13 +480,22 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
             >
               <b>{p.severity === "critical" ? "Критично: " : "Замечание: "}</b>
               {p.text}
-              {p.fix && <span className="mt-1 block text-cloud-body">Что делать: {p.fix}</span>}
+              {p.fix && !locked && <span className="mt-1 block text-cloud-body">Что делать: {p.fix}</span>}
             </div>
           ))}
         </div>
       )}
 
-      {result.nextSteps && result.nextSteps.length > 0 && (
+      {locked && <div className="mt-4 border-t border-white/15 pt-4 text-apple-body-sm text-cloud-body" data-document-fixes-locked>
+        <p><b className="text-cloud-white">{fixCount > 0 ? `Как исправить ${fixCount} ${plural(fixCount, "замечание", "замечания", "замечаний")}` : "Что делать дальше"} — в маршруте.</b> Там же повторные проверки исправленного файла и весь пакет документов под твой случай. Один платёж, не подписка.</p>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <AppleButton type="button" variant="filled" size="sm" data-wall-buy data-wall-place="document-fixes" aria-haspopup="dialog" onClick={fixWall.open}>{fixWall.label}</AppleButton>
+          <a href="/portal?view=login" className="inline-flex min-h-11 items-center text-apple-caption text-cloud-meta underline underline-offset-4">Уже оплачено — войти</a>
+        </div>
+        {fixWall.modal}
+      </div>}
+
+      {!locked && result.nextSteps && result.nextSteps.length > 0 && (
         <div className="mt-4 text-apple-body-sm text-cloud-white">
           <b>Что дальше</b>
           {result.nextSteps.map((n, i) => (
@@ -482,7 +506,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
         </div>
       )}
 
-      {onCta && <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/15 pt-4">
+      {onCta && !locked && <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-white/15 pt-4">
         <AppleButton type="button" variant="filled" size="sm" onClick={onCta}>
           Собрать весь пакет с IItaly
         </AppleButton>

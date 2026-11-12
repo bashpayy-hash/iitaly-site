@@ -5,7 +5,7 @@ import { BuyModal, type BuyProduct } from "@/components/prices/BuyModal";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { track } from "@/lib/track";
 
-export type WallPlace = "plan-step" | "portal-task" | "document-check" | "guide-step" | "visa" | "permesso";
+export type WallPlace = "plan-step" | "portal-task" | "document-check" | "guide-step" | "visa" | "permesso" | "chat" | "document-fixes";
 
 const PRODUCT = "Поступление под ключ";
 export const WALL_LABEL = `Открыть маршрут за ${priceLabel(PRICE_MAIN)}`;

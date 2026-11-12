@@ -75,12 +75,12 @@ try {
     await question.fill('Тестовый вопрос для повторной отправки');
     await question.press('Enter');
     await page.getByText('Не удалось получить ответ. Вопрос не списан — попробуй отправить его ещё раз.', { exact: true }).waitFor();
-    assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_asked')), null);
+    assert.equal(await page.evaluate(() => localStorage.getItem('iitaly_asked_v2')), null);
     assert.equal(await question.inputValue(), 'Тестовый вопрос для повторной отправки');
     chatMode = 'success';
     await question.press('Enter');
     await page.getByText('Тестовый ответ без внешнего запроса.', { exact: true }).waitFor();
-    assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_asked')), '1');
+    assert.equal(await page.evaluate(() => localStorage.getItem('iitaly_asked_v2')), '1');
     assert.equal(chatRequests.length, 2);
     assert.equal(chatRequests[1].messages.length, 1, 'Retry does not duplicate a failed question in model history');
 
@@ -89,17 +89,22 @@ try {
     await Promise.all([page.waitForRequest('**/api/chat'), question.press('Enter')]);
     await page.clock.fastForward(90001);
     await page.waitForFunction(() => document.getElementById('chat-input')?.value === 'Тестовый вопрос с зависшим соединением');
-    assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_asked')), '1');
+    assert.equal(await page.evaluate(() => localStorage.getItem('iitaly_asked_v2')), '1');
     assert.equal(await page.getByRole('button', { name: 'Отправить', exact: true }).isEnabled(), true);
     await heldChat?.abort().catch(() => {});
     chatMode = 'success';
     await question.press('Enter');
-    await page.waitForFunction(() => sessionStorage.getItem('iitaly_asked') === '2');
+    await page.waitForFunction(() => localStorage.getItem('iitaly_asked_v2') === '2');
     assert.equal(chatRequests.length, 4);
     assert.equal(chatRequests[3].messages.length, 3, 'Timeout retry includes only the previous successful exchange');
-    await page.evaluate(() => sessionStorage.setItem('iitaly_asked', '10'));
+    // Owner, 12 Nov 2026 («слишком много информации бесплатно»): three free
+    // questions per device, then the purchase wall; a phone number no longer
+    // unlocks the assistant.
+    await page.evaluate(() => localStorage.setItem('iitaly_asked_v2', '3'));
     await question.fill('Тестовый вопрос без отправки в ИИ');
     await question.press('Enter');
+    await page.locator('[data-chat-wall] [data-wall-buy][data-wall-place="chat"]').waitFor();
+    await page.getByRole('button', { name: 'Оставить номер — перезвоним', exact: true }).click();
     const phone = page.getByRole('textbox', { name: 'Номер телефона для WhatsApp' });
     await phone.fill('----------');
     await page.getByRole('button', { name: 'Отправить номер', exact: true }).click();
@@ -117,6 +122,11 @@ try {
     await page.getByText('Записали', { exact: true }).waitFor();
     assert.equal(await page.evaluate(() => sessionStorage.getItem('iitaly_lead')), '1');
     assert.equal(requests.length, 2);
+    await question.fill('Вопрос после номера');
+    await question.press('Enter');
+    await page.waitForTimeout(300);
+    assert.equal(chatRequests.length, 4, 'A phone number does not unlock the assistant');
+    assert.equal(await page.locator('[data-chat-wall] [data-wall-buy]').count(), 1);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     await page.getByRole('button', { name: 'Закрыть чат' }).click();
 

@@ -287,6 +287,12 @@ const approvedRevisions = {
   // roles and handlers are unchanged; italy.ts stays byte-exact.
   'src/components/universities/ItalyMap.tsx': '0295f8f82986d35dabe2d9ca2ee0c042b28ba92536821a799bed04316752c6d8',
   'src/lib/mapLabels.ts': '7a8158c51e84aadc041908df1affc5e1d29a70468280419325a2e430e9db5765',
+  // 2026-11-12 (owner: «мы даём слишком много информации бесплатно… надо
+  // продумать, где именно сколько дать, чтобы уже брали и покупали»; «Да,
+  // делай»). The free chat questions only: FREE_LIMIT 10 → 3, the counter in
+  // localStorage per device instead of sessionStorage per tab. The request,
+  // the context, the lead form and every API call are unchanged.
+  'src/lib/chat.ts': '1e013028ad2a6b7cbbf176e1be0a646d9244e9f95be38dee4371a96083061cca',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
 // 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll
