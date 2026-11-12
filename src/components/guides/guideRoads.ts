@@ -62,7 +62,9 @@ function stageStation(id: string): GuideRoadStation {
   return [GUIDE_STAGES.find(item => item.id === id)!].map(stage => ({ id: stage.id, title: stage.title, text: stage.description, href: guideStageHref(stage.id), mark: stageMark(STAGE_MARK[stage.id]),
     steps: stage.ids.map(id => {
       const inner = id === "visa" ? VISA_PARTS.flatMap(part => visaSteps(part.id)) : topicSteps(id);
-      return { key: `topic/${id}`, title: GUIDE_TOPICS.find(topic => topic.id === id)!.title, href: guideHref(id), locked: false,
+      // Owner, 12 Nov («не вижу дозирования»): a topic whose steps are all
+      // closed carries a lock on the guides road too; its page still opens.
+      return { key: `topic/${id}`, title: GUIDE_TOPICS.find(topic => topic.id === id)!.title, href: guideHref(id), locked: inner.every(step => step.locked),
         keys: inner.flatMap(step => step.keys), openKeys: inner.flatMap(step => step.openKeys) };
     }) }))[0];
 }

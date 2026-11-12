@@ -78,6 +78,17 @@ try {
   assert.equal(await paid.page.locator('[data-wall-buy]').count(), 0);
   assert.equal(await paid.page.locator('[data-path-stop][data-locked]').count(), 0, 'Paid: no lock on the path');
   assert.match(await paid.page.locator('[data-path-caption]').innerText(), /вход в кабинет/, 'Paid: the path says why all is open');
+  // Owner, 12 Nov («не вижу дозирования»): the overview says why all is open on a paid device.
+  await visit(paid.page, '/guides/education');
+  assert.equal(await paid.page.locator('[data-guide-dose=paid]').count(), 1, 'Paid: the overview says why all is open');
+  assert.equal(await paid.page.locator('[data-wall-buy]').count(), 0);
+  // «Глазами того, кто ещё не оплатил»: ?guest=1 shows the walls on a paid device for this tab; ?guest=0 returns.
+  await visit(paid.page, '/guides/education/2?guest=1');
+  assert.equal(await paid.page.locator('[data-wall-buy][data-wall-place="guide-step"]').count(), 1, 'Guest view shows the step wall');
+  await visit(paid.page, '/guides/education/3');
+  assert.equal(await paid.page.locator('[data-wall-buy][data-wall-place="guide-step"]').count(), 1, 'Guest view lasts for the tab');
+  await visit(paid.page, '/guides/education?guest=0');
+  assert.equal(await paid.page.locator('[data-guide-dose=paid]').count(), 1, '?guest=0 returns to the paid view');
   await visit(paid.page, '/guides/permesso-modulo-1?scenario=rilascio&page=2');
   await paid.page.locator('[data-sheet-page]').first().waitFor();
   assert.equal(await paid.page.locator('[data-permesso-locked-page], [data-permesso-transfer-locked]').count(), 0, 'Paid: the whole trainer');
@@ -177,6 +188,13 @@ try {
     await visit(guest.page, path);
     assert.equal(await guest.page.locator('[data-wall-buy][data-wall-place="visa"]').count(), wall ? 1 : 0, `${path}: wall ${wall}`);
   }
+  // Owner, 12 Nov: every overview says what is free and what the route opens, with the same purchase.
+  for (const path of ['/guides/education', '/guides/codice', '/guides/visa']) {
+    await visit(guest.page, path);
+    assert.equal(await guest.page.locator('[data-guide-dose=guest] [data-wall-buy][data-wall-place="guide-overview"]').count(), 1, `${path}: free and paid side by side`);
+  }
+  await visit(guest.page, '/guides');
+  assert.equal(await guest.page.locator('[data-guide-road=guides] [data-node-locked]').count(), 11, 'The guides road locks every topic whose steps are all closed');
   await visit(guest.page, '/guides/visa/documents?point=4');
   assert.equal(await guest.page.getByRole('button', { name: 'Отметить собранным' }).count(), 1, 'The checklist itself stays usable');
   // Modulo 1: the application sheet open, sheets 2–3 and the transfer closed, two of four tools open.
@@ -197,7 +215,7 @@ try {
   assert.equal(await guest.page.locator('[data-permesso-locked-checklist] [data-wall-buy]').count(), 1);
   assert.equal(await guest.page.locator('[data-wall-buy]').count(), 1, 'Paper and money stay open');
   const places = new Set(guest.events.filter(event => event.event === 'wall_seen').map(event => event.props?.place));
-  assert.deepEqual([...places].sort(), ['guide-step', 'permesso', 'visa'], 'wall_seen carries only the place');
+  assert.deepEqual([...places].sort(), ['guide-overview', 'guide-step', 'permesso', 'visa'], 'wall_seen carries only the place');
   assert(guest.events.every(event => JSON.stringify(event.props || {}).length < 120), 'No personal data in wall events');
   assert.deepEqual(guest.errors, []);
   await guest.context.close();

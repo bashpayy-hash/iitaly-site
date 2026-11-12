@@ -2,11 +2,13 @@ import Link from "next/link";
 import { ArrowUpRight, Calculator, CalendarClock, Clock, Coins, ExternalLink, Hourglass, Landmark, ListChecks, Route, Stamp, TriangleAlert, Wallet, type LucideIcon } from "lucide-react";
 import { Bento, BentoCell, BentoIcon, BentoStat, bento, type BentoSpan } from "@/components/ui/Bento";
 import { ADMISSION_SOURCES, type SourceId } from "@/data/admissions";
-import { VISA_KEY_FACTS, type GuideCard } from "@/data/guides";
+import { VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMELINE, type GuideCard } from "@/data/guides";
 import { guideFacts } from "./guideFacts";
 import { GUIDE_HELP, guideAction, isGuideId } from "./guideJourney";
 import { GuideActionLink } from "./GuideReadingContext";
-import { VISA_PARTS } from "./guideCatalogue";
+import { GUIDE_TOPICS, VISA_PARTS } from "./guideCatalogue";
+import { guideStepOpen } from "./guideAccess";
+import { GuideDose } from "./GuideDose";
 import ui from "./guide-pages.module.css";
 import steps from "./guide-steps.module.css";
 
@@ -19,6 +21,21 @@ import steps from "./guide-steps.module.css";
    друг друга. Без действия факты встают два на два. */
 
 const LONG_VALUE = 22;
+
+const points = (n: number) => n % 10 === 1 && n % 100 !== 11 ? "пункта" : "пунктов";
+const topics = (n: number) => n % 10 === 1 && n % 100 !== 11 ? "тема" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? "темы" : "тем";
+const VISA_POINTS = VISA_TIMELINE.length + VISA_DOCS.length + VISA_REJECT_REASONS.length;
+const ROUTE_TAIL = "Один платёж, не подписка.";
+
+/** Что в теме открыто сейчас и что откроется с маршрутом — словами ячейки дозирования. */
+function topicDose(guide: GuideCard) {
+  const total = guide.rows.length, open = guide.rows.filter((_, index) => guideStepOpen(guide.id, index + 1)).length;
+  if (open === total) {
+    const others = GUIDE_TOPICS.filter(topic => topic.id !== guide.id && topic.id !== "visa").length;
+    return { free: "Вся тема целиком — как образец того, что открывает маршрут.", paid: `Остальные ${others} ${topics(others)}, ${VISA_POINTS} пунктов визы, тренажёр Modulo 1 и проверка документов без лимита. ${ROUTE_TAIL}` };
+  }
+  return { free: `Название и первая фраза каждого из ${total} ${points(total)} разбора.`, paid: `Полный разбор: что именно сделать, суммы, сроки и ссылки. Вместе с остальными гайдами, визой, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}` };
+}
 
 function Fact({ icon, value, label, known = true, span, ...data }: { icon: LucideIcon; value: string; label: string; known?: boolean; span: BentoSpan } & { [key: `data-${string}`]: string | boolean | undefined }) {
   return <BentoCell span={span} icon={icon} data-bento-row {...data}>
@@ -67,6 +84,7 @@ export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: st
         <p className={bento.text}>{action.note}</p>
       </div>
     </BentoCell>}
+    <GuideDose place="guide-overview" span={{ md: 6 }} {...topicDose(guide)} />
     <Closing ids={guide.sources} note={note} />
   </Bento>;
 }
@@ -88,6 +106,8 @@ export function VisaOverview({ guide, note }: { guide: GuideCard; note: string }
       </div>
       <div className={bento.actions}><Link href={`/guides/visa/${funds.id}`} className={ui.primary}>Посчитать в тенге</Link></div>
     </BentoCell>
+    <GuideDose place="guide-overview" span={{ md: 6 }} free={`Ключевые факты, ссылка на VFS, калькулятор средств и первая фраза каждого из ${VISA_POINTS} пунктов.`}
+      paid={`Все ${VISA_POINTS} пунктов подробно: когда подавать, документы для визы, проверка перед подачей. Вместе с гайдами, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}`} />
     <Closing ids={guide.sources} note={note} />
   </Bento>;
 }
