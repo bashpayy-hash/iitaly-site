@@ -21,7 +21,12 @@ export function GuideTile({ guide, index }: { guide: GuideCard; index: number })
         fetches on every autoplay step, and a stalled one kept the page from
         ever going network-idle. The pages are static and open instantly. */}
     <Link className={styles.stage} href={guideHref(guide.id)} tabIndex={-1} aria-hidden="true" prefetch={false}>
-      <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 760px) 76vw, 340px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority={index < 2 ? "auto" : "low"} />
+      <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 760px) 76vw, 340px" width={art.width} height={art.height} alt="" decoding="async"
+        // Первая плитка — главная картинка страницы на телефоне: ей высокий
+        // приоритет. Плитки с пятой грузятся, когда к ним подходит прокрутка
+        // карусели: раньше все 13 картинок (около 365 КБ) качались сразу и
+        // спорили с первой (Lighthouse, телефон, 12 Nov).
+        fetchPriority={index === 0 ? "high" : index < 2 ? "auto" : "low"} loading={index < 4 ? "eager" : "lazy"} />
     </Link>
     <h2 id={`tile-${guide.id}`}>{guide.title}</h2>
     <p>{guide.teaser}</p>
