@@ -1410,3 +1410,28 @@ font and the hero video.
   the browser. Railway needs `https://iitaly.net` and
   `https://www.iitaly.net` in `ALLOWED_ORIGINS` and
   `SITE_URL=https://iitaly.net`.
+
+## Scripts that wait their turn · 12 November 2026
+
+Owner: «Да, сделай» — to loading the chat and the scroll animation library
+after the page, the second half of «максимально оптимизируй сайт». Nothing
+looks different: the launcher is pixel-identical before and after the real
+one takes over (checked on /, /prices and /guides).
+
+Measured on the build (brotli, scripts referenced by the page's HTML):
+home 254 → 160 KB, /prices 259 → 166, /plan 257 → 205, /guides 237 → 186,
+/universities 241 → 186, the cabinet 301 → 249.
+
+- **The chat arrives after the page.** `ChatWidget` sat in the root layout,
+  so every page carried its 15 KB and the 36 KB `motion` library that only
+  the chat and «Изменения 2026/27» use. `ChatMount` now renders the launcher
+  as a plain button with the same classes (`launcherFace.ts`) and loads the
+  chat after `load`, when the browser is idle — or at once on hover, focus,
+  a click, or a page's request to open it. Context events sent before the
+  chat exists (cabinet step, guide topic) and an early open request are kept
+  and replayed once `ChatWidget` listens. `ChatWidget.tsx` is untouched.
+- **gsap only where it runs.** `EditorialMotion` (home) and `HeadingPin`
+  (/prices) import gsap and ScrollTrigger (39 KB) on demand: from 768px,
+  without «меньше движения». A phone never downloads them.
+- Anything new in the root layout is on every page. A component that most
+  visitors never open should be loaded the same way.

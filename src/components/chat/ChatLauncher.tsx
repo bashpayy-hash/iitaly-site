@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { MessageCircle } from "lucide-react";
 import { useReducedMotion } from "@/components/motion/MotionProvider";
 import placement from "./chat-placement.module.css";
+import { isLabelledLauncher, LAUNCHER_ANCHOR, LAUNCHER_FACE, LAUNCHER_TITLE, launcherLabel } from "./launcherFace";
 
 /**
  * Плавающий вход в ИИ-консультанта.
@@ -51,9 +52,9 @@ const SPRING_MOVE = {
 const SPRING_HOVER = { type: "spring", stiffness: 260, damping: 26 } as const;
 const SPRING_PRESS = { type: "spring", stiffness: 520, damping: 30 } as const;
 
-/** Общие для якоря и кнопки классы позиции: bottom учитывает вырез iOS. */
-const ANCHOR_POSITION =
-  "fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom,0px))] size-12";
+// Классы позиции и вида — в launcherFace.ts: их же берёт ChatMount для
+// кнопки, которая стоит на странице, пока этот компонент ещё не загружен.
+const ANCHOR_POSITION = LAUNCHER_ANCHOR;
 
 export function ChatLauncher({
   hidden = false,
@@ -64,7 +65,7 @@ export function ChatLauncher({
   onOpen: () => void;
 }) {
   const reducedMotion = useReducedMotion();
-  const labelled = usePathname() === "/prices";
+  const labelled = isLabelledLauncher(usePathname());
   const position = labelled ? ANCHOR_POSITION.replace("size-12", placement.labelledLauncher) : ANCHOR_POSITION;
   const anchorRef = useRef<HTMLDivElement>(null);
   const [blocked, setBlocked] = useState(false);
@@ -153,11 +154,11 @@ export function ChatLauncher({
         data-vespi-launcher-mode="icon"
         type="button"
         onClick={onOpen}
-        aria-label={labelled ? "Спросить Веспи — задать вопрос ИИ-консультанту" : "Задать вопрос ИИ-консультанту"}
+        aria-label={launcherLabel(labelled)}
         aria-haspopup="dialog"
         aria-controls={hidden ? "iitaly-chat" : undefined}
         aria-expanded={hidden}
-        title="Веспи Баурысаков · Задать вопрос"
+        title={LAUNCHER_TITLE}
         // inert, пока кнопка уехала: иначе она остаётся в порядке обхода
         // с клавиатуры и ловит клики в пустом месте у края экрана
         tabIndex={away ? -1 : 0}
@@ -165,7 +166,7 @@ export function ChatLauncher({
         // Тень меняется css-переходом, а не motion: её значение — токен с
         // var() и четырьмя слоями, такое motion интерполировать не может и
         // просто подставил бы конечное значение скачком.
-        className={`${position} ${placement.aboveBadge} z-[90] flex items-center justify-center rounded-full border border-[#e7e4df] bg-white text-[#141413] shadow-[0_4px_16px_rgba(33, 29, 23,0.12)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
+        className={`${position} ${placement.aboveBadge} ${LAUNCHER_FACE}`}
         style={{ pointerEvents: away ? "none" : "auto" }}
         // initial={false} — при загрузке страницы кнопка просто есть, без
         // приветственного поп-ина: она не событие, а постоянный элемент.
