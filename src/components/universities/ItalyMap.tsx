@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { CITIES, CITY_ICONS, ITALY_PATH, MAP_H_PX, MAP_W_PX, type CityId } from "@/data/italy";
-import { placeAllLabels } from "@/lib/mapLabels";
+import { PIN_GLOW, pinRadius, pinRoom, pinYields, placeAllLabels } from "@/lib/mapLabels";
 
 // Внешний вид — как на старом сайте: тёмная карта-ночь, тонкие линии,
 // градиент моря и суши, лёгкое свечение у активного пина. Не перегружать
@@ -19,12 +19,13 @@ export function ItalyMap({
   matchedCities: ReadonlySet<CityId>;
 }) {
   const labels = useMemo(() => placeAllLabels(activeCity), [activeCity]);
+  // Выбранный город рисуется последним, поверх соседей.
   const cityIds = useMemo(
     () =>
       (Object.keys(CITIES) as CityId[]).sort(
-        (a, b) => (CITIES[a].tier === 1 ? 1 : 0) - (CITIES[b].tier === 1 ? 1 : 0),
+        (a, b) => (a === activeCity ? 2 : CITIES[a].tier === 1 ? 1 : 0) - (b === activeCity ? 2 : CITIES[b].tier === 1 ? 1 : 0),
       ),
-    [],
+    [activeCity],
   );
 
   return (
@@ -119,10 +120,16 @@ export function ItalyMap({
       {cityIds.map((id) => {
         const c = CITIES[id];
         const active = id === activeCity;
-        const big = c.tier === 1 || active;
+        const yielding = pinYields(id, activeCity);
+        const big = (c.tier === 1 || active) && !yielding;
         const dimmed = matchedCities.size > 0 && !matchedCities.has(id) && !active;
-        const r = active ? 14 : c.tier === 1 ? 11 : 7;
-        const gs = big ? 22 : 17;
+        // Размер — из mapLabels (там же объяснение): подписи и пины считают
+        // столкновения по одним и тем же радиусам.
+        const r = pinRadius(id, activeCity);
+        const gs = r * 2;
+        // Зона нажатия больше рисунка: маленький пин 4,5 — это 8 пикселей на
+        // телефоне. Круг до середины пути к соседу, но не больше 12.
+        const hit = Math.max(r, Math.min(12, pinRoom(id) / 2 + 2));
         const label = labels[id];
 
         return (
@@ -143,7 +150,8 @@ export function ItalyMap({
               dimmed ? "opacity-30" : "opacity-100"
             }`}
           >
-            {active && <circle cx={c.x} cy={c.y} r={r + 6} fill="#e63946" opacity={0.22} />}
+            <circle cx={c.x} cy={c.y} r={hit} fill="transparent" />
+            {active && <circle cx={c.x} cy={c.y} r={r + PIN_GLOW} fill="#e63946" opacity={0.22} />}
             <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#000" opacity={0.3} />
             <circle
               cx={c.x}
@@ -162,7 +170,7 @@ export function ItalyMap({
                 dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
               />
             ) : (
-              <circle cx={c.x} cy={c.y} r={2.6} fill="#b5b1ab" />
+              !yielding && <circle cx={c.x} cy={c.y} r={2} fill="#b5b1ab" />
             )}
             {label && (
               <text

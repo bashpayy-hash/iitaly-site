@@ -101,7 +101,7 @@ try{
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
     for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
     assert.equal(await page.locator('[data-deck-university]').count(),3);
-    // Layout rows (offsetTop): the arc tilts side cards on purpose; the rows stay level.
+    // Rows stay level across cards (offsetTop). Since 12 Nov 2026 the cards stand straight (owner: «сравнение не прям юзер френдли»).
     const rows=await page.locator('[data-deck-row=life]').evaluateAll(nodes=>nodes.map(n=>n.offsetTop));
     assert(rows.every(value=>value===rows[0]),'Deck metric rows must align');
     assert.equal(await page.locator('[data-comparison-deck] small').filter({hasText:'Ниже диапазон расходов'}).count(),2);
@@ -116,7 +116,7 @@ try{
     assert.equal(await page.locator('[data-university-comparison] [data-comparison-row]').count(),12);
     await page.getByLabel('Только различия').check();
     assert((await page.locator('[data-comparison-row]').count())<12);
-    await page.getByRole('button',{name:'Сетка',exact:true}).click();
+    await page.getByRole('button',{name:'Карточки',exact:true}).click();
     await page.locator('[data-university-decision]').getByRole('link').click();
     await page.locator('[data-plan-university=unibo]').waitFor();
     assert.match(await page.locator('[data-plan-university-context]').innerText(),/Bologna/);

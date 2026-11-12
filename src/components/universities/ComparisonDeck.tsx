@@ -1,8 +1,9 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Local mascot cut-out with explicit dimensions. */
 
-import { type CSSProperties, useState } from "react";
+import type { CSSProperties } from "react";
 import { Check, X, Plus } from "lucide-react";
-import { CITIES, type University } from "@/data/italy";
+import { CITIES, UNIS, type University } from "@/data/italy";
 import { cityLatin } from "@/components/journey/flightCoordinates";
 import { CityGlyph } from "./CityGlyph";
 import { UniversityDecision, type UniversitySelection } from "./UniversityDecision";
@@ -17,10 +18,15 @@ const rows = [
   { key: "dl", label: "Дедлайн подачи · по базе" },
 ] as const;
 
+/* Быстрый старт — те же три вуза, что в быстрых кнопках над картой
+   (UniversitiesExplorer): самые частые первые вопросы. */
+const POPULAR = ["unibo", "polimi", "unipd"];
+const popular = POPULAR.map(id => UNIS.find(u => u.id === id)).filter((u): u is University => Boolean(u));
+
 // Only complete monthly ranges are comparable. A floor is not a price,
 // and an exam or scholarship is never ranked as a guaranteed outcome.
 function range(text: string) {
-  const match = /^€(\d+)[–—-](\d+)\/мес$/.exec(text.replace(/[\s  ]/g,""));
+  const match = /^€(\d+)[–—-](\d+)\/мес$/.exec(text.replace(/[\s  ]/g,""));
   return match ? [Number(match[1]), Number(match[2])] : null;
 }
 function lowerLiving(university: University, universities: University[]) {
@@ -29,30 +35,57 @@ function lowerLiving(university: University, universities: University[]) {
   return universities.length > 1 && candidate && values.every(Boolean) && values.every(value => candidate[0] <= value![0] && candidate[1] <= value![1]) && values.some(value=> candidate[0] < value![0] || candidate[1] < value![1]);
 }
 
-/* Дуга постеров по референсу exp.fiddle.digital: три высокие карточки стоят
-   по дуге в перспективе, карточка в фокусе — прямо и чуть ближе. Над каждой —
-   моноширинный индекс, под дугой — огромный код вуза в фокусе и тонкая шкала.
-   Строки сравнения стоят на одной высоте (subgrid), поворот их не сдвигает. */
-export function ComparisonDeck({ universities, selection, portalSelection, onRemove }: { universities: University[]; selection?: UniversitySelection; portalSelection?: PortalUniversitySelection; onRemove: (id: string) => void }) {
-  const primaryIndex = universities.findIndex(university => university.id === selection?.primaryId);
-  const [focusId, setFocusId] = useState<string | null>(null);
-  const chosen = universities.findIndex(university => university.id === focusId);
-  const focus = chosen >= 0 ? chosen : primaryIndex >= 0 ? primaryIndex : Math.floor((universities.length - 1) / 2);
-  const focused = universities[focus];
-  const slots = Math.max(3, universities.length);
+function QuickAdd({ chosen, onAdd }: { chosen: University[]; onAdd: (ids: string[]) => void }) {
+  const left = popular.filter(u => !chosen.some(c => c.id === u.id)).slice(0, 3 - chosen.length);
+  if (!left.length) return null;
+  return <div className={styles.quick} aria-label="Быстро добавить в сравнение">
+    {left.map(u => <button key={u.id} type="button" data-deck-add={u.id} onClick={() => onAdd([u.id])}>
+      <Plus size={15} strokeWidth={1.8} aria-hidden="true" />{CITIES[u.city].name} · {u.name}
+    </button>)}
+  </div>;
+}
+
+/* Колода сравнения (owner, 12 Nov 2026: «сравнение выглядит не прям юзер
+   френдли, нужно это исправить»). Что мешало и что стало:
+   - Карточки стояли дугой в перспективе (референс Fiddle, 27 Oct): боковые
+     повёрнуты на 16°, и строки «Стоимость», «Дедлайн» читались под углом —
+     сравнивать наклонённый текст трудно. Теперь все стоят ровно.
+   - Под колодой огромный код вуза в фокусе и шкала «1 из 3» — украшение на
+     150 пикселей, которое путали со счётчиком выбора. Убрано.
+   - Пустые места были тремя пунктирными коробками по 440 пикселей с надписью
+     без действия. Теперь одно место «добавь ещё» по высоте содержимого, с
+     кнопками популярных вузов; пока не выбрано ничего — одна панель с Веспи
+     над картой (он переехал сюда из угла карты, owner: «можно его добавить,
+     но не прям туда»).
+   - На телефоне была видна одна карточка, вторая — свайпом: сравнивать
+     приходилось по памяти. Теперь рядом две колонки, третья — свайпом.
+   Строки сравнения по-прежнему стоят на одной высоте (subgrid). */
+export function ComparisonDeck({ universities, selection, portalSelection, onRemove, onAdd }: { universities: University[]; selection?: UniversitySelection; portalSelection?: PortalUniversitySelection; onRemove: (id: string) => void; onAdd: (ids: string[]) => void }) {
+  if (!universities.length) return <div className={styles.root} data-comparison-deck>
+    <div className={styles.start} data-deck-empty="start">
+      <img className={styles.startArt} src="/illustrations/scenery/vespi-map-280.webp" srcSet="/illustrations/scenery/vespi-map-280.webp 280w, /illustrations/scenery/vespi-map-560.webp 560w" sizes="(max-width: 767px) 140px, 200px" width={280} height={230} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} />
+      <div className={styles.startCopy}>
+        <h3>Сравни два-три вуза</h3>
+        <p>Нажми на город на карте выше или выбери в списке. Можно начать с популярных:</p>
+        <QuickAdd chosen={universities} onAdd={onAdd} />
+        <button type="button" className={styles.startAll} data-deck-add-all onClick={() => onAdd(popular.map(u => u.id))}>Сравнить все три сразу</button>
+      </div>
+    </div>
+    {/* Сохранённый основной вуз и ссылка в план не пропадают, даже если сравнение очистили. */}
+    {selection?.primaryId && <UniversityDecision universities={universities} selection={selection} showChoices={false} floating />}
+  </div>;
+
+  const missing = 3 - universities.length;
   return <div className={styles.root} data-comparison-deck>
     <div className={styles.scroll} role="region" aria-label="Карточки сравнения университетов" tabIndex={0}>
-      <div className={styles.deck}>
+      <div className={styles.deck} data-count={universities.length}>
         {universities.map((university, index) => {
           const primary = selection?.primaryId === university.id;
           const inPlan = portalSelection?.selectedIds.includes(university.id);
-          const offset = index - focus;
-          return <div key={university.id} className={styles.slot} data-deck-slot data-offset={offset < 0 ? "left" : offset > 0 ? "right" : "focus"}
-            style={{ "--deck-index": index } as CSSProperties}
-            onClick={() => setFocusId(university.id)} onFocusCapture={() => setFocusId(university.id)}>
+          return <div key={university.id} className={styles.slot} data-deck-slot>
             <p className={styles.code}>
               <span>{university.id.toUpperCase()} • {cityLatin(university.city)}</span>
-              <button type="button" onClick={event => { event.stopPropagation(); onRemove(university.id); }} aria-label={`Убрать из сравнения: ${university.name}`}><X size={15} aria-hidden="true" /></button>
+              <button type="button" onClick={() => onRemove(university.id)} aria-label={`Убрать из сравнения: ${university.name}`}><X size={15} aria-hidden="true" /></button>
             </p>
             <article className={styles.card} data-deck-university={university.id} data-primary={primary || undefined} data-tone={index % 3}>
               <header className={styles.poster}>
@@ -74,24 +107,16 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
             </article>
           </div>;
         })}
-        {Array.from({length:3-universities.length},(_,index)=><div key={`empty-${index}`} className={styles.emptySlot} data-deck-empty>
-          <p className={styles.code}><span>Свободное место</span></p>
-          <div className={styles.empty}>
-            <Plus size={26} strokeWidth={1.3} aria-hidden="true" />
-            <p>Добавь университет</p>
-            <span>На карте, в быстрых кнопках или в списке выше.</span>
+        {missing > 0 && <div className={styles.addSlot} data-deck-empty style={{ "--span": missing } as CSSProperties}>
+          <p className={styles.code}><span>{universities.length === 1 ? "Второй вуз" : "Третий вуз · по желанию"}</span></p>
+          <div className={styles.add}>
+            <p>{universities.length === 1 ? "Добавь второй вуз — и сравнение начнётся" : "Можно добавить ещё один"}</p>
+            <span>Нажми на город на карте или выбери в списке выше.</span>
+            <QuickAdd chosen={universities} onAdd={onAdd} />
           </div>
-        </div>)}
+        </div>}
       </div>
     </div>
-    {focused && <div className={styles.stageFooter} aria-hidden="true">
-      <p className={styles.bigCode} key={focused.id}>{focused.id.toUpperCase()}</p>
-      <div className={styles.stageMeta}>
-        <span>{CITIES[focused.city].name} · {focused.name}</span>
-        <span className={styles.scale} style={{ "--scale-at": slots > 1 ? focus / (slots - 1) : 0 } as CSSProperties}><i /></span>
-        <span>{focus + 1} из {slots}</span>
-      </div>
-    </div>}
     <p className={styles.note}>Данные для сравнения, не подтверждение условий конкурса. Стоимость, отбор и сроки проверь у выбранной программы. Стипендия не вычитается из расходов.</p>
     {selection && <UniversityDecision universities={universities} selection={selection} showChoices={false} floating />}
   </div>;

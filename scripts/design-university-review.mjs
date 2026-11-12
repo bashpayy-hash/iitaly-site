@@ -116,6 +116,37 @@ try {
       assert.equal(style.border,'1px');assert(style.radius>=980);assert.equal(style.case,'none');assert(style.height>=40);
     }
     if([1440,390,320].includes(width))await page.screenshot({path:resolve(output,`universities-${width}.png`),animations:'disabled'});
+    // Owner, 12 Nov 2026: «некоторые иконки слишком близко стоят местами друг другу».
+    // Idle and with each city selected: no two pins closer than 1 map unit, no
+    // label over another city's pin or over another label (real getBBox boxes).
+    if(width===1440) {
+      const crowding=()=>page.evaluate(()=>{
+        const groups=[...document.querySelectorAll('[data-map-frame] svg g[role=button]')];
+        const pins=[],labels=[];
+        for(const g of groups){
+          const name=g.getAttribute('aria-label').split(' — ')[0];
+          const pin=[...g.querySelectorAll('circle')].find(c=>c.getAttribute('stroke'));
+          pins.push({name,x:+pin.getAttribute('cx'),y:+pin.getAttribute('cy'),r:+pin.getAttribute('r')});
+          const t=g.querySelector('text');
+          if(t){const b=t.getBBox();labels.push({name,x:b.x,y:b.y+b.height*.18,w:b.width,h:b.height*.64});}
+        }
+        const hit=(b,c)=>Math.hypot(Math.max(b.x,Math.min(c.x,b.x+b.w))-c.x,Math.max(b.y,Math.min(c.y,b.y+b.h))-c.y)<c.r+.5;
+        const out=[];
+        for(const l of labels)for(const p of pins)if(p.name!==l.name&&hit(l,p))out.push(`label ${l.name} × pin ${p.name}`);
+        for(let i=0;i<labels.length;i++)for(let j=i+1;j<labels.length;j++){const a=labels[i],b=labels[j];if(a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h)out.push(`label ${a.name} × label ${b.name}`);}
+        for(let i=0;i<pins.length;i++)for(let j=i+1;j<pins.length;j++){const a=pins[i],b=pins[j];if(Math.hypot(a.x-b.x,a.y-b.y)-a.r-b.r<1)out.push(`pin ${a.name} × pin ${b.name}`);}
+        return out;
+      });
+      assert.deepEqual(await crowding(),[],'Idle map: pins and labels keep their distance');
+      const cities=await page.locator('[data-map-frame] svg g[role=button]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label')));
+      for(const city of cities){
+        await page.getByRole('button',{name:city,exact:true}).dispatchEvent('click');
+        assert.deepEqual(await crowding(),[],`${city}: pins and labels keep their distance`);
+      }
+      assert.equal(await page.locator('[data-map-frame] img').count(),0,'No Vespi cut-out over the map');
+      await page.reload({waitUntil:'networkidle'});
+      await page.waitForFunction(()=>document.querySelector('#compare-universities')?.getAttribute('data-comparison-ready')==='true');
+    }
     if(width===1440)await page.locator('[data-city-empty]').screenshot({path:resolve(output,'city-empty-1440.png'),animations:'disabled'});
     const menu=page.getByLabel('Открыть меню');
     if(await menu.isVisible()) {await menu.click();assert(await page.getByRole('navigation',{name:'Мобильная навигация'}).isVisible());await page.keyboard.press('Escape');assert.equal(await page.getByRole('navigation',{name:'Мобильная навигация'}).isVisible(),false);}

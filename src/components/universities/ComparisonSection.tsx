@@ -2,7 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { CITIES, UNIS, type University } from "@/data/italy";
-import { UniversityDecision, type UniversitySelection } from "./UniversityDecision";
+import type { UniversitySelection } from "./UniversityDecision";
 import { ComparisonTable } from "./ComparisonTable";
 import { ComparisonDeck } from "./ComparisonDeck";
 import styles from "./comparison.module.css";
@@ -25,6 +25,11 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
   const [mode, setMode] = useState<"grid" | "table">("grid");
   const ready = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
   const universities = compareIds.map(id => UNIS.find(u => u.id === id)).filter((u): u is University => Boolean(u));
+  function add(ids: string[]) {
+    onChange([...new Set([...compareIds, ...ids])].slice(0, 3));
+  }
+  // Таблица нужна, когда есть что сопоставить: с одним вузом показываем карточку.
+  const showTable = mode === "table" && universities.length >= 2;
   function select(index: number, value: string) {
     const next = [...compareIds];
     if (!value) next.splice(index, 1);
@@ -57,25 +62,22 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
             </label>}
           </div>)}
         </div>
-        {/* Строка управления колодой: счёт и действия слева, вид — справа, как LIST/GRID у Fiddle. */}
-        <div className={styles.deckBar}>
+        {/* Строка управления: счёт и действия слева, вид — справа. Пока не
+           выбрано ничего, её нет: «Выбрано 0 из 3» и переключатель вида без
+           данных только шумели (owner, 12 Nov: «не прям юзер френдли»). */}
+        {universities.length > 0 && <div className={styles.deckBar}>
           <div className={styles.selectionActions}>
             <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
             {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
             {universities.length >= 2 && <button type="button" onClick={onOpen}>Открыть в отдельном окне</button>}
           </div>
-          <div className={styles.viewModes} aria-label="Вид сравнения">
-            <button type="button" aria-pressed={mode === "grid"} onClick={() => setMode("grid")}>Сетка</button>
+          {universities.length >= 2 && <div className={styles.viewModes} aria-label="Вид сравнения">
+            <button type="button" aria-pressed={!showTable} onClick={() => setMode("grid")}>Карточки</button>
             <span aria-hidden="true">/</span>
-            <button type="button" aria-pressed={mode === "table"} onClick={() => setMode("table")}>Таблица</button>
-          </div>
-        </div>
-        {mode === "grid" ? <ComparisonDeck universities={universities} selection={selection} portalSelection={portalSelection} onRemove={id => onChange(compareIds.filter(value => value !== id))} /> : universities.length >= 2 ? <ComparisonTable universities={universities} selection={selection} /> : <div className={styles.empty}>
-          <span aria-hidden="true">01 / 02 / 03</span>
-          <p>{universities.length === 1 ? "Добавь ещё один вуз для сравнения." : "Два вуза — уже начало выбора."}</p>
-          <small>12 параметров · только различия · бюджет на 10 или 12 месяцев</small>
+            <button type="button" aria-pressed={showTable} onClick={() => setMode("table")}>Таблица</button>
+          </div>}
         </div>}
-        {selection && mode === "table" && universities.length < 2 && <UniversityDecision universities={universities} selection={selection} />}
+        {showTable ? <ComparisonTable universities={universities} selection={selection} /> : <ComparisonDeck universities={universities} selection={selection} portalSelection={portalSelection} onRemove={id => onChange(compareIds.filter(value => value !== id))} onAdd={add} />}
       </div>
     </section>
   );

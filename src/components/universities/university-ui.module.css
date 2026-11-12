@@ -53,19 +53,6 @@
 /* Owner, 4 Nov: «карту можно сделать побольше» — the map takes the wider
    column (see the 1024px rule) and the frame matches the site's 28px tiles. */
 .mapFrame { position: relative; overflow: clip; border: 0; border-radius: 28px; background: #FFFDF9; font-family: var(--font-sans); color: var(--color-ink); line-height: 1.5; }
-/* Vespi peeks over the frame's bottom edge in the Ionian corner, looking up
-   at the map. Decorative: no pointer events, hidden where motion is forced off
-   only by colour, not by position. */
-.mapPeek { position: absolute; right: 4%; bottom: -8px; width: 168px; height: auto; pointer-events: none; user-select: none; filter: drop-shadow(0 6px 10px rgba(21,17,11,.18)); }
-/* Веспи выглядывает по-настоящему: пока карта въезжает в экран, он
-   поднимается из-за нижнего края (scroll-driven, без JS; без поддержки или
-   с prefers-reduced-motion просто стоит на месте). */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .mapPeek { animation: map-peek-rise linear both; animation-timeline: view(); animation-range: entry 10% entry 70%; }
-  }
-}
-@keyframes map-peek-rise { from { transform: translateY(72%) rotate(-3deg); } to { transform: none; } }
 .mapCaption { margin-top: 14px; text-align: center; font-size: 12px; color: var(--u-meta); }
 .mapActions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
 .primaryButton, .secondaryButton, .textButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 20px; border: 1px solid transparent; border-radius: 999px; font-size: 14px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: background-color .15s, color .15s; }
@@ -136,7 +123,6 @@
   .mapGrid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; }
   .mapColumn { position: sticky; top: 96px; }
 }
-@media (max-width: 767px) { .mapPeek { width: 112px; right: 3%; bottom: -6px; } }
 @media (max-width: 1279px) { .heroInner { margin-inline: 32px; } }
 @media (max-width: 899px) { .heroInner { margin-inline: 24px; } .explorer, .compareBar { padding-left: 24px; padding-right: 24px; } }
 @media (max-width: 767px) {

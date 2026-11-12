@@ -1462,3 +1462,41 @@ different.
   before any swipe, all thirteen after swiping to the end.
 - **Left as is, measured.** The cabinet's feature scenes are 389 px wide on
   a phone and correctly take the 1024 px file on a 2–3× screen.
+
+## A comparison you can read, a map with room · 12 November 2026
+
+Owner, two screenshots of /universities: «сравнение выглядит не прям юзер
+френдли, нужно это исправить»; «в целом здесь голова Веспи ни к чему будто,
+можно его добавить, но не прям туда, и некоторые иконки слишком близко
+стоят местами друг другу».
+
+**Comparison.** The coloured poster cards stay; what got in the way of
+comparing goes.
+- The perspective arc (Fiddle reference, 27 Oct) tilted the side cards by
+  16°, so the rows being compared were read at an angle. Cards stand straight.
+- The huge code of the focused university and the «1 из 3» scale under the
+  deck (150 px of decoration, mistaken for the selection count) are gone.
+- Three 440 px dashed boxes with a non-clickable «Добавь университет» are
+  gone. With nothing chosen there is one panel: Vespi holding a map, a line
+  of what to do, three quick-add buttons (the same popular three as above
+  the map) and «Сравнить все три сразу». With one or two chosen, a single
+  «add another» place as tall as its content, with the remaining quick adds.
+- «Выбрано 0 из 3» and the view switch are hidden until there is something
+  to compare; «Сетка» is now «Карточки»; the table needs two universities.
+- The poster is 200 px instead of 310: a card with its choose button fits a
+  laptop screen (card 845 → 690 px at 1440).
+- On a phone two cards stand side by side and the third scrolls in; before,
+  one card filled the width and comparing meant remembering.
+
+**Map.** City coordinates and the outline of Italy are untouched; pin sizes
+change. Measured with real label boxes, idle and with each of the 30 cities
+selected: 138 overlaps on the live map (pins touching even when idle —
+Pavia/Milan, Padua/Venice, Ferrara/Bologna, Salerno/Naples — the selected pin
+covering neighbours by 3–7 units, labels on pins), 0 now.
+- Pins 9.5 (cities with several universities) and 4.5, at least 4 units
+  apart; the selected pin is 11 and drawn last; its close neighbours shrink
+  to a dot while it is selected. Tap circles stay generous (up to 12).
+- Label width model 6.1 → 7.6 per letter, measured with getBBox.
+- Vespi no longer peeks over the Ionian corner of the map; he holds the map
+  in the empty comparison instead.
+- `design-university-review` now fails if pins or labels crowd again.

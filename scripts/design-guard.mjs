@@ -279,6 +279,14 @@ const approvedRevisions = {
   'netlify.toml': 'adb2e27004bf12e7736d480aed35b712d3538f986396c5ee27c12d0d7c5df80d',
   'package.json': 'd74d6adecb14d27226f9cd938b5dbaeda9c6febdfa6c3bef273e40a640a02728',
   'package-lock.json': '9c0180c872d7a336ad95c28dd0f272fb9f770c0f71b535a25e38e9b99d5942e0',
+  // 2026-11-12 (owner: «некоторые иконки слишком близко стоят местами друг
+  // другу, нужно тоже это пофиксить»). Pin sizes only: tier pins 11/7 → 9.5/4.5,
+  // the selected pin 14 → 11 with its close neighbours shrinking to a dot while
+  // it is selected, a larger invisible tap circle, and the label width model
+  // 6.1 → 7.6 per letter (measured). City coordinates, the outline of Italy,
+  // roles and handlers are unchanged; italy.ts stays byte-exact.
+  'src/components/universities/ItalyMap.tsx': '0295f8f82986d35dabe2d9ca2ee0c042b28ba92536821a799bed04316752c6d8',
+  'src/lib/mapLabels.ts': '7a8158c51e84aadc041908df1affc5e1d29a70468280419325a2e430e9db5765',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
 // 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll
@@ -310,7 +318,7 @@ const baseMap = execFileSync('git', ['show', `${base}:src/components/universitie
 // The new brief explicitly recolors inline SVG gradients. Erase only color
 // literals for comparison: all paths, coordinates, roles and handlers stay exact.
 const withoutColors = source => source.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
-assert.equal(withoutColors(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8')), withoutColors(baseMap.replace('role="img"', 'role="group"')), 'Map changes are limited to colors; geometry and interaction stay exact.');
+if (!approvedRevision('src/components/universities/ItalyMap.tsx')) assert.equal(withoutColors(readFileSync('src/components/universities/ItalyMap.tsx', 'utf8')), withoutColors(baseMap.replace('role="img"', 'role="group"')), 'Map changes are limited to colors; geometry and interaction stay exact.');
 console.log('Approved presentation paths passed; map geometry, comparison model, API and dependencies remain protected.');
 
 // The current request changes presentation only, not stored data or service contracts.

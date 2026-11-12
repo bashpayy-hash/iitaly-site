@@ -5,14 +5,60 @@
 
 import { CITIES, MAP_H_PX, MAP_W_PX, type CityId } from "@/data/italy";
 
-const LBL_CH = 6.1;
+// Ширина буквы подписи в единицах карты. Было 6,1 — со старого сайта, где
+// подписи были другим шрифтом. Замер 12 Nov (getBBox, Inter Tight 11,5):
+// 7,0–7,7 на букву, и подпись «Флоренция» заезжала на пин Анконы, считая
+// себя уже, чем есть. Берём верх замера.
+const LBL_CH = 7.6;
 const LBL_H = 11;
 
 const labelW = (t: string) => t.length * LBL_CH;
 
+// Размеры пинов (owner, 12 Nov 2026: «некоторые иконки слишком близко стоят
+// местами друг другу, нужно тоже это пофиксить»). Координаты городов — это
+// география, их не двигаем; меняется только размер кружков.
+//
+// Было: крупный город 11, остальные 7, выбранный 14 со свечением до 20. Самые
+// близкие пары стоят в 17–21 единицах (Неаполь и Салерно 18,0, Милан и Павия
+// 18,1, Венеция и Падуя 18,3, Болонья и Феррара 18,5, Флоренция и Сиена 20,7),
+// поэтому кружки касались, а выбранная Сиена наезжала на Флоренцию.
+//
+// Стало: 9,5 и 4,5 — между любыми двумя пинами не меньше 4 единиц.
+// Выбранный город всегда 11 (рисунок города 22, как раньше) со свечением
+// +PIN_GLOW и рисуется поверх. Сосед, которого он задел бы, на время выбора
+// уступает: становится точкой 2,5 без рисунка (pinYields). Пробовал другое —
+// растить выбранный только до соседа: мелкие города у крупных (Павия, Падуя,
+// Сиена) тогда почти не росли, и выбор терялся.
+export const PIN_GLOW = 2.5;
+const PIN_ACTIVE = 11;
+const PIN_YIELD = 2.5;
+const PIN_GAP = 4;
+
+function basePinRadius(id: CityId): number {
+  return CITIES[id].tier === 1 ? 9.5 : 4.5;
+}
+
+const distance = (a: CityId, b: CityId) => Math.hypot(CITIES[a].x - CITIES[b].x, CITIES[a].y - CITIES[b].y);
+
+/** Сосед выбранного города, который на время выбора сжимается в точку. */
+export function pinYields(id: CityId, activeCity: CityId | null): boolean {
+  if (!activeCity || id === activeCity) return false;
+  return distance(id, activeCity) < PIN_ACTIVE + PIN_GLOW + basePinRadius(id) + PIN_GAP;
+}
+
+/** Расстояние до ближайшего соседа минус его пин: свободное место вокруг города. */
+export function pinRoom(id: CityId): number {
+  let room = Infinity;
+  for (const other of Object.keys(CITIES) as CityId[]) {
+    if (other !== id) room = Math.min(room, distance(id, other) - basePinRadius(other));
+  }
+  return room;
+}
+
 export function pinRadius(id: CityId, activeCity: CityId | null): number {
-  if (id === activeCity) return 14;
-  return CITIES[id].tier === 1 ? 11 : 7;
+  if (id === activeCity) return PIN_ACTIVE;
+  if (pinYields(id, activeCity)) return PIN_YIELD;
+  return basePinRadius(id);
 }
 
 interface Box {
