@@ -1523,7 +1523,9 @@ narrower than their text, buttons wrapping into three lines, tap targets.
   «конфиденциальности» pushed the page 20 px sideways. The Modulo 1
   trainer's «Инструменты» moves to its own line and its panel opens from
   the left edge (it scrolled the page and then opened off screen). The
-  /prices «43 университета» cell gets a soft hyphen.
+  /prices stats columns are never narrower than their word (73/82/73 px at
+  320, equal from 390); a soft hyphen was tried first and dropped — it
+  changes the text, which design-content guards.
 - **Cabinet.** The scenery after the last step of the stage in focus stuck
   50–60 px out of the stage's band at every width; the band now leaves room.
 - **Footer.** «Условия сервиса» and «Политика конфиденциальности» are 44 px
