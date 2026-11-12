@@ -1674,3 +1674,25 @@ reaches the one free check. The unavailable state now says so: «Это не
 - The program list used `<optgroup>`: Windows draws its label in bold and
   indents the options, which is the uneven text in the screenshot. The
   options are one flat list now (on /plan and in the cabinet).
+
+## Around the backend's CORS · 12 November 2026 (night)
+
+Owner: «Сделай обход» — to making the document check, sign-in and chat work
+on iitaly.net without waiting for the Railway setting.
+
+- The backend answers CORS only for https://iitaly.netlify.app; it still
+  processes every request, the browser just hides the answer from
+  iitaly.net. On iitaly.net the site now calls its own `/backend/*`, which
+  Netlify proxies to Railway (a 200 rewrite): same origin, no CORS.
+- Netlify cuts a proxied request at 26 seconds. Measured on the live
+  backend with synthetic, personal-data-free documents: a text check 6.9 s,
+  a photographed certificate 11.3 s. Photos are already reduced to
+  1600 px before sending; a 504 or 413 from the proxy now has its own
+  plain message (try again / split the PDF).
+- After Stripe the backend sends the buyer to its SITE_URL, still
+  iitaly.netlify.app, while the order number sits in the iitaly.net tab.
+  iitaly.netlify.app now redirects to iitaly.net (301), so the buyer lands
+  where the order is. Deploy previews are untouched.
+- Elsewhere (previews, local reviews) the site still calls the backend
+  directly. When Railway lists https://iitaly.net in ALLOWED_ORIGINS and
+  SITE_URL points to it, both rules and the branch in backend.ts can go.

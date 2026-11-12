@@ -276,7 +276,7 @@ const approvedGamifiedPortalPaths = new Set([
 // Once this revision is the base, the files are byte-exact again: a later
 // change needs its own approval here, with the request that asked for it.
 const approvedRevisions = {
-  'netlify.toml': 'adb2e27004bf12e7736d480aed35b712d3538f986396c5ee27c12d0d7c5df80d',
+  'netlify.toml': '070d9aeeb9dd98b24c2b19ddf184ff4f7bbcd7176da7af9d42f1e8696b598452',
   'package.json': 'd74d6adecb14d27226f9cd938b5dbaeda9c6febdfa6c3bef273e40a640a02728',
   'package-lock.json': '9c0180c872d7a336ad95c28dd0f272fb9f770c0f71b535a25e38e9b99d5942e0',
   // 2026-11-12 (owner: «некоторые иконки слишком близко стоят местами друг
@@ -293,6 +293,17 @@ const approvedRevisions = {
   // localStorage per device instead of sessionStorage per tab. The request,
   // the context, the lead form and every API call are unchanged.
   'src/lib/chat.ts': '1e013028ad2a6b7cbbf176e1be0a646d9244e9f95be38dee4371a96083061cca',
+  // 2026-11-12, evening (owner: «Сделай обход» — to routing the site around
+  // the backend's CORS, which answers only iitaly.netlify.app). netlify.toml:
+  // the 11 Nov headers unchanged, plus two redirects — iitaly.netlify.app → iitaly.net
+  // (301) and /backend/* → the same Railway backend (200 proxy). backend.ts:
+  // on iitaly.net the base is /backend, elsewhere NEXT_PUBLIC_BACKEND_URL.
+  // Endpoints, payloads and every API contract are unchanged.
+  'src/lib/backend.ts': 'f2fa2b19f6969995d10a300eacdc65a79fb3d7849ba078bbdabc6974c0530b81',
+  // Same request: checkDocument.ts only names the proxy's own failures —
+  // 504 (Netlify waits 26 s) and 413 (body too large) — instead of «сервер
+  // ответил не по формату». The request, payload and parsing are unchanged.
+  'src/lib/checkDocument.ts': '99b17276eea034a8fe19bba89b0ab46f3093f1b78077589d5951f36052c11d25',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
 // 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll
