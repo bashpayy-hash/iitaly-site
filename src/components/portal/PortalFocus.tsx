@@ -15,7 +15,9 @@ import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import { plainClick } from "./PortalStageLineup";
 import { PlainTerms } from "./PlainTerms";
-import { stepActionLabel } from "./plainWords";
+import { STAGE_PLAIN, stepActionLabel } from "./plainWords";
+import { BellRing, Coins, Compass, FileCheck2, GraduationCap, KeyRound, Mail, Plane, Stamp, type LucideIcon } from "lucide-react";
+import { Bento, BentoCell, bento } from "@/components/ui/Bento";
 import path from "./portal-path.module.css";
 
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
@@ -46,6 +48,11 @@ function daysTo(task: PortalTask | null) {
   return Number.isFinite(days) ? days : null;
 }
 
+/** «шаг готов / шага готово / шагов готово» — по общему числу шагов этапа. */
+function doneWord(total: number) {
+  return total % 10 === 1 && total % 100 !== 11 ? "шага готово" : "шагов готово";
+}
+
 function dayWord(days: number) {
   return days % 10 === 1 && days % 100 !== 11 ? "день" : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 12 || days % 100 > 14) ? "дня" : "дней";
 }
@@ -54,6 +61,10 @@ function dayWord(days: number) {
    Веспи что-то делает, с анимациями»). */
 const STAGE_SCENE: Record<PortalStageKey, StageSceneName> = {
   start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys",
+};
+/* Значок этапа в бенто — тот же предмет, что в сцене этапа. */
+const STAGE_ICON: Record<PortalStageKey, LucideIcon> = {
+  start: Compass, education12: GraduationCap, docs: Stamp, apply: Mail, dsu: Coins, visa: Plane, arrival: KeyRound,
 };
 
 export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings, locked }: Props) {
@@ -149,6 +160,8 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const checkedDocs = docsTasks.filter(task => data.docs?.[task.id]).length;
   const remindersOn = Boolean(data.client.tgLinked && data.client.notify?.telegram !== false);
   const nextStage = data.roadmap.slice(data.roadmap.indexOf(selected) + 1).find(stage => stage.tasks.length);
+  const stageDocs = ordered.filter(task => DOC_TASKS[task.id]);
+  const stageChecked = stageDocs.filter(task => data.docs?.[task.id]).length;
 
   return <section className={styles.canvas} data-portal-focus data-selected-stage={selected?.id} data-portal-page={stagePage ? "stage" : "overview"}>
     {/* Обзор кабинета (owner, 5–6 Nov: «минимализм Apple… думай как
@@ -225,11 +238,26 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         поинт»): хлебные крошки и одна плитка с одним шагом; внизу «Назад /
         Далее», на последнем шаге — переход к следующему этапу. */}
     {stagePage && <div className={styles.welcome}><PortalBreadcrumbs stage={selected} /></div>}
-    {stagePage && <div className={styles.stageBody} data-portal-overview>
-      {selected && <StageScene name={STAGE_SCENE[stageKey(selected.id)]} className={styles.stageScene} priority />}
+    {/* Страница этапа бенто-сеткой (owner, 12 Nov: «информацию в личных
+        кабинетах по конкретным сферам … нужно подавать в такой вот форме»,
+        референс Lamossa Studio): сцена этапа, ячейка этапа (сколько шагов
+        готово, название, что здесь делаешь), ячейка текущего шага — тот же
+        один шаг с точками и переходами — и рядом две главные функции
+        кабинета (owner, 6 Nov): проверка документов, если они есть в этапе,
+        и напоминания о сроках. Шаг, его кнопки и точки не менялись; списка
+        шагов нет (owner, 4 Nov: ничего не показано дважды). */}
+    {stagePage && <Bento as="div" className={styles.stageBody} data-portal-overview data-stage-bento>
+      {selected && <BentoCell span={{ md: 6, lg: 7 }} tone="media" className={styles.stageMedia}><StageScene name={STAGE_SCENE[stageKey(selected.id)]} className={styles.stageScene} priority /></BentoCell>}
+      {selected && <BentoCell span={{ md: 6, lg: 5 }} icon={STAGE_ICON[stageKey(selected.id)]} className={styles.stageSummary} data-stage-summary>
+        <div className={styles.stageSummaryCopy}>
+          <p className={styles.stageCount}><strong>{savedStampCount} из {ordered.length}</strong> <span>{doneWord(ordered.length)}</span></p>
+          <h1 id="portal-overview-heading" tabIndex={-1}>{selected.title}</h1>
+          <p className={bento.text}>{STAGE_PLAIN[stageKey(selected.id)]}</p>
+        </div>
+      </BentoCell>}
+      <BentoCell span={{ md: 6, lg: 8, rowsLg: stageDocs.length ? 2 : 1 }} className={styles.stageStep} data-stage-step>
       <div className={styles.stageEyebrow}>
-        <h1 id="portal-overview-heading" tabIndex={-1}>{selected?.title}</h1>
-        {selectedTask && <span className={styles.stagePosition}>· шаг {selectedTaskIndex + 1} из {visibleTasks.length}</span>}
+        {selectedTask && <span className={styles.stagePosition}>Шаг {selectedTaskIndex + 1} из {visibleTasks.length}</span>}
       </div>
       {/* Точки шагов: положение, сохранённые штампы (зелёные) и переход к
           любому шагу этапа. Счёт штампов остаётся для читалок. */}
@@ -249,7 +277,26 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           : nextStage ? <PortalPageLink href={`/portal?stage=${encodeURIComponent(nextStage.id)}`} data-next-stage={nextStage.id}>Следующий этап: {nextStage.title}</PortalPageLink>
           : <PortalPageLink href="/portal">К моему плану</PortalPageLink>}
       </nav>}
-    </div>}
+      </BentoCell>
+      {stageDocs.length > 0 && <BentoCell span={{ md: 6, lg: 4 }} tone="action" icon={FileCheck2} className={styles.stageDocs} data-stage-documents>
+        <div className={bento.body}>
+          <p className={bento.heading}>Проверка документов</p>
+          <p className={bento.text}>Проверено {stageChecked} из {stageDocs.length}</p>
+        </div>
+        <div className={bento.actions}>
+          <a className={styles.primary} href="/portal?view=docs" data-stage-documents-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>Проверить документ</a>
+        </div>
+      </BentoCell>}
+      <BentoCell span={{ md: 6, lg: 4 }} tone={stageDocs.length ? "plain" : "action"} icon={BellRing} className={styles.stageReminders} data-stage-reminders data-reminders-on={remindersOn || undefined}>
+        <div className={bento.body}>
+          <p className={bento.heading}>Напоминания о сроках</p>
+          <p className={bento.text}>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</p>
+        </div>
+        <div className={bento.actions}>
+          <a className={stageDocs.length ? styles.quietAction : styles.primary} href="/portal?view=settings#notifications" data-stage-reminders-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>{remindersOn ? "Настроить" : "Подключить Telegram"}</a>
+        </div>
+      </BentoCell>
+    </Bento>}
     {wall.modal}
   </section>;
 }

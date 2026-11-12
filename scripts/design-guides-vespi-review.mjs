@@ -180,7 +180,8 @@ try {
         assert.match(await page.locator('link[rel=canonical]').getAttribute('href'),new RegExp('/guides/'+id+'$'));
         assert.equal(await page.locator('main time').getAttribute('datetime'),'2026-10-09');
         assert.equal(await page.locator('[data-guide-select],[data-guide-stage],[data-guide-timeline]').count(),0);
-        assert(await page.locator('main details a[href^="https://"]').count()>0);
+        // Owner, 12 Nov (bento): the sources are an open list in the topic overview.
+        assert(await page.locator('main [data-guide-sources] a[href^="https://"]').count()>0,'Every topic names its official sources');
         await audit('topic '+id+' '+width);
         if(id==='con')await screenshot('guides-family');
         await page.goBack();await page.locator('[data-guide-select]').first().waitFor();

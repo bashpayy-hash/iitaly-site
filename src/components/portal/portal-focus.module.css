@@ -16,19 +16,33 @@
 .routeCard { grid-area:route; min-width:0; padding:8px 0 0; border:0; border-radius:0; background:transparent; box-shadow:none; scroll-margin-top:calc(var(--portal-chrome-height, 72px) + 16px); }
 /* Плитка этапа — тот же радиус 28px, что у плиток обзора и документов
    (полировка, 4 ноября); раньше была единственной карточкой на 16px. */
-.stageBody { grid-area:tasks; min-width:0; padding:30px 32px 12px; border:1px solid var(--border); border-radius:28px; background:var(--card); }
-/* Сцена этапа с Веспи — сверху плитки, на всю её ширину внутри полей. */
-.stageScene { margin:-14px -18px 24px; }
+/* Страница этапа — бенто (owner, 12 Nov, референс Lamossa Studio): подложка
+   беж кабинета, ячейки цвета карточек, тёмный значок цвета чернил. */
+.stageBody { grid-area:tasks; min-width:0; --bento-tray:var(--beige); --bento-cell:var(--card); --bento-ink:var(--ink); --bento-muted:var(--quiet); --bento-chip:var(--ink-strong); --bento-chip-ink:var(--on-dark); --bento-display:var(--font-sans); --bento-quiet:var(--paper); }
+/* Сцена этапа с Веспи — на всю ячейку-картинку. */
+.stageMedia { min-height:240px; }
+.stageScene { height:100%; min-height:240px; margin:0; border-radius:0; }
+.stageSummary { min-height:240px; }
+.stageSummaryCopy { display:grid; gap:10px; margin-top:auto; }
+.stageCount { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; margin:0; }
+.stageCount strong { font:600 44px/1 var(--font-sans); letter-spacing:-.035em; color:var(--ink-strong); font-variant-numeric:tabular-nums; }
+.stageCount span { color:var(--quiet); font-size:14px; line-height:1.4; }
+.stageSummary h1 { margin:4px 0 0; font:600 26px/1.15 var(--font-sans); letter-spacing:-.02em; color:var(--ink-strong); }
+.stageSummary h1:focus { outline:none; }
+.stageStep { padding:22px 26px 18px; }
+/* На узкой подложке шаг получает ширину обратно: поля ячейки тоньше. */
+@container (max-width:559px) { .stageStep { padding:16px 14px 14px; } }
+.stageReminders .primary,.stageDocs .primary { white-space:normal; }
+.quietAction { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 20px; border:1px solid var(--border); border-radius:999px; color:var(--ink); font:500 14px/1.4 var(--font-sans); text-decoration:none; }
+.quietAction:hover { border-color:var(--ink); }
+.quietAction:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 /* Страница этапа — один блок (owner, 4 Nov): ярлык «Этап · шаг n из N»,
    точки шагов (положение, зелёные — сохранённые штампы, переход к шагу),
    сам шаг и переходы. Без заголовка «Шаги этапа», счётчика штампов и
    ряда «01–05». */
 .stageEyebrow { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 6px; min-width:0; }
 /* No text-transform here: the h1 must read exactly as the stage title (reviews compare innerText). */
-.stageEyebrow h1,.stageEyebrow .stagePosition { margin:0; font:500 13px/1.5 var(--font-sans); letter-spacing:.01em; }
-.stageEyebrow h1 { color:var(--accent-text); }
-.stageEyebrow h1:focus { outline:none; }
-.stageEyebrow .stagePosition { color:var(--quiet); font-variant-numeric:tabular-nums; }
+.stageEyebrow .stagePosition { margin:0; color:var(--quiet); font:500 13px/1.5 var(--font-sans); letter-spacing:.01em; font-variant-numeric:tabular-nums; }
 .pips { display:flex; flex-wrap:wrap; gap:4px; margin:14px 0 0; }
 .pips a { display:grid; place-items:center; width:28px; height:28px; border-radius:999px; }
 .pips a span { width:9px; height:9px; border-radius:999px; background:var(--border); transition:width 320ms cubic-bezier(.22,1,.36,1),border-radius 320ms cubic-bezier(.22,1,.36,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
@@ -127,7 +141,6 @@ button.nowPrimary { border:0; cursor:pointer; }
 /* Overview shows one next task; each stage has a separate reading surface. */
 .canvas[data-portal-page=stage] { grid-template-columns:minmax(0,1fr); grid-template-areas:"welcome" "tasks"; grid-template-rows:auto auto; }
 .canvas[data-portal-page=stage] .welcome { padding:0; }
-.canvas[data-portal-page=stage] .stageBody { padding-bottom:16px; }
 .canvas[data-portal-page=overview] .stageBody { align-self:start; }
 .stageLink,.stagePagination a { display:inline-flex; align-items:center; gap:8px; min-height:44px; color:var(--ink); font-size:14px; text-decoration:underline; text-underline-offset:4px; }
 .stageLink { flex-shrink:0; }
