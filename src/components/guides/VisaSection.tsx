@@ -13,7 +13,7 @@ import { objectFrame } from "./guideArt";
 import { BEFORE_SHORT } from "./guideRoads";
 import { GuideReadMark } from "./GuideReadMark";
 import { GuideWall } from "./GuideWall";
-import { GUIDE_WALL_NOTE, visaPointOpen, type VisaPointsPart } from "./guideAccess";
+import { GUIDE_WALL_NOTE, leadOf, visaPointOpen, type VisaPointsPart } from "./guideAccess";
 import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitcher";
 
@@ -34,7 +34,8 @@ const BEFORE_ART: ArtName[] = ["coins", "keys", "diploma", "alarm"];
 /** What the path says above the stops: how much is open, or why all of it is. */
 function accessCaption(paid: boolean, open: number, total: number) {
   if (paid) return "Всё открыто: на этом устройстве выполнен вход в кабинет";
-  return open < total ? `Открыто ${open} из ${total} · остальные — с маршрутом` : undefined;
+  return open === 0 ? "Открыта первая фраза каждого пункта · подробности — с маршрутом"
+    : open < total ? `Открыто ${open} из ${total} · остальные — с маршрутом` : undefined;
 }
 export function VisaSection({ part }: { part?: VisaPart }) {
   if (part === "funds") return <><GuideReadMark readKey="visa/funds/1" open /><GuaranteeCalculator /></>;
@@ -52,7 +53,7 @@ function VisaPoints({ part, rows, subject }: { part: VisaPointsPart; rows: Guide
   const { index } = useStoryLocation("point", rows.length);
   const open = rows.filter((_, index) => visaPointOpen(part, index + 1)).length;
   return <><GuideReadMark readKey={`visa/${part}/${index + 1}`} open={visaPointOpen(part, index + 1)} /><GuidePointSwitcher subject={subject} caption={accessCaption(paid, open, rows.length)} rows={rows.map((row, index): GuidePointRow =>
-    paid || visaPointOpen(part, index + 1) ? row : { ...row, value: GUIDE_WALL_NOTE, locked: true, content: <GuideWall place="visa" note={null} /> })} /></>;
+    paid || visaPointOpen(part, index + 1) ? row : { ...row, value: (typeof row.value === "string" && leadOf(row.value)) || GUIDE_WALL_NOTE, locked: true, content: <GuideWall place="visa" note={null} /> })} /></>;
 }
 
 function GuaranteeCalculator() {
@@ -105,7 +106,7 @@ function VisaChecklist() {
       <MediaSwitcher items={VISA_DOCS.map((document, position) => {
         const open = paid || visaPointOpen("documents", position + 1);
         const check = <button type="button" aria-pressed={done.has(position)} className={ui.checkItem} onClick={() => toggle(position)}><Check size={18} aria-hidden="true" />{done.has(position) ? "Собрано — снять отметку" : "Отметить собранным"}</button>;
-        return { id:String(position), title:document.title, text:open ? document.desc : GUIDE_WALL_NOTE, subject:"folder" as const, label:String(position + 1).padStart(2, "0"), locked:!open, checked:done.has(position), art:art(DOCUMENT_ART[position]), content:open ? check : <>{check}<GuideWall place="visa" note={null} /></> };
+        return { id:String(position), title:document.title, text:open ? document.desc : leadOf(document.desc) || GUIDE_WALL_NOTE, subject:"folder" as const, label:String(position + 1).padStart(2, "0"), locked:!open, checked:done.has(position), art:art(DOCUMENT_ART[position]), content:open ? check : <>{check}<GuideWall place="visa" note={null} /></> };
       })} index={index} onSelect={select} href={href} label="Документы визового пакета" progressLabel="Документ" nav="path"
         pathCaption={accessCaption(paid, VISA_DOCS.filter((_, position) => visaPointOpen("documents", position + 1)).length, VISA_DOCS.length)} lastAction={<Link href="/guides/visa">К вопросам о визе</Link>} />
       </div>

@@ -1538,3 +1538,40 @@ narrower than their text, buttons wrapping into three lines, tap targets.
 - `design-review` compares the map against `main`; for the approved
   pin-spacing revision it holds the outline, every city centre, name and
   button exact and lets only pin sizes and label positions differ.
+
+## Less for free, so that people buy · 12 November 2026
+
+Owner: «мы даём слишком много информации бесплатно… надо продумать
+restriction, где именно сколько дать информации, чтобы люди уже брали и
+покупали»; then «Да, делай» to the plan below.
+
+**First, found on the way:** on iitaly.net nobody could buy at all. The
+backend answers only `https://iitaly.netlify.app` (no
+`Access-Control-Allow-Origin` for `https://iitaly.net`), so the browser
+blocks the purchase, the cabinet login and the chat on the main domain.
+Fixed only on Railway (`ALLOWED_ORIGINS`, `SITE_URL`); no wall can sell
+until then.
+
+**What was free.** The chat: 10 questions per tab, and leaving a phone
+number lifted the limit for good, so the chat answered everything the
+guides close. 17 of 41 guide steps and 6 of 18 visa points in full — the
+«how to do it» itself. The free document check with every fix. The
+document checklist with explanations on /plan.
+
+**The rule now:** free is understanding what to do and whether you can;
+paid is how exactly, in your case, by which date, with a check.
+- Chat: 3 questions per device (localStorage); then the purchase wall in
+  the chat. A phone number can still be left, it no longer unlocks.
+- Document check: the verdict and the list of problems stay; «Что делать»
+  and «Что дальше» are behind a wall that counts the problems.
+- /plan: document names stay, their explanations open with the route.
+- Guides: every step shows its title and first sentence, styled as the
+  first point of an open step; the rest are grey lines and a wall that
+  says how many points are left. A single-sentence step shows only its
+  title (its one sentence is the whole answer). «Codice fiscale» is open in
+  full as a sample. Visa: facts and the funds calculator open; every point
+  shows its title and first sentence.
+- Captions say what is open when nothing opens in full («у каждого шага
+  открыта первая фраза»), not «открыто 0».
+- Every new wall is the same purchase (`useWallPurchase`), with new
+  analytics places `chat` and `document-fixes`.

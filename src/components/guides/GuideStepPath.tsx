@@ -10,6 +10,7 @@ export function GuideStepPath({ stops, index }: { stops: { title: string; href: 
   const paid = usePaidDevice();
   const open = stops.filter(stop => !stop.locked).length;
   const caption = paid ? "Всё открыто: на этом устройстве выполнен вход в кабинет"
+    : open === 0 ? "Открыта первая фраза каждого шага · разбор — с маршрутом"
     : open < stops.length ? `Открыто ${open} из ${stops.length} · остальные — с маршрутом` : undefined;
   return <StoryPath label="Шаги темы" noun="Шаг" index={index} caption={caption} href={position => stops[position].href}
     stops={stops.map(stop => ({ id: stop.href, title: stop.title, locked: stop.locked && !paid }))} />;

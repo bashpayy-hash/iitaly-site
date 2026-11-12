@@ -131,6 +131,7 @@ export function GuideRoad({ id, heading, stations, showStations = true, scenery 
   const readCount = available.filter(key => read.has(key)).length;
   const percent = available.length ? Math.round(readCount / available.length * 100) : 0;
   const caption = paid ? "всё открыто: на этом устройстве выполнен вход в кабинет"
+    : openKeys.length === 0 ? "у каждого шага открыта первая фраза, разбор — с маршрутом"
     : openKeys.length < allKeys.length ? `открыто ${openKeys.length}, ещё ${allKeys.length - openKeys.length} — с маршрутом` : "";
   const anyRead = readCount > 0;
   const roadRef = useRef<HTMLDivElement>(null), lineRef = useRef<SVGSVGElement>(null);

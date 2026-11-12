@@ -1,21 +1,33 @@
 import { ADMISSIONS_CONTEXT } from "@/data/admissionsContext";
 import { BACKEND_URL } from "./backend";
 
-export const FREE_LIMIT = 10;
+/* Бесплатные вопросы помощнику (owner, 12 Nov 2026: «мы даём слишком много
+   информации бесплатно… надо продумать, где именно сколько дать, чтобы уже
+   брали и покупали»). Было 10 вопросов на вкладку (sessionStorage: новая
+   вкладка — ещё 10), а номер телефона в форме снимал лимит навсегда: чат
+   отвечал на всё, что закрыто в гайдах, и стена обходилась через него.
+   Теперь 3 вопроса на устройство (localStorage), дальше — только с
+   маршрутом; номер можно оставить, но лимит он не снимает. Устройство с
+   оплаченным кабинетом спрашивает без лимита (ChatWidget). */
+export const FREE_LIMIT = 3;
+const ASKED_KEY = "iitaly_asked_v2";
+let askedMemory = 0;
 
 export function askedCount(): number {
   try {
-    return parseInt(sessionStorage.getItem("iitaly_asked") || "0", 10) || 0;
+    return parseInt(localStorage.getItem(ASKED_KEY) || "0", 10) || 0;
   } catch {
-    return 0;
+    return askedMemory;
   }
 }
 
 export function bumpAsked() {
+  const next = askedCount() + 1;
+  askedMemory = next;
   try {
-    sessionStorage.setItem("iitaly_asked", String(askedCount() + 1));
+    localStorage.setItem(ASKED_KEY, String(next));
   } catch {
-    // sessionStorage unavailable — the free-question limit just won't persist
+    // хранилище недоступно (приватный режим) — счёт живёт до перезагрузки
   }
 }
 

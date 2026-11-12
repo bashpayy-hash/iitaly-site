@@ -6,7 +6,7 @@ import { isGuideId } from "./guideJourney";
 import { GuideBreadcrumbs, GuideFrame, GuideReviewed } from "./GuidePage";
 import { GuideActionLink, GuideHelperLink, GuideReadingContext } from "./GuideReadingContext";
 import { guideSentences } from "./guideText";
-import { guideStepOpen } from "./guideAccess";
+import { guideStepOpen, leadOf } from "./guideAccess";
 import { GuideSentences } from "./GuideSentences";
 import { GuideLockedStep } from "./GuideLockedStep";
 import { GuideStepPath } from "./GuideStepPath";
@@ -48,7 +48,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
       </header>
       <div className={styles.path}><GuideStepPath index={step - 1} stops={points.map((item, index) => ({ title: item.title, href: item.href, locked: !guideStepOpen(id, index + 1) }))} /></div>
       <GuideReadMark readKey={`${id}/${step}`} open={open} />
-      {open ? <GuideSentences sentences={sentences} text={point.text} /> : <GuideLockedStep id={id} step={step} count={sentences.length} />}
+      {open ? <GuideSentences sentences={sentences} text={point.text} /> : <GuideLockedStep id={id} step={step} count={sentences.length} lead={leadOf(point.text)} />}
       {!next && <section className={styles.finish} aria-label="Тема разобрана">
         <p>Это последний шаг темы «{guide.title}».</p>
         {helpId && <GuideActionLink id={helpId} />}

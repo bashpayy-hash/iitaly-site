@@ -141,7 +141,7 @@ try {
     await page.getByRole('button',{name:'Отправить',exact:true}).click();
     await page.getByText('Синтетический ответ 1.',{exact:true}).waitFor();
     assert.match(chats[0].messages.at(-1).content,/Открытая тема справочника IITALY: translation/);
-    assert.equal(await page.evaluate(()=>sessionStorage.getItem('iitaly_asked')),'1');
+    assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_asked_v2')),'1');
     await question.fill('Мой незаконченный вопрос');await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({state:'hidden'});
     assert(await page.locator('#chat-launcher').evaluate(button=>button.getBoundingClientRect().bottom<document.getElementById('nl-badge-frame').getBoundingClientRect().top));
