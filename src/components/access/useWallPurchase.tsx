@@ -4,8 +4,9 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { BuyModal, type BuyProduct } from "@/components/prices/BuyModal";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { track } from "@/lib/track";
+import { guestPreview } from "./usePaidDevice";
 
-export type WallPlace = "plan-step" | "portal-task" | "document-check" | "guide-step" | "visa" | "permesso" | "chat" | "document-fixes";
+export type WallPlace = "plan-step" | "portal-task" | "document-check" | "guide-step" | "guide-overview" | "visa" | "permesso" | "chat" | "document-fixes";
 
 const PRODUCT = "Поступление под ключ";
 export const WALL_LABEL = `Открыть маршрут за ${priceLabel(PRICE_MAIN)}`;
@@ -23,14 +24,16 @@ const seen = new Set<string>();
 export function useWallPurchase(place: WallPlace, visible = true): { open: () => void; modal: ReactNode; label: string } {
   const [buy, setBuy] = useState<BuyProduct | null>(null);
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || guestPreview()) return;
     const key = `${place}:${window.location.pathname}${window.location.search}`;
     if (seen.has(key)) return;
     seen.add(key); track("wall_seen", { place });
   }, [place, visible]);
   const open = useCallback(() => {
-    track("wall_cta", { place });
-    track("checkout_started", { product: PRODUCT, from: `wall:${place}` });
+    if (!guestPreview()) {
+      track("wall_cta", { place });
+      track("checkout_started", { product: PRODUCT, from: `wall:${place}` });
+    }
     setBuy({ name: PRODUCT, price: PRICE_MAIN });
   }, [place]);
   return { open, modal: <BuyModal product={buy} onClose={() => setBuy(null)} />, label: WALL_LABEL };

@@ -1611,3 +1611,19 @@ by two. On a phone the facts become rows (icon left, text right).
 Colours are the site's own: tray `#EFE9DF`, cells `#FFFDF9`, dark icon
 `#1F1A17`; the cabinet passes its beige, card and ink tokens through
 `--bento-*`. Icons are lucide, the family the site already uses.
+
+### The boundary is visible before the wall · 12 November 2026
+
+Owner: «я все еще не вижу дозирования контента по платной/бесплатной
+основе». The walls worked, but only inside a step: the topic and visa
+overviews and the guides road showed no difference between free and paid.
+
+- Every topic and the visa overview carry a «Бесплатно / С маршрутом» cell:
+  left, what is open now (the first sentence of each point; the whole
+  sample topic; the visa facts and calculator); right, what the route
+  opens; the same purchase as the step wall. On a paid device the cell
+  says why everything is open.
+- On `/guides` and the section pages a topic whose steps are all closed
+  carries a lock, and its model beside the road is the grey copy. The
+  topic page still opens. «Начни здесь» stands on the first place a guest
+  can read (the visa calculator).
