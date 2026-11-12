@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Local object renditions with explicit dimensions. */
 import Link from "next/link";
 import type { GuideCard } from "@/data/guides";
-import { guideFirstPointHref, guideHref } from "./guideCatalogue";
+import { guideHref } from "./guideCatalogue";
 import { guideArt } from "./guideArt";
 import { Lock, LockOpen } from "lucide-react";
 import { GuideCarousel } from "./GuideCarousel";
@@ -11,7 +11,8 @@ import styles from "./guide-tiles.module.css";
 /* Тема на полосе (owner, 3 Nov: Busy Bee Honey + apple.com): вещь стоит на
    тёмной полосе без рамки и тени, как товар на вывеске; под ней одна фраза
    (название), одна строка (суть) и одно действие — светлая пилюля
-   «Подробнее»; «Пошагово» — тихая ссылка рядом. Строки всех тем стоят на
+   «Подробнее» (owner, 12 Nov: «зачем здесь две кнопки, одной подробнее
+   хватит» — тихая ссылка «Пошагово» снята). Строки всех тем стоят на
    одних линиях (subgrid), вещи — на одной базовой линии.
    Картинки не ленивые: браузер не грузит lazy-картинку за краем
    горизонтального ряда, и при листании место было бы пустым. Все 13 весят
@@ -39,7 +40,6 @@ export function GuideTile({ guide, index }: { guide: GuideCard; index: number })
     <p>{guide.teaser}</p>
     <div className={styles.actions}>
       <Link className={styles.primary} href={guideHref(guide.id)} data-guide-select={guide.id} aria-label={`Подробнее: ${guide.title}`} prefetch={false}>Подробнее</Link>
-      <Link className={styles.secondary} href={guideFirstPointHref(guide.id)} data-guide-steps={guide.id} aria-label={`Пошагово: ${guide.title}`} prefetch={false}>Пошагово</Link>
     </div>
   </article>;
 }

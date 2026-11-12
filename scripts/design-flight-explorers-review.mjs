@@ -29,7 +29,8 @@ try{
     await context.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());
     const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
     // Owner 2 Nov (apple.com home): every topic is a tile with its own
-    // picture, «Подробнее» to the topic page and «Пошагово» to its first step.
+    // picture and «Подробнее» to the topic page (12 Nov: «одной подробнее
+    // хватит» — the «Пошагово» link is gone).
     await page.goto(origin+'/guides',{waitUntil:'networkidle'});
     const tiles=page.locator('[data-guide-tile]');
     assert.equal(await tiles.count(),13);
