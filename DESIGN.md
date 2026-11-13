@@ -1714,3 +1714,14 @@ invisible at tile size. The set is now generated from text only, as studio
 photographs of the same subjects in the same palette — real proportions,
 worn cloth, leather, crumpled paper. Lesson: a reference image locks the
 style; to change the style, describe the object and leave the reference out.
+
+## Vespi holds up Pisa · 13 November 2026
+
+Owner, with the cabinet road at the Pisa model: «вот здесь сделай ещё Веспи,
+который подпирает пизанскую башню». On the cabinet road the Pisa slot now
+shows the same diorama with Vespi pressing both arms against the leaning side
+(the side the tower falls to — the other variant pushed it over). Bologna moves
+before the espresso so no three Vespi pieces stand in a row; the guides road
+keeps the plain Pisa. Found on the way: a piece at the very last step of the
+road ran past the bottom of the card; the last stage now leaves the same room
+under it as the stage in focus.

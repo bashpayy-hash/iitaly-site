@@ -1,0 +1,26 @@
+{
+ "date": "2026-11-13",
+ "request": "Owner, 13 Nov, with a screenshot of the cabinet road at the Pisa model: «вот здесь сделай ещё Веспи, который подпирает пизанскую башню».",
+ "use": "PortalRoad scenery, in the slot of the plain Pisa model (the guides road keeps the plain Pisa).",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, 4:3, transparent background; image references: the three Vespi identity references of 7 Nov (ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5, 0f6d7ac4-4e85-4761-9765-753f578eec1e) and the 7 Nov Pisa model (job fc691e54-1a21-4b77-be09-b49c3b7cced1)",
+ "items": [
+  {
+   "name": "vespi-pisa",
+   "job": "65107f9b-bae2-4d10-8c57-08eb52a80b26",
+   "vespi": true,
+   "subject": "Vespi on the felt lawn on the low side of the Leaning Tower, both arms pressed against it, holding it up — the classic tourist pose",
+   "rejected": {
+    "job": "7ffad15e-c3f1-478a-92d3-80a8e7224e38",
+    "why": "Vespi pushed from the high side, so he would tip the tower over rather than hold it up"
+   }
+  }
+ ],
+ "processing": "As the 7 Nov scenery: cropped to the alpha bounding box (alpha > 4%) plus 10px, WebP q86 at 280 and 560 px; master WebP q92 in design/illustrations/source/scenery/vespi-pisa.webp. Grey copy computed in Node with the same recipe as the ImageMagick one (HSL lightness, 22% #B8A890, brightness-contrast 10x-14, alpha × 0.62), since ImageMagick is not installed here.",
+ "files": [
+  "public/illustrations/scenery/vespi-pisa-280.webp",
+  "public/illustrations/scenery/vespi-pisa-560.webp",
+  "public/illustrations/scenery/vespi-pisa-grey-280.webp",
+  "public/illustrations/scenery/vespi-pisa-grey-560.webp",
+  "design/illustrations/source/scenery/vespi-pisa.webp"
+ ]
+}

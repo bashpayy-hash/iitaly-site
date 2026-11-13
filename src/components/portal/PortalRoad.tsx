@@ -147,9 +147,13 @@ const SCENERY = [
   { name: "vespi-trevi", width: 560, height: 448 },
   { name: "duomo", width: 560, height: 439 },
   { name: "vespi-gondola", width: 560, height: 401 },
-  { name: "pisa", width: 560, height: 684 },
-  { name: "vespi-espresso", width: 560, height: 463 },
+  // Owner, 13 Nov: «сделай ещё Веспи, который подпирает пизанскую башню» —
+  // the same Pisa diorama with Vespi holding the tower up on its leaning
+  // side (design/illustrations/scenery-2026-11-13.json). Bologna moves before
+  // the espresso so that no three Vespi pieces stand in a row.
+  { name: "vespi-pisa", width: 560, height: 582 },
   { name: "bologna", width: 560, height: 668 },
+  { name: "vespi-espresso", width: 560, height: 463 },
   { name: "tuscany", width: 560, height: 380 },
 ] as const;
 const SCENERY_EVERY = 3;
