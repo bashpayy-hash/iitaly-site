@@ -1696,3 +1696,14 @@ on iitaly.net without waiting for the Railway setting.
 - Elsewhere (previews, local reviews) the site still calls the backend
   directly. When Railway lists https://iitaly.net in ALLOWED_ORIGINS and
   SITE_URL points to it, both rules and the branch in backend.ts can go.
+
+## Objects a little more real · 13 November 2026
+
+Owner, with the guides band: «чуточку реалистичнее было бы хорошо». The 19
+objects shared by the guides, /plan, the visa pages and the home banner were
+re-rendered with Higgsfield (gpt_image_2_6) using each 9 November object as
+the image reference: the same object, view, framing and palette, now with
+real materials — leather grain and stitching, milled coin edges, wood grain,
+paper fibres, uneven ink. Same 480×H frames, so nothing moves; the quiet
+folder is recomputed at 30% saturation. Provenance:
+`design/illustrations/objects-2026-11-13.json`.
