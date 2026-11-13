@@ -5,7 +5,6 @@ import type { CSSProperties } from "react";
 import { Check, X, Plus } from "lucide-react";
 import { CITIES, UNIS, type University } from "@/data/italy";
 import { cityLatin } from "@/components/journey/flightCoordinates";
-import { CityGlyph } from "./CityGlyph";
 import { UniversityDecision, type UniversitySelection } from "./UniversityDecision";
 import type { PortalUniversitySelection } from "./UniversitiesExplorer";
 import styles from "./comparison-deck.module.css";
@@ -82,15 +81,18 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
         {universities.map((university, index) => {
           const primary = selection?.primaryId === university.id;
           const inPlan = portalSelection?.selectedIds.includes(university.id);
+          /* Верх карточки (owner, 13 Nov: «расстояние между иконками, особенно
+             сверху… сделано коряво»): строка кода висела над карточкой отдельно,
+             грубая пиктограмма города и обрезанные вертикальные буквы спорили с
+             названием. Теперь в шапке одна строка — код вуза и круглая кнопка
+             «убрать», ниже город, название и метка. */
           return <div key={university.id} className={styles.slot} data-deck-slot>
-            <p className={styles.code}>
-              <span>{university.id.toUpperCase()} • {cityLatin(university.city)}</span>
-              <button type="button" onClick={() => onRemove(university.id)} aria-label={`Убрать из сравнения: ${university.name}`}><X size={15} aria-hidden="true" /></button>
-            </p>
             <article className={styles.card} data-deck-university={university.id} data-primary={primary || undefined} data-tone={index % 3}>
               <header className={styles.poster}>
-                <span className={styles.posterCode} aria-hidden="true">{university.id.toUpperCase()}</span>
-                <CityGlyph city={university.city} className={styles.glyph} />
+                <div className={styles.posterTop}>
+                  <span className={styles.posterCode} title={`${university.id.toUpperCase()} · ${cityLatin(university.city)}`}>{university.id.toUpperCase()}</span>
+                  <button type="button" className={styles.remove} onClick={() => onRemove(university.id)} aria-label={`Убрать из сравнения: ${university.name}`}><X size={16} aria-hidden="true" /></button>
+                </div>
                 <p>{CITIES[university.city].name}</p>
                 <h3>{university.name}</h3>
                 <span className={styles.badge} data-deck-badge>{primary ? <><Check size={14} aria-hidden="true" />Основной выбор</> : university.tp}</span>
@@ -108,8 +110,8 @@ export function ComparisonDeck({ universities, selection, portalSelection, onRem
           </div>;
         })}
         {missing > 0 && <div className={styles.addSlot} data-deck-empty style={{ "--span": missing } as CSSProperties}>
-          <p className={styles.code}><span>{universities.length === 1 ? "Второй вуз" : "Третий вуз · по желанию"}</span></p>
           <div className={styles.add}>
+            <small className={styles.addLabel}>{universities.length === 1 ? "Второй вуз" : "Третий вуз · по желанию"}</small>
             <p>{universities.length === 1 ? "Добавь второй вуз — и сравнение начнётся" : "Можно добавить ещё один"}</p>
             <span>Нажми на город на карте или выбери в списке выше.</span>
             <QuickAdd chosen={universities} onAdd={onAdd} />
