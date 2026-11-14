@@ -1,0 +1,53 @@
+{
+ "date": "2026-11-14",
+ "request": "Owner, 14 Nov, after round 3: «хмм, ещё варианты есть?»",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, 1:1; transparent background except the mosaic and the Renaissance portrait. Vespi references as in ../manifest.json; craft objects (patch, pin, mosaic, plate) used the first and the third.",
+ "prompts": "Full prompts are kept with the jobs in Higgsfield; each follows the round 2 pattern (the character description of the references, one idea, centred, readable when tiny, no text, flags or people).",
+ "drawn": {
+  "44-flat-ii": "source/flat-ii.svg — the two i of IITALY, their dots replaced by Vespi heads",
+  "45-flat-boot": "source/flat-boot.svg — the Italy outline from src/data/italy.ts (ITALY_PATH, read only) with a graduation cap"
+ },
+ "layout": "source/render.mjs",
+ "new": [
+  {
+   "file": "source/patch.webp",
+   "variant": "36-patch",
+   "job": "f93da1e8-6702-4638-be87-04953cba8bd8"
+  },
+  {
+   "file": "source/pin.webp",
+   "variant": "37-enamel-pin",
+   "job": "601ecec5-95dd-4d90-98df-c2fb03341710"
+  },
+  {
+   "file": "source/mosaic.webp",
+   "variant": "38-mosaic",
+   "job": "91fa1da9-49f7-482d-a28d-3ff1865ff3f2"
+  },
+  {
+   "file": "source/plate.webp",
+   "variant": "39-majolica",
+   "job": "2093b555-7e18-4fa2-8f76-8b66ab557a74"
+  },
+  {
+   "file": "source/stamp.webp",
+   "variant": "40-stamp",
+   "job": "7de7fb94-7828-407d-812c-7e5323484c07"
+  },
+  {
+   "file": "source/sunglasses.webp",
+   "variant": "41-dolce-vita",
+   "job": "3be9666c-bc55-4ddd-be53-13e7a7bc369d"
+  },
+  {
+   "file": "source/renaissance.webp",
+   "variant": "42-renaissance",
+   "job": "3d341b62-47a5-4fe7-b596-d118c31cf0e0"
+  },
+  {
+   "file": "source/sticker.webp",
+   "variant": "43-sticker",
+   "job": "51389641-5004-45db-b7d1-b68e2a0d0c5e"
+  }
+ ]
+}
