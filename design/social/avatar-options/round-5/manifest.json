@@ -1,0 +1,39 @@
+{
+ "date": "2026-11-14",
+ "request": "Owner, 14 Nov: «сделай тогда его мозаичным как галерея Виктора Эммануила».",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, 1:1, full-bleed. References: ab833075… and 0f6d7ac4…; the standing shot also a448f972… (full ids in ../manifest.json).",
+ "prompts": "Each prompt asks for a polished 19th-century Milanese marble floor mosaic in the style of the Galleria Vittorio Emanuele II (octagon of inlaid bands in deep green, cream, terracotta red and warm grey, rosettes) with Vespi's face in tesserae inside the central medallion — plain, with the graduation cap, or dolce vita — plus Vespi standing on the medallion and the glass dome seen from below. Every prompt excludes coats of arms, crosses, animals, flags, text and people. Full prompts stay with the jobs in Higgsfield.",
+ "note": "gal-dome came back with painted figures in the lunettes around the dome; the avatar crop (190%) keeps only the ribs and the medallion, so no figure is in the circle. Do not use the uncropped source as is.",
+ "procedural": {
+  "51-galleria-flat-gradcap": "source/tessellate.py on round-3/source/flat-gradcap.svg",
+  "52-galleria-flat": "source/tessellate.py on round-2/source/flat-vespi.svg"
+ },
+ "layout": "source/render.mjs",
+ "new": [
+  {
+   "file": "source/gal-face.webp",
+   "variant": "46-galleria-face",
+   "job": "e5399489-ad65-4f4b-8566-65a51121ff56"
+  },
+  {
+   "file": "source/gal-gradcap.webp",
+   "variant": "47-galleria-gradcap",
+   "job": "c7acd2fa-7381-4b69-b79b-d12166ba708f"
+  },
+  {
+   "file": "source/gal-dolce.webp",
+   "variant": "48-galleria-dolce",
+   "job": "6c0f3aab-8466-4a4f-94fc-12d162d8682a"
+  },
+  {
+   "file": "source/gal-standing.webp",
+   "variant": "49-galleria-standing",
+   "job": "d482705c-6d92-4b65-ae11-124687cb0e77"
+  },
+  {
+   "file": "source/gal-dome.webp",
+   "variant": "50-galleria-dome",
+   "job": "3915d2d7-cddd-43ac-b5c3-b7e664c6f3dc"
+  }
+ ]
+}
