@@ -1,5 +1,6 @@
-/* Netlify injects this frame on production only. Keep its branding visible
-   while moving our controls above it, including the launcher's measuring anchor. */
+/* Netlify injects a "Powered by Netlify" frame on production. The owner asked
+   to remove it, so it stays hidden everywhere and nothing has to make room for it. */
+:global(#nl-badge-frame) { display:none !important; }
 .aboveBadge {
   /* Motion owns transform/opacity. Never tween the safety inset with global CSS. */
   transition-property: none;
@@ -9,16 +10,7 @@
 .launcherLabel { color:inherit; font-family:var(--font-apple-text); font-size:14px; line-height:1.2; white-space:nowrap; }
 @media (max-width:480px) { .labelledLauncher { width:168px; } .launcherLabel { font-size:13px; } }
 
-:global(body:has(#nl-badge-frame)) .aboveBadge:not(.portalPanel) {
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-}
-
-:global(body:has(#nl-badge-frame)) .panel:not(.portalPanel) {
-  max-height: calc(100dvh - 96px - env(safe-area-inset-bottom, 0px));
-}
-
 /* The portal assistant is a work panel, with its own reserved desktop column. */
-:global(body:has([data-portal-design])) :global(#nl-badge-frame) { display:none !important; }
 :global(body:has([data-portal-chat="true"])) .portalPanel {
   top:16px; bottom:16px; right:16px; left:auto; height:calc(100dvh - 32px); max-height:calc(100dvh - 32px); width:380px;
 }
