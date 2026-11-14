@@ -9,7 +9,7 @@ const OUT = process.argv[2], dark = process.argv[3] === 'dark';
 const uri = (f, t) => `data:${t};base64,` + fs.readFileSync(f).toString('base64');
 const av = uri(path.join(DIR, '../../avatar-final/avatar-iitaly-320.png'), 'image/png');
 const covers = ['post1-1', 'post2-1', 'post3-1'].map(n => uri(path.join(DIR, '../posts', n + '.jpg'), 'image/jpeg'));
-const hl = [['01-vespi','Веспи'],['02-vuzy','Вузы'],['03-dokumenty','Документы'],['04-dsu','DSU'],['05-viza','Виза'],['06-gaidy','Гайды']]
+const hl = [['01-o-nas','О нас'],['02-cena','Цена'],['03-dokumenty','Проверка'],['04-dsu','DSU'],['05-vuzy','Вузы'],['06-viza','Виза'],['07-gaidy','Гайды'],['08-voprosy','Вопросы']]
   .map(([f, t]) => [uri(path.join(DIR, '../highlights', f + '.jpg'), 'image/jpeg'), t]);
 const bg = dark ? '#000' : '#fff', fg = dark ? '#F5F5F5' : '#0C0C0C', mute = dark ? '#A8A8A8' : '#737373', line = dark ? '#262626' : '#DBDBDB';
 const html = `<div class="p">
