@@ -1,0 +1,131 @@
+{
+ "date": "2026-11-14",
+ "request": "Owner, 14 Nov: «нам ещё нужно сделать инстаграм посты с Веспи в главной роли, оформи три вводных поста, где поясняются с иллюстрациями в стиле сайта сильные стороны и фишки сайта, также продумай аватарку». After v1: «иногда слишком много информации на одну страницу… дозировать»; «Веспи что-то там вытворяет на фоне декораций, которые не просто остров посреди чего-то… реальные пейзажи… играть с текстурой, с композицией кадра». Variants: «сделай ещё варианты… где-то сделать менее красочным, чтобы фон… а Веспи прям выделялся». On the paper variant C: «слишком белый… делай другие пейзажи, которые по цвету чуть такие сдержанные более» (variant D).",
+ "madeIn": "A local chat on the owner's computer. This session (14 Nov) recovered the variant A scenes and the avatar portrait from Higgsfield by job id; the rendered slides, v1, variants B/C/D, the comparison sheets and source/build.mjs stayed in the local chat and are not in the repository yet.",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 2k, 4:5 (1792x2240), PNG. Avatar: 1k, 1:1, transparent background.",
+ "references": [
+  "ab833075-dfc7-4e28-824c-7e299aad556c",
+  "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+  "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+ ],
+ "processing": "Masters stored as WebP q92 (method 6) in design/social/source/; the 2k PNGs (6-7 MB each) stay on the Higgsfield CDN under rawUrl. The avatar keeps its alpha.",
+ "variantsInLocalChat": {
+  "B_muted": "Edit of each A scene (the A scene is the only reference), same model, high, 2k, 4:5: muted sand, cream and terracotta, light haze. Job prefixes: s11 b14dd8b7, s12 7f48306c, s13 f55751b5, s14 808f330b, s15 90f2052b, s21 bb7b8e22, s22 a90f85cc, s23 63791d6b, s24 63a94586, s31 9ce9e0d1, s32 972113de, s33 5e1761f6, s34 83b6f719.",
+  "C_paper": "Same method, a world of cream cardboard; owner: too white. Job prefixes: s11 1b4b0e97, s12 3a237971, s13 d599788a, s14 06f486df, s15 1041124c, s21 ac301e4f, s22 ee9c171d, s23 96a50295, s24 6d5032ab, s31 65ee4061, s32 04451b61, s33 a6a73adf, s34 e238b64a.",
+  "D_calm": "New places in a naturally restrained palette (variants/calm/). No job ids were handed over."
+ },
+ "scenes": [
+  {
+   "file": "source/scenes/s11.webp",
+   "slide": "post1-1 (cover)",
+   "place": "Amalfi coast, wide three-quarter view from above",
+   "job": "81c33996-2da8-4254-83c3-e923a4cf6b30",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032204_81c33996-2da8-4254-83c3-e923a4cf6b30.png",
+   "prompt": "The exact same handmade toy character as in the reference images (Vespi): smooth cream cotton body with fine fibers and visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a small happy smile, olive-green felt cape collar with one red button. Vespi rides his small glossy red vintage scooter with a cream stripe along a winding cliffside coastal road on the Amalfi coast, leaning into the curve, a tiny tan leather suitcase strapped to the back, the little cape flapping in the wind. Below, a turquoise resin sea with tiny white boats; pastel clay houses in peach, lemon and pink stacked up the cliff, lemon trees with felt leaves and yellow clay lemons, a low stone wall along the road. Wide three-quarter view from slightly above, a sense of speed, warm late-morning sun. The whole scene is a handmade miniature toy world photographed like a stop-motion film set with a macro lens: matte painted clay and plaster, felt, resin water, painted wood, paper and cloth details, rich tactile textures, shallow depth of field. Full-bleed scene filling the entire frame edge to edge, no isolated base, no plain background, no border. Leave the top third of the frame calm: pale warm sky with a few soft cotton-wool clouds, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s12.webp",
+   "slide": "post1-2",
+   "place": "Florence rooftops, from behind",
+   "job": "e46dc149-c0e6-48f9-a4fd-bddf43de102a",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032206_e46dc149-c0e6-48f9-a4fd-bddf43de102a.png",
+   "prompt": "The exact same handmade toy character as in the reference images (Vespi): smooth cream cotton body with fine fibers and visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button. Vespi sits on the edge of a terracotta tiled rooftop in Florence at golden hour, looking through big brass binoculars toward the huge red-brick cathedral dome that rises on the right side of the frame; around him a sea of clay rooftops and chimneys, a tiny potted red geranium, a laundry line with little cloth socks. Seen from behind and slightly to the side, Vespi in the lower left quarter. The whole scene is a handmade miniature toy world photographed like a stop-motion film set with a macro lens: matte painted clay tiles, plaster, felt, painted wood, cloth details, rich tactile textures, warm low sun, shallow depth of field. Full-bleed scene filling the entire frame edge to edge, no isolated base, no plain background, no border. Leave the top third of the frame calm: soft apricot evening sky, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s13.webp",
+   "slide": "post1-3",
+   "place": "Roman cafe table, top-down flat lay",
+   "job": "101ee142-392c-41c8-9c07-1bf4b5d5ade6",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032204_101ee142-392c-41c8-9c07-1bf4b5d5ade6.png",
+   "prompt": "Top-down flat lay photographed straight from above on a round white-and-grey marble cafe table in a Roman piazza. The exact same handmade toy character as in the reference images (Vespi), with glossy satin red helmet with a cream center stripe and a small olive side button, cream cotton body, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button, stands on the table and looks up at the camera with a happy smile while pressing a big wooden-handled rubber stamp with red ink onto a cream document. Around him, arranged in a neat graphic composition: a tiny espresso cup on a saucer, a sugar cube, a cornetto on a paper napkin, a brass paper clip, a few cream papers with red wax seals and green felt check marks, warm cobblestones visible past the table edge. Soft daylight with gentle shadows, rich textures of marble, paper fibres, felt and porcelain, handmade miniature toy world. Full-bleed, filling the entire frame edge to edge, no border. Keep the top third mostly plain marble surface for a headline. No text, no letters or numbers on the papers, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s14.webp",
+   "slide": "post1-4",
+   "place": "Venetian canal, from the water level",
+   "job": "8c7e8dd6-1a2b-47bf-80e0-f61d0c375cc7",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032206_8c7e8dd6-1a2b-47bf-80e0-f61d0c375cc7.png",
+   "prompt": "Low angle from the water level of a narrow Venetian canal. The exact same handmade toy character as in the reference images (Vespi): smooth cream cotton body with fine fibers and visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a proud happy smile, olive-green felt cape collar with one red button. Vespi stands at the back of a small black gondola rowing with a long wooden oar; in the gondola sits a big glass jar full of gold coins tied with a red ribbon. Pastel clay palazzi with arched windows, flower boxes and striped wooden mooring poles on both sides, a small arched stone bridge ahead, glossy resin water with soft reflections and ripples. The whole scene is a handmade miniature toy world photographed like a stop-motion film set with a macro lens: matte painted clay and plaster, resin water, painted wood, cloth details, warm afternoon light, shallow depth of field. Full-bleed scene filling the entire frame edge to edge, no isolated base, no plain background, no border. Leave the top third calm: a strip of warm cream sky between the buildings, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s15.webp",
+   "slide": "post1-5 (paper price tag in the layout)",
+   "place": "Cinque Terre pebble beach, eye level",
+   "job": "5eb2fe4e-8026-49f6-8cb1-81eb96091cf3",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032205_5eb2fe4e-8026-49f6-8cb1-81eb96091cf3.png",
+   "prompt": "The exact same handmade toy character as in the reference images (Vespi): smooth cream cotton body with fine fibers and visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a blissful little smile, olive-green felt cape collar with one red button. Vespi lounges in a striped orange-and-cream canvas deck chair under a matching beach umbrella on a pebble beach in Cinque Terre, holding a pistachio gelato cone, little feet crossed; behind him colorful clay houses in ochre, rose and lemon climb the cliff, tiny wooden fishing boats pulled up on the shore, a calm turquoise resin sea. Eye-level medium shot, Vespi in the lower half. The whole scene is a handmade miniature toy world photographed like a stop-motion film set with a macro lens: matte painted clay, felt, resin, cloth and painted wood, rich tactile textures, sunny afternoon, shallow depth of field. Full-bleed scene filling the entire frame edge to edge, no isolated base, no plain background, no border. Leave the top third calm: open pale warm sky, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s21.webp",
+   "slide": "post2-1 (cover)",
+   "place": "Rome at night through an arched window",
+   "job": "e8d56297-3b65-4ea3-83c2-9f50d49b6487",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032204_e8d56297-3b65-4ea3-83c2-9f50d49b6487.png",
+   "prompt": "Night in Rome seen through an open arched window from inside a cozy room. In the lower half, on the wide stone windowsill, the exact same handmade toy character as in the reference images (Vespi) — cream cotton body with visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button, wearing thin round wire glasses — sits at a tiny wooden desk with a glowing brass desk lamp and examines a cream document with a red wax seal through a brass magnifying glass, focused and happy. Through the window: a miniature Roman skyline at night, clay domes and bell towers, many small warm lit windows, a crescent moon made of yellow felt hanging on a thin wire. Warm amber lamplight against a deep plum-brown night sky, cozy contrast. Handmade miniature toy world photographed like a stop-motion film set with a macro lens: clay, plaster, felt, painted wood, paper, rich tactile textures, shallow depth of field. Full-bleed, filling the entire frame edge to edge, no border. The top third is calm dark night sky, good for light text. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s22.webp",
+   "slide": "post2-2",
+   "place": "Roman alley, low angle from the cobblestones",
+   "job": "4ae7fb88-0405-4a9f-8e0d-dec3a1c87043",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032205_4ae7fb88-0405-4a9f-8e0d-dec3a1c87043.png",
+   "prompt": "Low angle from the cobblestones of a narrow Roman alley. The exact same handmade toy character as in the reference images (Vespi): smooth cream cotton body with visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, an excited open smile, olive-green felt cape collar with one red button. Vespi speeds toward the camera on his small glossy red vintage scooter, one arm raised high holding a cream document like a relay baton, a few loose papers fluttering behind him; ochre and terracotta clay walls with green shutters, potted plants, felt ivy, laundry lines with little cloth shirts strung between the houses. Motion blur on the background, dynamic diagonal composition, warm morning light. Handmade miniature toy world photographed like a stop-motion film set with a macro lens: clay, plaster, felt, painted wood, cloth, rich tactile textures. Full-bleed, filling the entire frame edge to edge, no isolated base, no border. Keep the top third calm: a strip of warm sky and laundry lines, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s23.webp",
+   "slide": "post2-3",
+   "place": "Bologna porticoes, one-point perspective",
+   "job": "646f59ba-90ce-4585-ab6e-6f3d058f6bb5",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032207_646f59ba-90ce-4585-ab6e-6f3d058f6bb5.png",
+   "prompt": "One-point perspective under the long arched porticoes of Bologna made of warm terracotta and ochre clay, the arches repeating far into the distance. In the foreground the exact same handmade toy character as in the reference images (Vespi): smooth cream cotton body with visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a cheerful smile, olive-green felt cape collar with one red button — walks toward the camera carrying a tall wobbly stack of cream documents topped with little green felt check marks, leaning back to balance it. Warm low sun falls through the arches and paints stripes of light and shadow on the stone floor. Handmade miniature toy world photographed like a stop-motion film set with a macro lens: clay, plaster, painted stone, paper, felt, rich tactile textures, shallow depth of field. Full-bleed, filling the entire frame edge to edge, no border. Keep the top third calm: the plain vaulted ceiling of the portico, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s24.webp",
+   "slide": "post2-4",
+   "place": "Sealing wax, extreme macro",
+   "job": "68a0cf85-db6c-481f-994c-bea42062810b",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032206_68a0cf85-db6c-481f-994c-bea42062810b.png",
+   "prompt": "Extreme close-up macro on an old wooden desk. The exact same handmade toy character as in the reference images (Vespi) — glossy satin red helmet with a cream center stripe and a small olive side button, cream cotton face with tiny embroidered black dot eyes and small pink cheeks, a satisfied smile, olive-green felt cape collar with one red button — fills the upper half of the frame, leaning over the desk; his little cotton hands press a brass seal stamp into a glossy pool of red sealing wax on a cream document. A softly glowing candle, a fountain pen and a folded letter nearby. Rich textures of paper fibres, wax, wood grain and cotton, warm candlelight, very shallow depth of field. Handmade miniature toy world. Full-bleed, filling the entire frame edge to edge, no border. Keep the bottom third calm: plain dark wooden desk surface slightly out of focus, for text. No text, no letters on the document, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s31.webp",
+   "slide": "post3-1 (cover)",
+   "place": "Tuscany (Val d'Orcia) at sunrise, very wide",
+   "job": "9b702d4a-500b-4ee1-9d27-73519dc90dbb",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032206_9b702d4a-500b-4ee1-9d27-73519dc90dbb.png",
+   "prompt": "Very wide establishing shot of the Tuscan hills of Val d'Orcia made of soft green and golden felt: a gravel road zigzags up a hill lined with tall felt cypress trees toward a small stone farmhouse with a terracotta roof at the top. At the very bottom of the road, small in the frame, the exact same handmade toy character as in the reference images (Vespi) — cream cotton body, glossy satin red helmet with a cream center stripe, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button — stands with a small tan backpack, holding an unfolded paper map and looking up the road, ready to set off. Sunrise light, long soft shadows, a little morning haze in the valleys. Handmade miniature toy world photographed like a stop-motion film set: felt hills, clay farmhouse, painted wood, tilt-shift look, rich tactile textures. Full-bleed, filling the entire frame edge to edge, no isolated base, no border. Leave the top third calm: wide sky in warm cream and apricot, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s32.webp",
+   "slide": "post3-2",
+   "place": "Olive grove, medium shot",
+   "job": "e35709e0-5e8f-448f-aefe-29d6b5673245",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032206_e35709e0-5e8f-448f-aefe-29d6b5673245.png",
+   "prompt": "In an olive grove made of felt and clay, the exact same handmade toy character as in the reference images (Vespi) — smooth cream cotton body with visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a content smile, olive-green felt cape collar with one red button — lies in a striped cloth hammock tied between two gnarled olive trees, reading an open booklet, one little leg dangling. On the grass below: a neat stack of five booklets with cloth spines in terracotta, olive, cream, mustard and dusty blue, and a woven basket of clay olives. Dappled sunlight through silvery felt leaves. Medium shot, Vespi in the lower half. Handmade miniature toy world photographed like a stop-motion film set with a macro lens: felt, clay, cloth, painted wood, rich tactile textures, shallow depth of field. Full-bleed, filling the entire frame edge to edge, no isolated base, no border. Keep the top third calm: soft out-of-focus canopy with warm light, for a headline. No text, no letters on the booklets, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s33.webp",
+   "slide": "post3-3",
+   "place": "Lake Como dock, three-quarter view from behind",
+   "job": "0288784b-37aa-45ba-a415-4c2afffdea6a",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032207_0288784b-37aa-45ba-a415-4c2afffdea6a.png",
+   "prompt": "Lake Como on a calm morning. The exact same handmade toy character as in the reference images (Vespi) — smooth cream cotton body with visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a happy smile, olive-green felt cape collar with one red button — sits at the end of a wooden dock with little legs dangling over glassy resin water, holding up one cream document and reading it; a small varnished wooden motorboat is moored beside him. Across the lake: pastel clay villas with cypress trees and felt mountains fading into soft haze. Three-quarter view from behind, Vespi in the lower right. Handmade miniature toy world photographed like a stop-motion film set with a macro lens: painted wood, resin water, clay, felt, rich tactile textures, soft morning light, shallow depth of field. Full-bleed, filling the entire frame edge to edge, no isolated base, no border. Keep the top third calm: soft hazy warm sky over the mountains, for a headline. No text, no letters, no flags, no people."
+  },
+  {
+   "file": "source/scenes/s34.webp",
+   "slide": "post3-4",
+   "place": "Colosseum at sunset, low angle",
+   "job": "38eb4db2-3265-4f2b-b018-bff3b7a8fead",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_032216_38eb4db2-3265-4f2b-b018-bff3b7a8fead.png",
+   "prompt": "Low angle at sunset in front of the Colosseum made of warm travertine-colored clay, its arches glowing orange. The exact same handmade toy character as in the reference images (Vespi) — smooth cream cotton body with visible seams, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a big joyful smile, olive-green felt cape collar with one red button — stands up on the seat of his small glossy red vintage scooter with both little arms raised in triumph. Cobblestones in the foreground, a few umbrella pines made of felt, golden backlight rim-lighting Vespi. Handmade miniature toy world photographed like a stop-motion film set with a macro lens: clay, plaster, felt, painted metal, rich tactile textures, shallow depth of field. Full-bleed, filling the entire frame edge to edge, no isolated base, no border. Keep the top third calm: warm sunset sky in apricot and rose, for a headline. No text, no letters, no signs, no flags, no people."
+  },
+  {
+   "file": "source/avatar.webp",
+   "slide": "avatar (face on #087C55 in the local chat's avatar.png)",
+   "place": "Portrait, head and shoulders, transparent background",
+   "job": "f62085eb-b608-430b-a8de-8dc14286e7a3",
+   "rawUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3IEOyz95hPdwK9Yu4IfSlkWBSlJ/hf_20261114_020729_f62085eb-b608-430b-a8de-8dc14286e7a3.png",
+   "prompt": "Portrait of the exact same handmade toy character as in the reference images (Vespi), head and shoulders, facing the camera straight on, centered, looking at the viewer with a friendly happy little smile: smooth cream cotton face with fine fibers, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button. The head fills most of the frame, the top of the helmet and the collar both fully visible with a little margin, the face clearly readable even when the picture is tiny. Warm soft studio light, crisp textile detail. Isolated character, transparent background. No text, no props, no people."
+  }
+ ]
+}
