@@ -37,7 +37,7 @@ function ThemeCard({ id, object, objectHeight, label, title, line, href }: { id:
 export function FeatureBanner() {
   const permesso = GUIDE_TOPICS.find(item => item.id === "permesso")!;
   return <section className={styles.section} data-section="feature" aria-label="План и первые шаги в Италии">
-    <SceneCard title={<>Один шаг.<br />Понятный маршрут.</>} href="/plan" actionLabel="Составить мой план" action="Составить мой план" caption="Ответь на вопросы о себе. План покажет, с чего начать и какой шаг будет следующим.">
+    <SceneCard title={<>Один шаг.<br />Понятный маршрут.</>} href="/plan#questionnaire" actionLabel="Составить мой план" action="Составить мой план" caption="Ответь на вопросы о себе. План покажет, с чего начать и какой шаг будет следующим.">
       <ul className={styles.cards} aria-label="Этапы маршрута">
         {GUIDE_STAGES.map((stage, index) => <ThemeCard key={stage.id} id={stage.id} {...STAGE_CARDS[index]} title={stage.title} line={stage.description} href={guideStageHref(stage.id)} />)}
       </ul>

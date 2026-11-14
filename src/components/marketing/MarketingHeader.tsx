@@ -11,7 +11,10 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const links = [
   { href: "/universities", label: "Университеты" },
-  { href: "/plan", label: "Мой план" },
+  // Owner, 14 Nov 2026 (after the uxaudit pass, «исправь все неточности»):
+  // «Мой план» opens on the questionnaire, not on the loggia cover, so the
+  // first question is on a phone's first screen. The cover stays for /plan typed by hand.
+  { href: "/plan#questionnaire", label: "Мой план" },
   { href: "/prices", label: "Цены" },
   { href: "/guides", label: "Гайды и виза" },
 ];
@@ -20,7 +23,7 @@ const links = [
 export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
-  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices").map(link => link.href === "/plan" ? { ...link, href: "/portal" } : link) : links;
+  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices").map(link => link.href.startsWith("/plan") ? { ...link, href: "/portal" } : link) : links;
 
   useEffect(() => {
     function closeOutside(event: PointerEvent) {
@@ -44,7 +47,7 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
             <Link key={href} href={href} prefetch={false} onClick={event => {
               if (variant !== "portal" || href !== "/portal" || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); navigatePortal(href);
-            }} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
+            }} aria-current={(pathname === href.split("#")[0] || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
         {variant === "portal" ? actions : <Link href="/portal" className={styles.portalLink} prefetch={false} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет</Link>}
@@ -65,7 +68,7 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
               <Link key={href} href={href} prefetch={false} onClick={event => {
                 if (variant !== "portal" || href !== "/portal" || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                 event.preventDefault(); navigatePortal(href);
-              }} aria-current={(pathname === href || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
+              }} aria-current={(pathname === href.split("#")[0] || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
             ))}
             {variant === "public" && <><Link href="/portal" prefetch={false}>Личный кабинет</Link>
             <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button></>}

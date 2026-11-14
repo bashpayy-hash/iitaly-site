@@ -40,12 +40,12 @@
 .filterSummary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-top: 12px; }
 .filterSummary .resultSummary { margin-top: 0; }
 .navigatorLink { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--u-body); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
-.navigatorLink:hover { color: var(--u-ink); }
+@media (hover: hover) and (pointer: fine) { .navigatorLink:hover { color: var(--u-ink); } }
 .filters, .filterGroup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .filterButton { min-height: 44px; padding: 9px 17px; border: 1px solid #e2ded8; border-radius: 999px; background: #fff; color: var(--u-body); font-size: 14px; font-weight: 500; line-height: 1.4; white-space: nowrap; cursor: pointer; transition: color .15s, background-color .15s, border-color .15s; }
-.filterButton:hover { border-color: #bebab4; background: #faf8f5; }
+@media (hover: hover) and (pointer: fine) { .filterButton:hover { border-color: #bebab4; background: #faf8f5; } }
 .filterButton[aria-pressed="true"] { background: #141413; color: #fff; border-color: #141413; }
-.filterButton[aria-pressed="true"]:hover { background: #141413; border-color: #141413; }
+@media (hover: hover) and (pointer: fine) { .filterButton[aria-pressed="true"]:hover { background: #141413; border-color: #141413; } }
 .filterDivider { width: 1px; height: 22px; background: var(--u-line); margin: 0 8px; }
 .resultSummary { margin-top: 14px; color: var(--u-meta); font-size: 13px; font-weight: 400; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums; }
 .mapGrid { display: grid; gap: 32px; margin-top: 28px; }
@@ -57,11 +57,11 @@
 .mapActions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
 .primaryButton, .secondaryButton, .textButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 20px; border: 1px solid transparent; border-radius: 999px; font-size: 14px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: background-color .15s, color .15s; }
 .primaryButton { background: var(--i-action); color: #fff; }
-.primaryButton:hover { background: #141413; }
+@media (hover: hover) and (pointer: fine) { .primaryButton:hover { background: #141413; } }
 .secondaryButton { background: #fff; border-color: var(--u-line); color: var(--u-ink); }
-.secondaryButton:hover { background: #f4f0ea; }
+@media (hover: hover) and (pointer: fine) { .secondaryButton:hover { background: #f4f0ea; } }
 .textButton { color: var(--i-link); background: transparent; }
-.textButton:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .textButton:hover { text-decoration: underline; text-underline-offset: 4px; } }
 .emptyCity { position: relative; display: flex; min-height: 460px; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 36px 28px; border: 1px solid var(--u-line); border-radius: 24px; background: #fff; text-align: center; }
 .emptyArt { width: 176px; margin: 0 0 28px; }
 .emptyArt::before { background: radial-gradient(ellipse, #f5f1eb 0%, #fff2e8 45%, transparent 72%); }
@@ -83,7 +83,7 @@
 .uniCard {
   composes: paper from "../marketing/surface-depth.module.css"; min-width: 0; display: flex; flex-direction: column; padding: 18px; border: 1px solid var(--u-line); border-radius: 16px; background: #fff; }
 .uniOpen { text-align: left; width: 100%; border-radius: 4px; cursor: pointer; }
-.uniOpen:hover .uniName { color: var(--i-link); }
+@media (hover: hover) and (pointer: fine) { .uniOpen:hover .uniName { color: var(--i-link); } }
 .uniName { font-size: 19px; font-weight: 600; line-height: 1.2; letter-spacing: -.025em; overflow-wrap: anywhere; }
 .uniType { margin-top: 6px; color: var(--u-meta); font-size: 13px; font-weight: 400; line-height: 1.45; }
 .uniDetails { display: grid; gap: 12px; padding-top: 18px; margin-top: 16px; border-top: 1px solid #f2eee8; }
@@ -105,7 +105,7 @@
 .compareChip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 6px 4px 10px; border: 1px solid var(--u-line); border-radius: 999px; background: #faf8f5; font-size: 12px; }
 .chipGlyph { flex: none; width: 16px; height: 16px; margin-right: -2px; color: #56524c; }
 .removeChip { display: grid; place-items: center; min-width: 44px; min-height: 44px; border-radius: 50%; color: var(--u-meta); font-size: 18px; cursor: pointer; }
-.removeChip:hover { background: #eeeae4; color: var(--i-link); }
+@media (hover: hover) and (pointer: fine) { .removeChip:hover { background: #eeeae4; color: var(--i-link); } }
 .dialogPanel {
   composes: paper from "../marketing/surface-depth.module.css"; max-width: 720px; border: 1px solid var(--u-line); border-radius: 24px; background: #fff; box-shadow: 0 18px 64px -30px #0005; }
 .comparisonDialog { max-width: 1152px; }
@@ -118,7 +118,7 @@
 .matchPanel { position: fixed; inset: 0 0 0 auto; z-index: 80; width: 400px; max-width: 100%; overflow-y: auto; border-left: 1px solid var(--u-line); background: #fff; box-shadow: -12px 0 48px -28px #0005; }
 .matchCard { padding: 20px; border: 1px solid var(--u-line); border-radius: 16px; background: #faf8f5; }
 .matchOption { width: 100%; min-height: 64px; padding: 14px 18px; border: 1px solid var(--u-line); border-radius: 20px; background: #fff; text-align: left; cursor: pointer; }
-.matchOption:hover { border-color: #e8b7c3; background: #fff5f7; }
+@media (hover: hover) and (pointer: fine) { .matchOption:hover { border-color: #e8b7c3; background: #fff5f7; } }
 @media (min-width: 1024px) {
   .mapGrid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; }
   .mapColumn { position: sticky; top: 96px; }
@@ -208,9 +208,9 @@
 .embedded .cityShortcut select { min-width: 0; }
 .embedded .cityShortcut { margin-top: 0; }
 .embedded .filterButton[aria-pressed="true"] { background: #faf8f5; border-color: #141413; color: #141413; }
-.embedded .filterButton[aria-pressed="true"]:hover { background: #f2eee8; }
+@media (hover: hover) and (pointer: fine) { .embedded .filterButton[aria-pressed="true"]:hover { background: #f2eee8; } }
 .embedded .primaryButton { border-color: var(--u-line); background: #fff; color: var(--u-ink); }
-.embedded .primaryButton:hover { background: #faf8f5; }
+@media (hover: hover) and (pointer: fine) { .embedded .primaryButton:hover { background: #faf8f5; } }
 .embedded .textButton { color: var(--u-body); }
 .embedded :is(.eyebrow, .mapCaption, .scholarship, .tag, .compareToggle, .compareBarLabel, .compareChip, .factNumber) { font-size: 13px; }
 .embedded .uniOpen { min-height: 44px; }
@@ -250,7 +250,7 @@
 .embedded .uniDetails dd { margin:3px 0 0; font-size:14px; line-height:1.5; }
 .embedded .cardActions { margin-top:0; padding-top:4px; align-self:end; }
 .embedded .shortlistToggle { width:100%; margin:0; border-color:var(--accent); background:var(--card); color:var(--accent-text); font-weight:600; line-height:1.4; }
-.embedded .shortlistToggle:hover { background:var(--beige); }
+@media (hover: hover) and (pointer: fine) { .embedded .shortlistToggle:hover { background:var(--beige); } }
 .embedded .shortlistToggle:has(:checked) { border-color:var(--status-green); color:var(--status-green); background:var(--card); }
 .embedded .shortlistToggle:has(:focus-visible) { outline:2px solid var(--accent); outline-offset:3px; }
 .embedded .shortlistToggle input { accent-color:var(--status-green); }

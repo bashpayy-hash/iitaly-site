@@ -22,7 +22,7 @@ export function MarketingFooter() {
           <p>ИИ-сервис поступления в университеты Италии · Казахстан</p>
         </div>
         <nav aria-label="Навигация в подвале">
-          <Link href="/plan" prefetch={false}>Мой план</Link>
+          <Link href="/plan#questionnaire" prefetch={false}>Мой план</Link>
           <Link href="/universities" prefetch={false}>Университеты</Link>
           <Link href="/prices" prefetch={false}>Цены</Link>
           <Link href="/guides" prefetch={false}>Гайды и виза</Link>

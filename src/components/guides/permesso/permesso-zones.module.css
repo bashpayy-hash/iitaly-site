@@ -13,7 +13,7 @@
 .focusLayer { display:block; position:absolute; inset:0; width:100%; height:100%; z-index:5; pointer-events:none; }
 .onboarding { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; color:#6d6259; font-size:12px; line-height:1.4; }
 .onboarding button { width:44px; height:44px; flex:0 0 44px; border:0; background:transparent; border-radius:8px; font:inherit; font-size:22px; color:#77695d; cursor:pointer; }
-.onboarding button:hover { background:#efe9e2; }
+@media (hover: hover) and (pointer: fine) { .onboarding button:hover { background:#efe9e2; } }
 /* На сенсорном экране навести нельзя — та же строка говорит «Нажми». */
 .onTouch { display:none; }
 @media (hover:none) and (pointer:coarse) { .onPointer { display:none; } .onTouch { display:inline; } }

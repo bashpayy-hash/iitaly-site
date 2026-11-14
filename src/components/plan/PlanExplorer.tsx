@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { WIZ, type WizAnswers } from "@/data/wizard";
@@ -30,6 +30,17 @@ export function PlanExplorer() {
   const { primary } = useUniversityChoice();
   const tool = useSyncExternalStore(subscribeTool, currentTool, () => "questionnaire");
   const plan = draft.complete ? buildPlan(draft.answers) : null;
+
+  // Owner, 14 Nov 2026 (uxaudit re-run, «исправь все неточности»): «Проверить
+  // документ» on the home page lands here with #document-check, but the block is
+  // hidden until the hash is read on the client, so the browser has nothing to
+  // scroll to and the visitor sees the loggia cover with the uploader 866 px
+  // below. Once the document tool is shown for that hash, bring it into view.
+  useEffect(() => {
+    if (tool !== "document-check" || window.location.hash !== "#document-check") return;
+    const frame = requestAnimationFrame(() => revealElement(document.getElementById("document-check"), "start"));
+    return () => cancelAnimationFrame(frame);
+  }, [tool]);
 
   function focusPlan() {
     requestAnimationFrame(() => {

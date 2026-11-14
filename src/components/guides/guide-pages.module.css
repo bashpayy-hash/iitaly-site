@@ -14,7 +14,7 @@
 .searchField input { width:100%; min-width:0; min-height:44px; border:0; background:transparent; color:#141413; font-size:16px; }
 .searchField input::placeholder { color:#655B52; opacity:1; }
 .searchField button { display:grid; place-items:center; flex:none; width:44px; height:44px; border-radius:8px; }
-.searchField button:hover { background:#EFEAE3; }
+@media (hover: hover) and (pointer: fine) { .searchField button:hover { background:#EFEAE3; } }
 .directory { margin-top:36px; }
 .directory > h2 { margin:0; font-size:26px; font-weight:600; letter-spacing:-.02em; }
 .stageList { list-style:none; padding:0; margin:0; border-top:1px solid #DCD5CA; }
@@ -24,7 +24,7 @@
 .stageList strong { display:block; font:600 28px/1.25 var(--font-apple-display); letter-spacing:-.025em; }
 .stageList span>span { display:block; max-width:66ch; margin-top:8px; color:#57514B; font-size:16px; line-height:1.5; }
 .stageList a>svg { flex:none; }
-.stageList a:hover strong { text-decoration:underline; text-underline-offset:5px; }
+@media (hover: hover) and (pointer: fine) { .stageList a:hover strong { text-decoration:underline; text-underline-offset:5px; } }
 .breadcrumbs { margin-bottom:24px; color:#57514B; font-size:13px; line-height:1.5; }
 .breadcrumbs ol { display:flex; flex-wrap:wrap; align-items:center; gap:0 8px; list-style:none; margin:0; padding:0; }
 .breadcrumbs li { display:flex; align-items:center; gap:8px; min-width:0; }
@@ -52,10 +52,10 @@
 .sources svg { flex:none; }
 .sources p { max-width:65ch; font-size:13px; line-height:1.5; }
 .primary { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:12px 22px; border:1px solid #141413; border-radius:999px; background:#141413; color:#fff; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
-.primary:hover { background:#383630; }
+@media (hover: hover) and (pointer: fine) { .primary:hover { background:#383630; } }
 .textLink { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 0; color:#141413; font-size:14px; line-height:1.5; text-align:left; text-decoration:underline; text-underline-offset:4px; }
 .textLink svg { flex:none; }
-.textLink:hover { text-decoration-thickness:2px; }
+@media (hover: hover) and (pointer: fine) { .textLink:hover { text-decoration-thickness:2px; } }
 .articleFooter { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 32px; margin-top:40px; padding-top:20px; border-top:1px solid #DCD5CA; }
 .indexFooter { margin-top:32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; }
 .visaTimeline { padding:0; list-style:none; counter-reset:visa; }

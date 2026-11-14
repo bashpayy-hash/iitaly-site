@@ -9,13 +9,13 @@
 .filters { display: flex; flex-wrap: wrap; column-gap: 16px; row-gap: 0; border: 0; padding: 0 0 4px; margin: 0; }
 .filter { display: inline-flex; min-width: 44px; min-height: 44px; max-width: 100%; align-items: center; gap: 7px; padding: 9px 0; border-bottom: 2px solid transparent; color: var(--portal-muted); font-size: 14px; line-height: 1.5; cursor: pointer; }
 .filter input { appearance: none; width: 0; height: 0; margin: 0; position: absolute; opacity: 0; }
-.filter:hover { color: var(--portal-ink); }
+@media (hover: hover) and (pointer: fine) { .filter:hover { color: var(--portal-ink); } }
 .filter[data-selected="true"] { border-color: var(--portal-ink); color: var(--portal-ink); font-weight: 500; }
 .filter:has(input:focus-visible) { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .count { font-variant-numeric: tabular-nums; margin-left: 3px; }
 .list { border-top: 1px solid var(--portal-border); }
 .row { display: block; min-height: 76px; padding: 20px 0; border-bottom: 1px solid var(--portal-border); color: var(--portal-ink); text-decoration: none; }
-.row:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .row:hover h3 { text-decoration: underline; text-underline-offset: 4px; } }
 .file { min-width: 0; }
 .file h3 { font-size: 16px; line-height: 1.5; font-weight: 500; }
 .meta, .empty { margin-top: 5px; color: var(--portal-muted); font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
@@ -47,7 +47,7 @@
 .purposes label:has(input:focus-visible) { outline:2px solid var(--portal-ink); outline-offset:3px; }
 .list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; border:0; margin-top:12px; }
 .row { display:flex; flex-direction:column; justify-content:space-between; min-height:180px; padding:22px; border:1px solid var(--portal-border); border-radius:24px; background:white; }
-.row:hover { background:var(--color-warm-white); }
+@media (hover: hover) and (pointer: fine) { .row:hover { background:var(--color-warm-white); } }
 .rowFooter { margin-top:20px; flex-wrap:wrap; }
 .status[data-outcome=approved] { color:var(--portal-green,#356450); background:#E4ECE3; padding:5px 9px; border-radius:999px; }
 @media(max-width:600px) { .list { grid-template-columns:1fr; } .row { padding:20px; min-height:160px; } }

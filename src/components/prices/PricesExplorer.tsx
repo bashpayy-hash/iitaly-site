@@ -58,7 +58,7 @@ export function PricesExplorer() {
 
       <section className={`${heroArt.packages} px-5 py-10 md:px-6`}>
         <div className="mx-auto max-w-[900px]">
-          <div data-price-comparison className="flex flex-col items-stretch gap-4 sm:flex-row">
+          <div data-price-comparison data-fab-yield className="flex flex-col items-stretch gap-4 sm:flex-row">
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
@@ -81,7 +81,7 @@ export function PricesExplorer() {
                 маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.
               </span>
             </div>
-            <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan")} className="w-full shrink-0 md:w-auto">
+            <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan#questionnaire")} className="w-full shrink-0 md:w-auto">
               Проверить шансы
             </AppleButton>
           </div>

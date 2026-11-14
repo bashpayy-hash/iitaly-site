@@ -11,7 +11,7 @@
   text-underline-offset: 3px;
 }
 
-.textAction:hover { text-decoration-thickness: 2px; }
+@media (hover: hover) and (pointer: fine) { .textAction:hover { text-decoration-thickness: 2px; } }
 .textAction[aria-disabled="true"] { opacity: .6; cursor: wait; }
 .textAction:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 
@@ -95,11 +95,11 @@
 }
 
 .primaryAction { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 24px; border: 0; border-radius: 999px; background: var(--portal-accent); color: #fff; font: inherit; font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: -.015em; cursor: pointer; }
-.primaryAction:hover { background: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .primaryAction:hover { background: var(--portal-accent-deep); } }
 .primaryAction:disabled { opacity: .6; cursor: wait; }
 .primaryAction:focus-visible, .dangerAction:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .dangerAction[href] { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; min-height: 48px; padding: 11px 16px; border: 1px solid var(--portal-muted); border-radius: 12px; color: var(--portal-ink); font-size: 15px; line-height: 1.5; font-weight: 500; text-decoration: none; }
-.dangerAction:hover { background: var(--portal-surface-soft); }
+@media (hover: hover) and (pointer: fine) { .dangerAction:hover { background: var(--portal-surface-soft); } }
 .dangerAction svg { stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .formHint { margin: 10px 0 0; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
 
@@ -139,9 +139,9 @@
 .profileList dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
 .pill,.pillOutline { display: inline-flex; align-items: center; justify-content: center; justify-self: start; min-height: 44px; padding: 10px 22px; border-radius: 999px; font-size: 15px; font-weight: 500; line-height: 1.2; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1); }
 .pill { background: #B83A27; color: #FAF6EE; }
-.pill:hover { background: #A33421; }
+@media (hover: hover) and (pointer: fine) { .pill:hover { background: #A33421; } }
 .pillOutline { border: 1px solid #B83A27; color: #A33421; }
-.pillOutline:hover { background: #B83A27; color: #FAF6EE; }
+@media (hover: hover) and (pointer: fine) { .pillOutline:hover { background: #B83A27; color: #FAF6EE; } }
 .pill:focus-visible,.pillOutline:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .quiet { margin: 0; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
 .quietOnDark { margin: 0; color: #CFC6BA; font-size: 15px; line-height: 1.5; }
@@ -163,7 +163,7 @@
 .dark .reminders .message { color: #FAF6EE; }
 .dark .reminders .textAction[href] { color: #FAF6EE; }
 .dark .reminders .primaryAction { background: #FAF6EE; color: #2A2420; }
-.dark .reminders .primaryAction:hover { background: #EAD7BB; }
+@media (hover: hover) and (pointer: fine) { .dark .reminders .primaryAction:hover { background: #EAD7BB; } }
 .dark .reminders :is(summary, a, button):focus-visible { outline-color: #FAF6EE; }
 .page .session { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-top: 0; padding: 28px 28px 26px; }
 .page .session > div { display: grid; gap: 12px; min-width: 0; }

@@ -21,10 +21,10 @@
 .nextStep > .meta { font-size:14px; }
 .nextStep > .fileArea,.nextStep > .textAction { margin-top:16px; }
 .fileArea { display:inline-flex; align-items:center; justify-content:center; gap:6px; max-width:100%; min-height:48px; padding:12px 22px; border:1px solid var(--portal-accent); border-radius:999px; background:var(--portal-accent); color:var(--portal-surface); font-size:16px; line-height:1.4; font-weight:500; text-decoration:none; cursor:pointer; text-align:center; }
-.fileArea:hover { background:var(--portal-muted); border-color:var(--portal-muted); }
+@media (hover: hover) and (pointer: fine) { .fileArea:hover { background:var(--portal-muted); border-color:var(--portal-muted); } }
 .fileArea:disabled { cursor:wait; opacity:.6; }
 .textAction { display:inline-flex; align-items:center; min-height:44px; padding:8px 0; border:0; background:transparent; color:var(--portal-ink); text-align:left; font-size:15px; line-height:1.5; text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
-.textAction:hover { text-decoration-thickness:2px; }
+@media (hover: hover) and (pointer: fine) { .textAction:hover { text-decoration-thickness:2px; } }
 .fileDetails { padding:24px 0; border-top:1px solid var(--portal-border); }
 .fileDetails dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 28px; }
 .fileDetails dt { color:var(--portal-muted); font-size:14px; margin-bottom:4px; }
@@ -68,7 +68,7 @@
 @media(max-width:900px) { .report { padding:20px; } .heading h2 { font-size:28px; } }
 @media(max-width:540px) { .fileDetails dl { grid-template-columns:1fr; } .contextFields { gap:12px; } .checks li { grid-template-columns:1fr; gap:4px; } .fileArea { width:100%; } .heading h2 { font-size:26px; } }
 .uploadForm .fileArea { width:fit-content; border-radius:999px; background:var(--accent); border-color:var(--accent); color:var(--on-dark); font:600 14px/1.4 var(--font-sans); }
-.uploadForm .fileArea:hover { background:var(--accent-text); border-color:var(--accent-text); }
+@media (hover: hover) and (pointer: fine) { .uploadForm .fileArea:hover { background:var(--accent-text); border-color:var(--accent-text); } }
 .report[data-document-page=action] { max-width:880px; margin-inline:auto; }
 
 .report [hidden] { display:none!important; }

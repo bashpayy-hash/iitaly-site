@@ -22,7 +22,7 @@
 .fileArea { display: grid; gap: 7px; justify-items: start; min-height: 92px; width: 100%; margin-top: 24px; padding: 20px; border: 1px solid var(--portal-accent); border-radius: 24px; background: var(--portal-accent); color: var(--portal-surface); text-align: left; }
 .fileArea > span { font-size: 16px; font-weight: 500; }
 .fileArea small { font-size: 13px; color: inherit; line-height: 1.5; }
-.fileArea:hover { background: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .fileArea:hover { background: var(--portal-accent-deep); } }
 .fileArea:disabled { cursor: wait; opacity: .7; }
 .selfReport { margin-top: 20px; }
 .selfReport label { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; }

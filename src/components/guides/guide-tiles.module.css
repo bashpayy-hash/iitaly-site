@@ -38,7 +38,7 @@
 .actions { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px 18px; margin-top:20px; }
 .primary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
 .primary { padding:10px 22px; background:#FAF6EE; color:#2A2420; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
-.primary:hover { background:#EAD7BB; }
+@media (hover: hover) and (pointer: fine) { .primary:hover { background:#EAD7BB; } }
 .primary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
 
 @media(max-width:760px) {

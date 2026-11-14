@@ -68,7 +68,7 @@
 .sources { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-top: 24px; font-size: 14px; }
 .sources b { color: var(--muted); font-weight: 500; }
 .sources a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); text-decoration: none; }
-.sources a:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .sources a:hover { text-decoration: underline; text-underline-offset: 3px; } }
 
 .cheatSheet { margin-top: 8px; border-top: 1px solid var(--line-strong); }
 .cheatSheet summary { display: flex; align-items: center; min-height: 52px; font-size: 15px; cursor: pointer; }

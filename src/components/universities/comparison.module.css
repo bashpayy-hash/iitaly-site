@@ -12,7 +12,7 @@
 .section :where(button,select,input):focus-visible, .comparison :where(select,input):focus-visible, .tableScroll:focus-visible { outline: 2px solid #141413; outline-offset: 4px; }
 .selectionActions { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 16px 0 24px; font-size: 13px; color: #6b6761; }
 .selectionActions button { min-height: 40px; padding: 8px 16px; border: 1px solid #e7e4df; border-radius: 999px; background: #fff; color: #141413; text-underline-offset: 4px; }
-.selectionActions button:hover { text-decoration: underline; }
+@media (hover: hover) and (pointer: fine) { .selectionActions button:hover { text-decoration: underline; } }
 .empty { padding: 40px 24px; border-top: 1px solid #e7e4df; text-align: center; }
 .empty > span { display: block; color: #141413; font-size: 12px; letter-spacing: .16em; }
 .empty p { font-size: 22px; margin-top: 12px; letter-spacing: -.025em; }
@@ -86,7 +86,7 @@
 .selectedBadge svg { flex:none; }
 .chooseButton,.planLink { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:46px; padding:11px 18px; border:1px solid #B83A27; border-radius:12px; background:#B83A27; color:#FAF9F3; font-size:14px; line-height:1.4; font-weight:600; text-align:left; cursor:pointer; text-decoration:none; }
 .chooseButton svg,.planLink svg { flex:none; }
-.chooseButton:hover,.planLink:hover { background:#A33421; }
+@media (hover: hover) and (pointer: fine) { .chooseButton:hover,.planLink:hover { background:#A33421; } }
 .chooseButton[aria-pressed=true] { background:#FBF3E9; color:#A33421; }
 .chooseButton:disabled { background:transparent; border-color:#DCD3C3; color:#6E685D; cursor:not-allowed; }
 .chooseButton:focus-visible,.planLink:focus-visible { outline:2px solid #352B28; outline-offset:4px; }
@@ -100,7 +100,7 @@
 .finalChoices { display:flex; flex-wrap:wrap; gap:12px; flex-basis:100%; }
 .finalChoices .chooseButton { background:transparent; color:#352B28; border-color:#DCD3C3; }
 .finalChoices .chooseButton[aria-pressed=true] { border-color:#B83A27; color:#A33421; }
-.finalChoices .chooseButton:hover { background:#EFE7D8; }
+@media (hover: hover) and (pointer: fine) { .finalChoices .chooseButton:hover { background:#EFE7D8; } }
 @media(max-width:767px) { .decision { gap:18px; }.decisionCopy { flex-basis:100%; }.planLink { width:100%; justify-content:space-between; }.finalChoices { display:grid; grid-template-columns:minmax(0,1fr); }.finalChoices .chooseButton { justify-content:flex-start; } }
 
 .viewModes{display:flex;align-items:center;gap:10px;margin:18px 0 0;color:#6E685D;font:500 14px/1.4 var(--font-sans)}
@@ -112,7 +112,7 @@
 .decision[data-chosen=true] .decisionTitle svg { color:#F29A89; }
 .decision[data-chosen=true] .decisionCopy p:not(.decisionTitle) { color:#CFC6BA; }
 .decision[data-chosen=true] .planLink { border-color:#FAF9F3; background:#FAF9F3; color:#352B28; }
-.decision[data-chosen=true] .planLink:hover { background:#EFE7D8; }
+@media (hover: hover) and (pointer: fine) { .decision[data-chosen=true] .planLink:hover { background:#EFE7D8; } }
 .decision[data-chosen=true] .planLink:focus-visible { outline-color:#F29A89; }
 .section { scroll-margin-top:80px; }
 @keyframes decision-in { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }

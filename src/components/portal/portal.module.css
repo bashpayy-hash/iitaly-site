@@ -90,7 +90,7 @@
   text-align: left;
 }
 
-.navItem:hover { color: var(--portal-ink); background: var(--portal-surface-soft); }
+@media (hover: hover) and (pointer: fine) { .navItem:hover { color: var(--portal-ink); background: var(--portal-surface-soft); } }
 .navItemActive { color: var(--portal-ink); background: var(--portal-surface); border-color: var(--portal-border); font-weight: 600; }
 .navItemActive::before { display: none; }
 
@@ -185,11 +185,11 @@
   border-radius: 7px;
 }
 
-.ghostButton:hover {
+@media (hover: hover) and (pointer: fine) { .ghostButton:hover {
   color: var(--portal-ink);
   border-color: #bdb5ab;
   background: rgba(36,33,29,.025);
-}
+} }
 
 .mobileNav { display: none; }
 
@@ -354,7 +354,7 @@
   white-space: nowrap;
 }
 
-.textLink:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .textLink:hover { text-decoration: underline; text-underline-offset: 3px; } }
 
 .nextStep {
   display: grid;
@@ -434,7 +434,7 @@
 }
 
 .secondaryStep:first-child { border-top: 0; }
-.secondaryStep:hover { background: rgba(36,33,29,.022); }
+@media (hover: hover) and (pointer: fine) { .secondaryStep:hover { background: rgba(36,33,29,.022); } }
 .secondaryStepIndex { color: var(--portal-ash); font-size: 13px; }
 .secondaryStepCopy { display: grid; gap: 2px; min-width: 0; }
 .secondaryStepCopy strong { font-size: 13px; font-weight: 500; color: var(--portal-ink); }
@@ -459,7 +459,7 @@
   color: #fff;
 }
 
-.primaryButton:hover { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .primaryButton:hover { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); } }
 
 .secondaryButton {
   border: 0;
@@ -471,7 +471,7 @@
   text-underline-offset: 4px;
 }
 
-.secondaryButton:hover { color: var(--portal-ink); border-color: #bdb5ab; }
+@media (hover: hover) and (pointer: fine) { .secondaryButton:hover { color: var(--portal-ink); border-color: #bdb5ab; } }
 
 .overviewGrid {
   display: grid;
@@ -496,7 +496,7 @@
   text-align: left;
 }
 
-.summaryCardButton:hover { border-color: #c9c1b6; }
+@media (hover: hover) and (pointer: fine) { .summaryCardButton:hover { border-color: #c9c1b6; } }
 
 .summaryHeader {
   display: flex;
@@ -565,7 +565,7 @@
   text-align: left;
 }
 
-.stageRow:hover .stageName { color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .stageRow:hover .stageName { color: var(--portal-accent-deep); } }
 .stageMeta,
 .docMeta { color: var(--portal-ash); font-size: 13px; }
 .miniTrack { width: 84px; height: 4px; overflow: hidden; border-radius: 999px; background: #e9e3da; }
@@ -916,7 +916,7 @@
   font-weight: 500;
 }
 
-.loginSubmit:hover:not(:disabled) { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .loginSubmit:hover:not(:disabled) { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); } }
 .loginSubmit:disabled { opacity: .55; }
 
 .loginFoot {
@@ -1075,7 +1075,7 @@
 }
 
 .guidanceRow:first-child { border-top: 0; }
-.guidanceRow:not(:disabled):hover strong { color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .guidanceRow:not(:disabled):hover strong { color: var(--portal-accent-deep); } }
 .guidanceRow:disabled { cursor: default; opacity: .72; }
 .guidanceRow > span:first-child { display: grid; gap: 2px; min-width: 0; }
 .guidanceRow strong { color: var(--portal-ink); font-size: 13px; font-weight: 500; line-height: 1.35; }
@@ -1098,7 +1098,7 @@
 }
 
 .deadlineRowButton:first-child { border-top: 0; }
-.deadlineRowButton:hover .deadlineName { color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .deadlineRowButton:hover .deadlineName { color: var(--portal-accent-deep); } }
 .rowArrow { color: var(--portal-ash); }
 
 .statusRail {
@@ -1126,7 +1126,7 @@
 }
 
 .statusRailItem:first-child { border-top: 0; }
-.statusRailItem:hover { background: rgba(36,33,29,.02); }
+@media (hover: hover) and (pointer: fine) { .statusRailItem:hover { background: rgba(36,33,29,.02); } }
 .statusRailItem > span:first-child,
 .statusRailItemStatic > span:first-child { display: grid; gap: 3px; }
 .statusRailItem small,
@@ -1246,7 +1246,7 @@
   color: inherit;
   text-align: left;
 }
-.optionCard:hover { border-color: #bebab4; }
+@media (hover: hover) and (pointer: fine) { .optionCard:hover { border-color: #bebab4; } }
 .optionCard[data-selected="true"] { border-color: #e8b7c3; background: #fff5f7; }
 .optionCard strong { display: block; font-size: 14px; font-weight: 500; }
 .optionCard span { display: block; margin-top: 2px; color: var(--portal-muted); font-size: 13px; line-height: 1.35; }
@@ -1260,15 +1260,15 @@
   font-weight: 500;
 }
 .onboardingPrimary { width: 100%; margin-top: 24px; border: 1px solid var(--portal-accent); background: var(--portal-accent); color: #fff; }
-.onboardingPrimary:hover:not(:disabled),
-.onboardingPrimarySmall:hover:not(:disabled) { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .onboardingPrimary:hover:not(:disabled),
+.onboardingPrimarySmall:hover:not(:disabled) { background: var(--portal-accent-deep); border-color: var(--portal-accent-deep); } }
 .onboardingPrimary:disabled,
 .onboardingPrimarySmall:disabled,
 .onboardingSecondarySmall:disabled { opacity: .55; }
 .onboardingBack { margin-top: 8px; border: 0; background: transparent; color: var(--portal-muted); }
 .pathChoices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
 .pathChoice { min-height: 190px; padding: 17px; border: 1px solid var(--portal-border); border-radius: 14px; background: transparent; color: inherit; text-align: left; }
-.pathChoice:hover { border-color: rgba(183,42,58,.32); background: rgba(183,42,58,.035); }
+@media (hover: hover) and (pointer: fine) { .pathChoice:hover { border-color: rgba(183,42,58,.32); background: rgba(183,42,58,.035); } }
 .pathChoiceEyebrow { display: block; margin-bottom: 15px; color: var(--portal-accent-deep); font-size: 13px; font-weight: 500; }
 .pathChoice strong { display: block; font-family: var(--font-apple-display); font-size: 18px; font-weight: 500; }
 .pathChoice p { margin: 8px 0 0; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
@@ -1411,7 +1411,7 @@
 }
 
 .weekRow:first-child { border-top: 0; }
-.weekRow:not(:disabled):hover strong { color: var(--portal-accent-deep); }
+@media (hover: hover) and (pointer: fine) { .weekRow:not(:disabled):hover strong { color: var(--portal-accent-deep); } }
 .weekRow:disabled { opacity: .68; cursor: default; }
 .weekRow > span:first-child { display: grid; gap: 2px; min-width: 0; }
 .weekRow strong { color: var(--portal-ink); font-size: 13px; font-weight: 500; line-height: 1.35; }
@@ -1440,7 +1440,7 @@
   text-align: left;
 }
 
-.parallelStrip:hover { background: rgba(183,42,58,.045); }
+@media (hover: hover) and (pointer: fine) { .parallelStrip:hover { background: rgba(183,42,58,.045); } }
 .parallelStrip > span:first-child { display: grid; gap: 2px; }
 .parallelStrip small { color: var(--portal-accent-deep); font-size: 13px; font-weight: 500; }
 .parallelStrip strong { color: var(--portal-ink); font-size: 13px; font-weight: 500; }

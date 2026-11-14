@@ -108,7 +108,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           скринридера остаётся невидимый progressbar. */}
       <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
 
-      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={preparing || finished ? styles.panel : styles.stage}>
+      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={preparing || finished ? styles.panel : styles.stage} data-fab-yield>
         {preparing ? <AssessmentTransition onSkip={finishTransition} /> : finished ? (
           <>
             {preview && (
@@ -127,7 +127,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
                       <>
                         Ещё {stepsLeft} {ruPlural(stepsLeft, "шаг", "шага", "шагов")} и{" "}
                         {docsCount} {ruPlural(docsCount, "документ", "документа", "документов")} в
-                        чек-листе — дальше на этой странице.
+                        чек-листе откроются по кнопке ниже.
                       </>
                     );
                   })()}

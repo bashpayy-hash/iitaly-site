@@ -1,5 +1,5 @@
 .zone { display:inline-flex; align-items:center; justify-content:center; width:fit-content; max-width:100%; min-height:48px; padding:12px 20px; border:1px solid var(--accent); border-radius:12px; background:var(--accent); color:var(--on-dark); font:600 14px/1.4 var(--font-sans); text-align:center; cursor:pointer; }
-.zone:hover { background:var(--accent-text); border-color:var(--accent-text); }
+@media (hover: hover) and (pointer: fine) { .zone:hover { background:var(--accent-text); border-color:var(--accent-text); } }
 .zone[data-drag] { outline:3px solid var(--ink); outline-offset:4px; }
 .zone:focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
 .zone:disabled { opacity:.65; cursor:wait; }
