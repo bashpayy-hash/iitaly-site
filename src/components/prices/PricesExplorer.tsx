@@ -13,6 +13,7 @@ import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import styles from "@/components/marketing/marketing.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
+import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -84,6 +85,10 @@ export function PricesExplorer() {
               Проверить шансы
             </AppleButton>
           </div>
+
+          {/* Owner, 13 Nov: проверка документов — то, за что платят; здесь она
+              стоит до состава пакета, со сравнением с агентством. */}
+          <DocumentCheckFeature compact />
 
           <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
             <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Что включено</h2>

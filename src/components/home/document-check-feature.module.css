@@ -1,0 +1,35 @@
+/* Проверка документов на главной и на ценах (owner, 13 Nov). Поля — общий
+   отступ сайта; сетка — общее бенто (src/components/ui/Bento.tsx). */
+.section { max-width: calc(1216px + 2 * max(32px, (100vw - 1216px) / 2)); margin: 0 auto; padding: 72px max(32px, calc((100vw - 1216px) / 2)) 80px; }
+.compact { max-width: none; padding: 40px 0 8px; }
+.head { display: grid; gap: 16px; max-width: 880px; margin-bottom: 28px; }
+.title { margin: 0; color: #141413; font: 600 clamp(32px, 3.6vw, 48px) / 1.06 var(--font-apple-display); letter-spacing: -.03em; text-wrap: balance; }
+.title span { color: #6B6761; }
+.compact .title { font-size: clamp(26px, 3vw, 34px); }
+.lead { margin: 0; max-width: 62ch; color: #56524C; font-size: 17px; line-height: 1.6; }
+.bento { width: 100%; }
+/* Пояснения у фактов разной длины: прижатые к низу значения в одном ряду
+   вставали на разную высоту. Здесь факты читаются по верху, ряд ровный. */
+.fact > dl { margin-top: 0; }
+
+/* Сравнение: три строки, у IITALY — тёмный текст, у агентства — тише. */
+.compare { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.45; }
+.compare caption { margin-bottom: 14px; text-align: left; }
+.compare th, .compare td { padding: 12px 10px; border-top: 1px solid rgba(53, 43, 40, .1); text-align: left; vertical-align: top; }
+.compare thead th { padding-top: 0; border-top: 0; color: #6B6761; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+.compare thead th:last-child { color: #A33421; }
+.compare tbody th { width: 30%; color: #241F1C; font-weight: 600; }
+.compare tbody td { color: #6B6761; }
+.compare tbody td:last-child { color: #241F1C; font-weight: 500; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 899px) { .section { padding: 56px 24px 64px; } .compact { padding: 32px 0 8px; } }
+@media (max-width: 767px) { .section { padding: 48px 20px 56px; } .lead { font-size: 16px; } }
+/* На телефоне таблица в три колонки тесная: строка сравнения встаёт столбиком. */
+@media (max-width: 559px) {
+  .compare thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .compare tbody tr { display: grid; gap: 4px; padding: 12px 0; border-top: 1px solid rgba(53, 43, 40, .1); }
+  .compare tbody th, .compare tbody td { width: auto; padding: 0; border-top: 0; }
+  .compare tbody td:first-of-type::before { content: "Агентство: "; color: #6B6761; }
+  .compare tbody td:last-child::before { content: "IITALY: "; color: #A33421; font-weight: 600; }
+}
