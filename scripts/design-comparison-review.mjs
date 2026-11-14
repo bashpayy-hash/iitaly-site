@@ -125,7 +125,10 @@ try {
     }
     await workbench.getByRole('button', {name:'Очистить выбор',exact:true}).click();
     assert.equal(await workbench.locator('[data-comparison-row]').count(),0);
-    await page.getByRole('button', {name:'Начать с Рима'}).click();
+    // Owner, 14 Nov 2026: «начать с Рима — убирай». The empty city panel has no
+    // shortcut button any more; Rome is chosen the way a visitor would without
+    // the map, through «Сразу к городу». The assertion on the panel is unchanged.
+    await page.locator('#city-shortcut').selectOption('roma');
     assert(await page.getByRole('heading', {name:'Рим',exact:true}).isVisible());
     await page.getByRole('button', {name:'Частные',exact:true}).click();
     assert.equal(await page.getByRole('button', {name:'Частные',exact:true}).getAttribute('aria-pressed'),'true');

@@ -1839,3 +1839,27 @@ A locked plan step read «· закрыт» right next to «Открыть ша�
 which the judges read as «already done or paid?». It now reads «· (lock) с
 маршрутом», the same words as the guides band, in the tile label and in the
 step's «Шаг N из M».
+
+## The map first on phones, with «Крупнее» · 14 November 2026
+
+Owner: «начать с Рима — хуйня, убирай… я не хочу список, я хочу именно
+карту… для телефонов просто нужно сделать чуть другую структуру именно той
+страницы, сделать карту побольше… или сделать upscale на карте».
+
+Measured on a 390 px phone, before → after:
+
+- **The map comes first.** It sat under the navigator card, the filters and
+  the «В сравнение» chips, its top at 1063 px (the third screen). Under 768 px
+  the explorer is a column with the map grid first: the map's top is at 344 px,
+  right under the title, edge to edge (390 × 483 instead of 350 × 433). The
+  filters, «Сразу к городу» and the quick chips follow it. Desktop is as it was.
+- **«Крупнее» / «Вся карта».** A pill in the map's top-left corner (phones
+  only) widens the map 1.8× inside its own frame (702 × 869 in a 390 × 600
+  window) that the finger pans; it opens on the north — Milan, Turin, Venice,
+  Bologna — where the dots used to touch. Pins keep working while zoomed
+  (tapping Milan opens Milan). Only the frame changes: ItalyMap.tsx, its
+  geometry and its pins are untouched, as design-guard requires.
+- The chat button yields to the map (`data-fab-yield`).
+- **«Начать с Рима» is gone** from the empty city panel; «Выбери город» and its
+  line stay. design-comparison-review chose Rome with that button; it now
+  chooses Rome through «Сразу к городу» and checks the same panel.
