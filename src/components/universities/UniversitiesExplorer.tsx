@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { usePortalPart, navigatePortal } from "@/components/portal/PortalPageNavigation";
 import { revealElement } from "@/components/motion/scroll";
@@ -15,7 +15,7 @@ import { CompareModal } from "./CompareModal";
 import { ComparisonSection } from "./ComparisonSection";
 import { CityMatch } from "./CityMatch";
 import { track } from "@/lib/track";
-import { Check, Plus } from "lucide-react";
+import { Check, Minus, Plus } from "lucide-react";
 import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
 import ui from "./university-ui.module.css";
 import Link from "next/link";
@@ -40,6 +40,19 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   const pagePart = usePortalPart("catalogue");
   const comparePage = Boolean(portalSelection && pagePart === "compare");
   const [activeCity, setActiveCity] = useState<CityId | null>(null);
+  // Owner, 14 Nov 2026: «я хочу именно карту… для телефонов сделать карту
+  // побольше… или сделать upscale на карте». On a phone the whole of Italy fits
+  // 390 px and the north (Milan, Turin, Bologna, Padua) is a cluster of dots.
+  // «Крупнее» widens the map 1.8× inside its own frame, which the finger can
+  // pan; the map's geometry and ItalyMap.tsx are untouched.
+  const [mapZoomed, setMapZoomed] = useState(false);
+  const mapScroller = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const scroller = mapScroller.current;
+    if (!mapZoomed || !scroller) return;
+    // Open on the dense north rather than on the Tyrrhenian Sea.
+    scroller.scrollTo({ left: (scroller.scrollWidth - scroller.clientWidth) * 0.18, top: scroller.scrollHeight * 0.06 });
+  }, [mapZoomed]);
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
   const [openUniId, setOpenUniId] = useState<string | null>(null);
@@ -148,7 +161,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       </section>}
 
       <section hidden={comparePage} className={ui.explorer} aria-label="Карта и каталог университетов">
-        <div className={ui.container}>
+        <div className={ui.container} data-map-first={portalSelection ? undefined : ""}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
             {!portalSelection && <VespiAssistant
               variant="route"
@@ -186,12 +199,19 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
           </div>
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
-              <div className={ui.mapFrame} data-map-frame>
-                <ItalyMap
-                  activeCity={activeCity}
-                  onSelectCity={chooseCity}
-                  matchedCities={matchedCities}
-                />
+              <div className={ui.mapFrame} data-map-frame data-zoomed={mapZoomed || undefined} data-fab-yield>
+                <div ref={mapScroller} className={ui.mapScroller} data-map-scroller>
+                  <div className={ui.mapCanvas}>
+                    <ItalyMap
+                      activeCity={activeCity}
+                      onSelectCity={chooseCity}
+                      matchedCities={matchedCities}
+                    />
+                  </div>
+                </div>
+                <button type="button" className={ui.mapZoom} aria-pressed={mapZoomed} data-map-zoom onClick={() => setMapZoomed(zoomed => !zoomed)}>
+                  {mapZoomed ? <Minus size={16} aria-hidden="true" /> : <Plus size={16} aria-hidden="true" />}{mapZoomed ? "Вся карта" : "Крупнее"}
+                </button>
                 {/* Веспи больше не выглядывает из угла карты (owner, 12 Nov:
                     «голова Веспи ни к чему будто, можно его добавить, но не
                     прям туда»): он закрывал Ионическое море у Сицилии и
@@ -245,9 +265,6 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                     Нажми на любую точку на карте, чтобы увидеть университеты,
                     стипендии и факты о городе.
                   </p>
-                  <button type="button" onClick={() => chooseCity("roma")} className={ui.primaryButton}>
-                    Начать с Рима
-                  </button>
                   <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
                 </div>
               )}
