@@ -93,5 +93,32 @@
    }
   ],
   "check": "check-53-development.jpg"
+ },
+ "development_58": {
+  "request": "Owner, 14 Nov: «развивайся в сторону 58 теперь».",
+  "method": "gpt_image_2_6, high, 1k, 1:1; references: job 7d43277c… (variant 58) + Vespi references ab833075… and 0f6d7ac4….",
+  "new": [
+   {
+    "file": "source/gv58-s1-tight.webp",
+    "variant": "62-shield-closeup",
+    "job": "e576b87e-737c-44d6-84a0-2cfaf17e72fe"
+   },
+   {
+    "file": "source/gv58-s2-gold.webp",
+    "variant": "63-shield-gold (+66 as a 150% crop)",
+    "job": "942e4785-babb-4472-9c26-c8365fe81347"
+   },
+   {
+    "file": "source/gv58-s3-true.webp",
+    "variant": "64-shield-true",
+    "job": "6fa7f2f6-10e7-410d-85ed-9ae7c61b6938"
+   },
+   {
+    "file": "source/gv58-s4-gradcap.webp",
+    "variant": "65-shield-gradcap",
+    "job": "e7357c4b-ea7e-48bb-9762-059268eaa78d"
+   }
+  ],
+  "check": "check-58-development.jpg"
  }
 }
