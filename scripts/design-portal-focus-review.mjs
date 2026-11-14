@@ -74,7 +74,8 @@ try {
     await context.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
     const page=await context.newPage();activePage=page;page.on('pageerror',e=>errors.push(e.message));
     await page.goto(origin+'/portal',{waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();await page.evaluate(()=>document.fonts.ready);
-    assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 0 из 2 шагов');
+    // Owner, 14 Nov 2026 (UX audit, item 8): before the questionnaire the count names its stage.
+    assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 0 из 2 шагов первого этапа · остальные откроются после анкеты');
     assert.equal(await page.locator('[data-road-locked]').count(),5);
     assert.equal(await page.locator('[data-road-locked] a,[data-road-locked] button').count(),0,'Preview stages cannot change stored progress');
     assert.equal(await page.locator('[data-stamp-count]').count(),0,'Overview leaves detailed stamps on the stage page');

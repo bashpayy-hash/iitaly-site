@@ -11,6 +11,7 @@ import { GuideRoad } from "./GuideRoad";
 import { topicRoad, visaRoad } from "./guideRoads";
 import { GuideLegacyPoint } from "./GuideLegacyPoint";
 import { guidePoints } from "./guideCatalogue";
+import { guideFree } from "./guideAccess";
 import { guideArt } from "./guideArt";
 import { GuideTopicOverview, VisaOverview } from "./GuideOverview";
 import steps from "./guide-steps.module.css";
@@ -67,7 +68,16 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         {id === "visa" ? <>
           {part && <VisaSection part={visaPart} />}
           {!part && <GuideRoad id="visa" heading="Путь по визе" stations={visaRoad()} scenery={2} />}
-        </> : <><GuideLegacyPoint hrefs={guidePoints(id).map(point => point.href)} /><GuideRoad id={id} heading="Разбор по шагам" stations={topicRoad(id)} showStations={false} scenery={GUIDE_TOPICS.findIndex(topic => topic.id === id)} /></>}
+        </> : <><GuideLegacyPoint hrefs={guidePoints(id).map(point => point.href)} />
+          {/* Owner, 14 Nov 2026 (UX audit, item 7): a free topic's step is often
+             one sentence, and «Шаг 1 из 4» for one phrase made the reader tap
+             four pages for a paragraph. The whole topic now reads on one
+             screen; the road below stays for those who keep track. */}
+          {guideFree(id) && <section className={ui.brief} aria-labelledby="guide-brief" data-guide-brief>
+            <h2 id="guide-brief">Вся тема коротко</h2>
+            <ol>{guidePoints(id).map(point => <li key={point.href}><b>{point.title}</b><p>{point.text}</p></li>)}</ol>
+          </section>}
+          <GuideRoad id={id} heading="Разбор по шагам" stations={topicRoad(id)} showStations={false} scenery={GUIDE_TOPICS.findIndex(topic => topic.id === id)} /></>}
         {id === "permesso" && <section className={ui.note}>
           <h2>Актуальная ремарка к тренажёру</h2>
           <p>Poste отдельно указывает €16 за marca da bollo, €30 за приём kit и €30,46 за электронную карточку; дополнительный contributo зависит от длительности и типа permesso. Для rinnovo требования также зависят от кода 24 / 31 — сверяй свой тип на Portale Immigrazione и у Questura.</p>

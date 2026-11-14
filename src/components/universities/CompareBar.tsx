@@ -61,15 +61,18 @@ export function CompareBar({
             </span>
           ))}
         </div>
-        <AppleButton
+        {/* Owner, 14 Nov 2026 (UX audit, item 6): a grey «Сравнить» beside a red
+           «Сравнить 1 из 3» link read as two buttons in two states. There is
+           one «Сравнить» now, and it shows only when it works: with one
+           university the bar says what is missing instead. */}
+        {unis.length < 2 ? <span className={ui.compareBarHint} data-compare-hint>Добавь ещё один вуз</span> : <AppleButton
           type="button"
           variant={embedded ? "outlined" : "filled"} size="sm"
           onClick={onOpenCompare}
-          disabled={unis.length < 2}
           className="shrink-0"
         >
           Сравнить
-        </AppleButton>
+        </AppleButton>}
       </div>
     </div>
   );

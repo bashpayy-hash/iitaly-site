@@ -15,10 +15,9 @@ import { CompareModal } from "./CompareModal";
 import { ComparisonSection } from "./ComparisonSection";
 import { CityMatch } from "./CityMatch";
 import { track } from "@/lib/track";
-import { Check, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { LemonPostcard } from "@/components/marketing/EditorialArtwork";
 import ui from "./university-ui.module.css";
-import Link from "next/link";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 
 // Константа, а не new Set() в рендере: иначе каждая перерисовка давала бы
@@ -128,8 +127,9 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
     if (compareIds.includes(id)) setCompareIds(compareIds.filter(value => value !== id));
     else if (compareIds.length < 3) {
       setCompareIds([...compareIds, id]);
-      // Третий вуз собирает колоду: показываем ряд карточек сразу, а не под картой.
-      if (!portalSelection && compareIds.length === 2) requestAnimationFrame(() => document.getElementById("compare-universities")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }));
+      // Третий вуз собирает колоду: показываем сами карточки, а не выбор над
+      // ними (owner, 14 Nov 2026, item 6: «сначала выбор, а сравнение ниже»).
+      if (!portalSelection && compareIds.length === 2) requestAnimationFrame(() => (document.querySelector("#compare-universities [data-comparison-results]") ?? document.getElementById("compare-universities"))?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }));
     }
   }
 
@@ -187,16 +187,16 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 cities={filteredCities.size}
                 filtered={filtersActive}
               />
-              {!portalSelection && <Link href="/plan#questionnaire" className={ui.navigatorLink}>Подобрать по моей ситуации</Link>}
             </div>
             {!portalSelection && cityShortcut}
           </div>
 
-          <div className={ui.quickUniversities} aria-label="Быстро добавить университет в сравнение">
-            <span>В сравнение</span>
-            {(activeCity ? cityUnis : filteredUnis.filter(university=>["unipd","unibo","polimi"].includes(university.id))).map(university=><button key={university.id} type="button" data-quick-compare={university.id} aria-pressed={compareIds.includes(university.id)} disabled={compareIds.length===3 && !compareIds.includes(university.id)} onClick={()=>toggleCompare(university.id)}>{compareIds.includes(university.id)?<Check size={15} aria-hidden="true" />:<Plus size={15} aria-hidden="true" />}{university.name}</button>)}
-            {compareIds.length>0 && <a href="#compare-universities" onClick={event=>{if(portalSelection){event.preventDefault();navigatePortal("/portal?view=plan&task=shortlist&part=compare");}}}>Сравнить {compareIds.length} из 3</a>}
-          </div>
+          {/* Owner, 14 Nov 2026 (UX audit, item 9): under the map there were
+             three ways to pick — «Подобрать по моей ситуации», «Подобрать город
+             под ритм» and the quick «В сравнение» chips with their own red
+             «Сравнить N из 3». One stays: the city match, because it works on
+             the map itself. Universities go to the comparison from the city
+             card, and the one «Сравнить» lives in the bar at the bottom. */}
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
               <div className={ui.mapFrame} data-map-frame data-zoomed={mapZoomed || undefined} data-fab-yield>

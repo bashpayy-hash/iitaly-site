@@ -65,7 +65,7 @@ export function ComparisonSection({ compareIds, onChange, onOpen, embedded = fal
         {/* Строка управления: счёт и действия слева, вид — справа. Пока не
            выбрано ничего, её нет: «Выбрано 0 из 3» и переключатель вида без
            данных только шумели (owner, 12 Nov: «не прям юзер френдли»). */}
-        {universities.length > 0 && <div className={styles.deckBar}>
+        {universities.length > 0 && <div className={styles.deckBar} data-comparison-results>
           <div className={styles.selectionActions}>
             <p role="status">{embedded ? "В сравнении" : "Выбрано"} {universities.length} из 3</p>
             {universities.length > 0 && <button type="button" onClick={() => onChange([])}>Очистить выбор</button>}
