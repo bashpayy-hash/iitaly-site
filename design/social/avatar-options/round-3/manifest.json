@@ -1,0 +1,74 @@
+{
+ "date": "2026-11-14",
+ "request": "Owner, 14 Nov, after round 2: «нравится вариант с кофе и вариант с шапкой выпускника… какие ещё есть символы Италии? Или символ поступления, или микс… как эти цвета, эти папки связать. Давай ещё вариантов 10, может 15».",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, 1:1; transparent background except the latte cups and the pizza. Vespi references: ab833075…, a448f972…, 0f6d7ac4… (full ids in ../manifest.json); object-only shots used the first and the third.",
+ "prompts": "Full prompts are kept with the jobs in Higgsfield; each follows the round 2 pattern (the character description of the references, one idea, centred, readable when tiny, no text, flags or people).",
+ "drawn": {
+  "33-flat-gradcap": "source/flat-gradcap.svg",
+  "34-flat-laurel": "source/flat-laurel.svg",
+  "35-flat-latte": "source/flat-latte.svg"
+ },
+ "layout": "source/render.mjs",
+ "new": [
+  {
+   "file": "source/laurel.webp",
+   "variant": "21-laurel",
+   "job": "df9dc92e-f065-42d3-b8bc-b9b907702465"
+  },
+  {
+   "file": "source/lattecap.webp",
+   "variant": "22-latte-gradcap",
+   "job": "fb493971-8147-4ff6-b4ee-27e838d50d4c"
+  },
+  {
+   "file": "source/lattebrand.webp",
+   "variant": "23-latte-brand-cup",
+   "job": "c26b1924-c966-47d9-aa40-873fc855d1fe"
+  },
+  {
+   "file": "source/cupbath.webp",
+   "variant": "24-cup-bath",
+   "job": "c72fc547-9c10-48ad-8554-49c2b491cab8"
+  },
+  {
+   "file": "source/espressocap.webp",
+   "variant": "25-espresso-gradcap",
+   "job": "1366d432-b264-45f6-b8bd-d57f4cca941a"
+  },
+  {
+   "file": "source/captoss.webp",
+   "variant": "26-cap-toss",
+   "job": "1ea500c9-6b97-4447-8005-7ba92a0e9886"
+  },
+  {
+   "file": "source/scootercap.webp",
+   "variant": "27-scooter-gradcap",
+   "job": "7181c427-be47-49d3-b5c8-0ae7c110ec89"
+  },
+  {
+   "file": "source/envelope.webp",
+   "variant": "28-envelope",
+   "job": "47d6bef1-16b9-4690-bf18-fc4af122815a"
+  },
+  {
+   "file": "source/pisafolders.webp",
+   "variant": "29-pisa-folders",
+   "job": "215cc9e7-f8f3-428b-b357-f01ffab4dd55"
+  },
+  {
+   "file": "source/pizza.webp",
+   "variant": "30-pizza",
+   "job": "ef968d0e-3772-4798-b52c-20c90d8ef327"
+  },
+  {
+   "file": "source/gelato.webp",
+   "variant": "31-gelato",
+   "job": "ee8c036e-8830-43c9-b0c3-aa7da5edfb7b"
+  },
+  {
+   "file": "source/moka.webp",
+   "variant": "32-moka",
+   "job": "706b5278-3601-4499-b3dc-f55d06c0c4d3"
+  }
+ ]
+}
