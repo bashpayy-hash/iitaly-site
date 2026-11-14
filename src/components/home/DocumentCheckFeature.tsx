@@ -1,7 +1,7 @@
 import { CalendarClock, FileCheck2, ListChecks, Repeat, Timer } from "lucide-react";
 import { AppleButtonLink } from "@/components/apple/Button";
 import { Bento, BentoCell, BentoStat, bento } from "@/components/ui/Bento";
-import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { PRICE_MAIN, fmtPrice, priceLabel } from "@/data/pricing";
 import styles from "./document-check-feature.module.css";
 
 /* Проверка документов — главная фишка (owner, 13 Nov: «проверка документов —
@@ -17,7 +17,13 @@ import styles from "./document-check-feature.module.css";
    - «никогда не ошибается» не пишем: ИИ может ошибаться, решение
      принимает вуз — так сказано на всём сайте.
    Сравнение с агентством — про устройство работы (рабочие часы менеджера,
-   повторная правка, отдельный договор), без чужих цен и сроков. */
+   повторная правка, отдельный договор), без чужих сроков. Цена агентств —
+   та, что владелец называет с начала проекта (NEXT_CHAT.md: «агентства
+   берут 650 000 – 1 000 000 ₸»), показать её он подтвердил 14 Nov: «Да,
+   добавь». Прежняя строка «Отдельный договор с агентством» остаётся,
+   цена идёт под ней: design-content сверяет весь прежний текст. */
+
+const AGENCY_SUPPORT = { from: 650_000, to: 1_000_000 };
 
 const FACTS = [
   { icon: Timer, value: "10–30 секунд", label: "обычно до ответа", note: "Без очереди и записи к менеджеру." },
@@ -29,7 +35,7 @@ const FACTS = [
 const COMPARE = [
   { row: "Когда ответят", agency: "В рабочие часы менеджера", us: "В любое время, обычно за 10–30 секунд" },
   { row: "Повторная проверка после правки", agency: "Снова ждать ответа", us: "Сразу и сколько угодно раз" },
-  { row: "Сколько стоит", agency: "Отдельный договор с агентством", us: `Входит в ${priceLabel(PRICE_MAIN)} за весь путь, первая проверка бесплатно` },
+  { row: "Сколько стоит", agency: "Отдельный договор с агентством", agencyPrice: `Сопровождение — обычно ${fmtPrice(AGENCY_SUPPORT.from)}–⁠${priceLabel(AGENCY_SUPPORT.to)}`, us: `Входит в ${priceLabel(PRICE_MAIN)} за весь путь, первая проверка бесплатно` },
 ] as const;
 
 export function DocumentCheckFeature({ compact = false }: { compact?: boolean }) {
@@ -51,7 +57,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
         <table className={styles.compare}>
           <caption className={bento.heading}>Проверка у агентства и здесь</caption>
           <thead><tr><th scope="col"><span className={styles.srOnly}>Что сравниваем</span></th><th scope="col">Агентство</th><th scope="col">IITALY</th></tr></thead>
-          <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}</td><td>{item.us}</td></tr>)}</tbody>
+          <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{item.agencyPrice}</span>}</td><td>{item.us}</td></tr>)}</tbody>
         </table>
       </BentoCell>
       {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" icon={FileCheck2} data-document-check-cta>

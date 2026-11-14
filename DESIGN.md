@@ -1743,4 +1743,10 @@ text 7 s, photo 11 s; PDFs take longer), so «обычно 10–30 секунд�
 ошибается» and «надёжнее» are left out: the AI can make mistakes and the
 university decides, as the rest of the site says. The agency column describes
 how the work is organised — the manager's hours, waiting again after a fix, a
-separate contract — with no other firm's prices or deadlines.
+separate contract — with no other firm's deadlines.
+
+Later the same day the owner confirmed the agency price for the «Сколько
+стоит» row («Да, добавь»): «Сопровождение — обычно 650 000–1 000 000 ₸», the
+range he has named since the start (NEXT_CHAT.md). It sits under the contract
+line rather than replacing it, because design-content checks that every
+earlier line of copy is still on the page.
