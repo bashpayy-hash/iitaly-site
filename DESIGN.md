@@ -1795,3 +1795,22 @@ Left as they were, on purpose: the cabinet greeting («Привет!», 19 px) a
 15 px rubric are the cabinet's quiet header, not a hierarchy error; marking a
 visa document as collected stays possible on a locked point, because its title
 is visible; the «iltaly» reading of the wordmark is the owner's call.
+
+The re-run the owner asked for («прогони ещё раз, чтобы наверняка») — the
+uxaudit catalog on the fixed build and two fresh judges that saw only the
+screenshots — found three more, all fixed the same day:
+
+- **«Проверить документ» landed on the cover.** From the home page the link
+  goes to `/plan#document-check`, but that block is hidden until the client
+  reads the hash, so on a client-side navigation the browser had nothing to
+  scroll to: the page stayed at the top for two seconds and longer, with the
+  uploader 866 px down. `PlanExplorer` now brings the document tool into view
+  once it is shown for that hash: at 0.6 s the page is on the check (measured).
+  The menu's «Мой план» in the header and footer now goes to
+  `/plan#questionnaire` as well, and the header still marks it current on
+  /plan; the cover is left for /plan typed by hand.
+- **The chat button lay on an answer.** The questionnaire card is marked
+  `data-fab-yield`, so the button steps aside while the visitor answers.
+- **«Твой план сохранён на этом устройстве» before any plan.** The cabinet's
+  local status said so before the questionnaire was filled; until then it now
+  reads «Прогресс сохраняется на этом устройстве».
