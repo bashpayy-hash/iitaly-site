@@ -161,7 +161,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
       </section>}
 
       <section hidden={comparePage} className={ui.explorer} aria-label="Карта и каталог университетов">
-        <div className={ui.container}>
+        <div className={ui.container} data-map-first={portalSelection ? undefined : ""}>
           <div className={ui.filterWorkspace} data-university-filter-workspace>
             {!portalSelection && <VespiAssistant
               variant="route"

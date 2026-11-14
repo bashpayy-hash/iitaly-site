@@ -1863,3 +1863,7 @@ Measured on a 390 px phone, before → after:
 - **«Начать с Рима» is gone** from the empty city panel; «Выбери город» and its
   line stay. design-comparison-review chose Rome with that button; it now
   chooses Rome through «Сразу к городу» and checks the same panel.
+- The new order is for the public /universities page only. In the cabinet's
+  shortlist picker «Сразу к городу» stays first, above the sticky «Сохранить»
+  (design-portal-university-selection-review checks that the first city
+  choice is visible on a 390 px screen).

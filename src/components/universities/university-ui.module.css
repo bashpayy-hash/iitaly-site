@@ -271,16 +271,18 @@
 /* Owner, 14 Nov 2026: «я хочу именно карту… для телефонов просто нужно
    сделать чуть другую структуру… сделать карту побольше… или сделать upscale».
    On phones the map comes first, edge to edge, and «Крупнее» widens it 1.8×
-   inside its own frame (pan with a finger). ItalyMap.tsx is not touched. */
+   inside its own frame (pan with a finger). ItalyMap.tsx is not touched.
+   The order changes on the public page only: in the cabinet's shortlist
+   picker «Сразу к городу» stays first, above the sticky «Сохранить». */
 .mapScroller { overflow: hidden; }
 .mapZoom { display: none; }
 @media (max-width: 767px) {
-  .container { display: flex; flex-direction: column; }
-  .mapGrid { order: -1; margin-top: 0; }
-  .mapFrame { margin-inline: -20px; border-radius: 0; }
+  .container[data-map-first] { display: flex; flex-direction: column; }
+  .container[data-map-first] .mapGrid { order: -1; margin-top: 0; }
+  .container[data-map-first] .mapFrame { margin-inline: -20px; border-radius: 0; }
   .mapFrame[data-zoomed] .mapScroller { overflow: auto; max-height: min(72vh, 600px); overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .mapFrame[data-zoomed] .mapCanvas { width: 180%; }
   .mapZoom { position: absolute; z-index: 2; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border: 1px solid rgba(250,246,238,.28); border-radius: 999px; background: rgba(21,17,11,.82); color: #FAF6EE; font: 500 14px/1 var(--font-sans); }
   .mapZoom:focus-visible { outline: 2px solid #F29A89; outline-offset: 2px; }
-  .filterWorkspace { margin-top: 24px; }
+  .container[data-map-first] .filterWorkspace { margin-top: 24px; }
 }
