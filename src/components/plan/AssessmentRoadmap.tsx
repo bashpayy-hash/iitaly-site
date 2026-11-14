@@ -9,6 +9,8 @@ import type { Plan, PlanStep } from "@/lib/planBuilder";
 import styles from "./assessment-result.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { PlanStepTiles } from "./PlanStepTiles";
+import { Lock } from "lucide-react";
+import { PlainTermNotes } from "@/components/ui/PlainTerms";
 
 function StepReferences({ step }: { step: PlanStep }) {
   return <details className={styles.references}>
@@ -44,7 +46,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
   return <div className={styles.result} data-assessment-route>
     <PlanStepTiles steps={plan.steps.map((item, position) => ({ title: item.t, line: item.summary || item.p, locked: !planStepOpen(position) }))} index={index} href={href} onSelect={select}
       detail={position => position === index && <section className={styles.step} data-instruction-point={index + 1} data-step-locked={!open || undefined} aria-labelledby="plan-reading-heading">
-        <p className={styles.stepPosition} role="status">Шаг {index + 1} из {plan.steps.length}{open ? "" : " · закрыт"}</p>
+        <p className={styles.stepPosition} role="status">Шаг {index + 1} из {plan.steps.length}{open ? "" : <> · <Lock size={12} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</p>
         <h2 id="plan-reading-heading" className={styles.srOnly}>{step.t}</h2>
         {open ? <>
           <p className={styles.summary}>{step.summary || step.p}</p>
@@ -52,6 +54,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
             {step.action && <p className={styles.action}><span>{step.action}</span></p>}
             <StepReferences step={step} />
           </div>
+          <PlainTermNotes text={[step.t, step.summary, step.p, step.action].filter(Boolean).join(" ")} />
         </> : <>
           <p className={styles.summary}>{teaser(step)}</p>
           <p className={styles.lockedNote} data-step-locked-note>Действие, требования и источники откроются после оплаты вместе с остальными шагами маршрута, проверкой документов без лимита и напоминаниями. Один платёж, без подписки.</p>

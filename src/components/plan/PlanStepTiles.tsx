@@ -4,6 +4,7 @@
 import { type MouseEvent, type ReactNode, useEffect, useRef } from "react";
 import { planStepArt, planStepPhase } from "./planStepArt";
 import styles from "./plan-step-tiles.module.css";
+import { Lock } from "lucide-react";
 import { revealElement } from "@/components/motion/scroll";
 
 export type PlanTileStep = { title: string; line: string; locked?: boolean };
@@ -62,7 +63,7 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
                     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                     event.preventDefault(); onSelect(position);
                   }}>
-                  <span className={styles.label}><span className={styles.srOnly}>Шаг {position + 1}. </span>{eyebrow}{step.locked ? " · закрыт" : ""}</span>
+                  <span className={styles.label}><span className={styles.srOnly}>Шаг {position + 1}. </span>{eyebrow}{step.locked && <> · <Lock size={11} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</span>
                   <span className={styles.title}>{step.title}</span>
                   <span className={styles.line}>{step.line}</span>
                   <span className={styles.pill}>{selected ? "Открыт" : "Открыть шаг"}</span>

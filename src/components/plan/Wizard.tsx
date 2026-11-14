@@ -15,6 +15,7 @@ import { QUESTION_CONTEXT, STEP_TITLES } from "./questionCopy";
 import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuChoice";
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
+import { PlainTermNotes } from "@/components/ui/PlainTerms";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -274,6 +275,10 @@ function WizStep({
             {option(byValue("none"))}
           </>}
       </div>
+      {/* Owner, 14 Nov 2026 («дай тогда расшифровку терминам»): the words a school
+         student meets here for the first time (DSU, ISEE, CIMEA…) get one plain
+         line under the answers, from the cabinet's glossary. */}
+      <PlainTermNotes tone={tone === "dark" ? "dark" : "light"} text={[question.q, question.hint, QUESTION_CONTEXT[question.id], ...question.opts.map(o => `${o.t} ${o.s ?? ""}`)].join(" ")} />
       {/* eslint-disable-next-line @next/next/no-img-element -- local riso art with explicit dimensions */}
       {art && <img className={styles.questionArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 600px) 60vw, 300px" width={art.width} height={art.height} alt="" decoding="async" data-plan-question-art />}
     </div>
