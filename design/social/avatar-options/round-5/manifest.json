@@ -62,5 +62,36 @@
    }
   ],
   "check": "check-reference.jpg"
+ },
+ "development_53": {
+  "request": "Owner, 14 Nov, on check-reference.jpg: «развивай дальше первый вариант на картинке» (variant 53).",
+  "method": "gpt_image_2_6, high, 1k, 1:1; references: job acfd1bb3… (variant 53 itself, for style and palette) + the Vespi references ab833075… and 0f6d7ac4….",
+  "new": [
+   {
+    "file": "source/gv53-d1-tight.webp",
+    "variant": "57-galleria-53-closeup",
+    "job": "4f3226dc-bedf-4e09-9d5e-9383584723d6",
+    "idea": "tighter framing, the cartouche fills ~70%, face larger"
+   },
+   {
+    "file": "source/gv53-d2-shield.webp",
+    "variant": "58-galleria-53-shield",
+    "job": "7d43277c-6cf8-495e-9bb8-3d7f769ebfed",
+    "idea": "Italian escutcheon shape with scrolled corners, as on the floor"
+   },
+   {
+    "file": "source/gv53-d3-refined.webp",
+    "variant": "59-galleria-53-refined (+61 as a 150% crop)",
+    "job": "f812e4ae-6465-43c0-914a-fac1d0fd7f96",
+    "idea": "cleaner face, red in two-three shades, gold glass along the cartouche"
+   },
+   {
+    "file": "source/gv53-d4-wave.webp",
+    "variant": "60-galleria-53-wave",
+    "job": "7db5e3e5-f32d-4188-bb9e-6bb2c7b08c91",
+    "idea": "Vespi waving"
+   }
+  ],
+  "check": "check-53-development.jpg"
  }
 }
