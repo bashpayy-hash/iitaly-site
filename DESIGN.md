@@ -1395,7 +1395,8 @@ font and the hero video.
   for long needs a version in its name.
 - **Headers.** A Content-Security-Policy (own origin plus the backend for
   requests; inline scripts stay allowed because the static export and the
-  Netlify badge need them) and a Permissions-Policy. Checked on 19 pages in a
+  Netlify badge need them; the badge frame itself is hidden on every page at
+  the owner's request, 14 November 2026) and a Permissions-Policy. Checked on 19 pages in a
   browser with the badge script injected: no violations. The backend address
   in the policy must match `NEXT_PUBLIC_BACKEND_URL`.
 - **Dependencies.** Next.js 16.3.4 → 16.4.6 (a critical advisory covered
@@ -1627,75 +1628,144 @@ overviews and the guides road showed no difference between free and paid.
   carries a lock, and its model beside the road is the grey copy. The
   topic page still opens. «Начни здесь» stands on the first place a guest
   can read (the visa calculator).
-
-## The first five guides free, and one design code · 12 November 2026 (evening)
-
-Owner, with three screenshots (/guides in incognito, the document check
-saying it is unavailable, the program list open on /plan): «в гайдах и
-везде сделай бесплатными вот эти вот только первые 4, возможно, 5 гайдов
-и виз, и потом дальше типа скажи, а вот дальше плати… проверка
-документов должна быть за деньги, но хотя бы одну бесплатную попытку
-давай всем… сделай так, чтобы на всём сайте был такой общий дизайн-код,
-потому что иногда он слишком квадратный, иногда слишком круглый… шрифт
-другой».
-
-**Guides.** The first five topics on the band and the road are open in
-full: education, tests, apostille, translation, DoV/CIMEA. The other eight
-and every visa point show only titles; the visa facts and the funds
-calculator stay open. Every card on the band says «Бесплатно» or «С
-маршрутом»; the road locks the paid topics; each overview says what is
-free and what the route opens. The first-sentence teaser of the afternoon
-is gone: after the free five, the answer is «дальше — с маршрутом».
-
-**The document check.** It was not closed by payment: the backend still
-does not answer https://iitaly.net (CORS), so nobody on the main domain
-reaches the one free check. The unavailable state now says so: «Это не
-связано с оплатой: одна проверка бесплатна для всех».
-
-**The design code, measured first** (every page at 1440 and 390):
-
-- Three faces were in use: SF Pro / Inter Tight on most text, Onest on
-  163 text nodes (bento labels, wall buttons, the road heading, the
-  compare buttons, most of the Modulo 1 trainer), Inter Tight in the
-  cabinet. On Windows the owner saw Inter Tight next to Onest. Inside the
-  page surface `--font-sans`, `--font-display` and `--font-mono` now lead
-  to the Apple stack (`marketing.module.css`), so every component that
-  asked for «the sans» gets the same face. The universities map keeps
-  Onest: its label widths are measured for it.
-- Radii had 20 values. The scale now: 999px for every button, toggle and
-  chip; 16px for fields and small inner boxes; 20px for inner cards,
-  walls and bento cells; 28px for cards and sections (24px on phones).
-  0px stays only on list rows and the paper form's own fields.
-- The square fields on /plan were a bug: `rounded-apple-input` named a
-  token that does not exist, so the selects, the walled box and the
-  result got no radius at all. The unavailable notice had none either.
-- The cabinet's buttons were 12px rectangles while the rest of the site
-  used pills; the trainer used 6–10px. Both now follow the scale.
-- The program list used `<optgroup>`: Windows draws its label in bold and
-  indents the options, which is the uneven text in the screenshot. The
-  options are one flat list now (on /plan and in the cabinet).
-
-## Around the backend's CORS · 12 November 2026 (night)
-
-Owner: «Сделай обход» — to making the document check, sign-in and chat work
-on iitaly.net without waiting for the Railway setting.
-
-- The backend answers CORS only for https://iitaly.netlify.app; it still
-  processes every request, the browser just hides the answer from
-  iitaly.net. On iitaly.net the site now calls its own `/backend/*`, which
-  Netlify proxies to Railway (a 200 rewrite): same origin, no CORS.
-- Netlify cuts a proxied request at 26 seconds. Measured on the live
-  backend with synthetic, personal-data-free documents: a text check 6.9 s,
-  a photographed certificate 11.3 s. Photos are already reduced to
-  1600 px before sending; a 504 or 413 from the proxy now has its own
-  plain message (try again / split the PDF).
-- After Stripe the backend sends the buyer to its SITE_URL, still
-  iitaly.netlify.app, while the order number sits in the iitaly.net tab.
-  iitaly.netlify.app now redirects to iitaly.net (301), so the buyer lands
-  where the order is. Deploy previews are untouched.
-- Elsewhere (previews, local reviews) the site still calls the backend
-  directly. When Railway lists https://iitaly.net in ALLOWED_ORIGINS and
-  SITE_URL points to it, both rules and the branch in backend.ts can go.
+
+
+## The first five guides free, and one design code · 12 November 2026 (evening)
+
+
+
+Owner, with three screenshots (/guides in incognito, the document check
+
+saying it is unavailable, the program list open on /plan): «в гайдах и
+
+везде сделай бесплатными вот эти вот только первые 4, возможно, 5 гайдов
+
+и виз, и потом дальше типа скажи, а вот дальше плати… проверка
+
+документов должна быть за деньги, но хотя бы одну бесплатную попытку
+
+давай всем… сделай так, чтобы на всём сайте был такой общий дизайн-код,
+
+потому что иногда он слишком квадратный, иногда слишком круглый… шрифт
+
+другой».
+
+
+
+**Guides.** The first five topics on the band and the road are open in
+
+full: education, tests, apostille, translation, DoV/CIMEA. The other eight
+
+and every visa point show only titles; the visa facts and the funds
+
+calculator stay open. Every card on the band says «Бесплатно» or «С
+
+маршрутом»; the road locks the paid topics; each overview says what is
+
+free and what the route opens. The first-sentence teaser of the afternoon
+
+is gone: after the free five, the answer is «дальше — с маршрутом».
+
+
+
+**The document check.** It was not closed by payment: the backend still
+
+does not answer https://iitaly.net (CORS), so nobody on the main domain
+
+reaches the one free check. The unavailable state now says so: «Это не
+
+связано с оплатой: одна проверка бесплатна для всех».
+
+
+
+**The design code, measured first** (every page at 1440 and 390):
+
+
+
+- Three faces were in use: SF Pro / Inter Tight on most text, Onest on
+
+  163 text nodes (bento labels, wall buttons, the road heading, the
+
+  compare buttons, most of the Modulo 1 trainer), Inter Tight in the
+
+  cabinet. On Windows the owner saw Inter Tight next to Onest. Inside the
+
+  page surface `--font-sans`, `--font-display` and `--font-mono` now lead
+
+  to the Apple stack (`marketing.module.css`), so every component that
+
+  asked for «the sans» gets the same face. The universities map keeps
+
+  Onest: its label widths are measured for it.
+
+- Radii had 20 values. The scale now: 999px for every button, toggle and
+
+  chip; 16px for fields and small inner boxes; 20px for inner cards,
+
+  walls and bento cells; 28px for cards and sections (24px on phones).
+
+  0px stays only on list rows and the paper form's own fields.
+
+- The square fields on /plan were a bug: `rounded-apple-input` named a
+
+  token that does not exist, so the selects, the walled box and the
+
+  result got no radius at all. The unavailable notice had none either.
+
+- The cabinet's buttons were 12px rectangles while the rest of the site
+
+  used pills; the trainer used 6–10px. Both now follow the scale.
+
+- The program list used `<optgroup>`: Windows draws its label in bold and
+
+  indents the options, which is the uneven text in the screenshot. The
+
+  options are one flat list now (on /plan and in the cabinet).
+
+
+
+## Around the backend's CORS · 12 November 2026 (night)
+
+
+
+Owner: «Сделай обход» — to making the document check, sign-in and chat work
+
+on iitaly.net without waiting for the Railway setting.
+
+
+
+- The backend answers CORS only for https://iitaly.netlify.app; it still
+
+  processes every request, the browser just hides the answer from
+
+  iitaly.net. On iitaly.net the site now calls its own `/backend/*`, which
+
+  Netlify proxies to Railway (a 200 rewrite): same origin, no CORS.
+
+- Netlify cuts a proxied request at 26 seconds. Measured on the live
+
+  backend with synthetic, personal-data-free documents: a text check 6.9 s,
+
+  a photographed certificate 11.3 s. Photos are already reduced to
+
+  1600 px before sending; a 504 or 413 from the proxy now has its own
+
+  plain message (try again / split the PDF).
+
+- After Stripe the backend sends the buyer to its SITE_URL, still
+
+  iitaly.netlify.app, while the order number sits in the iitaly.net tab.
+
+  iitaly.netlify.app now redirects to iitaly.net (301), so the buyer lands
+
+  where the order is. Deploy previews are untouched.
+
+- Elsewhere (previews, local reviews) the site still calls the backend
+
+  directly. When Railway lists https://iitaly.net in ALLOWED_ORIGINS and
+
+  SITE_URL points to it, both rules and the branch in backend.ts can go.
+
 
 ## Objects as photographs · 13 November 2026
 

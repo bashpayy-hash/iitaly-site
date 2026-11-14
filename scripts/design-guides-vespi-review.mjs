@@ -144,7 +144,7 @@ try {
     assert.equal(await page.evaluate(()=>localStorage.getItem('iitaly_asked_v2')),'1');
     await question.fill('Мой незаконченный вопрос');await page.keyboard.press('Escape');
     await page.getByRole('dialog').waitFor({state:'hidden'});
-    assert(await page.locator('#chat-launcher').evaluate(button=>button.getBoundingClientRect().bottom<document.getElementById('nl-badge-frame').getBoundingClientRect().top));
+    assert.equal(await page.locator('#nl-badge-frame').isVisible(),false,'The hosting badge is hidden on every page');
     await page.locator('#nl-badge-frame').evaluate(badge=>badge.remove());
     // Native links keep the global assistant draft; the topic context changes.
     await page.getByRole('navigation',{name:'Путь по справочнику'}).getByRole('link',{name:'Гайды и виза',exact:true}).click();
