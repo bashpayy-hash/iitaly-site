@@ -81,3 +81,6 @@
 .stepActions :is(button,a):not(:disabled):active{transform:scale(.97)}
 .result :is(button,a):focus-visible{outline:2px solid #A33421;outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.stepActions button,.stepActions a{transition:none}.stepActions :is(button,a):active{transform:none}}
+
+/* Owner, 14 Nov 2026 («пометка закрыт исправь»): a locked step reads a lock and «с маршрутом», as on the guides band, not «· закрыт» next to «Открыть шаг». */
+.lockGlyph { display:inline-block; margin:0 1px 0 0; vertical-align:-1px; }

@@ -1814,3 +1814,28 @@ screenshots — found three more, all fixed the same day:
 - **«Твой план сохранён на этом устройстве» before any plan.** The cabinet's
   local status said so before the questionnaire was filled; until then it now
   reads «Прогресс сохраняется на этом устройстве».
+
+## Plain words on the public pages, and «с маршрутом» instead of «закрыт» · 14 November 2026
+
+Owner: «дай тогда расшифровку терминам… а пометка „закрыт“ исправь». Both
+audit judges stopped on DSU, ISEE, CIMEA, DoV, permesso on the public pages,
+while the cabinet already explained them in plain words (`plainWords.ts`).
+The public pages now use the same glossary, so one word never gets two
+explanations (`src/components/ui/PlainTerms.tsx`):
+
+- **The questionnaire** shows one or two plain lines under the answers for
+  the words of that question (the budget question: «DSU — стипендия от
+  региона Италии…»), in the cabinet's footnote voice: a thin rule on the
+  left, the word in bold, one line; a light version on the dark cards.
+- **The open plan step** gets the same footnotes for its words (11 классов,
+  Foundation, DoV, CIMEA, апостиль…).
+- **The home hero** keeps its first screen short: «DSU» carries a small «i»
+  (kept on the same line as the word); a tap shows one line in a card at the
+  bottom of the screen, above the chat button, with a close button and
+  Escape. The card is rendered into <body>: inside the hero it sat in the
+  hero's own layer, under the next section (measured).
+
+A locked plan step read «· закрыт» right next to «Открыть шаг» / «Открыт»,
+which the judges read as «already done or paid?». It now reads «· (lock) с
+маршрутом», the same words as the guides band, in the tile label and in the
+step's «Шаг N из M».

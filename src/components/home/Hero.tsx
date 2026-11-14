@@ -4,6 +4,7 @@ import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import styles from "@/components/marketing/marketing.module.css";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import Link from "next/link";
+import { TermHint } from "@/components/ui/PlainTerms";
 import assistant from "./home-assistant.module.css";
 
 /* Первый экран — welcome (owner, 4 Nov): Веспи в аркаде Болоньи в вечернем
@@ -31,7 +32,7 @@ export function Hero() {
         </div>
         <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
-          <p className={styles.heroDescription}>Подбор вузов, документы, стипендия DSU и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
+          <p className={styles.heroDescription}>Подбор вузов, документы, стипендия <TermHint term="DSU">DSU</TermHint> и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <div className={assistant.entryActions}>
             {/* Owner, 6 Nov: «проверка документов — главная фишка сайта»:
                 она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}

@@ -106,3 +106,6 @@
   .stop { border:1px solid CanvasText; box-shadow:none; }
   .tile[data-flight-selected=true] .stop { background:Highlight; color:HighlightText; }
 }
+
+/* Owner, 14 Nov 2026 («пометка закрыт исправь»): a locked step reads a lock and «с маршрутом», as on the guides band, not «· закрыт» next to «Открыть шаг». */
+.lockGlyph { display:inline-block; margin:0 1px 0 0; vertical-align:-1px; }

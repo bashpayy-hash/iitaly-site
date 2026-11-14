@@ -1,0 +1,20 @@
+/* Plain-word footnotes and the «i» hint (owner, 14 Nov 2026, after the uxaudit
+   pass: «дай тогда расшифровку терминам»). Same voice as the cabinet's
+   footnotes: a thin rule on the left, the word in bold, one plain line. */
+.terms { display:grid; gap:6px; margin:16px 0 0; padding:2px 0 2px 12px; border-left:2px solid #E6D9C4; list-style:none; text-align:left; }
+.terms li { color:#57514B; font-size:14px; line-height:1.5; }
+.terms strong { display:inline; color:#141413; font-weight:600; }
+.terms[data-tone=dark] { border-left-color:rgba(250,246,238,.28); }
+.terms[data-tone=dark] li { color:#D9D1C4; }
+.terms[data-tone=dark] strong { color:#FAF6EE; }
+
+.word { white-space:nowrap; }
+.hint { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; margin:0 0 0 2px; padding:0; vertical-align:text-bottom; border:0; border-radius:999px; background:transparent; color:inherit; cursor:pointer; }
+.hint span { display:grid; place-items:center; width:16px; height:16px; border:1px solid currentColor; border-radius:999px; font-size:11px; font-weight:600; font-style:normal; line-height:1; opacity:.72; }
+.hint:focus-visible { outline:2px solid #A33421; outline-offset:2px; }
+.sheet { position:fixed; z-index:1000; left:16px; right:16px; bottom:16px; max-width:420px; margin:0 auto; padding:16px 48px 16px 18px; border-radius:20px; background:#FFFDF9; color:#3F3933; font-size:15px; line-height:1.5; text-align:left; box-shadow:0 12px 32px rgba(20,20,19,.16); animation:termIn 220ms cubic-bezier(.22,1,.36,1); }
+.sheet strong { color:#141413; font-weight:600; }
+.close { position:absolute; top:8px; right:8px; display:grid; place-items:center; width:36px; height:36px; border:0; border-radius:999px; background:transparent; color:#57514B; cursor:pointer; }
+.close:focus-visible { outline:2px solid #A33421; outline-offset:2px; }
+@keyframes termIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce) { .sheet { animation:none; } }
