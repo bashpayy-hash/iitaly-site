@@ -18,9 +18,19 @@
 .compare th, .compare td { padding: 12px 10px; border-top: 1px solid rgba(53, 43, 40, .1); text-align: left; vertical-align: top; }
 .compare thead th { padding-top: 0; border-top: 0; color: #6B6761; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
 .compare thead th:last-child { color: #A33421; }
-.compare tbody th { width: 30%; color: #241F1C; font-weight: 600; }
+.compare tbody th { color: #241F1C; font-weight: 600; }
 .compare tbody td { color: #6B6761; }
 .compare tbody td:last-child { color: #241F1C; font-weight: 500; }
+.compare td { text-wrap: pretty; }
+/* Ширины колонок заданы: иначе строка с ценой агентства раздвигала свою
+   колонку и «10–30 секунд» у IITALY рвалось после тире. */
+@media (min-width: 560px) {
+  .compare { table-layout: fixed; }
+  .compare thead th:first-child { width: 28%; }
+  .compare thead th:nth-child(2) { width: 32%; }
+}
+/* Цена агентства под строкой договора: тот же тихий цвет, цифры читаются. */
+.agencyPrice { display: block; margin-top: 2px; color: #57514B; font-weight: 500; font-variant-numeric: tabular-nums; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 899px) { .section { padding: 56px 24px 64px; } .compact { padding: 32px 0 8px; } }
