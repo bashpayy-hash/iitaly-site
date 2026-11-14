@@ -1,6 +1,9 @@
 // Instagram-like check sheet for a final avatar: profile header (110 px), story ring (66 px),
 // comment row (32 px), light and dark, plus the square with the circle crop marked.
-const { chromium } = require('playwright'); const fs = require('fs');
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+// Playwright is installed globally in the sandbox, not in the project, so it is resolved through createRequire.
+const { chromium } = createRequire(import.meta.url)('playwright');
 const files = process.argv.slice(3); const out = process.argv[2];
 const uri = f => 'data:image/png;base64,' + fs.readFileSync(f).toString('base64');
 const font = 'data:font/woff2;base64,' + fs.readFileSync('/home/user/iitaly-site/public/fonts/inter-tight-tenge-v1.woff2').toString('base64');

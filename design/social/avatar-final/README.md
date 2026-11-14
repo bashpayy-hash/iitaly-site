@@ -43,5 +43,5 @@
     из 2048, уменьшенные до 1080.
   - `alt-A`: задание `7a4a02e3-cd1d-46bb-84ad-f579e0f678ca`, исходник
     `source/final-A-2k.webp`.
-- Лист проверки собирает `source/check.cjs` (Playwright):
-  `node check.cjs out.png "файл.png::Подпись" …`.
+- Лист проверки собирает `source/check.mjs` (Playwright):
+  `node check.mjs out.png "файл.png::Подпись" …`.

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- archived layout script: each round keeps the shared palette and helpers even when its variants use only some of them. */
 // Round 5 of the avatar options (14 Nov 2026): mosaics after the floor of the Galleria Vittorio Emanuele II. Inputs: <dir>/in5 — the gal-*.png shots and mosaic-flat-*.png from tessellate.py.
 // Render avatar variants at 1080x1080 and a check sheet. Inputs in ./in, outputs in ./out.
 import { createRequire } from 'node:module'; const { chromium } = createRequire(import.meta.url)('playwright');

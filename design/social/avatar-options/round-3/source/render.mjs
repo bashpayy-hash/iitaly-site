@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- archived layout script: each round keeps the shared palette and helpers even when its variants use only some of them. */
 // Round 3 of the avatar options (14 Nov 2026). Inputs: <dir>/in3 — *-t.png crops of source/*.webp (alpha > 40%), the full-bleed PNGs, flat-*.png rendered from the SVGs.
 // Render avatar variants at 1080x1080 and a check sheet. Inputs in ./in, outputs in ./out.
 import { createRequire } from 'node:module'; const { chromium } = createRequire(import.meta.url)('playwright');
