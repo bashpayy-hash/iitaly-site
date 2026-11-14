@@ -1,0 +1,97 @@
+{
+ "date": "2026-11-14",
+ "request": "Owner, 14 Nov, after the first ten: «а если чуть-чуть покреативить? Подумай. Может, шлем и папка. Что-то ещё».",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, 1:1; transparent background except the latte",
+ "drawn": {
+  "19-flat-icon": "source/flat-vespi.svg, drawn by hand from the mascot's colours",
+  "20-flat-folder": "source/flat-folder.svg: public/brand/iitaly-mark.svg with a flat Vespi head on the folder edge"
+ },
+ "layout": "source/render.mjs, same as round 1 with inputs in <dir>/in2",
+ "new": [
+  {
+   "file": "source/folderchar.webp",
+   "variant": "11-folder-character",
+   "job": "7a506520-b0e7-42f2-89c5-1ebf60de8598",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "A handmade toy character that IS a document folder: a chunky deep green felt folder (#087C55) with a rounded folder tab on the upper left, a cream paper sheet peeking out of the top, and a red felt wave across the lower right corner, so it reads green, cream and red. The folder has a face exactly in the style of the toy in the reference images: tiny embroidered black dot eyes, small pink cheeks and a small happy stitched smile, and it wears the same glossy satin red scooter helmet with a cream center stripe and a small olive side button on top, slightly tilted. Two tiny cream cotton hands at its sides. Front view, centered, fills about 80% of the frame, bold simple silhouette that reads at tiny size. Warm soft studio light, crisp felt and satin textures, soft contact shadow. Isolated object, transparent background. No text, no letters, no flags, no people."
+  },
+  {
+   "file": "source/gradcap.webp",
+   "variant": "12-gradcap",
+   "job": "87b0749f-1ffc-4f71-a8ea-04a9ed9aa2b0",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "Portrait of the exact same handmade toy character as in the reference images (Vespi), head and shoulders, facing the camera, centered, proud happy smile: smooth cream cotton face, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button. On top of his glossy satin red scooter helmet with the cream center stripe sits a small square graduation mortarboard made of deep green felt, worn slightly tilted, with a cream silk tassel hanging over the side of the helmet. The head fills most of the frame, the cap fully visible with a little margin, readable when tiny. Warm soft studio light, crisp textile detail. Isolated character, transparent background. No text, no letters, no flags, no people."
+  },
+  {
+   "file": "source/seal.webp",
+   "variant": "13-wax-seal",
+   "job": "9eaf1b2d-b0aa-4fa8-a8b4-a404b78abed1",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "A real macro product photograph of a round glossy red sealing-wax seal, seen straight from the front, perfectly centered and filling about 88% of the frame, with the irregular poured wax rim around a crisp pressed circular emblem. The emblem in relief is the face of the toy character from the reference images: a rounded scooter helmet with a center stripe and a small side button, two little dot eyes and a small smile, all pressed into the wax as a clean embossed relief in the same red wax, with soft highlights catching the raised edges. Warm soft studio light, rich wax texture. Isolated object, transparent background. No text, no letters, no numbers, no flags."
+  },
+  {
+   "file": "source/coin.webp",
+   "variant": "14-coin",
+   "job": "c8382c08-7469-4d75-b46f-d56e28896142",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "A real macro product photograph of a single shiny gold coin, like one tossed into the Trevi fountain, seen straight from the front, perfectly centered and filling about 88% of the frame, with a fine beaded rim. In the center, in raised relief, the face of the toy character from the reference images: a rounded scooter helmet with a center stripe and a small side button, two little dot eyes and a small smile, with a tiny scooter handlebar below. Warm golden highlights, slightly worn polished gold, a few tiny water droplets on the surface. Isolated object, transparent background. No text, no letters, no numbers, no flags."
+  },
+  {
+   "file": "source/latte.webp",
+   "variant": "15-latte",
+   "job": "a23ff76e-9c5a-43e9-b2d7-8725601a4636",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "Straight top-down photograph of a small round espresso cup on its saucer on a warm cream marble cafe table, filling the frame, the cup centered. In the crema of the espresso, precise latte art draws the face of the toy character from the reference images: a rounded scooter helmet with a center stripe, two dot eyes, two little cheeks and a small smile, in white milk foam on golden-brown crema. A tiny silver spoon on the saucer. Warm morning daylight, soft shadows, rich textures of porcelain, foam and marble. Full-bleed, filling the entire frame, the cup and saucer occupy the central 85%. No text, no letters, no flags, no people."
+  },
+  {
+   "file": "source/folderscooter.webp",
+   "variant": "16-folder-scooter",
+   "job": "87a0e483-0a8e-409d-a4eb-31f2ebd2d4f0",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "The exact same handmade toy character as in the reference images (Vespi): cream cotton body, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, a gleeful smile, olive-green felt cape collar with one red button. Vespi rides a scooter that is made from a chunky deep green felt document folder (#087C55): the folder stands on its edge as the scooter body, its rounded tab is the front shield, a red felt wave runs along its lower side, a cream paper sheet sticks out like a little windscreen, two small black rubber wheels and a chrome handlebar with a round headlight. Three-quarter front view, driving toward the viewer, centered, fills about 80% of the frame, bold simple silhouette. Warm soft studio light, crisp felt and satin textures, soft contact shadow. Isolated object, transparent background. No text, no letters, no flags, no people."
+  },
+  {
+   "file": "source/passport.webp",
+   "variant": "17-passport",
+   "job": "5704a270-0904-45bb-884a-ec1ab744c7d4",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "A passport-style ID photo of the exact same handmade toy character as in the reference images (Vespi): head and shoulders, facing straight at the camera with a polite little smile, glossy satin red helmet with a cream center stripe and a small olive side button, cream cotton face, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button, against a plain light cream photo background. The small rectangular photo is clipped with a brass paper clip onto a cream document page, slightly tilted, and a round green felt stamp with a check mark overlaps its lower right corner. Front view, centered, the photo fills about 75% of the frame. Warm soft studio light, rich paper and felt textures, soft shadow. Isolated object, transparent background. No text, no letters, no numbers, no flags, no people."
+  },
+  {
+   "file": "source/helmetboat.webp",
+   "variant": "18-helmet-boat",
+   "job": "15d26e1d-8ea2-42ed-af8a-2039081ecb86",
+   "references": [
+    "ab833075-dfc7-4e28-824c-7e299aad556c",
+    "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+    "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+   ],
+   "prompt": "The exact same handmade toy character as in the reference images (Vespi): glossy satin red helmet with a cream center stripe and a small olive side button, cream cotton face, tiny embroidered black dot eyes, small pink cheeks, a cheeky happy smile, olive-green felt cape collar with one red button. Vespi peeks up from inside his own upturned glossy red scooter helmet as if it were a little round boat or bathtub: only his helmeted head, little hands on the rim and the collar show above the rim of a big second red satin helmet lying upside down, and a rolled cream document with a red wax seal sticks out beside him. Front view from slightly above, centered, fills about 80% of the frame, round bold silhouette. Warm soft studio light, crisp textile and satin textures, soft contact shadow. Isolated object, transparent background. No text, no letters, no flags, no people."
+  }
+ ]
+}
