@@ -19,7 +19,7 @@ function slideHtml(s) {
   const img = 'data:image/webp;base64,' + fs.readFileSync(path.join(DIR, 'scenes', s.scene + '.webp')).toString('base64');
   const ink = dark ? '#FAF6EE' : '#141413', accent = dark ? '#F4A090' : '#D7303F', sub = dark ? 'rgba(250,246,238,.9)' : '#3B3631';
   const scrim = dark ? 'linear-gradient(180deg, rgba(14,12,10,.55) 0%, rgba(14,12,10,.18) 34%, rgba(14,12,10,0) 48%)'
-                     : 'linear-gradient(180deg, rgba(250,248,245,.72) 0%, rgba(250,248,245,.30) 30%, rgba(250,248,245,0) 46%)';
+                     : 'linear-gradient(180deg, rgba(250,248,245,.84) 0%, rgba(250,248,245,.55) 26%, rgba(250,248,245,.18) 38%, rgba(250,248,245,0) 48%)';
   const tag = s.tag ? `<div class="tag"><i></i><small>${esc(s.tag.small)}</small><b>${esc(s.tag.big)}</b><em>${esc(s.tag.note)}</em></div>` : '';
   return `<div class="slide" style="--ink:${ink};--accent:${accent};--sub:${sub}">
     <img class="scene" src="${img}" alt="">
