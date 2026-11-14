@@ -37,7 +37,7 @@
 .dots { display:flex; align-items:center; min-height:48px; padding:0 12px; border-radius:999px; background:#3A322D; }
 .dot { position:relative; display:grid; place-items:center; width:20px; height:44px; padding:0; border:0; border-radius:999px; background:none; cursor:pointer; transition:width 320ms cubic-bezier(.22,1,.36,1); }
 .dot::before { content:""; width:8px; height:8px; border-radius:999px; background:#8A7F72; transition:width 320ms cubic-bezier(.22,1,.36,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
-.dot:hover::before { background:#CFC6BA; }
+@media (hover: hover) and (pointer: fine) { .dot:hover::before { background:#CFC6BA; } }
 .dot[aria-current=true] { width:52px; }
 .dot[aria-current=true]::before { width:40px; background:#FAF6EE; }
 .carousel[data-playing] .dot[aria-current=true]::before { background:#5A4F46; }
@@ -50,7 +50,7 @@
 
 .round { display:grid; place-items:center; flex:0 0 auto; width:48px; height:48px; padding:0; border:0; border-radius:50%; background:#3A322D; color:#FAF6EE; cursor:pointer; transition:background-color 160ms cubic-bezier(.4,0,.2,1),opacity 160ms cubic-bezier(.4,0,.2,1); }
 .controls[data-variant=row] .round { width:44px; height:44px; }
-.round:hover:not(:disabled) { background:#4A4038; }
+@media (hover: hover) and (pointer: fine) { .round:hover:not(:disabled) { background:#4A4038; } }
 .round:disabled { opacity:.35; cursor:default; }
 .dot:focus-visible,.round:focus-visible,.track:focus-visible { outline:2px solid #FAF6EE; outline-offset:2px; }
 
@@ -78,7 +78,7 @@
 
 /* On paper (topic step row): the same controls in warm greys. */
 .carousel[data-tone=light] .round { background:#E8E1D5; color:#241F1C; }
-.carousel[data-tone=light] .round:hover:not(:disabled) { background:#DCD3C3; }
+@media (hover: hover) and (pointer: fine) { .carousel[data-tone=light] .round:hover:not(:disabled) { background:#DCD3C3; } }
 .carousel[data-tone=light] :is(.dot,.round,.track):focus-visible { outline-color:#A33421; }
 
 @media(max-width:760px) {

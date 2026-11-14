@@ -325,7 +325,7 @@ export function ChangesExplorer() {
               карта университетов
             </Link>{" "}
             или{" "}
-            <Link href="/plan" className="font-semibold text-ink underline underline-offset-4">
+            <Link href="/plan#questionnaire" className="font-semibold text-ink underline underline-offset-4">
               бесплатный разбор ситуации
             </Link>
             .

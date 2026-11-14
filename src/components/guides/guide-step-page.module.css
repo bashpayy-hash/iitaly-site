@@ -20,7 +20,7 @@
 .dots { display:flex; flex-wrap:wrap; gap:4px; margin:28px 0 8px; }
 .dots a { display:grid; place-items:center; width:28px; height:28px; }
 .dots a span { width:8px; height:8px; border-radius:50%; background:#CFC6B7; transition:width 320ms cubic-bezier(.22,1,.36,1),border-radius 320ms cubic-bezier(.22,1,.36,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
-.dots a:hover span { background:#8A8174; }
+@media (hover: hover) and (pointer: fine) { .dots a:hover span { background:#8A8174; } }
 .dots a[aria-current=step] span { width:22px; border-radius:4px; background:#B83A27; }
 .dots a:focus-visible { outline:2px solid #A33421; outline-offset:2px; border-radius:6px; }
 .finish { margin:20px 0 4px; padding:20px 22px; border:1px dashed #CFC6B7; border-radius:16px; }
@@ -43,12 +43,12 @@
   .sentences p { font-size:16px; }
   .pager { grid-template-columns:minmax(0,1fr); }
 }
-@media(prefers-reduced-motion:reduce) { .pagerCard,.pagerCard svg,.dots a span { transition:none; } .pagerCard:hover,.pagerCard:hover svg { transform:none; } }
+@media(prefers-reduced-motion:reduce) { .pagerCard,.pagerCard svg,.dots a span { transition:none; } @media (hover: hover) and (pointer: fine) { .pagerCard:hover,.pagerCard:hover svg { transform:none; } } }
 /* Motion: the step arrives in one short sequence (heading, object, then the
    sentence cards 40ms apart, then the pager), under 600ms in all. */
 .pagerCard svg { flex:none; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
-.pagerCard:hover svg { transform:translateX(-3px); }
-.forward:hover svg { transform:translateX(3px); }
+@media (hover: hover) and (pointer: fine) { .pagerCard:hover svg { transform:translateX(-3px); } }
+@media (hover: hover) and (pointer: fine) { .forward:hover svg { transform:translateX(3px); } }
 @media (prefers-reduced-motion: no-preference) {
   .header > div { animation:step-rise 520ms cubic-bezier(.22,1,.36,1) backwards; }
   .art { animation:step-object 520ms 80ms cubic-bezier(.22,1,.36,1) backwards; }

@@ -5,6 +5,7 @@ import { useId, useRef, useState, type FormEvent } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import marketing from "@/components/marketing/marketing.module.css";
 import styles from "./portal-login.module.css";
+import { PAY_WA } from "@/lib/payment";
 
 /* Экран входа — в общем стиле сайта: шапка сайта, те же шрифты и цвета,
    акварель кампуса, что и на главной и в самом кабинете. Раньше он жил в
@@ -155,6 +156,15 @@ export function PortalLogin({
           <button type="submit" className={styles.submit} disabled={submitting}>
             {submitting ? "Проверяю…" : "Войти в кабинет"}
           </button>
+          {/* Owner, 14 Nov 2026 («исправь все неточности», after the uxaudit
+             pass): the only way out of this form was «Посмотреть тарифы», which
+             reads as «pay again» to someone who paid and lost the code. The
+             code is issued by hand after payment, so the honest recovery is
+             the same WhatsApp the payment flow already uses. */}
+          <p className={styles.foot}>
+            Не помню код —{" "}
+            <a href={`https://wa.me/${PAY_WA}?text=${encodeURIComponent("Здравствуйте! Не могу найти код доступа к кабинету IITALY. Моя фамилия: ")}`} target="_blank" rel="noopener noreferrer">написать в WhatsApp</a>
+          </p>
           <p className={styles.foot}>
             Ещё нет кода? <Link href="/prices">Посмотреть тарифы</Link>
           </p>

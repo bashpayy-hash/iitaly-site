@@ -18,7 +18,7 @@
 .selection > span { font-weight: 600; }
 .selection p { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin:4px 0 0; color:var(--portal-muted); font-size:13px; overflow-wrap:anywhere; }
 .saveButton { flex:none; min-height:44px; padding:12px 20px; border:0; border-radius:999px; background:var(--accent); color:var(--on-dark); font:600 14px/1.4 var(--font-sans); cursor:pointer; }
-.saveButton:hover:not(:disabled) { background:var(--accent-text); }
+@media (hover: hover) and (pointer: fine) { .saveButton:hover:not(:disabled) { background:var(--accent-text); } }
 .saveBar button:disabled { background: var(--portal-surface-soft); color: var(--portal-muted); cursor: default; }
 .step :is(a, button, summary):focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 @media(min-width:1101px) { :global(body:has([data-portal-chat="true"])) .step { --save-reserved:412px; } }

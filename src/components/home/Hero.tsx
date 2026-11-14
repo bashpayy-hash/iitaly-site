@@ -36,7 +36,7 @@ export function Hero() {
             {/* Owner, 6 Nov: «проверка документов — главная фишка сайта»:
                 она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}
             <div className={assistant.entryButtons}>
-              <AppleButtonLink href="/plan">Составить план бесплатно</AppleButtonLink>
+              <AppleButtonLink href="/plan#questionnaire">Составить план бесплатно</AppleButtonLink>
               <AppleButtonLink href="/plan#document-check" variant="outlined" data-hero-document-check>Проверить документ</AppleButtonLink>
             </div>
             <div className={assistant.entryAlternatives}>

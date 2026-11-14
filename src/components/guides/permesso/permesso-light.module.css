@@ -15,7 +15,7 @@
 .heading .scopeNote p { margin:2px 0 6px; }
 .headLinks { display:flex; flex-wrap:wrap; gap:0 18px; margin-top:4px; }
 .headLinks a { display:inline-flex; align-items:center; min-height:44px; color:#8b2939; font-size:13px; text-decoration:none; }
-.headLinks a:hover { text-decoration:underline; text-underline-offset:3px; }
+@media (hover: hover) and (pointer: fine) { .headLinks a:hover { text-decoration:underline; text-underline-offset:3px; } }
 .workbar { position:sticky; top:64px; z-index:30; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:24px; padding:10px 0; border-block:1px solid #ddd9d1; background:#FAF8F5; }
 .scenarios { display:flex; padding:3px; border:1px solid #d7d3ca; border-radius:999px; background:#efeeeb; }
 .light .scenarios button { min-height:38px; border:0; border-radius:999px; padding:8px 12px; background:transparent; font-size:13px; color:#66635d; white-space:nowrap; }
@@ -35,7 +35,7 @@
 .toolPanel p { margin:6px 0 12px; color:#6d6962; font-size:12px; line-height:1.5; }
 .toolActions { display:flex; flex-wrap:wrap; gap:6px; }
 .light .toolActions button { min-height:44px; padding:8px 10px; border:1px solid #ded8cf; border-radius:999px; background:transparent; color:#45413b; font-size:12px; }
-.light .toolActions button:hover { background:#f2eee7; }
+@media (hover: hover) and (pointer: fine) { .light .toolActions button:hover { background:#f2eee7; } }
 .light .toolActions button[data-destructive] { color:#8b2939; }
 .light .toolActions button[aria-current="page"],.light .toolActions button[aria-pressed="true"] { border-color:#a88b81; color:#8b2939; }
 .hintToggle { display:flex; align-items:center; gap:10px; min-height:44px; margin-top:6px; font-size:12px; color:#5c564d; }
@@ -65,7 +65,7 @@
 /* Поле, которому нужен справочник (16, 19, 25, провинции, страны), ведёт
    прямо в нужный инструмент раздела «Коды и расчёты». */
 .toolLink { display:inline-flex; align-items:center; min-height:44px; margin-top:4px; color:#8b2939; font-size:13px; text-decoration:underline; text-decoration-color:#8b293966; text-underline-offset:3px; }
-.toolLink:hover { text-decoration-color:currentColor; }
+@media (hover: hover) and (pointer: fine) { .toolLink:hover { text-decoration-color:currentColor; } }
 .nextSections { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:32px; }
 .nextSections a { display:grid; gap:4px; padding:18px 20px; border:1px solid #e4ddd3; border-radius:16px; background:#fffdf9; color:#242321; text-decoration:none; transition:border-color 160ms cubic-bezier(.4,0,.2,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
 .nextSections b { font-size:16px; font-weight:550; }
@@ -76,7 +76,7 @@
 .finishBar b { display:block; font-size:15px; font-weight:500; }
 .finishBar p { margin:5px 0 0; max-width:560px; color:#6d6962; font-size:13px; line-height:1.5; }
 .light .finishBar button { flex-shrink:0; min-height:46px; padding:10px 16px; border:1px solid #cfc7bd; border-radius:999px; background:transparent; color:#45413b; font-size:13px; }
-.light .finishBar button:hover { background:#efeeeb; }
+@media (hover: hover) and (pointer: fine) { .light .finishBar button:hover { background:#efeeeb; } }
 .samplePreview { margin:12px 0 0; border-top:1px solid #e7e2da; padding-top:8px; }
 .samplePreview summary { display:flex; align-items:center; min-height:44px; color:#6d6259; font-size:12px; cursor:pointer; }
 .sampleRows { display:flex; flex-wrap:wrap; gap:8px; max-width:100%; overflow-x:auto; padding:4px 0; }
@@ -98,7 +98,7 @@
 .lockedSheet > div { display:grid; gap:16px; }
 .lockedSheet h2 { margin:0; font:600 22px/1.2 var(--font-apple-display); letter-spacing:-.02em; color:#242321; }
 .light .finishBar .finishBuy { min-height:48px; padding:12px 22px; border:1px solid #141413; border-radius:999px; background:#141413; color:#fffdf9; font-size:15px; font-weight:500; cursor:pointer; }
-.light .finishBar .finishBuy:hover { background:#383630; }
+@media (hover: hover) and (pointer: fine) { .light .finishBar .finishBuy:hover { background:#383630; } }
 .light .finishBar .finishBuy:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
 @media (max-width:700px) {
   .lockedSheet { grid-template-columns:minmax(0,1fr); padding:16px; gap:18px; }

@@ -53,7 +53,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
         <p>Это последний шаг темы «{guide.title}».</p>
         {helpId && <GuideActionLink id={helpId} />}
       </section>}
-      <nav className={styles.pager} aria-label="Соседние шаги">
+      <nav className={styles.pager} aria-label="Соседние шаги" data-fab-yield>
         {previous ? <Link className={styles.pagerCard} href={previous.href} data-guide-step-prev><span><small>Назад</small>{previous.title}</span></Link>
           : <Link className={styles.pagerCard} href={guideHref(id)}><span><small>К теме</small>{guide.title}</span></Link>}
         {next ? <Link className={`${styles.pagerCard} ${styles.forward}`} href={next.href} data-guide-step-next><span><small>Дальше</small>{next.title}</span></Link>

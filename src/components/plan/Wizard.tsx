@@ -127,7 +127,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
                       <>
                         Ещё {stepsLeft} {ruPlural(stepsLeft, "шаг", "шага", "шагов")} и{" "}
                         {docsCount} {ruPlural(docsCount, "документ", "документа", "документов")} в
-                        чек-листе — дальше на этой странице.
+                        чек-листе откроются по кнопке ниже.
                       </>
                     );
                   })()}

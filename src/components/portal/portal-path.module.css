@@ -241,5 +241,5 @@
   .scenery[data-side=right] img { left:calc(50% - 0.71 * var(--amp) + 84px); object-position:left center; }
   .scenery[data-side=left] img { right:calc(50% - 0.71 * var(--amp) + 84px); object-position:right center; }
 }
-@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:hover .node,.step > a:active .node { transform:none; } }
+@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:active .node { transform:none; } @media (hover: hover) and (pointer: fine) { .step > a:hover .node { transform:none; } } }
 @media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }

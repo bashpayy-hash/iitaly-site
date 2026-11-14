@@ -117,16 +117,16 @@
   color: var(--bento-ink, #241F1C);
   text-decoration: none;
 }
-.listLink:hover { background: rgba(53, 43, 40, .05); }
+@media (hover: hover) and (pointer: fine) { .listLink:hover { background: rgba(53, 43, 40, .05); } }
 .listLink:focus-visible { outline: 2px solid var(--bento-ink, #241F1C); outline-offset: 2px; }
 .dot { grid-row: span 2; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; background: var(--bento-tray, #EFE9DF); color: var(--bento-ink, #241F1C); }
 .listTitle { min-width: 0; font-size: 14px; font-weight: 500; line-height: 1.4; text-decoration: underline; text-decoration-color: rgba(36, 31, 28, .35); text-underline-offset: 3px; }
-.listLink:hover .listTitle { text-decoration-color: currentColor; }
+@media (hover: hover) and (pointer: fine) { .listLink:hover .listTitle { text-decoration-color: currentColor; } }
 .listNote { display: -webkit-box; min-width: 0; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; font-size: 12px; line-height: 1.45; color: var(--bento-muted, #57514B); }
 
 /* Ячейка-ссылка чуть приподнимается под курсором. */
 a.cell { text-decoration: none; transition: transform .25s cubic-bezier(.16, 1, .3, 1), box-shadow .25s cubic-bezier(.16, 1, .3, 1); }
-a.cell:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(53, 43, 40, .4); }
+@media (hover: hover) and (pointer: fine) { a.cell:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(53, 43, 40, .4); } }
 a.cell:active { transform: translateY(0) scale(.99); }
 a.cell:focus-visible { outline: 2px solid var(--bento-ink, #241F1C); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { a.cell { transition: none; } a.cell:hover, a.cell:active { transform: none; } }
+@media (prefers-reduced-motion: reduce) { a.cell { transition: none; } a.cell:active { transform: none; } @media (hover: hover) and (pointer: fine) { a.cell:hover { transform: none; } } }

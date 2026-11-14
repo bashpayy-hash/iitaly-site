@@ -121,7 +121,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   }
 
   const cityShortcut = (
-          <div className={ui.cityShortcut}>
+          <div className={ui.cityShortcut} data-fab-yield>
             <label htmlFor="city-shortcut">Сразу к городу</label>
             <select id="city-shortcut" value={activeCity || ""} onChange={event => chooseCity((event.target.value || null) as CityId | null)}>
               <option value="">Выбери из списка или на карте</option>
@@ -139,7 +139,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             <p className={ui.eyebrow}>43 университета · 30 городов</p>
             <h1 className={ui.heroTitle}>Университеты<br /><span>Италии</span></h1>
             <p className={ui.heroDescription}>
-              Кликните по городу на карте — покажем вузы, стипендии DSU и факты о
+              Нажми на город на карте — покажем вузы, стипендии DSU и факты о
               жизни там. Можно сравнить до трёх университетов.
             </p>
           </div>
@@ -174,7 +174,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 cities={filteredCities.size}
                 filtered={filtersActive}
               />
-              {!portalSelection && <Link href="/plan" className={ui.navigatorLink}>Подобрать по моей ситуации</Link>}
+              {!portalSelection && <Link href="/plan#questionnaire" className={ui.navigatorLink}>Подобрать по моей ситуации</Link>}
             </div>
             {!portalSelection && cityShortcut}
           </div>
@@ -240,9 +240,9 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
                 />
               ) : (
                 <div className={ui.emptyCity} data-city-empty>
-                  <p className={ui.emptyTitle}>Выберите город</p>
+                  <p className={ui.emptyTitle}>Выбери город</p>
                   <p className={ui.emptyDescription}>
-                    Нажмите на любую точку на карте, чтобы увидеть университеты,
+                    Нажми на любую точку на карте, чтобы увидеть университеты,
                     стипендии и факты о городе.
                   </p>
                   <button type="button" onClick={() => chooseCity("roma")} className={ui.primaryButton}>

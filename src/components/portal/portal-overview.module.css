@@ -3,12 +3,12 @@
 .documentFeature h2 { margin: 0 0 8px; max-width: 32ch; font-family: var(--portal-heading-font); font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
 .documentFeature p { max-width: 60ch; color: var(--portal-muted); font-size: 15px; line-height: 1.5; }
 .featureLink { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; margin-top: 4px; font-size: 15px; font-weight: 500; }
-.documentFeature:hover .featureLink { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .documentFeature:hover .featureLink { text-decoration: underline; text-underline-offset: 4px; } }
 .documentFeature:focus-visible, .universityChoice:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; }
 .universityChoice { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; padding: 16px 0; color: var(--portal-ink); font-size: 15px; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
 .rowContent { min-width: 0; }
 .choiceNote { display: block; margin-top: 4px; color: var(--portal-muted); font-size: 13px; line-height: 1.5; }
-.universityChoice:hover .choiceNote { text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .universityChoice:hover .choiceNote { text-decoration: underline; text-underline-offset: 4px; } }
 .routeContext:empty { display: none; }
 .routeContext { border-top: 1px solid var(--portal-border); }
 .routeContext > * + * { border-top: 1px solid var(--portal-border); }
@@ -19,7 +19,7 @@
 .label { color: var(--portal-ink); font-weight: 500; }
 .document { color: var(--portal-ink); text-decoration: none; }
 .documentReason { display: block; margin-top: 4px; color: var(--portal-muted); }
-.document:hover .fileName { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+@media (hover: hover) and (pointer: fine) { .document:hover .fileName { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 .document:focus-visible { outline: 2px solid var(--portal-ink); outline-offset: 4px; border-radius: 2px; }
 .status { color: var(--portal-ink); }
 .status[data-outcome="fix"] { color: var(--portal-danger); }
@@ -31,7 +31,7 @@
 
 .orientirs > a { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 18px; min-height:48px; padding:10px 0; font-size:16px; line-height:1.5; color:var(--portal-ink); text-decoration:none; }
 .orientirs > a span:last-child { color:var(--portal-muted); }
-.orientirs > a:hover,.next:hover .rowContent { text-decoration:underline; text-underline-offset:4px; }
+@media (hover: hover) and (pointer: fine) { .orientirs > a:hover,.next:hover .rowContent { text-decoration:underline; text-underline-offset:4px; } }
 .overview a:focus-visible { outline:2px solid var(--portal-ink); outline-offset:4px; }
 .document,.next { font-size:16px; }
 .fileName { display:block; margin-bottom:8px; font-weight:600; }

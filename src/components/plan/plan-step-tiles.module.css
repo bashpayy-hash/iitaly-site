@@ -95,7 +95,8 @@
 @media(prefers-reduced-motion:reduce) {
   .tile,.pill,.visual img,.stop { transition:none; animation:none; }
   .detail { animation:none; }
-  .tile:hover .visual img,.tile:active .pill { transform:none; }
+  .tile:active .pill { transform:none; }
+  @media (hover: hover) and (pointer: fine) { .tile:hover .visual img { transform:none; } }
 }
 @media(forced-colors:active) {
   .tile { border:1px solid CanvasText; }

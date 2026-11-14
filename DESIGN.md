@@ -1750,3 +1750,48 @@ Later the same day the owner confirmed the agency price for the «Сколько
 range he has named since the start (NEXT_CHAT.md). It sits under the contract
 line rather than replacing it, because design-content checks that every
 earlier line of copy is still on the page.
+
+## After the UX audit: the first question, touch hover, the chat button · 14 November 2026
+
+Owner, after the uxaudit pass (`docs/ux-audit/2026-11-14/`): «поправь
+элементы именно с дизайном, а оплата работает, не переживай», then «и в
+целом исправь все неточности, потом прогони ещё раз, чтобы наверняка».
+Measured on a 390 px phone, before → after:
+
+- **«Составить план» opens on the question.** Every action that starts the
+  plan (home hero, the home scene card, «Проверить шансы» on /prices, «Подобрать
+  по моей ситуации» on /universities, 404, the rules page) now goes to
+  `/plan#questionnaire`, the anchor the page already had. The first question
+  was at 980 px, under the loggia cover; it is now at 218 px with the first
+  answer on screen (1024 and 768: 213 px). The cover stays for anyone who
+  opens /plan from the menu; «Мой план» in the header and footer still goes to
+  /plan, because it names a page, not an action.
+- **Hover only with a mouse, everywhere.** On a phone a tap leaves :hover on
+  the element, so on the next question the option under the finger was filled
+  like a chosen one (the audit's «предвыбранные ответы»). This guide already
+  said hover only under `(hover: hover) and (pointer: fine)`; 134 selectors in
+  42 CSS modules did not follow it. `scripts/guard-hover.mjs` moved each into
+  that media block in place, so the cascade order holds; a selector shared
+  with the chosen state (`.option:hover, .option[aria-pressed=true]`) is split
+  so the chosen state still shows on touch. `globals.css` is untouched.
+  `node scripts/guard-hover.mjs --check` lists any new unguarded :hover.
+  Measured: the option under the finger on question 2 is transparent on touch;
+  with a mouse the hover still fills it (rgb(184, 58, 39)).
+- **The chat button yields to the price and the next step.** It already slid
+  away from anything marked `data-fab-yield`; the /prices comparison cards,
+  the guide step's «Назад / Дальше» pager and the city shortcut on
+  /universities were not marked, so the pill lay on «10 990 ₸ открывает…» and
+  the round button on «Дальше · Подача». They are marked now.
+
+The same pass fixed two pieces of copy the owner allowed with «исправь все
+неточности»: /universities spoke to the reader as «вы» («Кликните», «Выберите
+город», «Нажмите») on a site that says «ты» everywhere — now «Нажми», «Выбери»;
+and the plan result said «дальше на этой странице» right above «Открыть мой
+план», so people scrolled into empty space — now «откроются по кнопке ниже».
+The cabinet login gains «Не помню код — написать в WhatsApp» next to «Ещё нет
+кода? Посмотреть тарифы», which was the only way out and read as «pay again».
+
+Left as they were, on purpose: the cabinet greeting («Привет!», 19 px) and its
+15 px rubric are the cabinet's quiet header, not a hierarchy error; marking a
+visa document as collected stays possible on a locked point, because its title
+is visible; the «iltaly» reading of the wordmark is the owner's call.
