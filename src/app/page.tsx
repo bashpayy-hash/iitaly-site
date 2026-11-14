@@ -1,6 +1,7 @@
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { EditorialMotion } from "@/components/marketing/EditorialMotion";
 import { Hero } from "@/components/home/Hero";
+import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
 import { VespiIntroSection } from "@/components/mascot/VespiIntroSection";
 import { FeatureBanner } from "@/components/home/FeatureBanner";
 import { Split } from "@/components/home/Split";
@@ -13,6 +14,8 @@ export default function Home() {
       <StructuredData />
       <div data-editorial-home>
         <Hero />
+        {/* Owner, 13 Nov: проверка документов — киллер-фича, сразу после первого экрана. */}
+        <DocumentCheckFeature />
         <Split />
         <VespiIntroSection />
         <FeatureBanner />
