@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- archived layout script: each round keeps the shared palette and helpers even when its variants use only some of them. */
 // Avatar options for Instagram (14 Nov 2026). See ../manifest.json for the inputs it expects.
 // Render avatar variants at 1080x1080 and a check sheet. Inputs in ./in, outputs in ./out.
 import { createRequire } from 'node:module'; const { chromium } = createRequire(import.meta.url)('playwright');

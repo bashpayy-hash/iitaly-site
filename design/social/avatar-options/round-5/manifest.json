@@ -35,5 +35,90 @@
    "variant": "50-galleria-dome",
    "job": "3915d2d7-cddd-43ac-b5c3-b7e664c6f3dc"
   }
- ]
+ ],
+ "reference_round": {
+  "request": "Owner, 14 Nov, with two photos of the real floor (the bull medallion close up and the whole octagon under the dome): «а вот референсы по мозаике».",
+  "what_changed": "Coarse matte hand-cut tesserae worn by footsteps instead of polished fine marble; a shaped cartouche in the centre (deep green #087C55 instead of the blue field), a ring of dark green laurel with gold dots, terracotta ribbons tied in knots. The bull of the original (Turin's arms) is replaced by Vespi; no real coat of arms.",
+  "new": [
+   {
+    "file": "source/gv-face.webp",
+    "variant": "53-galleria-ref-face",
+    "job": "acfd1bb3-4ab7-4216-a8c8-3f902779e862"
+   },
+   {
+    "file": "source/gv-gradcap.webp",
+    "variant": "54-galleria-ref-gradcap",
+    "job": "9a2d63a6-770f-40a0-bf97-51cf8cb571cf"
+   },
+   {
+    "file": "source/gv-scooter.webp",
+    "variant": "55-galleria-ref-scooter",
+    "job": "cdfab63c-32d6-4812-94da-9fc2abcf2886"
+   },
+   {
+    "file": "source/gv-dolce.webp",
+    "variant": "56-galleria-ref-dolce",
+    "job": "bfe65567-448f-4214-bdd0-06536fc0eeb3"
+   }
+  ],
+  "check": "check-reference.jpg"
+ },
+ "development_53": {
+  "request": "Owner, 14 Nov, on check-reference.jpg: «развивай дальше первый вариант на картинке» (variant 53).",
+  "method": "gpt_image_2_6, high, 1k, 1:1; references: job acfd1bb3… (variant 53 itself, for style and palette) + the Vespi references ab833075… and 0f6d7ac4….",
+  "new": [
+   {
+    "file": "source/gv53-d1-tight.webp",
+    "variant": "57-galleria-53-closeup",
+    "job": "4f3226dc-bedf-4e09-9d5e-9383584723d6",
+    "idea": "tighter framing, the cartouche fills ~70%, face larger"
+   },
+   {
+    "file": "source/gv53-d2-shield.webp",
+    "variant": "58-galleria-53-shield",
+    "job": "7d43277c-6cf8-495e-9bb8-3d7f769ebfed",
+    "idea": "Italian escutcheon shape with scrolled corners, as on the floor"
+   },
+   {
+    "file": "source/gv53-d3-refined.webp",
+    "variant": "59-galleria-53-refined (+61 as a 150% crop)",
+    "job": "f812e4ae-6465-43c0-914a-fac1d0fd7f96",
+    "idea": "cleaner face, red in two-three shades, gold glass along the cartouche"
+   },
+   {
+    "file": "source/gv53-d4-wave.webp",
+    "variant": "60-galleria-53-wave",
+    "job": "7db5e3e5-f32d-4188-bb9e-6bb2c7b08c91",
+    "idea": "Vespi waving"
+   }
+  ],
+  "check": "check-53-development.jpg"
+ },
+ "development_58": {
+  "request": "Owner, 14 Nov: «развивайся в сторону 58 теперь».",
+  "method": "gpt_image_2_6, high, 1k, 1:1; references: job 7d43277c… (variant 58) + Vespi references ab833075… and 0f6d7ac4….",
+  "new": [
+   {
+    "file": "source/gv58-s1-tight.webp",
+    "variant": "62-shield-closeup",
+    "job": "e576b87e-737c-44d6-84a0-2cfaf17e72fe"
+   },
+   {
+    "file": "source/gv58-s2-gold.webp",
+    "variant": "63-shield-gold (+66 as a 150% crop)",
+    "job": "942e4785-babb-4472-9c26-c8365fe81347"
+   },
+   {
+    "file": "source/gv58-s3-true.webp",
+    "variant": "64-shield-true",
+    "job": "6fa7f2f6-10e7-410d-85ed-9ae7c61b6938"
+   },
+   {
+    "file": "source/gv58-s4-gradcap.webp",
+    "variant": "65-shield-gradcap",
+    "job": "e7357c4b-ea7e-48bb-9762-059268eaa78d"
+   }
+  ],
+  "check": "check-58-development.jpg"
+ }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- archived layout script: each round keeps the shared palette and helpers even when its variants use only some of them. */
 // Round 4 of the avatar options (14 Nov 2026). Inputs: <dir>/in4 — *-t.png crops of source/*.webp (alpha > 40%), mosaic.png, renaissance.png, flat-*.png rendered from the SVGs. flat-boot.svg uses ITALY_PATH from src/data/italy.ts (read only).
 // Render avatar variants at 1080x1080 and a check sheet. Inputs in ./in, outputs in ./out.
 import { createRequire } from 'node:module'; const { chromium } = createRequire(import.meta.url)('playwright');
