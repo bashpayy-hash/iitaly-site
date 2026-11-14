@@ -1,0 +1,37 @@
+{
+ "date": "2026-11-14",
+ "request": "Owner, 14 Nov: «какую аватарку можно для Инстаграма, чтобы была запоминающаяся? … может просто лицо Веспи, или в целом логотип Италии, который папка в цветах Италии. Накидай вариантов 10. Изучи, что привлекает внимание, изучи логотипы других компаний».",
+ "model": "gpt_image_2_6 (Higgsfield), quality high, 1k, 1:1, transparent background",
+ "references": [
+  "ab833075-dfc7-4e28-824c-7e299aad556c",
+  "a448f972-9035-4be6-b0ca-1f0f7800f1a5",
+  "0f6d7ac4-4e85-4761-9765-753f578eec1e"
+ ],
+ "layout": "source/render.mjs (Playwright, 1080x1080, then the check sheet). Inputs it expects in <dir>/in: face-t.png (design/social/source/avatar.webp trimmed), folder-t.png, wink-t.png, helmet-t.png (the files below trimmed), s11.jpg (design/social/source/scenes/s11.webp at 1080 wide). Run: node render.mjs <dir>.",
+ "reused": {
+  "face": "design/social/source/avatar.webp, job f62085eb-b608-430b-a8de-8dc14286e7a3 — variants 01, 02, 03, 04, 10",
+  "mark": "public/brand/iitaly-mark.svg — variants 07, 08",
+  "amalfi": "design/social/source/scenes/s11.webp — variant 10"
+ },
+ "new": [
+  {
+   "file": "source/folder.webp",
+   "variant": "06-folder",
+   "job": "ab6a3eec-dd9c-41a3-8654-03cb031c7321",
+   "prompt": "The exact same handmade toy character as in the reference images (Vespi): smooth cream cotton face with fine fibers, glossy satin red helmet with a cream center stripe and a small olive side button, tiny embroidered black dot eyes, small pink cheeks, olive-green felt cape collar with one red button. Vespi peeks out of the top of a chunky handmade document folder made of deep green felt (#087C55) with a rounded folder tab on the upper left; a white paper sheet sticks out behind him and a red felt wave covers the lower right corner of the folder, so the folder reads green, white and red. Only his head, little hands and collar show above the folder edge, both hands holding the edge, a curious happy face looking straight at the viewer. Front view, centered, the whole object fills about 80% of the frame with a small even margin, clear bold silhouette that reads at tiny size. Warm soft studio light, crisp textile detail, soft contact shadow. Isolated object, transparent background. No text, no letters, no flags, no people."
+  },
+  {
+   "file": "source/wink.webp",
+   "variant": "05-wink",
+   "job": "60ff0957-9aad-4a93-b022-234f8396f9c9",
+   "prompt": "Portrait of the exact same handmade toy character as in the reference images (Vespi), head and shoulders, facing the camera straight on, centered: smooth cream cotton face with fine fibers, glossy satin red helmet with a cream center stripe and a small olive side button, small pink cheeks, olive-green felt cape collar with one red button. He winks: the left embroidered eye is a closed curved stitch, the right is a black dot, with a big cheeky open smile, and one little cotton hand raised beside his face in a cheerful wave. The head fills most of the frame, the top of the helmet fully visible with a little margin, the face clearly readable even when the picture is tiny. Warm soft studio light, crisp textile detail. Isolated character, transparent background. No text, no props, no people."
+  },
+  {
+   "file": "source/helmet.webp",
+   "variant": "09-helmet",
+   "job": "84781329-18ab-42bd-8f7f-b3f3f6b21b06",
+   "note": "One reference only (ab833075…).",
+   "prompt": "A real studio product photograph of a small glossy satin red vintage scooter helmet, exactly like the one the toy in the reference image wears: rounded dome, a wide cream stripe running front to back over the center, a small olive-green button on the side, a soft cream rim. Three-quarter front view from slightly above, centered, the helmet fills about 75% of the frame with an even margin, bold simple silhouette that reads as a symbol even at tiny size. Rich glossy satin reflections, warm soft key light, a realistic soft contact shadow under it. Isolated object, transparent background. No text, no letters, no logos, no flags, no people, no face."
+  }
+ ]
+}
