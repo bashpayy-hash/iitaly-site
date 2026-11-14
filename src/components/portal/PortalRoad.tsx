@@ -327,7 +327,10 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         <h2 id="portal-path-heading">Весь путь до учёбы в Италии</h2>
         <p className={styles.percent} aria-hidden="true" data-road-percent><strong>{percent}%</strong><span>пройдено</span></p>
       </div>
-      <p className={styles.count} data-road-count>Сделано <strong>{done}</strong> из {total} {stepWord(total)}{progress.ahead > 0 && <span className={styles.ahead}> · заранее {progress.ahead}</span>}</p>
+      {/* Owner, 14 Nov 2026 (UX audit, item 8): before the questionnaire only the
+         first stage is real, so «0 из 2» next to a long road read as a mistake.
+         The count names what it counts, and the rest says when it opens. */}
+      <p className={styles.count} data-road-count>Сделано <strong>{done}</strong> из {total} {stepWord(total)}{awaitingProfile && <span className={styles.ahead}> первого этапа · остальные откроются после анкеты</span>}{progress.ahead > 0 && <span className={styles.ahead}> · заранее {progress.ahead}</span>}</p>
       <div className={styles.meter} aria-hidden="true" data-road-meter><div className={styles.rail}>
         <span className={styles.bar}><span data-flight-fill data-road-bar /></span>
         {ticks.map(at => <i key={at} className={styles.tick} style={{ left: `${at}%` }} />)}

@@ -1867,3 +1867,40 @@ Measured on a 390 px phone, before → after:
   shortlist picker «Сразу к городу» stays first, above the sticky «Сохранить»
   (design-portal-university-selection-review checks that the first city
   choice is visible on a 390 px screen).
+
+## The audit's items 5–9: the first question, one «Сравнить», short topics, the cabinet header · 14 November 2026
+
+Owner: «Так, выполняй все пункты с 5 по 9» (the list from the UX audit).
+
+- **5 · «Осенью 2027» or «В 2026/27».** The options read as the same thing
+  to a school student. Under the answers of the first question there is one
+  line: «Учебный год в Италии начинается осенью. «Осенью 2027» — набор
+  2027/28, к нему готовятся сейчас. «В 2026/27» — учебный год, который уже
+  идёт: проверим, куда ещё можно успеть.» The options, the hint and
+  QUESTION_CONTEXT are unchanged (wizard.ts is byte-checked).
+- **6 · One «Сравнить».** A red «Сравнить 1 из 3» link (active-looking) and a
+  grey disabled «Сравнить» in the bottom bar were two controls in two states.
+  The link went with the quick chips (item 9). The bar's button shows only
+  when it works (two or more universities); with one, the bar says «Добавь ещё
+  один вуз». The third pick scrolls to the cards themselves
+  (`[data-comparison-results]`), not to the selectors above them.
+- **7 · A topic of one-sentence steps.** In the free topics every step is
+  31–131 characters, and «Шаг 1 из 4» for one phrase made a reader tap four
+  pages for a paragraph. The overview of a free topic now has «Вся тема
+  коротко»: the numbered points with their text on one screen. The road
+  («Разбор по шагам») stays below for those who keep track. Paid topics are
+  unchanged: their closed text never reaches the HTML.
+- **8 · The cabinet header.** On a phone «Помощник», «Документы» and
+  «Настройки» were bare icons. Each now has its caption under the icon (11 px;
+  10 px on 360 px Android phones, like a phone tab bar). Below 360 px the three
+  captions and «Меню» do not fit beside the logo, so there the icons fall back
+  to aria-label and title, as before. The road counter before the
+  questionnaire said «Сделано 0 из 2 шагов» beside a long road of locked
+  stages; it now says «Сделано 0 из 2 шагов первого этапа · остальные
+  откроются после анкеты».
+- **9 · One action under the map.** «Подобрать по моей ситуации», «Подобрать
+  город под ритм» and the quick «В сравнение» chips were three ways to pick.
+  «Подобрать город под ритм» stays, because it works on the map itself; a
+  university joins the comparison from its city card.
+  design-flight-explorers-review picked through the chips; it now opens Padua,
+  Bologna and Milan through «Сразу к городу» and ticks «Сравнить» on each card.

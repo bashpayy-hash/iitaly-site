@@ -100,7 +100,9 @@ try{
     await nav.goto(origin+'/guides?topic=codice',{waitUntil:'domcontentloaded'});await nav.waitForURL('**/guides/codice');await nav.locator('[data-guide-panel=codice]').waitFor();
     await nav.close();
     await page.goto(origin+'/universities',{waitUntil:'networkidle'});
-    for(const id of ['unipd','unibo','polimi'])await page.locator(`[data-quick-compare=${id}]`).click();
+    // Owner, 14 Nov 2026 (UX audit, item 9): the quick «В сравнение» chips are
+    // gone; a university joins the comparison from its city card, as a visitor does.
+    for(const [city,id] of [['padova','unipd'],['bologna','unibo'],['milano','polimi']]){await page.locator('#city-shortcut').selectOption(city);await page.locator(`[data-uni-card="${id}"]`).getByRole('checkbox',{name:'Сравнить',exact:true}).check();}
     assert.equal(await page.locator('[data-deck-university]').count(),3);
     // Rows stay level across cards (offsetTop). Since 12 Nov 2026 the cards stand straight (owner: «сравнение не прям юзер френдли»).
     const rows=await page.locator('[data-deck-row=life]').evaluateAll(nodes=>nodes.map(n=>n.offsetTop));
