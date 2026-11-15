@@ -6,6 +6,10 @@ const DIR = path.dirname(fileURLToPath(import.meta.url));
 // Playwright is the machine's global install (see the repository README), not a project dependency.
 const { chromium } = createRequire(import.meta.url)('playwright');
 const OUT = process.argv[2], dark = process.argv[3] === 'dark';
+// Optional third argument: a folder of highlight covers named NN-key.jpg
+// (square or 1080x1920); they are shown as the row of circles under the bio.
+const HL = process.argv[4];
+const LABELS = { 'o-nas': 'О нас', cena: 'Цена', dokumenty: 'Проверка', proverka: 'Проверка', dsu: 'DSU', vuzy: 'Вузы', viza: 'Виза', gaidy: 'Гайды', voprosy: 'Вопросы' };
 const uri = (f, t) => `data:${t};base64,` + fs.readFileSync(f).toString('base64');
 const av = uri(path.join(DIR, '../../avatar-final/avatar-iitaly-320.png'), 'image/png');
 const covers = ['post1-1', 'post2-1', 'post3-1'].map(n => uri(path.join(DIR, '../posts', n + '.jpg'), 'image/jpeg'));
@@ -14,6 +18,7 @@ const html = `<div class="p">
  <div class="top"><b>iitaly</b></div>
  <div class="head"><img class="av" src="${av}"><div class="stats"><div><b>3</b><span>публикации</span></div><div><b>—</b><span>подписчики</span></div><div><b>—</b><span>подписки</span></div></div></div>
  <div class="bio"><b>IITALY · поступление в Италию</b><p>Поступление в Италию с ИИ · вузы, документы, DSU, виза D · 10 990 ₸ вместо агентства</p><a>iitaly.net</a></div>
+ ${HL ? `<div class="hl">${fs.readdirSync(HL).filter(f => /\.(jpe?g|png)$/.test(f)).sort().map(f => `<figure><span><img src="${uri(path.join(HL, f), f.endsWith('.png') ? 'image/png' : 'image/jpeg')}"></span><figcaption>${LABELS[f.replace(/^\d+-|\.(jpe?g|png)$/g, '')] || ''}</figcaption></figure>`).join('')}</div>` : ''}
  <div class="tabs"><i></i></div>
  <div class="grid">${covers.map(s => `<img src="${s}">`).join('')}</div>
 </div>`;
@@ -24,6 +29,10 @@ const css = `html,body{margin:0;background:${bg}} body>*:not(.p){display:none!im
 .av{width:86px;height:86px;border-radius:50%;object-fit:cover}
 .stats{display:flex;flex:1;justify-content:space-around;text-align:center}.stats b{display:block;font-size:16px}.stats span{font-size:13px}
 .bio{padding:8px 16px 0;line-height:1.35}.bio b{font-size:14px}.bio p{margin:2px 0}.bio a{color:${dark?'#E0F1FF':'#00376B'};font-weight:600}
+.hl{display:flex;gap:14px;padding:16px 16px 10px;overflow:hidden}
+.hl figure{margin:0;width:64px;flex:none;text-align:center}.hl span{display:block;width:64px;height:64px;border-radius:50%;padding:3px;box-shadow:0 0 0 1px ${line};box-sizing:border-box}
+.hl img{width:58px;height:58px;border-radius:50%;object-fit:cover}
+.hl figcaption{font-size:12px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tabs{height:44px;border-top:1px solid ${line}}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}.grid img{width:100%;aspect-ratio:3/4;object-fit:cover}`;
 (async () => {
