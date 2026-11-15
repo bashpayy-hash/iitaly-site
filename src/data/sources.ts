@@ -9,7 +9,7 @@ export const OFFICIAL_SOURCES = {
   cimea: ADMISSION_SOURCES.cimea,
   lazioDsu: {
     label: "DiSCo Lazio · bando diritto allo studio 2026/27",
-    href: "https://laziodisco.it/wp-content/uploads/2026/06/BANDO-DIRITTO-ALLO-STUDIO-26-27.pdf",
+    href: "https://laziodisco.it/wp-content/uploads/2026/07/BANDO-DIRITTO-ALLO-STUDIO-26-27-con-EC.pdf",
   },
 } as const;
 
