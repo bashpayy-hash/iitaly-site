@@ -304,6 +304,14 @@ const approvedRevisions = {
   // 504 (Netlify waits 26 s) and 413 (body too large) — instead of «сервер
   // ответил не по формату». The request, payload and parsing are unchanged.
   'src/lib/checkDocument.ts': '99b17276eea034a8fe19bba89b0ab46f3093f1b78077589d5951f36052c11d25',
+  // 2026-11-15 (owner: «Перепроверь актуальность всей информации»; on the
+  // proposed city fixes and the «недорогая жизнь» wording: «Да мержи»). Copy
+  // only: Padova's first 2027/28 round closed on 15.11.2026 and its DSU is run
+  // by the university, not ESU; «самая дешёвая…» superlatives that contradict
+  // other rows become «недорогая жизнь» / «низкая плата»; Turin, Pavia and
+  // Ancona facts corrected. Ids, coordinates, tuition numbers and the outline
+  // of Italy are unchanged.
+  'src/data/italy.ts': 'e0f01915b4df3d00ce36f836a9f583f532d0a2cc87a66d04eacfe736c8443eb8',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
 // 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll
