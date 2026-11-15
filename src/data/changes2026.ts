@@ -10,7 +10,7 @@ export const VISA_GUARANTEE_LABEL = VISA_MINIMUM_LABEL;
 export type StatusKind = "closed" | "ahead" | "deadline";
 export interface StatusItem { kind: StatusKind; status: string; title: string; body: string }
 export const STATUSES: StatusItem[] = [
-  { kind: "ahead", status: "Приём на дату проверки открыт", title: "Padova · 2027/28", body: "Первый раунд большинства программ: 15 сентября–15 ноября 2026. У конкретного курса могут быть свои условия." },
+  { kind: "closed", status: "Первый раунд завершён", title: "Padova · 2027/28", body: "Первый раунд большинства программ шёл 15 сентября–15 ноября 2026. Следующие окна и условия курса — на странице приёма вуза." },
   { kind: "deadline", status: "Национальный предел", title: "Виза · 2026/27", body: VISA_DEADLINES["2026/27"] + ". Вуз и консульство могут установить более ранний срок." },
   { kind: "deadline", status: "Национальный предел", title: "Виза · 2027/28", body: VISA_DEADLINES["2027/28"] + ". Это не дедлайн подачи в университет." },
   { kind: "closed", status: "Обычный приём завершён", title: "EDISU Piemonte · 2026/27", body: "Обычный срок — 4 сентября 2026 в 12:00 по времени Италии. Отдельные категории сверяй с bando." },
