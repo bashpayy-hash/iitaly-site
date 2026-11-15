@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { usePortalPart, navigatePortal } from "@/components/portal/PortalPageNavigation";
 import { revealElement } from "@/components/motion/scroll";
@@ -52,6 +52,43 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
     // Open on the dense north rather than on the Tyrrhenian Sea.
     scroller.scrollTo({ left: (scroller.scrollWidth - scroller.clientWidth) * 0.18, top: scroller.scrollHeight * 0.06 });
   }, [mapZoomed]);
+  // Owner, 15 Nov 2026, on the desktop map: «сделать нужно большую карту,
+  // слишком всё dense и сложно кликать в нужную точку». Italy is tall, so on a
+  // computer the map is bound by the screen's height (669 × 829 px on every
+  // desktop width, scale 1.6) and the north's pins sit 16–24 px apart.
+  // «Крупнее» now works on desktop too: the map doubles inside its own frame
+  // and a mouse drags it. A press that moves less than 5 px stays a click on
+  // a city; a real drag swallows the click that follows it.
+  const mapDrag = useRef<{ x: number; y: number; left: number; top: number; moved: boolean } | null>(null);
+  const mapDragged = useRef(false);
+  const startMapDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const scroller = mapScroller.current;
+    if (!mapZoomed || !scroller || event.pointerType !== "mouse" || event.button !== 0) return;
+    mapDrag.current = { x: event.clientX, y: event.clientY, left: scroller.scrollLeft, top: scroller.scrollTop, moved: false };
+  };
+  const moveMapDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = mapDrag.current;
+    const scroller = mapScroller.current;
+    if (!drag || !scroller) return;
+    const dx = event.clientX - drag.x;
+    const dy = event.clientY - drag.y;
+    if (!drag.moved) {
+      if (Math.hypot(dx, dy) < 5) return;
+      drag.moved = true;
+      scroller.setPointerCapture(event.pointerId);
+      scroller.dataset.dragging = "";
+    }
+    scroller.scrollLeft = drag.left - dx;
+    scroller.scrollTop = drag.top - dy;
+  };
+  const endMapDrag = () => {
+    const drag = mapDrag.current;
+    mapDrag.current = null;
+    if (mapScroller.current) delete mapScroller.current.dataset.dragging;
+    if (!drag?.moved) return;
+    mapDragged.current = true;
+    window.setTimeout(() => { mapDragged.current = false; }, 0);
+  };
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [engOnly, setEngOnly] = useState(false);
   const [openUniId, setOpenUniId] = useState<string | null>(null);
@@ -200,7 +237,20 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
           <div className={ui.mapGrid}>
             <div className={ui.mapColumn}>
               <div className={ui.mapFrame} data-map-frame data-zoomed={mapZoomed || undefined} data-fab-yield>
-                <div ref={mapScroller} className={ui.mapScroller} data-map-scroller>
+                <div
+                  ref={mapScroller}
+                  className={ui.mapScroller}
+                  data-map-scroller
+                  onPointerDown={startMapDrag}
+                  onPointerMove={moveMapDrag}
+                  onPointerUp={endMapDrag}
+                  onPointerCancel={endMapDrag}
+                  onClickCapture={(event) => {
+                    if (!mapDragged.current) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                >
                   <div className={ui.mapCanvas}>
                     <ItalyMap
                       activeCity={activeCity}

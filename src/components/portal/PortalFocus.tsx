@@ -178,7 +178,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           что видят «меньше движения» и Save-Data. */}
       <div className={styles.heroScene} data-portal-hero-scene>
         <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} />
+        {/* Owner, 15 Nov: «анимация лагучая… стык был ровный». The loop now
+            wraps on the empty road (Vespi gone, nothing moves), and the poster
+            — Vespi on the road — is its frame 133: start there. */}
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={133.5 / 30} />
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>

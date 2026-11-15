@@ -1909,3 +1909,37 @@ Owner: «Так, выполняй все пункты с 5 по 9» (the list fr
   university joins the comparison from its city card.
   design-flight-explorers-review picked through the chips; it now opens Padua,
   Bologna and Milan through «Сразу к городу» and ticks «Сравнить» on each card.
+
+## A larger map on desktop, a ride without a jump · 15 November 2026
+
+Owner, two screenshots. /universities on a large monitor: «здесь в целом
+сделать нужно большую карту, слишком всё dense и сложно кликать в нужную
+точку». /portal: «ещё вот здесь анимация такая, лагучая… по тому же принципу,
+чтобы всё ровненько, стык был ровный».
+
+- **The map.** On every desktop width the map is 669 × 829 px (scale 1.6 of
+  the 420 × 520 drawing): Italy is tall, so the screen's height, not the
+  column, sets its size, and in the north pins sit 16–24 px apart. The
+  phone's «Крупнее» now works on desktop too: the map doubles inside the same
+  frame (pins 32–48 px apart), the mouse drags it, the wheel and trackpad
+  scroll it, and it opens on the north. A press that moves less than 5 px is
+  still a click on a city; a real drag never selects one. The frame keeps its
+  size, so nothing around it jumps. ItalyMap.tsx (geometry, pins, labels) is
+  untouched.
+- **The ride.** Measured on the shipped loop: at the loop point Vespi jumped
+  forward (the last-to-first step 2.20/255 against 0.6–0.9 around it — about
+  six frames of the ride were cut on 7 November with the braking stop), and
+  frame 0, which is also the poster, showed Vespi doubled from the old
+  ease-in. On top of that, Chrome drops one frame whenever a looping video
+  restarts (67–83 ms on the canvas), and a compressed loop's first frame is
+  sharper than its last, so the restart shimmers.
+  - Six motion-compensated frames now bridge the old end to the clean
+    frame 1 (step 0.54), so Vespi rides through without a jump.
+  - The loop restarts on the empty road, after Vespi has gone (step 0.014):
+    the dropped frame and the shimmer land where nothing moves. One keyframe
+    only, at that restart — a keyframe mid-ride made its own pop.
+  - The poster (Vespi on the road) is frame 133 of the new loop;
+    `LivingLandscape startAt` seeks there before the canvas appears, so the
+    handover stays invisible. Still areas match the old poster within
+    0.33/255; sizes and bitrates are the old ones.
+  - Passport: design/illustrations/motion-2026-11-15.json.
