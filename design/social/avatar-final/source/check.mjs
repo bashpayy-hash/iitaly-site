@@ -23,6 +23,6 @@ const block = (f, label) => { const u = uri(f); const ui = (theme) => `
   .row{display:flex;gap:14px;margin:16px 0}.ring{width:74px;height:74px;border-radius:50%;background:conic-gradient(#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75);display:grid;place-items:center}.ring.other{opacity:.35}.a66{width:66px;height:66px;border-radius:50%;border:3px solid currentColor;box-sizing:border-box}.light .a66{border-color:#fff}.dark .a66{border-color:#000}
   .comment{display:flex;gap:10px;align-items:center;font-size:14px}.a32{width:32px;height:32px;border-radius:50%}
   .sq{position:relative;width:300px;height:300px}.sq img{width:300px;height:300px;display:block}.mask{position:absolute;inset:0;background:radial-gradient(circle at center,transparent 149px,rgba(255,255,255,.72) 150px);outline:1px solid #ddd}</style>
-  <h1>Аватарка IITALY — финал № 64</h1><p class="s">Как увидит Instagram: профиль 110 px, кольцо историй 66 px, комментарий 32 px; справа — квадрат 1080×1080, светлым показано то, что срежет круг.</p>${body}`);
+  <h1>${process.env.TITLE || "Аватарка IITALY — финал"}</h1><p class="s">Как увидит Instagram: профиль 110 px, кольцо историй 66 px, комментарий 32 px; справа — квадрат 1080×1080, светлым показано то, что срежет круг.</p>${body}`);
   await p.waitForTimeout(400); await p.screenshot({ path: out, fullPage: true }); await b.close();
 })();

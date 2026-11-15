@@ -1751,6 +1751,11 @@ range he has named since the start (NEXT_CHAT.md). It sits under the contract
 line rather than replacing it, because design-content checks that every
 earlier line of copy is still on the page.
 
+On 15 November the owner set a new range («сделай новый диапазон 500 000 —
+миллион»). The row now reads «Сопровождение — обычно 500 000–1 000 000 ₸»;
+the swap is listed among the approved copy changes in
+`scripts/design-content.mjs`.
+
 ## After the UX audit: the first question, touch hover, the chat button · 14 November 2026
 
 Owner, after the uxaudit pass (`docs/ux-audit/2026-11-14/`): «поправь
