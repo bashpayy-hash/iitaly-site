@@ -1,17 +1,27 @@
-# Highlight covers 1080x1920 from square medallions: the medallion sits in the
-# middle, where Instagram cuts the circle, on a plain field sampled from the
-# square's own corners. Usage: python3 highlights.py <src-dir> <out-dir>
-# (src files: NN-key.png or .webp, e.g. 01-o-nas.png).
+# Highlight covers 1080x1920 from square medallions. Instagram cuts a circle
+# out of the middle and the profile shows it smaller still, so the medallion
+# (owner, 15 Nov: «на profile page уже идёт обрезка») is cut out along its own
+# rim, scaled to 84% and set on a field of its own ground colour: the whole
+# frame stays visible. Usage: python3 highlights.py <src-dir> <out-dir> [scale]
 import os, sys
-from PIL import Image, ImageStat
+import numpy as np
+from PIL import Image, ImageDraw
 src, out = sys.argv[1], sys.argv[2]
+scale = float(sys.argv[3]) if len(sys.argv) > 3 else 0.84
 os.makedirs(out, exist_ok=True)
 for f in sorted(os.listdir(src)):
     if not f.lower().endswith(('.png', '.webp', '.jpg')):
         continue
     sq = Image.open(os.path.join(src, f)).convert('RGB').resize((1080, 1080), Image.LANCZOS)
-    corners = [sq.crop(b) for b in ((0, 0, 60, 60), (1020, 0, 1080, 60), (0, 1020, 60, 1080), (1020, 1020, 1080, 1080))]
-    rgb = tuple(int(sum(ImageStat.Stat(c).mean[i] for c in corners) / 4) for i in range(3))
-    canvas = Image.new('RGB', (1080, 1920), rgb)
-    canvas.paste(sq, (0, 420))
+    a = np.asarray(sq).astype(np.float32)
+    yy, xx = np.mgrid[0:1080, 0:1080]
+    r = np.hypot(xx - 540, yy - 540) / 1080
+    ground = tuple(int(v) for v in np.median(a[(r > 0.36) & (r < 0.42)], axis=0) * 0.82)
+    mask = Image.new('L', (1080, 1080), 0)
+    ImageDraw.Draw(mask).ellipse((14, 14, 1066, 1066), fill=255)
+    size = int(1080 * scale)
+    med = sq.resize((size, size), Image.LANCZOS)
+    m = mask.resize((size, size), Image.LANCZOS)
+    canvas = Image.new('RGB', (1080, 1920), ground)
+    canvas.paste(med, ((1080 - size) // 2, 420 + (1080 - size) // 2), m)
     canvas.save(os.path.join(out, os.path.splitext(f)[0] + '.jpg'), quality=92)
