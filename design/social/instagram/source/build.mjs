@@ -34,7 +34,6 @@ function slideHtml(s) {
     <footer>
       <span class="brand"><svg viewBox="0 0 64 64" width="34" height="34"><path d="${mark.fold}" fill="#087C55"/><path d="${mark.arc}" fill="#E63946"/></svg>iitaly.net</span>
       ${s.note ? `<span class="note">${esc(s.note)}</span>` : ''}
-      <span class="count">${s.n} / ${s.of}</span>
     </footer>
   </div>`;
 }
@@ -55,7 +54,7 @@ const css = `
   footer { position:absolute; left:80px; right:80px; bottom:64px; display:flex; align-items:center; gap:18px; font-size:26px; font-weight:600; }
   footer > span { display:inline-flex; align-items:center; gap:12px; padding:12px 20px; border-radius:999px; background:rgba(250,248,245,.86); color:#141413; box-shadow:0 2px 10px rgba(20,20,19,.10); }
   footer .note { font-weight:500; font-size:22px; color:#3B3631; }
-  footer .count { margin-left:auto; font-variant-numeric: tabular-nums; }
+  
   .tag { position:absolute; right:92px; top:560px; width:330px; padding:46px 30px 30px; transform:rotate(5deg); background:#F6EEDD; border-radius:14px 14px 14px 14px; color:#141413; text-align:center;
          box-shadow:0 18px 40px rgba(30,24,16,.28), inset 0 0 0 2px rgba(120,96,60,.18); background-image: var(--paper-fibre); }
   .tag i { position:absolute; top:18px; left:50%; width:20px; height:20px; margin-left:-10px; border-radius:50%; background:#5d4a33; box-shadow: inset 0 2px 3px rgba(0,0,0,.4); }
