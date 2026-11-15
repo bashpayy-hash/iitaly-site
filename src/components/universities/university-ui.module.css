@@ -274,6 +274,19 @@
    picker «Сразу к городу» stays first, above the sticky «Сохранить». */
 .mapScroller { overflow: hidden; }
 .mapZoom { display: none; }
+/* Owner, 15 Nov 2026 (desktop): «сделать нужно большую карту, слишком всё
+   dense и сложно кликать в нужную точку». The frame keeps its size — the map
+   is already as tall as the screen allows — and «Крупнее» doubles the map
+   inside it: pins in the north go from 16–24 px apart to 32–48 px. The mouse
+   drags it (UniversitiesExplorer), the wheel and trackpad scroll it. */
+@media (min-width: 768px) {
+  .mapFrame[data-zoomed] .mapScroller { overflow: auto; aspect-ratio: 420 / 520; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(250,246,238,.35) transparent; cursor: grab; user-select: none; }
+  .mapFrame[data-zoomed] .mapScroller[data-dragging] { cursor: grabbing; }
+  .mapFrame[data-zoomed] .mapCanvas { width: 200%; }
+  .mapZoom { position: absolute; z-index: 2; left: 16px; top: 16px; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border: 1px solid rgba(250,246,238,.28); border-radius: 999px; background: rgba(21,17,11,.82); color: #FAF6EE; font: 500 14px/1 var(--font-sans); cursor: pointer; }
+  .mapZoom:focus-visible { outline: 2px solid #F29A89; outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) { .mapZoom:hover { background: rgba(21,17,11,.94); } }
+}
 @media (max-width: 767px) {
   .container[data-map-first] { display: flex; flex-direction: column; }
   .container[data-map-first] .mapGrid { order: -1; margin-top: 0; }

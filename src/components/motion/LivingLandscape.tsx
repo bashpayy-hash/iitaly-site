@@ -50,7 +50,7 @@ import styles from "./living-landscape.module.css";
  * «Меньше движения», Save-Data, сеть 2G и без JS — только картинка. За
  * экраном петля стоит на паузе на текущем кадре и продолжает с него.
  */
-export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths }: {
+export function LivingLandscape({ base, className = "", label, widths = [640, 1280], webmWidths, startAt = 0 }: {
   /** Общее начало путей: `${base}-<ширина>.mp4|webm`. H.264 там, где он есть
    *  (Safari, Chrome), иначе VP9 (сборки Chromium без проприетарных кодеков). */
   base: string;
@@ -64,6 +64,14 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
   /** классы раскладки той же картинки (inset, object-fit, object-position) */
   className?: string;
   label: string;
+  /** Секунда петли, кадр которой и есть картинка-постер. По умолчанию 0.
+   *  Нужна, когда шов петли лучше спрятать не на постере: в кабинете (owner,
+   *  15 Nov: «анимация лагучая… стык был ровный») петля начинается и
+   *  кончается на пустой дороге, где Chrome незаметно теряет кадр при
+   *  перезапуске, а Веспи с постера стоит на 133-м кадре. Холст появляется
+   *  только после перехода к этому кадру, поэтому смена постера на петлю
+   *  по-прежнему не видна. */
+  startAt?: number;
 }) {
   const reduced = useReducedMotion();
   const video = useRef<HTMLVideoElement>(null);
@@ -126,8 +134,19 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     };
     // Кадр-картинка готов: холст размером с кадр, кадр на холст, холст и
     // спрятанное под ним видео — в одной задаче, то есть в одном кадре экрана.
+    let positioned = startAt <= 0;
     const reveal = () => {
       if (shown || !node.videoWidth) return;
+      if (!positioned) {
+        // Сначала к кадру-постеру; reveal вернётся по «seeked».
+        positioned = true;
+        node.addEventListener("seeked", reveal, { once: true });
+        node.currentTime = startAt;
+        return;
+      }
+      // Сервер без Range-запросов не даёт перемотать: тогда остаётся постер,
+      // а не холст с другим кадром.
+      if (startAt > 0 && Math.abs(node.currentTime - startAt) > .2) { hide(); return; }
       paint.width = node.videoWidth;
       paint.height = node.videoHeight;
       try { draw(); } catch { return; }
@@ -156,10 +175,11 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
       seen.disconnect();
       window.removeEventListener("load", request);
       node.removeEventListener("loadeddata", reveal);
+      node.removeEventListener("seeked", reveal);
       node.removeEventListener("error", onError);
       hide();
     };
-  }, [reduced, base, widthKey, webmKey]);
+  }, [reduced, base, widthKey, webmKey, startAt]);
 
   return <>
     <video ref={video} className={`${className} ${styles.source}`} muted loop playsInline preload="none"
