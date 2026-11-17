@@ -71,7 +71,10 @@ export function PlanExplorer() {
               srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1920.webp 1920w, /illustrations/scenes/plan-loggia-2560.webp 2560w"
               sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1080} alt=""
               decoding="async" fetchPriority="high" draggable={false} data-plan-scene="loggia" />
-            <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-loggia" label="plan-loggia" widths={[960, 1600, 2560]} webmWidths={[960]} />
+            {/* Starts at frame 104, just before Vespi turns the page: from frame 0 he
+                barely moved for 3.7 s (owner, 17 Nov: «какое-то время просто стоят»).
+                The poster is that frame. */}
+            <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-loggia" label="plan-loggia" widths={[960, 1600, 2560]} webmWidths={[960]} startAt={104.5 / 30} />
             <span className={workspace.heroVeil} />
           </div>
           <div className={workspace.heroCopy} data-role="heading">

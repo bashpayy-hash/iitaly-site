@@ -1986,3 +1986,35 @@ Owner, 16 Nov. /universities: «и здесь нужна нормальная а
   its column at the top right, and the description starts 16 px under the
   title in one column of at most 680 px. Phones keep the full width; the
   picture there is 72 px, as in the closed tiles.
+
+## Scenes that move at once, no icon capsules, a roomier cabinet header · 17 November 2026
+
+Owner, phone screenshots: «Есть всё ещё проблема того, что анимации идут не
+сразу и какое-то время просто стоят, затем вот эти иконки довольно
+странные, убери иконки, это показатель ИИ-слопа… иногда меню в личном
+кабинете на телефоне выглядит сжатым».
+
+- **Loops start at once and do not stand.** Measured on a phone emulation:
+  the scenes began to move 1.3–2.5 s after opening, because each video was
+  asked for only after the page's `load`, and inside the loops the Tuscan
+  ride stood 4.5 s per lap (empty road, then Vespi tiny in the distance),
+  the loggia on /plan began where Vespi barely moves and turned the page only
+  at 3.7 s. Now:
+  - the video is requested as soon as its own scene image has arrived; if
+    iOS refuses autoplay, the loop starts on the first touch;
+  - the ride's empty stretch passes up to 3.8× faster with smooth ramps (the
+    ride itself untouched): 8.4 s per lap, the longest near-still run 1.6 s;
+  - the loggia, the café and the belvedere start right before their first
+    movement (frames 104, 24, 18); each poster is that frame, so the
+    handover from picture to loop stays invisible.
+  - Passport: design/illustrations/motion-2026-11-17-starts.json.
+- **No icon capsules.** The dark pill with a line icon on top of every bento
+  cell (home «Проверка документов», guides, visa, cabinet stages) and the
+  lock circles in «Бесплатно / С маршрутом» are gone: a cell is carried by
+  its number and words. Where a cell leads elsewhere, an arrow stays in its
+  corner — the way Apple marks a branch (› for a page inside, ↗ for an
+  outside link), not a picture per block.
+- **Cabinet header on phones.** Logo, three icon-over-caption buttons at
+  10–11 px and «Меню +» shared one row of a 390 px screen. Under 600 px the
+  three actions now take their own row under the logo: equal thirds, words at
+  14 px, no icons.

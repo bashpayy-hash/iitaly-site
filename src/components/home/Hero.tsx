@@ -28,7 +28,10 @@ export function Hero() {
       <div className={styles.heroScene} data-hero-scene>
         <div className={styles.heroSceneBox} aria-hidden="true">
           <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-cafe-1024.webp" srcSet="/illustrations/landscapes/bologna-cafe-640.webp 640w, /illustrations/landscapes/bologna-cafe-1024.webp 1024w, /illustrations/landscapes/bologna-cafe-1600.webp 1600w, /illustrations/landscapes/bologna-cafe-2400.webp 2400w" sizes="100vw" width={1024} height={680} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna-cafe" />
-          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna-cafe" label="bologna-cafe" widths={[960, 1600, 2400]} webmWidths={[960]} />
+          {/* Owner, 17 Nov: «анимации идут не сразу и какое-то время просто стоят».
+              The loop starts at frame 24, right before Vespi moves; the
+              poster is that frame (design/illustrations/motion-2026-11-17.json). */}
+          <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna-cafe" label="bologna-cafe" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={24.5 / 30} />
         </div>
         <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
           <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
