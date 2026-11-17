@@ -2019,34 +2019,34 @@ Owner, phone screenshots: «Есть всё ещё проблема того, ч
   three actions now take their own row under the logo: equal thirds, words at
   14 px, no icons.
 
-## Icons in Florentine mosaic, on guides and visa · 17 November 2026
+## Icons in authentic Roman mosaic, on guides and visa · 17 November 2026
 
-Owner, after the icon capsules were removed: «Так я вроде сказал про
-ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» —
-the pietra dura of the Instagram highlight covers
-(design/social/instagram/highlights/pietra-dura); then «только на гайдах и
-визе»; then «оставь только мозаичную структуру и сами элементы без кружков,
-а то кружки ассоциируются с ИИ-слопом»; then «Сделай их реально похожими на
-мозаику».
+Owner, step by step: «давай сделаем их в стиле той мозаики» (the pietra dura
+of the Instagram highlight covers); «только на гайдах и визе»; «оставь только
+мозаичную структуру и сами элементы без кружков, а то кружки ассоциируются с
+ИИ-слопом»; with two photos of Italian floor mosaics, «Сделай их реально
+похожими на мозаику»; then «Дизайн слишком какой-то детский, а здесь уже в
+иконках ставим на аутентичность. Всё ещё слишком мультяшные».
 
-- **What they are.** Real tessera mosaic (owner, with two photos of Italian
-  floor mosaics: «Сделай их реально похожими на мозаику»): each object is
-  laid in square tesserae — white Carrara marble, gold smalti, terracotta,
-  deep green — in rows that follow its contours, with grey grout between the
-  tiles and a row of dark tesserae around it, so a cream sheet still reads on
-  a cream cell. Chunky tiles (about 16 across) so the mosaic survives at
-  52 px. No disc, no ring, no badge. Higgsfield gpt_image_2_6 (the model of
-  the covers); each object drawn from its earlier version so the motif stays
-  the same. The photos were not uploaded; the style is described in words.
+- **What they are.** Fragments of an authentic Roman mosaic, as in Pompeii or
+  Ravenna: hundreds of small irregular tesserae of natural stone (travertine,
+  Siena ochre, umber, burnt sienna, verde antico) and a few gold smalti on the
+  highlights; each object in realistic proportions, modelled with tones of
+  tesserae, matte and slightly worn; no black cartoon outline, only a thin
+  umber line where a mosaicist would set one. Two or three rows of ivory
+  ground follow the object and stop in a ragged edge, as if the piece was
+  lifted from a floor. No disc, no ring; the wind rose follows its own points
+  instead of a round field.
+- **The objects lean old:** a pocket watch, Roman gold coins, a parchment
+  calendar page, an unrolled scroll with ticks, a wind rose, a manicule, a
+  brass padlock (guides); coins, a wax seal, an hourglass in turned wood, a
+  temple front, a wooden counting frame (visa).
 - **Where — guides and visa only.** The home page and the cabinet keep their
   cells without icons.
-  - guide overview: pocket watch, coins, calendar page, checklist (срок,
-    стоимость, дедлайн, сложность), next step a compass rose, note a
-    manicule, the paid-device cell an open padlock;
-  - visa: coins, wax seal, hourglass, the VFS tile a classical front, funds
-    an abacus.
-- **How.** `MosaicIcon` (`src/components/icons/MosaicIcon.tsx`), 52 px, 44 px
-  in the phone rows; WebP 112 and 224 px. Earlier versions stay as masters:
-  round medallions (`*-medallion.webp`, eight more motifs never published)
-  and smooth inlaid stone (`*-stone.webp`).
+- **How.** `MosaicIcon` (`src/components/icons/MosaicIcon.tsx`), 60 px, 48 px
+  in the phone rows; WebP 112 and 224 px; Higgsfield gpt_image_2_6. Earlier
+  versions stay as masters in design/illustrations/source/mosaic/: round
+  medallions (`*-medallion`), smooth inlaid stone (`*-stone`) and chunky
+  outlined tesserae (`*-tessera`). The owner's photos were not uploaded; the
+  style is described in words.
 - Manifest: design/illustrations/mosaic-icons-2026-11-17.json.
