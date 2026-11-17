@@ -2024,24 +2024,25 @@ Owner, phone screenshots: «Есть всё ещё проблема того, ч
 Owner, after the icon capsules were removed: «Так я вроде сказал про
 ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» —
 the pietra dura of the Instagram highlight covers
-(design/social/instagram/highlights/pietra-dura) — then «только на гайдах и
-визе».
+(design/social/instagram/highlights/pietra-dura); then «только на гайдах и
+визе»; then «оставь только мозаичную структуру и сами элементы без кружков,
+а то кружки ассоциируются с ИИ-слопом».
 
-- **What they are.** Medallions of the same stone as the covers: a deep
-  green marble disc, a thin terracotta ring with a gold line, one large motif
-  in polished stone, no floral ornament (it turns to noise under 56 px).
-  Higgsfield gpt_image_2_6 — the model of the covers — with the covers as
-  style references; transparent outside the disc.
+- **What they are.** Objects inlaid in polished stone — ivory marble with grey
+  veins, honey-gold Siena marble, terracotta jasper, a few deep green
+  accents — with fine dark seams between the pieces and a fine dark outline
+  around the whole object, so a cream sheet or a marble column still reads
+  on a cream cell. No disc, no ring, no badge. Higgsfield gpt_image_2_6 (the
+  model of the covers); each object drawn from its first round medallion so
+  the motif stays the same.
 - **Where — guides and visa only.** The home page and the cabinet keep their
   cells without icons.
-  - guide overview: clock, coins, calendar, checklist (срок, стоимость,
-    дедлайн, сложность), next step a compass rose, note a manicule, the
-    paid-device cell an open padlock;
+  - guide overview: pocket watch, coins, calendar page, checklist (срок,
+    стоимость, дедлайн, сложность), next step a compass rose, note a
+    manicule, the paid-device cell an open padlock;
   - visa: coins, wax seal, hourglass, the VFS tile a classical front, funds
     an abacus.
-- **How.** `MosaicIcon` (`src/components/icons/MosaicIcon.tsx`), 52 px with
-  a soft stone shadow, 44 px in the phone rows; WebP 112 and 224 px.
-  Eight more medallions made with the set (sun and moon, infinity, sheet
-  under a magnifier, swallow, key, mortarboard, envelope, bell) stay as
-  masters only.
+- **How.** `MosaicIcon` (`src/components/icons/MosaicIcon.tsx`), 52 px, 44 px
+  in the phone rows; WebP 112 and 224 px. The round medallions stay as
+  masters (`*-medallion.webp`), with eight more motifs never published.
 - Manifest: design/illustrations/mosaic-icons-2026-11-17.json.

@@ -1,9 +1,9 @@
 {
  "date": "2026-11-17",
- "request": "Owner: «эти иконки довольно странные, убери иконки, это показатель ИИ-слопа», then «Так я вроде сказал про ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» — the Florentine pietra dura of the Instagram highlight covers (design/social/instagram/highlights/pietra-dura). Then: «только на гайдах и визе» — the icons live on the guide and visa pages only; the home page and the cabinet keep cells without icons.",
+ "request": "Owner: «эти иконки довольно странные, убери иконки, это показатель ИИ-слопа», then «Так я вроде сказал про ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» — the Florentine pietra dura of the Instagram highlight covers (design/social/instagram/highlights/pietra-dura). Then: «только на гайдах и визе» — the icons live on the guide and visa pages only; the home page and the cabinet keep cells without icons. Then: «оставь только мозаичную структуру и сами элементы без кружков, а то кружки ассоциируются с ИИ-слопом» — the objects alone, in the same inlaid stone, without the disc and ring.",
  "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background (the model of the Instagram covers, so the stone matches)",
- "template": "A single round icon medallion in exactly the Florentine pietra dura style of the first/second reference: polished coloured stone inlaid into a DEEP GREEN marble disc, a thin terracotta(-and-gold) stone outer ring (with a fine gold inner line), fine seams between the stone pieces. In the centre one large simple motif in polished stone, about 60% of the disc: {motif}. No flowers, no leaves, no other ornament, only the motif on the green marble, so it reads clearly at 48 pixels. Front view, the disc centred and filling the square, transparent background outside the disc. Flat, even, soft light, no glare, no cast shadow. No text, no letters, no numbers.",
- "processing": "crop to alpha (>4 %) as a square plus 6 px; master WebP q92 in design/illustrations/source/mosaic/; site WebP q86 with alpha at 112 and 224 px (shown at 40–56 px, 2× screens take 224).",
+ "template": "The same {object} as in the first reference, made in the Florentine pietra dura technique: polished coloured stone pieces (ivory marble with grey veins, honey-gold Siena marble, terracotta jasper, a few deep green stone accents) fitted together with fine dark brown seams between every piece, and a fine dark brown stone outline around the whole object so it stands out on a light cream page. Show ONLY the object, isolated on a transparent background: no disc, no round frame, no ring, no circle, no background shape at all. The object fills about 85% of the square, centred. Flat, even, soft light, no glare, no cast shadow. No text, no letters, no numbers.",
+ "processing": "crop to alpha (>4 %), centred on a transparent square plus 6 px; master WebP q92 in design/illustrations/source/mosaic/; site WebP q86 with alpha at 112 and 224 px (shown at 44–52 px).",
  "use": {
   "guide overview": "clock, coins, calendar, checklist (срок, стоимость, дедлайн, сложность); next step compass; note note; paid device unlocked",
   "visa overview": "coins, seal, hourglass; VFS office; funds abacus"
@@ -11,297 +11,330 @@
  "icons": [
   {
    "name": "clock",
-   "job": "5ae12dfc-d9f8-41f0-b028-74e9bb480cac",
+   "job": "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9",
    "motif": "a round cream marble pocket-watch face with a gold rim and two short dark hands, small dots instead of numerals",
    "references": [
-    "5dca7a19-0b3a-4cc6-93bb-a0d652f71f57 (Instagram cover 03-dokumenty)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "day-night",
-   "job": "381ccc88-6b4b-41ca-9e82-e2611ebcb534",
-   "motif": "a golden sun with short rays on the left and a cream crescent moon on the right, side by side, meaning day and night",
-   "references": [
-    "5dca7a19-0b3a-4cc6-93bb-a0d652f71f57 (Instagram cover 03-dokumenty)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "compass",
-   "job": "ec07dd48-400e-4394-8746-b296d7406cdd",
-   "motif": "an eight-pointed compass rose in cream marble, terracotta and gold stone",
-   "references": [
-    "5dca7a19-0b3a-4cc6-93bb-a0d652f71f57 (Instagram cover 03-dokumenty)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "coins",
-   "job": "5c49b822-6b6c-4f89-b610-09c8924e4777",
-   "motif": "a small neat stack of three plain gold coins seen slightly from the front, no faces or marks on the coins",
-   "references": [
-    "5dca7a19-0b3a-4cc6-93bb-a0d652f71f57 (Instagram cover 03-dokumenty)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "hourglass",
-   "job": "58e6ffc9-d393-4d3f-b301-8d510d9bbf12",
-   "motif": "an upright hourglass with a gold frame and cream sand, sand running into the lower half",
-   "references": [
-    "5dca7a19-0b3a-4cc6-93bb-a0d652f71f57 (Instagram cover 03-dokumenty)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "swallow",
-   "job": "3cc49868-fe9c-4af3-82ba-e1a7b1761cf7",
-   "motif": "a terracotta-red swallow with a cream belly in flight, wings spread, flying up to the right",
-   "references": [
-    "5dca7a19-0b3a-4cc6-93bb-a0d652f71f57 (Instagram cover 03-dokumenty)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "unlimited",
-   "job": "96c94252-ee19-4ba0-9938-3c754b18e1b9",
-   "motif": "a horizontal infinity sign made of a smooth terracotta-red stone ribbon with a cream marble inner edge",
-   "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "checklist",
-   "job": "374bd8d2-60e8-4e06-8cbc-22c60542452f",
-   "motif": "an upright cream marble sheet of paper with three short dark lines, each line with a small terracotta-red check mark at its left",
-   "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "document-check",
-   "job": "3806f2d1-6ab4-499d-86fb-525e9cda7633",
-   "motif": "an upright cream marble sheet of paper with a few short dark lines, and a round gold-framed magnifying glass with a terracotta handle lying across its lower right corner",
-   "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "calendar",
-   "job": "80729aac-f779-4fed-8523-ccd88978a28d",
-   "motif": "a square cream marble calendar page with a terracotta-red band across the top, two small gold rings above it, and a neat grid of small dark dots instead of numbers",
-   "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "note",
-   "job": "024bff8b-4d75-4172-a015-d5c10a4bad8a",
-   "motif": "a Renaissance manicule, a cream marble hand with a terracotta-red cuff, the index finger pointing to the right, other fingers folded",
-   "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
-   ]
-  },
-  {
-   "name": "seal",
-   "job": "e7bb81c7-32bc-472b-8179-1758c23a5fe3",
-   "motif": "a round terracotta-red wax seal with soft wavy edges and a simple raised gold star in its middle",
-   "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
+    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (the medallion of the same motif)",
     "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
    ]
   },
   {
    "name": "office",
-   "job": "fe98bb58-19f9-49fd-8a72-7674fa7d0143",
+   "job": "5c6a2fe1-b682-4664-b0fe-57cffd84cb96",
    "motif": "the front of a small classical building in cream marble, four columns, a triangular terracotta pediment and two steps, symmetrical",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
+    "fe98bb58-19f9-49fd-8a72-7674fa7d0143 (the medallion of the same motif)",
     "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
    ]
   },
   {
-   "name": "abacus",
-   "job": "77568514-708c-4a61-81c9-8d94d6f43ba1",
-   "motif": "a small upright abacus with a gold frame and three horizontal rods of round beads, terracotta-red and cream beads",
+   "name": "checklist",
+   "job": "7d0cffd0-6981-42b7-bc0a-a9a8992bc9e4",
+   "motif": "an upright cream marble sheet of paper with three short dark lines, each line with a small terracotta-red check mark at its left",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
+    "374bd8d2-60e8-4e06-8cbc-22c60542452f (the medallion of the same motif)",
     "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
    ]
   },
   {
-   "name": "key",
-   "job": "160b0101-1c09-476f-ac65-bce3a4e1f02e",
-   "motif": "an old gold key lying diagonally, with a round ornate bow at the upper left and a simple bit at the lower right",
+   "name": "coins",
+   "job": "3112e4ec-cfd8-455f-9c5b-39e180d75edb",
+   "motif": "a small neat stack of three plain gold coins seen slightly from the front, no faces or marks on the coins",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
+    "5c49b822-6b6c-4f89-b610-09c8924e4777 (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
    ]
   },
   {
-   "name": "graduation",
-   "job": "6fbc9450-2b47-478b-aec0-bc516ca7eb86",
-   "motif": "a terracotta-red graduation mortarboard cap seen slightly from the front, with a gold tassel hanging at the side",
+   "name": "calendar",
+   "job": "17398b6e-4f36-40d1-bf36-5d60e10f95d2",
+   "motif": "a square cream marble calendar page with a terracotta-red band across the top, two small gold rings above it, and a neat grid of small dark dots instead of numbers",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
+    "80729aac-f779-4fed-8523-ccd88978a28d (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
    ]
   },
   {
-   "name": "envelope",
-   "job": "1c3c0a6a-29cb-4b3a-aa10-b146945e4256",
-   "motif": "a cream marble envelope seen from the back, its flap closed with a round terracotta-red wax seal",
+   "name": "compass",
+   "job": "a0803d23-5084-4cb0-b42c-199eec164250",
+   "motif": "an eight-pointed compass rose in cream marble, terracotta and gold stone",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
+    "ec07dd48-400e-4394-8746-b296d7406cdd (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
    ]
   },
   {
-   "name": "bell",
-   "job": "c0d7a751-5840-4a0b-880c-9a729b7d1323",
-   "motif": "a gold hand bell with a short terracotta-red wooden handle on top, standing upright",
+   "name": "note",
+   "job": "57256f24-6ae3-4b5d-815b-f19d9120c25b",
+   "motif": "a Renaissance manicule, a cream marble hand with a terracotta-red cuff, the index finger pointing to the right, other fingers folded",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
+    "024bff8b-4d75-4172-a015-d5c10a4bad8a (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
    ]
   },
   {
    "name": "unlocked",
-   "job": "f2834e77-dba1-4e09-b505-5bdf691d4519",
+   "job": "a4f5c103-1812-4f54-9f68-748ff30e750d",
    "motif": "an open gold padlock, its shackle lifted open on one side, the body plain gold with a small dark keyhole",
    "references": [
-    "5ae12dfc-d9f8-41f0-b028-74e9bb480cac (clock, this set)",
-    "e5121f81-7632-498e-8a2a-28f65c44503f (Instagram cover 02-cena)"
+    "f2834e77-dba1-4e09-b505-5bdf691d4519 (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
+   ]
+  },
+  {
+   "name": "seal",
+   "job": "15ebd9dc-64aa-424a-be50-ed3d53fd15df",
+   "motif": "a round terracotta-red wax seal with soft wavy edges and a simple raised gold star in its middle",
+   "references": [
+    "e7bb81c7-32bc-472b-8179-1758c23a5fe3 (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
+   ]
+  },
+  {
+   "name": "hourglass",
+   "job": "f71b9773-3375-4cae-902b-502b902353df",
+   "motif": "an upright hourglass with a gold frame and cream sand, sand running into the lower half",
+   "references": [
+    "58e6ffc9-d393-4d3f-b301-8d510d9bbf12 (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
+   ]
+  },
+  {
+   "name": "abacus",
+   "job": "230f0b87-ed13-469d-9f2d-2c64b5245bf7",
+   "motif": "a small upright abacus with a gold frame and three horizontal rods of round beads, terracotta-red and cream beads",
+   "references": [
+    "77568514-708c-4a61-81c9-8d94d6f43ba1 (the medallion of the same motif)",
+    "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9 (the frameless clock, after the probe)"
    ]
   }
  ],
  "files": [
   {
    "file": "public/illustrations/mosaic/clock-112.webp",
-   "bytes": 7676,
-   "sha256": "0dd54737e1ea765be5277e0bc5076c28c48594b991a852ed696592856ebbf8b6"
+   "bytes": 6296,
+   "sha256": "effc88001e1b7cb380498f698946a02ced87b940ec28e4786e7ecd0874304acf"
   },
   {
    "file": "public/illustrations/mosaic/clock-224.webp",
-   "bytes": 21634,
-   "sha256": "9d2d2baced4b31b6a43f25285eea756494e85bb119d134e630f9b26a4e6bf588"
-  },
-  {
-   "file": "public/illustrations/mosaic/compass-112.webp",
-   "bytes": 7880,
-   "sha256": "ad2c1ee1b4689df5762be59e7cbdf58e8e564074231cac5dd41d144d56ef8c52"
-  },
-  {
-   "file": "public/illustrations/mosaic/compass-224.webp",
-   "bytes": 22866,
-   "sha256": "b15f34ad88f18726ed6489ae0b8831692784bc3b781e0f4d9b89e19acfe25475"
-  },
-  {
-   "file": "public/illustrations/mosaic/coins-112.webp",
-   "bytes": 7380,
-   "sha256": "6e0686944f93e3514ab57decf8b988e2579234b8e0f691e382b055cd575f9f13"
-  },
-  {
-   "file": "public/illustrations/mosaic/coins-224.webp",
-   "bytes": 21846,
-   "sha256": "22610062951b13298f55a92dd5127665904799e00bb629fb52a28924668ae959"
-  },
-  {
-   "file": "public/illustrations/mosaic/hourglass-112.webp",
-   "bytes": 7764,
-   "sha256": "20b9872fdd1c8b3794d0dc928079eaf324e33b46cc8b0997a98688cf0e52ebff"
-  },
-  {
-   "file": "public/illustrations/mosaic/hourglass-224.webp",
-   "bytes": 22764,
-   "sha256": "c3e752d5baf746512ba546c6f02e45edf5df301c5516d137feb99961187d2f21"
-  },
-  {
-   "file": "public/illustrations/mosaic/checklist-112.webp",
-   "bytes": 7160,
-   "sha256": "e957c43e54c7e876da6c58e357f68d4396deb6b6bb5c5eb685cfd508ddf78947"
-  },
-  {
-   "file": "public/illustrations/mosaic/checklist-224.webp",
-   "bytes": 19962,
-   "sha256": "f47f911af852e1226f0b7e399e1d407be6078feabb7eeb86ddc5321ad03437a9"
-  },
-  {
-   "file": "public/illustrations/mosaic/calendar-112.webp",
-   "bytes": 7734,
-   "sha256": "58a020cf0abcf529187ef54780d1aa8b604b63ea632fe614430def7b234f7d3d"
-  },
-  {
-   "file": "public/illustrations/mosaic/calendar-224.webp",
-   "bytes": 22314,
-   "sha256": "2b9fa8029ef285ebe751c28cb11ad2bc374d865ff825038a058670736bcfe76b"
-  },
-  {
-   "file": "public/illustrations/mosaic/note-112.webp",
-   "bytes": 7306,
-   "sha256": "d4fb67250b5e44a43fb302eaf1cb4db3fe1221745cf3048dadf3772c03c5df08"
-  },
-  {
-   "file": "public/illustrations/mosaic/note-224.webp",
-   "bytes": 22200,
-   "sha256": "504bd49e109c3e4f993eeaf666cb7d342fe330280b1d906fe2acbb1862c712db"
-  },
-  {
-   "file": "public/illustrations/mosaic/seal-112.webp",
-   "bytes": 7588,
-   "sha256": "588e76c035e70f6df8740323ca45e562d980b6a8b1b926a7688e79c98f2d8e5b"
-  },
-  {
-   "file": "public/illustrations/mosaic/seal-224.webp",
-   "bytes": 22534,
-   "sha256": "f52d42e9df7117a3f0da4e19d74c3f1bddbc543a8b1cd83a24be31a49fa5e454"
+   "bytes": 15686,
+   "sha256": "22a9f96d5bc5cf208cf6b460000d68faa56c0d563d99e878277bc0624b5e8bd9"
   },
   {
    "file": "public/illustrations/mosaic/office-112.webp",
-   "bytes": 7480,
-   "sha256": "a969e1b70efc026e3d93c43cf9a6884a81d119f88df8c77a2f7ec201d5dc94dd"
+   "bytes": 7808,
+   "sha256": "8b21a07eec2b656031da035ac2459ab7aef504481008b23ed5ef03d3f2ca7063"
   },
   {
    "file": "public/illustrations/mosaic/office-224.webp",
-   "bytes": 21858,
-   "sha256": "ac0e8f37e9382640d5caaa7aca232288c4dd0db7e7f0d3597ca3a554a8b7495d"
+   "bytes": 19482,
+   "sha256": "70810f0638677f7acd05153461370f63d9ab96f33050ea7f0f858b17e70a1cd7"
   },
   {
-   "file": "public/illustrations/mosaic/abacus-112.webp",
-   "bytes": 7672,
-   "sha256": "ccbc9e0fa229d81aa6d9f022cfdfcd195f0be01cbd0038f871aae7aa1a47b3e8"
+   "file": "public/illustrations/mosaic/checklist-112.webp",
+   "bytes": 5824,
+   "sha256": "79e95a036d9e69a0b933a4d9f60ad783504ba8f35e8b50333cde61459131d814"
   },
   {
-   "file": "public/illustrations/mosaic/abacus-224.webp",
-   "bytes": 22544,
-   "sha256": "a0ccc3c20cc595b163553e02a46a6f3d95dec798c9d2ee607e438c2640741649"
+   "file": "public/illustrations/mosaic/checklist-224.webp",
+   "bytes": 16172,
+   "sha256": "cb4e644516cf919715a3667f20993ecc835222f507dcabc16578a080b802cfd3"
+  },
+  {
+   "file": "public/illustrations/mosaic/coins-112.webp",
+   "bytes": 7240,
+   "sha256": "fc3f1b18457eb31b558d99b3ae52345033cff1c026a673a9d4e1b72f633c9218"
+  },
+  {
+   "file": "public/illustrations/mosaic/coins-224.webp",
+   "bytes": 20862,
+   "sha256": "acc6da4ebf654a5f4b21ba94f19583b974877ebde0c246624460305a3c99cbfd"
+  },
+  {
+   "file": "public/illustrations/mosaic/calendar-112.webp",
+   "bytes": 7064,
+   "sha256": "c3111fc82b58b132dfea919bff051bd299df53fe98bee3699359eb23e89717da"
+  },
+  {
+   "file": "public/illustrations/mosaic/calendar-224.webp",
+   "bytes": 18712,
+   "sha256": "96bb270eb6d315c832547d1132f4e61c0f38db6d7b9d23201a05ba6136b293b3"
+  },
+  {
+   "file": "public/illustrations/mosaic/compass-112.webp",
+   "bytes": 6624,
+   "sha256": "b6b178715c2a5cde1549f9fba8a20ae3da0367b4afdea6e62c842b56a80140a3"
+  },
+  {
+   "file": "public/illustrations/mosaic/compass-224.webp",
+   "bytes": 16322,
+   "sha256": "14aa03254d6c1f3795832145b23495cd055d85f33469457726a396a55bcef748"
+  },
+  {
+   "file": "public/illustrations/mosaic/note-112.webp",
+   "bytes": 3860,
+   "sha256": "bf93cb30444d1c852307d16fdf1406c32ee4b6366616e27cf82bffe336f47027"
+  },
+  {
+   "file": "public/illustrations/mosaic/note-224.webp",
+   "bytes": 9862,
+   "sha256": "d3f344b6a1a5040efc2193d64101b7eec83b8b842631022c1905a52840bb49f3"
   },
   {
    "file": "public/illustrations/mosaic/unlocked-112.webp",
-   "bytes": 7480,
-   "sha256": "89ae977dcefdb25eb17809a9b77393988ead5f2f385039666202e5842715899a"
+   "bytes": 6052,
+   "sha256": "ac42ea9c642cbcfc5f00419fc98ef1ba1265afa3fa3c2e3cb92a9ba65b79d2b4"
   },
   {
    "file": "public/illustrations/mosaic/unlocked-224.webp",
-   "bytes": 22308,
-   "sha256": "23009a04688177f173d5699d7aa46362187caa54d7d74f5d87be3f729f4d079e"
+   "bytes": 16284,
+   "sha256": "bac8b73108d7b0bee1b9de7cc49a78fdb14962124e69f7c43c59aaa4fbdc116b"
+  },
+  {
+   "file": "public/illustrations/mosaic/seal-112.webp",
+   "bytes": 6624,
+   "sha256": "b763276091b1c67094b8a62deac4178f2b1f10a8261b584b834ad569e5ee79a6"
+  },
+  {
+   "file": "public/illustrations/mosaic/seal-224.webp",
+   "bytes": 19170,
+   "sha256": "a7016d9fce88338dcefed23b615ccb9b14696dc829855322454708a4160f18e6"
+  },
+  {
+   "file": "public/illustrations/mosaic/hourglass-112.webp",
+   "bytes": 6964,
+   "sha256": "2797f100e5e79c672f26299eeb7826616336c5214dd941e761983873c10017fe"
+  },
+  {
+   "file": "public/illustrations/mosaic/hourglass-224.webp",
+   "bytes": 18244,
+   "sha256": "ff7070a5faf7719d5e17746522d2ad06cb5650d19083df0060ea745eaa6fe5ac"
+  },
+  {
+   "file": "public/illustrations/mosaic/abacus-112.webp",
+   "bytes": 9356,
+   "sha256": "e2ceabbd0c9587e8504f876c3d5ef76a9f3f12a86dcb1b9e0099c0161bd0e5c7"
+  },
+  {
+   "file": "public/illustrations/mosaic/abacus-224.webp",
+   "bytes": 25056,
+   "sha256": "58dafed92c129f3bb8c4cbacae359f689fdacc3b80b9c9a1b50ea76d35dcee97"
   }
  ],
- "not_on_site": [
-  "day-night",
-  "swallow",
-  "unlimited",
-  "document-check",
-  "key",
-  "graduation",
-  "envelope",
-  "bell"
- ],
- "not_on_site_note": "Generated with the set; masters kept in design/illustrations/source/mosaic/ for later use, not published."
+ "replaced": [
+  {
+   "name": "clock",
+   "job": "5ae12dfc-d9f8-41f0-b028-74e9bb480cac",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/clock-medallion.webp"
+  },
+  {
+   "name": "day-night",
+   "job": "381ccc88-6b4b-41ca-9e82-e2611ebcb534",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/day-night.webp"
+  },
+  {
+   "name": "compass",
+   "job": "ec07dd48-400e-4394-8746-b296d7406cdd",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/compass-medallion.webp"
+  },
+  {
+   "name": "coins",
+   "job": "5c49b822-6b6c-4f89-b610-09c8924e4777",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/coins-medallion.webp"
+  },
+  {
+   "name": "hourglass",
+   "job": "58e6ffc9-d393-4d3f-b301-8d510d9bbf12",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/hourglass-medallion.webp"
+  },
+  {
+   "name": "swallow",
+   "job": "3cc49868-fe9c-4af3-82ba-e1a7b1761cf7",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/swallow.webp"
+  },
+  {
+   "name": "unlimited",
+   "job": "96c94252-ee19-4ba0-9938-3c754b18e1b9",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/unlimited.webp"
+  },
+  {
+   "name": "checklist",
+   "job": "374bd8d2-60e8-4e06-8cbc-22c60542452f",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/checklist-medallion.webp"
+  },
+  {
+   "name": "document-check",
+   "job": "3806f2d1-6ab4-499d-86fb-525e9cda7633",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/document-check.webp"
+  },
+  {
+   "name": "calendar",
+   "job": "80729aac-f779-4fed-8523-ccd88978a28d",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/calendar-medallion.webp"
+  },
+  {
+   "name": "note",
+   "job": "024bff8b-4d75-4172-a015-d5c10a4bad8a",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/note-medallion.webp"
+  },
+  {
+   "name": "seal",
+   "job": "e7bb81c7-32bc-472b-8179-1758c23a5fe3",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/seal-medallion.webp"
+  },
+  {
+   "name": "office",
+   "job": "fe98bb58-19f9-49fd-8a72-7674fa7d0143",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/office-medallion.webp"
+  },
+  {
+   "name": "abacus",
+   "job": "77568514-708c-4a61-81c9-8d94d6f43ba1",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/abacus-medallion.webp"
+  },
+  {
+   "name": "key",
+   "job": "160b0101-1c09-476f-ac65-bce3a4e1f02e",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/key.webp"
+  },
+  {
+   "name": "graduation",
+   "job": "6fbc9450-2b47-478b-aec0-bc516ca7eb86",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/graduation.webp"
+  },
+  {
+   "name": "envelope",
+   "job": "1c3c0a6a-29cb-4b3a-aa10-b146945e4256",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/envelope.webp"
+  },
+  {
+   "name": "bell",
+   "job": "c0d7a751-5840-4a0b-880c-9a729b7d1323",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/bell.webp"
+  },
+  {
+   "name": "unlocked",
+   "job": "f2834e77-dba1-4e09-b505-5bdf691d4519",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/unlocked-medallion.webp"
+  }
+ ]
 }
