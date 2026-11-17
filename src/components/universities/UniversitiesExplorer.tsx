@@ -39,6 +39,8 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
   const pagePart = usePortalPart("catalogue");
   const comparePage = Boolean(portalSelection && pagePart === "compare");
   const [activeCity, setActiveCity] = useState<CityId | null>(null);
+  // Панель города входит заново при каждой смене города, но не при загрузке.
+  const [cityChosen, setCityChosen] = useState(false);
   // Owner, 14 Nov 2026: «я хочу именно карту… для телефонов сделать карту
   // побольше… или сделать upscale на карте». On a phone the whole of Italy fits
   // 390 px and the north (Milan, Turin, Bologna, Padua) is a cluster of dots.
@@ -150,6 +152,7 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
 
   function chooseCity(id: CityId | null) {
     setActiveCity(id);
+    setCityChosen(true);
     if (id && window.matchMedia("(max-width: 1023px)").matches) requestAnimationFrame(() => {
       revealElement(document.getElementById("selected-city"), "start");
     });
@@ -299,25 +302,27 @@ export function UniversitiesExplorer({ portalSelection }: { portalSelection?: Po
             </div>
 
             <div id="selected-city" className={ui.cityResult}>
-              {activeCity ? (
-                <CityPanel
-                  cityId={activeCity}
-                  unis={cityUnis}
-                  onOpenUni={openUniModal}
-                  compareIds={compareIds}
-                  onToggleCompare={toggleCompare}
-                  portalSelection={portalSelection}
-                />
-              ) : (
-                <div className={ui.emptyCity} data-city-empty>
-                  <p className={ui.emptyTitle}>Выбери город</p>
-                  <p className={ui.emptyDescription}>
-                    Нажми на любую точку на карте, чтобы увидеть университеты,
-                    стипендии и факты о городе.
-                  </p>
-                  <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
-                </div>
-              )}
+              <div key={activeCity ?? "none"} className={cityChosen ? ui.cityEnter : undefined}>
+                {activeCity ? (
+                  <CityPanel
+                    cityId={activeCity}
+                    unis={cityUnis}
+                    onOpenUni={openUniModal}
+                    compareIds={compareIds}
+                    onToggleCompare={toggleCompare}
+                    portalSelection={portalSelection}
+                  />
+                ) : (
+                  <div className={ui.emptyCity} data-city-empty>
+                    <p className={ui.emptyTitle}>Выбери город</p>
+                    <p className={ui.emptyDescription}>
+                      Нажми на любую точку на карте, чтобы увидеть университеты,
+                      стипендии и факты о городе.
+                    </p>
+                    <span className={ui.emptyNote}>До трёх университетов в одном сравнении</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

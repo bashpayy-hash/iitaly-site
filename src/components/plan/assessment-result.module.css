@@ -61,7 +61,7 @@
 .step{min-width:0}
 .stepPosition{margin:0 0 10px;font:600 13px/1.5 var(--font-sans);color:#A33421}
 .srOnly{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.step .summary{margin-top:0;font-size:16px;line-height:1.55;color:#3F3933}
+.step .summary{max-width:none;margin-top:0;font-size:16px;line-height:1.55;color:#3F3933}
 .step .action{margin:16px 0;padding:14px 16px;border-radius:16px;background:#F6EFE3;font-size:16px;color:#241F1C}
 .step .references{border-color:#DCD5CA}.step .references p{color:#57514B}.step .references a{color:#241F1C}
 /* Закрытый шаг (owner, 5 Nov): та же плитка и та же строка переходов —

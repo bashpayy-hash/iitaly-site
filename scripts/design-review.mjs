@@ -18,6 +18,19 @@ const PIN_SPACING_REVISION = {
   'src/lib/mapLabels.ts': '7a8158c51e84aadc041908df1affc5e1d29a70468280419325a2e430e9db5765',
 };
 const pinSpacingRevision = Object.entries(PIN_SPACING_REVISION).every(([path, hash]) => createHash('sha256').update(readFileSync(path)).digest('hex') === hash);
+// 2026-11-16 (owner, /universities map: «и здесь нужна нормальная анимация,
+// не ровно как то»). This revision animates a change of city: the pin grows
+// from its old size, the old state fades out as an aria-hidden ghost, labels
+// slide. At rest the map must be exactly the base map: the same outline, city
+// centres, buttons and labels, and every pin, shadow, drawing and label with
+// the same geometry. The only extra markup allowed is a wrapper per pin and
+// the ghost layer, which is empty at rest. The design guard approves the
+// same hash.
+const MAP_MOTION_REVISION = {
+  'src/components/universities/ItalyMap.tsx': 'e7140dfc2483ba2880150c30362f6f29e5708fcccbab583dfb20635744ffdd52',
+  'src/lib/mapLabels.ts': '7a8158c51e84aadc041908df1affc5e1d29a70468280419325a2e430e9db5765',
+};
+const mapMotionRevision = Object.entries(MAP_MOTION_REVISION).every(([path, hash]) => createHash('sha256').update(readFileSync(path)).digest('hex') === hash);
 
 const tools = process.env.REVIEW_TOOLS;
 assert(tools, 'REVIEW_TOOLS must point to the isolated browser-tool installation.');
@@ -95,6 +108,11 @@ async function mapShot(page, name) {
       return [g.getAttribute('aria-label'), g.getAttribute('tabindex'), pin?.getAttribute('cx'), pin?.getAttribute('cy')];
     }).sort((a, b) => a[0].localeCompare(b[0])),
     labels: [...svg.querySelectorAll('g[role=button] text')].map(text => text.textContent).sort(),
+    shapes: [...svg.querySelectorAll('g[role=button]')].map(g => [g.getAttribute('aria-label'), ...[...g.querySelectorAll('circle, ellipse, text, g[transform]')].map(el => {
+      const s = getComputedStyle(el);
+      return [el.tagName, ...['cx', 'cy', 'r', 'rx', 'ry', 'x', 'y', 'text-anchor', 'transform', 'font-size', 'font-weight', 'stroke-width'].map(name => el.getAttribute(name)), s.fontFamily, s.opacity].join(' | ');
+    })]).sort((a, b) => a[0].localeCompare(b[0])),
+    ghosts: svg.querySelectorAll('g[aria-hidden=true] > *').length,
     presentation: [...svg.querySelectorAll('*')].map(el => {
       const s = getComputedStyle(el);
       return [el.tagName, s.fontFamily, s.fontSize, s.fontWeight, s.fill, s.stroke, s.strokeWidth, s.opacity];
@@ -106,6 +124,16 @@ function compareImages(base, actual, name) {
   // Compare all geometry, structure, labels and typography, allowing colors only.
   const withoutColors = value => value.replace(/#[\da-f]{3,8}\b|rgba?\([^)]*\)/gi, 'COLOR');
   const geometry = value => ({ ...value, markup: withoutColors(value.markup), presentation: value.presentation.map(row => row.map((item, index) => [4, 5].includes(index) && item !== 'none' && !item.startsWith('url(') ? 'COLOR' : item)) });
+  if (mapMotionRevision) {
+    assert.equal(actual.viewBox, base.viewBox, name + ': viewBox unchanged');
+    assert.deepEqual(actual.outline, base.outline, name + ': outline of Italy unchanged');
+    assert.deepEqual(actual.cities, base.cities, name + ': every city keeps its centre, name and button');
+    assert.deepEqual(actual.labels, base.labels, name + ': the same city labels are shown');
+    assert.deepEqual(actual.shapes, base.shapes, name + ': at rest every pin, shadow, drawing and label keeps its geometry');
+    assert.equal(actual.ghosts, 0, name + ': no ghost is drawn at rest');
+    results.push({ test: name, passed: true, comparison: 'Approved motion revision (16 Nov): at rest the outline, city centres, buttons, labels and every pin and label geometry match the base exactly; only the selection is animated' });
+    return;
+  }
   if (pinSpacingRevision) {
     assert.equal(actual.viewBox, base.viewBox, name + ': viewBox unchanged');
     assert.deepEqual(actual.outline, base.outline, name + ': outline of Italy unchanged');

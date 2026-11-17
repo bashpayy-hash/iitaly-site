@@ -60,6 +60,13 @@
 .detail { grid-column:1 / -1; grid-row:2; min-width:0; margin-top:16px; animation:tile-open 420ms cubic-bezier(.22,1,.36,1) both; }
 .tile[data-flight-selected=true] { align-items:start; padding-top:30px; box-shadow:inset 0 0 0 2px #B83A27; }
 .tile[data-flight-selected=true] .visual { height:96px; }
+/* Owner, 16 Nov 2026: «вот эти пространства странноватые». The opened step
+   read as a title, an empty band beside the picture, a lone «Шаг 1 из 12»,
+   then text in three widths (666, 1096, 1096 px). Now the position sits in
+   the label, the picture keeps its column at the top right, and the step's
+   text starts right under the title in one column of at most 680 px. */
+.tile[data-flight-selected=true] .visual { grid-row:1 / span 2; align-self:start; }
+.tile[data-flight-selected=true] .detail { grid-column:1; max-width:680px; }
 .tile[data-flight-selected=true] :is(.line,.pill) { display:none; }
 
 .srOnly { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
@@ -75,11 +82,13 @@
   .tile:not([data-flight-selected=true]) .pill { min-height:0; margin-top:8px; padding:0; background:none; color:var(--tile-label); font-weight:600; }
   .visual { height:72px; }
   .tile[data-flight-selected=true] { padding-top:24px; }
+  .tile[data-flight-selected=true] .visual { grid-row:1; height:72px; }
+  .tile[data-flight-selected=true] .detail { grid-column:1 / -1; max-width:none; }
 }
 /* 320px phones: long Russian words («академические», «финансирование») get room. */
 @container (max-width:340px) {
   .tile { grid-template-columns:minmax(0,1fr) 56px; gap:0 10px; padding-right:12px; }
-  .visual { height:56px; }
+  .visual, .tile[data-flight-selected=true] .visual { height:56px; }
 }
 /* Motion: the steps line up one after another (40ms apart); the opened step fades in. */
 @media (prefers-reduced-motion: no-preference) {
