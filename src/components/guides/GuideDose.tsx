@@ -17,7 +17,7 @@ import styles from "./guide-steps.module.css";
 export function GuideDose({ place, free, paid: paidText, span }: { place: WallPlace; free: string; paid: string; span: BentoSpan }) {
   const paid = usePaidDevice();
   const wall = useWallPurchase(place, !paidDeviceNow());
-  if (paid) return <BentoCell span={span} tone="quiet" data-guide-dose="paid">
+  if (paid) return <BentoCell span={span} tone="quiet" art="unlocked" data-guide-dose="paid">
     <p className={bento.text}>Всё открыто: на этом устройстве выполнен вход в кабинет.</p>
   </BentoCell>;
   return <BentoCell span={span} data-guide-dose="guest">

@@ -33,6 +33,11 @@
   .cell { grid-column: span var(--s-lg); grid-row: span var(--r-lg); padding: 24px 24px 26px; }
 }
 
+/* Значок-мозаика (MosaicIcon): фрагмент настоящей мозаики, без диска и
+   кольца (owner, 17 Nov: «без кружков»; «в иконках ставим на
+   аутентичность»). 60px — чтобы тессеры и камень читались. */
+.art { display: block; flex: none; width: 60px; height: 60px; object-fit: contain; }
+
 /* Значение крупно, подпись под ним, пояснение мелко — прижаты к низу ячейки. */
 .stat { display: flex; flex-direction: column; margin: auto 0 0; }
 .value {
@@ -54,6 +59,7 @@
 @container (max-width: 559px) {
   .cell[data-bento-row] { flex-direction: row; align-items: flex-start; gap: 14px; padding: 16px 18px; }
   .cell[data-bento-row] .stat { margin: 0; }
+  .cell[data-bento-row] .art { width: 48px; height: 48px; }
   .cell[data-bento-row] .value { font-size: 20px; }
   .cell[data-bento-row] .stat[data-long] .value { font-size: 17px; }
 }

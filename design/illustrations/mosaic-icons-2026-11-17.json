@@ -1,0 +1,456 @@
+{
+ "date": "2026-11-17",
+ "request": "Owner: «эти иконки довольно странные, убери иконки, это показатель ИИ-слопа», then «Так я вроде сказал про ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» — the Florentine pietra dura of the Instagram highlight covers (design/social/instagram/highlights/pietra-dura). Then: «только на гайдах и визе» — the icons live on the guide and visa pages only; the home page and the cabinet keep cells without icons. Then: «оставь только мозаичную структуру и сами элементы без кружков, а то кружки ассоциируются с ИИ-слопом» — the objects alone, in the same inlaid stone, without the disc and ring. Then, with two photos of Italian tessera mosaics (a Friul mosaic panel and the floor of the Galleria Vittorio Emanuele II): «Сделай их реально похожими на мозаику». The objects are now laid in square tesserae; the photos were not uploaded, the style is described in words. Then: «Дизайн слишком какой-то детский, а здесь уже в иконках ставим на аутентичность. Всё ещё слишком мультяшные» — authentic Roman mosaic: muted natural stone, objects modelled in tones, worn surface, no cartoon outline, each piece a fragment lifted from a floor.",
+ "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background (the model of the Instagram covers, so the stone matches)",
+ "template": "An authentic Italian mosaic detail of {object}, like a museum piece from Pompeii or Ravenna, not a cartoon or an icon: opus vermiculatum, hundreds of small irregular hand-cut tesserae of natural stone — ivory travertine, Siena ochre, raw umber, burnt sienna, verde antico, grey marble — with a few gold glass smalti only on the highlights; realistic proportions modelled with tonal gradations of tesserae from light to shadow; no black cartoon outline, only a thin line of muted umber tesserae where an ancient mosaicist would set one. Around it two or three rows of ivory ground tesserae follow its contour, then stop in a ragged irregular edge, as if this piece was lifted from a larger floor; beyond that the background is transparent. Matte, slightly worn surface, uneven grout, natural variation in tile size and colour. Straight-on, soft even daylight. No text, no letters, no numbers, no circle, no round frame, no border.",
+ "processing": "crop to alpha (>4 %), centred on a transparent square plus 6 px; master WebP q92 in design/illustrations/source/mosaic/; site WebP q86 with alpha at 112 and 224 px (shown at 60 px, 48 px in phone rows).",
+ "use": {
+  "guide overview": "clock, coins, calendar, checklist (срок, стоимость, дедлайн, сложность); next step compass; note note; paid device unlocked",
+  "visa overview": "coins, seal, hourglass; VFS office; funds abacus"
+ },
+ "icons": [
+  {
+   "name": "clock",
+   "job": "5e1b669d-ad75-4985-bedd-5103f0593acb",
+   "motif": "an antique gold pocket watch",
+   "references": []
+  },
+  {
+   "name": "office",
+   "job": "2ea48fca-473e-46f3-83a0-51f5eeb74faf",
+   "motif": "the front of a classical temple, four columns, pediment, steps",
+   "references": []
+  },
+  {
+   "name": "coins",
+   "job": "c5ab5423-07b1-4658-913b-e76e43f326c6",
+   "motif": "three ancient Roman gold coins in a small stack",
+   "references": []
+  },
+  {
+   "name": "calendar",
+   "job": "3c349c1e-5e9b-4a6d-894c-186529fff7f1",
+   "motif": "an old parchment calendar page with a red ribbon tab and a grid of small marks",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  },
+  {
+   "name": "checklist",
+   "job": "dcf51ec3-8ef1-48db-9b78-9cdf353888a8",
+   "motif": "a parchment scroll with three lines and small red ticks",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  },
+  {
+   "name": "compass",
+   "job": "2fbb805f-0286-4b47-95e1-f72a9a81715c",
+   "motif": "an eight-pointed wind rose, star-shaped ground, no round field",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)",
+    "071499ac-e8d4-4808-b2cb-ba0ab7829fdb (first wind rose, redone without its round field)"
+   ]
+  },
+  {
+   "name": "note",
+   "job": "4188af52-7892-4c46-a6f7-e1b27426f9d0",
+   "motif": "a realistic hand with a red cuff pointing right (manicule)",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  },
+  {
+   "name": "unlocked",
+   "job": "9453fd73-7eb8-40f2-b701-cdfffc606705",
+   "motif": "an antique brass padlock, shackle open",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  },
+  {
+   "name": "seal",
+   "job": "dcd73469-f6b4-4583-92e8-e8195727235a",
+   "motif": "a round deep red wax seal with a pressed star",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  },
+  {
+   "name": "hourglass",
+   "job": "8c6ad041-7152-480f-8732-867fda7fad1a",
+   "motif": "an antique hourglass with a turned wooden frame",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  },
+  {
+   "name": "abacus",
+   "job": "976366fb-0d16-4d90-be72-60897f07d541",
+   "motif": "an old wooden counting frame with stone beads",
+   "references": [
+    "5e1b669d-ad75-4985-bedd-5103f0593acb (the authentic clock, style)"
+   ]
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/mosaic/clock-112.webp",
+   "bytes": 7206,
+   "sha256": "f81a825a3bf032fc945f9930ed946a68d5f0b58c2e9ed24411652e1a487b88ec"
+  },
+  {
+   "file": "public/illustrations/mosaic/clock-224.webp",
+   "bytes": 20956,
+   "sha256": "6205e1c2679829b36e76df96843e12eb0f9d177096ec78513c838feb3109d2ef"
+  },
+  {
+   "file": "public/illustrations/mosaic/office-112.webp",
+   "bytes": 7978,
+   "sha256": "807805449d4c9bec2172551e8a291aac9aa743caa023009cdca1e04923c5b45e"
+  },
+  {
+   "file": "public/illustrations/mosaic/office-224.webp",
+   "bytes": 24030,
+   "sha256": "0af0837c717de51afe8bdc58553009412e3ae01c59603ba445528622681adb2b"
+  },
+  {
+   "file": "public/illustrations/mosaic/coins-112.webp",
+   "bytes": 7992,
+   "sha256": "6d7cfcca0eeb6f7f4d99b110293c118757b15f0c2f0e26b2257734546f4ff951"
+  },
+  {
+   "file": "public/illustrations/mosaic/coins-224.webp",
+   "bytes": 24550,
+   "sha256": "f7c73ecaa03936f11052aac8447e0f314c1632067ca5d064ba769c65ac8ec6a5"
+  },
+  {
+   "file": "public/illustrations/mosaic/calendar-112.webp",
+   "bytes": 8700,
+   "sha256": "f0cd7633c9b1b08b0b256746f904f776bd451e79f7be886152d3d01452700f5b"
+  },
+  {
+   "file": "public/illustrations/mosaic/calendar-224.webp",
+   "bytes": 25724,
+   "sha256": "fd7bb62f0b9c16c04bf76546ca5041cfb90b0a94b3bb34b528788564d31d7b62"
+  },
+  {
+   "file": "public/illustrations/mosaic/checklist-112.webp",
+   "bytes": 7752,
+   "sha256": "87bc02150c204f9b3b260a25783eb8459ab52739856d6f266b1d923c058f0f1e"
+  },
+  {
+   "file": "public/illustrations/mosaic/checklist-224.webp",
+   "bytes": 22224,
+   "sha256": "3f36bdde15b3405387620e6d6d56e0f31851e26d04ee8007f441711487892681"
+  },
+  {
+   "file": "public/illustrations/mosaic/compass-112.webp",
+   "bytes": 7418,
+   "sha256": "d1e192ae54bd39fdd2bf7d3ac6d6824168b5d2d0b6660e9d40e7cf1a20628ba0"
+  },
+  {
+   "file": "public/illustrations/mosaic/compass-224.webp",
+   "bytes": 20732,
+   "sha256": "c497c86a5650ed6f73e7b2e0e1eae373d47ac2bcc8cb677f24c92da5fb7488a1"
+  },
+  {
+   "file": "public/illustrations/mosaic/note-112.webp",
+   "bytes": 4488,
+   "sha256": "89bb7456802cb516e45581bda0449900d3e68258122e7224aa66968a58cfe64b"
+  },
+  {
+   "file": "public/illustrations/mosaic/note-224.webp",
+   "bytes": 12198,
+   "sha256": "f9b27df84815796f4f85845ae3ee23125c6d3a1910077527465350e2eaa4855e"
+  },
+  {
+   "file": "public/illustrations/mosaic/unlocked-112.webp",
+   "bytes": 6762,
+   "sha256": "e8fb23011c127846b8826666f675acad635268b48696f3a2d0609bc34cb56cc1"
+  },
+  {
+   "file": "public/illustrations/mosaic/unlocked-224.webp",
+   "bytes": 19126,
+   "sha256": "28088c4b4b7dc002cac9ea0dd2dbbdf0658f8f647c0a844b24c9f9a587c0a2d8"
+  },
+  {
+   "file": "public/illustrations/mosaic/seal-112.webp",
+   "bytes": 7784,
+   "sha256": "da7bf20b9d7cb545e7749c76c271de019eddd3623f4229f8c49c2e6b64fa2b93"
+  },
+  {
+   "file": "public/illustrations/mosaic/seal-224.webp",
+   "bytes": 23718,
+   "sha256": "99672930093185bb7411fef5e9ea3eab8bd150734ad7adc64283c0b6f1c16518"
+  },
+  {
+   "file": "public/illustrations/mosaic/hourglass-112.webp",
+   "bytes": 5950,
+   "sha256": "edc9143e1e4580751354cd2479567b8fe0d20792d94d74123a36685b863c6a04"
+  },
+  {
+   "file": "public/illustrations/mosaic/hourglass-224.webp",
+   "bytes": 16446,
+   "sha256": "973535a78fc0736ee279e4fcb264db0f9ae20f2c7473e1d8dcc5cb98af29b675"
+  },
+  {
+   "file": "public/illustrations/mosaic/abacus-112.webp",
+   "bytes": 9192,
+   "sha256": "8bf54821bb5e66b45da6599f433ebb545eaad925535cedb95d28d8bbc9d74099"
+  },
+  {
+   "file": "public/illustrations/mosaic/abacus-224.webp",
+   "bytes": 27650,
+   "sha256": "cb497be68c21cfef235c4de1fc25ee74141d9848b7d5ecaeef4c8e1215016ebd"
+  }
+ ],
+ "replaced": [
+  {
+   "name": "clock",
+   "job": "5ae12dfc-d9f8-41f0-b028-74e9bb480cac",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/clock-medallion.webp"
+  },
+  {
+   "name": "day-night",
+   "job": "381ccc88-6b4b-41ca-9e82-e2611ebcb534",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/day-night.webp"
+  },
+  {
+   "name": "compass",
+   "job": "ec07dd48-400e-4394-8746-b296d7406cdd",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/compass-medallion.webp"
+  },
+  {
+   "name": "coins",
+   "job": "5c49b822-6b6c-4f89-b610-09c8924e4777",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/coins-medallion.webp"
+  },
+  {
+   "name": "hourglass",
+   "job": "58e6ffc9-d393-4d3f-b301-8d510d9bbf12",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/hourglass-medallion.webp"
+  },
+  {
+   "name": "swallow",
+   "job": "3cc49868-fe9c-4af3-82ba-e1a7b1761cf7",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/swallow.webp"
+  },
+  {
+   "name": "unlimited",
+   "job": "96c94252-ee19-4ba0-9938-3c754b18e1b9",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/unlimited.webp"
+  },
+  {
+   "name": "checklist",
+   "job": "374bd8d2-60e8-4e06-8cbc-22c60542452f",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/checklist-medallion.webp"
+  },
+  {
+   "name": "document-check",
+   "job": "3806f2d1-6ab4-499d-86fb-525e9cda7633",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/document-check.webp"
+  },
+  {
+   "name": "calendar",
+   "job": "80729aac-f779-4fed-8523-ccd88978a28d",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/calendar-medallion.webp"
+  },
+  {
+   "name": "note",
+   "job": "024bff8b-4d75-4172-a015-d5c10a4bad8a",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/note-medallion.webp"
+  },
+  {
+   "name": "seal",
+   "job": "e7bb81c7-32bc-472b-8179-1758c23a5fe3",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/seal-medallion.webp"
+  },
+  {
+   "name": "office",
+   "job": "fe98bb58-19f9-49fd-8a72-7674fa7d0143",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/office-medallion.webp"
+  },
+  {
+   "name": "abacus",
+   "job": "77568514-708c-4a61-81c9-8d94d6f43ba1",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/abacus-medallion.webp"
+  },
+  {
+   "name": "key",
+   "job": "160b0101-1c09-476f-ac65-bce3a4e1f02e",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/key.webp"
+  },
+  {
+   "name": "graduation",
+   "job": "6fbc9450-2b47-478b-aec0-bc516ca7eb86",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/graduation.webp"
+  },
+  {
+   "name": "envelope",
+   "job": "1c3c0a6a-29cb-4b3a-aa10-b146945e4256",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/envelope.webp"
+  },
+  {
+   "name": "bell",
+   "job": "c0d7a751-5840-4a0b-880c-9a729b7d1323",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/bell.webp"
+  },
+  {
+   "name": "unlocked",
+   "job": "f2834e77-dba1-4e09-b505-5bdf691d4519",
+   "what": "round medallion: green marble disc and terracotta ring",
+   "master": "design/illustrations/source/mosaic/unlocked-medallion.webp"
+  },
+  {
+   "name": "clock",
+   "job": "bb078ea5-60dd-4f41-90b8-3f497cdf0fb9",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/clock-stone.webp"
+  },
+  {
+   "name": "office",
+   "job": "5c6a2fe1-b682-4664-b0fe-57cffd84cb96",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/office-stone.webp"
+  },
+  {
+   "name": "coins",
+   "job": "3112e4ec-cfd8-455f-9c5b-39e180d75edb",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/coins-stone.webp"
+  },
+  {
+   "name": "calendar",
+   "job": "17398b6e-4f36-40d1-bf36-5d60e10f95d2",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/calendar-stone.webp"
+  },
+  {
+   "name": "unlocked",
+   "job": "a4f5c103-1812-4f54-9f68-748ff30e750d",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/unlocked-stone.webp"
+  },
+  {
+   "name": "hourglass",
+   "job": "f71b9773-3375-4cae-902b-502b902353df",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/hourglass-stone.webp"
+  },
+  {
+   "name": "abacus",
+   "job": "230f0b87-ed13-469d-9f2d-2c64b5245bf7",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/abacus-stone.webp"
+  },
+  {
+   "name": "seal",
+   "job": "15ebd9dc-64aa-424a-be50-ed3d53fd15df",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/seal-stone.webp"
+  },
+  {
+   "name": "note",
+   "job": "57256f24-6ae3-4b5d-815b-f19d9120c25b",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/note-stone.webp"
+  },
+  {
+   "name": "compass",
+   "job": "a0803d23-5084-4cb0-b42c-199eec164250",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/compass-stone.webp"
+  },
+  {
+   "name": "checklist",
+   "job": "7d0cffd0-6981-42b7-bc0a-a9a8992bc9e4",
+   "what": "frameless pietra dura: smooth inlaid stone pieces",
+   "master": "design/illustrations/source/mosaic/checklist-stone.webp"
+  },
+  {
+   "name": "clock",
+   "job": "f71b8304-5aa7-4a14-97ea-f89acb92cca5",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/clock-tessera.webp"
+  },
+  {
+   "name": "office",
+   "job": "cb749bbf-6c75-48cd-bc50-88294bd74ffd",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/office-tessera.webp"
+  },
+  {
+   "name": "coins",
+   "job": "700ee2b5-cb0e-4a43-8ba0-0d9600d6d70b",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/coins-tessera.webp"
+  },
+  {
+   "name": "calendar",
+   "job": "29d4fd45-a626-4166-8f57-87f3d591ca44",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/calendar-tessera.webp"
+  },
+  {
+   "name": "checklist",
+   "job": "e04eec34-c378-4fc5-9872-49770169a4b1",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/checklist-tessera.webp"
+  },
+  {
+   "name": "compass",
+   "job": "73173935-f738-452f-9b56-73fdc2d412f9",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/compass-tessera.webp"
+  },
+  {
+   "name": "note",
+   "job": "04048f05-64f5-4080-9152-c2c0bdb318cc",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/note-tessera.webp"
+  },
+  {
+   "name": "unlocked",
+   "job": "2f630cc8-6e45-4a46-85df-184ec0273356",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/unlocked-tessera.webp"
+  },
+  {
+   "name": "seal",
+   "job": "84b3a5f2-3940-4580-a505-abb070a6979c",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/seal-tessera.webp"
+  },
+  {
+   "name": "hourglass",
+   "job": "faab350b-ea25-440e-abb4-a152736f2553",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/hourglass-tessera.webp"
+  },
+  {
+   "name": "abacus",
+   "job": "e20fed82-8180-453a-9fe1-713b29e546f5",
+   "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
+   "master": "design/illustrations/source/mosaic/abacus-tessera.webp"
+  }
+ ]
+}

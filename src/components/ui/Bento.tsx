@@ -1,4 +1,5 @@
 import type { CSSProperties, ElementType, ReactNode } from "react";
+import { MosaicIcon, type MosaicIconName } from "@/components/icons/MosaicIcon";
 import styles from "./bento.module.css";
 
 /* Бенто (owner, 12 Nov, референс Lamossa Studio на godly.design: «информацию
@@ -6,9 +7,11 @@ import styles from "./bento.module.css";
    такой вот форме»). Светлая подложка с крупным скруглением, внутри ячейки
    разного размера: крупное значение, подпись и короткое пояснение снизу;
    одна ячейка-действие на точечной фактуре.
-   Тёмных значков-капсул сверху больше нет (owner, 17 Nov: «эти иконки
-   довольно странные, убери иконки, это показатель ИИ-слопа»): ячейку
-   держат цифра и слова, а переход в другой раздел — стрелка у заголовка.
+   Тёмные значки-капсулы с линейной иконкой сняты (owner, 17 Nov: «эти
+   иконки довольно странные… показатель ИИ-слопа»); на их месте — значок
+   во флорентийской мозаике (owner, тот же день: «давай сделаем их в стиле
+   той мозаики», MosaicIcon) — только в гайдах и визе («только на гайдах
+   и визе»). Переход в другой раздел — стрелка у заголовка.
    Сетка считается от ширины самой подложки (container query): меньше 560px —
    одна колонка, до 900px — шесть, шире — двенадцать. Размер ячейки на каждой
    ширине задаёт тот, кто собирает сетку, чтобы в ней не оставалось дыр. */
@@ -23,18 +26,21 @@ export function Bento({ label, labelledBy, children, className, as: Tag = "secti
   </Tag>;
 }
 
-export function BentoCell({ span, tone = "plain", children, className, as: Tag = "div", ...rest }: {
+export function BentoCell({ span, tone = "plain", art, children, className, as: Tag = "div", ...rest }: {
   span: BentoSpan;
   href?: string;
   target?: string;
   rel?: string;
   tone?: "plain" | "action" | "media" | "quiet";
+  /** Значок во флорентийской мозаике над содержимым ячейки. */
+  art?: MosaicIconName;
   children?: ReactNode;
   className?: string;
   as?: ElementType;
 } & DataAttributes) {
   const style = { "--s-md": span.md, "--s-lg": span.lg ?? span.md * 2, "--r-md": span.rowsMd ?? 1, "--r-lg": span.rowsLg ?? span.rowsMd ?? 1 } as CSSProperties;
   return <Tag className={`${styles.cell} ${styles[tone]}${className ? ` ${className}` : ""}`} style={style} data-bento-cell={tone} {...rest}>
+    {art && <MosaicIcon name={art} className={styles.art} />}
     {children}
   </Tag>;
 }

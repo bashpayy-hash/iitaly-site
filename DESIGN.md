@@ -2018,3 +2018,35 @@ Owner, phone screenshots: «Есть всё ещё проблема того, ч
   10–11 px and «Меню +» shared one row of a 390 px screen. Under 600 px the
   three actions now take their own row under the logo: equal thirds, words at
   14 px, no icons.
+
+## Icons in authentic Roman mosaic, on guides and visa · 17 November 2026
+
+Owner, step by step: «давай сделаем их в стиле той мозаики» (the pietra dura
+of the Instagram highlight covers); «только на гайдах и визе»; «оставь только
+мозаичную структуру и сами элементы без кружков, а то кружки ассоциируются с
+ИИ-слопом»; with two photos of Italian floor mosaics, «Сделай их реально
+похожими на мозаику»; then «Дизайн слишком какой-то детский, а здесь уже в
+иконках ставим на аутентичность. Всё ещё слишком мультяшные».
+
+- **What they are.** Fragments of an authentic Roman mosaic, as in Pompeii or
+  Ravenna: hundreds of small irregular tesserae of natural stone (travertine,
+  Siena ochre, umber, burnt sienna, verde antico) and a few gold smalti on the
+  highlights; each object in realistic proportions, modelled with tones of
+  tesserae, matte and slightly worn; no black cartoon outline, only a thin
+  umber line where a mosaicist would set one. Two or three rows of ivory
+  ground follow the object and stop in a ragged edge, as if the piece was
+  lifted from a floor. No disc, no ring; the wind rose follows its own points
+  instead of a round field.
+- **The objects lean old:** a pocket watch, Roman gold coins, a parchment
+  calendar page, an unrolled scroll with ticks, a wind rose, a manicule, a
+  brass padlock (guides); coins, a wax seal, an hourglass in turned wood, a
+  temple front, a wooden counting frame (visa).
+- **Where — guides and visa only.** The home page and the cabinet keep their
+  cells without icons.
+- **How.** `MosaicIcon` (`src/components/icons/MosaicIcon.tsx`), 60 px, 48 px
+  in the phone rows; WebP 112 and 224 px; Higgsfield gpt_image_2_6. Earlier
+  versions stay as masters in design/illustrations/source/mosaic/: round
+  medallions (`*-medallion`), smooth inlaid stone (`*-stone`) and chunky
+  outlined tesserae (`*-tessera`). The owner's photos were not uploaded; the
+  style is described in words.
+- Manifest: design/illustrations/mosaic-icons-2026-11-17.json.
