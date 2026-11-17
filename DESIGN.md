@@ -2019,30 +2019,29 @@ Owner, phone screenshots: «Есть всё ещё проблема того, ч
   three actions now take their own row under the logo: equal thirds, words at
   14 px, no icons.
 
-## Icons in Florentine mosaic · 17 November 2026
+## Icons in Florentine mosaic, on guides and visa · 17 November 2026
 
 Owner, after the icon capsules were removed: «Так я вроде сказал про
 ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» —
 the pietra dura of the Instagram highlight covers
-(design/social/instagram/highlights/pietra-dura).
+(design/social/instagram/highlights/pietra-dura) — then «только на гайдах и
+визе».
 
-- **What they are.** 19 medallions of the same stone as the covers: a deep
+- **What they are.** Medallions of the same stone as the covers: a deep
   green marble disc, a thin terracotta ring with a gold line, one large motif
   in polished stone, no floral ornament (it turns to noise under 56 px).
   Higgsfield gpt_image_2_6 — the model of the covers — with the covers as
   style references; transparent outside the disc.
-- **Where.** Every bento cell that had a dark capsule:
-  - home «Проверка документов»: clock, sun and moon, infinity, checklist;
-    the call to action a sheet under a magnifier;
+- **Where — guides and visa only.** The home page and the cabinet keep their
+  cells without icons.
   - guide overview: clock, coins, calendar, checklist (срок, стоимость,
-    дедлайн, сложность), next step a compass rose, note a manicule;
+    дедлайн, сложность), next step a compass rose, note a manicule, the
+    paid-device cell an open padlock;
   - visa: coins, wax seal, hourglass, the VFS tile a classical front, funds
-    an abacus;
-  - cabinet stage: compass, mortarboard, wax seal, envelope, coins, swallow
-    (as the Instagram «Виза» cover), key; documents and reminders a sheet
-    under a magnifier and a bell.
+    an abacus.
 - **How.** `MosaicIcon` (`src/components/icons/MosaicIcon.tsx`), 52 px with
   a soft stone shadow, 44 px in the phone rows; WebP 112 and 224 px.
-  Functional line glyphs (search, close, arrows, locks inside text, play)
-  stay lines: they are controls, not pictures.
+  Eight more medallions made with the set (sun and moon, infinity, sheet
+  under a magnifier, swallow, key, mortarboard, envelope, bell) stay as
+  masters only.
 - Manifest: design/illustrations/mosaic-icons-2026-11-17.json.

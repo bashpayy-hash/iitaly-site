@@ -27,10 +27,10 @@ import styles from "./document-check-feature.module.css";
 const AGENCY_SUPPORT = { from: 500_000, to: 1_000_000 };
 
 const FACTS = [
-  { art: "clock", value: "10–30 секунд", label: "обычно до ответа", note: "Без очереди и записи к менеджеру." },
-  { art: "day-night", value: "24/7", label: "днём, ночью, в выходные", note: "Проверяй, когда документ готов, а не когда открыт офис." },
-  { art: "unlimited", value: "Без лимита", label: "проверок с маршрутом", note: "Исправил — проверь снова, сколько нужно. Первая — бесплатно." },
-  { art: "checklist", value: "По пунктам", label: "имена, даты, печати, перевод", note: "Сверка с правилами твоего вуза, DSU и визы на твой учебный год." },
+  { value: "10–30 секунд", label: "обычно до ответа", note: "Без очереди и записи к менеджеру." },
+  { value: "24/7", label: "днём, ночью, в выходные", note: "Проверяй, когда документ готов, а не когда открыт офис." },
+  { value: "Без лимита", label: "проверок с маршрутом", note: "Исправил — проверь снова, сколько нужно. Первая — бесплатно." },
+  { value: "По пунктам", label: "имена, даты, печати, перевод", note: "Сверка с правилами твоего вуза, DSU и визы на твой учебный год." },
 ] as const;
 
 const COMPARE = [
@@ -51,7 +51,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
       </p>
     </div>
     <Bento label="Чем проверка документов отличается от агентства" className={styles.bento}>
-      {FACTS.map(fact => <BentoCell key={fact.value} span={{ md: 3, lg: 3 }} art={fact.art} className={styles.fact} data-bento-row data-document-check-fact>
+      {FACTS.map(fact => <BentoCell key={fact.value} span={{ md: 3, lg: 3 }} className={styles.fact} data-bento-row data-document-check-fact>
         <BentoStat value={fact.value} label={fact.label} note={fact.note} />
       </BentoCell>)}
       <BentoCell span={{ md: 6, lg: compact ? 12 : 8 }} data-document-check-compare>
@@ -61,7 +61,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
           <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{item.agencyPrice}</span>}</td><td>{item.us}</td></tr>)}</tbody>
         </table>
       </BentoCell>
-      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" art="document-check" data-document-check-cta>
+      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" data-document-check-cta>
         <div className={bento.body}>
           <p className={bento.heading}>Проверь один документ бесплатно</p>
           <p className={bento.text}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>

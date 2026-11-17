@@ -1,14 +1,12 @@
 {
  "date": "2026-11-17",
- "request": "Owner: «эти иконки довольно странные, убери иконки, это показатель ИИ-слопа», then «Так я вроде сказал про ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» — the Florentine pietra dura of the Instagram highlight covers (design/social/instagram/highlights/pietra-dura).",
+ "request": "Owner: «эти иконки довольно странные, убери иконки, это показатель ИИ-слопа», then «Так я вроде сказал про ребрендинг иконок, давай делать, давай сделаем их в стиле той мозаики» — the Florentine pietra dura of the Instagram highlight covers (design/social/instagram/highlights/pietra-dura). Then: «только на гайдах и визе» — the icons live on the guide and visa pages only; the home page and the cabinet keep cells without icons.",
  "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background (the model of the Instagram covers, so the stone matches)",
  "template": "A single round icon medallion in exactly the Florentine pietra dura style of the first/second reference: polished coloured stone inlaid into a DEEP GREEN marble disc, a thin terracotta(-and-gold) stone outer ring (with a fine gold inner line), fine seams between the stone pieces. In the centre one large simple motif in polished stone, about 60% of the disc: {motif}. No flowers, no leaves, no other ornament, only the motif on the green marble, so it reads clearly at 48 pixels. Front view, the disc centred and filling the square, transparent background outside the disc. Flat, even, soft light, no glare, no cast shadow. No text, no letters, no numbers.",
  "processing": "crop to alpha (>4 %) as a square plus 6 px; master WebP q92 in design/illustrations/source/mosaic/; site WebP q86 with alpha at 112 and 224 px (shown at 40–56 px, 2× screens take 224).",
  "use": {
-  "home document check": "clock, day-night, unlimited, checklist; call to action document-check",
   "guide overview": "clock, coins, calendar, checklist (срок, стоимость, дедлайн, сложность); next step compass; note note; paid device unlocked",
-  "visa overview": "coins, seal, hourglass; VFS office; funds abacus",
-  "cabinet stage": "start compass, education12 graduation, docs seal, apply envelope, dsu coins, visa swallow (as the Instagram «Виза» cover), arrival key; documents document-check; reminders bell"
+  "visa overview": "coins, seal, hourglass; VFS office; funds abacus"
  },
  "icons": [
   {
@@ -195,16 +193,6 @@
    "sha256": "9d2d2baced4b31b6a43f25285eea756494e85bb119d134e630f9b26a4e6bf588"
   },
   {
-   "file": "public/illustrations/mosaic/day-night-112.webp",
-   "bytes": 7844,
-   "sha256": "c407160a8d2bc821dd5bb41a7d97997e55b5c817108aeabba663ef6f80586a17"
-  },
-  {
-   "file": "public/illustrations/mosaic/day-night-224.webp",
-   "bytes": 22806,
-   "sha256": "54f765989bd9adc1787dff7bc4cd4c13df136234a22b001e13144b19aa72b884"
-  },
-  {
    "file": "public/illustrations/mosaic/compass-112.webp",
    "bytes": 7880,
    "sha256": "ad2c1ee1b4689df5762be59e7cbdf58e8e564074231cac5dd41d144d56ef8c52"
@@ -235,26 +223,6 @@
    "sha256": "c3e752d5baf746512ba546c6f02e45edf5df301c5516d137feb99961187d2f21"
   },
   {
-   "file": "public/illustrations/mosaic/swallow-112.webp",
-   "bytes": 7344,
-   "sha256": "4cc8819ab6d7dfbaa5d26372227c111dbecf4028c5862da8ad412bda9422b72d"
-  },
-  {
-   "file": "public/illustrations/mosaic/swallow-224.webp",
-   "bytes": 21934,
-   "sha256": "24bbe260ed3778509305d27bf6a825bdb07e3dcf32b423439fedbbc3ded6e147"
-  },
-  {
-   "file": "public/illustrations/mosaic/unlimited-112.webp",
-   "bytes": 7862,
-   "sha256": "e3139b9ef1fad466650a4723e732ca3ca35035543623e1142157afb28ab6644b"
-  },
-  {
-   "file": "public/illustrations/mosaic/unlimited-224.webp",
-   "bytes": 23448,
-   "sha256": "59714e4fcbab0445345622a09658b4b5b518da51c8b47bf10e2174cdda1066fb"
-  },
-  {
    "file": "public/illustrations/mosaic/checklist-112.webp",
    "bytes": 7160,
    "sha256": "e957c43e54c7e876da6c58e357f68d4396deb6b6bb5c5eb685cfd508ddf78947"
@@ -263,16 +231,6 @@
    "file": "public/illustrations/mosaic/checklist-224.webp",
    "bytes": 19962,
    "sha256": "f47f911af852e1226f0b7e399e1d407be6078feabb7eeb86ddc5321ad03437a9"
-  },
-  {
-   "file": "public/illustrations/mosaic/document-check-112.webp",
-   "bytes": 6828,
-   "sha256": "51b6e3f82a38d842ba5a9d0c440a88c26d9554c6dfc46a95e560ab218e69ae15"
-  },
-  {
-   "file": "public/illustrations/mosaic/document-check-224.webp",
-   "bytes": 19322,
-   "sha256": "41087756974c7a2f686210735593d91ba33ceb0c6dbe6ac6e39efa0528edb9d4"
   },
   {
    "file": "public/illustrations/mosaic/calendar-112.webp",
@@ -325,46 +283,6 @@
    "sha256": "a0ccc3c20cc595b163553e02a46a6f3d95dec798c9d2ee607e438c2640741649"
   },
   {
-   "file": "public/illustrations/mosaic/key-112.webp",
-   "bytes": 7260,
-   "sha256": "459486ba365019d64e41ef841ea7f823cf6e21a068177f915360242dc366a152"
-  },
-  {
-   "file": "public/illustrations/mosaic/key-224.webp",
-   "bytes": 21384,
-   "sha256": "94e5a596e1bd345864e536185cdcdd798155f8d2bf9d11d1aeb5665eddde80b4"
-  },
-  {
-   "file": "public/illustrations/mosaic/graduation-112.webp",
-   "bytes": 7634,
-   "sha256": "0021c86fe283a944b3fad06130f63c2929dc8c44dad5069447163e32be2a4782"
-  },
-  {
-   "file": "public/illustrations/mosaic/graduation-224.webp",
-   "bytes": 22946,
-   "sha256": "6ea73a750b71bfcd5d676a6684af587401a731fde5d6df3b03b5823459af929c"
-  },
-  {
-   "file": "public/illustrations/mosaic/envelope-112.webp",
-   "bytes": 7050,
-   "sha256": "5796219ad4cdedd7ad157de90f220ec130ca107c8042c23427fe600e90d973b9"
-  },
-  {
-   "file": "public/illustrations/mosaic/envelope-224.webp",
-   "bytes": 20800,
-   "sha256": "0ee48f8a73addc952c09d4d5855a024d648e9ef3ec2611d2606f83b5e3a5d1d3"
-  },
-  {
-   "file": "public/illustrations/mosaic/bell-112.webp",
-   "bytes": 7050,
-   "sha256": "9a058a1b30a71b970e4b4d60557ba3c1d2f374004a9b2141bc59ca94c66be21c"
-  },
-  {
-   "file": "public/illustrations/mosaic/bell-224.webp",
-   "bytes": 20714,
-   "sha256": "0199a733d59b2e3c2c6d6c9f793550bad1831ac31b58a7e11f41669bf56c7aa9"
-  },
-  {
    "file": "public/illustrations/mosaic/unlocked-112.webp",
    "bytes": 7480,
    "sha256": "89ae977dcefdb25eb17809a9b77393988ead5f2f385039666202e5842715899a"
@@ -374,5 +292,16 @@
    "bytes": 22308,
    "sha256": "23009a04688177f173d5699d7aa46362187caa54d7d74f5d87be3f729f4d079e"
   }
- ]
+ ],
+ "not_on_site": [
+  "day-night",
+  "swallow",
+  "unlimited",
+  "document-check",
+  "key",
+  "graduation",
+  "envelope",
+  "bell"
+ ],
+ "not_on_site_note": "Generated with the set; masters kept in design/illustrations/source/mosaic/ for later use, not published."
 }

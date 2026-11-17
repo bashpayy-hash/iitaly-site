@@ -7,13 +7,13 @@
    значок — диск тёмно-зелёного мрамора с тонким терракотовым кольцом и
    одним крупным мотивом из полированного камня, без орнамента, чтобы читался
    в 40–56px. Значок декоративный: смысл несёт текст рядом.
+   Только в гайдах и визе (owner, тот же день: «только на гайдах и визе»):
+   на главной и в кабинете ячейки держат цифра и слова.
    Манифест: design/illustrations/mosaic-icons-2026-11-17.json. */
 
 export type MosaicIconName =
-  | "clock" | "day-night" | "unlimited" | "checklist" | "document-check"
-  | "coins" | "calendar" | "compass" | "note" | "seal" | "hourglass"
-  | "office" | "abacus" | "key" | "graduation" | "envelope" | "swallow"
-  | "bell" | "unlocked";
+  | "clock" | "coins" | "calendar" | "checklist" | "compass" | "note"
+  | "unlocked" | "seal" | "hourglass" | "office" | "abacus";
 
 export function MosaicIcon({ name, size = 52, className }: { name: MosaicIconName; size?: number; className?: string }) {
   const base = `/illustrations/mosaic/${name}`;
