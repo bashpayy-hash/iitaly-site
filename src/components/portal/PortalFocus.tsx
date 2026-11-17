@@ -17,6 +17,7 @@ import { plainClick } from "./PortalStageLineup";
 import { PlainTerms } from "./PlainTerms";
 import { STAGE_PLAIN, stepActionLabel } from "./plainWords";
 import { Bento, BentoCell, bento } from "@/components/ui/Bento";
+import type { MosaicIconName } from "@/components/icons/MosaicIcon";
 import path from "./portal-path.module.css";
 
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
@@ -60,6 +61,12 @@ function dayWord(days: number) {
    Веспи что-то делает, с анимациями»). */
 const STAGE_SCENE: Record<PortalStageKey, StageSceneName> = {
   start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys",
+};
+/* Значок этапа во флорентийской мозаике (owner, 17 Nov: «давай сделаем их в
+   стиле той мозаики») — тот же предмет, что в сцене этапа; виза — ласточка,
+   как на обложке «Виза» в Instagram. */
+const STAGE_ART: Record<PortalStageKey, MosaicIconName> = {
+  start: "compass", education12: "graduation", docs: "seal", apply: "envelope", dsu: "coins", visa: "swallow", arrival: "key",
 };
 
 export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings, locked }: Props) {
@@ -251,7 +258,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         шагов нет (owner, 4 Nov: ничего не показано дважды). */}
     {stagePage && <Bento as="div" className={styles.stageBody} data-portal-overview data-stage-bento>
       {selected && <BentoCell span={{ md: 6, lg: 7 }} tone="media" className={styles.stageMedia}><StageScene name={STAGE_SCENE[stageKey(selected.id)]} className={styles.stageScene} priority /></BentoCell>}
-      {selected && <BentoCell span={{ md: 6, lg: 5 }} className={styles.stageSummary} data-stage-summary>
+      {selected && <BentoCell span={{ md: 6, lg: 5 }} art={STAGE_ART[stageKey(selected.id)]} className={styles.stageSummary} data-stage-summary>
         <div className={styles.stageSummaryCopy}>
           <p className={styles.stageCount}><strong>{savedStampCount} из {ordered.length}</strong> <span>{doneWord(ordered.length)}</span></p>
           <h1 id="portal-overview-heading" tabIndex={-1}>{selected.title}</h1>
@@ -281,7 +288,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           : <PortalPageLink href="/portal">К моему плану</PortalPageLink>}
       </nav>}
       </BentoCell>
-      {stageDocs.length > 0 && <BentoCell span={{ md: 6, lg: 4 }} tone="action" className={styles.stageDocs} data-stage-documents>
+      {stageDocs.length > 0 && <BentoCell span={{ md: 6, lg: 4 }} tone="action" art="document-check" className={styles.stageDocs} data-stage-documents>
         <div className={bento.body}>
           <p className={bento.heading}>Проверка документов</p>
           <p className={bento.text}>Проверено {stageChecked} из {stageDocs.length}</p>
@@ -290,7 +297,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           <a className={styles.primary} href="/portal?view=docs" data-stage-documents-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>Проверить документ</a>
         </div>
       </BentoCell>}
-      <BentoCell span={{ md: 6, lg: 4 }} tone={stageDocs.length ? "plain" : "action"} className={styles.stageReminders} data-stage-reminders data-reminders-on={remindersOn || undefined}>
+      <BentoCell span={{ md: 6, lg: 4 }} tone={stageDocs.length ? "plain" : "action"} art="bell" className={styles.stageReminders} data-stage-reminders data-reminders-on={remindersOn || undefined}>
         <div className={bento.body}>
           <p className={bento.heading}>Напоминания о сроках</p>
           <p className={bento.text}>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</p>
