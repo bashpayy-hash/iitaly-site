@@ -16,7 +16,6 @@ import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParamet
 import { plainClick } from "./PortalStageLineup";
 import { PlainTerms } from "./PlainTerms";
 import { STAGE_PLAIN, stepActionLabel } from "./plainWords";
-import { BellRing, Coins, Compass, FileCheck2, GraduationCap, KeyRound, Mail, Plane, Stamp, type LucideIcon } from "lucide-react";
 import { Bento, BentoCell, bento } from "@/components/ui/Bento";
 import path from "./portal-path.module.css";
 
@@ -61,10 +60,6 @@ function dayWord(days: number) {
    Веспи что-то делает, с анимациями»). */
 const STAGE_SCENE: Record<PortalStageKey, StageSceneName> = {
   start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys",
-};
-/* Значок этапа в бенто — тот же предмет, что в сцене этапа. */
-const STAGE_ICON: Record<PortalStageKey, LucideIcon> = {
-  start: Compass, education12: GraduationCap, docs: Stamp, apply: Mail, dsu: Coins, visa: Plane, arrival: KeyRound,
 };
 
 export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings, locked }: Props) {
@@ -180,11 +175,13 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
         {/* Owner, 15 Nov: «анимация лагучая… стык был ровный». The loop now
             wraps on the empty road (Vespi gone, nothing moves), and the poster
-            — Vespi on the road — is its frame 110: start there. Owner, 16 Nov:
+            — Vespi on the road — is its frame 105: start there. Owner, 16 Nov:
             «здесь всё ещё есть проблема» — Vespi slowed to a quarter speed at
             the old seam and then shot off; that stretch is retimed to a steady
-            speed (design/illustrations/motion-2026-11-17.json). */}
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={110.5 / 30} />
+            speed (design/illustrations/motion-2026-11-17.json). Owner, 17 Nov:
+            «какое-то время просто стоят» — the empty road between rides lasted
+            2.6 s; it now passes up to 3.8× faster, the ride itself untouched. */}
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={105.5 / 30} />
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>
@@ -254,7 +251,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         шагов нет (owner, 4 Nov: ничего не показано дважды). */}
     {stagePage && <Bento as="div" className={styles.stageBody} data-portal-overview data-stage-bento>
       {selected && <BentoCell span={{ md: 6, lg: 7 }} tone="media" className={styles.stageMedia}><StageScene name={STAGE_SCENE[stageKey(selected.id)]} className={styles.stageScene} priority /></BentoCell>}
-      {selected && <BentoCell span={{ md: 6, lg: 5 }} icon={STAGE_ICON[stageKey(selected.id)]} className={styles.stageSummary} data-stage-summary>
+      {selected && <BentoCell span={{ md: 6, lg: 5 }} className={styles.stageSummary} data-stage-summary>
         <div className={styles.stageSummaryCopy}>
           <p className={styles.stageCount}><strong>{savedStampCount} из {ordered.length}</strong> <span>{doneWord(ordered.length)}</span></p>
           <h1 id="portal-overview-heading" tabIndex={-1}>{selected.title}</h1>
@@ -284,7 +281,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           : <PortalPageLink href="/portal">К моему плану</PortalPageLink>}
       </nav>}
       </BentoCell>
-      {stageDocs.length > 0 && <BentoCell span={{ md: 6, lg: 4 }} tone="action" icon={FileCheck2} className={styles.stageDocs} data-stage-documents>
+      {stageDocs.length > 0 && <BentoCell span={{ md: 6, lg: 4 }} tone="action" className={styles.stageDocs} data-stage-documents>
         <div className={bento.body}>
           <p className={bento.heading}>Проверка документов</p>
           <p className={bento.text}>Проверено {stageChecked} из {stageDocs.length}</p>
@@ -293,7 +290,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           <a className={styles.primary} href="/portal?view=docs" data-stage-documents-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>Проверить документ</a>
         </div>
       </BentoCell>}
-      <BentoCell span={{ md: 6, lg: 4 }} tone={stageDocs.length ? "plain" : "action"} icon={BellRing} className={styles.stageReminders} data-stage-reminders data-reminders-on={remindersOn || undefined}>
+      <BentoCell span={{ md: 6, lg: 4 }} tone={stageDocs.length ? "plain" : "action"} className={styles.stageReminders} data-stage-reminders data-reminders-on={remindersOn || undefined}>
         <div className={bento.body}>
           <p className={bento.heading}>Напоминания о сроках</p>
           <p className={bento.text}>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</p>

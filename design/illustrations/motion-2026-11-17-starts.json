@@ -1,0 +1,106 @@
+{
+ "date": "2026-11-17",
+ "request": "Owner, phone screenshots of the home page and the cabinet: «Есть всё ещё проблема того, что анимации идут не сразу и какое-то время просто стоят».",
+ "diagnosis": {
+  "start": "Each loop asked for its video only after the page's load event, which also waits for every other image and font; on a phone emulation (iPhone viewport, 9 Mbit/s, 60 ms) the scenes started moving 1.3–2.5 s after opening.",
+  "stills": "Inside the loops, measured as frames where under 0.15 % of the picture changes by more than 12 levels: the Tuscan ride stood 4.5 s per lap (empty road 2.6 s, then Vespi tiny in the distance); the loggia on /plan began at frame 0 where Vespi barely moves and turned the page only at 3.7 s; the belvedere and the café began with 0.7–1 s of stillness.",
+  "cut_rejected": "The empty road is not static: a patch of the road on the left keeps changing slowly (a trace of the old seam), so cutting frames out gave a 1.6/255 jump against 0.04–0.12 steps."
+ },
+ "fix": [
+  "LivingLandscape requests the video as soon as its own scene image has loaded (or on load, whichever comes first), so the rest of the page no longer holds the loop back; if autoplay is refused (iOS Low Power Mode), the loop starts on the first touch.",
+  "Tuscan ride: the stretch from Vespi far away to just before he enters again (source 230 → 45 of the next lap) plays up to 3.8× faster with cosine ramps, the short texture flicker in source frames 3–12 at normal speed. Exact-time motion-compensated frames as on 16 Nov. 252 frames, 8.4 s (was 329, 10.97 s); the longest near-still run is 1.6 s (was 4.5 s). The restart stays on the empty road. Poster: frame 105 (the same source frame as before), startAt 105.5/30.",
+  "Loggia (/plan): startAt 104.5/30, just before Vespi turns the page; café (home hero): 24.5/30; belvedere (home FAQ): 18.5/30. Their videos are unchanged; each poster is now that frame of its 2400/2560 video, decoded with the BT.709 matrix (PSNR to the old posters 39 dB, as sharp)."
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/motion/tuscany-ride-2400.mp4",
+   "bytes": 3840070,
+   "sha256": "326283331a1406acbee1f0b9ef7d6f5b69f462dd5686ca82656a7d5ef1443151"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-1600.mp4",
+   "bytes": 1838803,
+   "sha256": "e811201dacfe5c6c41250722e4966d9d5b030600571761d41c7b062ea0f5d6d5"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-960.mp4",
+   "bytes": 502320,
+   "sha256": "8491ecccfffa740e06cb9ae4fbaa65a5cc39af39547e2548d83563cc3e636c2a"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-960.webm",
+   "bytes": 490616,
+   "sha256": "fd7ba4615cf33e02af0b02cfe86ae38c1dc1624cfaf6db69f2eea763d6aba7ac"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-2400.webp",
+   "bytes": 402498,
+   "sha256": "45d6b1d5425d5b6580e568597694ca02c360f45c9cab26fe1995d57207397ef6"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-1600.webp",
+   "bytes": 219522,
+   "sha256": "8a0154f6cfd1e85d9ee62d74892384cab8936a998b51a7e507c52e7ab8d6bc21"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-960.webp",
+   "bytes": 110038,
+   "sha256": "8cdca4a784a7c3b95986939dcdeca112c831bd20ff7f4f9f869943abfe143e68"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-2400.webp",
+   "bytes": 228634,
+   "sha256": "0a7744b7576df2f5dd9ad8ec152ff968d84bf56b4474d2b86fd0c7e163626652"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-1600.webp",
+   "bytes": 151458,
+   "sha256": "1fc9047c40fb31e7b48e8cb804c7bad3a90700fc99d6e250b0f6243e0e9a1b3c"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-1024.webp",
+   "bytes": 85478,
+   "sha256": "cc25e0ba214695b8050de3044c1e205db9b6264a01185a3dccb39ca4d42fb16a"
+  },
+  {
+   "file": "public/illustrations/landscapes/bologna-cafe-640.webp",
+   "bytes": 45286,
+   "sha256": "6d762cd6065fde866d7eccff13d6e71bd4027c1750ca3ecbbd9c589e0f790863"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-2400.webp",
+   "bytes": 332556,
+   "sha256": "00e6bdf7f977bc265a838deaee755c7d57754b44e0fa59a10efff14a82489ac2"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-1600.webp",
+   "bytes": 228718,
+   "sha256": "526c4e04b5daa0b70d1d218eddb61a661b5bc96fa1bb545af2a4f2ac753aeff1"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-1024.webp",
+   "bytes": 126738,
+   "sha256": "effcd919fbe1134f4ce63eb7236aff158e6a1feaf1c97394484f5935f642df65"
+  },
+  {
+   "file": "public/illustrations/landscapes/belvedere-640.webp",
+   "bytes": 63734,
+   "sha256": "e522793cfbb58c866a53a70c01c1129697ad5af3e0c10c420f51f7c546fec8bb"
+  },
+  {
+   "file": "public/illustrations/scenes/plan-loggia-2560.webp",
+   "bytes": 256882,
+   "sha256": "019982eff36a68c5194e96d66f3244e1af5abbd5062494b37ceabf142ef84127"
+  },
+  {
+   "file": "public/illustrations/scenes/plan-loggia-1920.webp",
+   "bytes": 186768,
+   "sha256": "9677d8d475a62208cd5fbf91e25b7bdc1425dca8646248e2e5fd177d929b7d15"
+  },
+  {
+   "file": "public/illustrations/scenes/plan-loggia-960.webp",
+   "bytes": 63188,
+   "sha256": "b2e37be0e86a4bf281c5134672151bb7ea3d3837c05bd6fba5cdad919723a844"
+  }
+ ]
+}

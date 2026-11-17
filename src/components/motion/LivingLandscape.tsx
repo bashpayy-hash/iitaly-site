@@ -42,10 +42,19 @@ import styles from "./living-landscape.module.css";
  * принимал за главный элемент страницы, и LCP кабинета ждал его загрузки.
  *
  * Петля не спорит с картинкой за канал (11 Nov, owner: «максимально
- * оптимизируй сайт»): файл видео запрашивается только после события load
- * страницы, когда картинка сцены, стили и шрифты уже пришли. Раньше 200–400 КБ
- * видео качались одновременно с главной картинкой, и на медленной сети она
- * появлялась позже (Lighthouse, телефон: загрузка картинки главной 3,3 с).
+ * оптимизируй сайт»): раньше 200–400 КБ видео качались одновременно с главной
+ * картинкой, и на медленной сети она появлялась позже (Lighthouse, телефон:
+ * загрузка картинки главной 3,3 с). Поэтому видео ждало события load всей
+ * страницы. Но load ждёт и всё остальное — другие картинки, шрифты, — и
+ * сцена стояла картинкой лишние секунды (owner, 17 Nov: «анимации идут не
+ * сразу и какое-то время просто стоят»). Теперь видео запрашивается, как
+ * только пришла картинка этой сцены (её `<img>` рядом), или по load, если
+ * он наступил раньше: картинка по-прежнему первая, но остальная страница
+ * петлю больше не держит.
+ *
+ * Если автозапуск запрещён (режим энергосбережения iOS), петля начинается
+ * с первого касания страницы: касание — это жест пользователя, после него
+ * play() разрешён.
  *
  * «Меньше движения», Save-Data, сеть 2G и без JS — только картинка. За
  * экраном петля стоит на паузе на текущем кадре и продолжает с него.
@@ -104,12 +113,21 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
       try { draw(); } catch { hide(); return; }
       next();
     }
+    let waitingForGesture = false;
+    const onGesture = () => { waitingForGesture = false; start(); };
     const start = () => {
       if (!shown || running || !visible) return;
       running = true;
       // Автоплей запрещён (режим энергосбережения iOS) — на холсте остаётся
-      // кадр-картинка, и это то же самое, что видит «меньше движения».
-      node.play().catch(() => { running = false; cancel(); });
+      // кадр-картинка, и это то же самое, что видит «меньше движения»; с
+      // первым касанием страницы петля пробует ещё раз.
+      node.play().catch(() => {
+        running = false; cancel();
+        if (!waitingForGesture) {
+          waitingForGesture = true;
+          window.addEventListener("pointerdown", onGesture, { once: true, passive: true });
+        }
+      });
       next();
     };
     const stop = () => { running = false; cancel(); node.pause(); };
@@ -126,11 +144,17 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
       node.preload = "auto";
       node.src = node.canPlayType('video/mp4; codecs="avc1.640028"') ? `${base}-${pick(list(widthKey))}.mp4` : `${base}-${pick(list(webmKey))}.webm`;
     };
+    // Картинка этой сцены — соседний <img> (постер); видео идёт сразу за ней.
+    const poster = paint.parentElement?.querySelector("img");
+    let requested = false;
+    const requestOnce = () => { if (requested) return; requested = true; request(); };
     const load = () => {
       if (armed) return;
       armed = true;
-      if (document.readyState === "complete") request();
-      else window.addEventListener("load", request, { once: true });
+      if (document.readyState === "complete" || !poster || (poster.complete && poster.naturalWidth > 0)) { requestOnce(); return; }
+      poster.addEventListener("load", requestOnce, { once: true });
+      poster.addEventListener("error", requestOnce, { once: true });
+      window.addEventListener("load", requestOnce, { once: true });
     };
     // Кадр-картинка готов: холст размером с кадр, кадр на холст, холст и
     // спрятанное под ним видео — в одной задаче, то есть в одном кадре экрана.
@@ -173,7 +197,10 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     return () => {
       near.disconnect();
       seen.disconnect();
-      window.removeEventListener("load", request);
+      window.removeEventListener("load", requestOnce);
+      window.removeEventListener("pointerdown", onGesture);
+      poster?.removeEventListener("load", requestOnce);
+      poster?.removeEventListener("error", requestOnce);
       node.removeEventListener("loadeddata", reveal);
       node.removeEventListener("seeked", reveal);
       node.removeEventListener("error", onError);

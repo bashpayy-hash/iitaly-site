@@ -336,20 +336,22 @@
   .header[data-portal-header=true] .mobileMenu { display:block; }
   .header[data-portal-header=true] .navInner > div { margin-left:auto; }
 }
+/* Owner, 17 Nov 2026 (phone): «иногда меню в личном кабинете на телефоне
+   выглядит сжатым». Logo, three icon-over-caption buttons at 10–11 px and
+   «Меню +» shared one 60 px row of a 390 px screen. On phones the cabinet's
+   three actions now take their own row under the logo: equal thirds, words
+   at 14 px, no icons (owner, same day: icons read as AI slop). The logo and
+   «Меню» keep the first row. */
 @media(max-width:600px) {
-  .header[data-portal-header=true] .navInner { padding-inline:12px; gap:8px; }
-  .header[data-portal-header=true] .navInner > div { gap:0; }
-  /* Owner, 14 Nov 2026 (UX audit, item 8): no bare icons in the cabinet
-     header. «Помощник» keeps its caption under the icon, like «Документы»
-     and «Настройки» beside it (workspace.module.css). */
-  .header[data-portal-header=true] [data-portal-assistant] { flex-direction:column; gap:2px; min-width:48px; padding:4px 3px; border-radius:12px; font-size:11px; line-height:1.2; letter-spacing:-.01em; }
-  .header[data-portal-header=true] [data-portal-assistant] svg { width:18px; height:18px; }
+  .header[data-portal-header=true] .navInner { flex-wrap:wrap; height:auto; padding:8px 16px; column-gap:8px; row-gap:6px; }
+  .header[data-portal-header=true] .navInner > div { order:3; flex:1 0 100%; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-left:0; }
+  .header[data-portal-header=true] .navInner > div > a { display:flex; flex-direction:row; align-items:center; justify-content:center; width:auto; min-width:0; min-height:40px; padding:8px 6px; border:1px solid #E2DDD3; border-radius:12px; background:#FFFDF9; color:#241F1C; font-size:14px; font-weight:500; line-height:1.2; letter-spacing:-.01em; white-space:nowrap; }
+  .header[data-portal-header=true] .navInner > div > a[aria-current="page"] { border-color:#241F1C; }
+  .header[data-portal-header=true] .navInner > div > a svg { display:none; }
+  .header[data-portal-header=true] .navInner > div > a span { position:static; display:inline; width:auto; height:auto; overflow:visible; clip-path:none; }
+  .header[data-portal-header=true] .mobileMenu { margin-left:auto; }
 }
-@media(max-width:374px) { .header[data-portal-header=true] [data-portal-assistant] { font-size:10px; } }
-@media(max-width:359px) {
-  .header[data-portal-header=true] [data-portal-assistant] { min-width:40px; }
-  .header[data-portal-header=true] [data-portal-assistant] span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-}
+@media(max-width:359px) { .header[data-portal-header=true] .navInner > div > a { font-size:13px; padding-inline:4px; } }
 
 .header[data-portal-header=true] .mobileMenu summary { display:flex; align-items:center; min-height:44px; gap:8px; cursor:pointer; font-size:13px; list-style:none; }
 .header[data-portal-header=true] .mobileMenu summary::-webkit-details-marker { display:none; }

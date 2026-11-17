@@ -1,6 +1,5 @@
 "use client";
 
-import { Lock, LockOpen } from "lucide-react";
 import { BentoCell, bento, type BentoSpan } from "@/components/ui/Bento";
 import { paidDeviceNow, usePaidDevice } from "@/components/access/usePaidDevice";
 import { useWallPurchase, type WallPlace } from "@/components/access/useWallPurchase";
@@ -12,21 +11,23 @@ import styles from "./guide-steps.module.css";
    внутри шагов; в обзоре темы и визы её не было видно. Теперь обзор говорит
    её прямо: слева — что открыто сейчас, справа — что откроется после оплаты,
    и та же покупка, что в стене шага. На оплаченном устройстве ячейка говорит,
-   почему открыто всё. */
+   почему открыто всё.
+   Без кружков с замками (owner, 17 Nov: «убери иконки, это показатель ИИ-слопа»):
+   сторону называет слово и цвет ярлыка. */
 export function GuideDose({ place, free, paid: paidText, span }: { place: WallPlace; free: string; paid: string; span: BentoSpan }) {
   const paid = usePaidDevice();
   const wall = useWallPurchase(place, !paidDeviceNow());
-  if (paid) return <BentoCell span={span} tone="quiet" icon={LockOpen} data-guide-dose="paid">
+  if (paid) return <BentoCell span={span} tone="quiet" data-guide-dose="paid">
     <p className={bento.text}>Всё открыто: на этом устройстве выполнен вход в кабинет.</p>
   </BentoCell>;
   return <BentoCell span={span} data-guide-dose="guest">
     <div className={styles.dose}>
       <div className={styles.doseSide} data-dose="free">
-        <p className={styles.doseLabel}><span aria-hidden="true"><LockOpen size={15} strokeWidth={1.9} /></span>Бесплатно</p>
+        <p className={styles.doseLabel}>Бесплатно</p>
         <p className={styles.doseText}>{free}</p>
       </div>
       <div className={styles.doseSide} data-dose="paid">
-        <p className={styles.doseLabel}><span aria-hidden="true"><Lock size={15} strokeWidth={1.9} /></span>С маршрутом</p>
+        <p className={styles.doseLabel}>С маршрутом</p>
         <p className={styles.doseText}>{paidText}</p>
       </div>
     </div>
