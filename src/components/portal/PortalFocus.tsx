@@ -180,8 +180,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
         {/* Owner, 15 Nov: «анимация лагучая… стык был ровный». The loop now
             wraps on the empty road (Vespi gone, nothing moves), and the poster
-            — Vespi on the road — is its frame 133: start there. */}
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={133.5 / 30} />
+            — Vespi on the road — is its frame 110: start there. Owner, 16 Nov:
+            «здесь всё ещё есть проблема» — Vespi slowed to a quarter speed at
+            the old seam and then shot off; that stretch is retimed to a steady
+            speed (design/illustrations/motion-2026-11-17.json). */}
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={110.5 / 30} />
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>

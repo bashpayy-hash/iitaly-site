@@ -1943,3 +1943,46 @@ Owner, two screenshots. /universities on a large monitor: «здесь в цел
     handover stays invisible. Still areas match the old poster within
     0.33/255; sizes and bitrates are the old ones.
   - Passport: design/illustrations/motion-2026-11-15.json.
+
+## A map that changes smoothly, a ride at one speed, a calmer plan · 17 November 2026
+
+Owner, 16 Nov. /universities: «и здесь нужна нормальная анимация, не ровно
+как то». /portal: «и здесь всё ещё есть проблема, в чате уже было скинуто, как
+оно чинится». /prices: «нужен ли здесь дубляж». /plan: «не нагружает ли это
+пользователя, вот эти пространства странноватые».
+
+- **The map.** Choosing a city used to swap everything in one frame: the pin
+  jumped from 4.5 to 11, a neighbour lost its drawing, labels leapt to new
+  places. Now the new state appears over the old one, transform and opacity
+  only (`university-ui.module.css`, `.map*`):
+  - the chosen pin grows from its old size to 11 (320 ms,
+    `cubic-bezier(.22,1,.36,1)`) while it fades in (160 ms);
+  - the old state — the dark pin, a neighbour's drawing — is drawn once more
+    as an aria-hidden ghost under the cities and shrinks toward the new size
+    as it fades, so a neighbour visibly folds into a dot;
+  - a label that keeps its anchor slides to its new place; one that changes
+    side, or appears, fades in 80 ms later while the old one fades out.
+  - Pin sizes, label placement, coordinates, roles and handlers are the same;
+    `prefers-reduced-motion` stops it all through the global rule.
+  - The city panel under the map enters like the site's cards: up 8 px with
+    a fade, 320 ms, on every change of city but not on load.
+- **The ride.** The 7 November rule is a steady speed, and the seam fix of
+  15 November kept the old clip's braking: tracking the red helmet, Vespi
+  rode at 5–6 px a frame, slowed to 1–1.7 over half a second, then shot off
+  at 7.5. That stretch (old frames 72–158) is retimed to an even 5.6 → 7.3,
+  59 frames instead of 86. Each frame is interpolated at its exact time, not
+  rounded to a grid, so the speed does not flutter. The wrap on the empty
+  road is unchanged; the loop is now 10.97 s, the poster is frame 110 at the
+  old poster's spot. Passport: design/illustrations/motion-2026-11-17.json.
+- **/prices.** «Живой человек» stood three times in a row: at the end of
+  «Что система делает сама» («…это отдельная услуга ниже»), in the heading,
+  and in the line under it. The pointer sentence is gone; the line under the
+  heading now says «По желанию, в 10 990 ₸ не входит», so the 16 900 ₸ card
+  no longer reads as a hidden surcharge after «Без доплат».
+- **The opened plan step.** The title sat beside a 96 px picture with an
+  empty band under it, then a lone «Шаг 1 из 12», then text in three widths
+  (666, 1096, 1096 px). The position now sits in the label («Образование ·
+  шаг 1 из 12»; the status line stays for screen readers), the picture keeps
+  its column at the top right, and the description starts 16 px under the
+  title in one column of at most 680 px. Phones keep the full width; the
+  picture there is 72 px, as in the closed tiles.

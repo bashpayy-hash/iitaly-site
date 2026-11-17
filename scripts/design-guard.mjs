@@ -285,7 +285,13 @@ const approvedRevisions = {
   // it is selected, a larger invisible tap circle, and the label width model
   // 6.1 → 7.6 per letter (measured). City coordinates, the outline of Italy,
   // roles and handlers are unchanged; italy.ts stays byte-exact.
-  'src/components/universities/ItalyMap.tsx': '0295f8f82986d35dabe2d9ca2ee0c042b28ba92536821a799bed04316752c6d8',
+  // 2026-11-16 (owner, /universities map: «и здесь нужна нормальная анимация,
+  // не ровно как то»). Motion only: on a new selection the pin grows from its
+  // old size, the previous state is drawn once more as an aria-hidden ghost
+  // that shrinks and fades, labels slide or cross-fade (CSS keyframes,
+  // transform and opacity). Pin sizes, label placement (mapLabels.ts is
+  // untouched), coordinates, roles, handlers and the hit circles are the same.
+  'src/components/universities/ItalyMap.tsx': 'e7140dfc2483ba2880150c30362f6f29e5708fcccbab583dfb20635744ffdd52',
   'src/lib/mapLabels.ts': '7a8158c51e84aadc041908df1affc5e1d29a70468280419325a2e430e9db5765',
   // 2026-11-12 (owner: «мы даём слишком много информации бесплатно… надо
   // продумать, где именно сколько дать, чтобы уже брали и покупали»; «Да,

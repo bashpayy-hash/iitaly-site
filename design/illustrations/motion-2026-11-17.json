@@ -1,0 +1,57 @@
+{
+ "date": "2026-11-17",
+ "request": "Owner, /portal screenshot, 16 Nov: «и здесь всё ещё есть проблема, в чате уже было скинуто, как оно чинится, поищи тот мд файл». The principle is DESIGN.md «Loops without jerks» (7 Nov): Vespi rides through at a steady speed, the braking thinned.",
+ "diagnosis": {
+  "speed": "Tracked Vespi's red helmet in every frame (960 px). He rode at 5–6 px per frame, slowed to 1.0–1.7 px per frame over frames 119–133 (the end of the old clip, where the generated ride brakes, plus the six bridge frames of 15 Nov), then shot off to 7.5 px per frame. On screen: a stall, then a lurch.",
+  "rest": "The wrap on the empty road (15 Nov) was clean and stays as it was; the light never changes."
+ },
+ "fix": [
+  "Kept the lossless 15 Nov master (2400 × 1810, YUV, BT.709). Frames 0–71 and 158–355 are untouched.",
+  "Frames 72–158 are retimed: Vespi's speed now runs smoothly from 5.6 to 7.3 px per frame (cubic ease between the measured speeds at both ends), 59 frames instead of 86.",
+  "Each new frame is taken at its exact fractional source time with motion-compensated interpolation (ffmpeg minterpolate, mci/aobmc/bidir, two frames either side), not rounded to a frame grid, so the speed does not jitter. Where the needed time falls within 0.03 px of a source frame, the source frame is used as is.",
+  "Same encode as 15 Nov: one keyframe at the restart (x264 keyint 400, scenecut 0; VP9 g 400), two-pass at the old bitrates, BT.709 tags, faststart. 329 frames, 10.967 s at 30 fps.",
+  "The poster is frame 110 (Vespi at the spot of the old poster, helmet x 317.6 against 318.8), decoded with the BT.709 matrix; LivingLandscape starts at 110.5/30."
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/motion/tuscany-ride-2400.mp4",
+   "bytes": 5039491,
+   "sha256": "a7d378efcebc6d3bf9d3859b584bfdd868c420962b463cf17e60686890219172"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-1600.mp4",
+   "bytes": 2415488,
+   "sha256": "6857a5d41f1659760b4e12278143b26ae41cc9ccbbf4b6c72129d629e52c9d43"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-960.mp4",
+   "bytes": 661231,
+   "sha256": "3aeab89f0b2f984832833729913cce5f475437e07c855f4a29464328b15bdfb8"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-960.webm",
+   "bytes": 589197,
+   "sha256": "5761e65e806bc5df0d6b43b895da988626e491dd5609e90ebebb3aab928bd6eb"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-2400.webp",
+   "bytes": 405448,
+   "sha256": "595a5925367309c2fcf350c7b3c06f45b9be9d153c732647a2db5344658cfef0"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-1600.webp",
+   "bytes": 220208,
+   "sha256": "ed8bcd8b9ff9ca98a72eab4d0bc492b8fbdd16c0ed82b05f4fdf9cb5c25238e9"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-960.webp",
+   "bytes": 109952,
+   "sha256": "a2a411f6f07a2369db934ad65ccab31fc7561ff21c392a3d373f3a73a1a7ada6"
+  }
+ ],
+ "measured": {
+  "speed_px_per_frame_960": "frames 60–150, 4-frame mean: 5.6 → 7.5 without a dip (was 4.9 → 1.2 → 7.5); after frame 150 it falls as Vespi rides away into the distance, as before",
+  "restart_step": "0.39 (2400) – 0.87 (960) on the empty road, unchanged",
+  "largest_step": "1.6–1.9 at frame 109: Vespi passing the old seam, where the grass and hill texture of the two old clip ends differ; the light (mean level) moves under 0.1/255"
+ }
+}

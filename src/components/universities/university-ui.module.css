@@ -178,6 +178,27 @@
 .cityShortcut select { min-height: 46px; max-width: 100%; min-width: 240px; border: 1px solid #d7d3cd; border-radius:16px; padding: 10px 36px 10px 12px; background: #fff; color: #141413; font: inherit; font-size: 16px; }
 .cityShortcut select:focus-visible { outline: 2px solid #141413; outline-offset: 4px; }
 .cityResult { scroll-margin-top: 88px; }
+/* Смена города под картой: панель входит так же, как карточки сайта —
+   подъём на 8px с проявлением (owner, 16 Nov 2026: «нужна нормальная
+   анимация, не ровно как-то»). */
+.cityEnter { animation: cityEnter 320ms cubic-bezier(.22,1,.36,1); }
+@keyframes cityEnter { from { opacity: 0; transform: translateY(8px); } }
+
+/* Карта: смена выбранного города. Только transform и opacity; при «меньше
+   движения» общее правило globals.css сводит анимации к нулю. Новый пин
+   растёт из прежнего размера (--map-from), призрак старого уходит к новому
+   (--map-to) и тает за 160 мс, подпись переезжает (--map-dx/--map-dy). */
+.mapPinGrow { animation: mapPinScale 320ms cubic-bezier(.22,1,.36,1), mapFadeIn 160ms cubic-bezier(.4,0,.2,1); }
+.mapPinFade { animation: mapFadeIn 160ms cubic-bezier(.4,0,.2,1); }
+.mapGhost { opacity: 0; animation: mapGhostScale 320ms cubic-bezier(.22,1,.36,1), mapFadeOut 160ms cubic-bezier(.4,0,.2,1); }
+.mapLabelGhost { opacity: 0; animation: mapFadeOut 160ms cubic-bezier(.4,0,.2,1); }
+.mapLabelSlide { animation: mapLabelSlide 320ms cubic-bezier(.22,1,.36,1); }
+.mapLabelFade { animation: mapFadeIn 200ms cubic-bezier(.4,0,.2,1) 80ms backwards; }
+@keyframes mapPinScale { from { transform: scale(var(--map-from)); } }
+@keyframes mapGhostScale { to { transform: scale(var(--map-to)); } }
+@keyframes mapFadeIn { from { opacity: 0; } }
+@keyframes mapFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes mapLabelSlide { from { transform: translate(var(--map-dx), var(--map-dy)); } }
 @media (max-width: 639px) { .cityShortcut { align-items: stretch; gap: 8px; } .cityShortcut label, .cityShortcut select { width: 100%; } }
 
 /* User-requested in-portal selection reuses the complete catalogue. Keep these

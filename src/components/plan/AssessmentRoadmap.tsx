@@ -46,7 +46,11 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
   return <div className={styles.result} data-assessment-route>
     <PlanStepTiles steps={plan.steps.map((item, position) => ({ title: item.t, line: item.summary || item.p, locked: !planStepOpen(position) }))} index={index} href={href} onSelect={select}
       detail={position => position === index && <section className={styles.step} data-instruction-point={index + 1} data-step-locked={!open || undefined} aria-labelledby="plan-reading-heading">
-        <p className={styles.stepPosition} role="status">Шаг {index + 1} из {plan.steps.length}{open ? "" : <> · <Lock size={12} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</p>
+        {/* Позиция «шаг 1 из 12» видна в ярлыке плитки (owner, 16 Nov: «не
+            нагружает ли это пользователя, вот эти пространства странноватые»):
+            одинокая строка над описанием оставляла пустую полосу под
+            заголовком. Здесь она остаётся для чтения с экрана. */}
+        <p className={styles.srOnly} role="status">Шаг {index + 1} из {plan.steps.length}{open ? "" : <> · <Lock size={12} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</p>
         <h2 id="plan-reading-heading" className={styles.srOnly}>{step.t}</h2>
         {open ? <>
           <p className={styles.summary}>{step.summary || step.p}</p>

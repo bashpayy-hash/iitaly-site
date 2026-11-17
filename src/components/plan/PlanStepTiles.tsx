@@ -63,7 +63,7 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
                     if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                     event.preventDefault(); onSelect(position);
                   }}>
-                  <span className={styles.label}><span className={styles.srOnly}>Шаг {position + 1}. </span>{eyebrow}{step.locked && <> · <Lock size={11} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</span>
+                  <span className={styles.label}><span className={styles.srOnly}>Шаг {position + 1}. </span>{eyebrow}{selected && <span aria-hidden="true"> · шаг {position + 1} из {steps.length}</span>}{step.locked && <> · <Lock size={11} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</span>
                   <span className={styles.title}>{step.title}</span>
                   <span className={styles.line}>{step.line}</span>
                   <span className={styles.pill}>{selected ? "Открыт" : "Открыть шаг"}</span>

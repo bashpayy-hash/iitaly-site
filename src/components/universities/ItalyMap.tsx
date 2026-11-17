@@ -1,13 +1,65 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { CITIES, CITY_ICONS, ITALY_PATH, MAP_H_PX, MAP_W_PX, type CityId } from "@/data/italy";
 import { PIN_GLOW, pinRadius, pinRoom, pinYields, placeAllLabels } from "@/lib/mapLabels";
+import ui from "./university-ui.module.css";
+
+type PinState = "active" | "yield" | "rest";
+
+const pinState = (id: CityId, activeCity: CityId | null): PinState =>
+  id === activeCity ? "active" : pinYields(id, activeCity) ? "yield" : "rest";
+
+// Пин города в одном состоянии: свечение, тень, кружок, рисунок или точка.
+// Им же рисуется «уходящее» состояние при смене выбора (см. ниже).
+function PinBody({ id, state, r }: { id: CityId; state: PinState; r: number }) {
+  const c = CITIES[id];
+  const active = state === "active";
+  const big = (c.tier === 1 || active) && state !== "yield";
+  const gs = r * 2;
+  return (
+    <>
+      {active && <circle cx={c.x} cy={c.y} r={r + PIN_GLOW} fill="#e63946" opacity={0.22} />}
+      <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#000" opacity={0.3} />
+      <circle
+        cx={c.x}
+        cy={c.y}
+        r={r}
+        fill={active ? "#e63946" : "rgba(34, 30, 24,.92)"}
+        stroke={active ? "#ffb59f" : "#b5b1ab"}
+        strokeWidth={active ? 1.4 : 1.1}
+        filter={active ? "url(#mapPinGlow)" : undefined}
+      />
+      {big ? (
+        <g
+          transform={`translate(${c.x - gs / 2},${c.y - gs / 2}) scale(${(gs / 22).toFixed(3)})`}
+          fill={active ? "#fff" : "#e2ded8"}
+          dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
+        />
+      ) : (
+        state !== "yield" && <circle cx={c.x} cy={c.y} r={2} fill="#b5b1ab" />
+      )}
+    </>
+  );
+}
 
 // Внешний вид — как на старом сайте: тёмная карта-ночь, тонкие линии,
 // градиент моря и суши, лёгкое свечение у активного пина. Не перегружать
 // толстыми чёрными обводками, как в остальном брутализме сайта — карта
 // нарочно другая по фактуре (см. .map-card/.it-shape в старом index.html).
+//
+// Смена выбора (owner, 16 Nov 2026: «здесь нужна нормальная анимация, не
+// ровно как-то»). Раньше пины, рисунки и подписи перескакивали в новое
+// состояние за один кадр. Теперь новое состояние проявляется поверх
+// старого, только transform и opacity:
+// - пин, который растёт (выбранный город), вырастает из прежнего размера;
+// - старое состояние (тёмный пин, рисунок соседа) рисуется призраком под
+//   картой городов и за 160 мс тает, уходя к новому размеру; так сосед
+//   «сжимается в точку», а не исчезает;
+// - подпись, сменившая место с той же привязкой, переезжает; сменившая
+//   привязку или новая — проявляется, старая тает.
+// Геометрия, роли и обработчики прежние. «Меньше движения» глушит всё
+// общим правилом в globals.css.
 export function ItalyMap({
   activeCity,
   onSelectCity,
@@ -18,7 +70,17 @@ export function ItalyMap({
   // ReadonlySet: карта только читает выборку и не должна её менять.
   matchedCities: ReadonlySet<CityId>;
 }) {
+  // Предыдущий выбор нужен, чтобы знать, откуда анимировать. Обновляется
+  // во время рендера (так React советует хранить «прошлые пропсы»); version
+  // перезапускает призраков при каждой смене.
+  const [trail, setTrail] = useState({ active: activeCity, previous: activeCity, version: 0 });
+  if (trail.active !== activeCity) {
+    setTrail({ active: activeCity, previous: trail.active, version: trail.version + 1 });
+  }
+  const previousCity = trail.previous;
+
   const labels = useMemo(() => placeAllLabels(activeCity), [activeCity]);
+  const previousLabels = useMemo(() => placeAllLabels(previousCity), [previousCity]);
   // Выбранный город рисуется последним, поверх соседей.
   const cityIds = useMemo(
     () =>
@@ -27,6 +89,13 @@ export function ItalyMap({
       ),
     [activeCity],
   );
+  // Города, у которых сменилось состояние пина или место подписи.
+  const changedPins = cityIds.filter((id) => pinState(id, previousCity) !== pinState(id, activeCity));
+  const leavingLabels = cityIds.filter((id) => {
+    const was = previousLabels[id];
+    const now = labels[id];
+    return was && (!now || now.anchor !== was.anchor);
+  });
 
   return (
     <svg
@@ -117,20 +186,50 @@ export function ItalyMap({
         <ellipse cx={120} cy={80} rx={150} ry={120} fill="#fff" opacity={0.05} />
       </g>
 
+      {/* Призраки прошлого выбора: под картой городов, тают за 160 мс. */}
+      <g key={trail.version} aria-hidden="true" pointerEvents="none">
+        {changedPins.map((id) => {
+          const was = pinRadius(id, previousCity);
+          const now = pinRadius(id, activeCity);
+          return (
+            <g key={id} className={ui.mapGhost} style={{ ...pinOrigin(id), "--map-to": now / was } as CSSProperties}>
+              <PinBody id={id} state={pinState(id, previousCity)} r={was} />
+            </g>
+          );
+        })}
+        {leavingLabels.map((id) => {
+          const was = previousLabels[id]!;
+          return (
+            <text key={id} className={ui.mapLabelGhost} {...labelProps(id, was, id === previousCity)}>
+              {CITIES[id].name}
+            </text>
+          );
+        })}
+      </g>
+
       {cityIds.map((id) => {
         const c = CITIES[id];
         const active = id === activeCity;
-        const yielding = pinYields(id, activeCity);
-        const big = (c.tier === 1 || active) && !yielding;
+        const state = pinState(id, activeCity);
         const dimmed = matchedCities.size > 0 && !matchedCities.has(id) && !active;
         // Размер — из mapLabels (там же объяснение): подписи и пины считают
         // столкновения по одним и тем же радиусам.
         const r = pinRadius(id, activeCity);
-        const gs = r * 2;
         // Зона нажатия больше рисунка: маленький пин 4,5 — это 8 пикселей на
         // телефоне. Круг до середины пути к соседу, но не больше 12.
         const hit = Math.max(r, Math.min(12, pinRoom(id) / 2 + 2));
         const label = labels[id];
+        const was = pinRadius(id, previousCity);
+        const wasState = pinState(id, previousCity);
+        // Растущий пин вырастает из прежнего размера; уменьшившийся просто
+        // проявляется: его сжатие показывает призрак.
+        const pinEnter = wasState === state ? undefined : was < r ? ui.mapPinGrow : ui.mapPinFade;
+        const wasLabel = previousLabels[id];
+        const labelEnter = !label || (wasLabel && wasLabel.x === label.x && wasLabel.y === label.y && wasLabel.anchor === label.anchor)
+          ? undefined
+          : wasLabel && wasLabel.anchor === label.anchor
+            ? ui.mapLabelSlide
+            : ui.mapLabelFade;
 
         return (
           <g
@@ -151,40 +250,19 @@ export function ItalyMap({
             }`}
           >
             <circle cx={c.x} cy={c.y} r={hit} fill="transparent" />
-            {active && <circle cx={c.x} cy={c.y} r={r + PIN_GLOW} fill="#e63946" opacity={0.22} />}
-            <ellipse cx={c.x} cy={c.y + r * 0.5} rx={r * 0.85} ry={r * 0.4} fill="#000" opacity={0.3} />
-            <circle
-              cx={c.x}
-              cy={c.y}
-              r={r}
-              fill={active ? "#e63946" : "rgba(34, 30, 24,.92)"}
-              stroke={active ? "#ffb59f" : "#b5b1ab"}
-              strokeWidth={active ? 1.4 : 1.1}
-              filter={active ? "url(#mapPinGlow)" : undefined}
-              className="transition-colors"
-            />
-            {big ? (
-              <g
-                transform={`translate(${c.x - gs / 2},${c.y - gs / 2}) scale(${(gs / 22).toFixed(3)})`}
-                fill={active ? "#fff" : "#e2ded8"}
-                dangerouslySetInnerHTML={{ __html: CITY_ICONS[id] }}
-              />
-            ) : (
-              !yielding && <circle cx={c.x} cy={c.y} r={2} fill="#b5b1ab" />
-            )}
+            <g key={state} className={pinEnter} style={{ ...pinOrigin(id), "--map-from": was / r } as CSSProperties}>
+              <PinBody id={id} state={state} r={r} />
+            </g>
             {label && (
               <text
-                x={label.x}
-                y={label.y}
-                textAnchor={label.anchor}
-                fontSize={c.tier === 1 ? 11.5 : 11}
-                fontWeight={active ? 700 : 600}
-                letterSpacing={0.2}
-                fill={active ? "#fff" : c.tier === 1 ? "#dcd8d2" : "#bab6b0"}
-                stroke="rgba(21, 17, 11,.85)"
-                strokeWidth={3}
-                strokeLinejoin="round"
-                paintOrder="stroke"
+                key={`${label.x},${label.y},${label.anchor}`}
+                className={labelEnter}
+                style={
+                  wasLabel
+                    ? ({ "--map-dx": `${wasLabel.x - label.x}px`, "--map-dy": `${wasLabel.y - label.y}px` } as CSSProperties)
+                    : undefined
+                }
+                {...labelProps(id, label, active)}
               >
                 {c.name}
               </text>
@@ -194,4 +272,24 @@ export function ItalyMap({
       })}
     </svg>
   );
+}
+
+// Масштаб пина — вокруг центра города (единицы карты = px в transform-origin).
+const pinOrigin = (id: CityId): CSSProperties => ({ transformOrigin: `${CITIES[id].x}px ${CITIES[id].y}px` });
+
+function labelProps(id: CityId, pos: { x: number; y: number; anchor: "start" | "middle" | "end" }, active: boolean) {
+  const c = CITIES[id];
+  return {
+    x: pos.x,
+    y: pos.y,
+    textAnchor: pos.anchor,
+    fontSize: c.tier === 1 ? 11.5 : 11,
+    fontWeight: active ? 700 : 600,
+    letterSpacing: 0.2,
+    fill: active ? "#fff" : c.tier === 1 ? "#dcd8d2" : "#bab6b0",
+    stroke: "rgba(21, 17, 11,.85)",
+    strokeWidth: 3,
+    strokeLinejoin: "round" as const,
+    paintOrder: "stroke",
+  };
 }
