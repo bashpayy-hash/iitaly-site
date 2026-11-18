@@ -1,0 +1,294 @@
+{
+ "date": "2026-11-18",
+ "request": "After the authentic Roman fragments (manifest mosaic-icons-2026-11-17.json) the owner said: «Слишком косит под старинность, не аутентично, сделай 10 вариантов». Of ten directions the owner picked the floor of the Galleria Vittorio Emanuele II: «Двигайся в сторону восьмого варианта, но там всё ещё напоминает очень сильно этот, просто как эмодзи, только в других стилях, но чтобы он и по структуре своей был другим». Then rounds of ten structures: «Не 4, а 10»; «1 и 4 нравятся… ещё 10 вариантов»; «3, 7, 9 классные, ещё 10 вариантов уже в их направлении»; «3, 4 и 8 нравится, ещё 10 вариантов»; and the choice: «Вставь седьмой вариант в сайт» — the Baroque strapwork cartouche crowned by a scallop shell.",
+ "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background; later icons with two finished icons of the set as image references so the cartouche stays the same",
+ "template": "In the style of the floor of the Galleria Vittorio Emanuele II in Milan, polished marble tesserae, freshly laid, seen straight from above: a Baroque strapwork cartouche with a cream ivory ground laid in rows, its edges curling outward into slate-blue scrolled straps at the sides and bottom, crowned at the top by a terracotta and ochre scallop shell with small slate-blue scrolls; no square, no circle. In the centre a flat symmetrical emblem: {motif}. Palette: cream ivory, warm ochre, terracotta red, slate blue, leaf green. Flat, not a 3D object, not an emoji, not a sticker. Transparent background. No text, no letters, no numbers.",
+ "processing": "crop to alpha (>4 %), centred on a transparent square plus 6 px; master WebP q92 in design/illustrations/source/mosaic/<name>.webp; site WebP q86 with alpha at 112 and 224 px (shown at 60 px, 48 px in phone rows).",
+ "use": {
+  "guide overview": "clock, coins, calendar, checklist (срок, стоимость, дедлайн, сложность); next step compass; note note; paid device unlocked",
+  "visa overview": "coins, seal, hourglass; VFS office; funds abacus"
+ },
+ "icons": [
+  {
+   "name": "clock",
+   "job": "bedb5476-f8c5-4d92-be7a-633bb1c257fc",
+   "motif": "a clock dial: an ochre ring, twelve terracotta hour marks, two slate-blue hands, no numerals",
+   "references": [
+    "73519f80-c62c-40fe-8e8b-80042bde86ef (coins, round five variant 7) and addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple, round five variant 7)"
+   ]
+  },
+  {
+   "name": "coins",
+   "job": "73519f80-c62c-40fe-8e8b-80042bde86ef",
+   "motif": "three coins in a small triangle, ochre-gold discs with a terracotta eight-pointed star",
+   "references": []
+  },
+  {
+   "name": "calendar",
+   "job": "58fbf6ec-0add-4795-bdcf-9c4406dcbef5",
+   "motif": "a small ochre stone tablet like a Roman calendar, a terracotta ribbon tab, rows of slate-blue dots, one dot terracotta",
+   "references": [
+    "6dc6260d-0b43-409f-8832-4d5f7c4891a1 (seal) and 4827139b-6346-482e-9003-a25a0aa2a94e (compass), redone because the first take looked like an app icon"
+   ]
+  },
+  {
+   "name": "checklist",
+   "job": "ebafe790-a282-4be2-8983-74a8b29db5db",
+   "motif": "an unrolled ochre scroll with three slate-blue lines, each starting with a terracotta tick",
+   "references": [
+    "6dc6260d-0b43-409f-8832-4d5f7c4891a1 (seal) and 4827139b-6346-482e-9003-a25a0aa2a94e (compass), redone because the first take looked like an app icon"
+   ]
+  },
+  {
+   "name": "compass",
+   "job": "4827139b-6346-482e-9003-a25a0aa2a94e",
+   "motif": "an eight-pointed wind rose, long points ochre and terracotta, short points slate blue",
+   "references": [
+    "73519f80-c62c-40fe-8e8b-80042bde86ef (coins, round five variant 7) and addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple, round five variant 7)"
+   ]
+  },
+  {
+   "name": "note",
+   "job": "6a095ff2-6652-4574-b25b-e6317f63afeb",
+   "motif": "a quill pen in a small slate-blue inkwell",
+   "references": [
+    "6dc6260d-0b43-409f-8832-4d5f7c4891a1 (seal) and 4827139b-6346-482e-9003-a25a0aa2a94e (compass), redone because the first take looked like an app icon"
+   ]
+  },
+  {
+   "name": "unlocked",
+   "job": "f55b270e-4351-4b1a-b5aa-440a04536cc4",
+   "motif": "an open padlock: ochre body, slate-blue keyhole, terracotta shackle lifted on one side",
+   "references": [
+    "73519f80-c62c-40fe-8e8b-80042bde86ef (coins, round five variant 7) and addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple, round five variant 7)"
+   ]
+  },
+  {
+   "name": "seal",
+   "job": "6dc6260d-0b43-409f-8832-4d5f7c4891a1",
+   "motif": "a terracotta wax seal with an ochre eight-pointed star and two slate-blue ribbon tails",
+   "references": [
+    "73519f80-c62c-40fe-8e8b-80042bde86ef (coins, round five variant 7) and addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple, round five variant 7)"
+   ]
+  },
+  {
+   "name": "hourglass",
+   "job": "bb353c85-8c76-42c8-9c2a-e1cdeb39c24f",
+   "motif": "an hourglass with a terracotta frame, slate-blue bulbs and ochre sand",
+   "references": []
+  },
+  {
+   "name": "office",
+   "job": "addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3",
+   "motif": "a classical temple front with four ochre columns and a terracotta pediment",
+   "references": []
+  },
+  {
+   "name": "abacus",
+   "job": "52db2481-3cff-4322-ae72-560d0c8a94fd",
+   "motif": "a counting frame: ochre frame, three slate-blue rods, terracotta and cream beads",
+   "references": [
+    "73519f80-c62c-40fe-8e8b-80042bde86ef (coins, round five variant 7) and addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple, round five variant 7)"
+   ]
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/mosaic/clock-112.webp",
+   "bytes": 7832,
+   "sha256": "f17caeff581a863c94be922d7ecf140490edde2ad2b950e38dbaf11fb6b8f3d0"
+  },
+  {
+   "file": "public/illustrations/mosaic/clock-224.webp",
+   "bytes": 20734,
+   "sha256": "826a8397ac45082a3e9db8ba93c8faa4f0e1998c2294819c2b0207b3e369fe9c"
+  },
+  {
+   "file": "public/illustrations/mosaic/coins-112.webp",
+   "bytes": 8234,
+   "sha256": "eb914e4e2327eea86231a995711835b39f75abeb4d1aa6b4c1f03a9fbf051ca0"
+  },
+  {
+   "file": "public/illustrations/mosaic/coins-224.webp",
+   "bytes": 22222,
+   "sha256": "8b4da57743e237d2849f71a698890a4f328b058710623f560d9368430da46e88"
+  },
+  {
+   "file": "public/illustrations/mosaic/calendar-112.webp",
+   "bytes": 7786,
+   "sha256": "8919e58f83d630f98650402e0241c92fb79ac926c95b0be81d9a6da4cf742966"
+  },
+  {
+   "file": "public/illustrations/mosaic/calendar-224.webp",
+   "bytes": 20396,
+   "sha256": "8b2d4cc9ead502e867c9a0d98e97ecf58d40df550966db3cd3f300aab4133604"
+  },
+  {
+   "file": "public/illustrations/mosaic/checklist-112.webp",
+   "bytes": 7598,
+   "sha256": "a270bbe387d25cdd6b93b6c179cea69040b75e612e9c49086efddcae5b2669c3"
+  },
+  {
+   "file": "public/illustrations/mosaic/checklist-224.webp",
+   "bytes": 20140,
+   "sha256": "c185f7daac5dc08cce9b265e9dd5caafcb2914b4f3002874382ec42c0448dd20"
+  },
+  {
+   "file": "public/illustrations/mosaic/compass-112.webp",
+   "bytes": 7350,
+   "sha256": "87e562ca2f918493ce1ba3d437c0754772da9050a34c639203ddcc36e384ca6c"
+  },
+  {
+   "file": "public/illustrations/mosaic/compass-224.webp",
+   "bytes": 20434,
+   "sha256": "ce13d0e5eae3c599118bdc8e06d4d5a963bbe39b1f694321b71f7dd3a2e27d05"
+  },
+  {
+   "file": "public/illustrations/mosaic/note-112.webp",
+   "bytes": 7264,
+   "sha256": "ae2bb872e95f73c8f638d31a833adaea343796257e6e4769f9d37ea4724e82b9"
+  },
+  {
+   "file": "public/illustrations/mosaic/note-224.webp",
+   "bytes": 19908,
+   "sha256": "5616586b1a09a22e4776e51314da4b8f60ccdd4e1082c041b13e4ef2e6aab321"
+  },
+  {
+   "file": "public/illustrations/mosaic/unlocked-112.webp",
+   "bytes": 7862,
+   "sha256": "0500ec587127672c8864e194bdc118b40c358905e8e0dbd18d6eb76bcf63caf2"
+  },
+  {
+   "file": "public/illustrations/mosaic/unlocked-224.webp",
+   "bytes": 21178,
+   "sha256": "3260d5d04145bc1ddeeb731a706c8277bdecc27246d88a96b89b9cbbc65a0395"
+  },
+  {
+   "file": "public/illustrations/mosaic/seal-112.webp",
+   "bytes": 7410,
+   "sha256": "24d42cfd87cdd53d5403c9b411e12b38d3ba5fedd196a1c33605e2f44b42c77d"
+  },
+  {
+   "file": "public/illustrations/mosaic/seal-224.webp",
+   "bytes": 20490,
+   "sha256": "0e41d39cf01d47ef0327ca508df0e6b1fab096a575d20d88fdaeff6c97b88d56"
+  },
+  {
+   "file": "public/illustrations/mosaic/hourglass-112.webp",
+   "bytes": 8616,
+   "sha256": "bba65ee016ae365818b6de31b48df77c055cb95e47dafa88c06811b0ceed5321"
+  },
+  {
+   "file": "public/illustrations/mosaic/hourglass-224.webp",
+   "bytes": 24358,
+   "sha256": "65a8a139d2e3fa04955aa7410a98ed697895fc46b4ccb05539773ce0a5749ff0"
+  },
+  {
+   "file": "public/illustrations/mosaic/office-112.webp",
+   "bytes": 7980,
+   "sha256": "020994f363d54cd72562cd5d8f5783baa3bcdcfd885d5f2dd84590528453e693"
+  },
+  {
+   "file": "public/illustrations/mosaic/office-224.webp",
+   "bytes": 22164,
+   "sha256": "41ab114eb4d6d91f0fb0ce5db1a779cd2fbd9f2491fdf6b1ea4da375ba5e8e94"
+  },
+  {
+   "file": "public/illustrations/mosaic/abacus-112.webp",
+   "bytes": 7824,
+   "sha256": "7f3d13772bf44361cf9bffedb285ae7fb78238aa2bec5764e0214958c5e256ca"
+  },
+  {
+   "file": "public/illustrations/mosaic/abacus-224.webp",
+   "bytes": 21126,
+   "sha256": "9c74f160cdb185788c39a3836adb3bfaaf5f1d67177eaffe2fc94836f4272dcb"
+  }
+ ],
+ "replaced": [
+  {
+   "name": "clock",
+   "job": "5e1b669d-ad75-4985-bedd-5103f0593acb",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/clock-roman.webp"
+  },
+  {
+   "name": "coins",
+   "job": "c5ab5423-07b1-4658-913b-e76e43f326c6",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/coins-roman.webp"
+  },
+  {
+   "name": "calendar",
+   "job": "3c349c1e-5e9b-4a6d-894c-186529fff7f1",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/calendar-roman.webp"
+  },
+  {
+   "name": "checklist",
+   "job": "dcf51ec3-8ef1-48db-9b78-9cdf353888a8",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/checklist-roman.webp"
+  },
+  {
+   "name": "compass",
+   "job": "2fbb805f-0286-4b47-95e1-f72a9a81715c",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/compass-roman.webp"
+  },
+  {
+   "name": "note",
+   "job": "4188af52-7892-4c46-a6f7-e1b27426f9d0",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/note-roman.webp"
+  },
+  {
+   "name": "unlocked",
+   "job": "9453fd73-7eb8-40f2-b701-cdfffc606705",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/unlocked-roman.webp"
+  },
+  {
+   "name": "seal",
+   "job": "dcd73469-f6b4-4583-92e8-e8195727235a",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/seal-roman.webp"
+  },
+  {
+   "name": "hourglass",
+   "job": "8c6ad041-7152-480f-8732-867fda7fad1a",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/hourglass-roman.webp"
+  },
+  {
+   "name": "office",
+   "job": "2ea48fca-473e-46f3-83a0-51f5eeb74faf",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/office-roman.webp"
+  },
+  {
+   "name": "abacus",
+   "job": "976366fb-0d16-4d90-be72-60897f07d541",
+   "what": "fragment of an authentic Roman mosaic, ragged edge",
+   "master": "design/illustrations/source/mosaic/abacus-roman.webp"
+  },
+  {
+   "name": "calendar",
+   "job": "e729d58c-2e58-4f78-8d3a-9cf75c992cfc",
+   "what": "first take: a calendar page that read as an app icon; not published",
+   "master": null
+  },
+  {
+   "name": "checklist",
+   "job": "4ed51fdc-cacc-4b23-8de6-1a06eafac682",
+   "what": "first take: a document sheet that read as an app icon; not published",
+   "master": null
+  },
+  {
+   "name": "note",
+   "job": "855735fd-00d7-4999-be8d-8fd01afa3d72",
+   "what": "first take: a pointing hand that read as an emoji; not published",
+   "master": null
+  }
+ ],
+ "earlier": "design/illustrations/mosaic-icons-2026-11-17.json (medallion, stone, tessera and Roman versions)"
+}

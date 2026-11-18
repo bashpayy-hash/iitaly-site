@@ -2050,3 +2050,33 @@ of the Instagram highlight covers); «только на гайдах и визе
   outlined tesserae (`*-tessera`). The owner's photos were not uploaded; the
   style is described in words.
 - Manifest: design/illustrations/mosaic-icons-2026-11-17.json.
+
+## Icons as Galleria floor cartouches, on guides and visa · 18 November 2026
+
+The Roman fragments did not last: «Слишком косит под старинность, не
+аутентично, сделай 10 вариантов». Of ten directions the owner took the floor of
+the Galleria Vittorio Emanuele II, but not as a single object in mosaic skin:
+«всё ещё напоминает очень сильно этот, просто как эмодзи… чтобы он и по
+структуре своей был другим». Four rounds of ten structures followed («1 и 4
+нравятся», «3, 7, 9 классные», «3, 4 и 8 нравится»), and the choice was
+«Вставь седьмой вариант в сайт».
+
+- **What they are.** A Baroque strapwork cartouche laid in polished marble
+  tesserae, seen straight from above: a cream ground in rows, edges curling
+  out into slate-blue scrolled straps with small leaf-green sprigs, a
+  terracotta and ochre scallop shell on top. The object in the middle is a flat
+  symmetrical emblem, part of the ornament, not a standalone 3D thing. No
+  square tile, no disc.
+- **Palette of the Galleria floor:** cream, warm ochre, terracotta, slate blue,
+  a little leaf green.
+- **The emblems:** a clock dial, three coins with stars, a calendar tablet with
+  a ribbon tab, a scroll with ticks, a wind rose, a quill in an inkwell, an open
+  padlock (guides); coins, a wax seal with ribbons, an hourglass, a temple
+  front, a counting frame (visa). A calendar page, a document sheet and a
+  pointing hand were tried first and dropped: they read as an app icon and an
+  emoji.
+- **Where and how** stay as before: guides and visa only, `MosaicIcon`, 60 px
+  (48 px in phone rows), WebP 112 and 224 px, Higgsfield gpt_image_2_6; later
+  icons used two finished ones as references so the cartouche matches. The
+  Roman fragments stay as masters (`*-roman`) next to the earlier versions.
+- Manifest: design/illustrations/mosaic-icons-2026-11-18.json.
