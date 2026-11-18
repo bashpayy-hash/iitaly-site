@@ -452,5 +452,6 @@
    "what": "chunky tessera mosaic with a dark cartoon outline (owner: «слишком мультяшные»)",
    "master": "design/illustrations/source/mosaic/abacus-tessera.webp"
   }
- ]
+ ],
+ "superseded_by": "design/illustrations/mosaic-icons-2026-11-18.json (the published icons are now the Galleria cartouches; the Roman masters are kept as *-roman.webp)"
 }
