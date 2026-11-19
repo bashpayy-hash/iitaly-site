@@ -9,7 +9,9 @@
   "visa point switcher": "cap, coins, passport, alarm, permesso-kit, diploma, translation, keys, insurance, tax-card, minors",
   "not used": "the guide and visa roads keep the shared objects (objectFrame) in their 56 px thumbs; the overview cells have no icons",
   "document check": "doc-check, 88 px in the upload zone (src/components/plan/DocCheck.tsx), plan and cabinet",
-  "home": "the route stage cards (route-map, suitcase, keys) and the arrival cards (permesso-card, tax-card, insurance), src/components/home/FeatureBanner.tsx"
+  "home": "the route stage cards (route-map, suitcase, keys) and the arrival cards (permesso-card, tax-card, insurance), src/components/home/FeatureBanner.tsx",
+  "plan steps": "src/components/plan/planStepArt.ts: diploma, folder, tests, doc-check, alarm, coins, permesso-card, stamp-pad, passport, suitcase, minors, military, keys, route-map (owner, 19 Nov, on the plan: «вот они сильно выбиваются из общей картины, нужны изменения»)",
+  "questionnaire": "src/components/plan/questionArt.ts (plan and cabinet assessment): alarm, diploma, tests, cap, coins, route-map, translation, minors, passport, family-docs"
  },
  "icons": [
   {
@@ -105,14 +107,15 @@
   },
   {
    "name": "military",
-   "job": "17b9cf02-f4dc-4886-99b2-bcb1177dbad8",
-   "motif": "a small shield with a star, two swords crossed behind it",
+   "job": "eed22b7a-9ac4-4d93-b93a-d2fc685eaca1",
+   "motif": "Vespi, the mascot, in a round olive-green soldier's helmet, marching in profile with a high step, no weapon (owner, 19 Nov: «где воинский учет сделай веспи с военным шлемом и марширующим»)",
    "frame": "E",
    "earlier_jobs": [
-    "ac858b03-5f42-4515-8283-036794bdbd97"
+    "ac858b03-5f42-4515-8283-036794bdbd97",
+    "17b9cf02-f4dc-4886-99b2-bcb1177dbad8"
    ],
-   "references": "the earlier cartouche of this icon for its emblem and the frame exemplar",
-   "file": "military.9e61c44e"
+   "references": "the frame exemplar (17b9cf02 / 71f063a7) and Vespi, ab833075-dfc7-4e28-824c-7e299aad556c (handmade-v1 welcome)",
+   "file": "military.30160013"
   },
   {
    "name": "keys",
@@ -138,14 +141,15 @@
   },
   {
    "name": "insurance",
-   "job": "037d96c1-5e90-4373-9d99-76d3b0d60a26",
-   "motif": "a shield with a cream cross",
+   "job": "ab1cfda5-4877-4555-acc5-c33f742df990",
+   "motif": "Vespi walking with a paper toward a doctor in a white coat at the loggia of an Italian Renaissance hospital (round arches, terracotta roof, blue roundels, after the Ospedale degli Innocenti), no cross symbol (owner, 19 Nov: «где страховка нарисуй веспи который идет к доктору в итальянской больнице»)",
    "frame": "C",
    "earlier_jobs": [
-    "ca386748-e757-4370-a280-106aaa10cec1"
+    "ca386748-e757-4370-a280-106aaa10cec1",
+    "037d96c1-5e90-4373-9d99-76d3b0d60a26"
    ],
-   "references": "the earlier cartouche of this icon for its emblem and the frame exemplar",
-   "file": "insurance.63b3840b"
+   "references": "the frame exemplar (17b9cf02 / 71f063a7) and Vespi, ab833075-dfc7-4e28-824c-7e299aad556c (handmade-v1 welcome)",
+   "file": "insurance.744ae89e"
   },
   {
    "name": "alarm",
@@ -285,14 +289,14 @@
    "sha256": "68b2e13e725fbe0fd43baf3800dcf030cf61c0348e53e6f33807b58bc3fbcf16"
   },
   {
-   "file": "public/illustrations/cartouche/insurance.63b3840b-240.webp",
-   "bytes": 21434,
-   "sha256": "ff9c3f1e7f01e64c6cee2c354ad923e67bd5a322e9ff4a8c105d676f935d46eb"
+   "file": "public/illustrations/cartouche/insurance.744ae89e-240.webp",
+   "bytes": 24066,
+   "sha256": "d8532211df99ecc5d337e09d0b7a145ef41b809526ba4f6e40a7073d127ba682"
   },
   {
-   "file": "public/illustrations/cartouche/insurance.63b3840b-480.webp",
-   "bytes": 65006,
-   "sha256": "156492f4bf3e104a88db60fc1c56a58e54778fe6c022d9347a9170bd3c2f8f68"
+   "file": "public/illustrations/cartouche/insurance.744ae89e-480.webp",
+   "bytes": 73146,
+   "sha256": "31e3212d6c45038945814b58fe8aeb47332b7bdcf5572918790b767bc87c38d9"
   },
   {
    "file": "public/illustrations/cartouche/keys.ace9e925-240.webp",
@@ -305,14 +309,14 @@
    "sha256": "cc9a897b6768ab01894fb9aeccfccc12bd6a1ccb20b40b6ac231107aa9ad8a03"
   },
   {
-   "file": "public/illustrations/cartouche/military.9e61c44e-240.webp",
-   "bytes": 13962,
-   "sha256": "07054daedf6093e5516535458699c5a3a868c4a97521dff238b6bf24f7bc63a4"
+   "file": "public/illustrations/cartouche/military.30160013-240.webp",
+   "bytes": 15114,
+   "sha256": "8f24d349f35a8976c16c42e75300b2883959f5fefba5cc83769de32f5bc11289"
   },
   {
-   "file": "public/illustrations/cartouche/military.9e61c44e-480.webp",
-   "bytes": 43582,
-   "sha256": "2cf117b2440b1b4e8fee119198da3cd839d5f09f768c8ec2815cab09b3b32e7e"
+   "file": "public/illustrations/cartouche/military.30160013-480.webp",
+   "bytes": 47372,
+   "sha256": "770505c28f18d3b18f5eefcac99c49eba7d6aae15401befb4da93ae6b1514050"
   },
   {
    "file": "public/illustrations/cartouche/minors.daa9b2ef-240.webp",

@@ -2275,3 +2275,48 @@ the right edge, text over text, text crossed by the road, tap targets under
   the map's approved revision; the Modulo 1 paper fields keep the paper's
   geometry; the gallery's dots belong to the carousel, which is being
   changed elsewhere.
+
+## Plan steps and questionnaire in cartouches · 19 November 2026
+
+On a screenshot of the plan: «вот они сильно выбиваются из общей картины,
+нужны изменения». The studio objects in the plan step tiles and in the
+questionnaire were the last ones beside the Galleria cartouches.
+
+- **Plan steps.** Each step shows the cartouche of its topic: education the
+  diploma, DoV/CIMEA the verified diploma, the programme the book, the
+  university requirements the document check, the calendar the clock, DSU
+  and finances the Vespi coin, the status in Italy the permesso card, the
+  consulate the seal, visa D the passport of Kazakhstan, the reserve until
+  the grant the suitcase, under 18 the signed scroll, conscription the
+  shield, enrolment the keys.
+- **Questionnaire.** It uses the same set: the clock, the diploma, the book,
+  the cap, the coin, the route map, the scrolls of translation, the signed
+  scroll, the passport and the family documents. The cabinet's assessment
+  uses it too.
+- **Unchanged.** The cabinet road keeps its marks and 3D landmarks («вот
+  этот стайл именно на карте прогресса норм»).
+
+## Vespi on two topics and the document check in the guides · 19 November 2026
+
+- **Conscription.** «Где воинский учёт сделай Веспи с военным шлемом и
+  марширующим». The quatrefoil keeps its frame. In it Vespi marches in
+  profile in a round olive helmet, with a high step and no weapon.
+- **Insurance.** «Нарисуй Веспи, который идёт к доктору в итальянской
+  больнице». The acanthus cartouche shows Vespi walking with a paper to a
+  doctor at the loggia of a Renaissance hospital. The round arches,
+  terracotta roof and blue roundels follow the Ospedale degli Innocenti.
+  There is no cross symbol.
+- **The document check, advertised in the guides.** «Проверка документов
+  это киллер-фича, её нужно активнее рекламировать».
+  - A dark card with the document-check cartouche stands under the
+    overview of every topic about a paper the reader holds: education,
+    apostille, translation, DoV/CIMEA, family certificates, DSU, the visa
+    and its documents page. It also stands under the topic band of
+    /guides.
+  - The title names the paper: «Поставил апостиль? Проверь документ за
+    10–30 секунд».
+  - The text says only what the home section already says: what is checked
+    against, and that the first check is free with no sign-up. The red
+    button leads to /plan#document-check.
+  - On the home page, the action cell «Проверь один документ бесплатно»
+    shows the same cartouche instead of an empty dotted field.
