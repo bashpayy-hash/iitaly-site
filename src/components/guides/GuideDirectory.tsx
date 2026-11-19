@@ -63,11 +63,14 @@ export function GuideDirectory() {
         searching (it answers the query); the section link appears with a section. */}
     <p className={terms.length ? styles.resultCount : "sr-only"} role="status">{terms.length ? `Найдено тем: ${matches.length}` : ""}</p>
     {stage && <div className={styles.resultRow}><Link className={styles.stageLink} data-guide-stage={stage.id} href={guideStageHref(stage.id)}>Раздел целиком: {stage.title}</Link></div>}
-    {/* 19 Nov (phone pass): the gallery's dots and ▶ end at the bottom right of
-        the band, where the chat button rests; on a 360px phone the button hid
-        the ▶. The gallery is a yield target, so the button steps aside while
-        the band is under it (ChatLauncher), as it does for primary buttons. */}
-    {matches.length ? <section className={styles.explorer} aria-label="Темы справочника" data-guide-explorer data-fab-yield>
+    {/* 19 Nov (phone pass): on a phone the gallery's dots and ▶ end at the
+        bottom right of the band, where the chat button rests; at 360px the
+        button hid the ▶. On phones an empty layer over the gallery is a yield
+        target, so the button steps aside while the band is under it
+        (ChatLauncher), as it does for primary buttons. On wider screens the ▶
+        is centred, far from the button, and the layer has no size. */}
+    {matches.length ? <section className={styles.explorer} aria-label="Темы справочника" data-guide-explorer>
+      <span className={styles.fabYield} data-fab-yield aria-hidden="true" />
       <GuideTiles key={matches.map(guide => guide.id).join()} guides={matches} variant="gallery" autoplay={!touched && !query && category === "all"} />
     </section> : <section className={ui.directory}><h2>Такой темы не нашли</h2><p>Попробуй другое слово или выбери «Все темы».</p><button className={ui.textLink} type="button" onClick={()=>openGuideHelper(undefined,query)}>Спросить Веспи</button></section>}
   </>;

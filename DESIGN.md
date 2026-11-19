@@ -2253,9 +2253,11 @@ the right edge, text over text, text crossed by the road, tap targets under
 - **The chat button.**
   - At the end of every public page it stood on «Политика
     конфиденциальности». On phones the footer ends 76 px above the edge.
-  - It covered the gallery's ▶ on /guides and the «Следующая тема» arrow on
-    the section pages. Both galleries are yield targets now
-    (`data-fab-yield`), so the button steps aside, as for primary buttons.
+  - It covered the gallery's ▶ on /guides (phones under ~410 px) and the
+    «Следующая тема» arrow on the section pages (all of it at 360 px, 32–40
+    px of it at 768–1280 px). The section row and, on phones, the /guides
+    gallery are yield targets now (`data-fab-yield`), so the button steps
+    aside, as it does for primary buttons.
 - **Tap targets to 44 px on phones:** the cabinet's three header buttons (40),
   «Есть код доступа? Войти» (36), the stage page's step dots (28, on touch
   screens), the guide step path stops (32), the «Крупнее» map button (40),
