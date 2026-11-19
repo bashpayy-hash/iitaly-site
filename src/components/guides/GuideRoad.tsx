@@ -86,18 +86,21 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
   }, [wrap, line, version]);
 }
 
-/* Виды Италии у изгибов дороги — плоская мозаика с пола Галереи, тем же
-   камнем, что картуши тем (owner, 19 Nov: дорога «сыровато»; объёмные макеты
-   спорили с мозаикой, design/illustrations/scenery-mosaic-2026-11-19.json).
-   В кармане изгиба, не чаще чем раз в три остановки; рядом с закрытым —
-   серые. Кабинет оставляет свои макеты (PortalRoad.tsx). */
+/* Те же макеты Италии, что вдоль дороги кабинета (scenery-2026-11-07.json):
+   в кармане изгиба, не чаще чем раз в три остановки; рядом с закрытым — серые.
+   Макеты с Веспи чередуются с местами, двух подряд нет. Owner, 19 Nov, о
+   мозаичных видах вместо них: «Нет, вот этот стайл именно на карте
+   прогресса норм» — объёмные макеты остаются. */
 const SCENERY = [
-  { name: "colosseum", width: 560, height: 369 },
-  { name: "duomo", width: 560, height: 454 },
-  { name: "gondola", width: 560, height: 389 },
-  { name: "pisa", width: 560, height: 850 },
-  { name: "tuscany", width: 560, height: 392 },
-  { name: "bologna", width: 560, height: 684 },
+  { name: "colosseum", width: 560, height: 401 },
+  { name: "vespi-map", width: 560, height: 459 },
+  { name: "duomo", width: 560, height: 439 },
+  { name: "vespi-gondola", width: 560, height: 401 },
+  { name: "pisa", width: 560, height: 684 },
+  { name: "vespi-trevi", width: 560, height: 448 },
+  { name: "tuscany", width: 560, height: 380 },
+  { name: "vespi-espresso", width: 560, height: 463 },
+  { name: "bologna", width: 560, height: 668 },
 ] as const;
 const SCENERY_EVERY = 3;
 type SceneryPlace = { art: (typeof SCENERY)[number]; side: "left" | "right" };
@@ -114,7 +117,7 @@ function Scenery({ place, reached }: { place: SceneryPlace; reached: boolean }) 
   const { name, width, height } = place.art;
   const file = reached ? name : `${name}-grey`;
   return <li className={styles.scenery} aria-hidden="true" data-road-scenery={name} data-side={place.side} data-scenery-shape={height > width ? "tall" : "wide"}>
-    <img src={`/illustrations/scenery-mosaic/${file}-280.webp`} srcSet={`/illustrations/scenery-mosaic/${file}-280.webp 280w, /illustrations/scenery-mosaic/${file}-560.webp 560w`}
+    <img src={`/illustrations/scenery/${file}-280.webp`} srcSet={`/illustrations/scenery/${file}-280.webp 280w, /illustrations/scenery/${file}-560.webp 560w`}
       sizes="(max-width: 640px) 168px, 260px" width={width} height={height} alt="" loading="lazy" decoding="async" draggable={false} />
   </li>;
 }

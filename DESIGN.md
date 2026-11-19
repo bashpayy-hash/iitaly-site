@@ -2164,9 +2164,8 @@ road and the document check:
     instead of pale round dots; the part already read is still solid green.
   - The header says the count once: «Прочитано 0 из 5» and the bar; the big
     percentage repeated it.
-  - The landmarks beside the road are flat mosaic vignettes from the same
-    floor: Colosseum, Florence cathedral, gondola, Pisa, Tuscan hills,
-    Bologna towers. Beside closed steps they show as muted grey.
+  - The landmarks beside the road stay the 3D models. Flat mosaic
+    vignettes were tried, and the owner kept the models: «Нет, вот этот
+    стайл именно на карте прогресса норм».
   - The cabinet road keeps its own look.
-- Manifests: design/illustrations/cartouche-2026-11-19.json,
-  design/illustrations/scenery-mosaic-2026-11-19.json.
+- Manifest: design/illustrations/cartouche-2026-11-19.json.
