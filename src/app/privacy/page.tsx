@@ -123,9 +123,9 @@ export default function PrivacyPage() {
               ))}
             </div>
 
-            <div className="mt-12 flex flex-wrap gap-6 text-[15px] font-medium">
-              <Link href="/terms" className="text-ink underline underline-offset-4">Условия сервиса</Link>
-              <Link href="/" className="text-ink underline underline-offset-4">Вернуться на сайт</Link>
+            <div className="mt-12 flex flex-wrap gap-x-6 text-[15px] font-medium">
+              <Link href="/terms" className="inline-flex min-h-11 items-center text-ink underline underline-offset-4">Условия сервиса</Link>
+              <Link href="/" className="inline-flex min-h-11 items-center text-ink underline underline-offset-4">Вернуться на сайт</Link>
             </div>
           </div>
         </section>

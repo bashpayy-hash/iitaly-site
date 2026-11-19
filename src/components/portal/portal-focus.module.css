@@ -32,6 +32,10 @@
 .stageStep { padding:22px 26px 18px; }
 /* На узкой подложке шаг получает ширину обратно: поля ячейки тоньше. */
 @container (max-width:559px) { .stageStep { padding:16px 14px 14px; } }
+/* 19 Nov (phone pass): the summary is as tall as the scene only to match it
+   side by side; in the one-column tray that left a 77px empty band above
+   «1 из 4». There it hugs its text. */
+@container (max-width:559px) { .stageSummary { min-height:0; } }
 .stageReminders .primary,.stageDocs .primary { white-space:normal; }
 .quietAction { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 20px; border:1px solid var(--border); border-radius:999px; color:var(--ink); font:500 14px/1.4 var(--font-sans); text-decoration:none; }
 @media (hover: hover) and (pointer: fine) { .quietAction:hover { border-color:var(--ink); } }
@@ -51,6 +55,10 @@
 .pips a[aria-current=step] span { width:24px; border-radius:4px; background:var(--accent); }
 .pips a[aria-current=step][data-stamped=true] span { background:var(--status-green); }
 .pips a[data-just-stamped=true] span { animation:stampPrint .4s cubic-bezier(.34,1.56,.64,1); }
+/* 19 Nov (phone pass, owner: «много таких недочётов»): on a touch screen a
+   step dot was a 28px target. Each dot now owns 44px; the row starts 8px to
+   the left so the first dot still lines up with the text above it. */
+@media (pointer:coarse) { .pips { gap:0; margin-left:-8px; } .pips a { width:44px; height:44px; } }
 .pips a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 .srOnly { position:absolute; width:1px; height:1px; margin:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .taskList { display:grid; gap:0; }

@@ -18,3 +18,10 @@
 .close:focus-visible { outline:2px solid #A33421; outline-offset:2px; }
 @keyframes termIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 @media (prefers-reduced-motion: reduce) { .sheet { animation:none; } }
+/* 19 Nov (phone pass, owner: «много таких недочётов»): the «i» is drawn 16px
+   inside a 24px button, which sits in a line of text; an invisible ring takes
+   the tap area to 44px without moving the line. The sheet's close button grows
+   from 36px to 44px inside the room its padding already keeps. */
+.hint { position:relative; }
+.hint::before { content:""; position:absolute; inset:-10px; border-radius:999px; }
+.close { top:4px; right:4px; width:44px; height:44px; }

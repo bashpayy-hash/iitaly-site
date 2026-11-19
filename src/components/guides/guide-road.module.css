@@ -6,13 +6,17 @@
 .guideRoad [data-road-text] > span,.guideRoad [data-road-step-title] { overflow-wrap:break-word; hyphens:auto; }
 .tail { height:56px; list-style:none; }
 @media (max-width:640px) {
-  .guideRoad [data-road-unit-state=current] { padding-bottom:56px; }
+  /* 19 Nov: step captions stand beside their circles on phones
+     (portal-path.module.css), not under them, so the highlighted section
+     needs only a little air below its last circle, and a piece of scenery at
+     the end has its own strip: the tail spacer is not needed there. */
+  .guideRoad [data-road-unit-state=current] { padding-bottom:12px; }
   /* Проход по неровностям (10 Nov): на телефоне у станции остаются название и
      статус одной строкой; описание в колонке шириной с ладонь рвалось на
      слоги. Оно есть на странице раздела. */
   .guideRoad [data-road-text] > span { display:none; }
   .guideRoad [data-road-status] { flex-wrap:nowrap; white-space:nowrap; }
-  .tail { height:40px; }
+  .tail { height:0; }
 }
 
 /* Owner, 19 Nov: дорога «чуть будто бы недоделанная, сыровато». Линия

@@ -341,11 +341,12 @@
    «Меню +» shared one 60 px row of a 390 px screen. On phones the cabinet's
    three actions now take their own row under the logo: equal thirds, words
    at 14 px, no icons (owner, same day: icons read as AI slop). The logo and
-   «Меню» keep the first row. */
+   «Меню» keep the first row. 19 Nov (phone pass): the three buttons are
+   44px tall, a full thumb target (they were 40px). */
 @media(max-width:600px) {
   .header[data-portal-header=true] .navInner { flex-wrap:wrap; height:auto; padding:8px 16px; column-gap:8px; row-gap:6px; }
   .header[data-portal-header=true] .navInner > div { order:3; flex:1 0 100%; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin-left:0; }
-  .header[data-portal-header=true] .navInner > div > a { display:flex; flex-direction:row; align-items:center; justify-content:center; width:auto; min-width:0; min-height:40px; padding:8px 6px; border:1px solid #E2DDD3; border-radius:12px; background:#FFFDF9; color:#241F1C; font-size:14px; font-weight:500; line-height:1.2; letter-spacing:-.01em; white-space:nowrap; }
+  .header[data-portal-header=true] .navInner > div > a { display:flex; flex-direction:row; align-items:center; justify-content:center; width:auto; min-width:0; min-height:44px; padding:8px 6px; border:1px solid #E2DDD3; border-radius:12px; background:#FFFDF9; color:#241F1C; font-size:14px; font-weight:500; line-height:1.2; letter-spacing:-.01em; white-space:nowrap; }
   .header[data-portal-header=true] .navInner > div > a[aria-current="page"] { border-color:#241F1C; }
   .header[data-portal-header=true] .navInner > div > a svg { display:none; }
   .header[data-portal-header=true] .navInner > div > a span { position:static; display:inline; width:auto; height:auto; overflow:visible; clip-path:none; }
@@ -363,3 +364,9 @@
 @media (max-width: 1023px) { .heroPanel { padding-inline: 32px; } }
 @media (max-width: 899px) { .footer, .heroPanel { padding-inline: 24px; } }
 @media (max-width: 767px) { .footer, .heroPanel { padding-inline: 20px; } }
+/* 19 Nov (owner, on an iPhone: «много таких недочётов»): at the very end of
+   every public page the chat button (48px, 16px from the corner; ChatLauncher)
+   stood on «Политика конфиденциальности», and the last line could not be
+   scrolled out from under it. On phones the footer ends 76px above the edge,
+   so its last row clears the button with 12px to spare. */
+@media (max-width: 767px) { .footer { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } }
