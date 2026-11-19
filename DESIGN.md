@@ -2080,3 +2080,53 @@ the Galleria Vittorio Emanuele II, but not as a single object in mosaic skin:
   icons used two finished ones as references so the cartouche matches. The
   Roman fragments stay as masters (`*-roman`) next to the earlier versions.
 - Manifest: design/illustrations/mosaic-icons-2026-11-18.json.
+
+## One large cartouche per topic, no small icons · 19 November 2026
+
+The icons were the wrong target. With a phone screenshot of the visa page
+showing the burgundy notebook in its header, the owner wrote: «Надо было
+заменить вот это блокнот, он как раз так и проблематичен». Two more notes
+followed:
+
+- on the first take: «Почему это отличается от вариантов которые ты делал
+  до этого и которые я одобрил»;
+- on the small cartouches in the overview cells: «Убери эти мелкие гербы,
+  они тут ни к чему, везде применяй этот принцип».
+
+- **One picture per topic, and it is large.**
+  - Each topic has one Baroque cartouche from the Galleria floor, in the
+    place of the object. It shows in the guide header, the catalogue tile,
+    the step page and the visa point switcher.
+  - The overview cells have no icons at all. `MosaicIcon` and
+    `public/illustrations/mosaic` are gone; the icon masters stay in
+    design/illustrations/source/mosaic/.
+  - The road thumbs (56 px) keep the shared objects, as in the cabinet.
+- **Faithful to variant 7.**
+  - Every cartouche is drawn anew, with its own outline, rich strapwork
+    (slate blue with ochre and terracotta bands), acanthus and the shell.
+  - The emblem is classical and laid in the same tesserae, flat and matte.
+  - Higgsfield got the three original variant 7 images as style references.
+    The first take had copied one later icon as a template and put app-like
+    pictograms (a folder, sheets with arrows) in the middle; it was never
+    published.
+- **Emblems.**
+  - Topics:
+    - school leaving certificate: a diploma scroll;
+    - tests: an open book;
+    - apostille: a wax seal with ribbons;
+    - translation: two scrolls with crossed quills;
+    - CIMEA: tied papers;
+    - family documents: a small house on papers;
+    - ISEE: coins with stars;
+    - visa: a passport booklet;
+    - under 18: a signed scroll with a quill;
+    - military: a shield with crossed swords;
+    - permesso: crossed keys;
+    - codice fiscale: a sealed tablet;
+    - insurance: a shield with a cross.
+  - The visa switcher also uses a clock face, a graduation cap on a book and
+    a sealed letter.
+- **Only guides and visa.** The home page, the cabinet and the plan keep the
+  shared object set (`objectFrame`). The guides use `cartoucheFrame` in
+  `src/components/guides/guideArt.ts`: square, 480 px with a 240 px copy.
+- Manifest: design/illustrations/cartouche-2026-11-19.json.

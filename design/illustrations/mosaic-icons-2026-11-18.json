@@ -290,5 +290,6 @@
    "master": null
   }
  ],
- "earlier": "design/illustrations/mosaic-icons-2026-11-17.json (medallion, stone, tessera and Roman versions)"
+ "earlier": "design/illustrations/mosaic-icons-2026-11-17.json (medallion, stone, tessera and Roman versions)",
+ "removed": "2026-11-19: owner, «Убери эти мелкие гербы, они тут ни к чему, везде применяй этот принцип». MosaicIcon and public/illustrations/mosaic are gone; the overview cells carry no icons. The masters stay in design/illustrations/source/mosaic/."
 }

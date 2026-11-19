@@ -8,7 +8,7 @@ import { VG_PER_YEAR, VISA_DOCS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/da
 import type { VisaPart } from "./guideCatalogue";
 import ui from "./guide-pages.module.css";
 import { GuidePointSwitcher, type GuidePointRow } from "./GuidePointSwitcher";
-import { objectFrame } from "./guideArt";
+import { cartoucheFrame } from "./guideArt";
 import { BEFORE_SHORT } from "./guideRoads";
 import { GuideReadMark } from "./GuideReadMark";
 import { GuideWall } from "./GuideWall";
@@ -22,10 +22,10 @@ import { MediaSwitcher, useStoryLocation } from "@/components/story/MediaSwitche
    и ссылку на VFS рисует бенто обзора (GuideOverview.tsx, owner 12 Nov).
    Owner, 10 Nov: пункты стоят на пути-прогрессе, у каждого — предмет по его
    теме из общего набора (будильник — сроки, монеты — средства, паспорт —
-   VFS, шапочка — вуз, ключи — жильё, конверт-кит — permesso). */
+   VFS, шапочка — вуз, ключи — жильё, конверт-кит — permesso). С 19 Nov
+   это картуши с пола Галереи (guideArt.ts, cartoucheFrame). */
 type ArtName = "alarm" | "cap" | "coins" | "diploma" | "insurance" | "keys" | "minors" | "passport" | "permesso-kit" | "tax-card" | "translation";
-const ART_HEIGHT: Record<ArtName, number> = { alarm:357, cap:348, coins:367, diploma:357, insurance:362, keys:365, minors:371, passport:359, "permesso-kit":387, "tax-card":361, translation:351 };
-const art = (name: ArtName) => objectFrame(name, ART_HEIGHT[name]);
+const art = (name: ArtName) => cartoucheFrame(name);
 const TIMELINE_ART: ArtName[] = ["cap", "coins", "passport", "alarm", "permesso-kit"];
 const DOCUMENT_ART: ArtName[] = ["passport", "cap", "diploma", "translation", "coins", "keys", "insurance", "tax-card", "minors"];
 const BEFORE_ART: ArtName[] = ["coins", "keys", "diploma", "alarm"];

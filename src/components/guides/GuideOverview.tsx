@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { Bento, BentoCell, BentoStat, bento, type BentoSpan } from "@/components/ui/Bento";
-import { MosaicIcon, type MosaicIconName } from "@/components/icons/MosaicIcon";
 import { ADMISSION_SOURCES, type SourceId } from "@/data/admissions";
 import { VISA_DOCS, VISA_KEY_FACTS, VISA_REJECT_REASONS, VISA_TIMELINE, type GuideCard } from "@/data/guides";
 import { guideFacts } from "./guideFacts";
@@ -43,8 +42,8 @@ function topicDose(guide: GuideCard) {
     paid: `Полный разбор этой темы: что именно сделать, суммы, сроки и ссылки. Вместе с остальными гайдами, визой, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}` };
 }
 
-function Fact({ art, value, label, known = true, span, ...data }: { art: MosaicIconName; value: string; label: string; known?: boolean; span: BentoSpan } & { [key: `data-${string}`]: string | boolean | undefined }) {
-  return <BentoCell span={span} art={art} data-bento-row {...data}>
+function Fact({ value, label, known = true, span, ...data }: { value: string; label: string; known?: boolean; span: BentoSpan } & { [key: `data-${string}`]: string | boolean | undefined }) {
+  return <BentoCell span={span} data-bento-row {...data}>
     <BentoStat value={value} label={label} quiet={!known} long={value.length > LONG_VALUE} />
   </BentoCell>;
 }
@@ -63,7 +62,7 @@ function Sources({ ids, span }: { ids: readonly SourceId[]; span: BentoSpan }) {
 }
 
 function Note({ text, span }: { text: string; span: BentoSpan }) {
-  return <BentoCell span={span} tone="quiet" art="note" data-guide-note>
+  return <BentoCell span={span} tone="quiet" data-guide-note>
     <p className={bento.text}>{text}</p>
   </BentoCell>;
 }
@@ -73,9 +72,6 @@ function Closing({ ids, note }: { ids: readonly SourceId[]; note: string }) {
   return note ? <><Sources ids={ids} span={{ md: 4 }} /><Note text={note} span={{ md: 2 }} /></> : <Sources ids={ids} span={{ md: 6 }} />;
 }
 
-/* Срок, стоимость, дедлайн, сложность — в том же порядке, что guideFacts. */
-const TOPIC_ART: MosaicIconName[] = ["clock", "coins", "calendar", "checklist"];
-
 export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: string }) {
   const helpId = isGuideId(guide.id) ? guide.id : undefined;
   const action = helpId ? guideAction(helpId) : null;
@@ -83,8 +79,8 @@ export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: st
   const factSpan: BentoSpan = action ? { md: 2 } : { md: 3 };
   return <Bento label="Коротко о теме" className={steps.overviewBento} data-guide-overview data-with-lead={Boolean(guide.lead)}>
     {guide.lead && <BentoCell span={{ md: 6 }} data-guide-lead><p className={steps.bentoLead}>{guide.lead}</p></BentoCell>}
-    {facts.map((fact, index) => <Fact key={fact.label} art={TOPIC_ART[index]} value={fact.value} label={fact.label} known={fact.known} span={factSpan} data-guide-fact={fact.known} />)}
-    {action && helpId && <BentoCell span={{ md: 4 }} tone="action" art="compass" data-guide-next={guide.id}>
+    {facts.map(fact => <Fact key={fact.label} value={fact.value} label={fact.label} known={fact.known} span={factSpan} data-guide-fact={fact.known} />)}
+    {action && helpId && <BentoCell span={{ md: 4 }} tone="action" data-guide-next={guide.id}>
       <p className={bento.heading}>{GUIDE_HELP[helpId].next}</p>
       <div className={bento.actions}>
         <GuideActionLink id={helpId} />
@@ -96,18 +92,15 @@ export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: st
   </Bento>;
 }
 
-/* Средства, сбор за визу, срок рассмотрения — порядок VISA_KEY_FACTS. */
-const VISA_ART: MosaicIconName[] = ["coins", "seal", "hourglass"];
-
 export function VisaOverview({ guide, note }: { guide: GuideCard; note: string }) {
   const funds = VISA_PARTS.find(part => part.id === "funds")!;
   return <Bento label="Коротко о визе" className={steps.overviewBento} data-guide-overview data-visa-overview>
-    {VISA_KEY_FACTS.map((fact, index) => <Fact key={fact.label} art={VISA_ART[index]} value={fact.value} label={fact.label} span={{ md: 2 }} data-guide-fact />)}
+    {VISA_KEY_FACTS.map(fact => <Fact key={fact.label} value={fact.value} label={fact.label} span={{ md: 2 }} data-guide-fact />)}
     <BentoCell as="a" span={{ md: 2 }} href={ADMISSION_SOURCES.visaWhere.href} target="_blank" rel="noopener noreferrer" data-visa-vfs>
-      <div className={bento.head}><MosaicIcon name="office" className={bento.art} /><ArrowUpRight size={18} strokeWidth={1.8} aria-hidden="true" /></div>
+      <div className={bento.head}><ArrowUpRight size={18} strokeWidth={1.8} aria-hidden="true" /></div>
       <p className={`${bento.heading} ${bento.pushDown}`}>Официальный VFS для Италии в Казахстане</p>
     </BentoCell>
-    <BentoCell span={{ md: 4 }} tone="action" art="abacus" data-visa-funds>
+    <BentoCell span={{ md: 4 }} tone="action" data-visa-funds>
       <div className={bento.body}>
         <p className={bento.heading}>{funds.title}</p>
         <p className={bento.text}>{funds.description}</p>

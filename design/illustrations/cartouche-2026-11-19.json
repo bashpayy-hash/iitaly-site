@@ -1,0 +1,338 @@
+{
+ "date": "2026-11-19",
+ "request": "After the guide and visa icons became Galleria cartouches (#239), the owner sent a phone screenshot of the visa page with the burgundy notebook in its header: «Надо было заменить вот это блокнот, он как раз так и проблематичен». The topic pictures of guides and visa — the header of each guide, the catalogue tiles, the guide and visa roads and the visa point switcher — move to the same chosen style (round five, variant 7). The home page, the cabinet and the plan keep the shared object set (design/illustrations/objects-2026-11-13.json). Then, on why the first take differed from the approved variants («Почему это отличается от вариантов которые ты делал до этого и которые я одобрил»), the set was redone from the original variant 7 images, and on the small cartouches in the overview cells: «Убери эти мелкие гербы, они тут ни к чему, везде применяй этот принцип» — the picture is only large: the topic header, the catalogue tile, the visa point switcher. The road thumbs (56 px) keep the shared objects.",
+ "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background, with the three original variant 7 images as style references (not as a shape to copy): 73519f80-c62c-40fe-8e8b-80042bde86ef (coins), bb353c85-8c76-42c8-9c2a-e1cdeb39c24f (hourglass), addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple)",
+ "template": "In the same style as the reference images, but do not copy their outline: draw a new Baroque strapwork cartouche of its own. In the style of the floor of the Galleria Vittorio Emanuele II in Milan, polished marble tesserae, freshly laid, seen straight from above: a Baroque strapwork cartouche with a cream ivory ground laid in rows, its edges curling outward into rich slate-blue scrolled straps with ochre and terracotta inner bands, acanthus leaves in leaf green, crowned at the top by a terracotta and ochre scallop shell; no square, no circle. In the centre a flat symmetrical emblem laid in the same small tesserae as everything else, matte, no bevel, no gloss, no drop shadow, classical in form like the reference coins, hourglass and temple: {motif}. Palette: cream ivory, warm ochre, terracotta red, slate blue, leaf green. Flat, not a 3D object, not an emoji, not an app pictogram. Transparent background. No text, no letters, no numbers.",
+ "processing": "crop to alpha (>4 %), centred on a transparent square plus 6 px; master WebP q92 in design/illustrations/source/cartouche/; site WebP q86 at 240 and 480 px (square), src/components/guides/guideArt.ts cartoucheFrame.",
+ "use": {
+  "guide topics": "education diploma, tests tests, apostille stamp-pad, translation translation, cimea folder, con family-docs, iseeu coins, visa passport, minors minors, military military, permesso keys, codice tax-card, health-travel insurance — the topic header, the catalogue tile and the step page",
+  "visa point switcher": "cap, coins, passport, alarm, permesso-kit, diploma, translation, keys, insurance, tax-card, minors",
+  "not used": "the guide and visa roads keep the shared objects (objectFrame) in their 56 px thumbs; the overview cells have no icons"
+ },
+ "icons": [
+  {
+   "name": "diploma",
+   "job": "f8c19f15-c5ea-4648-a1e8-966ce8377fc8",
+   "motif": "a rolled diploma scroll tied with a terracotta ribbon and a small seal"
+  },
+  {
+   "name": "tests",
+   "job": "75561ef3-e436-4f8f-ac1f-4d09d6e0d7a0",
+   "motif": "an open book with lines and a bookmark ribbon"
+  },
+  {
+   "name": "stamp-pad",
+   "job": "0c2375c5-1df5-41d1-b962-daebd7a42d67",
+   "motif": "a round wax seal pressed with a star, two ribbon tails"
+  },
+  {
+   "name": "translation",
+   "job": "90ba5384-f91e-4bcd-bbb6-2dda137a2702",
+   "motif": "two unrolled scrolls facing each other, two quills crossed between them"
+  },
+  {
+   "name": "folder",
+   "job": "8ad8cb6b-5071-4ab7-8ed6-6d31c49076b3",
+   "motif": "a bundle of papers tied crosswise with a ribbon and a bow"
+  },
+  {
+   "name": "family-docs",
+   "job": "a3dfe6be-8b3f-47ef-880b-0c768c382a29",
+   "motif": "a small classical house with a pediment on a stack of papers"
+  },
+  {
+   "name": "coins",
+   "job": "5bb44f88-534a-4bfd-a686-8cb8d166b2b3",
+   "motif": "a small stack of coins with three star coins in front"
+  },
+  {
+   "name": "passport",
+   "job": "449c3980-8ad2-4184-920c-43f573e607b9",
+   "motif": "a closed passport booklet with an ochre star"
+  },
+  {
+   "name": "minors",
+   "job": "47253153-2188-4bdc-9164-8cf08acabca8",
+   "motif": "an unrolled scroll with a signature flourish and a quill"
+  },
+  {
+   "name": "military",
+   "job": "ac858b03-5f42-4515-8283-036794bdbd97",
+   "motif": "a small shield with a star, two swords crossed behind it"
+  },
+  {
+   "name": "keys",
+   "job": "44718260-1403-4a9e-8792-f45eda262e2b",
+   "motif": "two crossed keys tied with a ribbon"
+  },
+  {
+   "name": "tax-card",
+   "job": "f7dca5ea-3e13-4962-93dd-cb2222cb0cd0",
+   "motif": "a rectangular tablet with lines and a round seal"
+  },
+  {
+   "name": "insurance",
+   "job": "ca386748-e757-4370-a280-106aaa10cec1",
+   "motif": "a shield with a cream cross"
+  },
+  {
+   "name": "alarm",
+   "job": "33acc0c5-7428-43d0-81a5-3ba5683025e1",
+   "motif": "a classical clock face with two leaf sprigs, no numerals"
+  },
+  {
+   "name": "cap",
+   "job": "331457af-1e9b-4c15-a98c-b02e70b5c0c1",
+   "motif": "a graduation cap on a closed book with laurel sprigs"
+  },
+  {
+   "name": "permesso-kit",
+   "job": "d836b846-78bb-4466-8e96-f31fd5b5b050",
+   "motif": "a folded letter closed with a round seal"
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/cartouche/diploma-240.webp",
+   "bytes": 28482,
+   "sha256": "8d1cc4c3b6520579e6a783f982e171699c0d8c7392d8da3975e7e0800d6ffd44"
+  },
+  {
+   "file": "public/illustrations/cartouche/diploma-480.webp",
+   "bytes": 89556,
+   "sha256": "766fd4b0ad32a276175eb588dfaf54560174c5b5b47d40743550d4a4122168a5"
+  },
+  {
+   "file": "public/illustrations/cartouche/tests-240.webp",
+   "bytes": 27462,
+   "sha256": "57a539f4b306a9f943bde82c71e2469b77005f1f4a48ae3e631712c997f20d9a"
+  },
+  {
+   "file": "public/illustrations/cartouche/tests-480.webp",
+   "bytes": 86384,
+   "sha256": "510624ddf4efd9c17b4926b9c607dc66ee1b8c05512075949de66fd262b89379"
+  },
+  {
+   "file": "public/illustrations/cartouche/stamp-pad-240.webp",
+   "bytes": 27468,
+   "sha256": "473abe05535396e4295653e7423e2c5419e915b75b11b962404bc678b04b6399"
+  },
+  {
+   "file": "public/illustrations/cartouche/stamp-pad-480.webp",
+   "bytes": 87228,
+   "sha256": "abcba58be900769ecc52b976469bd76f69d3169bd9c65d2054577355fc7b3779"
+  },
+  {
+   "file": "public/illustrations/cartouche/translation-240.webp",
+   "bytes": 28574,
+   "sha256": "21445fa9a6d0ee804445a33b6a263fea0ef2d0ecf26f0bbe93546f1e0a93fda2"
+  },
+  {
+   "file": "public/illustrations/cartouche/translation-480.webp",
+   "bytes": 91524,
+   "sha256": "fc7b2e1a66baeeeb29d01060b835199fc23025903a88e30af9151b45633cc2ff"
+  },
+  {
+   "file": "public/illustrations/cartouche/folder-240.webp",
+   "bytes": 26470,
+   "sha256": "6db1eae86fb83d2a4d0efe5d2c985b2cb7c81d86da01dc0165899ecec2358e82"
+  },
+  {
+   "file": "public/illustrations/cartouche/folder-480.webp",
+   "bytes": 85402,
+   "sha256": "fa4e547d7c26ba369c0cd09f502ce5a7df1dbbc4d6d866aea55dc38b4fec2b1a"
+  },
+  {
+   "file": "public/illustrations/cartouche/family-docs-240.webp",
+   "bytes": 26182,
+   "sha256": "50c58ae1cd21740179fa0b27290b7ccb9970983af50e55600c6ca9674752fc41"
+  },
+  {
+   "file": "public/illustrations/cartouche/family-docs-480.webp",
+   "bytes": 83538,
+   "sha256": "0901e8c849d50d8cb244f26eb4bac735cc8bb965585e442f5c5f751ed37d5f46"
+  },
+  {
+   "file": "public/illustrations/cartouche/coins-240.webp",
+   "bytes": 26674,
+   "sha256": "fad9df0a2e44eed5fe052040d64db3b7c536b85cdc3d6dd30f4d110561c1a087"
+  },
+  {
+   "file": "public/illustrations/cartouche/coins-480.webp",
+   "bytes": 83788,
+   "sha256": "a87e2fb8efbac459cf15fa3327b227bf8e710ada0a81ceffb9199d2ac737c33d"
+  },
+  {
+   "file": "public/illustrations/cartouche/passport-240.webp",
+   "bytes": 25786,
+   "sha256": "a4147a60268d62520a912a848bbb2e491f968b8dde269c5774611d69b64bba44"
+  },
+  {
+   "file": "public/illustrations/cartouche/passport-480.webp",
+   "bytes": 83342,
+   "sha256": "20bb35e9ee37c8e6e196739de69c23797d9a9244042b8effdf8d2b230814ca2a"
+  },
+  {
+   "file": "public/illustrations/cartouche/minors-240.webp",
+   "bytes": 26822,
+   "sha256": "e5cfc90aff76ae85a408ed301e094f03f1f57b1dc319560880a6e4ab114cc873"
+  },
+  {
+   "file": "public/illustrations/cartouche/minors-480.webp",
+   "bytes": 84700,
+   "sha256": "08dcbddcf40bdff736cd2f17da0ffa25971180023c5d65462d6d42eb0c94340a"
+  },
+  {
+   "file": "public/illustrations/cartouche/military-240.webp",
+   "bytes": 24674,
+   "sha256": "18c6da1c14f04d64a045b221edba1962b1d65f0b757aab8a151b5670e55736ea"
+  },
+  {
+   "file": "public/illustrations/cartouche/military-480.webp",
+   "bytes": 79482,
+   "sha256": "69e01060a61e2477089ea94d0f95c611f3309ca5919d270c05ea56cf66167882"
+  },
+  {
+   "file": "public/illustrations/cartouche/keys-240.webp",
+   "bytes": 27392,
+   "sha256": "38d38a8a1f5e64cd996820cde4efde9d7e5ea527d08543f48080af36b5ad0db1"
+  },
+  {
+   "file": "public/illustrations/cartouche/keys-480.webp",
+   "bytes": 87960,
+   "sha256": "1645a8f8982867f94f31c5bb7cd2607c7f401c6ad34bbfe91c0bb9c789854f9c"
+  },
+  {
+   "file": "public/illustrations/cartouche/tax-card-240.webp",
+   "bytes": 24370,
+   "sha256": "70de2a538917c40441016e287422e896021ad1c7ee56950ff03f80783a2e57d0"
+  },
+  {
+   "file": "public/illustrations/cartouche/tax-card-480.webp",
+   "bytes": 76994,
+   "sha256": "fd783724ea8a88afb38de0717813c9d20e4e237fa007af96f9fce4ca4d4cce65"
+  },
+  {
+   "file": "public/illustrations/cartouche/insurance-240.webp",
+   "bytes": 25740,
+   "sha256": "54d273a4162711e70afc4306e04fa0016715b154b644094ba1a5b3160f1bdc79"
+  },
+  {
+   "file": "public/illustrations/cartouche/insurance-480.webp",
+   "bytes": 81892,
+   "sha256": "c0a7933990657c8e97a9527cf2109ef5dafc18c3a60334d6434dd13fd815b2f8"
+  },
+  {
+   "file": "public/illustrations/cartouche/alarm-240.webp",
+   "bytes": 25106,
+   "sha256": "bdf09a709f3fa32d2d914fda84377dc1a8a2347342a1c6a3e1a858cc00d56b7a"
+  },
+  {
+   "file": "public/illustrations/cartouche/alarm-480.webp",
+   "bytes": 81588,
+   "sha256": "29dd6cfeec01a0b1f6c068a4542e13bbf936026d64c7592a93c16b077c7b8d47"
+  },
+  {
+   "file": "public/illustrations/cartouche/cap-240.webp",
+   "bytes": 24892,
+   "sha256": "9db300435d996c496b86e67d85a1f877d4d26681b6f6e953a4e3cc7c1170389c"
+  },
+  {
+   "file": "public/illustrations/cartouche/cap-480.webp",
+   "bytes": 80234,
+   "sha256": "39c245f5c9f12eb9727335a9865eae866b92c3eb1eed94b9a7d29b00566e2cf2"
+  },
+  {
+   "file": "public/illustrations/cartouche/permesso-kit-240.webp",
+   "bytes": 26668,
+   "sha256": "881209c1c87d3f05b1b92b28c52bf1802109a38ccd9fcf216dd54eff4a8b5340"
+  },
+  {
+   "file": "public/illustrations/cartouche/permesso-kit-480.webp",
+   "bytes": 85476,
+   "sha256": "79c8add1e2d3275f5347ba6f79b600018381dd65ee96e32fc20dfed6081b3457"
+  }
+ ],
+ "replaced": [
+  {
+   "name": "diploma",
+   "job": "6fe3382c-b942-49ac-8e92-69364be751b3",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "tests",
+   "job": "2ad350c9-0396-4485-99b9-8f5e0fe37aae",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "stamp-pad",
+   "job": "3f9eb078-fc08-4fdd-b547-853b208cef36",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "translation",
+   "job": "f1e5b41e-6366-436f-8520-51458fde5e96",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "folder",
+   "job": "160906cc-c918-4ae8-a54b-126eaa9bcee3",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "family-docs",
+   "job": "3e2798da-c208-43fa-9574-3bb378c22b47",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "coins",
+   "job": "b9bca8d6-426d-4620-96fd-b6bf2660067b",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "passport",
+   "job": "1f66c98b-093c-4d24-9088-32a899d250aa",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "minors",
+   "job": "698d33df-e370-4650-9bc0-e5f6b8d9f379",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "military",
+   "job": "bb544e36-8c8b-44a1-94ea-8cd001bc6122",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "keys",
+   "job": "eb4e7dda-e5fc-4034-9074-3245f849ccd7",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "tax-card",
+   "job": "b012d6e7-2024-4bfe-ac43-de5bd56ceb37",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "insurance",
+   "job": "13e2c117-5a9f-48ae-b748-83519cc09dfd",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "alarm",
+   "job": "0aaf2ead-d310-47dd-85e0-8239b040ed4f",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "cap",
+   "job": "eb5b7613-3a36-4e00-a556-5f5617806fc8",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "permesso-kit",
+   "job": "93f33e0a-0e4c-4d0f-aae6-62f7bc748cdf",
+   "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  }
+ ]
+}
