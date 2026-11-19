@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- Local pre-sized WebP art for the static export. */
 
-import { ObjectIcon } from "@/components/icons/ObjectIcon";
+import { cartoucheFrame } from "@/components/guides/guideArt";
 import { documentOutcome } from "@/lib/portalDocument";
 
 import { useEffect, useId, useRef, useState } from "react";
@@ -24,6 +25,7 @@ import portalStyles from "@/components/portal/portal-document.module.css";
 import styles from "./plan-workspace.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 
+const DOC_CHECK_ART = cartoucheFrame("doc-check");
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
 const LABEL: Record<string, string> = {
   ok: "Видимых ошибок нет",
@@ -303,14 +305,15 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             disabled={state.step === "reading" || unavailable || availabilityPending}
             onChange={(e) => accept(e.target.files?.[0])}
           />
-          <ObjectIcon name="folder-quiet" size={60} />
+          {/* Owner, 19 Nov: войлочная папка «чуть страшновата» — тот же
+              мозаичный картуш, что у тем гайдов: свиток с лупой и галочкой. */}
+          <img src={DOC_CHECK_ART.src} srcSet={DOC_CHECK_ART.srcSet} sizes="88px" width={88} height={88} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} data-doc-check-art />
           <b className={styles.fileAction}>Выбрать документ</b>
           <small>или перетащи сюда<br />{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>
       ) : (
         <div className="mt-5 flex items-start gap-3 rounded-[20px] border border-white/15 p-4 sm:items-center sm:gap-4">
           {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={preview}
               alt="документ"

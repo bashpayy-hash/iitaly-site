@@ -13,8 +13,8 @@ import local from "./guide-road.module.css";
    (portal-path.module.css): медальоны по змейке, остановки-станции с
    предметом, линия по реальным центрам остановок, макеты Италии в карманах
    изгиба. Смысл — чтение: прочитано — зелёный с галочкой, «читать дальше» —
-   крупный терракотовый со звездой (один на дорогу), открыто — бумажный с
-   точкой, закрыто до оплаты — замок. Полоса сверху — сколько прочитано из
+   крупный, с терракотовым кольцом и цветной смальтой (один на дорогу),
+   открыто — бумажный с приглушённой смальтой, закрыто до оплаты — замок. Полоса сверху — сколько прочитано из
    открытого. Устройство с оплаченным кабинетом видит всё без замков.
    Змейка, линия и пейзаж повторяют PortalRoad.tsx (кабинет): меняешь там —
    сверь здесь. */
@@ -36,9 +36,21 @@ const outside = (i: number): "left" | "right" => Math.sin(2 * Math.PI * (i + 0.5
 type NodeState = "done" | "current" | "todo" | "locked";
 function NodeMark({ state }: { state: NodeState }) {
   if (state === "done") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="done"><path d="m6 12.6 3.9 3.9L18.2 8" /></svg>;
-  if (state === "current") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="current"><path d="m12 4.4 2.25 4.6 5.05.72-3.65 3.57.86 5.04L12 15.95l-4.51 2.38.86-5.04L4.7 9.72l5.05-.73Z" /></svg>;
   if (state === "locked") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="locked"><rect x="6.5" y="10.8" width="11" height="8.4" rx="2.1" /><path d="M9 10.8V8.9a3 3 0 0 1 6 0v1.9" /></svg>;
-  return <span className={styles.nodeDot} aria-hidden="true" />;
+  return <Tesserae />;
+}
+
+/* Четыре кусочка смальты ромбом — знак остановки, которую ещё читать
+   (owner, 19 Nov: дорога «чуть будто бы недоделанная, сыровато»; пустой
+   кружок с серой точкой читался как незаполненное гнездо). Цифр нет:
+   owner, 4 Nov — без «Шаг 01» и крупных номеров. */
+function Tesserae() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="tesserae">
+    <path d="M12 1.8 16.8 6.6 12 11.4 7.2 6.6Z" fill="#B83A27" />
+    <path d="M17.4 7.2 22.2 12 17.4 16.8 12.6 12Z" fill="#D9A441" />
+    <path d="M12 12.6 16.8 17.4 12 22.2 7.2 17.4Z" fill="#6E5644" />
+    <path d="M6.6 7.2 11.4 12 6.6 16.8 1.8 12Z" fill="#5E7F3E" />
+  </svg>;
 }
 
 const reachedPoint = (state: string) => state === "done" || state === "current" || state === "station-done" || state === "station-current";
@@ -74,19 +86,18 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
   }, [wrap, line, version]);
 }
 
-/* Те же макеты Италии, что вдоль дороги кабинета (scenery-2026-11-07.json):
-   в кармане изгиба, не чаще чем раз в три остановки; рядом с закрытым — серые.
-   Макеты с Веспи чередуются с местами, двух подряд нет. */
+/* Виды Италии у изгибов дороги — плоская мозаика с пола Галереи, тем же
+   камнем, что картуши тем (owner, 19 Nov: дорога «сыровато»; объёмные макеты
+   спорили с мозаикой, design/illustrations/scenery-mosaic-2026-11-19.json).
+   В кармане изгиба, не чаще чем раз в три остановки; рядом с закрытым —
+   серые. Кабинет оставляет свои макеты (PortalRoad.tsx). */
 const SCENERY = [
-  { name: "colosseum", width: 560, height: 401 },
-  { name: "vespi-map", width: 560, height: 459 },
-  { name: "duomo", width: 560, height: 439 },
-  { name: "vespi-gondola", width: 560, height: 401 },
-  { name: "pisa", width: 560, height: 684 },
-  { name: "vespi-trevi", width: 560, height: 448 },
-  { name: "tuscany", width: 560, height: 380 },
-  { name: "vespi-espresso", width: 560, height: 463 },
-  { name: "bologna", width: 560, height: 668 },
+  { name: "colosseum", width: 560, height: 369 },
+  { name: "duomo", width: 560, height: 454 },
+  { name: "gondola", width: 560, height: 389 },
+  { name: "pisa", width: 560, height: 850 },
+  { name: "tuscany", width: 560, height: 392 },
+  { name: "bologna", width: 560, height: 684 },
 ] as const;
 const SCENERY_EVERY = 3;
 type SceneryPlace = { art: (typeof SCENERY)[number]; side: "left" | "right" };
@@ -103,7 +114,7 @@ function Scenery({ place, reached }: { place: SceneryPlace; reached: boolean }) 
   const { name, width, height } = place.art;
   const file = reached ? name : `${name}-grey`;
   return <li className={styles.scenery} aria-hidden="true" data-road-scenery={name} data-side={place.side} data-scenery-shape={height > width ? "tall" : "wide"}>
-    <img src={`/illustrations/scenery/${file}-280.webp`} srcSet={`/illustrations/scenery/${file}-280.webp 280w, /illustrations/scenery/${file}-560.webp 560w`}
+    <img src={`/illustrations/scenery-mosaic/${file}-280.webp`} srcSet={`/illustrations/scenery-mosaic/${file}-280.webp 280w, /illustrations/scenery-mosaic/${file}-560.webp 560w`}
       sizes="(max-width: 640px) 168px, 260px" width={width} height={height} alt="" loading="lazy" decoding="async" draggable={false} />
   </li>;
 }
@@ -129,7 +140,6 @@ export function GuideRoad({ id, heading, stations, showStations = true, scenery 
   const openKeys = [...new Set(steps.flatMap(step => step.openKeys))];
   const available = allKeys;
   const readCount = available.filter(key => read.has(key)).length;
-  const percent = available.length ? Math.round(readCount / available.length * 100) : 0;
   const caption = paid ? "всё открыто: на этом устройстве выполнен вход в кабинет"
     : openKeys.length === 0 ? "разбор этой темы — с маршрутом"
     : openKeys.length < allKeys.length ? `открыто ${openKeys.length}, ещё ${allKeys.length - openKeys.length} — с маршрутом` : "";
@@ -144,9 +154,10 @@ export function GuideRoad({ id, heading, stations, showStations = true, scenery 
   return <section className={`${styles.path} ${local.guideRoad}`} style={{ ...ROAD_VARS, "--route-fill": available.length ? readCount / available.length : 0 } as CSSProperties}
     data-guide-road={id} aria-labelledby={`${id}-road-heading`}>
     <div className={styles.head}>
+      {/* Owner, 19 Nov («сыровато»): «0%», «0 из 5» и полоса говорили одно и
+          то же трижды — остались счёт и полоса. */}
       <div className={styles.headTop}>
         <h2 id={`${id}-road-heading`}>{heading}</h2>
-        <p className={styles.percent} aria-hidden="true"><strong>{percent}%</strong><span>прочитано</span></p>
       </div>
       <p className={styles.count} data-road-count>Прочитано <strong>{readCount}</strong> из {available.length}{caption && <span className={styles.ahead} data-path-caption> · {caption}</span>}</p>
       <div className={styles.meter} aria-hidden="true"><div className={styles.rail}>

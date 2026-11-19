@@ -1,0 +1,162 @@
+{
+ "date": "2026-11-19",
+ "request": "Owner, on the guide road «Разбор по шагам»: «чуть будто бы недоделанная, сыровато», «используй дизайн критик». The realistic 3D landmarks beside the road argued with the mosaic cartouches; the guide roads get flat mosaic landmarks from the same Galleria floor. The cabinet road keeps its scenery.",
+ "model": "Higgsfield gpt_image_2_6, quality high, 1k, 4:3 (3:4 for the towers), transparent background, with two original variant 7 cartouches as style references (73519f80-c62c-40fe-8e8b-80042bde86ef, addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3)",
+ "template": "A flat mosaic floor vignette in the same tesserae, palette and craft as the reference images, polished marble tesserae seen straight from above: {landmark}. No frame, no cartouche, no shell, no circle. Palette: cream ivory, warm ochre, terracotta red, slate blue, leaf green. Flat ornament, not a 3D render, not a photo. Transparent background. No text, no letters, no numbers.",
+ "processing": "crop to alpha (>4 %); master WebP q92 in design/illustrations/source/scenery-mosaic/; site WebP q86 at 280 and 560 px wide; the -grey copies (beside closed steps) keep 15 % of the colour and are blended 38 % into #F6F2EB.",
+ "landmarks": [
+  {
+   "name": "colosseum",
+   "job": "48798ac3-6cc6-4346-b4ca-87214bbe20bb"
+  },
+  {
+   "name": "duomo",
+   "job": "428f7f6d-f496-41a1-af5f-5a1b61065767"
+  },
+  {
+   "name": "pisa",
+   "job": "3ea4c088-ffbc-4849-b889-0c270bc5abcc"
+  },
+  {
+   "name": "gondola",
+   "job": "c3315ea0-5917-4747-841f-fd68649b3d20"
+  },
+  {
+   "name": "tuscany",
+   "job": "60c3117d-c118-458e-8466-a2b9be9fb47e"
+  },
+  {
+   "name": "bologna",
+   "job": "cad4301a-8b6b-421c-a5e6-ff33252e8cbf"
+  }
+ ],
+ "dropped": [
+  {
+   "name": "trevi",
+   "job": "154f7842-e6ab-435c-aaba-fa9e9003bf54",
+   "why": "false safety flag; six landmarks are enough"
+  }
+ ],
+ "files": [
+  {
+   "file": "public/illustrations/scenery-mosaic/bologna-280.webp",
+   "bytes": 49032,
+   "sha256": "c23d9ba653ed0ad86bdc87b1d948c209da3a288ac57fc676ca188dc80e2664a0"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/bologna-560.webp",
+   "bytes": 154098,
+   "sha256": "9db4a3dace381dac382fed2f54c95a59376394674b8e7f1d9ba028ac43847620"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/bologna-grey-280.webp",
+   "bytes": 41780,
+   "sha256": "ae79b3ae1363799bac297cb4dae698bfc9999e6d1d3ced6d6676452ddb4d785e"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/bologna-grey-560.webp",
+   "bytes": 128352,
+   "sha256": "ddfb49870f504fa8eed26a1758b563d2468c803b4c1fc61b71ab8974ebc1765b"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/colosseum-280.webp",
+   "bytes": 34498,
+   "sha256": "cc4d12f3d0727f53387acc90aaf0d0d30b288d41d781753158503de4fe52ec5f"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/colosseum-560.webp",
+   "bytes": 100026,
+   "sha256": "6cc8fc984a8aec59431c59caac945a30622d157079ebd678220da4b53a36aebd"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/colosseum-grey-280.webp",
+   "bytes": 29512,
+   "sha256": "e05b9e5e69e21a5b3625158ae172cbdea5a73284047a7db1b5ae801cca877733"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/colosseum-grey-560.webp",
+   "bytes": 83878,
+   "sha256": "58d9e78550e99d0d8eca9ba752cfdfffd8fc53d0f97063ac78547b6badfa7661"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/duomo-280.webp",
+   "bytes": 25594,
+   "sha256": "3183d2bfa518896b6bc18ef68ab7e42ae6296c863ae1ee3f42453da81bbc2372"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/duomo-560.webp",
+   "bytes": 80870,
+   "sha256": "a9c7f6b00b50978316a0d6b8acd8f0312cee7b3cf6ed3103ccb60afbb081ab3b"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/duomo-grey-280.webp",
+   "bytes": 19638,
+   "sha256": "0f10b46009911a12b9e9688ddc2d303dbb28ba5fb3d44ba140d7aa780d5c32d1"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/duomo-grey-560.webp",
+   "bytes": 60056,
+   "sha256": "cbfb8080c5fb5a5411d0cd6b5c59322ce269d1a3deaae7a76470c34a49208713"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/gondola-280.webp",
+   "bytes": 36444,
+   "sha256": "eef94e13ff87b529e7a78ba9b1821656e240953f48ab98b08ed010835ee097ad"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/gondola-560.webp",
+   "bytes": 114180,
+   "sha256": "7ffef7362ff4ad3fd75f5888594da6bf69a337333ea0ae81ca562236329243cc"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/gondola-grey-280.webp",
+   "bytes": 29706,
+   "sha256": "8062e422628ee3b2ea7379cff2f4b8343bfbeb8e609246d861083535e033ed63"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/gondola-grey-560.webp",
+   "bytes": 91644,
+   "sha256": "aae5d75c0484132c6a88b5d50df069721b820961e3b42059a021f045f75fcaff"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/pisa-280.webp",
+   "bytes": 35828,
+   "sha256": "20cfbd810f761ef33610ab904154e21fffdeee41894017192942f7f64f8a517b"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/pisa-560.webp",
+   "bytes": 118188,
+   "sha256": "c21b449fc10381669a3dfdafba4a842c413a9839bfd5e0f5cf72eb2d190cc8e3"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/pisa-grey-280.webp",
+   "bytes": 26140,
+   "sha256": "43a6c12a6a3ab73de6d00d121de000181a72533899fe600422dc0c975cc9e393"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/pisa-grey-560.webp",
+   "bytes": 85582,
+   "sha256": "d884d814e397ea668cb51b532cb54f6f2f97ea7cde274f073f9906ca21744d4c"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/tuscany-280.webp",
+   "bytes": 25386,
+   "sha256": "cee4ab0a9fb68232c6949b50577a41ef13c79ed22d9b41662797991de78f4f9b"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/tuscany-560.webp",
+   "bytes": 91374,
+   "sha256": "54299572a0e82ae477766c467f1aa141bfe1ef292ac73b07d0d70a3f7e47f3be"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/tuscany-grey-280.webp",
+   "bytes": 19074,
+   "sha256": "7bd7246c5ed104fe66e2554dd7181f3bcdf60d3ba184df922aa05fc9a4060d47"
+  },
+  {
+   "file": "public/illustrations/scenery-mosaic/tuscany-grey-560.webp",
+   "bytes": 69230,
+   "sha256": "22f1b2c5b1b5cf2b343b0600803adf09641ab274ac00818642feef3dc4ec3acf"
+  }
+ ]
+}

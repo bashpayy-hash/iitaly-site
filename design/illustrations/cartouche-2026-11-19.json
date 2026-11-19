@@ -1,13 +1,14 @@
 {
  "date": "2026-11-19",
- "request": "After the guide and visa icons became Galleria cartouches (#239), the owner sent a phone screenshot of the visa page with the burgundy notebook in its header: «Надо было заменить вот это блокнот, он как раз так и проблематичен». The topic pictures of guides and visa — the header of each guide, the catalogue tiles, the guide and visa roads and the visa point switcher — move to the same chosen style (round five, variant 7). The home page, the cabinet and the plan keep the shared object set (design/illustrations/objects-2026-11-13.json). Then, on why the first take differed from the approved variants («Почему это отличается от вариантов которые ты делал до этого и которые я одобрил»), the set was redone from the original variant 7 images, and on the small cartouches in the overview cells: «Убери эти мелкие гербы, они тут ни к чему, везде применяй этот принцип» — the picture is only large: the topic header, the catalogue tile, the visa point switcher. The road thumbs (56 px) keep the shared objects.",
+ "request": "After the guide and visa icons became Galleria cartouches (#239), the owner sent a phone screenshot of the visa page with the burgundy notebook in its header: «Надо было заменить вот это блокнот, он как раз так и проблематичен». The topic pictures of guides and visa — the header of each guide, the catalogue tiles, the guide and visa roads and the visa point switcher — move to the same chosen style (round five, variant 7). The home page, the cabinet and the plan keep the shared object set (design/illustrations/objects-2026-11-13.json). Then, on why the first take differed from the approved variants («Почему это отличается от вариантов которые ты делал до этого и которые я одобрил»), the set was redone from the original variant 7 images, and on the small cartouches in the overview cells: «Убери эти мелкие гербы, они тут ни к чему, везде применяй этот принцип» — the picture is only large: the topic header, the catalogue tile, the visa point switcher. The road thumbs (56 px) keep the shared objects. On 19 Nov, on the catalogue tiles: the visa gets «флаг конкретный Казахстана» (kz-flag; the passport cartouche stays with the visa point about the passport), the DSU coins looked «слишком по-яичному» and became refined thin coins, the family documents lost the two odd columns for a family tree on papers; the document-check upload zone swapped its felt folder («чуть страшновата») for the doc-check cartouche.",
  "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background, with the three original variant 7 images as style references (not as a shape to copy): 73519f80-c62c-40fe-8e8b-80042bde86ef (coins), bb353c85-8c76-42c8-9c2a-e1cdeb39c24f (hourglass), addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple)",
  "template": "In the same style as the reference images, but do not copy their outline: draw a new Baroque strapwork cartouche of its own. In the style of the floor of the Galleria Vittorio Emanuele II in Milan, polished marble tesserae, freshly laid, seen straight from above: a Baroque strapwork cartouche with a cream ivory ground laid in rows, its edges curling outward into rich slate-blue scrolled straps with ochre and terracotta inner bands, acanthus leaves in leaf green, crowned at the top by a terracotta and ochre scallop shell; no square, no circle. In the centre a flat symmetrical emblem laid in the same small tesserae as everything else, matte, no bevel, no gloss, no drop shadow, classical in form like the reference coins, hourglass and temple: {motif}. Palette: cream ivory, warm ochre, terracotta red, slate blue, leaf green. Flat, not a 3D object, not an emoji, not an app pictogram. Transparent background. No text, no letters, no numbers.",
  "processing": "crop to alpha (>4 %), centred on a transparent square plus 6 px; master WebP q92 in design/illustrations/source/cartouche/; site WebP q86 at 240 and 480 px (square), src/components/guides/guideArt.ts cartoucheFrame.",
  "use": {
-  "guide topics": "education diploma, tests tests, apostille stamp-pad, translation translation, cimea folder, con family-docs, iseeu coins, visa passport, minors minors, military military, permesso keys, codice tax-card, health-travel insurance — the topic header, the catalogue tile and the step page",
+  "guide topics": "education diploma, tests tests, apostille stamp-pad, translation translation, cimea folder, con family-docs, iseeu coins, visa kz-flag, minors minors, military military, permesso keys, codice tax-card, health-travel insurance — the topic header, the catalogue tile and the step page",
   "visa point switcher": "cap, coins, passport, alarm, permesso-kit, diploma, translation, keys, insurance, tax-card, minors",
-  "not used": "the guide and visa roads keep the shared objects (objectFrame) in their 56 px thumbs; the overview cells have no icons"
+  "not used": "the guide and visa roads keep the shared objects (objectFrame) in their 56 px thumbs; the overview cells have no icons",
+  "document check": "doc-check, 88 px in the upload zone (src/components/plan/DocCheck.tsx), plan and cabinet"
  },
  "icons": [
   {
@@ -37,13 +38,13 @@
   },
   {
    "name": "family-docs",
-   "job": "a3dfe6be-8b3f-47ef-880b-0c768c382a29",
-   "motif": "a small classical house with a pediment on a stack of papers"
+   "job": "6608aaed-3281-4a7f-b3ba-21d1aea18bed",
+   "motif": "a family tree: an olive tree with three fruits, its roots on a stack of papers tied with a ribbon"
   },
   {
    "name": "coins",
-   "job": "5bb44f88-534a-4bfd-a686-8cb8d166b2b3",
-   "motif": "a small stack of coins with three star coins in front"
+   "job": "cac216fb-aa7c-4c8a-be97-b5b04cdda285",
+   "motif": "three thin antique gold coins fanned out, fine laurel rims and small profiles (refined)"
   },
   {
    "name": "passport",
@@ -89,6 +90,16 @@
    "name": "permesso-kit",
    "job": "d836b846-78bb-4466-8e96-f31fd5b5b050",
    "motif": "a folded letter closed with a round seal"
+  },
+  {
+   "name": "kz-flag",
+   "job": "617ff121-4496-495e-8468-feee434f34bb",
+   "motif": "the flag of Kazakhstan waving on a slim pole: sky-blue field, golden sun and steppe eagle, ornament band at the hoist"
+  },
+  {
+   "name": "doc-check",
+   "job": "906d84f0-5b37-4814-8778-0badddea7efe",
+   "motif": "an unrolled document with a magnifying glass and a small check mark"
   }
  ],
  "files": [
@@ -144,23 +155,23 @@
   },
   {
    "file": "public/illustrations/cartouche/family-docs-240.webp",
-   "bytes": 26182,
-   "sha256": "50c58ae1cd21740179fa0b27290b7ccb9970983af50e55600c6ca9674752fc41"
+   "bytes": 27260,
+   "sha256": "4eeb021bfcb828342aade5a9d23eed222bf1a214ed92441053a675bbb20ae972"
   },
   {
    "file": "public/illustrations/cartouche/family-docs-480.webp",
-   "bytes": 83538,
-   "sha256": "0901e8c849d50d8cb244f26eb4bac735cc8bb965585e442f5c5f751ed37d5f46"
+   "bytes": 85600,
+   "sha256": "79229bb2f10231e66ce07c7098b6025e276eb63463721451a404ebf2ad2dfa93"
   },
   {
    "file": "public/illustrations/cartouche/coins-240.webp",
-   "bytes": 26674,
-   "sha256": "fad9df0a2e44eed5fe052040d64db3b7c536b85cdc3d6dd30f4d110561c1a087"
+   "bytes": 27460,
+   "sha256": "4cdc3b5fa3074384b6cea570b9c14f1753fe9d97b424539111ca43b7dcda34d0"
   },
   {
    "file": "public/illustrations/cartouche/coins-480.webp",
-   "bytes": 83788,
-   "sha256": "a87e2fb8efbac459cf15fa3327b227bf8e710ada0a81ceffb9199d2ac737c33d"
+   "bytes": 88346,
+   "sha256": "0155da0616ce5e582c9fa879d325f6a4af288fdff880df0261e7bdb73044029d"
   },
   {
    "file": "public/illustrations/cartouche/passport-240.webp",
@@ -251,6 +262,26 @@
    "file": "public/illustrations/cartouche/permesso-kit-480.webp",
    "bytes": 85476,
    "sha256": "79c8add1e2d3275f5347ba6f79b600018381dd65ee96e32fc20dfed6081b3457"
+  },
+  {
+   "file": "public/illustrations/cartouche/kz-flag-240.webp",
+   "bytes": 28294,
+   "sha256": "eb08ce95aab45e4896fb2c63d307f832c5e08afda28d7f24689690d26fcdd5de"
+  },
+  {
+   "file": "public/illustrations/cartouche/kz-flag-480.webp",
+   "bytes": 91286,
+   "sha256": "a4a4a56373a6618fcb3c0d9f76af90084f8bf1f16f5eb8248273e2b4f324ef23"
+  },
+  {
+   "file": "public/illustrations/cartouche/doc-check-240.webp",
+   "bytes": 27308,
+   "sha256": "1a84d9963c8617b4d9d79e9d93492aaf52e1693844671ee5c471c1735e2c8c03"
+  },
+  {
+   "file": "public/illustrations/cartouche/doc-check-480.webp",
+   "bytes": 88902,
+   "sha256": "3f5ad5f3757410aa7c12ca38f5a1991749da1fe86d386c984d073e52bae54466"
   }
  ],
  "replaced": [
@@ -333,6 +364,16 @@
    "name": "permesso-kit",
    "job": "93f33e0a-0e4c-4d0f-aae6-62f7bc748cdf",
    "what": "first take: one copied cartouche outline with app-like pictograms, never published"
+  },
+  {
+   "name": "coins",
+   "job": "5bb44f88-534a-4bfd-a686-8cb8d166b2b3",
+   "what": "thick round coins with stars — owner: «слишком по-яичному… более утончённым»"
+  },
+  {
+   "name": "family-docs",
+   "job": "a3dfe6be-8b3f-47ef-880b-0c768c382a29",
+   "what": "two small columns on papers — owner: «какие-то странные… что-то там другое поставь»"
   }
  ]
 }
