@@ -135,8 +135,9 @@ jobs:
       # packages, and its Ubuntu mirror served them at ~66 kB/s (21 MB in
       # 5 min, 19 Nov). Their .deb files are cached once and installed with
       # dpkg; apt runs only for what is still missing after that, and it
-      # refills the cache. Skipping the packages instead changed how the
-      # cabinet behaved (portal focus review).
+      # refills the cache. apt keeps its own timeouts: a 30 s limit gave up
+      # on the slow mirror and failed the job. Skipping the packages instead
+      # changed how the cabinet behaved (portal focus review).
       - name: Install isolated browser tools (no lockfile changes)
         run: |
           PW=/tmp/iitaly-browser/node_modules/.bin/playwright
@@ -160,7 +161,7 @@ jobs:
           fi
           if [ -n "$missing" ]; then
             echo "Installing missing system packages with apt:$missing"
-            printf 'Acquire::Retries "3";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' | sudo tee /etc/apt/apt.conf.d/99iitaly-timeouts > /dev/null
+            echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/99iitaly-retries > /dev/null
             sudo apt-get update
             sudo apt-get install -y --no-install-recommends --download-only $missing
             mkdir -p /tmp/iitaly-apt-debs
