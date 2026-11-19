@@ -2081,27 +2081,52 @@ the Galleria Vittorio Emanuele II, but not as a single object in mosaic skin:
   Roman fragments stay as masters (`*-roman`) next to the earlier versions.
 - Manifest: design/illustrations/mosaic-icons-2026-11-18.json.
 
-## Guide and visa pictures as the same cartouches · 19 November 2026
+## One large cartouche per topic, no small icons · 19 November 2026
 
-The icons were the wrong target. With a phone screenshot of the visa page and
-its burgundy notebook in the header, the owner: «Надо было заменить вот это
-блокнот, он как раз так и проблематичен». Every topic picture of guides and
-visa now uses the chosen style: the guide header, the catalogue tiles, the
-guide and visa roads and the visa point switcher. Each picture is a Baroque
-cartouche from the Galleria floor with the topic's flat emblem in the
-middle.
+The icons were the wrong target. With a phone screenshot of the visa page
+showing the burgundy notebook in its header, the owner wrote: «Надо было
+заменить вот это блокнот, он как раз так и проблематичен». Two more notes
+followed:
 
+- on the first take: «Почему это отличается от вариантов которые ты делал
+  до этого и которые я одобрил»;
+- on the small cartouches in the overview cells: «Убери эти мелкие гербы,
+  они тут ни к чему, везде применяй этот принцип».
+
+- **One picture per topic, and it is large.**
+  - Each topic has one Baroque cartouche from the Galleria floor, in the
+    place of the object. It shows in the guide header, the catalogue tile,
+    the step page and the visa point switcher.
+  - The overview cells have no icons at all. `MosaicIcon` and
+    `public/illustrations/mosaic` are gone; the icon masters stay in
+    design/illustrations/source/mosaic/.
+  - The road thumbs (56 px) keep the shared objects, as in the cabinet.
+- **Faithful to variant 7.**
+  - Every cartouche is drawn anew, with its own outline, rich strapwork
+    (slate blue with ochre and terracotta bands), acanthus and the shell.
+  - The emblem is classical and laid in the same tesserae, flat and matte.
+  - Higgsfield got the three original variant 7 images as style references.
+    The first take had copied one later icon as a template and put app-like
+    pictograms (a folder, sheets with arrows) in the middle; it was never
+    published.
 - **Emblems.**
-  - Topics: a diploma scroll (school leaving certificate), an answer sheet
-    with a pencil (tests), a stamp and its impression (apostille), two
-    sheets with arrows (translation), a tied folder (CIMEA), a house on
-    papers (family documents), coins and a banknote (ISEE), a passport front
-    (visa), a signed sheet (under 18), a booklet with medals (military), two
-    crossed keys (permesso), a certificate card (codice fiscale), a shield
-    with a cross (insurance).
-  - Visa road and switcher: an alarm clock, a graduation cap and a sealed
-    envelope join these.
+  - Topics:
+    - school leaving certificate: a diploma scroll;
+    - tests: an open book;
+    - apostille: a wax seal with ribbons;
+    - translation: two scrolls with crossed quills;
+    - CIMEA: tied papers;
+    - family documents: a small house on papers;
+    - ISEE: coins with stars;
+    - visa: a passport booklet;
+    - under 18: a signed scroll with a quill;
+    - military: a shield with crossed swords;
+    - permesso: crossed keys;
+    - codice fiscale: a sealed tablet;
+    - insurance: a shield with a cross.
+  - The visa switcher also uses a clock face, a graduation cap on a book and
+    a sealed letter.
 - **Only guides and visa.** The home page, the cabinet and the plan keep the
-  shared object set (`objectFrame`); the guides use `cartoucheFrame` in
-  `src/components/guides/guideArt.ts`, square 480 px with a 240 px copy.
+  shared object set (`objectFrame`). The guides use `cartoucheFrame` in
+  `src/components/guides/guideArt.ts`: square, 480 px with a 240 px copy.
 - Manifest: design/illustrations/cartouche-2026-11-19.json.
