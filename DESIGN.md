@@ -2147,6 +2147,13 @@ road and the document check:
   - Family documents: the two «странные» columns, then «справки о семье
     переработай». The emblem is an oval cameo with the profiles of a family
     over a sealed certificate.
+- **Permesso di soggiorno.** «Сделай иконку пластиковой карточки пермессо с
+  фоткой Веспи». The cartouche shows the plastic residence permit card with
+  Vespi's portrait, a chip and the emblem of the Italian Republic, no
+  writing. The crossed keys stay with the visa points about housing.
+- **Home, «После визы путь продолжается».** «Замени иконки… тоже»: the three
+  cards (permesso, codice fiscale, insurance) show the same cartouches. The
+  route stage cards above keep their objects.
 - **The upload zone of the document check.** The felt folder («чуть
   страшновата») became the doc-check cartouche: a scroll, a magnifying
   glass and a check. It is shown at 88 px, at full colour, in the plan and

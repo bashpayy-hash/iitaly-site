@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { SceneCard } from "@/components/journey/SceneCard";
 import { GUIDE_TOPICS, GUIDE_STAGES, guideHref, guideStageHref } from "@/components/guides/guideCatalogue";
+import { cartoucheFrame, objectFrame } from "@/components/guides/guideArt";
 import styles from "./journey-scenes.module.css";
 
 /* Две сцены на главной. Owner, 3 Nov: «суть информации не сильно понятна —
@@ -11,25 +12,29 @@ import styles from "./journey-scenes.module.css";
    своей плоской плиткой (светлая/тёмная по очереди, как плитки кабинета):
    ярлык, название и одна строка сверху, вещь темы (студийный рендер,
    design/illustrations/objects-2026-11-03.json) внизу. Всё видно сразу,
-   плитка ведёт на свою страницу. Тексты — те же, что были в окне. */
+   плитка ведёт на свою страницу. Тексты — те же, что были в окне.
+   Owner, 19 Nov (скрин «После визы путь продолжается»): «замени иконки… тоже» —
+   у тем после приезда те же картуши с пола Галереи, что в гайдах
+   (guideArt.ts, cartoucheFrame); у этапов маршрута — прежние вещи. */
+type Frame = { src: string; srcSet: string; width: number; height: number };
 const STAGE_CARDS = [
-  { label: "Маршрут", object: "map", objectHeight: 358 },
-  { label: "До отъезда", object: "folder", objectHeight: 338 },
-  { label: "В Италии", object: "keys", objectHeight: 365 },
+  { label: "Маршрут", object: "map", frame: objectFrame("map", 358) },
+  { label: "До отъезда", object: "folder", frame: objectFrame("folder", 338) },
+  { label: "В Италии", object: "keys", frame: objectFrame("keys", 365) },
 ];
 const ARRIVAL_CARDS = [
-  { id: "permesso", label: "Permesso", object: "permesso-kit", objectHeight: 387 },
-  { id: "codice", label: "Codice fiscale", object: "tax-card", objectHeight: 361 },
-  { id: "health-travel", label: "Страховка", object: "insurance", objectHeight: 362 },
+  { id: "permesso", label: "Permesso", object: "permesso-card", frame: cartoucheFrame("permesso-card") },
+  { id: "codice", label: "Codice fiscale", object: "tax-card", frame: cartoucheFrame("tax-card") },
+  { id: "health-travel", label: "Страховка", object: "insurance", frame: cartoucheFrame("insurance") },
 ];
 
-function ThemeCard({ id, object, objectHeight, label, title, line, href }: { id: string; object: string; objectHeight: number; label: string; title: string; line: string; href: string }) {
+function ThemeCard({ id, object, frame, label, title, line, href }: { id: string; object: string; frame: Frame; label: string; title: string; line: string; href: string }) {
   return <li className={styles.card}>
     <Link className={styles.cardLink} href={href} data-scene-photo={id}>
       {/* Ярлык над названием — только когда он что-то добавляет (owner, 7 Nov:
           «Codice fiscale / Codice fiscale» читалось странно). */}
       <span className={styles.copy}>{label && label !== title && !title.startsWith(label) && <small>{label}</small>}<strong>{title}</strong><span>{line}</span></span>
-      <span className={styles.object}><img src={`/illustrations/objects/${object}-480.webp`} srcSet={`/illustrations/objects/${object}-240.webp 240w, /illustrations/objects/${object}-480.webp 480w`} sizes="(max-width: 640px) 60vw, 280px" width={480} height={objectHeight} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
+      <span className={styles.object}><img src={frame.src} srcSet={frame.srcSet} sizes="(max-width: 640px) 60vw, 280px" width={frame.width} height={frame.height} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
     </Link>
   </li>;
 }
