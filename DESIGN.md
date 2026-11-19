@@ -2130,3 +2130,42 @@ followed:
   shared object set (`objectFrame`). The guides use `cartoucheFrame` in
   `src/components/guides/guideArt.ts`: square, 480 px with a 240 px copy.
 - Manifest: design/illustrations/cartouche-2026-11-19.json.
+
+## Sharper topic cartouches and a finished guide road · 19 November 2026
+
+Notes from the owner, on phone screenshots of the catalogue tiles, a guide
+road and the document check:
+
+- **Cartouches.**
+  - Visa D: first «флаг конкретный Казахстана», then «изобрази именно что
+    паспорт Казахстана». The emblem is the Kazakhstan passport: navy cover
+    with the golden state emblem and the chip symbol, no writing. The same
+    picture serves the visa point about the passport.
+  - DSU and ISEEU: the coins looked «слишком по-яичному» («более
+    утончённым»), then «отчекань на монетах самого Веспи». Vespi is minted
+    on one large thin coin with a laurel rim, with two coins behind it.
+  - Family documents: the two «странные» columns, then «справки о семье
+    переработай». The emblem is an oval cameo with the profiles of a family
+    over a sealed certificate.
+- **The upload zone of the document check.** The felt folder («чуть
+  страшновата») became the doc-check cartouche: a scroll, a magnifying
+  glass and a check. It is shown at 88 px, at full colour, in the plan and
+  in the cabinet.
+- **The guide road** («чуть будто бы недоделанная, сыровато»; reviewed with
+  a design critique).
+  - Each open stop now holds four tesserae as a small rosette, muted.
+    Before, an empty paper circle with a grey dot read as an unfilled
+    socket.
+  - The stop to read next is the same paper circle with a terracotta ring
+    and the rosette in full colour, not a red ball with a star. The «Начни
+    здесь» chip stays.
+  - No numerals in the circles (owner, 4 Nov).
+  - The line is laid in short rectangular tesserae (7 px with 5 px gaps)
+    instead of pale round dots; the part already read is still solid green.
+  - The header says the count once: «Прочитано 0 из 5» and the bar; the big
+    percentage repeated it.
+  - The landmarks beside the road stay the 3D models. Flat mosaic
+    vignettes were tried, and the owner kept the models: «Нет, вот этот
+    стайл именно на карте прогресса норм».
+  - The cabinet road keeps its own look.
+- Manifest: design/illustrations/cartouche-2026-11-19.json.

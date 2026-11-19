@@ -100,7 +100,7 @@
 @media (hover: hover) and (pointer: fine) { .dropzone:hover { background:var(--color-coral-soft); } }
 .dropzone:focus-within { outline:2px solid var(--color-ink); outline-offset:4px; }
 /* Папка тише (owner, 8 Nov): приглушённый рендер, без тени, чуть прозрачнее. */
-.dropzone > img { margin-bottom:4px; opacity:.85; }
+.dropzone > img { margin-bottom:4px; }
 .fileAction { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:11px 22px; border-radius:999px; background:var(--color-ink); color:white; font-size:14px; font-weight:600; }
 .dropzone:has(input:disabled) { cursor:wait; }
 .dropzone:has(input:disabled) .fileAction { background:var(--color-warm-stone); color:var(--color-cloud-body); }
