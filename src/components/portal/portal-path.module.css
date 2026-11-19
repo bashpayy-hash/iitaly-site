@@ -155,6 +155,12 @@
    закрытый — серый диск с приглушённым значком. */
 .thumb { --rim:#E1D4C1; position:absolute; top:50%; left:calc(var(--center) + var(--x, 0) * var(--amp)); display:grid; place-items:center; width:var(--station); height:var(--station); margin:calc(var(--station) / -2) 0 0 calc(var(--station) / -2); border-radius:50%; background:#FFFDF9;
   box-shadow:inset 0 0 0 1.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
+/* 19 Nov: in the cabinet, the paper reset (`.paper :where(*) { box-shadow:none }`,
+   portal-paper.module.css) has the same weight as `.thumb` and comes later,
+   so a stage ahead lost its rim and its object floated beside the road with
+   no disc. One more class keeps the authored rim; done and current stops
+   already had their own stronger rules. */
+.unitHead .thumb { box-shadow:inset 0 0 0 1.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
 .thumb img { display:block; width:70%; height:70%; object-fit:contain; }
 .unitHead[data-road-stage-state=done] .thumb { --rim:#3A8560; box-shadow:inset 0 0 0 2.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
 .unitHead[data-road-stage-state=current] .thumb { --rim:var(--accent,#B83A27); box-shadow:inset 0 0 0 2.5px var(--rim),0 8px 14px -10px rgba(58,40,24,.45); }
@@ -213,18 +219,34 @@
   .feature .featureScene { aspect-ratio:16 / 10; }
   .featureCopy { padding:2px 8px 0; }
   .featureAction { margin:0 8px; }
-  /* На телефоне та же змейка, уже (±88px), как дорожка Duolingo: подписи
-     шагов стоят под кружками по центру (до трёх строк), названия этапов —
-     с внутренней стороны изгиба, где есть место, пейзаж — в кармане
-     напротив крайнего кружка. */
-  .road { --center:50%; --amp:clamp(60px, calc(50% - 79px), 88px); --node:60px; --row:148px; --station:64px; --gap:16px; }
-  .row > .unitHead { padding:24px 0; }
-  /* Тёплая подложка текущего этапа заканчивается с воздухом под подписью его последнего шага. */
-  .row[data-road-unit-state=current] { padding-bottom:40px; }
+  /* На телефоне та же змейка, уже (±88px), как дорожка Duolingo. Названия
+     этапов и подписи шагов стоят с внутренней стороны изгиба, где есть
+     место, пейзаж — в изгибе у крайнего кружка, на своей полосе. */
+  /* Owner, 19 Nov, on an iPhone: «много таких недочётов» — the current star
+     was huge, the dotted line ran straight through «Заполнить анкету», the
+     next caption ran off the right edge and the next mark was a big pale
+     circle. Why it happened: captions stood centred under their circles, but
+     the road leaves every circle vertically, so it always ran through the
+     caption below; marks of 60–76px (92px with the ring) took a third of a
+     360px column. Now the circles are 44px (52px for the current one), the
+     caption stands beside its circle on the inner side of the bend, centred
+     on it, and the road passes above and below it. Nothing is clamped: a row
+     of 104px holds four lines, or the «Сейчас» chip and three. */
+  .road { --center:50%; --amp:clamp(60px, calc(50% - 79px), 88px); --node:44px; --row:104px; --station:52px; --gap:14px; }
+  .row > .unitHead { padding:20px 0; }
   .row[data-road-unit-state=current] { margin:0 -10px; padding:0 10px 4px; border-radius:20px; }
-  .step[data-side] .stepLabel,.step[data-node-state=current][data-side] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp)); right:auto; top:calc(50% + var(--node) / 2 + 8px); width:140px; max-width:140px; gap:4px; justify-items:center; transform:translateX(-50%); text-align:center; font-size:13px; line-height:1.3; }
-  .stepTitle { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden; }
-  .step[data-node-state=current] .stepTitle { -webkit-line-clamp:3; }
+  .step[data-node-state=current] .node { --size:calc(var(--node) + 8px); }
+  .step[data-node-state=current] .node::after { inset:-5px; }
+  .nodeDot { width:8px; height:8px; }
+  /* The inner side is the one opposite data-side (the side the bend heads to). */
+  .step[data-side] .stepLabel,.step[data-node-state=current][data-side] .stepLabel { top:50%; width:auto; gap:4px; transform:translateY(-50%); font-size:14px; line-height:1.3; }
+  .step[data-node-state=current][data-side] .stepLabel { font-size:15px; }
+  .step[data-side=right] .stepLabel,.step[data-node-state=current][data-side=right] .stepLabel { left:auto; right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 12px);
+    max-width:min(176px, calc(var(--center) + var(--x, 0) * var(--amp) - var(--node) / 2 - 12px)); justify-items:end; text-align:right; }
+  .step[data-side=left] .stepLabel,.step[data-node-state=current][data-side=left] .stepLabel { right:auto; left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 12px);
+    max-width:min(176px, calc(100% - var(--center) - var(--x, 0) * var(--amp) - var(--node) / 2 - 12px)); justify-items:start; text-align:left; }
+  .step[data-node-state=current][data-side=right] .stepLabel { right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--node) / 2 + 20px); max-width:min(176px, calc(var(--center) + var(--x, 0) * var(--amp) - var(--node) / 2 - 20px)); }
+  .step[data-node-state=current][data-side=left] .stepLabel { left:calc(var(--center) + var(--x, 0) * var(--amp) + var(--node) / 2 + 20px); max-width:min(176px, calc(100% - var(--center) - var(--x, 0) * var(--amp) - var(--node) / 2 - 20px)); }
   /* Название этапа — с внутренней стороны изгиба: кружок справа — текст слева, и наоборот. */
   .unitHead[data-side=right] :is(.text,.status) { margin-left:auto; margin-right:calc(100% - var(--center) - var(--x, 0) * var(--amp) + var(--station) / 2 + var(--gap)); text-align:right; }
   .unitHead[data-side=right] .text { justify-items:end; }
@@ -236,10 +258,17 @@
   .text > span { font-size:13px; }
   /* У остановки на пересечении оси места мало с обеих сторон: статус переносится. */
   .status { flex-wrap:wrap; row-gap:4px; white-space:normal; }
-  .scenery { --scene-h:124px; }
-  .scenery img { width:min(176px, calc(50% + 0.71 * var(--amp) - 92px)); }
-  .scenery[data-side=right] img { left:calc(50% - 0.71 * var(--amp) + 84px); object-position:left center; }
-  .scenery[data-side=left] img { right:calc(50% - 0.71 * var(--amp) + 84px); object-position:right center; }
+  /* The inner side now holds captions, so the scenery cannot share a row
+     with them: on phones its strip gets its own height, and the road makes
+     room for it between the extreme circle and the next one. The piece keeps
+     to the inner side, 20px clear of the road, which runs along the outer
+     edge there. */
+  .scenery { --scene-h:112px; height:calc(var(--scene-h) + 8px); }
+  .scenery img { top:4px; width:min(176px, calc(50% + 0.71 * var(--amp) - 20px)); }
+  .scenery[data-side=right] img { left:calc(50% - 0.71 * var(--amp) + 20px); object-position:left center; }
+  .scenery[data-side=left] img { right:calc(50% - 0.71 * var(--amp) + 20px); object-position:right center; }
+  .row[data-road-unit-state=current]:has(> .steps > .scenery:last-child),
+  .row:last-child:has(> .steps > .scenery:last-child) { padding-bottom:4px; }
 }
 @media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:active .node { transform:none; } @media (hover: hover) and (pointer: fine) { .step > a:hover .node { transform:none; } } }
 @media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }

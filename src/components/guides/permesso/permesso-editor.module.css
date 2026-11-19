@@ -115,3 +115,17 @@
    1280px по колонке 1216px; 24px на планшете (768–899); 20px на телефоне. */
 @media (max-width: 899px) { .editor { padding-left: 24px; padding-right: 24px; } }
 @media (max-width: 767px) { .editor { padding-left: 20px; padding-right: 20px; } }
+/* 19 Nov (phone pass, owner: «много таких недочётов»): «Сверить с PDF» was a
+   17px line of 11px text, too small to hit with a thumb. On phones the bar
+   grows to the link's 44px; the sheet below and its geometry are unchanged. */
+@media (max-width: 600px) { .documentBar { flex-wrap: wrap; column-gap: 8px; padding-block: 0; } .documentBar span { padding-top: 10px; } .documentBar span, .documentBar a { white-space: nowrap; } .documentBar a { display: inline-flex; align-items: center; min-height: 44px; } }
+/* 19 Nov (phone pass, responsive-design checklist: «labels under 12px»):
+   the trainer's own words around the paper — status lines, the document
+   bar, the inspector's labels and counters, the page tabs — were 11px on
+   phones, under the site's 12px floor (DESIGN_GUIDE.md: only the copy of the
+   paper form is smaller). On phones they are 12px; the paper is unchanged. */
+@media (max-width: 600px) {
+  .scenarios small, .pageTabs b, .pageTabs button, .viewTools, .viewTools button, .documentBar, .inspectorTop,
+  .editorLabel > span, .editorLabel small, .radioGroup legend, .validation, .explanation dt, .reviewBody button span,
+  .intro .scope, .draftActions button { font-size: 12px; }
+}

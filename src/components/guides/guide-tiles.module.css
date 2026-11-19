@@ -46,5 +46,14 @@
   .stage { height:170px; }
   .tile h2 { margin-top:20px; font-size:22px; }
 }
+/* Touch screens (owner, 19 Nov, on a phone: «анимации в этот раз не
+   заработали»): nothing follows a mouse there, so the card in view steps
+   forward and its neighbours wait a step back — a swipe or autoplay visibly
+   moves the band. data-current comes from GuideCarousel. */
+@media (hover:none), (pointer:coarse) {
+  .slide .art { transform:scale(.86); opacity:.62; transition:transform 620ms cubic-bezier(.22,1,.36,1), opacity 620ms cubic-bezier(.22,1,.36,1); }
+  .slide[data-current] .art { transform:none; opacity:1; }
+}
+@media (prefers-reduced-motion:reduce) { .slide .art, .slide[data-current] .art { transform:none; opacity:1; transition:none; } }
 @media(prefers-reduced-motion:reduce) { .art,.primary,.tile h2,.tile p,.band [data-guide-carousel] ul > li { transition:none; } .art,.tile h2,.tile p,.band [data-guide-carousel] ul > li,.tile:focus-within .art { transform:none; } }
 @media(forced-colors:active) { .band { border-block:1px solid CanvasText; } }

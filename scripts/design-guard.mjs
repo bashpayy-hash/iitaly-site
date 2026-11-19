@@ -276,7 +276,13 @@ const approvedGamifiedPortalPaths = new Set([
 // Once this revision is the base, the files are byte-exact again: a later
 // change needs its own approval here, with the request that asked for it.
 const approvedRevisions = {
-  'netlify.toml': '070d9aeeb9dd98b24c2b19ddf184ff4f7bbcd7176da7af9d42f1e8696b598452',
+  // 2026-11-19 (owner: «сайт иногда долго загружает эти иконки на мобильной
+  // версии. Нужно это всё оптимизировать»). netlify.toml: one more cache rule,
+  // a year and immutable for /illustrations/cartouche/*, whose file names now
+  // carry the master's hash. Every other header, redirect and build setting is
+  // unchanged.
+  'netlify.toml': '8105a9ee295694f22f99c12e7fa5cfae195f2883d4e218d7415085b0e01d9e89',
+  // package.json and package-lock.json: the 2026-11-11 revision above.
   'package.json': 'd74d6adecb14d27226f9cd938b5dbaeda9c6febdfa6c3bef273e40a640a02728',
   'package-lock.json': '9c0180c872d7a336ad95c28dd0f272fb9f770c0f71b535a25e38e9b99d5942e0',
   // 2026-11-12 (owner: «некоторые иконки слишком близко стоят местами друг

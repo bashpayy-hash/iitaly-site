@@ -56,3 +56,6 @@
    1280px по колонке 1216px; 24px на планшете (768–899); 20px на телефоне. */
 @media (max-width: 899px) { .page { padding-left: 24px; padding-right: 24px; } }
 @media (max-width: 767px) { .page { padding-left: 20px; padding-right: 20px; } }
+/* 19 Nov (phone pass): a short tab («Бланк») was 38–41px wide and the
+   scenario switch 40px tall; on phones both reach 44px. */
+@media (max-width: 600px) { .sections a { justify-content: center; min-width: 44px; } .scenarios button { min-height: 44px; } }

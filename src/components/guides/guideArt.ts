@@ -33,8 +33,20 @@
    (он же у пункта визы о паспорте), камея с профилями семьи над свитком.
    И: «сделай иконку пластиковой карточки пермессо с фоткой Веспи» — у
    permesso карточка ВНЖ с фото Веспи; ключи остаются у пунктов про жильё.
+   Owner, 19 Nov, с телефона: «у всех гербов сделай разные узоры, где-то
+   вариантов 5, и распредели их, чтобы они не повторялись, потому что когда
+   они все так одинаково выглядят, это выглядит очень лениво» — пять рамок:
+   A барочный картуш с ракушкой (прежний), B круглый лавровый венок,
+   C охристый картуш из аканта, D терракотовый щит с лилией, E синий
+   четырёхлистник. Соседи нигде не повторяются: в ряду тем A B C D E по кругу,
+   в пунктах визы и на главной — по таблице в cartouche-2026-11-19.json.
+   И: «вот этот конверт [Codice fiscale] слишком короткий» — у Codice fiscale
+   и у DoV/CIMEA теперь высокий лист: справка с печатью, диплом с печатью
+   проверки и лупой.
    Главная, кабинет и план оставляют общий набор предметов (objectFrame).
    Картинки декоративные (alt=""): смысл несут заголовок и тизер темы. */
+import { CARTOUCHE_FILES } from "./cartoucheFiles";
+
 const ART: Record<string, string> = {
   education: "diploma",
   tests: "tests",
@@ -61,11 +73,13 @@ export function objectFrame(name: string, height: number) {
   };
 }
 
-/** Квадратный 480px-картуш темы гайда и его уменьшенная копия для srcSet. */
+/** Квадратный 480px-картуш темы гайда и его уменьшенная копия для srcSet.
+    В имени файла хэш мастера (cartoucheFiles.ts): браузер хранит картуш год. */
 export function cartoucheFrame(name: string) {
+  const file = CARTOUCHE_FILES[name] ?? name;
   return {
-    src: `/illustrations/cartouche/${name}-480.webp`,
-    srcSet: `/illustrations/cartouche/${name}-240.webp 240w, /illustrations/cartouche/${name}-480.webp 480w`,
+    src: `/illustrations/cartouche/${file}-480.webp`,
+    srcSet: `/illustrations/cartouche/${file}-240.webp 240w, /illustrations/cartouche/${file}-480.webp 480w`,
     width: 480,
     height: 480,
   };

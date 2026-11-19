@@ -123,9 +123,10 @@ export default function PrivacyPage() {
               ))}
             </div>
 
-            <div className="mt-12 flex flex-wrap gap-6 text-[15px] font-medium">
-              <Link href="/terms" className="text-ink underline underline-offset-4">Условия сервиса</Link>
-              <Link href="/" className="text-ink underline underline-offset-4">Вернуться на сайт</Link>
+            {/* 19 Nov (phone pass): on phones these two links were 23px tall; there they are 44px targets. */}
+            <div className="mt-12 flex flex-wrap gap-6 text-[15px] font-medium max-sm:gap-y-0">
+              <Link href="/terms" className="text-ink underline underline-offset-4 max-sm:inline-flex max-sm:min-h-11 max-sm:items-center">Условия сервиса</Link>
+              <Link href="/" className="text-ink underline underline-offset-4 max-sm:inline-flex max-sm:min-h-11 max-sm:items-center">Вернуться на сайт</Link>
             </div>
           </div>
         </section>

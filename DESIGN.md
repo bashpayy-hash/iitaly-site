@@ -2175,3 +2175,103 @@ road and the document check:
     стайл именно на карте прогресса норм».
   - The cabinet road keeps its own look.
 - Manifest: design/illustrations/cartouche-2026-11-19.json.
+
+## Five cartouche frames, topic descriptions and a lighter mobile load · 19 November 2026
+
+The owner went through the guide catalogue on a phone.
+
+- **Five frames instead of one.** «У всех гербов сделай разные узоры, где-то
+  вариантов 5, и распредели их, чтобы они не повторялись… это выглядит очень
+  лениво.» The emblems stay; the frames around them change:
+  - A, the Baroque cartouche with the scallop shell (variant 7);
+  - B, a round laurel wreath with a terracotta bow;
+  - C, an ochre ground in slate-blue acanthus scrolls with a garland below;
+  - D, a terracotta shield with an ochre fleur-de-lis;
+  - E, a slate-blue pointed quatrefoil with terracotta lilies.
+
+  In the topic row they go A B C D E in turn. In the visa points and on the
+  home cards they are set by hand so that no two neighbours share a frame.
+  The table is in the manifest.
+- **Codice fiscale and DoV/CIMEA are tall sheets.** «Вот этот конверт, он
+  слишком короткий… сделать его более нормальным». Codice fiscale is an
+  upright paper certificate with a seal and a code line. DoV/CIMEA is an
+  upright diploma with a verification seal and a magnifying glass.
+- **Each topic says what it is and why it matters.** «Добавь описание, что
+  это такое, вкратце, чтобы все поняли, почему это важно».
+  - The teaser of every topic is now two sentences: what it is, and why it
+    is needed. The facts come from the topic's own rows.
+  - The catalogue tile, the topic header and the road show both sentences.
+  - The home cards beside a picture show the first sentence.
+- **Lighter cartouches.** «Сайт иногда долго загружает эти иконки на
+  мобильной версии».
+  - Every cartouche file name carries the hash of its master, and
+    /illustrations/cartouche/* is cached for a year. Before, the phone asked
+    the server about each picture on every page.
+  - The renditions are WebP q76 instead of q86: the set went from 2.3 MB to
+    1.6 MB, with no visible change at 2× zoom.
+  - The topic header picture loads first.
+  - Once the page has loaded, the catalogue row fetches its remaining
+    pictures in the background, so a swipe never shows an empty tile.
+- **Motion on phones.** «Анимации в этот раз не заработали».
+  - A finger that lands on the full-width topic band to scroll the page no
+    longer stops autoplay; only a sideways swipe takes the row.
+  - On touch screens the card in view steps forward (scale 1, full opacity)
+    and its neighbours wait a step back (0.86, 62 %), so swiping and
+    autoplay visibly move the band. Under reduced motion everything stays
+    still.
+
+## The phone pass: captions beside the circles, nothing under the chat button · 19 November 2026
+
+Owner, on an iPhone, about the cabinet road after /plan: «много таких
+недочётов» — go through the whole phone version and remove them. His
+example: the current step's red circle with the star was enormous, the dotted
+road ran straight through «Заполнить анкету», «Выбрать университеты» ran off
+the right edge, and the next step was a big pale circle with a dot.
+
+Every page was measured at 360, 375, 390 and 430 px (touch, scale 1), the
+questionnaire step by step, the cabinet empty and with a plan, the menu, the
+chat, the term sheet and the university panels: page overflow, anything past
+the right edge, text over text, text crossed by the road, tap targets under
+44 px and what the chat button covers at rest.
+
+- **Both roads (cabinet and guides), phones only.**
+  - Why the road crossed the captions: they stood centred under their
+    circles, and the road leaves every circle vertically, so it always ran
+    through the caption below. Now a caption stands beside its circle, on
+    the inner side of the bend, centred on it; the road passes above and
+    below. Nothing is clamped: a 104 px row holds four lines, or «Сейчас»
+    and three.
+  - Circles 44 px, the current one 52 px with a 5 px ring (were 60, 76 and
+    8); stage discs 52 px (were 64); the dot 8 px.
+  - The inner side now carries the captions, so a landmark no longer shares
+    a row with them: on phones its strip has its own height and the road
+    makes room for it between the extreme circle and the next. The landmarks
+    are the same pictures; desktop is unchanged.
+  - Stage discs ahead had lost their rim in the cabinet: the paper reset
+    (`.paper :where(*) { box-shadow:none }`) weighed as much as `.thumb` and
+    came later. One more class restores it, on every width.
+- **The chat button.**
+  - At the end of every public page it stood on «Политика
+    конфиденциальности». On phones the footer ends 76 px above the edge.
+  - It covered the gallery's ▶ on /guides (phones under ~410 px) and the
+    «Следующая тема» arrow on the section pages (all of it at 360 px, 32–40
+    px of it at 768–1280 px). The section row and, on phones, the /guides
+    gallery are yield targets now (`data-fab-yield`), so the button steps
+    aside, as it does for primary buttons.
+- **Tap targets to 44 px on phones:** the cabinet's three header buttons (40),
+  «Есть код доступа? Войти» (36), the stage page's step dots (28, on touch
+  screens), the guide step path stops (32), the «Крупнее» map button (40),
+  the bottom links of /privacy and /terms (23), the Modulo 1 scenario switch
+  (38–40), the «Бланк» tab (38 wide), «Сверить с PDF» (17), the «i» hint
+  (an invisible 44 px ring around the 24 px button) and its sheet's close
+  button (36).
+- **Smaller things.** A link inside a sentence on the cabinet's documents
+  page kept its 44 px box and pushed its line apart; in running text it is
+  inline now. The stage summary kept a 240 px height meant to match the
+  picture beside it, which left a 77 px empty band in the one-column phone
+  tray. Source notes in the bento lists read in full on phones (they were
+  clamped to two lines). /universities uses `svh` for its full height.
+- **Not changed, and why.** The map pins (12–22 px tap circles) are fixed by
+  the map's approved revision; the Modulo 1 paper fields keep the paper's
+  geometry; the gallery's dots belong to the carousel, which is being
+  changed elsewhere.

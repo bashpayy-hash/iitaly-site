@@ -20,7 +20,11 @@ export default async function GuideStageRoute({params}:{params:Promise<{stage:st
   return <GuideFrame><GuideReadingContext /><GuideBreadcrumbs items={[{title:group.title}]} />
     <div className={ui.article}>
     <header className={ui.articleHeader}><h1>{group.title}</h1><p className={ui.intro}>{group.description}</p></header>
-    <GuideTiles guides={group.ids.map(id => GUIDE_TOPICS.find(topic => topic.id === id)!)} />
+    {/* 19 Nov (phone pass): the chat button covered the row's «Следующая тема»
+        arrow — all of it on a 360px phone, 32–40px of it at 768–1280px. The
+        row is a yield target, so the button steps aside while it is under it
+        (ChatLauncher). */}
+    <div data-fab-yield><GuideTiles guides={group.ids.map(id => GUIDE_TOPICS.find(topic => topic.id === id)!)} /></div>
     {/* The station of /guides, opened: the same road, this section only. */}
     <div className={ui.indexRoad}><GuideRoad id={`stage-${group.id}`} heading="Путь по разделу" stations={stageRoad(group.id)} scenery={GUIDE_STAGES.findIndex(item => item.id === group.id) * 2} /></div>
     </div>

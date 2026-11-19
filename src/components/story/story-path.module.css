@@ -38,7 +38,12 @@
 @media (max-width:600px) {
   .path { --node:30px; --stop-min:38px; }
   .name { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
-  .stop { padding:0 2px 2px; }
+  /* 19 Nov (phone pass): with the names hidden a stop was only its 30px
+     circle, 32px tall to tap. It now reaches 44px below the circle; the rail
+     still runs through the circles' centres, and the path gives the extra
+     height back in its bottom margin. */
+  .path { margin-bottom:0; }
+  .stop { min-height:44px; align-content:start; padding:0 2px 2px; }
   .node { font-size:13px; }
 }
 @media (prefers-reduced-motion:reduce) { .fill,.node { transition:none; } }

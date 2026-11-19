@@ -8,4 +8,11 @@
 .resultCount { margin:0 0 16px; color:#57514B; font-size:14px; line-height:1.5; }
 .stageLink { display:inline-flex; align-items:center; gap:6px; min-height:44px; color:#241F1C; font-size:14px; text-decoration:underline; text-underline-offset:4px; }
 .explorer { min-width:0; }
+/* 19 Nov: the chat button's yield layer over the gallery (GuideDirectory). It
+   has no size on wide screens, where the ▶ is far from the button. */
+.fabYield { display:none; }
+@media (max-width:640px) {
+  .explorer { position:relative; }
+  .fabYield { position:absolute; inset:0; display:block; pointer-events:none; }
+}
 .categories button:focus-visible,.stageLink:focus-visible { outline:2px solid #A33421; outline-offset:3px; }

@@ -8,7 +8,9 @@
   --u-body: #56524c;
   --u-meta: #6b6761;
   --u-line: #e7e4df;
-  width: 100%; min-height: 100vh; background: transparent; color: var(--u-ink);
+  /* 19 Nov (phone pass): 100vh on a phone is the height with the browser bars
+     hidden; svh is the visible height, as in the cabinet (vh stays as fallback). */
+  width: 100%; min-height: 100vh; min-height: 100svh; background: transparent; color: var(--u-ink);
   font-family: var(--font-apple-text); line-height: 1.5;
 }
 .main { min-height: 65vh; }
@@ -314,7 +316,8 @@
   .container[data-map-first] .mapFrame { margin-inline: -20px; border-radius: 0; }
   .mapFrame[data-zoomed] .mapScroller { overflow: auto; max-height: min(72vh, 600px); overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .mapFrame[data-zoomed] .mapCanvas { width: 180%; }
-  .mapZoom { position: absolute; z-index: 2; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border: 1px solid rgba(250,246,238,.28); border-radius: 999px; background: rgba(21,17,11,.82); color: #FAF6EE; font: 500 14px/1 var(--font-sans); }
+  /* 19 Nov (phone pass): «Крупнее» is a full 44px thumb target on phones (was 40px). */
+  .mapZoom { position: absolute; z-index: 2; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 1px solid rgba(250,246,238,.28); border-radius: 999px; background: rgba(21,17,11,.82); color: #FAF6EE; font: 500 14px/1 var(--font-sans); }
   .mapZoom:focus-visible { outline: 2px solid #F29A89; outline-offset: 2px; }
   .container[data-map-first] .filterWorkspace { margin-top: 24px; }
 }

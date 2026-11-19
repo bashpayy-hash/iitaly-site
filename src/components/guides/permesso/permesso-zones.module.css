@@ -40,7 +40,8 @@
  .zoneButton, .group[data-pinned="true"] .zoneButton { pointer-events:auto; min-height:44px; min-width:44px; top:50%; left:50%; bottom:auto; right:auto; transform:translate(-50%,-50%); }
  .part { pointer-events:none!important; }
 }
-@media (max-width:600px) { .onboarding { font-size:11px; } .quickInspector { padding:14px; } .legend { font-size:11px; gap:7px 12px; } }
+/* 19 Nov (phone pass): the hint and the legend stay at the site's 12px floor on phones (were 11px). */
+@media (max-width:600px) { .onboarding { font-size:12px; } .quickInspector { padding:14px; } .legend { font-size:12px; gap:7px 12px; } }
 @media (prefers-reduced-motion:reduce) { .group,.zoneButton { scroll-behavior:auto!important; } }
 @media (max-width:900px) { .workspace>aside { order:initial; } }
 .group,.group *,.focusLayer { transition-property:none!important; animation:none!important; }
