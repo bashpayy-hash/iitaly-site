@@ -125,10 +125,11 @@ jobs:
             /tmp/iitaly-browser
             ~/.cache/ms-playwright
           key: browser-tools-ubuntu-24.04-playwright-1.56.1-pngjs-7.0.0-axe-4.10.3
-      # The runner image already carries Chrome's system libraries; apt
-      # (--with-deps) took from 27 s to almost 10 min depending on the
-      # mirror a runner got. The libraries are installed only when the
-      # downloaded Chromium cannot start without them.
+      # The system libraries and fonts stay exactly the set Playwright asks
+      # for (`install-deps --dry-run`); apt runs only for the ones the runner
+      # image lacks. apt (--with-deps on every run) took from 27 s to almost
+      # 10 min depending on the mirror a runner got, and skipping it without
+      # this check changed how the cabinet behaved (portal focus review).
       - name: Install isolated browser tools (no lockfile changes)
         run: |
           PW=/tmp/iitaly-browser/node_modules/.bin/playwright
@@ -136,9 +137,19 @@ jobs:
             npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0 axe-core@4.10.3
           fi
           "$PW" install chromium
-          if ! node -e "require('/tmp/iitaly-browser/node_modules/playwright').chromium.launch().then(b => b.close())"; then
-            echo "Chromium needs system libraries on this runner; installing them"
-            "$PW" install-deps chromium
+          wanted=$("$PW" install-deps --dry-run chromium | sed -n 's/.*--no-install-recommends \([^"]*\)".*/\1/p')
+          test -n "$wanted"
+          missing=""
+          for pkg in $wanted; do
+            dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed" || missing="$missing $pkg"
+          done
+          if [ -n "$missing" ]; then
+            echo "Installing missing system packages:$missing"
+            printf 'Acquire::Retries "3";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' | sudo tee /etc/apt/apt.conf.d/99iitaly-timeouts > /dev/null
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends $missing
+          else
+            echo "All system packages for Chromium are already installed"
           fi
       - name: Run the ${{ matrix.group }} reviews
         run: |
