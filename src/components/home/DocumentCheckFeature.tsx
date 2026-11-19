@@ -65,7 +65,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
           <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{item.agencyPrice}</span>}</td><td>{item.us}</td></tr>)}</tbody>
         </table>
       </BentoCell>
-      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" data-document-check-cta>
+      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" className={styles.cta} data-document-check-cta>
         <div className={bento.body}>
           <p className={bento.heading}>Проверь один документ бесплатно</p>
           <p className={bento.text}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>
