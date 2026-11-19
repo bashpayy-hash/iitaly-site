@@ -125,12 +125,21 @@ jobs:
             /tmp/iitaly-browser
             ~/.cache/ms-playwright
           key: browser-tools-ubuntu-24.04-playwright-1.56.1-pngjs-7.0.0-axe-4.10.3
+      # The runner image already carries Chrome's system libraries; apt
+      # (--with-deps) took from 27 s to almost 10 min depending on the
+      # mirror a runner got. The libraries are installed only when the
+      # downloaded Chromium cannot start without them.
       - name: Install isolated browser tools (no lockfile changes)
         run: |
-          if [ ! -x /tmp/iitaly-browser/node_modules/.bin/playwright ]; then
+          PW=/tmp/iitaly-browser/node_modules/.bin/playwright
+          if [ ! -x "$PW" ]; then
             npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0 axe-core@4.10.3
           fi
-          /tmp/iitaly-browser/node_modules/.bin/playwright install --with-deps chromium
+          "$PW" install chromium
+          if ! node -e "require('/tmp/iitaly-browser/node_modules/playwright').chromium.launch().then(b => b.close())"; then
+            echo "Chromium needs system libraries on this runner; installing them"
+            "$PW" install-deps chromium
+          fi
       - name: Run the ${{ matrix.group }} reviews
         run: |
           failed=""
