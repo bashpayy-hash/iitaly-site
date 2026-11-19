@@ -2152,21 +2152,20 @@ road and the document check:
   Vespi's portrait, a chip and the emblem of the Italian Republic, no
   writing. The crossed keys stay with the visa points about housing.
 - **Home, «После визы путь продолжается».** «Замени иконки… тоже»: the three
-  cards (permesso, codice fiscale, insurance) show the same cartouches. The
-  route stage cards above keep their objects.
+  cards (permesso, codice fiscale, insurance) show the same cartouches.
+  Then, on the route stage cards above, «почему здесь остались старые
+  иконки»: they show cartouches too. Маршрут has a map with a route and a
+  compass, До отъезда a suitcase with a passport and documents, В Италии
+  the crossed keys.
 - **The upload zone of the document check.** The felt folder («чуть
   страшновата») became the doc-check cartouche: a scroll, a magnifying
   glass and a check. It is shown at 88 px, at full colour, in the plan and
   in the cabinet.
 - **The guide road** («чуть будто бы недоделанная, сыровато»; reviewed with
   a design critique).
-  - Each open stop now holds four tesserae as a small rosette, muted.
-    Before, an empty paper circle with a grey dot read as an unfilled
-    socket.
-  - The stop to read next is the same paper circle with a terracotta ring
-    and the rosette in full colour, not a red ball with a star. The «Начни
-    здесь» chip stays.
-  - No numerals in the circles (owner, 4 Nov).
+  - The circles keep their marks: a red ball with a star for the next
+    stop, a dot for open stops. A rosette of four tesserae was tried and
+    removed: «что за ромбы, исправляй». No numerals (owner, 4 Nov).
   - The line is laid in short rectangular tesserae (7 px with 5 px gaps)
     instead of pale round dots; the part already read is still solid green.
   - The header says the count once: «Прочитано 0 из 5» and the bar; the big

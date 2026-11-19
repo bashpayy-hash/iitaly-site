@@ -13,8 +13,9 @@ import local from "./guide-road.module.css";
    (portal-path.module.css): медальоны по змейке, остановки-станции с
    предметом, линия по реальным центрам остановок, макеты Италии в карманах
    изгиба. Смысл — чтение: прочитано — зелёный с галочкой, «читать дальше» —
-   крупный, с терракотовым кольцом и цветной смальтой (один на дорогу),
-   открыто — бумажный с приглушённой смальтой, закрыто до оплаты — замок. Полоса сверху — сколько прочитано из
+   крупный терракотовый со звездой (один на дорогу), открыто — бумажный с
+   точкой, закрыто до оплаты — замок. Owner, 19 Nov: ромбы-смальта в
+   кружках («что за ромбы, исправляй») сняты, знаки прежние. Полоса сверху — сколько прочитано из
    открытого. Устройство с оплаченным кабинетом видит всё без замков.
    Змейка, линия и пейзаж повторяют PortalRoad.tsx (кабинет): меняешь там —
    сверь здесь. */
@@ -36,21 +37,9 @@ const outside = (i: number): "left" | "right" => Math.sin(2 * Math.PI * (i + 0.5
 type NodeState = "done" | "current" | "todo" | "locked";
 function NodeMark({ state }: { state: NodeState }) {
   if (state === "done") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="done"><path d="m6 12.6 3.9 3.9L18.2 8" /></svg>;
+  if (state === "current") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="current"><path d="m12 4.4 2.25 4.6 5.05.72-3.65 3.57.86 5.04L12 15.95l-4.51 2.38.86-5.04L4.7 9.72l5.05-.73Z" /></svg>;
   if (state === "locked") return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="locked"><rect x="6.5" y="10.8" width="11" height="8.4" rx="2.1" /><path d="M9 10.8V8.9a3 3 0 0 1 6 0v1.9" /></svg>;
-  return <Tesserae />;
-}
-
-/* Четыре кусочка смальты ромбом — знак остановки, которую ещё читать
-   (owner, 19 Nov: дорога «чуть будто бы недоделанная, сыровато»; пустой
-   кружок с серой точкой читался как незаполненное гнездо). Цифр нет:
-   owner, 4 Nov — без «Шаг 01» и крупных номеров. */
-function Tesserae() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" data-mark="tesserae">
-    <path d="M12 1.8 16.8 6.6 12 11.4 7.2 6.6Z" fill="#B83A27" />
-    <path d="M17.4 7.2 22.2 12 17.4 16.8 12.6 12Z" fill="#D9A441" />
-    <path d="M12 12.6 16.8 17.4 12 22.2 7.2 17.4Z" fill="#6E5644" />
-    <path d="M6.6 7.2 11.4 12 6.6 16.8 1.8 12Z" fill="#5E7F3E" />
-  </svg>;
+  return <span className={styles.nodeDot} aria-hidden="true" />;
 }
 
 const reachedPoint = (state: string) => state === "done" || state === "current" || state === "station-done" || state === "station-current";
