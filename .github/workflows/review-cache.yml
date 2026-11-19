@@ -1,0 +1,31 @@
+name: Review cache
+
+# A pull request can only restore caches made on its own ref or on the
+# default branch, and the design review runs only on pull requests. This
+# job fills the same caches on main (the browser tools, Chromium and the
+# font packages the runner image lacks), so the first review run of every
+# new pull request starts warm. No review runs here.
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/actions/review-browser/**"
+      - ".github/workflows/review-cache.yml"
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  warm:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Isolated browser tools, Chromium and its system packages
+        uses: ./.github/actions/review-browser

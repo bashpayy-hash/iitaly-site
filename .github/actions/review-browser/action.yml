@@ -1,0 +1,61 @@
+name: Review browser
+description: Isolated Playwright tools, Chromium and the exact system packages it needs, cached between runs
+# Used by the design review and by the cache warmer on main
+# (review-cache.yml): a pull request can only restore caches made on
+# its own ref or on the default branch, so main keeps them warm.
+runs:
+  using: composite
+  steps:
+    - name: Restore isolated browser tools
+      uses: actions/cache@v4
+      with:
+        path: |
+          /tmp/iitaly-browser
+          ~/.cache/ms-playwright
+        key: browser-tools-ubuntu-24.04-playwright-1.56.1-pngjs-7.0.0-axe-4.10.3
+    - name: Restore the font packages the runner image lacks
+      uses: actions/cache@v4
+      with:
+        path: /tmp/iitaly-apt-debs
+        key: chromium-system-debs-ubuntu-24.04-playwright-1.56.1-v1
+    # The system libraries and fonts stay exactly the set Playwright asks
+    # for (`install-deps --dry-run`). The runner image lacks seven font
+    # packages, and its Ubuntu mirror served them at ~66 kB/s (21 MB in
+    # 5 min, 19 Nov). Their .deb files are cached once and installed with
+    # dpkg; apt runs only for what is still missing after that, and it
+    # refills the cache. apt keeps its own timeouts: a 30 s limit gave up
+    # on the slow mirror and failed the job. Skipping the packages instead
+    # changed how the cabinet behaved (portal focus review).
+    - name: Install isolated browser tools (no lockfile changes)
+      shell: bash
+      run: |
+        PW=/tmp/iitaly-browser/node_modules/.bin/playwright
+        if [ ! -x "$PW" ]; then
+          npm install --prefix /tmp/iitaly-browser --no-package-lock --ignore-scripts playwright@1.56.1 pngjs@7.0.0 axe-core@4.10.3
+        fi
+        "$PW" install chromium
+        wanted=$("$PW" install-deps --dry-run chromium | sed -n 's/.*--no-install-recommends \([^"]*\)".*/\1/p')
+        test -n "$wanted"
+        lacking() {
+          missing=""
+          for pkg in $wanted; do
+            dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed" || missing="$missing $pkg"
+          done
+        }
+        lacking
+        if [ -n "$missing" ] && ls /tmp/iitaly-apt-debs/*.deb > /dev/null 2>&1; then
+          echo "Installing cached packages for:$missing"
+          sudo dpkg -i /tmp/iitaly-apt-debs/*.deb || echo "Cached packages did not install cleanly; apt takes over"
+          lacking
+        fi
+        if [ -n "$missing" ]; then
+          echo "Installing missing system packages with apt:$missing"
+          echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/99iitaly-retries > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends --download-only $missing
+          mkdir -p /tmp/iitaly-apt-debs
+          cp /var/cache/apt/archives/*.deb /tmp/iitaly-apt-debs/
+          sudo apt-get install -y -f --no-install-recommends $missing
+        else
+          echo "All system packages for Chromium are installed"
+        fi
