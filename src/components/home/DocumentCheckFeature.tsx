@@ -1,7 +1,11 @@
+/* eslint-disable @next/next/no-img-element -- Local cartouche renditions with explicit dimensions. */
 import { AppleButtonLink } from "@/components/apple/Button";
 import { Bento, BentoCell, BentoStat, bento } from "@/components/ui/Bento";
 import { PRICE_MAIN, fmtPrice, priceLabel } from "@/data/pricing";
+import { cartoucheFrame } from "@/components/guides/guideArt";
 import styles from "./document-check-feature.module.css";
+
+const CTA_ART = cartoucheFrame("doc-check");
 
 /* Проверка документов — главная фишка (owner, 13 Nov: «проверка документов —
    это такая киллер-фича… в любое время суток, в неограниченное количество…
@@ -61,11 +65,15 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
           <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{item.agencyPrice}</span>}</td><td>{item.us}</td></tr>)}</tbody>
         </table>
       </BentoCell>
-      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" data-document-check-cta>
+      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" className={styles.cta} data-document-check-cta>
         <div className={bento.body}>
           <p className={bento.heading}>Проверь один документ бесплатно</p>
           <p className={bento.text}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>
         </div>
+        {/* Owner, 19 Nov: «проверка документов это киллер фича, её нужно
+            активнее рекламировать» — the cell gets the document-check cartouche
+            instead of an empty dotted field. */}
+        <img className={styles.ctaArt} src={CTA_ART.src} srcSet={CTA_ART.srcSet} sizes="(max-width: 640px) 120px, 160px" width={CTA_ART.width} height={CTA_ART.height} alt="" loading="lazy" decoding="async" draggable={false} data-document-check-art />
         <div className={bento.actions}><AppleButtonLink href="/plan#document-check">Проверить документ</AppleButtonLink></div>
       </BentoCell>}
     </Bento>

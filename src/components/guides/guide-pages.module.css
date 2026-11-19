@@ -87,6 +87,8 @@
 @media(max-width:700px) { .fundsLayout { grid-template-columns:minmax(0,1fr); gap:12px; } .fundsArt { order:-1; width:140px; } }
 /* Дорога на главной гайдов (owner, 10 Nov): после галереи тем, по колонке. */
 .indexRoad { max-width:1216px; margin:48px auto 0; padding-inline:max(0px, calc((100% - 1216px) / 2)); }
+/* Owner, 19 Nov: the document check under the topic band (DocCheckPromo). */
+.indexPromo { max-width:1216px; margin:40px auto 0; padding-inline:max(0px, calc((100% - 1216px) / 2)); }
 /* Один отступ на весь сайт (owner, 10 Nov: «по всем неровностям… по всему
    сайту»): край контента стоит там же, где логотип в шапке — 32px, а шире
    1280px по колонке 1216px; 24px на планшете (768–899); 20px на телефоне. */

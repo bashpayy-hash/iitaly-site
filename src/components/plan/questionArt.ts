@@ -1,23 +1,24 @@
-import { objectFrame } from "@/components/guides/guideArt";
+import { cartoucheFrame } from "@/components/guides/guideArt";
 
-/* Своя вещь у каждого вопроса анкеты, как картинка на плитке темы в
-   справочнике — из общего набора сайта (owner, 4 Nov: «общий стиль везде»;
-   design/illustrations/objects-2026-11-04.json). Декоративные (alt=""):
-   смысл несут вопрос и ответы. */
-const ART: Record<string, { name: string; height: number }> = {
-  intake: { name: "alarm", height: 357 },
-  education: { name: "diploma", height: 357 },
-  grades: { name: "tests", height: 352 },
-  goal: { name: "cap", height: 348 },
-  budget: { name: "coins", height: 367 },
-  field: { name: "books", height: 369 },
-  lang: { name: "translation", height: 351 },
-  age: { name: "minors", height: 371 },
-  residence: { name: "keys", height: 365 },
-  dsuRegion: { name: "envelope", height: 362 },
+/* Своя картинка у каждого вопроса анкеты, как у темы в справочнике. С 19
+   ноября это картуши с пола Галереи, общий набор справочника, визы и главной
+   (owner, на скриншоте плана: «вот они сильно выбиваются из общей картины,
+   нужны изменения»; design/illustrations/cartouche-2026-11-19.json).
+   Декоративные (alt=""): смысл несут вопрос и ответы. */
+const ART: Record<string, string> = {
+  intake: "alarm",
+  education: "diploma",
+  grades: "tests",
+  goal: "cap",
+  budget: "coins",
+  field: "route-map",
+  lang: "translation",
+  age: "minors",
+  residence: "passport",
+  dsuRegion: "family-docs",
 };
 
 export function questionArt(id: string) {
   const art = ART[id];
-  return art ? objectFrame(art.name, art.height) : undefined;
+  return art ? cartoucheFrame(art) : undefined;
 }

@@ -1,0 +1,21 @@
+/* Проверка документов в гайдах (owner, 19 Nov). Тёмная полоса и картуш —
+   как у каталога тем: карточка заметна среди светлых ячеек, но говорит тем
+   же языком. Кнопка — главная, малиновая. */
+.promo { display:grid; grid-template-columns:auto minmax(0, 1fr); align-items:center; gap:28px; margin:28px 0 8px; padding:28px 32px; border-radius:28px; background:#2A2420; color:#FAF6EE; }
+.art { display:block; width:140px; height:auto; }
+.body { display:grid; justify-items:start; gap:8px; min-width:0; }
+.kicker { margin:0; color:#E8B4A0; font-size:13px; font-weight:600; letter-spacing:.02em; }
+.title { margin:0; max-width:24ch; font-size:clamp(22px, 2.4vw, 28px); font-weight:600; line-height:1.12; letter-spacing:-.025em; text-wrap:balance; }
+.text { margin:0; max-width:58ch; color:#CFC6BA; font-size:15px; line-height:1.5; text-wrap:pretty; }
+/* The plan's red step pill (plan-step-tiles.module.css): a black button
+   disappeared on the dark card. */
+.promo .action { margin-top:10px; background:#B83A27; color:#FAF6EE; }
+@media (hover:hover) and (pointer:fine) { .promo .action:hover { background:#A33421; } }
+
+@media (max-width:640px) {
+  .promo { grid-template-columns:1fr; justify-items:center; gap:16px; padding:24px 20px 26px; text-align:center; }
+  .art { width:104px; }
+  .body { justify-items:center; }
+  .action { min-height:44px; }
+}
+@media (forced-colors:active) { .promo { border:1px solid CanvasText; } }
