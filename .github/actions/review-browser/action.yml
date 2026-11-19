@@ -52,7 +52,18 @@ runs:
           echo "Installing missing system packages with apt:$missing"
           echo 'Acquire::Retries "5";' | sudo tee /etc/apt/apt.conf.d/99iitaly-retries > /dev/null
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends --download-only $missing
+          # The mirror can also stop answering for minutes (19 Nov: every
+          # mirror timed out on one runner while the other three groups
+          # fetched fine), so the download gets three tries, a pause apart.
+          fetched=""
+          for attempt in 1 2 3; do
+            if sudo apt-get install -y --no-install-recommends --download-only $missing; then fetched=yes; break; fi
+            [ "$attempt" = 3 ] && break
+            echo "The Ubuntu mirror did not deliver the packages (try $attempt of 3); next try in $(( attempt * 45 ))s"
+            sleep $(( attempt * 45 ))
+            sudo apt-get update || true
+          done
+          test -n "$fetched"
           mkdir -p /tmp/iitaly-apt-debs
           cp /var/cache/apt/archives/*.deb /tmp/iitaly-apt-debs/
           sudo apt-get install -y -f --no-install-recommends $missing
