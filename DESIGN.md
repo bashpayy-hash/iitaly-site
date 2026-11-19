@@ -2137,13 +2137,16 @@ Notes from the owner, on phone screenshots of the catalogue tiles, a guide
 road and the document check:
 
 - **Cartouches.**
-  - Visa D: «флаг конкретный Казахстана». The emblem is the Kazakhstan flag
-    on a slim pole. The passport cartouche stays with the visa point about
-    the passport.
-  - DSU and ISEEU: the coins looked «слишком по-яичному», so they are now
-    three thin coins with laurel rims, «более утончённым».
-  - Family documents: the two «странные» columns became a family tree on a
-    stack of papers.
+  - Visa D: first «флаг конкретный Казахстана», then «изобрази именно что
+    паспорт Казахстана». The emblem is the Kazakhstan passport: navy cover
+    with the golden state emblem and the chip symbol, no writing. The same
+    picture serves the visa point about the passport.
+  - DSU and ISEEU: the coins looked «слишком по-яичному» («более
+    утончённым»), then «отчекань на монетах самого Веспи». Vespi is minted
+    on one large thin coin with a laurel rim, with two coins behind it.
+  - Family documents: the two «странные» columns, then «справки о семье
+    переработай». The emblem is an oval cameo with the profiles of a family
+    over a sealed certificate.
 - **The upload zone of the document check.** The felt folder («чуть
   страшновата») became the doc-check cartouche: a scroll, a magnifying
   glass and a check. It is shown at 88 px, at full colour, in the plan and
