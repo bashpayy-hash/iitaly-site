@@ -1,7 +1,7 @@
 import { VISA_DOCS, VISA_REJECT_REASONS, VISA_TIMELINE } from "@/data/guides";
 import { GUIDE_STAGES, GUIDE_TOPICS, VISA_PARTS, guideHref, guidePoints, guideStageHref } from "./guideCatalogue";
 import { guideStepOpen, visaPointOpen, type VisaPointsPart } from "./guideAccess";
-import { guideArt, objectFrame } from "./guideArt";
+import { cartoucheFrame, guideArt } from "./guideArt";
 import type { GuideRoadStation, GuideRoadStep } from "./GuideRoad";
 
 /* Дороги гайдов и визы (GuideRoad.tsx) собираются на сервере: только
@@ -20,11 +20,11 @@ function topicSteps(id: string): GuideRoadStep[] {
   });
 }
 
-const VISA_POINTS: Record<string, { titles: string[]; mark: { name: string; height: number } }> = {
-  timeline: { titles: VISA_TIMELINE.map(step => step.t), mark: { name: "alarm", height: 357 } },
-  funds: { titles: ["Годовой минимум в тенге"], mark: { name: "coins", height: 367 } },
-  documents: { titles: VISA_DOCS.map(document => document.title), mark: { name: "folder", height: 338 } },
-  "before-application": { titles: BEFORE_SHORT.slice(0, VISA_REJECT_REASONS.length), mark: { name: "stamp-pad", height: 371 } },
+const VISA_POINTS: Record<string, { titles: string[]; mark: string }> = {
+  timeline: { titles: VISA_TIMELINE.map(step => step.t), mark: "alarm" },
+  funds: { titles: ["Годовой минимум в тенге"], mark: "coins" },
+  documents: { titles: VISA_DOCS.map(document => document.title), mark: "folder" },
+  "before-application": { titles: BEFORE_SHORT.slice(0, VISA_REJECT_REASONS.length), mark: "stamp-pad" },
 };
 
 function visaSteps(part: string): GuideRoadStep[] {
@@ -45,7 +45,7 @@ export function topicRoad(id: string): GuideRoadStation[] {
 /** The visa page: four parts as stations, every point as a stop. */
 export function visaRoad(): GuideRoadStation[] {
   return VISA_PARTS.map(part => ({ id: part.id, title: part.title, text: part.description, href: `/guides/visa/${part.id}`,
-    mark: objectFrame(VISA_POINTS[part.id].mark.name, VISA_POINTS[part.id].mark.height), steps: visaSteps(part.id) }));
+    mark: cartoucheFrame(VISA_POINTS[part.id].mark), steps: visaSteps(part.id) }));
 }
 
 /** /guides: three sections as stations, every topic as a stop. */

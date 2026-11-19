@@ -2080,3 +2080,28 @@ the Galleria Vittorio Emanuele II, but not as a single object in mosaic skin:
   icons used two finished ones as references so the cartouche matches. The
   Roman fragments stay as masters (`*-roman`) next to the earlier versions.
 - Manifest: design/illustrations/mosaic-icons-2026-11-18.json.
+
+## Guide and visa pictures as the same cartouches · 19 November 2026
+
+The icons were the wrong target. With a phone screenshot of the visa page and
+its burgundy notebook in the header, the owner: «Надо было заменить вот это
+блокнот, он как раз так и проблематичен». Every topic picture of guides and
+visa now uses the chosen style: the guide header, the catalogue tiles, the
+guide and visa roads and the visa point switcher. Each picture is a Baroque
+cartouche from the Galleria floor with the topic's flat emblem in the
+middle.
+
+- **Emblems.**
+  - Topics: a diploma scroll (school leaving certificate), an answer sheet
+    with a pencil (tests), a stamp and its impression (apostille), two
+    sheets with arrows (translation), a tied folder (CIMEA), a house on
+    papers (family documents), coins and a banknote (ISEE), a passport front
+    (visa), a signed sheet (under 18), a booklet with medals (military), two
+    crossed keys (permesso), a certificate card (codice fiscale), a shield
+    with a cross (insurance).
+  - Visa road and switcher: an alarm clock, a graduation cap and a sealed
+    envelope join these.
+- **Only guides and visa.** The home page, the cabinet and the plan keep the
+  shared object set (`objectFrame`); the guides use `cartoucheFrame` in
+  `src/components/guides/guideArt.ts`, square 480 px with a 240 px copy.
+- Manifest: design/illustrations/cartouche-2026-11-19.json.
