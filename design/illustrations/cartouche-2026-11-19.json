@@ -1,6 +1,6 @@
 {
  "date": "2026-11-19",
- "request": "After the guide and visa icons became Galleria cartouches (#239), the owner sent a phone screenshot of the visa page with the burgundy notebook in its header: «Надо было заменить вот это блокнот, он как раз так и проблематичен». The topic pictures of guides and visa — the header of each guide, the catalogue tiles, the guide and visa roads and the visa point switcher — move to the same chosen style (round five, variant 7). The home page, the cabinet and the plan keep the shared object set (design/illustrations/objects-2026-11-13.json). Then, on why the first take differed from the approved variants («Почему это отличается от вариантов которые ты делал до этого и которые я одобрил»), the set was redone from the original variant 7 images, and on the small cartouches in the overview cells: «Убери эти мелкие гербы, они тут ни к чему, везде применяй этот принцип» — the picture is only large: the topic header, the catalogue tile, the visa point switcher. The road thumbs (56 px) keep the shared objects. On 19 Nov, on the catalogue tiles: the visa gets «флаг конкретный Казахстана» (kz-flag; the passport cartouche stays with the visa point about the passport), the DSU coins looked «слишком по-яичному» and became refined thin coins, the family documents lost the two odd columns for a family tree on papers; the document-check upload zone swapped its felt folder («чуть страшновата») for the doc-check cartouche. Then: «отчекань на монетах самого Веспи», «на визу D изобрази именно что паспорт Казахстана», «справки о семье переработай» — Vespi on the coin, the Kazakhstan passport for the visa topic and its passport point, a family cameo over a sealed certificate. Then, on the permesso tile: «сделай иконку пластиковой карточки пермессо с фоткой Веспи» (permesso-card; the crossed keys stay with the visa points about housing), and on the home scene «После визы путь продолжается»: «замени иконки… тоже» — its three cards (permesso, codice fiscale, insurance) show these cartouches.",
+ "request": "After the guide and visa icons became Galleria cartouches (#239), the owner sent a phone screenshot of the visa page with the burgundy notebook in its header: «Надо было заменить вот это блокнот, он как раз так и проблематичен». The topic pictures of guides and visa — the header of each guide, the catalogue tiles, the guide and visa roads and the visa point switcher — move to the same chosen style (round five, variant 7). The home page, the cabinet and the plan keep the shared object set (design/illustrations/objects-2026-11-13.json). Then, on why the first take differed from the approved variants («Почему это отличается от вариантов которые ты делал до этого и которые я одобрил»), the set was redone from the original variant 7 images, and on the small cartouches in the overview cells: «Убери эти мелкие гербы, они тут ни к чему, везде применяй этот принцип» — the picture is only large: the topic header, the catalogue tile, the visa point switcher. The road thumbs (56 px) keep the shared objects. On 19 Nov, on the catalogue tiles: the visa gets «флаг конкретный Казахстана» (kz-flag; the passport cartouche stays with the visa point about the passport), the DSU coins looked «слишком по-яичному» and became refined thin coins, the family documents lost the two odd columns for a family tree on papers; the document-check upload zone swapped its felt folder («чуть страшновата») for the doc-check cartouche. Then: «отчекань на монетах самого Веспи», «на визу D изобрази именно что паспорт Казахстана», «справки о семье переработай» — Vespi on the coin, the Kazakhstan passport for the visa topic and its passport point, a family cameo over a sealed certificate. Then, on the permesso tile: «сделай иконку пластиковой карточки пермессо с фоткой Веспи» (permesso-card; the crossed keys stay with the visa points about housing), and on the home scene «После визы путь продолжается»: «замени иконки… тоже» — its three cards (permesso, codice fiscale, insurance) show these cartouches. Then, on the home route stage cards: «почему здесь остались старые иконки» — Маршрут route-map, До отъезда suitcase, В Италии keys.",
  "model": "Higgsfield gpt_image_2_6, quality high, 1k, 1:1, transparent background, with the three original variant 7 images as style references (not as a shape to copy): 73519f80-c62c-40fe-8e8b-80042bde86ef (coins), bb353c85-8c76-42c8-9c2a-e1cdeb39c24f (hourglass), addccab9-cbf8-4eb4-8f1e-9d7c7b9c44e3 (temple)",
  "template": "In the same style as the reference images, but do not copy their outline: draw a new Baroque strapwork cartouche of its own. In the style of the floor of the Galleria Vittorio Emanuele II in Milan, polished marble tesserae, freshly laid, seen straight from above: a Baroque strapwork cartouche with a cream ivory ground laid in rows, its edges curling outward into rich slate-blue scrolled straps with ochre and terracotta inner bands, acanthus leaves in leaf green, crowned at the top by a terracotta and ochre scallop shell; no square, no circle. In the centre a flat symmetrical emblem laid in the same small tesserae as everything else, matte, no bevel, no gloss, no drop shadow, classical in form like the reference coins, hourglass and temple: {motif}. Palette: cream ivory, warm ochre, terracotta red, slate blue, leaf green. Flat, not a 3D object, not an emoji, not an app pictogram. Transparent background. No text, no letters, no numbers.",
  "processing": "crop to alpha (>4 %), centred on a transparent square plus 6 px; master WebP q92 in design/illustrations/source/cartouche/; site WebP q86 at 240 and 480 px (square), src/components/guides/guideArt.ts cartoucheFrame.",
@@ -9,7 +9,7 @@
   "visa point switcher": "cap, coins, passport, alarm, permesso-kit, diploma, translation, keys, insurance, tax-card, minors",
   "not used": "the guide and visa roads keep the shared objects (objectFrame) in their 56 px thumbs; the overview cells have no icons",
   "document check": "doc-check, 88 px in the upload zone (src/components/plan/DocCheck.tsx), plan and cabinet",
-  "home": "the scene «После визы путь продолжается»: permesso-card, tax-card, insurance (src/components/home/FeatureBanner.tsx); the route stage cards keep the shared objects"
+  "home": "the route stage cards (route-map, suitcase, keys) and the arrival cards (permesso-card, tax-card, insurance), src/components/home/FeatureBanner.tsx"
  },
  "icons": [
   {
@@ -109,6 +109,16 @@
     "44718260-1403-4a9e-8792-f45eda262e2b (crossed keys cartouche)",
     "ab833075-dfc7-4e28-824c-7e299aad556c (Vespi, handmade-v1 welcome)"
    ]
+  },
+  {
+   "name": "route-map",
+   "job": "310138f0-f372-4724-bb3d-1cb9b23c0b70",
+   "motif": "an unfolded old map with a dotted route to a pin and a compass"
+  },
+  {
+   "name": "suitcase",
+   "job": "77fc06e9-8b29-4960-beab-d2bb77cacace",
+   "motif": "a vintage travel suitcase with a passport and documents on top and a tag"
   }
  ],
  "files": [
@@ -291,6 +301,26 @@
    "file": "public/illustrations/cartouche/permesso-card-480.webp",
    "bytes": 86922,
    "sha256": "327cb22f37a8787acca63a44933bca75f6745b5eb9c0c98ec4498fa6ea31c404"
+  },
+  {
+   "file": "public/illustrations/cartouche/route-map-240.webp",
+   "bytes": 29114,
+   "sha256": "236a0f5dd052f3a04bce91357ec668e1286b3feee74d3249b632361017103770"
+  },
+  {
+   "file": "public/illustrations/cartouche/route-map-480.webp",
+   "bytes": 91478,
+   "sha256": "d610b3fb8b9e497558fc9d4bf197adc5ea15e04eab511bb7d8d45262c227d990"
+  },
+  {
+   "file": "public/illustrations/cartouche/suitcase-240.webp",
+   "bytes": 26944,
+   "sha256": "215e863164c0d83ec38ba27f7bcde3b6cfd7207feebe67a0c1162ef4f2621d04"
+  },
+  {
+   "file": "public/illustrations/cartouche/suitcase-480.webp",
+   "bytes": 87542,
+   "sha256": "0ab2850a78af8c94b6bff72b272bc143e1f93f2c75cf641319a5a364304b801c"
   }
  ],
  "replaced": [

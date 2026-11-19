@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { SceneCard } from "@/components/journey/SceneCard";
 import { GUIDE_TOPICS, GUIDE_STAGES, guideHref, guideStageHref } from "@/components/guides/guideCatalogue";
-import { cartoucheFrame, objectFrame } from "@/components/guides/guideArt";
+import { cartoucheFrame } from "@/components/guides/guideArt";
 import styles from "./journey-scenes.module.css";
 
 /* Две сцены на главной. Owner, 3 Nov: «суть информации не сильно понятна —
@@ -15,12 +15,14 @@ import styles from "./journey-scenes.module.css";
    плитка ведёт на свою страницу. Тексты — те же, что были в окне.
    Owner, 19 Nov (скрин «После визы путь продолжается»): «замени иконки… тоже» —
    у тем после приезда те же картуши с пола Галереи, что в гайдах
-   (guideArt.ts, cartoucheFrame); у этапов маршрута — прежние вещи. */
+   (guideArt.ts, cartoucheFrame). Затем о карточках этапов: «почему здесь
+   остались старые иконки» — у них тоже картуши: карта с розой ветров,
+   дорожный чемодан с документом, ключи. */
 type Frame = { src: string; srcSet: string; width: number; height: number };
 const STAGE_CARDS = [
-  { label: "Маршрут", object: "map", frame: objectFrame("map", 358) },
-  { label: "До отъезда", object: "folder", frame: objectFrame("folder", 338) },
-  { label: "В Италии", object: "keys", frame: objectFrame("keys", 365) },
+  { label: "Маршрут", object: "route-map", frame: cartoucheFrame("route-map") },
+  { label: "До отъезда", object: "suitcase", frame: cartoucheFrame("suitcase") },
+  { label: "В Италии", object: "keys", frame: cartoucheFrame("keys") },
 ];
 const ARRIVAL_CARDS = [
   { id: "permesso", label: "Permesso", object: "permesso-card", frame: cartoucheFrame("permesso-card") },
