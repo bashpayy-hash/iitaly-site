@@ -59,7 +59,8 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
           <p className={ui.intro}>{part?.description || guide.teaser}</p>
           <GuideReviewed />
         </div>
-        {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 40vw, 220px" width={art.width} height={art.height} alt="" />}
+        {/* The topic's own picture is the first thing to paint on a phone. */}
+        {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 40vw, 220px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />}
       </header>
       {/* Owner, 12 Nov (Lamossa Studio): facts, the next action, the note and
           the sources as one bento above the steps (GuideOverview.tsx). */}

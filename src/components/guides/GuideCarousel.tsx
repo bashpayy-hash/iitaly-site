@@ -48,6 +48,7 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
   // Card asked for by a dot, an arrow or autoplay. Wins over the scroll
   // position until the visitor scrolls the row themselves.
   const requested = useRef<number | null>(null);
+  const swipe = useRef<{ x: number; y: number; taken: boolean } | null>(null);
   const started = useRef(false);
   const [active, setActive] = useState(0);
   const [edges, setEdges] = useState({ start: true, end: false });
@@ -170,6 +171,30 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
     setEdges({ start: x <= 1, end: x >= max - 1 });
   }, [positions]);
 
+  // Cards past the first few load lazily so they do not compete with the
+  // first paint. A sideways row is a blind spot for lazy loading on phones,
+  // though: a card was fetched only as it slid in and showed up empty (owner,
+  // 19 Nov: «сайт иногда долго загружает эти иконки на мобильной версии»).
+  // Once the page has loaded, the rest of the row is fetched in the background.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let timer = 0;
+    const warm = () => { for (const img of track.querySelectorAll<HTMLImageElement>('img[loading="lazy"]')) img.loading = "eager"; };
+    const schedule = () => { timer = window.setTimeout(warm, 400); };
+    if (document.readyState === "complete") schedule(); else window.addEventListener("load", schedule, { once: true });
+    return () => { window.removeEventListener("load", schedule); window.clearTimeout(timer); };
+  }, []);
+
+  // The card in view carries data-current: on touch screens, where nothing
+  // follows a mouse, it is the one shown in full and its neighbours wait a
+  // step back (guide-tiles.module.css).
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    [...track.children].forEach((slide, index) => slide.toggleAttribute("data-current", index === active));
+  }, [active, count]);
+
   // The row bleeds to the window edges; the first card keeps to the text column.
   useEffect(() => {
     const track = trackRef.current, root = rootRef.current;
@@ -249,8 +274,19 @@ export function GuideCarousel({ label, titles, variant = "row", autoplay = false
       ref={trackRef}
       className={styles.track}
       aria-label={label}
-      onPointerDown={takeOver}
-      onTouchStart={takeOver}
+      // A finger that lands on the row to scroll the page must not stop the
+      // gallery (owner, 19 Nov, on a phone: «анимации в этот раз не
+      // заработали» — every vertical swipe over the full-width band killed
+      // autoplay for good). Only a sideways swipe takes the row; a mouse or
+      // pen press takes it at once, as before.
+      onPointerDown={event => { if (event.pointerType !== "touch") takeOver(); }}
+      onTouchStart={event => { const touch = event.touches[0]; swipe.current = touch ? { x: touch.clientX, y: touch.clientY, taken: false } : null; }}
+      onTouchMove={event => {
+        const start = swipe.current, touch = event.touches[0];
+        if (!start || start.taken || !touch) return;
+        const dx = Math.abs(touch.clientX - start.x), dy = Math.abs(touch.clientY - start.y);
+        if (dx > 10 && dx > dy) { start.taken = true; takeOver(); }
+      }}
       onKeyDown={takeOver}
       onWheel={event => { if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) takeOver(); }}
       onPointerEnter={event => { if (event.pointerType === "mouse") setHold(current => ({ ...current, hover: true })); }}

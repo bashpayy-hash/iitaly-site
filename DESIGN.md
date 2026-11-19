@@ -2175,3 +2175,47 @@ road and the document check:
     стайл именно на карте прогресса норм».
   - The cabinet road keeps its own look.
 - Manifest: design/illustrations/cartouche-2026-11-19.json.
+
+## Five cartouche frames, topic descriptions and a lighter mobile load · 19 November 2026
+
+The owner went through the guide catalogue on a phone.
+
+- **Five frames instead of one.** «У всех гербов сделай разные узоры, где-то
+  вариантов 5, и распредели их, чтобы они не повторялись… это выглядит очень
+  лениво.» The emblems stay; the frames around them change:
+  - A, the Baroque cartouche with the scallop shell (variant 7);
+  - B, a round laurel wreath with a terracotta bow;
+  - C, an ochre ground in slate-blue acanthus scrolls with a garland below;
+  - D, a terracotta shield with an ochre fleur-de-lis;
+  - E, a slate-blue pointed quatrefoil with terracotta lilies.
+
+  In the topic row they go A B C D E in turn. In the visa points and on the
+  home cards they are set by hand so that no two neighbours share a frame.
+  The table is in the manifest.
+- **Codice fiscale and DoV/CIMEA are tall sheets.** «Вот этот конверт, он
+  слишком короткий… сделать его более нормальным». Codice fiscale is an
+  upright paper certificate with a seal and a code line. DoV/CIMEA is an
+  upright diploma with a verification seal and a magnifying glass.
+- **Each topic says what it is and why it matters.** «Добавь описание, что
+  это такое, вкратце, чтобы все поняли, почему это важно».
+  - The teaser of every topic is now two sentences: what it is, and why it
+    is needed. The facts come from the topic's own rows.
+  - The catalogue tile, the topic header and the road show both sentences.
+  - The home cards beside a picture show the first sentence.
+- **Lighter cartouches.** «Сайт иногда долго загружает эти иконки на
+  мобильной версии».
+  - Every cartouche file name carries the hash of its master, and
+    /illustrations/cartouche/* is cached for a year. Before, the phone asked
+    the server about each picture on every page.
+  - The renditions are WebP q76 instead of q86: the set went from 2.3 MB to
+    1.6 MB, with no visible change at 2× zoom.
+  - The topic header picture loads first.
+  - Once the page has loaded, the catalogue row fetches its remaining
+    pictures in the background, so a swipe never shows an empty tile.
+- **Motion on phones.** «Анимации в этот раз не заработали».
+  - A finger that lands on the full-width topic band to scroll the page no
+    longer stops autoplay; only a sideways swipe takes the row.
+  - On touch screens the card in view steps forward (scale 1, full opacity)
+    and its neighbours wait a step back (0.86, 62 %), so swiping and
+    autoplay visibly move the band. Under reduced motion everything stays
+    still.

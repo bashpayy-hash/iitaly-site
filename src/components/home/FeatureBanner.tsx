@@ -41,6 +41,11 @@ function ThemeCard({ id, object, frame, label, title, line, href }: { id: string
   </li>;
 }
 
+/* The topic teaser says what it is and why it matters in two sentences
+   (owner, 19 Nov). A card beside its picture keeps the first one: the second
+   lives on the guide itself. */
+const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0];
+
 export function FeatureBanner() {
   const permesso = GUIDE_TOPICS.find(item => item.id === "permesso")!;
   return <section className={styles.section} data-section="feature" aria-label="План и первые шаги в Италии">
@@ -51,7 +56,7 @@ export function FeatureBanner() {
     </SceneCard>
     <SceneCard title={<>После визы<br />путь продолжается.</>} href={guideHref(permesso.id)} actionLabel={`Открыть гайд: ${permesso.title}`} action="Открыть гайд" caption="Первые формальности в новом городе. Выбирай одну тему, разбирайся с ней и переходи дальше.">
       <ul className={`${styles.cards} ${styles.cardsAlt}`} aria-label="Темы после приезда">
-        {ARRIVAL_CARDS.map(card => { const topic = GUIDE_TOPICS.find(item => item.id === card.id)!; return <ThemeCard key={card.id} {...card} title={topic.title} line={topic.teaser} href={guideHref(card.id)} />; })}
+        {ARRIVAL_CARDS.map(card => { const topic = GUIDE_TOPICS.find(item => item.id === card.id)!; return <ThemeCard key={card.id} {...card} title={topic.title} line={firstSentence(topic.teaser)} href={guideHref(card.id)} />; })}
       </ul>
     </SceneCard>
   </section>;
