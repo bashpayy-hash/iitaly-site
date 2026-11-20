@@ -321,3 +321,6 @@
   .mapZoom:focus-visible { outline: 2px solid #F29A89; outline-offset: 2px; }
   .container[data-map-first] .filterWorkspace { margin-top: 24px; }
 }
+/* 20 Nov (phone pass): «Выбери город, затем университет» ended with
+   «университет» alone on phones; the navigator title is balanced. */
+.navigator [data-vespi-title], .navigator [data-vespi-title] h2 { text-wrap:balance; }

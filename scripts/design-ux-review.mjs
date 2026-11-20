@@ -145,6 +145,8 @@ try {
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
     await page.getByRole('navigation',{name:'Бесплатные инструменты'}).getByRole('link',{name:'Проверить документ',exact:true}).click();
     await page.waitForURL(/\/check$/);
+    // /check asks the service whether it is available on arrival; the picker unlocks after the answer.
+    await page.waitForFunction(()=>document.querySelector('#document-check input[type="file"]')?.disabled===false);
     await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'example.txt',mimeType:'text/plain',buffer:Buffer.from('Синтетический тест: доход семьи за указанный год.')});
     const doc=page.locator('#document-check');
     await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();

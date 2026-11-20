@@ -272,3 +272,8 @@
 }
 @media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:active .node { transform:none; } @media (hover: hover) and (pointer: fine) { .step > a:hover .node { transform:none; } } }
 @media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }
+/* 20 Nov (phone pass): beside a circle a caption is two or three short lines;
+   balanced, they no longer end on a preposition («Воинский учёт в /
+   Казахстане», «Собрать справки о / составе…»). Desktop captions are wider
+   and keep text-wrap:pretty. */
+@media(max-width:640px) { .stepLabel { text-wrap:balance; } }

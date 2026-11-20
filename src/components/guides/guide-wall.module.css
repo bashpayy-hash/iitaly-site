@@ -33,3 +33,9 @@
 }
 @media(prefers-reduced-motion:reduce) { .buy { transition:none; } .buy:active { transform:none; } }
 @media(forced-colors:active) { .wall { border-color:CanvasText; } }
+/* 320–374px (20 Nov, phone pass): «Открыть маршрут за 10 990 ₸» broke into
+   two lines inside the overview's dose cell (it needs 221px at 15px; the cell
+   gives 220 at 360px and 196 at 320). The sides are 12px and the label keeps
+   one line; below 360px it is 14px. */
+@media(max-width:374px) { .buy { padding-inline:12px; white-space:nowrap; } }
+@media(max-width:359px) { .buy { font-size:14px; } }

@@ -19,3 +19,5 @@
   .action { min-height:44px; }
 }
 @media (forced-colors:active) { .promo { border:1px solid CanvasText; } }
+/* Phones (20 Nov): 24px corners like the other cards on the page (design code). */
+@media (max-width:767px) { .promo { border-radius:24px; } }

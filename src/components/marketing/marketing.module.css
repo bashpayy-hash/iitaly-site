@@ -370,3 +370,67 @@
    scrolled out from under it. On phones the footer ends 76px above the edge,
    so its last row clears the button with 12px to spare. */
 @media (max-width: 767px) { .footer { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } }
+
+/* Phone and tablet finish (owner, 20 Nov: «теперь мобильную версию прошерсти на
+   неточности, неровности и в целом адаптивность, люди часто будут смотреть сайт
+   с телефона»). Audited with responsive-craft at 280–1440 px; desktop ≥1024 is
+   unchanged except where noted.
+   - Home hero below 1024px: the picture box had aspect-ratio 4:3 and
+     max-height 60vh; when 60vh was the shorter side the browser narrowed the
+     box to keep 4:3 and a dark band stood beside the photo (844×390: a 312px
+     picture). The box keeps the full width; object-fit crops instead. */
+@media (max-width: 1023px) { .heroSceneBox { width: 100%; } }
+/* When the window is wider than 4:5 (phone landscape, a short tablet window)
+   that box is wider than 4:3 and shows a band of the picture: centred lower,
+   the band cut Vespi's helmet; it now centres on him. */
+@media (max-width: 1023px) and (min-aspect-ratio: 4/5) { .heroLandscape { object-position: 28% 38%; } }
+@media (max-width: 767px) {
+  /* Design code: cards and sections 28px, 24px on phones. These four were
+     still 28px beside 24px trays, the FAQ and the roads on the same page. The
+     package card (.offerCard, #main-package) keeps 28px: its whole style is
+     pinned by design-prices-landscape-review («Pricing card design is
+     preserved»). */
+  .journey { border-radius: 24px 24px 0 0; }
+  .summaryCard, .termsBox, .optionalService { border-radius: 24px; }
+  /* «Одна Италия. Твой собственный выбор.»: 38px at every phone width broke
+     the second sentence into «Твой / собственный / выбор.» at 320–360px. It
+     scales down there, so every phone shows the same three lines. */
+  .universityTitle { font-size: clamp(30px, 9.4vw, 38px); }
+  /* The 24px tagline kept the footer's 1.6 line-height: at 320–360px it
+     wrapped into two lines 38px apart with «кажется.» alone. */
+  .footerTagline { line-height: 1.2; text-wrap: balance; }
+  /* Menu items on the page's 20px edge, under the logo (they were at 24px). */
+  .mobileMenu nav { padding-inline: 20px; }
+}
+/* Desktop too (drag 280→1440): from 1240px the title reaches its 68px cap and
+   «Твой собственный выбор.» needs 809px in an 800px column, so every wide
+   screen read «Твой собственный / выбор.» while 1180px read one line. The
+   column is 840px; 1280px and wider now show the second sentence on one line,
+   as the design had it below 1240. */
+.universityTitle { max-width: 840px; }
+/* A sentence after a forced break is its own balanced block: as an inline
+   span it was never balanced and ended «…собственный / выбор.» on phones. The
+   home hero's gradient span stays inline (a block would stretch its gradient). */
+.universityTitle span { display: block; }
+/* 320px: «Документы и DSU» and «Первые недели» wrapped while their row
+   partners did not, so the two link columns lost their shared baseline. At
+   14px «Первые недели» fits; «Документы и DSU» cannot (127px in 113px), so
+   each link starts its first line where a one-line link sits (11px into its
+   44px box) and the two columns share their first baseline. */
+@media (max-width: 359px) { .route li { font-size: 14px; } .route a { align-items: flex-start; padding-top: 11px; } }
+/* Cabinet on phones: the logo and the three header buttons stood at 16px,
+   the cabinet's own frame (portal-focus .localFrame) and everything in it at
+   12px. The header now shares the frame's edge, and so does its menu. */
+@media (max-width: 600px) {
+  .header[data-portal-header=true] .navInner { padding-inline: 12px; }
+  .header[data-portal-header=true] .mobileMenu nav { padding-inline: 12px; }
+}
+/* Same at 768–900px (iPad portrait): the frame is 20px there, the header kept
+   the public 24/32px. */
+@media (min-width: 601px) and (max-width: 900px) { .header[data-portal-header=true] .navInner { padding-inline: 20px; } }
+/* The «Твой маршрут» stage kept 24px sides from 900px up while the site's
+   edge there is max(32px, (100vw − 1216px) / 2): at 900–1263px (iPad
+   landscape, small laptops) the card stood 8px left of the logo and of every
+   block around it. From 1264px the formula gives the old position, so wide
+   screens and 1280px are unchanged. */
+@media (min-width: 900px) { .stage { padding-inline: max(32px, calc((100vw - 1216px) / 2)); } }

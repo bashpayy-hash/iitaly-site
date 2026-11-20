@@ -91,3 +91,6 @@
 
 .docCard p { font-size:15px; }
 .status { font-size:14px; }
+/* 20 Nov (phone pass): on phones a document's name wrapped to leave one word
+   alone («Официальный перевод на / итальянский»); it is balanced there. */
+@media(max-width:767px) { .docCard h3 { text-wrap:balance; } }

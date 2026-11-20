@@ -5,6 +5,14 @@
 .head { display: grid; gap: 16px; max-width: 880px; margin-bottom: 28px; }
 .title { margin: 0; color: #141413; font: 600 clamp(32px, 3.6vw, 48px) / 1.06 var(--font-apple-display); letter-spacing: -.03em; text-wrap: balance; }
 .title span { color: #6B6761; }
+/* The second sentence is its own balanced block (20 Nov, phone pass): as an
+   inline span after <br> it was never balanced and ended «Пункт за пунктом —
+   в / любое время.» from 300 to 1024px. One line on desktop either way. */
+.title span { display: block; }
+/* The dash stays with «пунктом» (a no-break space in the markup, the words
+   are the same), so no line starts with «—»; at 320–359px the title is 29px,
+   the size at which «Пункт за пунктом —» still fits on its line. */
+@media (max-width: 359px) { .section:not(.compact) .title { font-size: 29px; } }
 .compact .title { font-size: clamp(26px, 3vw, 34px); }
 .lead { margin: 0; max-width: 62ch; color: #56524C; font-size: 17px; line-height: 1.6; }
 .bento { width: 100%; }
@@ -48,6 +56,20 @@
   .ctaText { font-size:15px; }
   .cta .ctaButton { margin-top:6px; }
 }
+/* 20 Nov (phone pass): the corner cartouche kept 72px of the 24px title for
+   its whole height, so the title broke into four lines at 320px and three at
+   360–390 («Проверь один / документ / бесплатно»), and the button wrapped into
+   two lines at 320. On phones the cartouche stands above the title, small, at
+   the text edge; the title has the full width (two lines from 360px) and the
+   main button the full width, like the hero's buttons. The page grows by
+   about 40px. */
+@media (max-width:767px) {
+  .bento .cta { display:flex; flex-direction:column; align-items:flex-start; }
+  .ctaArt { position:static; order:-1; width:56px; margin:0 0 14px; }
+  .ctaTitle { padding-right:0; }
+  .ctaCopy { align-self:stretch; }
+  .cta .ctaButton { width:100%; padding-inline:20px; white-space:nowrap; }
+}
 
 /* /prices: the heading on a wide scene of Vespi checking documents. The
    picture fills the card; a cream wash from the left keeps the heading on a
@@ -66,6 +88,13 @@
 
 @media (max-width: 899px) { .section { padding: 56px 24px 64px; } .compact { padding: 32px 0 8px; } }
 @media (max-width: 767px) { .section { padding: 48px 20px 56px; } .lead { font-size: 16px; } }
+/* Phone rhythm (20 Nov): 48px between the home blocks — it was 48 / 56 / 44 / 84 / 64. */
+@media (max-width: 767px) { .section:not(.compact) { padding-bottom: 48px; } }
+/* /prices on phones (20 Nov): the phone rule above gave the compact block the
+   home section's 20px sides as well (same weight, later in the file), so on
+   /prices the scene, the facts and the comparison stood 20px inside the
+   column every other card fills (40px from the screen edge, not 20). */
+@media (max-width: 767px) { .compact { padding: 32px 0 8px; } }
 /* На телефоне таблица в три колонки тесная: строка сравнения встаёт столбиком. */
 @media (max-width: 559px) {
   .compare thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

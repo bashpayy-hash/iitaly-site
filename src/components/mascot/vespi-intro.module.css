@@ -51,3 +51,17 @@
   .portal ul { margin-top:12px; font-size:13px; }
   .portal .copy ul { padding-right:100px; }
 }
+/* Phone and tablet finish (owner, 20 Nov: «прошерсти на неточности,
+   неровности и в целом адаптивность»):
+   - the second sentence of the title is its own balanced block, so it ends
+     «твой ИИ-проводник / в Италию.», not «…в / Италию.»;
+   - on the home page the card follows the site's edge: 24px at 768–899px and
+     20px below (it kept 32px there, 8–12px off every other card);
+   - 48px above and below on phones, the home page's rhythm;
+   - 24px corners on phones, like every other card (design code);
+   - at 360px and below the title steps down to 24px: at 27px it took five
+     lines and broke «ИИ-» at 320. */
+.intro h2 span { display:block; }
+@media(max-width:899px) { .home { margin-inline:24px; } }
+@media(max-width:767px) { .home { margin:48px 20px; } .intro { border-radius:24px; } .portrait { border-radius:0 24px 24px 0; } }
+@media(max-width:360px) { .home h2 { font-size:24px; } }

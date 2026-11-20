@@ -49,3 +49,11 @@
 @media (prefers-reduced-motion:reduce) { .fill,.node { transition:none; } }
 @media (forced-colors:active) { .rail { background:CanvasText; } .fill { background:Highlight; } .node { border-color:CanvasText; } }
 @media print { .path { display:none; } }
+/* 20 Nov (phone pass, responsive-craft drag 280→1440): the dense path's
+   52px minimum stop (above) outweighed the phone rule's 38px by specificity,
+   so on phones the nine documents of the visa list made a 468px row in a
+   350px column — it scrolled sideways with a circle cut in half at the screen
+   edge and two documents out of sight. On phones a dense row fits the column
+   from 360px; at 320px the circles step down to 26px so all nine still fit. */
+@media (max-width:600px) { .path[data-dense] { --stop-min:35px; } }
+@media (max-width:359px) { .path[data-dense] { --node:26px; --stop-min:31px; } }

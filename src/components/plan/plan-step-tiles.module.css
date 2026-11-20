@@ -118,3 +118,11 @@
 
 /* Owner, 14 Nov 2026 («пометка закрыт исправь»): a locked step reads a lock and «с маршрутом», as on the guides band, not «· закрыт» next to «Открыть шаг». */
 .lockGlyph { display:inline-block; margin:0 1px 0 0; vertical-align:-1px; }
+/* Phone finish (20 Nov, owner: «прошерсти на неточности»). In the narrow
+   tile the title was hyphenated mid-word to balance its lines («Сверь кален-/
+   дарь 2026/27», «академиче-/ские»); phone titles wrap at spaces only (a word
+   longer than the line still breaks, overflow-wrap above). In the label, «шаг
+   1 из 11» and «🔒 с маршрутом» stay whole, and the «·» before them stays with
+   the word it follows, so a line never starts with it. */
+.keep { white-space:nowrap; }
+@container (max-width:599.98px) { .title { -webkit-hyphens:manual; hyphens:manual; } }

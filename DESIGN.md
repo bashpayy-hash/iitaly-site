@@ -2378,3 +2378,60 @@ questionnaire were the last ones beside the Galleria cartouches.
 - **Loops start sooner.** «Чтобы анимации запускались сразу». A scene on
   the first screen asks for its loop together with its picture, not after
   it.
+
+## The phone and tablet finish; no Netlify badge · 20 November 2026
+
+Owner: «теперь мобильную версию прошерсти на неточности, неровности и в целом
+адаптивность, люди часто будут смотреть сайт с телефона», then «responsive-craft
+тогда начинай с него», then phones and iPad to standard, and the «Powered by
+Netlify» badge gone from every page.
+
+Method: responsive-craft's Transform Existing workflow (audit, design forks,
+fixes in order, verification), on an exact build of `main`: every route at
+320/360/375/390/414/430, 844×390, and iPad 768×1024, 820×1180, 1180×820,
+1024×1366, 1366×1024 (touch), plus a continuous drag from 280 to 1440 px in
+20 px steps. Forks were decided without asking, keeping the current design:
+bento stacks, the snake roads, card-stack comparison, stacked cabinet, the
+hero picture above its panel, one sticky header, «Меню», no
+`viewport-fit=cover`.
+
+- **Netlify badge.** `#nl-badge-frame` is hidden site-wide
+  (`chat-placement.module.css`); the rules that lifted the chat above it are
+  gone. The chat button sits 16 px from the corner (`max(1rem,
+  env(safe-area-inset-bottom))`).
+- **Nothing past its column.** Legal titles scale with `clamp(22px, 8vw,
+  36px)` («конфиденциальности» overflowed at 300–460 px). The hero picture
+  keeps the full width below 1024 px in short windows. Visa's nine-document
+  path fits the column from 320 px (a specificity bug kept a 52 px minimum).
+- **No two-line buttons.** At 320 px every main button keeps one line: full
+  width on phones, or 12 px sides and 14 px type below 375/360 px.
+- **One edge.** Every block stands on the site edge at every width: 20 px
+  phones, 24 px at 768–899, 32 px and the 1216 px column above. The Vespi
+  card, the FAQ, the two home scenes and the «Твой маршрут» stage were 8–26 px
+  off at 641–1263 px. The cabinet header is on the cabinet frame (12 px on
+  phones, 20 px to 900 px). /prices' document check fills its column.
+- **One radius.** Top-level cards are 24 px on phones (they were 28 beside
+  24 on the same page). The /prices package card keeps 28 px: its style is
+  pinned by `design-prices-landscape-review`.
+- **Tablet in-betweens.** The topic and visa source lists stay one column
+  with full notes until their tray is 660 px wide (at 600–715 px windows they
+  split into two 160 px columns with cut notes).
+- **Headings.** A sentence after `<br>` is its own balanced block (home
+  document check, «Одна Италия…», «Знакомься, это Веспи…»); the dash in
+  «Пункт за пунктом — в любое время.» is bound to «пунктом» with a no-break
+  space. «Одна Италия…» scales on small phones; the topic cartouche is 96 px
+  below 375 px; /plan step titles are not hyphenated on phones; captions on
+  the roads and answer lines are balanced.
+- **Rhythm and alignment.** 48 px between home blocks on phones; the FAQ's
+  last question has no hairline at the rounded edge; the carousel's dots and
+  ▶ are both 44 px; the cabinet stage dots line up with their label.
+- **Left as they are:** map pins (approved geometry), Modulo 1 paper fields
+  (paper geometry; iOS zooms on focus), carousel dots 14 px wide at ≤480,
+  secondary text at 14–15 px, two-line pills at 280 px (Galaxy Fold).
+- **Desktop.** 1280 px is pixel-identical except two headings that were
+  wrong there too: /prices reads «Пункт за пунктом — / в любое время.», and
+  the home «Твой собственный выбор.» is one line (from 1240 px it needed
+  809 px in an 800 px column; the column is 840 px).
+
+Audit and verification: `/tmp/claude-0/polish/responsive-audit.md` in the
+session that made it; the findings are summarised above.
