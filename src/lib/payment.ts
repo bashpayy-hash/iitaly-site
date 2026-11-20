@@ -51,6 +51,7 @@ export async function submitOrder(fields: {
   name: string;
   surname?: string;
   phone: string;
+  email?: string;
 }): Promise<OrderResult> {
   if (!BACKEND_URL) {
     return { ok: false, error: "Приём заявок временно не работает. Напиши в WhatsApp — оформим вручную." };
@@ -93,6 +94,7 @@ export async function startStripeCheckout(fields: {
   name: string;
   surname: string;
   phone: string;
+  email?: string;
 }): Promise<StripeCheckoutResult> {
   if (!STRIPE_ENABLED) {
     return { ok: false, error: "Оплата картой пока не включена." };

@@ -186,10 +186,57 @@
 @media (hover: hover) and (pointer: fine) { .submit:hover:not(:disabled) { border-color: var(--login-action-deep); background: var(--login-action-deep); } }
 .submit:disabled { opacity: .6; cursor: wait; }
 .submit:focus-visible,
-.foot a:focus-visible { outline: 2px solid var(--login-action); outline-offset: 3px; }
+.foot a:focus-visible,
+.textButton:focus-visible,
+.whatsapp:focus-visible { outline: 2px solid var(--login-action); outline-offset: 3px; }
 .foot { margin: 16px 0 0; color: var(--login-muted); font-size: 14px; line-height: 1.6; }
 .foot a { color: var(--login-action-deep); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; }
 @media (hover: hover) and (pointer: fine) { .foot a:hover { color: var(--login-action); } }
+/* «Не помню код» (20 Nov): a button that reads as the link beside it. */
+.textButton {
+  margin: 0;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--login-action-deep);
+  font: inherit;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) { .textButton:hover { color: var(--login-action); } }
+.cardTitle:focus { outline: none; }
+.notice {
+  margin-top: 24px;
+  border: 1px solid var(--login-line);
+  border-radius: 16px;
+  background: #faf8f5;
+  padding: 18px;
+  color: var(--login-body);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.notice:focus { outline: none; }
+.notice p { margin: 0; }
+.notice .noticeTitle { margin-bottom: 6px; color: var(--login-ink); font-weight: 600; }
+.whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 14px;
+  border: 1px solid var(--login-ink);
+  border-radius: 999px;
+  padding: 10px 20px;
+  color: var(--login-ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) { .whatsapp:hover { background: var(--login-ink); color: #fff; } }
 
 @media (min-width: 1400px) {
   .page { padding-top: 56px; }
@@ -228,5 +275,5 @@
   .fields { margin-top: 24px; gap: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .field input, .submit { transition: none; }
+  .field input, .submit, .whatsapp { transition: none; }
 }

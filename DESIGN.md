@@ -2435,3 +2435,28 @@ hero picture above its panel, one sticky header, «Меню», no
 
 Audit and verification: `/tmp/claude-0/polish/responsive-audit.md` in the
 session that made it; the findings are summarised above.
+
+## «Не помню код» on the login card; email at purchase · 20 November 2026
+
+The owner, on the cabinet login: «Почему для восстановления пароля он должен
+писать WhatsApp? У нас нету формы восстановления или как?» — then «Да, давай
+делай». There was none: the code is issued by hand after payment and the
+only way back was a WhatsApp link.
+
+- **The card turns over.** «Не помню код — восстановить» swaps the login form
+  for a recovery form in the same card: «Не помню код», surname (carried over
+  from the login card) and phone, «Прислать код». Focus moves to the heading;
+  «Код нашёлся? Ввести код» turns it back with what was typed kept.
+- **The code never reaches the page.** The server sends it to the cabinet's
+  own Telegram and email and answers the same for everyone, so the form
+  cannot tell who studies with us. The page says «Запрос принят: если кабинет
+  с такими фамилией и телефоном есть, код уже в Telegram или на почте…».
+- **WhatsApp stays as the fallback**, a quiet outlined pill in the result
+  card, with the surname and phone already in the message. On a server
+  without the route (or any failure) the result is «Пришлём код вручную».
+- **Email at purchase**, optional, under the phone: «Почта (по желанию)» with
+  «Пришлём сюда код доступа к кабинету, если потеряешь его.» A typo stops
+  the order and is marked; empty sends nothing extra. The privacy page names
+  the email among order data and the code among the uses.
+- **Server.** `docs/backend-patches/2026-11-20-portal-code-recovery.patch`
+  for `bashpayy-hash/iitaly`; see HANDOFF §3.

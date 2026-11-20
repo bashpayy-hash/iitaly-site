@@ -324,6 +324,17 @@ const approvedRevisions = {
   // Ancona facts corrected. Ids, coordinates, tuition numbers and the outline
   // of Italy are unchanged.
   'src/data/italy.ts': 'e0f01915b4df3d00ce36f836a9f583f532d0a2cc87a66d04eacfe736c8443eb8',
+  // 2026-11-20 (owner: «Почему для восстановления пароля он должен писать
+  // WhatsApp? У нас нету формы восстановления?» — «Да, давай делай»).
+  // portalRecovery.ts is new: one call, POST /api/portal/recover with the
+  // surname and phone, for the «Не помню код» form on the login card. The
+  // server sends the code to the cabinet's own Telegram and email and never
+  // returns it; on an older server the form falls back to WhatsApp.
+  // payment.ts: one optional `email` field on the two order calls, sent only
+  // when the buyer fills it in. Endpoints, prices and every other field are
+  // unchanged; portalApi.ts stays byte-exact.
+  'src/lib/portalRecovery.ts': '87b0c849b379bf208ae25605debdb7e219ed26d53d2634f2f66121d4b8be9a66',
+  'src/lib/payment.ts': '20712613eb27d25f6d8a6a0b4c8a5bc160fbb6d521b144dca7b15d4df233262d',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
 // 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll

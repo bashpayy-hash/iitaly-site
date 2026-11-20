@@ -116,6 +116,16 @@ try {
     await dialog.getByLabel('Имя', { exact: true }).fill('Demo');
     await dialog.getByLabel('Фамилия', { exact: true }).fill('Testov');
     await dialog.getByLabel('Телефон', { exact: true }).fill('+7 700 000 00 00');
+    // Optional email (owner, 20 Nov, the «Не помню код» form): a typo stops
+    // the order and is marked; an empty field sends nothing extra.
+    const email = dialog.getByLabel('Почта (по желанию)', { exact: true });
+    assert.equal(await email.getAttribute('type'), 'email');
+    await email.fill('demo@');
+    await submit().click();
+    await dialog.getByRole('alert').filter({ hasText: 'Проверь адрес почты' }).waitFor();
+    assert.equal(calls, 0, 'A malformed email never submits');
+    assert.equal(await email.getAttribute('aria-invalid'), 'true');
+    await email.fill('');
     await submit().click();
     await dialog.getByRole('status').waitFor();
     await page.keyboard.press('Tab');

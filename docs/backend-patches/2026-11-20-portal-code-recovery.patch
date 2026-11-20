@@ -1,0 +1,482 @@
+From f86e3e46b843a49922c1f9f1989b1b2718ac68dd Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 20 Nov 2026 10:36:17 +0000
+Subject: [PATCH] =?UTF-8?q?Portal:=20=C2=AB=D0=9D=D0=B5=20=D0=BF=D0=BE?=
+ =?UTF-8?q?=D0=BC=D0=BD=D1=8E=20=D0=BA=D0=BE=D0=B4=C2=BB=20sends=20the=20a?=
+ =?UTF-8?q?ccess=20code=20to=20the=20client's=20own=20channels?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+POST /api/portal/recover takes the surname and phone given at purchase.
+The server finds the cabinet and sends the code only where the client
+connected themselves: the Telegram bot and email. The code is never
+returned to the browser, and the answer is the same whether a cabinet
+exists or not, so the form cannot tell who studies with us. Sending
+happens after the answer.
+
+If the cabinet has no Telegram or email, or sending failed, the owner
+gets the code in the work chat to forward in WhatsApp by hand.
+
+Limits: 5 requests per IP in 5 minutes, one send per cabinet in two
+minutes, so the form cannot be used to flood someone's Telegram.
+
+Orders also accept an optional email (manual and Stripe). It is
+validated, kept on the order and copied to the cabinet on activation,
+so recovery by email works from the first day. Without the field
+everything works as before.
+
+Tests: unit tests for matching, cooldown and delivery; server wiring
+tests for recovery, owner alert, bad input and purchase email; smoke
+checks for the new route. 95/95 and smoke 28/28 locally.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01EJf3uoJW8TN46ucPCkbbdr
+---
+ .github/workflows/ci.yml      |   2 +-
+ order-store.js                |   1 +
+ portal-recovery.js            | 102 ++++++++++++++++++++++++++++++++++
+ server.js                     |  57 ++++++++++++++++++-
+ smoke-test.js                 |   6 ++
+ test/portal-recovery.test.js  |  72 ++++++++++++++++++++++++
+ test/reminders-server.test.js |  70 +++++++++++++++++++++++
+ 7 files changed, 307 insertions(+), 3 deletions(-)
+ create mode 100644 portal-recovery.js
+ create mode 100644 test/portal-recovery.test.js
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 0550a21..85dea5a 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -23,7 +23,7 @@ jobs:
+       - run: npm ci
+ 
+       - name: Синтаксис
+-        run: node --check server.js && node --check ai-readiness.js && node --check roadmap.js && node --check smoke-test.js && node --check reminders.js && node --check reminder-telegram.js && node --check telegram-linking.js && node --check order-store.js && node --check stripe-checkout.js
++        run: node --check server.js && node --check ai-readiness.js && node --check roadmap.js && node --check smoke-test.js && node --check reminders.js && node --check reminder-telegram.js && node --check telegram-linking.js && node --check order-store.js && node --check stripe-checkout.js && node --check portal-recovery.js
+ 
+       - name: Изолированные проверки напоминаний
+         run: |
+diff --git a/order-store.js b/order-store.js
+index b0ce343..59e589d 100644
+--- a/order-store.js
++++ b/order-store.js
+@@ -69,6 +69,7 @@ function createOrderStore({ dir, key }) {
+       name: String(fields.name || '').trim().slice(0, 60),
+       surname: String(fields.surname || '').trim().slice(0, 60),
+       phone: String(fields.phone || '').trim().slice(0, 20),
++      email: String(fields.email || '').trim().slice(0, 80),
+     };
+     if (!write(record)) throw new Error('order write failed');
+     return record;
+diff --git a/portal-recovery.js b/portal-recovery.js
+new file mode 100644
+index 0000000..c112ffa
+--- /dev/null
++++ b/portal-recovery.js
+@@ -0,0 +1,102 @@
++'use strict';
++
++/* «Не помню код»: восстановление кода доступа к кабинету.
++
++   Человек вводит фамилию и телефон, которые указал при покупке. Сервер ищет
++   кабинет и отправляет код только туда, куда клиент подключился сам: в
++   Telegram-бот и на почту. На экран код не выводится никогда, иначе войти
++   мог бы любой, кто знает чужие фамилию и телефон.
++
++   Ответ сайту всегда одинаковый: есть кабинет или нет, подключён ли
++   Telegram или почта. По форме нельзя узнать, кто у нас учится. Отправка
++   идёт уже после ответа.
++
++   Если кабинет найден, а отправить код некуда или отправка не удалась,
++   владельцу приходит сообщение в рабочий чат: код можно переслать в
++   WhatsApp вручную, как раньше. */
++
++const RESEND_COOLDOWN_MS = 2 * 60 * 1000;
++const SUBJECT = 'IITALY: код доступа к кабинету';
++
++/* +7 777 000 00 00, 8 777 000 00 00 и 7770000000 — один номер.
++   Сравниваем последние десять цифр; короче — не телефон. */
++function phoneKey(value) {
++  const digits = String(value || '').replace(/\D/g, '');
++  return digits.length >= 10 && digits.length <= 15 ? digits.slice(-10) : '';
++}
++
++function findRecoveryMatches({ surname, phone }, { listCodes, readClient, normSurname }) {
++  const wantedSurname = normSurname(surname);
++  const wantedPhone = phoneKey(phone);
++  if (wantedSurname.length < 2 || !wantedPhone) return [];
++  const matches = [];
++  for (const code of listCodes()) {
++    const client = readClient(code);
++    if (!client || !client.surname) continue;
++    if (normSurname(client.surname) !== wantedSurname) continue;
++    if (phoneKey(client.phone) !== wantedPhone) continue;
++    matches.push({ code: client.code || code, client });
++  }
++  return matches;
++}
++
++function recoveryText(client, code, siteUrl) {
++  const site = String(siteUrl || 'https://iitaly.net').replace(/\/+$/, '');
++  return 'IITALY: код доступа к кабинету\n\n'
++    + 'Фамилия: ' + client.surname + '\n'
++    + 'Код: ' + code + '\n\n'
++    + 'Вход: ' + site + '/portal\n\n'
++    + 'Код запросили на сайте через «Не помню код». Если это был не ты, ничего делать не нужно: код пришёл только тебе.';
++}
++
++function ownerAlertText(client, code) {
++  return '🔑 Не помню код\n'
++    + [client.surname, client.name].filter(Boolean).join(' ') + '\n'
++    + 'Телефон: ' + (client.phone || 'не указан') + '\n'
++    + 'Код: ' + code + '\n'
++    + 'Telegram и почта не подключены или не ответили. Отправь код в WhatsApp.';
++}
++
++/* Один запрос в две минуты на кабинет: форму нельзя превратить в способ
++   заваливать чужой Telegram или почту сообщениями. */
++function createRecoveryCooldown({ now = () => Date.now(), cooldownMs = RESEND_COOLDOWN_MS } = {}) {
++  const last = new Map();
++  return {
++    allow(code) {
++      const t = now();
++      for (const [key, at] of last) if (t - at >= cooldownMs) last.delete(key);
++      if (last.has(code)) return false;
++      last.set(code, t);
++      return true;
++    },
++  };
++}
++
++/* Отправка для найденных кабинетов. Каналы передаются снаружи, чтобы модуль
++   не знал ни токена бота, ни настроек почты. Возвращает, что куда ушло;
++   в журнал сервер пишет только названия каналов, без адресов и кода. */
++async function deliverRecovery(matches, { cooldown, siteUrl, sendTelegram, sendEmail, alertOwner }) {
++  const results = [];
++  for (const { code, client } of matches) {
++    if (!cooldown.allow(code)) { results.push({ code, skipped: true, sent: [] }); continue; }
++    const text = recoveryText(client, code, siteUrl);
++    const sent = [];
++    if (client.tgChatId && await sendTelegram(client.tgChatId, text)) sent.push('telegram');
++    if (client.email && await sendEmail(client.email, SUBJECT, text)) sent.push('email');
++    let ownerAlerted = false;
++    if (!sent.length && alertOwner) ownerAlerted = Boolean(await alertOwner(ownerAlertText(client, code)));
++    results.push({ code, skipped: false, sent, ownerAlerted });
++  }
++  return results;
++}
++
++module.exports = {
++  RESEND_COOLDOWN_MS,
++  SUBJECT,
++  phoneKey,
++  findRecoveryMatches,
++  recoveryText,
++  ownerAlertText,
++  createRecoveryCooldown,
++  deliverRecovery,
++};
+diff --git a/server.js b/server.js
+index 221ef1d..36c4afb 100644
+--- a/server.js
++++ b/server.js
+@@ -12,6 +12,7 @@ const { createReminderRunner, RETRY_MS } = require("./reminders");
+ const { sendTelegramReminder } = require("./reminder-telegram");
+ const { makeLinkToken, findClientByToken } = require("./telegram-linking");
+ const { createOrderStore } = require("./order-store");
++const { phoneKey, findRecoveryMatches, createRecoveryCooldown, deliverRecovery } = require("./portal-recovery");
+ const { CURRENCY: STRIPE_CURRENCY, minorUnits, createCheckoutSession, parseVerifiedEvent } = require("./stripe-checkout");
+ 
+ /* ---------- Почта ----------
+@@ -343,6 +344,9 @@ const portalLimit = makeLimit("portal", 60);
+ const eventLimit = makeLimit("event", 300, WINDOW_MS, "Слишком много событий.");
+ const orderLimit = makeLimit("order", 10, WINDOW_MS,
+   "Слишком много заявок подряд. Подожди пару минут.");
++// «Не помню код»: живому человеку хватает одной-двух попыток.
++const recoverLimit = makeLimit("recover", 5, WINDOW_MS,
++  "Слишком много запросов кода подряд. Подожди пару минут.");
+ 
+ /* Вход в кабинет — отдельно и строже. Код из 8 символов подобрать
+    перебором нереально (23^8), но лимит закрывает и утечку кода, и
+@@ -770,6 +774,39 @@ app.get("/api/portal/:code", portalLimit, (req, res) => {
+   readPortal(req, res, code, req.query.surname);
+ });
+ 
++/* «Не помню код» — подробности и правила в portal-recovery.js.
++   Ответ одинаковый для всех, код уходит только в Telegram и на почту
++   самого клиента, отправка — после ответа. */
++const recoveryCooldown = createRecoveryCooldown();
++const RECOVERY_SITE_URL = process.env.SITE_URL || "https://iitaly.net";
++
++app.post("/api/portal/recover", recoverLimit, (req, res) => {
++  const body = req.body || {};
++  const surname = String(body.surname || "").slice(0, 60);
++  const phone = String(body.phone || "").slice(0, 20);
++  if (normSurname(surname).length < 2 || !phoneKey(phone)) {
++    return res.status(400).json({ ok: false, error: "Укажи фамилию и телефон, как при оплате." });
++  }
++  res.json({ ok: true });
++  const matches = findRecoveryMatches({ surname, phone }, {
++    listCodes: () => listClients().map(file => file.replace(/\.json$/, "")),
++    readClient,
++    normSurname,
++  });
++  if (!matches.length) return;
++  deliverRecovery(matches, {
++    cooldown: recoveryCooldown,
++    siteUrl: RECOVERY_SITE_URL,
++    sendTelegram: (chatId, text) => tgSendTo(chatId, text),
++    sendEmail: (to, subject, text) => sendMail(to, subject, text),
++    alertOwner: text => tgSendTo(process.env.TG_CHAT_ID, text),
++  }).then(results => {
++    for (const r of results) {
++      console.log("PORTAL RECOVERY: " + (r.skipped ? "cooldown" : r.sent.length ? r.sent.join("+") : r.ownerAlerted ? "owner" : "nowhere"));
++    }
++  }).catch(() => console.error("portal recovery error"));
++});
++
+ const PROFILE_VALUES = {
+   education: new Set(["11 классов", "НИШ / 12 лет", "Студент вуза КЗ", "Бакалавр"]),
+   goal: new Set(["Бакалавриат", "Магистратура"]),
+@@ -1289,6 +1326,7 @@ function activatePortalOrder(order) {
+     name: order.name,
+     surname: order.surname,
+     phone: order.phone,
++    email: order.email || "",
+     sourceOrderId: order.id,
+   });
+   if (!created.ok) return created;
+@@ -1308,6 +1346,16 @@ function validBuyerFields({ product, name, surname, phone }) {
+     typeof phone === "string" && /^[+0-9() -]{10,18}$/.test(phone);
+ }
+ 
++/* Почта при покупке — по желанию (владелец, 20 Nov: восстановление кода).
++   Пусто или нет поля — заказ проходит как раньше; старый сайт её не шлёт. */
++function buyerEmail(value) {
++  if (value === undefined || value === null || value === "") return { ok: true, email: "" };
++  if (typeof value !== "string") return { ok: false };
++  const email = value.trim();
++  if (!email) return { ok: true, email: "" };
++  return email.length <= 80 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? { ok: true, email } : { ok: false };
++}
++
+ // Legacy/manual order endpoint remains available for operational fallback.
+ app.post("/api/order", orderLimit, async (req, res) => {
+   try {
+@@ -1316,8 +1364,10 @@ app.post("/api/order", orderLimit, async (req, res) => {
+     if (!offer || !validBuyerFields({ product, name, surname, phone })) {
+       return res.status(400).json({ ok: false, error: "Проверь услугу, имя, фамилию и телефон." });
+     }
++    const contact = buyerEmail((req.body || {}).email);
++    if (!contact.ok) return res.status(400).json({ ok: false, error: "Проверь адрес почты." });
+ 
+-    const order = orderStore.create({ product, price: offer.price, name, surname, phone });
++    const order = orderStore.create({ product, price: offer.price, name, surname, phone, email: contact.email });
+     order.fulfillment = offer.fulfillment;
+     order.provider = "manual";
+     if (!orderStore.write(order)) return res.status(500).json({ ok: false, error: "Не удалось сохранить заказ." });
+@@ -1344,9 +1394,11 @@ app.post("/api/stripe/checkout", orderLimit, async (req, res) => {
+     if (!offer || !validBuyerFields({ product, name, surname, phone })) {
+       return res.status(400).json({ ok: false, error: "Проверь услугу, имя, фамилию и телефон." });
+     }
++    const contact = buyerEmail((req.body || {}).email);
++    if (!contact.ok) return res.status(400).json({ ok: false, error: "Проверь адрес почты." });
+ 
+     const access = makeOrderToken();
+-    const order = orderStore.create({ product, price: offer.price, name, surname, phone });
++    const order = orderStore.create({ product, price: offer.price, name, surname, phone, email: contact.email });
+     Object.assign(order, {
+       fulfillment: offer.fulfillment,
+       provider: "stripe",
+@@ -1520,6 +1572,7 @@ app.get("/api/admin/overview", adminAuth, (_req, res) => {
+     name: order.name,
+     surname: order.surname || "",
+     phone: order.phone,
++    email: order.email || "",
+     portalCode: order.portalCode || null,
+     activatedAt: order.activatedAt || null,
+     provider: order.provider || "manual",
+diff --git a/smoke-test.js b/smoke-test.js
+index a52617d..f63492c 100644
+--- a/smoke-test.js
++++ b/smoke-test.js
+@@ -97,6 +97,12 @@ async function j(method, path, body) {
+   r = await j("POST", "/api/portal/lookup", { code: "../../etc", surname: "x" });
+   ok(r.status === 404, "POST /api/portal/lookup обход каталога → 404");
+ 
++  // 14a. «Не помню код»: ответ одинаковый и без кода, неполные данные — 400
++  r = await j("POST", "/api/portal/recover", { surname: "Несуществующий", phone: "+7 700 000 00 00" });
++  ok(r.status === 200 && r.data?.ok === true && Object.keys(r.data).length === 1, "POST /api/portal/recover → 200 без подробностей");
++  r = await j("POST", "/api/portal/recover", { surname: "Несуществующий", phone: "12" });
++  ok(r.status === 400 && r.data?.ok === false, "POST /api/portal/recover без телефона → 400");
++
+   // 15. Telegram: кабинет создаёт одноразовую ссылку без кода доступа в URL
+   r = await j("POST", "/api/portal/create", {
+     key: KEY,
+diff --git a/test/portal-recovery.test.js b/test/portal-recovery.test.js
+new file mode 100644
+index 0000000..8fa9d68
+--- /dev/null
++++ b/test/portal-recovery.test.js
+@@ -0,0 +1,72 @@
++'use strict';
++const { test } = require('node:test');
++const assert = require('node:assert/strict');
++const {
++  phoneKey, findRecoveryMatches, recoveryText, createRecoveryCooldown, deliverRecovery,
++} = require('../portal-recovery');
++
++const normSurname = v => String(v || '').trim().toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ');
++
++test('phoneKey: +7, 8 and bare national numbers are the same phone; short input is not a phone', () => {
++  for (const v of ['+7 700 000 00 01', '87000000001', '7000000001', '+7 (700) 000-00-01']) {
++    assert.equal(phoneKey(v), '7000000001');
++  }
++  assert.equal(phoneKey('12345'), '');
++  assert.equal(phoneKey(''), '');
++  assert.equal(phoneKey('1'.repeat(16)), '');
++});
++
++test('matches need both the surname and the phone of the same cabinet', () => {
++  const clients = {
++    'AAAA-0001': { code: 'AAAA-0001', surname: 'Ёлкина', phone: '+77000000001' },
++    'AAAA-0002': { code: 'AAAA-0002', surname: 'Ёлкина', phone: '+77000000002' },
++    'AAAA-0003': { code: 'AAAA-0003', surname: 'Другая', phone: '+77000000001' },
++  };
++  const deps = { listCodes: () => Object.keys(clients), readClient: code => clients[code] || null, normSurname };
++  assert.deepEqual(findRecoveryMatches({ surname: ' елкина ', phone: '87000000001' }, deps).map(m => m.code), ['AAAA-0001']);
++  assert.deepEqual(findRecoveryMatches({ surname: 'Ёлкина', phone: '+77000000009' }, deps), []);
++  assert.deepEqual(findRecoveryMatches({ surname: 'Ё', phone: '+77000000001' }, deps), []);
++  assert.deepEqual(findRecoveryMatches({ surname: 'Ёлкина', phone: '123' }, deps), []);
++});
++
++test('recovery text carries the code, the surname and the cabinet link, nothing else', () => {
++  const text = recoveryText({ surname: 'Пример', name: 'Тест', phone: '+77000000001', email: 'x@example.invalid' }, 'AAAA-0001', 'https://example.invalid/');
++  assert.match(text, /Код: AAAA-0001/);
++  assert.match(text, /Фамилия: Пример/);
++  assert.match(text, /https:\/\/example\.invalid\/portal/);
++  assert.doesNotMatch(text, /77000000001|x@example/);
++});
++
++test('cooldown: one send per cabinet in two minutes', () => {
++  let now = 0;
++  const cooldown = createRecoveryCooldown({ now: () => now });
++  assert.equal(cooldown.allow('AAAA-0001'), true);
++  assert.equal(cooldown.allow('AAAA-0001'), false);
++  assert.equal(cooldown.allow('AAAA-0002'), true);
++  now = 2 * 60 * 1000;
++  assert.equal(cooldown.allow('AAAA-0001'), true);
++});
++
++test('delivery: own channels first; the owner hears only when nothing reached the client', async () => {
++  const sent = [];
++  const channels = {
++    cooldown: createRecoveryCooldown(),
++    siteUrl: 'https://example.invalid',
++    sendTelegram: async (chat, text) => { sent.push(['tg', chat, text]); return chat !== 404; },
++    sendEmail: async (to, subject, text) => { sent.push(['mail', to, text]); return true; },
++    alertOwner: async text => { sent.push(['owner', text]); return true; },
++  };
++  const results = await deliverRecovery([
++    { code: 'AAAA-0001', client: { surname: 'А', tgChatId: 1, email: 'a@example.invalid' } },
++    { code: 'AAAA-0002', client: { surname: 'Б', tgChatId: null, email: '' } },
++    { code: 'AAAA-0003', client: { surname: 'В', tgChatId: 404, email: '' } },
++  ], channels);
++  assert.deepEqual(results.map(r => r.sent), [['telegram', 'email'], [], []]);
++  assert.deepEqual(results.map(r => r.ownerAlerted), [false, true, true]);
++  const owner = sent.filter(s => s[0] === 'owner').map(s => s[1]);
++  assert.equal(owner.length, 2);
++  assert.match(owner[0], /AAAA-0002/);
++  assert.match(owner[1], /AAAA-0003/);
++  const again = await deliverRecovery([{ code: 'AAAA-0001', client: { surname: 'А', tgChatId: 1 } }], channels);
++  assert.equal(again[0].skipped, true);
++});
+diff --git a/test/reminders-server.test.js b/test/reminders-server.test.js
+index 435b5db..c588f4d 100644
+--- a/test/reminders-server.test.js
++++ b/test/reminders-server.test.js
+@@ -68,6 +68,7 @@ function createServerHarness(t, { enabled = false, apiKey = '', workspaceId = ''
+         if (name === './reminder-telegram') return { sendTelegramReminder: (token, id, text) => require('../reminder-telegram').sendTelegramReminder(token, id, text, request) };
+         if (name === './telegram-linking') return require('../telegram-linking');
+         if (name === './order-store') return require('../order-store');
++        if (name === './portal-recovery') return require('../portal-recovery');
+         if (name === './stripe-checkout') {
+           const stripe = require('../stripe-checkout');
+           return { ...stripe, createCheckoutSession: options => stripe.createCheckoutSession({ ...options, fetchImpl: async (...args) => {
+@@ -422,3 +423,72 @@ test('profile shortlist rejects unauthorized, malformed and failed writes withou
+   assert.equal(failed.statusCode, 500);
+   assert.deepEqual(Array.from(h.server.readClient('TEST-001').profile.universityIds), ['bocconi']);
+ });
++
++// Payloads come from the vm realm; compare their JSON, not their prototypes.
++const plainJson = value => JSON.parse(JSON.stringify(value));
++const flushRecovery = async () => { for (let i = 0; i < 8; i++) await new Promise(resolve => setImmediate(resolve)); };
++
++test('portal recovery: the code goes only to the client\'s own Telegram and email; every answer is the same', async t => {
++  const h = createServerHarness(t);
++  const client = { code: 'RCVR-2026', name: 'Тест', surname: 'Ёлкина', phone: '+7 700 000 00 01', tgChatId: 202,
++    email: 'recover@example.invalid', createdAt: '2026-01-01', intakeYear: 2026, profile: {}, done: {}, docs: {},
++    notify: { telegram: true, email: false } };
++  assert(h.server.writeClient(client.code, client));
++  const found = await h.invoke('POST', '/api/portal/recover', { body: { surname: ' елкина ', phone: '87000000001' } });
++  const missing = await h.invoke('POST', '/api/portal/recover', { body: { surname: 'Ёлкина', phone: '+7 700 000 00 09' } });
++  await flushRecovery();
++  assert.equal(found.statusCode, 200);
++  assert.deepEqual(plainJson(found.payload), { ok: true });
++  assert.deepEqual(plainJson(missing.payload), plainJson(found.payload));
++  const telegram = h.deliveries.filter(d => d.chat_id === 202);
++  assert.equal(telegram.length, 1);
++  assert.match(telegram[0].text, /Код: RCVR-2026/);
++  assert.match(telegram[0].text, /https:\/\/example\.invalid\/portal/);
++  assert.equal(h.email.length, 1, 'the account email is used even with reminder emails off');
++  assert.equal(h.email[0].to, 'recover@example.invalid');
++  assert.match(h.email[0].text, /RCVR-2026/);
++  assert.equal(h.deliveries.filter(d => String(d.chat_id) === '999').length, 0, 'the owner is not bothered when the client got the code');
++  await h.invoke('POST', '/api/portal/recover', { body: { surname: 'Ёлкина', phone: '+77000000001' } });
++  await flushRecovery();
++  assert.equal(h.deliveries.filter(d => d.chat_id === 202).length, 1, 'a second request inside two minutes sends nothing');
++});
++
++test('portal recovery: with no Telegram or email the owner gets the code to send by hand; bad input is refused', async t => {
++  const h = createServerHarness(t);
++  assert(h.server.writeClient('RCVR-0000', { code: 'RCVR-0000', name: 'Без', surname: 'Каналов', phone: '+77000000002',
++    tgChatId: null, email: '', createdAt: '2026-01-01', intakeYear: 2026, profile: {}, done: {}, docs: {}, notify: { telegram: true, email: false } }));
++  const asked = await h.invoke('POST', '/api/portal/recover', { body: { surname: 'Каналов', phone: '8 700 000 00 02' } });
++  await flushRecovery();
++  assert.deepEqual(plainJson(asked.payload), { ok: true });
++  const owner = h.deliveries.filter(d => String(d.chat_id) === '999');
++  assert.equal(owner.length, 1);
++  assert.match(owner[0].text, /RCVR-0000/);
++  assert.match(owner[0].text, /WhatsApp/);
++  assert.equal(h.email.length, 0);
++  for (const body of [{ surname: 'Каналов', phone: '123' }, { surname: '', phone: '+77000000002' }, {}]) {
++    const refused = await h.invoke('POST', '/api/portal/recover', { body });
++    assert.equal(refused.statusCode, 400);
++    assert.equal(refused.payload.ok, false);
++  }
++});
++
++test('purchase email is optional, validated, kept on the order and handed to the activated cabinet', async t => {
++  const h = createServerHarness(t);
++  const store = require('../order-store').createOrderStore({ dir: h.dataDir, key: 'synthetic-test-encryption-key' });
++  const base = { product: 'Поступление под ключ', name: 'Test', surname: 'Buyer', phone: '+77000000003' };
++  const bad = await h.invoke('POST', '/api/order', { body: { ...base, email: 'not-an-email' } });
++  assert.equal(bad.statusCode, 400);
++  const without = await h.invoke('POST', '/api/order', { body: base });
++  assert.equal(without.statusCode, 200);
++  assert.equal(store.read(without.payload.orderId).email, '');
++  const withMail = await h.invoke('POST', '/api/order', { body: { ...base, email: ' buyer@example.invalid ' } });
++  assert.equal(store.read(withMail.payload.orderId).email, 'buyer@example.invalid');
++  const confirm = await h.invoke('POST', '/api/admin/orders/:id/confirm', { params: { id: withMail.payload.orderId } });
++  assert.equal(confirm.statusCode, 200);
++  assert.equal(h.server.readClient(confirm.payload.code).email, 'buyer@example.invalid');
++  await h.invoke('POST', '/api/portal/recover', { body: { surname: 'buyer', phone: '+7 700 000 00 03' } });
++  await flushRecovery();
++  assert.equal(h.email.length, 1);
++  assert.equal(h.email[0].to, 'buyer@example.invalid');
++  assert.match(h.email[0].text, new RegExp('Код: ' + confirm.payload.code));
++});
+-- 
+2.43.0
+
