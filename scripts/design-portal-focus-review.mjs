@@ -205,7 +205,7 @@ try {
     assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=scene.y+scene.height-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its scene');
     assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The scene clips its landscape');
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape');
-    assert.equal(await page.locator('[data-living-landscape=amalfi-ride]').count(),1,'Vespi rides through the hero (a loop)');
+    assert.equal(await page.locator('[data-portal-ride]').count(),1,'Vespi rides through the hero (a CSS ride over the still road)');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),width>640?'28px':'24px');
     assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');

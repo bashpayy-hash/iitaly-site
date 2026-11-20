@@ -60,18 +60,32 @@ export function Hero() {
       <div className={styles.stage}>
         <div className={styles.stageLabel}><span>Большой путь. По одному шагу.</span><span>Казахстан — Италия</span></div>
         <div className={styles.journey} data-journey-preview>
-          <div className={styles.journeyHeader}>
-            <div><span className={styles.journeyLogo}>Твой маршрут</span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
-          </div>
-          <div className={styles.journeyBody}>
-            <div>
-              <h2>Найти место,<br />где хочется учиться.</h2>
-              <p>43 университета в 30 городах. Программы, требования и дедлайны — в одной базе.</p>
+          {/* Owner, 20 Nov (evening, iPad): «там слишком белое, добавь туда
+              такую иллюстрацию по теме, чтобы обыгрывалось пространство, в
+              стиле самого сайта». The card's upper part stands on a scene in the
+              site's Renaissance study: Vespi tracing a dotted route across a map
+              of Italy on the right, the words on a calm plaster wall on the left
+              (a paper wash keeps them readable); the topic tiles stay on paper
+              below. On a phone the scene is a picture above the words
+              (design/illustrations/scenes-2026-11-20.json, route-map). */}
+          <div className={styles.journeyScene} data-journey-scene>
+            {/* eslint-disable-next-line @next/next/no-img-element -- Local pre-sized WebP scene for the static export. */}
+            <img className={styles.journeyArt} src="/illustrations/scenes/route-map-1600.webp"
+              srcSet="/illustrations/scenes/route-map-960.webp 960w, /illustrations/scenes/route-map-1600.webp 1600w, /illustrations/scenes/route-map-2400.webp 2400w"
+              sizes="(max-width: 1264px) calc(100vw - 48px), 1216px" width={2688} height={1520} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} data-journey-art />
+            <div className={styles.journeyHeader}>
+              <div><span className={styles.journeyLogo}>Твой маршрут</span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
             </div>
-            <div>
-              <span className={styles.journeyLabel}>Стипендия DSU</span>
-              <strong className={styles.scholarship}>По региону</strong>
-              <p>Сумма, справки и сроки — по конкурсу твоего года. Жильё и денежная выплата не гарантированы.</p>
+            <div className={styles.journeyBody}>
+              <div>
+                <h2>Найти место,<br />где хочется учиться.</h2>
+                <p>43 университета в 30 городах. Программы, требования и дедлайны — в одной базе.</p>
+              </div>
+              <div>
+                <span className={styles.journeyLabel}>Стипендия DSU</span>
+                <strong className={styles.scholarship}>По региону</strong>
+                <p>Сумма, справки и сроки — по конкурсу твоего года. Жильё и денежная выплата не гарантированы.</p>
+              </div>
             </div>
           </div>
           <ol className={styles.route} aria-label="Этапы поступления">

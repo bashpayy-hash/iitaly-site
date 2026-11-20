@@ -56,23 +56,25 @@ const SCENE = {
   srcSet: "/illustrations/scenes/prices-check-960.webp 960w, /illustrations/scenes/prices-check-1600.webp 1600w, /illustrations/scenes/prices-check-2400.webp 2400w",
 };
 
-export function DocumentCheckFeature({ compact = false }: { compact?: boolean }) {
+/** `page`: on /check itself — no invitation to /check, and the heading says why
+ *  here rather than what (the page's own hero already says what). */
+export function DocumentCheckFeature({ compact = false, page = false }: { compact?: boolean; page?: boolean }) {
   const head = <div className={styles.head}>
     <h2 id={compact ? "document-check-promo-title" : "document-check-feature-title"} className={styles.title}>
-      Проверка документов.<br /><span>Пункт за пунктом — в любое время.</span>
+      {page ? <>Быстрее агентства.<br /><span>Пункт за пунктом — в любое время.</span></> : <>Проверка документов.<br /><span>Пункт за пунктом — в любое время.</span></>}
     </h2>
     <p className={styles.lead}>
       Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы
       на твой учебный год и скажет, что исправить, — пока агентство ещё не открылось.
     </p>
   </div>;
-  return <section className={`${styles.section} ${compact ? styles.compact : ""}`} data-section={compact ? undefined : "document-check-feature"} data-document-check-feature aria-labelledby={compact ? "document-check-promo-title" : "document-check-feature-title"}>
+  return <section className={`${styles.section} ${compact ? styles.compact : ""} ${page ? styles.onPage : ""}`} data-section={compact || page ? undefined : "document-check-feature"} data-document-check-feature aria-labelledby={compact ? "document-check-promo-title" : "document-check-feature-title"}>
     {compact ? <div className={styles.scene} data-document-check-scene>
       <img className={styles.sceneArt} src={SCENE.src} srcSet={SCENE.srcSet} sizes="(max-width: 700px) 100vw, 1160px" width={2400} height={1357} alt="" loading="lazy" decoding="async" draggable={false} />
       {head}
     </div> : head}
     <Bento label="Чем проверка документов отличается от агентства" className={styles.bento}>
-      {!compact && <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={styles.cta} data-document-check-cta>
+      {!compact && !page && <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={styles.cta} data-document-check-cta>
         <div className={styles.ctaCopy}>
           <p className={styles.ctaTitle}>Проверь один документ бесплатно</p>
           <p className={styles.ctaText}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>

@@ -6,7 +6,13 @@ import { AppleButton } from "@/components/apple/Button";
 import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import { DocCheck } from "./DocCheck";
-import { PlanToolNav, PlanUniversityContext } from "./PlanExplorer";
+import { PlanUniversityContext } from "./PlanExplorer";
+import Link from "next/link";
+import { Bento, BentoCell } from "@/components/ui/Bento";
+import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
+import { useWallPurchase } from "@/components/access/useWallPurchase";
+import { usePaidDevice } from "@/components/access/usePaidDevice";
+import { RISK_LINE } from "@/components/access/offerCopy";
 import workspace from "./plan-workspace.module.css";
 import check from "./check-page.module.css";
 
@@ -45,6 +51,35 @@ function UploadNow() {
   </div>;
 }
 
+const HOW = [
+  { title: "Выбери заявку", text: "Программа и учебный год: общий DSU, конкурс региона или вуза. Если ещё не знаешь — проверим содержание по общим правилам DSU." },
+  { title: "Загрузи файл", text: "Справка, перевод, выписка или аттестат: фото, PDF или Word до 5 МБ." },
+  { title: "Получи разбор", text: "Обычно за 10–30 секунд: что в порядке и что уточнить — пункт за пунктом." },
+] as const;
+
+/* What opens with the route — the same purchase as on /prices and the walls. */
+function CheckOffer() {
+  const paid = usePaidDevice();
+  const wall = useWallPurchase("document-check", !paid);
+  return <section className={check.section} aria-labelledby="check-offer-title" data-check-offer>
+    <Bento label="Проверки без лимита" className={check.bento}>
+      <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={check.offer}>
+        <div className={check.offerCopy}>
+          <h2 id="check-offer-title" className={check.offerTitle}>Проверки без лимита — с маршрутом</h2>
+          <p className={check.offerText}>{paid ? "На этом устройстве кабинет уже открыт: проверяй документы там, сколько нужно." : "Исправил — проверь снова, сколько нужно. Вместе с маршрутом: шаги с датами, чек-листы и напоминания о сроках. Первая проверка — бесплатно."}</p>
+          <div className={check.offerActions}>
+            {paid ? <Link className={check.offerButton} href="/portal?view=docs">Открыть документы в кабинете</Link>
+              : <button type="button" className={check.offerButton} onClick={wall.open} data-wall-buy data-wall-place="document-check" aria-haspopup="dialog">{wall.label}</button>}
+            <Link className={check.offerLink} href="/plan#questionnaire">Составить план</Link>
+          </div>
+          {!paid && <p className={check.offerRisk} data-wall-risk>{RISK_LINE}</p>}
+        </div>
+      </BentoCell>
+    </Bento>
+    {wall.modal}
+  </section>;
+}
+
 export function DocumentCheckPage() {
   return (
     <>
@@ -71,9 +106,14 @@ export function DocumentCheckPage() {
         </div>
       </section>
 
-      <section className={workspace.tools} data-public-paper-zone="check-tools">
+      {/* A page of its own (owner, 20 Nov, evening: «я бы хотел, чтобы
+          «Проверь документ» было полноценной страницей отдельной»). No plan /
+          check tabs and no second «Проверь документ перед подачей» under the
+          hero: the tool, then how it works, why here rather than at an agency,
+          and what opens with the route. Everything said is what the check
+          already does (DocumentCheckFeature lists the sources of each fact). */}
+      <section className={`${workspace.tools} ${check.tools}`} data-public-paper-zone="check-tools">
         <PlanUniversityContext />
-        <PlanToolNav current="check" />
         <div className={styles.planWorkspace}>
           <div id="document-check" className={workspace.document}>
             <GuidePlanContext target="document" />
@@ -81,6 +121,20 @@ export function DocumentCheckPage() {
           </div>
         </div>
       </section>
+
+      <section className={check.section} aria-labelledby="check-how-title" data-check-how>
+        <h2 id="check-how-title" className={check.title}>Как это работает.<span>Три шага, без регистрации.</span></h2>
+        <Bento label="Как работает проверка" className={check.bento}>
+          {HOW.map(item => <BentoCell key={item.title} span={{ md: 2, lg: 4 }} className={check.how}>
+            <h3 className={check.howTitle}>{item.title}</h3>
+            <p className={check.howText}>{item.text}</p>
+          </BentoCell>)}
+        </Bento>
+      </section>
+
+      <DocumentCheckFeature page />
+
+      <CheckOffer />
     </>
   );
 }

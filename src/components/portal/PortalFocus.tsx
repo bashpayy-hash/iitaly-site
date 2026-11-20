@@ -19,7 +19,6 @@ import { STAGE_PLAIN, stepActionLabel } from "./plainWords";
 import { Bento, BentoCell, bento } from "@/components/ui/Bento";
 import path from "./portal-path.module.css";
 
-import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import { PORTAL_HERO } from "@/app/portal/hero-image";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
 
@@ -166,33 +165,27 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         этапы простыми словами со статусом. Ничего не показано дважды. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
       {/* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
-          фоне, и Веспи должен реально ехать»): петля, где Веспи въезжает
-          слева, проезжает по дороге и уезжает (с 20 Nov — Амальфи, к морю); первый и
-          последний кадр — пустая дорога, шва нет. Текст — на сплошной кремовой
-          панели, без белой дымки поверх кадра. Картинка с Веспи — постер и всё,
-          что видят «меньше движения» и Save-Data. */}
+          фоне, и Веспи должен реально ехать»). Owner, 20 Nov (evening, iPad,
+          after a steady 30 fps loop): «эта сцена всё ещё капец лагучая… исправь
+          любой ценой». The loop is gone: no video is decoded and nothing is
+          redrawn on a canvas, which iPad Safari did unevenly. The Amalfi road is
+          one still picture; Vespi is a cut-out (his own matte, keyed against
+          the empty road) that rides across it on CSS transforms the compositor
+          runs at the screen's own rate — 60 or 120 Hz, in Low Power Mode too.
+          The stage keeps the picture's 4:3 and is cropped like object-fit:
+          cover at the bottom, so Vespi stays on the road at every width. With
+          «меньше движения» he stands on the road where the poster had him
+          (design/illustrations/motion-2026-11-20-amalfi.json). */}
       <div className={styles.heroScene} data-portal-hero-scene>
-        <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1200} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
-        {/* Owner, 15 Nov: «анимация лагучая… стык был ровный». The loop now
-            wraps on the empty road (Vespi gone, nothing moves), and the poster
-            — Vespi on the road — is its frame 105: start there. Owner, 16 Nov:
-            «здесь всё ещё есть проблема» — Vespi slowed to a quarter speed at
-            the old seam and then shot off; that stretch is retimed to a steady
-            speed (design/illustrations/motion-2026-11-17.json). Owner, 17 Nov:
-            «какое-то время просто стоят» — the empty road between rides lasted
-            2.6 s; it now passes up to 3.8× faster, the ride itself untouched.
-            Owner, 20 Nov: «в виде гифки будет очень плох… пусть он едет где-то
-            там по Амальфи… сохраняя все пропорции… максимально бесшовно».
-            A new 4:3 scene on the Amalfi coast road: the landscape is one
-            still sharp frame and only Vespi (with his shadow) moves over it,
-            so nothing in the background shimmers and the empty road at the
-            wrap is the same frame on both sides
-            (design/illustrations/motion-2026-11-20-amalfi.json). Owner, same
-            evening, iPad: «на Амальфи всё ещё лагает». The generated ride ran
-            at 24 fps (held 2 and 3 refreshes in turn on a 60 Hz screen) and
-            Vespi's speed swung from 9 to 22 px a frame; the loop is now 30 fps
-            with Vespi at one steady speed. The poster is frame 81. */}
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/amalfi-ride" label="amalfi-ride" widths={[960, 1600, 2176]} webmWidths={[960]} startAt={81.5 / 30} />
+        <div className={styles.heroStage} data-portal-stage>
+          <img className={styles.heroStageArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={2176} height={1632} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
+          <div className={styles.ride} data-portal-ride aria-hidden="true">
+            <span className={styles.rideBody}>
+              <span className={styles.rideShadow} />
+              <img className={styles.rideVespi} src="/illustrations/landscapes/amalfi-vespi.webp" width={357} height={425} alt="" decoding="async" draggable={false} />
+            </span>
+          </div>
+        </div>
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>

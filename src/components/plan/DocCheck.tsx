@@ -205,8 +205,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   return (
     <div className={styles.workbench} data-document-workbench>
       <div className={styles.auditContext} data-portal-inspector={portalInspector || undefined} data-inspector-state={portalInspector ? state.step : undefined}>
-        {!portalInspector && <p className={styles.auditBadge}>AI Document Audit · одна проверка бесплатно</p>}
-        <h2>Проверь документ перед подачей</h2>
+        {/* /check is its own page (owner, 20 Nov, evening): the hero already
+            says «Проверь документ перед подачей», so the tool names its job. */}
+        {!portalInspector && <p className={styles.auditBadge}>Одна проверка бесплатно</p>}
+        <h2>Загрузи документ</h2>
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable, walled && !("file" in state))}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
         <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
