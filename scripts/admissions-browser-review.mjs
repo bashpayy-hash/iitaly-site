@@ -51,17 +51,30 @@ try {
     await routeStops.first().waitFor();
     const count=await routeStops.count();
     // Owner, 20 Nov (screenshot of the plan): «очень громоздкие, большие
-    // степы… не даёт понять весь масштаб пути» — the whole route as short
-    // rows under the cabinet's stage names; each step opens on its own page.
-    { const boxes=await routeStops.evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {y:r.y+scrollY,h:r.height};}));
-      for (let i=1;i<boxes.length;i++) assert(boxes[i].y>boxes[i-1].y,'Steps go down the page in plan order');
-      assert(boxes.slice(1).every(box=>box.h<=96),'Later steps are short rows (up to three lines on 320 px), not tiles');
+    // степы… не даёт понять весь масштаб пути»; the same evening, iPad:
+    // «неровный и корявый… делай блочно, как на лендинге». The route is one
+    // bento tray of step cells: every row runs from edge to edge (no holes),
+    // only the next step may stand alone in its row, and the whole route
+    // fits about one desktop screen. Each step opens on its own page.
+    { const layout=await page.locator('[data-plan-path-grid]').evaluate(grid=>{
+        const box=grid.getBoundingClientRect(), pad=parseFloat(getComputedStyle(grid).paddingLeft);
+        const cells=[...grid.querySelectorAll('[data-plan-path-step]')].map(cell=>{const r=cell.getBoundingClientRect();return {n:+cell.dataset.planPathStep,state:cell.dataset.state,phase:cell.dataset.phase,left:r.left-box.left,right:box.right-r.right,top:Math.round(r.top+scrollY)};});
+        const rows=[];for(const cell of cells){const row=rows.find(item=>Math.abs(item.top-cell.top)<2);if(row)row.cells.push(cell);else rows.push({top:cell.top,cells:[cell]});}
+        return {pad,cells,rows:rows.map(row=>({top:row.top,left:Math.min(...row.cells.map(c=>c.left)),right:Math.min(...row.cells.map(c=>c.right)),cells:row.cells.map(c=>({n:c.n,state:c.state}))}))};
+      });
+      for (let i=1;i<layout.rows.length;i++) assert(layout.rows[i].top>layout.rows[i-1].top,'Rows go down the page');
+      assert.deepEqual(layout.cells.map(c=>c.n),layout.cells.map((_,i)=>i+1),'Steps keep the plan order');
+      for (const row of layout.rows) {
+        assert(Math.abs(row.left-layout.pad)<1.5&&Math.abs(row.right-layout.pad)<1.5,`Row at ${row.top} runs edge to edge (${row.left}/${row.right})`);
+        // On a phone the tray is one column: every row is a single cell by design.
+        if (row.cells.length===1&&layout.rows.some(other=>other.cells.length>1)) assert.equal(row.cells[0].state,'current','Only the next step stands alone in its row');
+      }
       if (width>=1024) assert((await page.locator('[data-plan-path]').boundingBox()).height<=900,'The whole route fits about one desktop screen');
-      assert.deepEqual(await routeStops.evaluateAll(els=>els.map(el=>el.getAttribute('href'))),boxes.map((_,i)=>`/plan/${i+1}`),'Every step links to its own page');
-      const phases=await page.locator('[data-plan-path] [data-plan-path-phase]').evaluateAll(els=>els.map(el=>el.dataset.planPathPhase));
+      assert.deepEqual(await routeStops.evaluateAll(els=>els.map(el=>el.getAttribute('href'))),layout.cells.map((_,i)=>`/plan/${i+1}`),'Every step links to its own page');
+      const phases=layout.cells.map(c=>c.phase).filter((phase,i,all)=>phase!==all[i-1]);
       assert.equal(phases[0],'Документы','The route starts with the education documents');
       assert.equal(phases.at(-1),'После приезда','The route ends after arrival');
-      assert.equal(new Set(phases).size,phases.length,'Each stage appears once'); }
+      assert.equal(new Set(phases).size,phases.length,'Each stage appears once, in order'); }
     // Before payment (owner, 5 Nov): the first step opens in full, every later
     // step shows its title, one orienting line and the purchase.
     assert.equal(await page.locator('[data-plan-path-step][data-state=locked]').count(),count-1,'Every step after the first is locked');

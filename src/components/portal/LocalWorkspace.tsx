@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
-import { Settings, FileText } from "lucide-react";
+import { Settings, FileText, ArrowRight } from "lucide-react";
+import { Bento, BentoCell, bento } from "@/components/ui/Bento";
+import { planSpans } from "@/components/ui/bentoPack";
 import { StageScene } from "@/components/illustration/StageScene";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { VespiOutline } from "@/components/mascot/VespiOutline";
@@ -202,22 +204,50 @@ export function LocalWorkspace() {
               </>} />}
           </>}
           {location.view === "docs" && !showDetail && <>
-            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <Link className={styles.textLink} href="/plan#document-check">«Мой план»</Link>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><StageScene name="stamp" className={styles.docsScene} priority /></div>
+            {/* Owner, 20 Nov, вечер (скрин с iPad): «эта страница выглядит на
+                такой подвальный вайб… сделай как принцип на лендинге». The landing's
+                pattern: a two-tone heading, then one bento tray — the free check as
+                the action cell with Vespi at the stamp, the documents as even paper
+                cells (packSpans: every row full, two to a row on a tablet and wider). */}
+            <header className={styles.docsHead} data-documents-head>
+              <h1 className={styles.docsTitle}>Документы твоего маршрута. <span>Где взять и как проверить.</span></h1>
+              <p className={styles.docsLead}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p>
+            </header>
             {!documents.length && <div className={styles.paper}><h2>Сначала уточним твой маршрут</h2><p>После анкеты здесь появятся документы по твоей ситуации. Поздние этапы откроются по мере выполнения текущих шагов.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "profile"); if (task) openTask(task); }}>Заполнить анкету</a></div>}
-            <div className={styles.vault}>{documents.map(task => {
-              const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);
-              return <a className={styles.docCard} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
-                <h3>{DOC_TASKS[task.id]}</h3>
-                {info && <p className={styles.docPurpose}>{PURPOSE_LABEL[info.purpose]}</p>}
-                {info && <p className={styles.docWhere}><strong>Где взять:</strong> {info.where}</p>}
-                <span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span>{data.docs[task.id] && outcome.action && <p>Что сделать: {outcome.action}</p>}
-
-              </a>;
-            })}</div>
+            <Bento as="div" className={styles.docsTray} data-documents-tray>
+              <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={styles.docsCheck} data-documents-check>
+                <div className={styles.docsCheckCopy}>
+                  <h2 className={styles.docsCheckTitle}>Проверь документ перед подачей</h2>
+                  <p className={styles.docsCheckText} data-documents-free-note>Первая проверка — бесплатно, без регистрации. Проверки в кабинете без лимита открываются вместе с маршрутом.</p>
+                  <Link className={styles.docsCheckButton} href="/check">Проверить документ</Link>
+                </div>
+                <StageScene name="stamp" className={styles.docsScene} priority />
+              </BentoCell>
+              {(() => {
+                const lg = planSpans(documents.length, -1, 12, [6, 4], [6]), md = planSpans(documents.length, -1, 6, [3, 2], [3]);
+                return documents.map((task, index) => {
+                  const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);
+                  return <a className={`${bento.cell} ${bento.plain} ${styles.docCell}`} style={{ "--s-md": md[index], "--s-lg": lg[index] } as CSSProperties} key={task.id} href={`/portal?view=docs&doc=${task.id}`} onClick={event => { event.preventDefault(); openTask(task); }} data-document={task.id} data-document-outcome={outcome.kind}>
+                    {info && <span className={styles.docPurpose} data-purpose={info.purpose}>{PURPOSE_LABEL[info.purpose]}</span>}
+                    <h3 className={styles.docName}>{DOC_TASKS[task.id]}</h3>
+                    {info && <p className={styles.docWhere}><strong>Где взять:</strong> {info.where}</p>}
+                    {data.docs[task.id] && outcome.action && <p className={styles.docWhere}>Что сделать: {outcome.action}</p>}
+                    <span className={styles.docFoot}><span className={styles.status} data-kind={outcome.kind}>{outcome.label}</span><span className={styles.docOpen}>Открыть <ArrowRight size={14} strokeWidth={2.2} aria-hidden="true" /></span></span>
+                  </a>;
+                });
+              })()}
+            </Bento>
           </>}
           {location.view === "settings" && <>
-            <h1 className={styles.heading}>Настройки</h1><PortalSoundSetting enabled={feedback.sound} onToggle={feedback.toggleSound} /><section className={styles.paper}><h2>Локальный профиль</h2><p>Набор: {intake}. Ответы анкеты, выбранные вузы и отметки хранятся на этом устройстве. Сканов, номера телефона и полного разбора в этом хранилище нет. При изменении анкеты или списка вузов отметки маршрута и итоги проверок нужно пройти заново.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); updateDraft({ ...draft, step: 0, complete: false }); navigate({ view: "plan", task: "profile", doc: null }); }}>Изменить ответы анкеты</a></section>
-            <section className={styles.paper}><h2>Напоминания выключены</h2><p>Telegram и почта подключаются в активированном облачном кабинете. Для входа нужны код доступа и фамилия. Локальный профиль не переносится туда автоматически.</p><a className={styles.primary} href={cloudLoginHref}>Подключить кабинет</a></section>
+            {/* Settings in the same bento as the documents (owner, 20 Nov, вечер:
+                «все эти отступы должны быть нормальными»): two equal cells side by
+                side from a tablet up, the sound switch as one quiet row under them. */}
+            <header className={styles.docsHead}><h1 className={styles.docsTitle}>Настройки. <span>Профиль, напоминания и звук.</span></h1></header>
+            <Bento as="div" className={styles.docsTray} data-settings-tray>
+              <BentoCell span={{ md: 3, lg: 6 }} className={styles.setCell}><h2 className={styles.setTitle}>Локальный профиль</h2><p>Набор: {intake}. Ответы анкеты, выбранные вузы и отметки хранятся на этом устройстве. Сканов, номера телефона и полного разбора в этом хранилище нет. При изменении анкеты или списка вузов отметки маршрута и итоги проверок нужно пройти заново.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); updateDraft({ ...draft, step: 0, complete: false }); navigate({ view: "plan", task: "profile", doc: null }); }}>Изменить ответы анкеты</a></BentoCell>
+              <BentoCell span={{ md: 3, lg: 6 }} className={styles.setCell}><h2 className={styles.setTitle}>Напоминания выключены</h2><p>Telegram и почта подключаются в активированном облачном кабинете. Для входа нужны код доступа и фамилия. Локальный профиль не переносится туда автоматически.</p><a className={styles.primary} href={cloudLoginHref}>Подключить кабинет</a></BentoCell>
+              <BentoCell span={{ md: 6, lg: 12 }} tone="quiet" className={styles.setSound}><PortalSoundSetting enabled={feedback.sound} onToggle={feedback.toggleSound} /></BentoCell>
+            </Bento>
             {plan && <p className={styles.next}>Правила сверены {plan.reviewed}. Отметки маршрута не означают одобрение вуза или консульства.</p>}
           </>}
         </div>
