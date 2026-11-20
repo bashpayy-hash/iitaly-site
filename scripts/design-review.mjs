@@ -229,6 +229,23 @@ try {
   await summary.click();
   assert.equal(await summary.evaluate(el => el.parentElement.open), true);
   results.push({ test: 'FAQ opens', passed: true });
+  // Night map of Italy behind «Одна Италия» (owner, 20 Nov: «развивай второй
+  // вариант»): decorative, one light per catalogue city, cropped by the band
+  // rather than stretching it; the lights switch on when the band is seen and
+  // stop twinkling once it leaves the screen.
+  const split = page.locator('[data-section="split"]');
+  const nightMap = page.locator('[data-italy-night-map]');
+  assert.equal(await nightMap.getAttribute('aria-hidden'), 'true');
+  assert.equal(await nightMap.locator('[data-city]').count(), 30, 'One light per catalogue city');
+  await split.evaluate(el => el.scrollIntoView({ block: 'center' }));
+  await nightMap.evaluate(el => new Promise(done => { const check = () => el.hasAttribute('data-seen') && el.hasAttribute('data-live') ? done() : requestAnimationFrame(check); check(); }));
+  const splitBox = await split.boundingBox(), mapBox = await nightMap.boundingBox();
+  assert(mapBox.height > splitBox.height && splitBox.height < 900, 'The map is cropped by the band, not stretching it');
+  assert.equal(await split.evaluate(el => getComputedStyle(el).overflow), 'hidden');
+  assert.equal(await split.locator('h2').evaluate(el => getComputedStyle(el).zIndex), '1', 'The heading stands above the map');
+  await page.evaluate(() => scrollTo(0, 0));
+  await nightMap.evaluate(el => new Promise(done => { const check = () => el.hasAttribute('data-live') ? requestAnimationFrame(check) : done(); check(); }));
+  results.push({ test: 'Night map of Italy: decorative, cropped, lights only while seen', passed: true });
   await page.context().close();
   const mobile = await makePage(390);
   await visit(mobile, '/');

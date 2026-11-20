@@ -2489,5 +2489,35 @@ FAQ: «менюшка лагучая, нужно всё это исправит�
   answer opens past the panel's bottom, the panel (not the page) scrolls to
   show it. On laptops the tile is `min(840px, max(640px, 100svh − 64px))`.
 - **«Одна Италия» band.** Five ways to draw the real outline (`ITALY_PATH`,
-  read-only) were shown to the owner; nothing is built until one is chosen.
-  Previews: `design-review/italy-band/` in the session that made them.
+  read-only) were shown to the owner; he chose the second, the night map
+  (next section).
+
+## «Одна Италия» on a night map of Italy · 20 November 2026
+
+The owner on the dark band: «там пустовато, добавь иллюстрацию очертаний
+страны Италии… не то чтобы plain, а что-то типа играние с пространством,
+чтобы было реально эффектно»; of five variants — «развивай второй вариант».
+
+- **What it is.** The university map's own outline (`ITALY_PATH`, imported,
+  never changed) drawn as a halftone of dots (#5a4d40 on #1b1711), with the
+  30 catalogue cities as warm lights. A light's size follows the number of
+  universities in its city (one: 4.4 % of the map's width, +1.2 % for each
+  more, up to five), so Milan and Rome burn brightest.
+- **Space.** The map is 148 % of the band's height, cropped by it and set
+  right of centre: the Alps above the heading, Sicily past the button. On
+  phones it is 112 % and the lights are 0.8×, so the whole boot shows and the
+  text keeps the stage.
+- **Motion.** The first time the band is seen the dots fade in and the
+  lights switch on as a wave from the Alps to Sicily; while it stays on
+  screen each light breathes in its own 3–6 s rhythm. Off screen the
+  animation stops (`data-live` from one IntersectionObserver). The cursor on
+  «Открыть карту Италии» lights every city fully. Opacity and transform
+  only; with reduced motion the map is simply on and still; hidden in
+  forced colours and from assistive technology.
+- **Cost.** The markup is rendered on the server (no map data in the
+  browser); the only script is `ItalyNightMapLive.tsx`. Measured at 4× CPU
+  slowdown while scrolling into the band: the same frame times with and
+  without the map (phone: 0 frames over 20 ms in 4 s).
+- `design-review` checks: decorative, 30 lights, cropped by the band rather
+  than stretching it, heading above the map, lights on when seen and off
+  when the band leaves the screen.

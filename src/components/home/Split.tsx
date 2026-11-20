@@ -2,12 +2,14 @@ import { PaperTexture } from "@/components/marketing/PublicPaper";
 import paper from "@/components/marketing/public-paper.module.css";
 import { AppleButtonLink } from "@/components/apple/Button";
 import styles from "@/components/marketing/marketing.module.css";
+import { ItalyNightMap } from "./ItalyNightMap";
 
 /** An entry point, not a reimplementation of the protected university map. */
 export function Split() {
   return (
     <section data-section="split" className={`${styles.university} ${paper.surface}`}>
       <PaperTexture dark />
+      <ItalyNightMap />
       <h2 className={styles.universityTitle}>Одна Италия.<br /><span>Твой собственный выбор.</span></h2>
       <p>Найди свой университет: цены по ISEE, тесты, дедлайны и стипендия региона.</p>
       <div className={styles.universityNumbers}><div><b>43</b><small>университета</small></div><div><b>30</b><small>городов</small></div></div>
