@@ -227,7 +227,9 @@ button.nowPrimary { border:0; cursor:pointer; }
 .rideBody { position:absolute; left:35.892%; top:64.216%; width:16.406%; aspect-ratio:357 / 425; transform-origin:45.378% 31.294%; animation:amalfi-ride-size 8.767s linear -3.496s infinite; }
 /* A light jolt of the road, the shadow stays on the ground. */
 .rideVespi { position:absolute; inset:0; width:100%; height:100%; animation:amalfi-ride-bump .36s ease-in-out infinite alternate; }
-.rideShadow { position:absolute; left:8%; right:-14%; bottom:-2.5%; height:9%; border-radius:50%; background:radial-gradient(closest-side, rgba(74, 38, 36, .42), rgba(74, 38, 36, .18) 62%, rgba(74, 38, 36, 0)); }
+/* No gradients in the cabinet (owner, 3 Nov): a solid ellipse, blurred once
+   with the moving layer. */
+.rideShadow { position:absolute; left:12%; right:-8%; bottom:-1.5%; height:6%; border-radius:50%; background:rgba(74, 38, 36, .3); filter:blur(5px); }
 @keyframes amalfi-ride-bump { from { translate:0 0; } to { translate:0 -.7%; } }
 @keyframes amalfi-ride {
   0% { translate: -53.118% 3.811%; }
