@@ -111,7 +111,11 @@ try {
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
     await settle(page, 4176);
-    const baseHeroHeading = await page.locator('[data-section="hero"] h1').innerText();
+    // Owner, 20 Nov (CRO audit, «делай тогда те самые 5 правок»): the one
+    // approved heading change — the hero names the job instead of a slogan.
+    const approvedHeading = new Map([['Твоё будущее.\nТеперь в Италии.', 'Поступление в\u00a0Италию\nбез агентства.']]);
+    const rawBaseHeading = await page.locator('[data-section="hero"] h1').innerText();
+    const baseHeroHeading = approvedHeading.get(rawBaseHeading) ?? rawBaseHeading;
     const beforeLayout = await heroLayout(page);
     await page.locator('[data-section="hero"] > div').first().screenshot({ path: resolve(output, `hero-baseline-${width}.png`), animations: 'disabled' });
     await settle(page, 4175);
