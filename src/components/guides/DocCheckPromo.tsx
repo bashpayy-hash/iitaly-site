@@ -33,7 +33,7 @@ export function DocCheckPromo({ topic }: { topic: string }) {
       <p className={styles.kicker}>Проверка документов · 24/7</p>
       <h2 id={titleId} className={styles.title}>{title}</h2>
       <p className={styles.text}>ИИ сверит его с требованиями твоего вуза, DSU и визы на твой учебный год и скажет, что исправить. Первая проверка бесплатно и без регистрации.</p>
-      <AppleButtonLink href="/plan#document-check" className={styles.action} data-doc-check-promo-action>Проверить документ</AppleButtonLink>
+      <AppleButtonLink href="/check" className={styles.action} data-doc-check-promo-action>Проверить документ</AppleButtonLink>
     </div>
   </aside>;
 }

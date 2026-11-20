@@ -10,7 +10,7 @@ const BASE = "https://iitaly.net";
    противоречивый сигнал, из-за которого страница попадает в отчёты
    Search Console как ошибка. Закрывать /portal ещё и в robots.txt тоже
    нельзя: запрет обхода помешает роботу увидеть тот самый noindex. */
-const ROUTES = ["", "/universities", "/plan", "/prices", "/guides", "/changes-2026-27", "/privacy", "/terms",
+const ROUTES = ["", "/universities", "/plan", "/check", "/prices", "/guides", "/changes-2026-27", "/privacy", "/terms",
   ...GUIDE_STAGES.map(stage=>`/guides/stages/${stage.id}`),
   ...GUIDE_TOPICS.map(guide=>`/guides/${guide.id}`),
   ...VISA_PARTS.map(part=>`/guides/visa/${part.id}`), "/guides/permesso-modulo-1", "/guides/permesso-modulo-1/kody", "/guides/permesso-modulo-1/pochta",

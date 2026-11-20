@@ -12,10 +12,6 @@
     {
      "job": "a58ac8bc-8bb8-4ebe-bcb2-179fcfcaea81",
      "why": "archive shelves, busier behind the heading"
-    },
-    {
-     "job": "807a5e48-271c-4605-bbb7-8ee367ddc56b",
-     "why": "loggia with a view: columns and sky behind the heading"
     }
    ],
    "files": [
@@ -25,6 +21,18 @@
    ],
    "master": "design/illustrations/source/scenes/prices-check.webp",
    "processing": "2688x1520 still; WebP q80 at 960, 1600 and 2400 px; master WebP q90"
+  },
+  {
+   "name": "check-loggia",
+   "use": "/check cover (DocumentCheckPage): Vespi checking a document in a loggia with Florence behind",
+   "job": "807a5e48-271c-4605-bbb7-8ee367ddc56b",
+   "request": "Owner, 20 Nov: «для проверки документов должна быть отдельная страница»",
+   "files": [
+    "public/illustrations/scenes/check-loggia-960.webp",
+    "public/illustrations/scenes/check-loggia-1600.webp",
+    "public/illustrations/scenes/check-loggia-2400.webp"
+   ],
+   "master": "design/illustrations/source/scenes/check-loggia.webp"
   }
  ]
 }

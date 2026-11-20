@@ -1,0 +1,18 @@
+/* /check cover (owner, 20 Nov). The scene has Vespi in its right third and a
+   calm loggia on the left, so the heading stands left over a cream wash
+   instead of centred like the plan's cover. On a phone the heading sits at the
+   top and the picture keeps Vespi in view. */
+.art { object-position:72% 100%; }
+.veil { background:linear-gradient(90deg, rgba(250,248,244,.9) 0%, rgba(250,248,244,.72) 36%, rgba(250,248,244,0) 62%); }
+.copy { justify-self:start; max-width:560px; text-align:left; }
+.copy p { margin-left:0; }
+/* On a phone the heading would lie over Vespi's face: the heading comes first
+   on the paper, the scene follows as a picture, Vespi in full view. */
+@media (max-width:760px) {
+  .hero { min-height:0; padding:28px 20px 0; background:#F3ECE1; }
+  .scene { position:relative; inset:auto; z-index:auto; order:2; width:calc(100% + 40px); margin:22px -20px 0; aspect-ratio:4 / 3; }
+  .art { object-position:80% 72%; }
+  .veil { display:none; }
+  .copy { justify-self:center; text-align:center; }
+  .copy p { margin-left:auto; }
+}

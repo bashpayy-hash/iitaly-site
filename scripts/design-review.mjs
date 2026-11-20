@@ -186,6 +186,10 @@ try {
   // The document check lives behind its own tab; the picker must be focusable there.
   const fileInput = page.getByLabel('Выбрать документ для проверки');
   await page.getByRole('link', { name: 'Проверить документ', exact: true }).click();
+  // 20 Nov: the check is its own page, /check; the picker unlocks once the
+  // service has answered the availability check.
+  await page.waitForURL(/\/check$/);
+  await page.waitForFunction(() => document.querySelector('#document-check input[type="file"]')?.disabled === false);
   await fileInput.focus();
   assert.equal(await fileInput.evaluate(el => document.activeElement === el), true, 'Document picker remains keyboard accessible');
   await page.getByRole('link', { name: 'Составить план', exact: true }).click();

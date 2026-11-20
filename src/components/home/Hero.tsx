@@ -41,7 +41,7 @@ export function Hero() {
                 она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}
             <div className={assistant.entryButtons}>
               <AppleButtonLink href="/plan#questionnaire">Составить план бесплатно</AppleButtonLink>
-              <AppleButtonLink href="/plan#document-check" variant="outlined" data-hero-document-check>Проверить документ</AppleButtonLink>
+              <AppleButtonLink href="/check" variant="outlined" data-hero-document-check>Проверить документ</AppleButtonLink>
             </div>
             <div className={assistant.entryAlternatives}>
               <Link href="/universities">Смотреть университеты</Link>
@@ -70,7 +70,7 @@ export function Hero() {
             {/* Words only (owner, 5–6 Nov: без номеров и без значков-эмодзи). */}
             {[
               { label: 'Подбор вузов', href: '/universities' },
-              { label: 'Документы и DSU', href: '/plan#document-check' },
+              { label: 'Документы и DSU', href: '/check' },
               { label: 'Виза D', href: '/guides#visa' },
               { label: 'Первые недели', href: '/guides#permesso' },
             ].map(({ label, href }) => <li key={label}><Link href={href}>{label}</Link></li>)}

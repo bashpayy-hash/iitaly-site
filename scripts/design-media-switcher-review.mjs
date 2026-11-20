@@ -59,7 +59,9 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           assert(Math.abs((title.x + title.width / 2) - (tile.x + tile.width / 2)) < 2, 'The heading is centred over the scene');
           if (width === 1440) assert((await page.locator('#questionnaire').boundingBox()).width >= 1100, 'Plan must use the full workspace');
           await page.getByRole('link', { name:'Проверить документ', exact:true }).click();
-          assert.equal(await page.locator('#questionnaire').isVisible(), false);
+          // 20 Nov: the document check is its own page, /check.
+          await page.waitForURL(/\/check$/);
+          assert.equal(await page.locator('#questionnaire').count(), 0);
           assert.equal(await page.locator('#document-check').isVisible(), true);
           await page.goBack();
           await page.locator('[data-plan-question]').waitFor();
