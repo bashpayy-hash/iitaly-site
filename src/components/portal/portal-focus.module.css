@@ -268,3 +268,37 @@ button.nowPrimary { border:0; cursor:pointer; }
   .pips { margin:4px 0 -8px -17.5px; }
   .pips:has(a:first-of-type[aria-current=step]) { margin-left:-10px; }
 }
+
+/* 20 Nov (owner, at 100 % in Chrome on a laptop, next to apple.com: «на
+   странице Apple айфон помещается, и композиция выглядит лаконично… у нас
+   нету ощущения масштаба»). At 1320×723 the hero tile was 775 px tall from
+   y=170: the road and Vespi fell below the fold, and the page only looked
+   right zoomed out. The overview column now follows the window's height the
+   way a zoomed-out page would: the tile keeps its proportion, so greeting,
+   step, button and Vespi on the road fit the first screen; the tiles below
+   and the status line take the same width. Wide, tall windows keep 1296 px;
+   phones keep their own layout. On short windows the panel is set tighter
+   so the road under it stays in view. */
+.portalRoot { --cabinet-column:1296px; }
+@media (min-width:1101px) {
+  .portalRoot { --cabinet-column:min(1296px, max(860px, calc((100svh - 172px) * 1296 / 800))); }
+}
+@media (min-width:641px) and (max-width:1100px) {
+  .portalRoot { --cabinet-column:min(100%, max(700px, calc((100svh - 168px) * 4 / 3))); }
+}
+.canvas[data-portal-page=overview] { max-width:var(--cabinet-column); }
+.portalRoot .localFrame:has([data-portal-page=overview]) [data-local-status] { max-width:var(--cabinet-column); margin-inline:auto; }
+@media (min-width:641px) and (max-height:960px) {
+  .portalRoot .localFrame:has([data-portal-page=overview]) [data-local-status] { padding-bottom:6px; }
+  .canvas[data-portal-page=overview] { margin-top:6px; }
+  .hero { padding-top:16px; padding-bottom:clamp(120px, 26svh, 240px); }
+  .heroPanel { width:min(100%,540px); padding:16px 24px 18px; }
+  .canvas[data-portal-page=overview] .welcome h1 { font-size:19px; }
+  .nowCard { margin-top:10px; }
+  .nowRubric { margin-bottom:6px; font-size:14px; }
+  .nowTitle { font-size:clamp(28px, 4.3svh, 44px); }
+  .nowWhy { margin-top:8px; font-size:15px; }
+  .nowFacts { margin-top:8px; font-size:13px; }
+  .nowActions { margin-top:14px; }
+  .nowPrimary { min-height:44px; padding:10px 24px; }
+}

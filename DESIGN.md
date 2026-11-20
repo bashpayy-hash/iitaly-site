@@ -2460,3 +2460,34 @@ only way back was a WhatsApp link.
   the email among order data and the code among the uses.
 - **Server.** bashpayy-hash/iitaly#31 (`POST /api/portal/recover`, optional
   order email), deployed the same day; see HANDOFF §3.
+
+## The cabinet fits the first screen; FAQ that stays under the cursor; even topic links · 20 November 2026
+
+The owner, at 100 % in Chrome on a laptop, next to apple.com: «на странице
+Apple айфон помещается, и композиция выглядит лаконично… у нас нету ощущения
+масштаба»; on the home links: «Виза D… там всё ещё есть неровности»; on the
+FAQ: «менюшка лагучая, нужно всё это исправить и протестить».
+
+- **Cabinet overview follows the window's height.** At 1320×723 the hero tile
+  was 775 px tall from y=170, so Vespi and the road fell below the fold. The
+  overview column is now `min(1296px, max(860px, (100svh − 172px) × 1296/800))`
+  (4:3 between 641 and 1100 px): the tile keeps its proportion, so greeting,
+  step, button and Vespi on the road fit one screen, as on a zoomed-out page.
+  The tiles below and the «Прогресс сохраняется…» line take the same width.
+  On windows up to 960 px tall the panel is set tighter (title
+  `clamp(28px, 4.3svh, 44px)`, 15 px line, 44 px button). Measured: 1320×723
+  hero 150–701, 1440×900 150–878, 1024×700 150–682.
+- **Topic links under the home hero.** Each link filled its quarter, so the
+  pink hover box ran far past the words with the text on its left edge. The
+  box now hugs the words with 10 px each side; the words stay on the column
+  edge (negative margin).
+- **FAQ.** Frames were fine (52 per 900 ms, two over 20 ms); what felt laggy
+  was the clicked question running away by 55–100 px while it opened: the
+  panel re-centred in the tile and the answer open above folded at the same
+  time. The panel now stands at the top of the tile and questions open
+  independently — measured movement of the clicked question: 0 px. If an
+  answer opens past the panel's bottom, the panel (not the page) scrolls to
+  show it. On laptops the tile is `min(840px, max(640px, 100svh − 64px))`.
+- **«Одна Италия» band.** Five ways to draw the real outline (`ITALY_PATH`,
+  read-only) were shown to the owner; nothing is built until one is chosen.
+  Previews: `design-review/italy-band/` in the session that made them.
