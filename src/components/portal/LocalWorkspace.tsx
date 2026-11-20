@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import dynamic from "next/dynamic";
 import { Settings, FileText } from "lucide-react";
@@ -201,7 +202,7 @@ export function LocalWorkspace() {
               </>} />}
           </>}
           {location.view === "docs" && !showDetail && <>
-            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <a className={styles.textLink} href="/plan#document-check">«Мой план»</a>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><StageScene name="stamp" className={styles.docsScene} priority /></div>
+            <div className={styles.illustratedHeading}><div><h1 className={styles.heading}>Документы твоего маршрута</h1><p className={styles.intro}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p><p className={styles.intro} data-documents-free-note>Одну проверку документа можно сделать бесплатно на странице <Link className={styles.textLink} href="/plan#document-check">«Мой план»</Link>. Проверки в кабинете без лимита открываются вместе с маршрутом.</p></div><StageScene name="stamp" className={styles.docsScene} priority /></div>
             {!documents.length && <div className={styles.paper}><h2>Сначала уточним твой маршрут</h2><p>После анкеты здесь появятся документы по твоей ситуации. Поздние этапы откроются по мере выполнения текущих шагов.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "profile"); if (task) openTask(task); }}>Заполнить анкету</a></div>}
             <div className={styles.vault}>{documents.map(task => {
               const info = DOCUMENT_INFO[task.id]; const outcome = documentOutcome(data.docs[task.id], applicationYear);

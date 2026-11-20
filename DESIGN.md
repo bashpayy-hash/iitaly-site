@@ -2561,3 +2561,39 @@ then: «делай тогда те самые 5 правок».
 
 Shared copy: `src/components/access/offerCopy.ts`. Reviews:
 `design-assessment-review` now checks the direct preview.
+
+## The plan as a short path, each step on its own page; Vespi on the Amalfi coast · 20 November 2026
+
+Owner, screenshots of /plan and /portal: «очень громоздкие, большие степы… не
+даёт понять весь масштаб пути… путь дан для того, чтобы пользователь понимал,
+где он, отмечал его прогресс, и прогресс его поощрялся»; «нажимал на „Далее“ —
+его переносило на другую страницу, где всё описывается в стиле всего сайта»;
+«мотоциклский райд в виде гифки будет очень плох… пусть он едет по Амальфи…
+сохраняя все пропорции… максимально бесшовно».
+
+- **Plan result.** The step tiles gave way to `PlanPath`: the whole route as
+  short rows under the cabinet's stage names (stage cartouche, «шаги 3–5»),
+  one circle per step on a line. Read — green with a check; next — the one
+  paper card with a terracotta circle, the step's first sentence and «Начни
+  здесь»; open — a numbered paper circle; closed before payment — a lock and
+  «с маршрутом». Above: «Разобрано N из M», a green bar and one line that
+  cheers progress. On a desktop the stage sits left of its steps, so 12 steps
+  fit one screen (788 px at 1440 × 900); on a phone 12 steps take about 1.3
+  screens instead of one or two steps per screen.
+- **Step pages** `/plan/1…16` (static; the plan is built in the browser from
+  the questionnaire, so they are not indexed). The layout of a guide step:
+  stage over the heading, the step's cartouche, a `StoryPath` over all steps
+  (read ones checked, locked ones with a lock), the summary as numbered cards,
+  «Что сделать сейчас» with the conditions and official sources folded,
+  «Шаг отмечен на маршруте · разобрано N из M», then «Назад / Дальше» cards.
+  A locked step: its first sentence, grey lines for the rest, the guide wall
+  and the risk line. Opening a step marks it read on this device
+  (`plan/<id>` in the guides' reading store, id from the step itself, so new
+  answers never mark a different step).
+- **Cabinet hero.** The Tuscan ride is replaced by an Amalfi coastal road
+  (4:3 like before; same tile, crop and object-position). The landscape is
+  one still sharp frame, only Vespi and his shadow move over it, cut from the
+  generated video along his silhouette — the background never shimmers and
+  the wrap is the same empty-road frame on both sides. 8.5 s at 24 fps;
+  1.4 MB at 1600 px (the Tuscan loop was 2.4 MB). Record:
+  `design/illustrations/motion-2026-11-20-amalfi.json`.

@@ -47,35 +47,32 @@ try {
       'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
-    const routeStops=page.locator('[data-assessment-route] [data-flight-stop]');
+    const routeStops=page.locator('[data-plan-path] [data-plan-path-step]');
     await routeStops.first().waitFor();
-    // Owner, 4 Nov (phone screenshot): Apple-style step tiles with the step's
-    // object, not a Word-like list; the opened step keeps its flat 28px tile.
-    const tiles=page.locator('[data-assessment-route] [data-plan-step-tile]');
-    assert.equal(await tiles.count(),await routeStops.count(),'One tile per plan step');
-    assert.equal(await tiles.locator('img[data-plan-step-object]').count(),await routeStops.count(),'Every step tile shows its object');
-    assert.equal(await tiles.first().evaluate(el=>getComputedStyle(el).borderRadius),'28px');
-    assert.equal(await page.locator('[data-assessment-route] [data-plan-step-tile][data-flight-selected=true]').count(),1,'Exactly one step is open');
-    // Owner, 6 Nov (night): «нагляднее, в хронологическом порядке» — one
-    // column, steps top to bottom under the cabinet's stage names, a numbered stop per step.
-    { const boxes=await tiles.evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {x:Math.round(r.x),y:r.y+scrollY,w:Math.round(r.width)};}));
-      for (let i=1;i<boxes.length;i++) { assert(boxes[i].y>boxes[i-1].y,'Steps go down the page in plan order'); assert(Math.abs(boxes[i].x-boxes[0].x)<1&&Math.abs(boxes[i].w-boxes[0].w)<1,'One column of equal steps'); }
-      assert.deepEqual(await page.locator('[data-assessment-route] [data-plan-stop]').allTextContents(),boxes.map((_,i)=>String(i+1)),'Every step carries its number on the line');
-      const phases=await page.locator('[data-assessment-route] [data-plan-phase]').evaluateAll(els=>els.map(el=>el.dataset.planPhase));
+    const count=await routeStops.count();
+    // Owner, 20 Nov (screenshot of the plan): «очень громоздкие, большие
+    // степы… не даёт понять весь масштаб пути» — the whole route as short
+    // rows under the cabinet's stage names; each step opens on its own page.
+    { const boxes=await routeStops.evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {y:r.y+scrollY,h:r.height};}));
+      for (let i=1;i<boxes.length;i++) assert(boxes[i].y>boxes[i-1].y,'Steps go down the page in plan order');
+      assert(boxes.slice(1).every(box=>box.h<=96),'Later steps are short rows (up to three lines on 320 px), not tiles');
+      if (width>=1024) assert((await page.locator('[data-plan-path]').boundingBox()).height<=900,'The whole route fits about one desktop screen');
+      assert.deepEqual(await routeStops.evaluateAll(els=>els.map(el=>el.getAttribute('href'))),boxes.map((_,i)=>`/plan/${i+1}`),'Every step links to its own page');
+      const phases=await page.locator('[data-plan-path] [data-plan-path-phase]').evaluateAll(els=>els.map(el=>el.dataset.planPathPhase));
       assert.equal(phases[0],'Документы','The route starts with the education documents');
       assert.equal(phases.at(-1),'После приезда','The route ends after arrival');
       assert.equal(new Set(phases).size,phases.length,'Each stage appears once'); }
-    // Before payment (owner, 5 Nov): the first step opens in full; every later
-    // step keeps its tile, title, object and one orienting line, and inside
-    // the opened tile the purchase stands where the action was — same row,
-    // no new blocks (owner: «не меняй структуру блоков»).
-    assert.equal(await page.locator('[data-assessment-route] [data-plan-step-locked]').count(),await routeStops.count()-1,'Every step after the first is marked locked');
-    assert.equal(await page.locator('[data-plan-step-tile="1"][data-plan-step-locked]').count(),0,'The first step is open');
+    // Before payment (owner, 5 Nov): the first step opens in full, every later
+    // step shows its title, one orienting line and the purchase.
+    assert.equal(await page.locator('[data-plan-path-step][data-state=locked]').count(),count-1,'Every step after the first is locked');
+    assert.equal(await page.locator('[data-plan-path-step="1"]').getAttribute('data-state'),'current','The first step is where to start');
+    assert.match(await page.locator('[data-plan-path-count]').innerText(),new RegExp(`Разобрано 0 из ${count}`));
     const chapters=[await page.locator('main').textContent()];
-    for (let index=0;index<await routeStops.count();index++) {
-      await routeStops.nth(index).click();
-      const point=page.locator('[data-instruction-point]');
-      assert.equal(await point.count(),1,'Only the selected admission step is rendered');
+    for (let index=0;index<count;index++) {
+      await visit(`/plan/${index+1}`);
+      const point=page.locator('[data-plan-step]');
+      await point.waitFor();
+      assert.equal(await point.getAttribute('data-plan-step'),String(index+1));
       if (index===0) { assert.equal(await point.locator('[data-assessment-next-action]').count(),1,'The first step shows its action and sources'); assert.equal(await point.locator('[data-wall-buy]').count(),0); }
       else { assert.equal(await point.locator('[data-wall-buy][data-wall-place="plan-step"]').count(),1,`Step ${index+1} shows the wall`); assert.equal(await point.locator('[data-assessment-next-action], details').count(),0,`Step ${index+1} hides its action and sources`); assert.match(await point.locator('[data-wall-buy]').innerText(),/10\s990\s₸/); }
       chapters.push(await point.textContent());
@@ -85,7 +82,11 @@ try {
     assert.match(result,/Документы несовершеннолетнего/);
     assert.match(result,/региональная стипендия с отдельной заявкой/,'A locked step keeps its orienting line');
     assert.doesNotMatch(result,/годы справок пока не назначаем/,'Locked requirements stay behind the wall');
-    await routeStops.first().click();
+    // The opened step is marked on the path; progress is counted.
+    await visit('/plan#route');
+    await page.locator('[data-plan-path]').waitFor();
+    assert.equal(await page.locator('[data-plan-path-step="1"]').getAttribute('data-state'),'done','The read step turns green on the path');
+    assert.match(await page.locator('[data-plan-path-count]').innerText(),new RegExp(`Разобрано 1 из ${count}`));
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1),false,'Plan result overflow at '+width);
     await page.screenshot({path:resolve(output,`plan-${width}.png`),fullPage:true});
     for (const id of ['cimea','iseeu','visa']) {

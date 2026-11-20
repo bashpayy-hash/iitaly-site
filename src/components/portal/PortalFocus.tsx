@@ -167,12 +167,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
     {!stagePage && <div className={styles.hero} data-portal-hero>
       {/* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
           фоне, и Веспи должен реально ехать»): петля, где Веспи въезжает
-          слева, проезжает по дороге и уезжает за кипарисы к ферме; первый и
+          слева, проезжает по дороге и уезжает (с 20 Nov — Амальфи, к морю); первый и
           последний кадр — пустая дорога, шва нет. Текст — на сплошной кремовой
           панели, без белой дымки поверх кадра. Картинка с Веспи — постер и всё,
           что видят «меньше движения» и Save-Data. */}
       <div className={styles.heroScene} data-portal-hero-scene>
-        <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1207} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="tuscany" />
+        <img className={styles.heroArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={1600} height={1200} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
         {/* Owner, 15 Nov: «анимация лагучая… стык был ровный». The loop now
             wraps on the empty road (Vespi gone, nothing moves), and the poster
             — Vespi on the road — is its frame 105: start there. Owner, 16 Nov:
@@ -180,8 +180,16 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             the old seam and then shot off; that stretch is retimed to a steady
             speed (design/illustrations/motion-2026-11-17.json). Owner, 17 Nov:
             «какое-то время просто стоят» — the empty road between rides lasted
-            2.6 s; it now passes up to 3.8× faster, the ride itself untouched. */}
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/tuscany-ride" label="tuscany-ride" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={105.5 / 30} />
+            2.6 s; it now passes up to 3.8× faster, the ride itself untouched.
+            Owner, 20 Nov: «в виде гифки будет очень плох… пусть он едет где-то
+            там по Амальфи… сохраняя все пропорции… максимально бесшовно».
+            A new 4:3 scene on the Amalfi coast road: the landscape is one
+            still sharp frame and only Vespi (with his shadow) moves over it,
+            so nothing in the background shimmers and the empty road at the
+            wrap is the same frame on both sides
+            (design/illustrations/motion-2026-11-20-amalfi.json). The poster
+            is frame 72 of the loop. */}
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/amalfi-ride" label="amalfi-ride" widths={[960, 1600, 2176]} webmWidths={[960]} startAt={72.5 / 24} />
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>

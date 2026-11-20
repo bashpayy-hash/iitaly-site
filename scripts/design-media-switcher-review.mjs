@@ -74,14 +74,18 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           const skip = page.getByRole('button', { name:/Показать|Пропустить/ });
           if (await skip.count()) await skip.first().click();
           await page.getByRole('button', { name:'Открыть мой план', exact:true }).click();
-          assert.equal(await page.locator('[data-assessment-route] [data-instruction-point]').count(), 1);
-          assert((await page.locator('[data-assessment-route] [data-flight-stop]').count()) > 5);
-          await page.locator('[data-assessment-route] [data-instruction-next]').click();
-          assert.equal(new URL(page.url()).searchParams.get('step'), '2');
+          // Owner, 20 Nov: the route is a short path; a step opens on its own
+          // page, «Дальше» goes to the next page, the back button returns.
+          assert((await page.locator('[data-plan-path] [data-plan-path-step]').count()) > 5);
+          await page.locator('[data-plan-path-step="1"]').click();
+          await page.waitForURL(/\/plan\/1$/);
+          await page.locator('[data-plan-step="1"]').waitFor();
+          await page.locator('[data-plan-step] [data-instruction-next]').click();
+          await page.waitForURL(/\/plan\/2$/);
           await page.reload({ waitUntil:'networkidle' });
-          await page.locator('[data-assessment-route] [data-instruction-point="2"]').waitFor();
+          await page.locator('[data-plan-step="2"]').waitFor();
           await page.goBack();
-          await page.locator('[data-assessment-route] [data-instruction-point="1"]').waitFor();
+          await page.locator('[data-plan-step="1"]').waitFor();
         }
         if (route === '/universities') {
           await page.evaluate(() => localStorage.removeItem('iitaly_university_choice_v1'));

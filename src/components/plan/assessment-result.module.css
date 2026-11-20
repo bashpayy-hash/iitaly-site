@@ -1,4 +1,4 @@
-.result, .transition {
+.result, .transition, .documents {
   --result-ink: var(--portal-ink, #141413);
   --result-muted: var(--portal-muted, #57534E);
   --result-line: var(--portal-border, #E4DDD5);

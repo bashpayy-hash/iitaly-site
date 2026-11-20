@@ -1,0 +1,37 @@
+/* Страница шага плана: раскладка шага гайда (guide-step-page.module.css),
+   здесь — только то, чего у гайда нет: действие, источники, отметка на
+   маршруте и состояния без плана. */
+.art { max-width: 220px; justify-self: end; }
+
+.action { margin-top: 20px; padding: 20px 22px; border: 1px solid #E2D9CB; border-radius: 16px; background: #FFFDF9; }
+.action h2 { margin: 0; color: #A33421; font: 600 13px/1.5 var(--font-sans); letter-spacing: 0; }
+.action > p { max-width: 66ch; margin: 6px 0 0; color: #141413; font-size: 17px; font-weight: 500; line-height: 1.55; text-wrap: pretty; }
+.references { margin-top: 14px; border-top: 1px solid #ECE5DA; }
+.action h2 + p + .references { margin-top: 16px; }
+.action > .references:first-child { margin-top: 0; border-top: 0; }
+.references summary { min-height: 44px; padding: 10px 0; font-size: 14px; cursor: pointer; }
+.references > p { max-width: 70ch; margin: 4px 0 12px; color: #57514B; font-size: 15px; line-height: 1.7; }
+.references a { display: inline-flex; align-items: center; min-height: 44px; color: #141413; }
+
+.progress { display: flex; align-items: center; gap: 8px; margin: 22px 0 0; color: #1F6B47; font-size: 14px; font-weight: 500; line-height: 1.4; }
+.progress svg { flex: none; padding: 3px; border-radius: 50%; background: #1F6B47; color: #FFFDF9; width: 22px; height: 22px; }
+.risk { margin: 10px 0 0; color: #6B655E; font-size: 13px; line-height: 1.5; text-wrap: pretty; }
+
+.primary { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 4px; padding: 10px 20px; border-radius: 999px; background: #141413; color: #FFFDF9; font-size: 15px; font-weight: 600; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .primary:hover { background: #2A2420; } }
+.primary:focus-visible { outline: 2px solid #A33421; outline-offset: 3px; }
+
+.waiting { min-height: 60vh; }
+.empty { min-height: 50vh; }
+.empty h1 { margin: 8px 0 12px; font: 600 clamp(28px, 3.4vw, 40px)/1.1 var(--font-apple-display); letter-spacing: -.03em; text-wrap: balance; }
+.empty p { max-width: 56ch; margin: 0 0 20px; color: #57514B; font-size: 17px; line-height: 1.6; }
+
+@media (max-width: 700px) {
+  .action { padding: 18px 16px; }
+  .action > p { font-size: 16px; }
+  .art { max-width: 120px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .action, .progress { animation: plan-step-rise 420ms 200ms cubic-bezier(.22, 1, .36, 1) backwards; }
+}
+@keyframes plan-step-rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }

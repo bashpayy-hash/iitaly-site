@@ -1,6 +1,8 @@
 "use client";
 
-import { AssessmentRoadmap } from "./AssessmentRoadmap";
+import { PlanDocuments } from "./AssessmentRoadmap";
+import { PlanPath } from "./PlanPath";
+import { stepsWord } from "./planRoute";
 import type { Plan } from "@/lib/planBuilder";
 import { AppleButton, AppleButtonLink } from "@/components/apple/Button";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
@@ -10,17 +12,11 @@ import styles from "./plan-journey.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 
 /* Результат анкеты без повторов (owner, 5 Nov: «перепроверь перегрузы»):
-   одна строка «что это», одна главная кнопка, шаги плитками. Ушли рамка
+   одна строка «что это», одна главная кнопка, шаги (с 20 Nov — короткий
+   путь, каждый шаг на своей странице). Ушли рамка
    с капсом «Персональный план готов» (заголовок выше уже говорит это) и
    вторая заливная кнопка «Собрать документы» внизу — покупка и так стоит
    в каждом закрытом шаге. */
-function stepsWord(n: number) {
-  const mod10 = n % 10, mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 14) return "шагов";
-  if (mod10 === 1) return "шаг";
-  if (mod10 >= 2 && mod10 <= 4) return "шага";
-  return "шагов";
-}
 
 export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void }) {
   const paid = usePaidDevice();
@@ -54,11 +50,15 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         <p className="mt-1 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p>
       </div>}
 
+      {/* Owner, 20 Nov (скрин этого места: «очень громоздкие, большие
+          степы… помещается только один или два»): весь маршрут короткими
+          строками по этапам; шаг открывается на своей странице (/plan/n). */}
       <div className={styles.routeHeading}>
-        <h2>С чего начать</h2>
+        <h2>Твой маршрут</h2>
         <button type="button" onClick={onReset}>Изменить ответы</button>
       </div>
-      <AssessmentRoadmap plan={plan} />
+      <PlanPath plan={plan} />
+      <PlanDocuments plan={plan} />
       {wall.modal}
 
       <details className={styles.reminders}>
