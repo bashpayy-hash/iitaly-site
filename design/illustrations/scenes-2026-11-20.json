@@ -1,0 +1,30 @@
+{
+ "date": "2026-11-20",
+ "request": "Owner, 20 Nov, on /prices: «она довольно пустая. Возможно, нам нужна одна большая иллюстрация с Веспи, который что-то там делает именно по тематике. Вот, и это должно быть на фоне.»",
+ "items": [
+  {
+   "name": "prices-check",
+   "use": "/prices, the document check section: the heading stands on this scene (DocumentCheckFeature compact)",
+   "model": "Higgsfield gpt_image_2_6, 2k, 16:9; references: Vespi ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5 and the plan loggia still c1bbadf9-8a4b-4ac3-aad4-79c5df3e72a3 for the style",
+   "job": "a07dffda-246c-48ab-b7f3-7901ee4f8471",
+   "scene": "a Renaissance study with faded garland frescoes (no figures) and a tall arched window; Vespi at a walnut desk in the right third checks a sealed certificate through a brass magnifying glass, papers, a stamp and a checked page beside him; the left two thirds are a calm plaster wall for the heading",
+   "rejected": [
+    {
+     "job": "a58ac8bc-8bb8-4ebe-bcb2-179fcfcaea81",
+     "why": "archive shelves, busier behind the heading"
+    },
+    {
+     "job": "807a5e48-271c-4605-bbb7-8ee367ddc56b",
+     "why": "loggia with a view: columns and sky behind the heading"
+    }
+   ],
+   "files": [
+    "public/illustrations/scenes/prices-check-960.webp",
+    "public/illustrations/scenes/prices-check-1600.webp",
+    "public/illustrations/scenes/prices-check-2400.webp"
+   ],
+   "master": "design/illustrations/source/scenes/prices-check.webp",
+   "processing": "2688x1520 still; WebP q80 at 960, 1600 and 2400 px; master WebP q90"
+  }
+ ]
+}

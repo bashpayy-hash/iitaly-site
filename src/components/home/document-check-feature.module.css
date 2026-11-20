@@ -31,16 +31,36 @@
 }
 /* Цена агентства под строкой договора: тот же тихий цвет, цифры читаются. */
 .agencyPrice { display: block; margin-top: 2px; color: #57514B; font-weight: 500; font-variant-numeric: tabular-nums; }
-/* The cartouche of the check fills the action cell (owner, 19 Nov). On a
-   phone the cell stands alone in its row, so a picture between the text and
-   the button would lengthen the page by ~140px and push everything below,
-   down to Vespi's introduction, further from the first screen; there the
-   cartouche sits small in the cell's top corner instead. */
-.cta { position:relative; }
-.ctaArt { display:block; width:160px; height:auto; margin:8px auto 4px; }
+/* The invitation first and large (owner, 20 Nov): the main button, the
+   cartouche of the check beside it. On a phone the cartouche stays small in
+   the corner, so the page keeps its length (the lazy pictures below it, down
+   to Vespi's introduction, still load with the page). */
+.bento .cta { position:relative; display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:center; gap:24px 40px; padding:clamp(28px, 4vw, 48px); }
+.ctaCopy { display:grid; justify-items:start; gap:12px; min-width:0; }
+.ctaTitle { margin:0; color:#141413; font:600 clamp(26px, 3vw, 40px) / 1.08 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
+.ctaText { margin:0; max-width:52ch; color:#56524C; font-size:16px; line-height:1.55; }
+.cta .ctaButton { margin-top:12px; min-height:52px; padding-inline:28px; font-size:17px; }
+.ctaArt { display:block; width:clamp(180px, 20vw, 260px); height:auto; }
 @media (max-width:767px) {
-  .ctaArt { position:absolute; top:14px; right:14px; width:64px; margin:0; }
-  .cta p:first-of-type { padding-right:72px; }
+  .bento .cta { display:block; padding:20px 18px 22px; }
+  .ctaArt { position:absolute; top:14px; right:14px; width:64px; }
+  .ctaTitle { padding-right:72px; font-size:24px; }
+  .ctaText { font-size:15px; }
+  .cta .ctaButton { margin-top:6px; }
+}
+
+/* /prices: the heading on a wide scene of Vespi checking documents. The
+   picture fills the card; a cream wash from the left keeps the heading on a
+   calm ground. On a phone the scene sits above the heading as a picture. */
+.scene { position:relative; display:grid; align-items:center; min-height:clamp(340px, 34vw, 460px); margin-bottom:28px; padding:clamp(28px, 4vw, 56px); overflow:hidden; border-radius:28px; background:#EFE6D8; isolation:isolate; }
+.sceneArt { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:right center; }
+.scene::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(250,248,245,.94) 0%, rgba(250,248,245,.82) 34%, rgba(250,248,245,0) 62%); }
+.scene .head { max-width:min(540px, 56%); margin:0; }
+@media (max-width:700px) {
+  .scene { display:block; min-height:0; padding:0; overflow:visible; border-radius:0; background:none; }
+  .sceneArt { position:static; z-index:auto; aspect-ratio:4 / 3; height:auto; margin-bottom:20px; border-radius:24px; object-position:82% center; }
+  .scene::before { display:none; }
+  .scene .head { max-width:none; }
 }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 

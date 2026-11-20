@@ -2320,3 +2320,27 @@ questionnaire were the last ones beside the Galleria cartouches.
     button leads to /plan#document-check.
   - On the home page, the action cell «Проверь один документ бесплатно»
     shows the same cartouche instead of an empty dotted field.
+
+## The document check leads its section; a scene on /prices; Trevi redrawn · 20 November 2026
+
+- **Home, the document check section.** «Саму кнопку «Проверь документы»,
+  она должна быть главной, и эти блоки должны быть снизу… блок «Проверь
+  документы» должен быть вот такой большой».
+  - The invitation now comes first, full width: a 26–40 px title, the text,
+    a large main button and the document-check cartouche at 180–260 px
+    beside them. The four facts and the comparison with an agency follow.
+  - On a phone the cartouche stays small in the corner, so the page keeps
+    nearly its length.
+- **/prices.** «Она довольно пустая… одна большая иллюстрация с Веспи,
+  который что-то делает именно по тематике… на фоне».
+  - The heading of the document check stands on a wide scene: Vespi at a
+    walnut desk in a Renaissance study checks a sealed certificate through
+    a magnifying glass.
+  - A cream wash from the left keeps the heading readable. On a phone the
+    scene is a rounded picture above the heading.
+  - Manifest: design/illustrations/scenes-2026-11-20.json.
+- **Cabinet and guide roads, Trevi.** «Пропорции какие-то не такие. Он
+  кидает монетку, но кидает её странно». Vespi is redrawn in his true
+  proportions, about a third of the fountain's height. He stands with his
+  back to the water and tosses the coin over his shoulder; its arc ends in
+  the basin. Same frame size, grey copy for the closed part of the road.
