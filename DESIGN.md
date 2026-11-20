@@ -2458,5 +2458,5 @@ only way back was a WhatsApp link.
   «Пришлём сюда код доступа к кабинету, если потеряешь его.» A typo stops
   the order and is marked; empty sends nothing extra. The privacy page names
   the email among order data and the code among the uses.
-- **Server.** `docs/backend-patches/2026-11-20-portal-code-recovery.patch`
-  for `bashpayy-hash/iitaly`; see HANDOFF §3.
+- **Server.** bashpayy-hash/iitaly#31 (`POST /api/portal/recover`, optional
+  order email), deployed the same day; see HANDOFF §3.
