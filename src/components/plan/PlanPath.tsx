@@ -74,7 +74,12 @@ export function PlanPath({ plan }: { plan: Plan }) {
         const state: StepState = done(position) ? "done" : position === current ? "current" : open(position) ? "todo" : "locked";
         const phase = planStepPhase(step.t);
         const art = state === "current" ? planStepArt(step.t).frame : null;
-        return <BentoCell key={position} as={Link} href={planStepHref(position)} span={{ md: md[position], lg: lg[position] }}
+        // prefetch={false}: in a static export Next prefetches every visible
+        // link with a HEAD request plus its segment files — twelve step pages
+        // at once each time the route shows, wasted mobile data and requests
+        // still in flight when the visitor leaves (the media-switcher review
+        // hung on them). A step page is small; it loads on the tap.
+        return <BentoCell key={position} as={Link} prefetch={false} href={planStepHref(position)} span={{ md: md[position], lg: lg[position] }}
           className={styles.cell} data-plan-path-step={position + 1} data-state={state} data-phase={phase}
           aria-current={state === "current" ? "step" : undefined}>
           <span className={styles.top}>

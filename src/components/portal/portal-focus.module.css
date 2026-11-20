@@ -213,6 +213,62 @@ button.nowPrimary { border:0; cursor:pointer; }
    то есть столько же света, сколько у самой картинки. */
 .heroScene { background:#AD8057; }
 .heroArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; object-fit:cover; object-position:50% 100%; }
+/* Amalfi ride without video (owner, 20 Nov, evening: «исправь любой ценой»).
+   The scene is a size container; the stage inside keeps the picture's 4:3 and
+   covers the scene from the bottom, like object-fit: cover with
+   object-position 50% 100%, so the rider's percentages stay on the road at
+   every width. The rider is a full-stage layer: its translate in % is a share
+   of the stage, so the path is in the picture's own coordinates. Only
+   translate and scale move — compositor work, no layout, no decoding. */
+.heroScene { container-type:size; }
+.heroStage { position:absolute; left:50%; bottom:0; width:max(100cqw, 133.334cqh); aspect-ratio:4 / 3; translate:-50% 0; }
+.heroStageArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; }
+.ride { position:absolute; inset:0; pointer-events:none; animation:amalfi-ride 8.767s linear -3.496s infinite; will-change:translate; }
+.rideBody { position:absolute; left:35.892%; top:64.216%; width:16.406%; aspect-ratio:357 / 425; transform-origin:45.378% 31.294%; animation:amalfi-ride-size 8.767s linear -3.496s infinite; }
+/* A light jolt of the road, the shadow stays on the ground. */
+.rideVespi { position:absolute; inset:0; width:100%; height:100%; animation:amalfi-ride-bump .36s ease-in-out infinite alternate; }
+/* No gradients in the cabinet (owner, 3 Nov): a solid ellipse, blurred once
+   with the moving layer. */
+.rideShadow { position:absolute; left:12%; right:-8%; bottom:-1.5%; height:6%; border-radius:50%; background:rgba(74, 38, 36, .3); filter:blur(5px); }
+@keyframes amalfi-ride-bump { from { translate:0 0; } to { translate:0 -.7%; } }
+@keyframes amalfi-ride {
+  0% { translate: -53.118% 3.811%; }
+  6.328% { translate: -44.689% 2.957%; }
+  12.656% { translate: -36.261% 2.12%; }
+  18.984% { translate: -27.832% 1.426%; }
+  25.312% { translate: -19.403% 0.883%; }
+  31.64% { translate: -10.975% 0.474%; }
+  37.969% { translate: -2.546% 0.182%; }
+  44.297% { translate: 5.883% -0.012%; }
+  50.625% { translate: 14.311% -0.123%; }
+  56.953% { translate: 22.74% -0.169%; }
+  63.281% { translate: 31.169% -0.168%; }
+  69.609% { translate: 39.597% -0.137%; }
+  75.937% { translate: 48.026% -0.094%; }
+  82.265% { translate: 56.455% -0.053%; }
+  88.593% { translate: 64.883% -0.015%; }
+  100% { translate: 64.883% -0.015%; }
+}
+@keyframes amalfi-ride-size {
+  0% { scale: 1.025; }
+  6.328% { scale: 1.021; }
+  12.656% { scale: 1.017; }
+  18.984% { scale: 1.013; }
+  25.312% { scale: 1.009; }
+  31.64% { scale: 1.005; }
+  37.969% { scale: 1.001; }
+  44.297% { scale: 0.997; }
+  50.625% { scale: 0.993; }
+  56.953% { scale: 0.989; }
+  63.281% { scale: 0.985; }
+  69.609% { scale: 0.982; }
+  75.937% { scale: 0.978; }
+  82.265% { scale: 0.974; }
+  88.593% { scale: 0.97; }
+  100% { scale: 0.97; }
+}
+@media (prefers-reduced-motion: reduce) { .ride, .rideBody, .rideVespi { animation:none; } }
+
 .heroPanel { position:relative; z-index:1; display:grid; justify-items:center; width:min(100%,600px); padding:26px 32px 28px; border-radius:24px; background:#FFFDF9; box-shadow:0 1px 2px rgba(42,36,32,.08),0 14px 36px rgba(42,36,32,.14); }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }
 .canvas[data-portal-page=overview] .welcome h1 { margin:0; font:600 21px/1.25 var(--font-sans); letter-spacing:-.01em; }

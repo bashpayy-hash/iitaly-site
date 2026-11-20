@@ -103,7 +103,7 @@ export function PlanStepPage({ position }: { position: number }) {
       <img className={`${page.art} ${styles.art}`} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 30vw, 200px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />
     </header>
     <div className={page.path}>
-      <StoryPath label="Шаги маршрута" noun="Шаг" index={position} caption={caption} href={planStepHref}
+      <StoryPath label="Шаги маршрута" noun="Шаг" index={position} caption={caption} href={planStepHref} prefetch={false}
         stops={steps.map((item, index) => ({ id: String(index), title: displayStepTitle(item.t), locked: !open(index), checked: index !== position && open(index) && read.has(planStepKey(item)) }))} />
     </div>
     <GuideReadMark readKey={key} open={isOpen} />

@@ -19,39 +19,24 @@
   ],
   "files": [
     {
-      "file": "public/illustrations/motion/amalfi-ride-2176.mp4",
-      "bytes": 2634306,
-      "sha256": "d047a146540f02b402ec358afdef746c7677b11edc657f3164654a5f8033531e"
+      "file": "public/illustrations/landscapes/amalfi-road-960.webp",
+      "bytes": 146420,
+      "sha256": "b4062c0cdc7c0e9ac86ded74b75e278f3b95dd3b207704a2e611a30d49e19d0e"
     },
     {
-      "file": "public/illustrations/motion/amalfi-ride-1600.mp4",
-      "bytes": 1422315,
-      "sha256": "821c356aaccb0250aa7a87db6eff6c61949c14ba8ebc0d65a60537a921ed5d2f"
+      "file": "public/illustrations/landscapes/amalfi-road-1600.webp",
+      "bytes": 337886,
+      "sha256": "ad72b43dacbe78b4e4d2f11bac1bc7f60ae2cf4e52b57a68d8fdbfb4355dc59c"
     },
     {
-      "file": "public/illustrations/motion/amalfi-ride-960.mp4",
-      "bytes": 437847,
-      "sha256": "59b8e8aabb08f1769ef4323e7e1b5a2a2f5add59fada3119f3e3fab8e5b1e4d3"
+      "file": "public/illustrations/landscapes/amalfi-road-2176.webp",
+      "bytes": 544490,
+      "sha256": "3a0b6843caf3f51e09251a3a53ad0d4faa99640de708b790e772fd1f2c0513fa"
     },
     {
-      "file": "public/illustrations/motion/amalfi-ride-960.webm",
-      "bytes": 422208,
-      "sha256": "1615e7ca798e93c2650a1031b449370cc8ace99f399fbe691ed82863d9a30796"
-    },
-    {
-      "file": "public/illustrations/landscapes/amalfi-2176.webp",
-      "bytes": 540076,
-      "sha256": "0d7bb2bb134ffe04ca8d01bd817879ac74144c5289716cd695369515b1be31df"
-    },
-    {
-      "file": "public/illustrations/landscapes/amalfi-1600.webp",
-      "bytes": 337882,
-      "sha256": "ae437887e59171baec38db47b3dc13f3fb17aa43a485e230abbea14dca5e9011"
-    },
-    {
-      "file": "public/illustrations/landscapes/amalfi-960.webp",
-      "bytes": 147000,
-      "sha256": "aed9115b82975a5b7a2d9ad7144bb291e623daa53ba63a90da020411f69a6639"
+      "file": "public/illustrations/landscapes/amalfi-vespi.webp",
+      "bytes": 47442,
+      "sha256": "3e81b84d1ec086a6ddd9582da999dd455bd76de33c61d351bebb480b39119521"
     }
   ],
   "revision_same_day": {
@@ -67,5 +52,22 @@
       "Same encode settings, now -r 30. Posters are frame 81 of the new loop; LivingLandscape starts at 81.5/30. A tablet (820 px wide, 2×) loads the 1600 px file."
     ],
     "tools": "scratchpad scripts track.py (head matching) and retime.py (cut-outs, steady 30 fps); not part of the site."
+  },
+  "css_ride_same_evening": {
+    "request": "Owner, iPad, after the steady 30 fps loop: «в личном кабинете эта сцена всё ещё капец лагучая, я не знаю, исправь любой ценой».",
+    "diagnosis": "The loop itself was even (30 fps, 33 ms between every presented frame in Chromium), but the page never shows the video: LivingLandscape draws each decoded frame onto a canvas so the light matches the picture. On iPad Safari a hidden video drawn into a 1600 × 1200 canvas 30 times a second is the uneven part; it cannot be measured here.",
+    "fix": [
+      "No video in the cabinet any more. The landscape is one still frame of the empty road (source frame 30): landscapes/amalfi-road-{960,1600,2176}.webp.",
+      "Vespi is one cut-out (landscapes/amalfi-vespi.webp, 357 × 425, from source frame 130): the plate warped onto the frame with dense optical flow, Lab colour difference as alpha, his shadow and the road under the wheels dropped (darker-than-road pixels that are not near-black tyres), the sunlit leaves behind the helmet removed, the edge refined with a guided filter.",
+      "He rides on CSS: a full-stage layer translates along the measured path (head matching on the generated ride, cubic fit of height against x, straight beyond the tracked span), 330 px/s on the 2176 px stage like the steady loop, 7.77 s across and 1 s of empty road; a gentle scale from 1.025 to 0.97 along the road (helmet size fit), a 0.7% bump every 0.36 s, and a soft CSS shadow that stays on the road. Only translate and scale animate, so the compositor runs it at the screen's rate.",
+      "The stage keeps the picture's 4:3 inside a size container and covers it from the bottom (width max(100cqw, 133.334cqh)), so the path stays on the road at every width. Start offset −3.5 s: on load he stands where the poster had him; with «меньше движения» he stays there.",
+      "Measured in Chromium at 820 × 1180: 15.2% of the stage width per second, frame-to-frame within ±6% (rAF sampling), the wrap happens off-screen."
+    ],
+    "removed": [
+      "public/illustrations/motion/amalfi-ride-{960,1600,2176}.mp4",
+      "public/illustrations/motion/amalfi-ride-960.webm",
+      "public/illustrations/landscapes/amalfi-{960,1600,2176}.webp"
+    ],
+    "tools": "scratchpad scripts matte.py (cut-out) and the keyframe generator; not part of the site."
   }
 }

@@ -2634,3 +2634,45 @@ Owner, iPad screenshots: «на первом скрине дизайн неро�
 - **Amalfi ride.** 30 fps (24 fps judders on a 60 Hz iPad) and one steady
   speed (the generated ride went 9 to 22 px a frame); see
   `design/illustrations/motion-2026-11-20-amalfi.json`.
+
+## The cabinet ride without video; /check as a page; a scene on «Твой маршрут»; Vespi's face at Trevi · 20 November 2026 (late)
+
+Owner, iPad: «Проверь документ было бы полноценной страницей»; «в личном
+кабинете эта сцена всё ещё капец лагучая… исправь любой ценой»; on the road,
+Vespi at Trevi: «странно у него выражение лица… соблюдай его анатомию»; on the
+home «Твой маршрут» card: «слишком белое… добавь иллюстрацию по теме».
+
+- **Cabinet ride on CSS.** No video, no canvas: the Amalfi road is a still
+  picture and Vespi is a clean cut-out that rides across it on `translate` and
+  `scale` only, so the compositor runs it at 60/120 Hz, in Low Power Mode too.
+  The stage keeps 4:3 inside a size container and covers like object-fit, so
+  the path stays on the road at every width. A soft CSS shadow, a light bump.
+  Details: `design/illustrations/motion-2026-11-20-amalfi.json`.
+- **/check is a page of its own.** No «Составить план / Проверить документ»
+  tabs and no second «Проверь документ перед подачей» under the hero; the tool
+  is «Загрузи документ» (badge «Одна проверка бесплатно», not «AI Document
+  Audit»). Then «Как это работает» (three cells), «Быстрее агентства» (the
+  facts and the comparison from the home section, without its invitation to
+  /check) and «Проверки без лимита — с маршрутом» with the purchase, the risk
+  line and «Составить план».
+- **Home «Твой маршрут».** The card's upper part has a scene: Vespi tracing a
+  dotted route on a map of Italy in the site's Renaissance study, as the right
+  half of the card melting into the paper; the words stand in one column on
+  the left. On a phone the scene is a picture above the words.
+- **Vespi's face is canonical everywhere.** Two open dot eyes, a small smile,
+  pink cheeks — never closed or curved eyes. The Trevi piece on the road was
+  redrawn with only the face changed.
+- **Guide and visa pages on a textured band** (owner, same night, with a
+  reference of a grainy sage-to-sand section: «такие страницы мне тоже
+  нравятся, имплементи такого рода текстуру в страницы с гайдами и визой»).
+  Topic, visa and guide-step pages open on a full-width band under the path
+  and the header: the site's olive fading into sand, with paper grain from an
+  inline SVG noise tile (no image request). The bento and the reading stay on
+  the plain canvas. Intro text on the band is #4E4A44 (4.8:1 on the darkest
+  sage).
+- **Fewer background requests.** In output: "export" Next 16 prefetches each
+  visible link with a HEAD request plus its segment files. The plan's twelve
+  step links and the twelve stops on a step page no longer prefetch (a step
+  page loads on the tap); the media-switcher review waits for the restored
+  university instead of network idle when it returns from /plan, where those
+  prefetches could still be in flight.

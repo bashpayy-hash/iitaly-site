@@ -50,7 +50,7 @@
   },
   {
    "name": "vespi-trevi",
-   "job": "74020623-1454-49af-861f-64ec71eb4075",
+   "job": "f87e9465-3eee-447c-a021-00a9fa608328",
    "vespi": true,
    "subject": "The Trevi Fountain at its grand scale (wide travertine palace facade, columns, central niche with rock-work, broad turquoise pool); Vespi small like a visitor, about a sixth of its height, sits on the rim with his back to the water and flips a coin over his shoulder, ripples where the last one fell. gpt_image_2_6 with the three Vespi identity references and the 7 Nov piece; padded to the 560x448 frame.",
    "files": [
@@ -62,10 +62,17 @@
    "master": "design/illustrations/source/scenery/vespi-trevi.webp",
    "earlier_jobs": [
     "a1be3f42-daf3-4ba3-b8bd-985ef4af2f2c",
-    "8963c1ed-5b6c-4ca2-a35b-614a0fd2464d"
+    "8963c1ed-5b6c-4ca2-a35b-614a0fd2464d",
+    "74020623-1454-49af-861f-64ec71eb4075"
    ],
    "date": "2026-11-20",
-   "request": "Owner, 20 Nov, on the cabinet road: «у фонтана Треви… пропорции какие-то не такие. Он кидает монетку, но кидает её странно». Then, on the first redraw: «ещё странно. Сделай более natural, ты по пропорциям улетел не туда»."
+   "request": "Owner, 20 Nov, on the cabinet road: «у фонтана Треви… пропорции какие-то не такие. Он кидает монетку, но кидает её странно». Then, on the first redraw: «ещё странно. Сделай более natural, ты по пропорциям улетел не туда».",
+   "face_fix": {
+    "date": "2026-11-20",
+    "request": "Owner, 20 Nov (evening), on the cabinet road: «Веспи сидит на фонтане Треви, как-то странно у него выражение лица, не делай такие выражения лица. Соблюдай его анатомию.» The redraw had him with closed, curved eyes.",
+    "how": "gpt_image_2_6, 2k, 4:3, transparent background, quality high; references: the previous Trevi piece (job 74020623-1454-49af-861f-64ec71eb4075) as the image to keep, and the three Vespi identity references. Prompt: keep everything, change only the face to the canonical one — two open round glossy black dot eyes, small calm smile, pink cheeks.",
+    "rule": "Vespi always has open dot eyes and a small smile; no closed, curved or squinting eyes."
+   }
   },
   {
    "name": "vespi-gondola",

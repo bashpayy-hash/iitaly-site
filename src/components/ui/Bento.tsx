@@ -31,6 +31,8 @@ export function BentoCell({ span, tone = "plain", children, className, as: Tag =
   href?: string;
   target?: string;
   rel?: string;
+  /** Passed to next/link when the cell is a Link. */
+  prefetch?: boolean;
   tone?: "plain" | "action" | "media" | "quiet";
   children?: ReactNode;
   className?: string;

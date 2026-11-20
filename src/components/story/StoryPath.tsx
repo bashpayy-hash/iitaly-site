@@ -21,9 +21,11 @@ export type PathStop = { id: string; title: string; locked?: boolean;
    названия не режутся по слогам — их прячет путь, они остаются в подсказке и
    для чтения с экрана, а пункт называет заголовок ниже. Отмеченная
    посетителем остановка — зелёная с галочкой, как пройденный шаг в кабинете. */
-export function StoryPath({ stops, index, href, onSelect, label, noun = "Пункт", caption }: {
+export function StoryPath({ stops, index, href, onSelect, label, noun = "Пункт", caption, prefetch }: {
   stops: PathStop[]; index: number; href: (index: number) => string; onSelect?: (index: number) => void;
   label: string; noun?: string; caption?: ReactNode;
+  /** false: the stops do not prefetch their pages (a long path of small pages). */
+  prefetch?: boolean;
 }) {
   const scroller = useRef<HTMLDivElement>(null);
   const count = stops.length;
@@ -65,7 +67,7 @@ export function StoryPath({ stops, index, href, onSelect, label, noun = "Пун�
               {onSelect ? <a {...common} href={href(position)} onClick={event => {
                 if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                 event.preventDefault(); onSelect(position);
-              }}>{body}</a> : <Link {...common} href={href(position)}>{body}</Link>}
+              }}>{body}</a> : <Link {...common} href={href(position)} prefetch={prefetch === false ? false : undefined}>{body}</Link>}
             </li>;
           })}
         </ol>

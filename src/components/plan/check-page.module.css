@@ -16,3 +16,30 @@
   .copy { justify-self:center; text-align:center; }
   .copy p { margin-left:auto; }
 }
+
+/* The rest of /check as a page of its own (owner, 20 Nov, evening): the
+   landing's rhythm — a two-tone heading, then one bento tray per section. */
+.tools { padding-bottom:24px; }
+.section { max-width:1280px; margin:0 auto; padding:32px 32px 24px; }
+.title { margin:0 0 22px; color:#141413; font:600 clamp(28px, 3.2vw, 40px)/1.08 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
+.title span { display:block; color:#6B6761; }
+.bento { width:100%; }
+.bento .how { gap:10px; padding:22px 24px 24px; }
+.howTitle { margin:0; font:600 20px/1.25 var(--font-apple-display); letter-spacing:-.02em; color:#241F1C; }
+.howText { margin:0; color:#57514B; font-size:15px; line-height:1.55; text-wrap:pretty; }
+.bento .offer { padding:clamp(24px, 3.6vw, 44px); }
+.offerCopy { display:grid; justify-items:start; gap:12px; max-width:720px; }
+.offerTitle { margin:0; color:#141413; font:600 clamp(24px, 2.8vw, 36px)/1.1 var(--font-apple-display); letter-spacing:-.025em; text-wrap:balance; }
+.offerText { margin:0; max-width:60ch; color:#56524C; font-size:16px; line-height:1.55; text-wrap:pretty; }
+.offerActions { display:flex; flex-wrap:wrap; align-items:center; gap:12px 22px; margin-top:8px; }
+.offerButton { display:inline-flex; align-items:center; justify-content:center; min-height:52px; padding:12px 28px; border:0; border-radius:999px; background:#141413; color:#FFFDF9; font-size:17px; font-weight:600; text-decoration:none; cursor:pointer; transition:transform .25s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) and (pointer: fine) { .offerButton:hover { transform:translateY(-1px); } }
+.offerButton:focus-visible, .offerLink:focus-visible { outline:2px solid #141413; outline-offset:3px; }
+.offerLink { display:inline-flex; align-items:center; min-height:44px; color:#141413; font-size:15px; font-weight:500; text-decoration:underline; text-underline-offset:4px; }
+.offerRisk { margin:0; color:#6B655E; font-size:13px; line-height:1.5; }
+@media (max-width:767px) {
+  .section { padding:24px 16px 16px; }
+  .offerActions { flex-direction:column; align-items:stretch; }
+  .offerButton { width:100%; }
+}
+@media (prefers-reduced-motion: reduce) { .offerButton { transition:none; } }

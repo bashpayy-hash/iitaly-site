@@ -33,6 +33,28 @@
     "public/illustrations/scenes/check-loggia-2400.webp"
    ],
    "master": "design/illustrations/source/scenes/check-loggia.webp"
+  },
+  {
+   "name": "route-map",
+   "date": "2026-11-20 (evening)",
+   "request": "Owner, iPad screenshot of the home «Твой маршрут» card: «там слишком белое, добавь туда такую иллюстрацию по теме, чтобы обыгрывалось пространство, в стиле самого сайта».",
+   "use": "Home, the «Твой маршрут» card: the scene behind the heading and the DSU note; the four topic tiles stay on paper below it.",
+   "model": "Higgsfield gpt_image_2_6, 2k, 16:9, quality high; references: Vespi ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5, 0f6d7ac4-4e85-4761-9765-753f578eec1e and the /prices study (job a07dffda-246c-48ab-b7f3-7901ee4f8471) for the style",
+   "job": "b6fec085-fec8-43a9-a86e-a00c99573531",
+   "scene": "the same Renaissance room with faded garland frescoes; Vespi on a small wooden step at a walnut map table traces a dotted terracotta route across an unrolled map of Italy; a suitcase and a rolled map by the table leg; an arched window onto Tuscan hills; the left two thirds a calm plaster wall for the text",
+   "rejected": [
+    {
+     "job": "5de40c1c-09fd-4b0f-9f85-9016184b989d",
+     "why": "loggia with the scooter: lovely, but the route on the map table says «твой маршрут» more directly"
+    }
+   ],
+   "files": [
+    "public/illustrations/scenes/route-map-960.webp",
+    "public/illustrations/scenes/route-map-1600.webp",
+    "public/illustrations/scenes/route-map-2400.webp"
+   ],
+   "master": "design/illustrations/source/scenes/route-map.webp",
+   "processing": "2688x1520 still; WebP q80 at 960, 1600 and 2400 px; master WebP q90"
   }
  ]
 }
