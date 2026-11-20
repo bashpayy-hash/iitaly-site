@@ -107,3 +107,7 @@
   .lockedSheet img { max-width:240px; }
   .finishBar:has(.finishBuy) { flex-direction:column; align-items:stretch; }
 }
+/* iPad (20 Nov, phone and tablet pass): the scenario switch was 44px only on
+   phones; on a touch tablet «Первое ВНЖ / Продление» stayed 38px next to 44px
+   page tabs and the 44px «Инструменты». Every touch screen gets 44px. */
+@media (pointer:coarse) { .light .scenarios button { min-height:44px; } }
