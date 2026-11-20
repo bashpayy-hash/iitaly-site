@@ -2597,3 +2597,40 @@ Owner, screenshots of /plan and /portal: «очень громоздкие, бо
   the wrap is the same empty-road frame on both sides. 8.5 s at 24 fps;
   1.4 MB at 1600 px (the Tuscan loop was 2.4 MB). Record:
   `design/illustrations/motion-2026-11-20-amalfi.json`.
+
+## Blocks, not rows: the plan, the cabinet documents and settings; a steady Amalfi ride · 20 November 2026 (evening)
+
+Owner, iPad screenshots: «на первом скрине дизайн неровный и корявый… делай
+блочно, как на лендинге… чтобы много умещалось, но не коряво»; «на Амальфи всё
+ещё лагает»; «страница [документов] выглядит на подвальный вайб… сделай как на
+лендинге»; «кнопки неровно расположены… должна быть банальная ровность».
+
+- **One rule for evenness: `ui/bentoPack.ts`.** The bento grid (12 columns on a
+  wide tray, 6 on a medium one, 1 on a phone) gets its spans from `planSpans`:
+  every row runs edge to edge, a cell that does not fit closes its row and the
+  row's cells share the free columns evenly, and of the allowed sizes the
+  calmest layout wins (no row of a single cell except a deliberate one, then
+  the fewest rows). Measured at 390, 820, 1024, 1180 and 1440 px: every row
+  of the plan, the documents and the settings is flush with the tray on both
+  sides.
+- **/plan route.** One bento tray of step cells: number (or check, or lock),
+  stage, title. The next step takes a whole row with its cartouche, its first
+  sentence and a dark «Начни здесь» pill; read steps are green, locked ones
+  carry only the lock (no repeated «с маршрутом»). Four cells a row on a
+  desktop, three on a tablet, one compact row each on a phone. 12 steps:
+  the tray is about 570 px tall at 1440 and 710 px at 820.
+- **Cabinet documents** (local cabinet). The landing's pattern: a two-tone
+  heading («Документы твоего маршрута. / Где взять и как проверить.»), then one
+  tray — the free check as the action cell with Vespi at the stamp and a dark
+  «Проверить документ» (now to /check; the old note sent people to «Мой план»,
+  where the check no longer is), and each document as a paper cell: what it is
+  for (a coloured chip: вуз, DSU, виза), name, where to get it, status and
+  «Открыть».
+- **Cabinet settings.** The same heading pattern and tray: the profile and the
+  reminders as two equal cells, the sound switch as a quiet row under them.
+- **Home «Твой маршрут».** The four links are equal tiles filling their
+  columns (four in a row, two by two below 900 px) instead of words at the
+  left of each quarter with gaps of 105–229 px.
+- **Amalfi ride.** 30 fps (24 fps judders on a 60 Hz iPad) and one steady
+  speed (the generated ride went 9 to 22 px a frame); see
+  `design/illustrations/motion-2026-11-20-amalfi.json`.

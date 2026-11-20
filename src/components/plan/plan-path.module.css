@@ -1,14 +1,12 @@
-/* Короткий путь плана (owner, 20 Nov): весь маршрут виден сразу — строки
-   по этапам вместо больших плиток. Цвета — те же, что у дороги кабинета:
-   разобрано — зелёный с галочкой, следующий шаг — терракотовый, открыто —
-   бумажный кружок с номером, закрыто до оплаты — замок. */
+/* Маршрут плана блоками (owner, 20 Nov, вечер): общая бенто-сетка сайта
+   (ui/bento.module.css) — подложка и бумажные ячейки; здесь только
+   содержимое ячейки шага и состояния. Разобрано — зелёная галочка, следующий
+   шаг — терракотовый номер и тёмная пилюля, закрыто до оплаты — замок. */
 .path {
   --ink: #141413;
   --quiet: #57514B;
-  --line: #DCD3C3;
   --accent: #B83A27;
   --done: #1F6B47;
-  --paper: #FFFDF9;
   margin-top: 16px;
   scroll-margin-top: 96px;
 }
@@ -20,73 +18,54 @@
 .meter { position: relative; height: 6px; margin-top: 8px; overflow: hidden; border-radius: 999px; background: #E9E2D6; }
 .meter span { position: absolute; inset: 0; border-radius: inherit; background: var(--done); transform: scaleX(var(--fill)); transform-origin: left; transition: transform 640ms cubic-bezier(.22, 1, .36, 1); }
 
-.phases { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
-.phase { display: grid; gap: 4px; }
-.phaseHead { display: flex; align-items: center; gap: 10px; min-height: 44px; }
-.phaseMark { display: grid; flex: none; place-items: center; width: 44px; height: 44px; }
-.phaseMark img { width: 44px; height: auto; max-height: 44px; object-fit: contain; }
-.phaseText { display: grid; gap: 1px; min-width: 0; }
-.phaseText b { color: var(--ink); font-size: 15px; font-weight: 650; line-height: 1.3; }
-.phaseText span { display: inline-flex; align-items: center; gap: 4px; color: var(--quiet); font-size: 13px; line-height: 1.4; }
-.phase[data-done] .phaseText span { color: var(--done); }
-
-.steps { display: grid; margin: 0; padding: 0; list-style: none; }
-/* The line runs through the centres of the circles; the stretch after a
-   read step is green. */
-.step { position: relative; }
-.step::before { content: ""; position: absolute; z-index: 0; left: 27px; top: 50%; height: 100%; width: 2px; background: var(--line); }
-.step:last-child::before { display: none; }
-.step[data-state="done"]::before { background: var(--done); }
-
-.link {
-  position: relative; z-index: 1;
-  display: grid; grid-template-columns: 32px minmax(0, 1fr) auto 18px; align-items: center; gap: 12px;
-  min-height: 48px; padding: 8px 10px 8px 12px; border: 1px solid transparent; border-radius: 14px;
-  color: var(--ink); text-decoration: none;
-  transition: background-color 160ms cubic-bezier(.4, 0, .2, 1), border-color 160ms cubic-bezier(.4, 0, .2, 1);
-}
-@media (hover: hover) and (pointer: fine) {
-  .link:hover { background: #F3EEE6; }
-  .link:hover .chevron { transform: translateX(2px); }
-}
-.link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
+/* Ячейка шага. Две ступени класса перебивают общий стиль ячейки бенто. */
+.tray .cell { gap: 12px; padding: 16px 18px 18px; color: var(--ink); }
+.top { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .node {
-  display: grid; place-items: center; width: 32px; height: 32px; border: 1.5px solid #CFC6B7; border-radius: 50%;
-  background: var(--paper); color: var(--ink); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
+  display: grid; flex: none; place-items: center; width: 28px; height: 28px;
+  border: 1.5px solid #CFC6B7; border-radius: 50%; background: #FFFDF9;
+  color: var(--ink); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums;
 }
-.step[data-state="done"] .node { border-color: var(--done); background: var(--done); color: #FFFDF9; }
-.step[data-state="current"] .node { border-color: var(--accent); background: var(--accent); color: #FFFDF9; box-shadow: 0 0 0 4px rgba(184, 58, 39, .14); }
-.step[data-state="locked"] .node { border-color: #E2D9CB; background: #F1ECE3; color: #8A8174; }
+.phase { min-width: 0; overflow: hidden; color: var(--quiet); font-size: 13px; font-weight: 500; line-height: 1.3; white-space: nowrap; text-overflow: ellipsis; }
+.body { display: grid; gap: 6px; min-width: 0; }
+.title { font: 600 16px/1.32 var(--font-apple-display, inherit); letter-spacing: -.01em; text-wrap: pretty; }
+.line { color: var(--quiet); font-size: 14px; line-height: 1.5; text-wrap: pretty; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.foot { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; color: var(--quiet); font-size: 13px; font-weight: 500; line-height: 1.3; }
+.foot svg { flex: none; transition: transform 320ms cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (pointer: fine) { .cell:hover .foot svg:last-child { transform: translateX(2px); } }
 
-.text { display: grid; gap: 2px; min-width: 0; }
-.title { font-size: 15px; font-weight: 500; line-height: 1.35; text-wrap: pretty; }
-.step[data-state="done"] .title { color: var(--quiet); }
-.step[data-state="locked"] .title { color: #6B655E; }
-.line { color: var(--quiet); font-size: 13.5px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cell[data-state="done"] .node { border-color: var(--done); background: var(--done); color: #FFFDF9; }
+.cell[data-state="done"] .title { color: var(--quiet); }
+.cell[data-state="done"] .foot { color: var(--done); }
+.cell[data-state="locked"] .node { border-color: #E2D9CB; background: #F1ECE3; color: #8A8174; }
+.cell[data-state="locked"] .title { color: #6B655E; }
+.cell[data-state="locked"] .foot { display: none; }
 
-/* The next step is the one card on the path. */
-.step[data-state="current"] .link { padding-block: 12px; border-color: #E2D9CB; background: var(--paper); box-shadow: 0 1px 2px rgba(42, 36, 32, .06), 0 8px 22px rgba(42, 36, 32, .07); }
-.step[data-state="current"] .title { font-weight: 650; }
-.chip { justify-self: start; margin-top: 6px; padding: 5px 10px; border-radius: 999px; background: #FBE7E2; color: #9E2F1F; font-size: 12.5px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
-.meta { color: #8A8174; font-size: 12.5px; line-height: 1.2; white-space: nowrap; }
-.chevron { color: #8A8174; transition: transform 320ms cubic-bezier(.22, 1, .36, 1); }
-.step[data-state="current"] .chevron { color: var(--accent); }
+/* Следующий шаг — ячейка шире, с картушем шага и тёмной пилюлей. */
+.cell[data-state="current"] .node { border-color: var(--accent); background: var(--accent); color: #FFFDF9; }
+.cell[data-state="current"] .title { font-size: 20px; line-height: 1.25; letter-spacing: -.02em; }
+.cell[data-state="current"] .top, .cell[data-state="current"] .body { padding-right: 124px; }
+.art { position: absolute; top: 14px; right: 16px; width: 108px; height: auto; pointer-events: none; }
+.start { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 16px; border-radius: 999px; background: #141413; color: #FFFDF9; font-size: 14px; font-weight: 600; }
 
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 
-/* Desktop: the stage sits to the left of its steps, so the whole route of
-   9–12 steps fits a screen. */
-@media (min-width: 760px) {
-  .phases { gap: 6px; }
-  .phase { grid-template-columns: 196px minmax(0, 1fr); gap: 16px; align-items: start; padding-top: 6px; border-top: 1px solid #ECE5DA; }
-  .phase:first-child { border-top: 0; padding-top: 0; }
-  .phaseHead { padding-top: 2px; }
+/* Телефон (подложка уже 560px): шаг — строка: номер слева, этап и название
+   справа; пилюля остаётся только у следующего шага, замок говорит сам. */
+@container (max-width: 559px) {
+  .tray .cell { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 12px; row-gap: 2px; align-items: start; padding: 14px 16px; }
+  .top { display: contents; }
+  .node { grid-row: 1 / span 2; }
+  .phase { grid-column: 2; font-size: 12.5px; }
+  .body { grid-column: 2; }
+  .title { font-size: 15.5px; }
+  .foot { grid-column: 2; margin-top: 4px; }
+  .cell:not([data-state="current"]) .foot { display: none; }
+  .cell[data-state="current"] .title { font-size: 18px; }
+  .cell[data-state="current"] .top, .cell[data-state="current"] .body { padding-right: 0; }
+  .cell[data-state="current"] .phase, .cell[data-state="current"] .body { padding-right: 64px; }
+  .cell[data-state="current"] .foot { margin-top: 10px; }
+  .art { top: 12px; right: 12px; width: 56px; }
 }
-@media (max-width: 480px) {
-  .link { grid-template-columns: 32px minmax(0, 1fr) 0 16px; gap: 10px; padding-inline: 8px; }
-  .step::before { left: 23px; }
-  .meta { display: none; }
-}
-@media (prefers-reduced-motion: reduce) { .meter span, .link, .chevron { transition: none; } }
-@media (forced-colors: active) { .node { forced-color-adjust: none; } .link { border-color: CanvasText; } }
+@media (prefers-reduced-motion: reduce) { .meter span, .foot svg { transition: none; } }
+@media (forced-colors: active) { .node { forced-color-adjust: none; } }

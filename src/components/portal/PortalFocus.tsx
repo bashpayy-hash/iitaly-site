@@ -187,9 +187,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
             still sharp frame and only Vespi (with his shadow) moves over it,
             so nothing in the background shimmers and the empty road at the
             wrap is the same frame on both sides
-            (design/illustrations/motion-2026-11-20-amalfi.json). The poster
-            is frame 72 of the loop. */}
-        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/amalfi-ride" label="amalfi-ride" widths={[960, 1600, 2176]} webmWidths={[960]} startAt={72.5 / 24} />
+            (design/illustrations/motion-2026-11-20-amalfi.json). Owner, same
+            evening, iPad: «на Амальфи всё ещё лагает». The generated ride ran
+            at 24 fps (held 2 and 3 refreshes in turn on a 60 Hz screen) and
+            Vespi's speed swung from 9 to 22 px a frame; the loop is now 30 fps
+            with Vespi at one steady speed. The poster is frame 81. */}
+        <LivingLandscape className={styles.heroArt} base="/illustrations/motion/amalfi-ride" label="amalfi-ride" widths={[960, 1600, 2176]} webmWidths={[960]} startAt={81.5 / 30} />
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
       <div className={styles.welcome} data-portal-welcome>

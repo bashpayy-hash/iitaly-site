@@ -3,6 +3,7 @@ import { AppleButtonLink } from "@/components/apple/Button";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import styles from "@/components/marketing/marketing.module.css";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { TermHint } from "@/components/ui/PlainTerms";
 import assistant from "./home-assistant.module.css";
@@ -80,7 +81,7 @@ export function Hero() {
               { label: 'Документы и DSU', href: '/check' },
               { label: 'Виза D', href: '/guides#visa' },
               { label: 'Первые недели', href: '/guides#permesso' },
-            ].map(({ label, href }) => <li key={label}><Link href={href}>{label}</Link></li>)}
+            ].map(({ label, href }) => <li key={label}><Link href={href}><span>{label}</span><ChevronRight size={16} strokeWidth={2} aria-hidden="true" /></Link></li>)}
           </ol>
         </div>
       </div>
