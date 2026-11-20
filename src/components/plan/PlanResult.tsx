@@ -19,7 +19,8 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
       </p>
 
-      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled">Продолжить в личном кабинете</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
+      {/* Full width on phones, like the home hero's buttons: at 320px the label broke into two lines (20 Nov, phone pass). */}
+      <div className="mt-5"><AppleButtonLink href="/portal" variant="filled" className="max-sm:w-full">Продолжить в личном кабинете</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
 
       <div className={styles.routeHeading}>
         <h2>С чего начать</h2>

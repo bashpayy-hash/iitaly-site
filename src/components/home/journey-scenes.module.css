@@ -25,3 +25,18 @@
 @media(max-width:640px) { .cards { grid-template-columns:1fr; } .cardLink { flex-direction:row; align-items:center; aspect-ratio:auto; min-height:200px; } .copy { flex:1 1 auto; padding:22px 0 22px 20px; } .object { flex:0 0 42%; align-items:center; padding:16px 16px 16px 0; } .object img { max-width:100%; max-height:150px; } .copy strong { font-size:19px; } }
 @media(prefers-reduced-motion:reduce) { .cardLink,.object img { transition:none; } @media (hover: hover) and (pointer: fine) { .cardLink:hover .object img { transform:none; } } }
 @media(forced-colors:active) { .cardLink { border:1px solid CanvasText; } }
+/* Phone and tablet finish (owner, 20 Nov: «прошерсти на неточности,
+   неровности и в целом адаптивность»):
+   - 641–900px: the two scenes kept a 760px column, so on an iPad (820px) their
+     cards stood at 50px while every other block starts at the site's 24px
+     edge; they follow the edge now (32px at 900, 24px, then 20px);
+   - phones: 48px from the Vespi card above and to the FAQ below (it was 84
+     and 64);
+   - 374px and below: the copy column could not shrink (no min-width:0), so
+     «Подготовиться» pushed the suitcase cartouche past the card's edge and the
+     arrival cards wrapped into eight lines of two words. The picture takes a
+     third, the gap is 12px, the title 18px. */
+@media(max-width:900px) { .section { max-width:none; padding-inline:32px; } }
+@media(max-width:899px) { .section { padding-inline:24px; } }
+@media(max-width:767px) { .section { padding:0 20px 48px; } }
+@media(max-width:374px) { .cardLink { gap:12px; } .copy { min-width:0; } .object { flex-basis:32%; min-width:0; } .copy strong { font-size:18px; } }

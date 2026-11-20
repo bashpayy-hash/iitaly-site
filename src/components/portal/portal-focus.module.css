@@ -257,3 +257,14 @@ button.nowPrimary { border:0; cursor:pointer; }
 @media(prefers-reduced-motion:reduce) { .nowPrimary { transition:none; } .nowPrimary:active { transform:none; } }
 @media(forced-colors:active) { .hero { border:1px solid CanvasText; } }
 
+/* 20 Nov (phone pass). The 19 Nov touch rule above gave every step dot a 44px
+   target but kept the 28px rhythm's margins, so on touch screens «Шаг 2 из 4»,
+   the dots and the step title stood 47 and 60px apart, and the first dot sat
+   9.5px in from the label it should line up with (its 9px dot is centred in
+   44px: 17.5px, minus 8). The targets stay 44px; negative margins give back
+   the visual spacing of the 28px layout, and the first dot (or the current
+   24px pill, when it is first) starts on the label's edge. */
+@media (pointer:coarse) {
+  .pips { margin:4px 0 -8px -17.5px; }
+  .pips:has(a:first-of-type[aria-current=step]) { margin-left:-10px; }
+}

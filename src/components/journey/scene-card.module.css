@@ -8,3 +8,8 @@
 .caption{margin:0;max-width:52ch;color:#57514B;font-size:14px;line-height:1.5;text-wrap:pretty}
 @media(max-width:760px){.card{padding:24px;border-radius:28px;gap:24px}.heading{gap:16px}.scene{min-height:240px}}
 @media(prefers-reduced-motion:reduce){.action{transition:none}}
+/* Phones (20 Nov, phone pass): 24px corners like every other card (design
+   code: 28px, 24px on phones); at 374px and below 16px inside, so the three
+   cards keep room for their words. */
+@media(max-width:767px){.card{border-radius:24px}}
+@media(max-width:374px){.card{padding:20px 16px}}

@@ -161,7 +161,7 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-[28px] border border-white/15 p-6 sm:p-8">
+          <div className="mt-6 rounded-[24px] border border-white/15 p-6 sm:p-8 md:rounded-[28px]">
             <b className="block text-apple-body-sm font-semibold text-cloud-white">Что система делает сама, а где решаешь ты</b>
             <p className="mt-2 text-apple-body-sm text-cloud-body">
               Подбор программ, сроки, чек-листы, черновики и проверку

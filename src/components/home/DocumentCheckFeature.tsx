@@ -59,7 +59,7 @@ const SCENE = {
 export function DocumentCheckFeature({ compact = false }: { compact?: boolean }) {
   const head = <div className={styles.head}>
     <h2 id={compact ? "document-check-promo-title" : "document-check-feature-title"} className={styles.title}>
-      Проверка документов.<br /><span>Пункт за пунктом — в любое время.</span>
+      Проверка документов.<br /><span>Пункт за пунктом — в любое время.</span>
     </h2>
     <p className={styles.lead}>
       Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы

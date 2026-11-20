@@ -102,3 +102,7 @@
    snap and the smooth scroll step aside, the script moves it frame by frame
    and lands it on a card with a spring before snapping comes back. */
 .track[data-gliding] { scroll-snap-type:none; scroll-behavior:auto; }
+/* 20 Nov (phone pass): at 480px and below the dots pill was 48px tall beside
+   the 44px ▶ circle — two controls side by side of different heights. Both
+   are 44px now; each dot keeps its 44px-tall target. */
+@media(max-width:480px) { .dots { min-height:44px; } }

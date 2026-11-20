@@ -102,3 +102,8 @@
 .brief li::before { content:counter(brief); grid-row:span 2; color:#B83A27; font-weight:600; font-size:15px; line-height:1.5; font-variant-numeric:tabular-nums; }
 .brief b { font-weight:600; font-size:16px; line-height:1.5; color:#141413; }
 .brief p { margin:4px 0 0; max-width:65ch; color:#57514B; font-size:16px; line-height:1.6; }
+/* 320–374px (20 Nov, phone pass): the overview's main action («Открыть
+   тренажёр Modulo 1») broke into two lines; the sides are 12px and the label
+   keeps one line; below 360px it is 14px. */
+@media(max-width:374px) { .primary { padding-inline:12px; white-space:nowrap; } }
+@media(max-width:359px) { .primary { font-size:14px; } }

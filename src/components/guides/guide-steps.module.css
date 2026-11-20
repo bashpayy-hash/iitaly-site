@@ -21,3 +21,8 @@
   .facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .facts > div { padding:14px 16px 12px; }
 }
+/* 320–374px (20 Nov, phone pass): beside a 120px cartouche the topic's title
+   and intro had 148px at 320 — «Permesso / di / soggiorno» in three lines and
+   the intro two words a line. The cartouche is 96px there; the text gets
+   172px. From 375px the header is unchanged. */
+@media(max-width:374px) { .topicHeader { grid-template-columns:minmax(0,1fr) 96px; } }
