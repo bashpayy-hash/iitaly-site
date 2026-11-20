@@ -41,6 +41,19 @@ const FAQ = [
   },
 ];
 
+/* After the 320ms reveal: if the opened answer ends below the panel's visible
+   part, scroll the panel (not the page) just enough to show it. */
+function revealInPanel(details: HTMLDetailsElement) {
+  const panel = details.closest<HTMLElement>("[data-faq-panel]");
+  if (!panel) return;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.setTimeout(() => {
+    if (!details.open || panel.scrollHeight <= panel.clientHeight) return;
+    const overflow = details.getBoundingClientRect().bottom - panel.getBoundingClientRect().bottom + 16;
+    if (overflow > 0) panel.scrollBy({ top: overflow, behavior: reduce ? "auto" : "smooth" });
+  }, reduce ? 0 : 340);
+}
+
 export function TrustFAQ() {
   return (
     <section data-public-paper-zone="home-faq" className={styles.section} aria-labelledby="home-faq-title">
@@ -53,20 +66,29 @@ export function TrustFAQ() {
               frame (owner, 17 Nov: «какое-то время просто стоят»). */}
           <LivingLandscape className={styles.scene} base="/illustrations/motion/belvedere" label="belvedere" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={18.5 / 30} />
         </div>
-        <div className={styles.panel}>
+        <div className={styles.panel} data-faq-panel>
           <p className={styles.eyebrow}>Прежде чем платить</p>
           <h2 id="home-faq-title" className={styles.title}>Можно ли нам доверять</h2>
-          {/* Один открытый вопрос за раз и плавное раскрытие (owner, 8 Nov:
-              «очень топорно… иллюстрация увеличивается по мере того, как
-              нажимаешь»): плитка держит высоту, кадр со смотровой не растёт. */}
+          {/* Плавное раскрытие (owner, 8 Nov: «очень топорно… иллюстрация
+              увеличивается по мере того, как нажимаешь»): плитка держит высоту,
+              кадр со смотровой не растёт. Owner, 20 Nov: «менюшка лагучая».
+              The question under the cursor ran away by 55–100px while it
+              opened: the panel re-centred itself in the tile, and the answer
+              open above it (one at a time) folded at the same moment. Now the
+              panel stands at the top of the tile and questions open
+              independently, so a click only moves what is below it. If an
+              answer opens past the panel's bottom, the panel itself scrolls to
+              show it — never the page. */}
           <div className={styles.list}>
             {FAQ.map((item) => (
               <details
                 key={item.q}
                 className={styles.item}
-                name="home-faq"
                 onToggle={(e) => {
-                  if ((e.target as HTMLDetailsElement).open) track("faq_opened", { q: item.q });
+                  const details = e.currentTarget;
+                  if (!details.open) return;
+                  track("faq_opened", { q: item.q });
+                  revealInPanel(details);
                 }}
               >
                 <summary className={`${styles.question} ${disclosure.row}`}>

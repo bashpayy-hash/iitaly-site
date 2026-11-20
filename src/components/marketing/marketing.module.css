@@ -195,8 +195,14 @@
 .scholarship small { font-size: 18px; }
 .route { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-top: 24px; border-top: 1px solid var(--i-line); list-style: none; }
 .route li { min-width: 0; font-size: 14px; }
-.route a { display: flex; align-items: center; min-height: 44px; border-radius: 8px; font-weight: 500; text-decoration: underline; text-decoration-color: var(--i-line); text-underline-offset: 5px; }
-@media (hover: hover) and (pointer: fine) { .route a:hover { color: var(--i-link); background: #fff0f3; } }
+/* Owner, 20 Nov (on «Виза D» under the cursor: «там всё ещё есть неровности»):
+   the link filled its whole quarter, so the pink hover box ran far past the
+   words with the text against its left edge. The box now hugs the words with
+   10px on each side, and the words stay on the column edge (the negative
+   margin takes the padding back). */
+.route a { display: inline-flex; align-items: center; min-height: 44px; margin-inline: -10px; padding-inline: 10px; border-radius: 10px; font-weight: 500; text-decoration: underline; text-decoration-color: var(--i-line); text-underline-offset: 5px; transition: background-color 160ms ease, color 160ms ease, text-decoration-color 160ms ease; }
+@media (hover: hover) and (pointer: fine) { .route a:hover { color: var(--i-link); background: #fff0f3; text-decoration-color: currentColor; } }
+@media (prefers-reduced-motion: reduce) { .route a { transition: none; } }
 
 .metrics { background: transparent; padding: 48px 24px; border-bottom: 1px solid var(--i-line); }
 .metricsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; max-width: 1100px; margin: auto; }

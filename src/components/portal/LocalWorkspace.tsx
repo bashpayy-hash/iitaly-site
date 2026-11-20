@@ -167,7 +167,7 @@ export function LocalWorkspace() {
       <a href="/portal?view=settings" aria-label="Настройки" title="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
     </div>} /></div>
     <main id="main" className={`${styles.frame} ${focusStyles.localFrame}`} onClickCapture={event => { if ((event.target as Element).closest("button")) feedback.prime(); }}>
-      <div className={styles.localStatus}><span>{draft.complete ? "Твой план сохранён на этом устройстве" : "Прогресс сохраняется на этом устройстве"}</span><a href={cloudLoginHref}>Есть код доступа? Войти</a></div>
+      <div className={styles.localStatus} data-local-status><span>{draft.complete ? "Твой план сохранён на этом устройстве" : "Прогресс сохраняется на этом устройстве"}</span><a href={cloudLoginHref}>Есть код доступа? Войти</a></div>
       {storageError && <p role="alert" className={styles.readOnly}>{storageError}</p>}
       <div className={`${styles.layout} ${focusStyles.localLayout}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div ref={content} className={styles.content}>
