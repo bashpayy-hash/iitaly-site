@@ -123,7 +123,13 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await comparison.getByRole('link', { name:/Перейти в Мой план/ }).click();
           await page.locator('[data-plan-university=unipd]').waitFor();
           assert.equal(new URL(page.url()).pathname, '/plan');
-          await page.goto(origin + '/universities', { waitUntil:'networkidle' });
+          // Back to /universities after /plan: Next 16 in output: "export" prefetches
+          // visible links with HEAD requests plus segment files, and some of
+          // those started on /plan are still in flight when the page changes,
+          // so «networkidle» may never arrive (it hung here in CI on #259).
+          // Wait for the page and the restored choice itself.
+          await page.goto(origin + '/universities', { waitUntil:'load' });
+          await page.locator('[data-deck-university][data-primary=true]').waitFor();
           assert.equal(await page.locator('[data-deck-university][data-primary=true]').count(), 1);
         }
         if (route === '/guides/tests') {

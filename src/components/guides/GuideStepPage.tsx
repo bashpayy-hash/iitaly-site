@@ -36,8 +36,10 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
   const helpId = isGuideId(id) ? id : undefined;
   return <GuideFrame narrow>
     <GuideReadingContext id={helpId} />
-    <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, { title:guide.title, href:guideHref(id) }, { title:point.title }]} />
     <article className={ui.article} data-guide-step={id} data-guide-current={id} data-instruction-point={step} aria-labelledby="guide-step-title">
+      {/* The same textured band as the topic page (owner, 20 Nov, late). */}
+      <div className={ui.band} data-guide-band>
+      <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, { title:guide.title, href:guideHref(id) }, { title:point.title }]} />
       <header className={styles.header}>
         <div>
           <p className={styles.position}>{guide.title}</p>
@@ -46,6 +48,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
         </div>
         <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />
       </header>
+      </div>
       <div className={styles.path}><GuideStepPath index={step - 1} stops={points.map((item, index) => ({ title: item.title, href: item.href, locked: !guideStepOpen(id, index + 1) }))} /></div>
       <GuideReadMark readKey={`${id}/${step}`} open={open} />
       {open ? <GuideSentences sentences={sentences} text={point.text} /> : <GuideLockedStep id={id} step={step} count={sentences.length} />}

@@ -107,3 +107,32 @@
    keeps one line; below 360px it is 14px. */
 @media(max-width:374px) { .primary { padding-inline:12px; white-space:nowrap; } }
 @media(max-width:359px) { .primary { font-size:14px; } }
+
+/* Topic, visa and step pages open on a textured band (owner, 20 Nov, late:
+   «такие страницы мне тоже нравятся, имплементи такого рода текстуру»): a soft
+   sage-to-sand wash with paper grain, full width, under the path and the
+   topic header; the bento and the reading stay on the plain canvas below.
+   The grain is an inline SVG noise tile (no image request); the colours are
+   the site's olive and sand, light enough that the intro text keeps 4.5:1. */
+.band { position:relative; isolation:isolate; margin:-40px 0 36px; padding:32px 0 36px; }
+.band::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:100vw;
+  translate:-50% 0;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .2 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+    radial-gradient(70% 120% at 4% 28%, rgba(170, 185, 148, .9), rgba(170, 185, 148, 0) 70%),
+    radial-gradient(60% 110% at 98% 86%, rgba(239, 206, 164, .85), rgba(239, 206, 164, 0) 72%),
+    linear-gradient(100deg, #C3CBAB 0%, #DAD5B8 44%, #ECD9BA 100%);
+}
+.band > header { margin-bottom:0; }
+.band .breadcrumbs a, .band .breadcrumbs { color:#4E4A44; }
+.band .intro { color:#4E4A44; }
+.band .reviewed { color:#4E4A44; }
+@media (max-width:700px) { .band { margin:-22px 0 28px; padding:22px 0 26px; } }
+@media (forced-colors: active) { .band::before { display:none; } }

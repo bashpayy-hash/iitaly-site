@@ -2662,3 +2662,17 @@ home «Твой маршрут» card: «слишком белое… добав
 - **Vespi's face is canonical everywhere.** Two open dot eyes, a small smile,
   pink cheeks — never closed or curved eyes. The Trevi piece on the road was
   redrawn with only the face changed.
+- **Guide and visa pages on a textured band** (owner, same night, with a
+  reference of a grainy sage-to-sand section: «такие страницы мне тоже
+  нравятся, имплементи такого рода текстуру в страницы с гайдами и визой»).
+  Topic, visa and guide-step pages open on a full-width band under the path
+  and the header: the site's olive fading into sand, with paper grain from an
+  inline SVG noise tile (no image request). The bento and the reading stay on
+  the plain canvas. Intro text on the band is #4E4A44 (4.8:1 on the darkest
+  sage).
+- **Fewer background requests.** In output: "export" Next 16 prefetches each
+  visible link with a HEAD request plus its segment files. The plan's twelve
+  step links and the twelve stops on a step page no longer prefetch (a step
+  page loads on the tap); the media-switcher review waits for the restored
+  university instead of network idle when it returns from /plan, where those
+  prefetches could still be in flight.

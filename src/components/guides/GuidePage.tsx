@@ -52,8 +52,13 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
   const note = guide.warn || (id === "tests" ? "У каждого вуза свои окна приёма CEnT-S. Не жди дедлайна подачи — сдай тест заранее, чтобы успеть получить нормализованный балл." : "");
   return <GuideFrame narrow>
     <GuideReadingContext id={helpId} />
-    <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, ...(part ? [{title:guide.title,href:guideHref(id)},{title:part.title}] : [{title:guide.title}])]} />
     <article className={ui.article} data-guide-panel={id} data-guide-current={id} data-guide-part={visaPart} aria-labelledby="guide-title">
+      {/* Owner, 20 Nov (late), with a reference of a grainy sage-to-sand
+          section: «имплементи такого рода текстуру в страницы с гайдами и
+          визой, на которые переходит пользователь после нажатия на иконку».
+          The path and the topic header stand on that band, full width. */}
+      <div className={ui.band} data-guide-band>
+      <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, ...(part ? [{title:guide.title,href:guideHref(id)},{title:part.title}] : [{title:guide.title}])]} />
       <header className={`${ui.articleHeader} ${part ? "" : steps.topicHeader}`}>
         <div>
           <h1 id="guide-title" tabIndex={-1}>{part?.title || guide.title}</h1>
@@ -63,6 +68,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         {/* The topic's own picture is the first thing to paint on a phone. */}
         {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 40vw, 220px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />}
       </header>
+      </div>
       {/* Owner, 12 Nov (Lamossa Studio): facts, the next action, the note and
           the sources as one bento above the steps (GuideOverview.tsx). */}
       {!part && (id === "visa" ? <VisaOverview guide={guide} note={note} /> : <GuideTopicOverview guide={guide} note={note} />)}
