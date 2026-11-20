@@ -24,11 +24,20 @@ export interface BuyProduct {
 
 type Step = "form" | "sending" | "manual";
 
+/* Почта — по желанию (owner, 20 Nov, «Да, давай делай» to the «Не помню код»
+   form): the server sends a lost cabinet code there. Empty is fine; an older
+   server simply ignores the field. */
+const isValidEmail = (value: string) => {
+  const email = value.trim();
+  return !email || (email.length <= 80 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+};
+
 export function BuyModal({ product, onClose }: { product: BuyProduct | null; onClose: () => void }) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const inFlight = useRef(false);
@@ -44,6 +53,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
     setName("");
     setSurname("");
     setPhone("");
+    setEmail("");
     setError(null);
     setCopied(false);
     inFlight.current = false;
@@ -61,6 +71,10 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
       setError("Проверь имя, фамилию и телефон.");
       return;
     }
+    if (!isValidEmail(email)) {
+      setError("Проверь адрес почты или оставь поле пустым.");
+      return;
+    }
 
     setError(null);
     inFlight.current = true;
@@ -72,6 +86,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
         name: name.trim(),
         surname: surname.trim(),
         phone: phone.trim(),
+        ...(email.trim() ? { email: email.trim() } : {}),
       });
       if (!active.current) return;
       if (!result.ok) {
@@ -104,6 +119,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
       name: name.trim(),
       surname: surname.trim(),
       phone: phone.trim(),
+      ...(email.trim() ? { email: email.trim() } : {}),
     });
     if (!active.current) return;
     if (!result.ok) {
@@ -175,6 +191,15 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
                   aria-describedby={error ? "checkout-error" : undefined}
                   className={styles.formInput} />
               </label>
+              <label className="mt-2.5 block">
+                <span className={styles.fieldLabel}>Почта (по желанию)</span>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@mail.com"
+                  type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
+                  aria-invalid={!!error && !isValidEmail(email) || undefined}
+                  aria-describedby={error ? "checkout-error checkout-email-hint" : "checkout-email-hint"}
+                  className={styles.formInput} data-checkout-email />
+              </label>
+              <p id="checkout-email-hint" className="mt-1 text-apple-caption text-cloud-meta">Пришлём сюда код доступа к кабинету, если потеряешь его.</p>
 
               {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-red">{error}</p>}
 

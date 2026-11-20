@@ -77,7 +77,17 @@ npx serve out -l 4321  # посмотреть ровно то, что увиди
    POST /api/chat · /api/check-document · /api/order · /api/lead · /api/event
    GET  /api/portal/:code?surname=
    POST /api/portal/:code/task · /doc · /notify · /delete
+   POST /api/portal/recover            (с 20 ноября, см. ниже)
    ```
+   20 ноября владелец разрешил правку сервера («Да, давай делай») для формы
+   «Не помню код»: `POST /api/portal/recover {surname, phone}` отправляет код
+   в Telegram и на почту самого клиента и всегда отвечает `{ok:true}`; в
+   `/api/order` и `/api/stripe/checkout` появилось необязательное поле
+   `email`. Правка сервера лежит готовым патчем в
+   `docs/backend-patches/2026-11-20-portal-code-recovery.patch` (репозиторий
+   `bashpayy-hash/iitaly`, ветка `claude/gallant-planck-8vhj71`): записи в
+   серверный репозиторий у сессии не было. Сайт работает и без неё — форма
+   отправляет в WhatsApp.
 2. **Тексты, цены и фактуру не менять** без прямой просьбы. Цена
    10 990 ₸ (`PRICE_MAIN` в `src/data/pricing.ts`), стипендия до €7 557,
    43 университета в 30 городах — это данные, а не копирайт.

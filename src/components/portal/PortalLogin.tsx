@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import marketing from "@/components/marketing/marketing.module.css";
 import styles from "./portal-login.module.css";
 import { PAY_WA } from "@/lib/payment";
+import { isValidPhone } from "@/lib/phone";
+import { requestPortalCode } from "@/lib/portalRecovery";
 
 /* Экран входа — в общем стиле сайта: шапка сайта, те же шрифты и цвета,
    акварель кампуса, что и на главной и в самом кабинете. Раньше он жил в
@@ -28,6 +30,73 @@ export function PortalLogin({
   const codeRef = useRef<HTMLInputElement>(null);
   const errorId = useId();
   const hintId = useId();
+  /* «Не помню код» (owner, 20 Nov: «Почему для восстановления пароля он должен
+     писать WhatsApp? У нас нету формы восстановления?» — «Да, давай делай»).
+     The card turns into a recovery form: surname and phone as at payment.
+     The server sends the code to the cabinet's own Telegram and email and
+     answers the same for everyone (src/lib/portalRecovery.ts). WhatsApp stays
+     as the fallback: on an older server, on a network failure, and when
+     nothing arrives. */
+  const [mode, setMode] = useState<"login" | "recover">("login");
+  const [phone, setPhone] = useState("");
+  const [recoverState, setRecoverState] = useState<"idle" | "sending" | "sent" | "manual">("idle");
+  const [recoverError, setRecoverError] = useState<string | null>(null);
+  const recoverInFlight = useRef(false);
+  const recoverSurnameRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const recoverHeadingRef = useRef<HTMLHeadingElement>(null);
+  const recoverStatusRef = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
+  const recoverErrorId = useId();
+  const recoverHintId = useId();
+
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
+    if (mode === "recover") recoverHeadingRef.current?.focus();
+    else codeRef.current?.focus();
+  }, [mode]);
+
+  useEffect(() => {
+    if (recoverState === "sent" || recoverState === "manual") recoverStatusRef.current?.focus();
+  }, [recoverState]);
+
+  function openRecovery() {
+    setLocalError(null);
+    setRecoverError(null);
+    setRecoverState("idle");
+    setMode("recover");
+  }
+
+  async function recover(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (recoverInFlight.current) return;
+    if (surname.trim().length < 2) {
+      setRecoverError("Введи фамилию, как при оплате.");
+      recoverSurnameRef.current?.focus();
+      return;
+    }
+    if (!isValidPhone(phone)) {
+      setRecoverError("Введи телефон, который указывал при оплате.");
+      phoneRef.current?.focus();
+      return;
+    }
+    recoverInFlight.current = true;
+    setRecoverError(null);
+    setRecoverState("sending");
+    try {
+      const result = await requestPortalCode(surname.trim(), phone.trim());
+      if (result.ok) setRecoverState("sent");
+      else if (result.kind === "invalid") { setRecoverError(result.error); setRecoverState("idle"); }
+      else setRecoverState("manual");
+    } finally {
+      recoverInFlight.current = false;
+    }
+  }
+
+  const whatsappText = surname.trim().length >= 2
+    ? `Здравствуйте! Не могу найти код доступа к кабинету IITALY. Фамилия: ${surname.trim()}${phone.trim() ? `, телефон: ${phone.trim()}` : ""}.`
+    : "Здравствуйте! Не могу найти код доступа к кабинету IITALY. Моя фамилия: ";
+  const whatsappHref = `https://wa.me/${PAY_WA}?text=${encodeURIComponent(whatsappText)}`;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -101,6 +170,81 @@ export function PortalLogin({
           </div>
         </div>
 
+        {mode === "recover" ? (
+        <form
+          className={styles.card}
+          onSubmit={recover}
+          noValidate
+          aria-labelledby="portal-recover-heading"
+          aria-busy={recoverState === "sending"}
+          data-fab-yield
+          data-portal-recover
+        >
+          <div>
+            <p className={styles.eyebrow}>Вход</p>
+            <h2 id="portal-recover-heading" ref={recoverHeadingRef} tabIndex={-1} className={styles.cardTitle}>Не помню код</h2>
+            <p id={recoverHintId} className={styles.hint}>Укажи фамилию и телефон, как при оплате. Код придёт в Telegram или на почту, если они подключены к кабинету.</p>
+          </div>
+
+          {recoverState === "sent" || recoverState === "manual" ? (
+            <div ref={recoverStatusRef} tabIndex={-1} role="status" className={styles.notice} data-portal-recover-status={recoverState}>
+              {recoverState === "sent" ? <>
+                <p className={styles.noticeTitle}>Запрос принят</p>
+                <p>Если кабинет с такими фамилией и телефоном есть, код уже в Telegram или на почте, которые к нему подключены. Не пришёл за пару минут&nbsp;— напиши нам, пришлём вручную.</p>
+              </> : <>
+                <p className={styles.noticeTitle}>Пришлём код вручную</p>
+                <p>Отправить код автоматически сейчас не получилось. Напиши нам в WhatsApp: фамилия и телефон уже в сообщении.</p>
+              </>}
+              <a className={styles.whatsapp} href={whatsappHref} target="_blank" rel="noopener noreferrer">Написать в WhatsApp</a>
+            </div>
+          ) : <>
+            <div className={styles.fields}>
+              <label className={styles.field}>
+                <span>Фамилия</span>
+                <input
+                  ref={recoverSurnameRef}
+                  name="surname"
+                  value={surname}
+                  onChange={(event) => {
+                    setSurname(event.target.value);
+                    setRecoverError(null);
+                  }}
+                  placeholder="Как в форме оплаты"
+                  autoComplete="family-name"
+                  aria-invalid={!!recoverError || undefined}
+                  aria-describedby={recoverError ? recoverErrorId : recoverHintId}
+                />
+              </label>
+              <label className={styles.field}>
+                <span>Телефон</span>
+                <input
+                  ref={phoneRef}
+                  name="phone"
+                  type="tel"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(event) => {
+                    setPhone(event.target.value);
+                    setRecoverError(null);
+                  }}
+                  placeholder="+7 777 123 45 67"
+                  autoComplete="tel"
+                  aria-invalid={!!recoverError || undefined}
+                  aria-describedby={recoverError ? recoverErrorId : recoverHintId}
+                />
+              </label>
+            </div>
+            {recoverError && <p id={recoverErrorId} role="alert" className={styles.error}>{recoverError}</p>}
+            <button type="submit" className={styles.submit} disabled={recoverState === "sending"}>
+              {recoverState === "sending" ? "Отправляю…" : "Прислать код"}
+            </button>
+          </>}
+          <p className={styles.foot}>
+            Код нашёлся?{" "}
+            <button type="button" className={styles.textButton} onClick={() => setMode("login")} data-portal-recover-back>Ввести код</button>
+          </p>
+        </form>
+        ) : (
         <form
           className={styles.card}
           onSubmit={submit}
@@ -158,17 +302,17 @@ export function PortalLogin({
           </button>
           {/* Owner, 14 Nov 2026 («исправь все неточности», after the uxaudit
              pass): the only way out of this form was «Посмотреть тарифы», which
-             reads as «pay again» to someone who paid and lost the code. The
-             code is issued by hand after payment, so the honest recovery is
-             the same WhatsApp the payment flow already uses. */}
+             reads as «pay again» to someone who paid and lost the code. Since
+             20 Nov the way back is the recovery form above, not WhatsApp. */}
           <p className={styles.foot}>
             Не помню код —{" "}
-            <a href={`https://wa.me/${PAY_WA}?text=${encodeURIComponent("Здравствуйте! Не могу найти код доступа к кабинету IITALY. Моя фамилия: ")}`} target="_blank" rel="noopener noreferrer">написать в WhatsApp</a>
+            <button type="button" className={styles.textButton} onClick={openRecovery} data-portal-recover-open>восстановить</button>
           </p>
           <p className={styles.foot}>
             Ещё нет кода? <Link href="/prices">Посмотреть тарифы</Link>
           </p>
         </form>
+        )}
       </div>
     </section>
     </main>

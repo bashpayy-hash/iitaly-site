@@ -36,6 +36,9 @@ try {
     const context = await browser.newContext({ viewport: { width, height: 1000 }, locale: 'ru-RU', reducedMotion: 'reduce' });
     const errors = [];
     const auth = [];
+    const recovery = [];
+    // 360 px plays an older server without the route: the form must fall back to WhatsApp.
+    const recoveryRoute = width !== 360;
     let acceptLogin = false;
     await context.route('**/*', async (route) => {
       const url = new URL(route.request().url());
@@ -51,6 +54,13 @@ try {
           done: {}, docs: {}, progress: { done: 0, total: 1, pct: 0 },
         }) });
         return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ ok: false, error: 'Тестовая ошибка входа' }) });
+      }
+      if (url.pathname === '/api/portal/recover') {
+        assert.equal(route.request().method(), 'POST');
+        recovery.push(route.request().postDataJSON());
+        await new Promise((done) => setTimeout(done, 150));
+        if (!recoveryRoute) return route.fulfill({ status: 404, contentType: 'text/html', body: '<!DOCTYPE html><pre>Cannot POST /api/portal/recover</pre>' });
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
       }
       if (['127.0.0.1', 'localhost'].includes(url.hostname) || url.protocol === 'data:') return route.continue();
       return route.abort(); // Never call production auth, payment, analytics or other external services.
@@ -99,13 +109,52 @@ try {
     assert.deepEqual(auth[0], { code: 'ABCD-1234', surname: 'Login Test' });
     assert.equal(await code.inputValue(), ' abcd-1234 ', 'Errors must retain entered values');
     await page.screenshot({ path: resolve(output, `login-error-${width}.png`), fullPage: true, animations: 'disabled' });
+
+    // «Не помню код» (owner, 20 Nov): the card turns into a recovery form. The
+    // code never reaches the browser; WhatsApp stays as the fallback.
+    assert.equal(await form.getByRole('link', { name: /WhatsApp/ }).count(), 0, 'The login card no longer sends people to WhatsApp first');
+    await form.getByRole('button', { name: 'восстановить', exact: true }).click();
+    const recoverForm = page.locator('form[aria-labelledby="portal-recover-heading"]');
+    await recoverForm.waitFor();
+    assert(await page.locator('#portal-recover-heading').evaluate((el) => document.activeElement === el), 'Focus moves to the recovery heading');
+    const recoverSurname = recoverForm.getByLabel('Фамилия', { exact: true });
+    const recoverPhone = recoverForm.getByLabel('Телефон', { exact: true });
+    assert.equal(await recoverSurname.inputValue(), '  Login Test  ', 'The surname carries over from the login card');
+    assert.equal(await recoverPhone.getAttribute('type'), 'tel');
+    const send = recoverForm.getByRole('button', { name: 'Прислать код', exact: true });
+    assert((await send.boundingBox()).height >= 44);
+    await send.click();
+    assert.match(await recoverForm.getByRole('alert').innerText(), /телефон/);
+    assert.equal(recovery.length, 0, 'An empty phone never reaches the server');
+    assert(await recoverPhone.evaluate((el) => document.activeElement === el));
+    await recoverPhone.fill('+7 700 000 00 01');
+    await recoverPhone.press('Enter');
+    const status = recoverForm.locator('[data-portal-recover-status]');
+    await status.waitFor();
+    assert.deepEqual(recovery, [{ surname: 'Login Test', phone: '+7 700 000 00 01' }]);
+    assert.equal(await status.getAttribute('data-portal-recover-status'), recoveryRoute ? 'sent' : 'manual');
+    assert.equal(await status.getAttribute('role'), 'status');
+    assert(await status.evaluate((el) => document.activeElement === el), 'Focus moves to the result');
+    assert.doesNotMatch(await status.innerText(), /ABCD|Код:/, 'The page never shows a code');
+    const whatsapp = status.getByRole('link', { name: 'Написать в WhatsApp', exact: true });
+    const waHref = decodeURIComponent(await whatsapp.getAttribute('href'));
+    assert.match(waHref, /^https:\/\/wa\.me\/\d+\?text=/);
+    assert.match(waHref, /Фамилия: Login Test, телефон: \+7 700 000 00 01/);
+    assert((await whatsapp.boundingBox()).height >= 44);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, `Recovery overflow at ${width}px`);
+    await page.screenshot({ path: resolve(output, `recover-${width}.png`), fullPage: true, animations: 'disabled' });
+    await recoverForm.getByRole('button', { name: 'Ввести код', exact: true }).click();
+    await form.waitFor();
+    assert(await code.evaluate((el) => document.activeElement === el), 'Back on the login card, focus is on the code');
+    assert.equal(await code.inputValue(), ' abcd-1234 ', 'Switching cards keeps what was typed');
+
     acceptLogin = true;
     await submit.click();
     await page.locator('[data-portal-login]').waitFor({ state: 'detached' });
     assert.equal(auth.length, 2);
     assert.equal(await page.evaluate(() => localStorage.getItem('iitaly_portal_code')), 'ABCD-1234');
     assert.deepEqual(errors, [], 'No runtime or hydration errors');
-    results.push({ width, passed: true, checks: 'approved image decoded, no overflow, form validation, Enter, one in-flight request, error recovery, fixture-only successful login' });
+    results.push({ width, passed: true, checks: `approved image decoded, no overflow, form validation, Enter, one in-flight request, error recovery, code recovery (${recoveryRoute ? 'sent' : 'older server → WhatsApp'}), fixture-only successful login` });
     await context.close();
   }
   console.log(JSON.stringify(results, null, 2));
