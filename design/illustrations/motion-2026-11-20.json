@@ -1,0 +1,49 @@
+{
+ "date": "2026-11-20",
+ "request": "Owner, /portal screenshot of the cabinet «Сейчас» scene: «вот это пространство, оно как-то становится мыльным, и это нужно тоже исправить»; then «удостоверься, что на мобильной версии всё будет не лагать… чтобы анимации запускались сразу».",
+ "diagnosis": "The ride came from a 1024 px still and a 1080p video, scaled to 2400; the poster was a frame of that video, and the loop ran at 1.75 Mbit/s for 1600 px and 3.65 Mbit/s for 2400 px. When the loop took over from the poster, the whole landscape went soft and blocky. Only 8–17 % of each frame actually moves (Vespi, the dust, some grass); the camera is still (median difference to the poster 2.7/255).",
+ "fix": [
+  "Upscaled the 2400 poster with Higgsfield (bytedance_image_upscale, 4k, job db4466d9-3a72-468c-a338-7ed1d4a0ab16, source imported from the live poster) and brought it back to 2400 × 1810 (Lanczos); it lines up with the video (low-pass difference 1.17/255).",
+  "For each frame, motion is measured against the old soft poster (so the upscale's extra detail is not taken for motion): mean absolute difference at quarter size, blur 1, threshold 13, held over ±3 frames around the loop, dilated (max 9) and feathered (blur 5). Mean coverage 16.7 %. Where it is 0 the frame is the sharp still; where it is 1 the frame is the video; in between a soft blend.",
+  "Encoded from one composite pass: x264 slow, CRF 21 / 22 / 25 at 2400 / 1600 / 960, one keyframe at the restart (keyint 400, scenecut 0), BT.709 tags, faststart; VP9 960 CRF 36, g 400. Same 252 frames and timing, so startAt stays 105.5/30.",
+  "Posters landscapes/tuscany-{960,1600,2400}.webp are composite frame 105 (where the loop starts), WebP q82, so the handover from the picture to the loop is invisible and both are sharp."
+ ],
+ "sizes": "2400: 3.84 → 4.09 MB; 1600: 1.84 → 2.08 MB; 960: 0.50 → 0.55 MB; 960 webm: 0.49 → 0.40 MB; posters 402/220/110 KB → 324/192/91 KB.",
+ "files": [
+  {
+   "file": "public/illustrations/motion/tuscany-ride-2400.mp4",
+   "bytes": 4087977,
+   "sha256": "2b0c81b78cda62dec47e0a4558470b67cda1bc7ded992ddee92932d8e1983f38"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-1600.mp4",
+   "bytes": 2080868,
+   "sha256": "e44cad914940a6b36e701c97535788334daa46aef007e29a83504d51f3625dc5"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-960.mp4",
+   "bytes": 545107,
+   "sha256": "7022a16e40bc5b22574502d614b0eaedd364a50b3a18e9b04ba1c04bac512a75"
+  },
+  {
+   "file": "public/illustrations/motion/tuscany-ride-960.webm",
+   "bytes": 404045,
+   "sha256": "875bd9ca9d87267defe34db8c6a5912f4f4057613b7cfd750766def8c1d29d46"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-2400.webp",
+   "bytes": 324206,
+   "sha256": "cb349833d5fe00ca6c1c8e9b80aeadeddfcd0b166888215173b51fc5c04aa439"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-1600.webp",
+   "bytes": 192410,
+   "sha256": "dd99e363c164b7507cc92b45ddbba1d3bed6cff80604bcd7d18b00f35b5b44c2"
+  },
+  {
+   "file": "public/illustrations/landscapes/tuscany-960.webp",
+   "bytes": 90812,
+   "sha256": "292dcf28e3b667279a03e83bf5464e60bd1bc28ec6d84e7ece79837b1ebcb0f0"
+  }
+ ]
+}

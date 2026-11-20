@@ -2344,3 +2344,37 @@ questionnaire were the last ones beside the Galleria cartouches.
   proportions, about a third of the fountain's height. He stands with his
   back to the water and tosses the coin over his shoulder; its arc ends in
   the basin. Same frame size, grey copy for the closed part of the road.
+
+## The document check gets its own page; Trevi natural; the Tuscan ride sharp · 20 November 2026
+
+- **/check.** «Почему здесь сверху всё ещё стоит вот эта иллюстрация, для
+  проверки документов должна быть отдельная страница».
+  - The document check now lives on its own page, with its own cover:
+    Vespi checks a document with a magnifying glass in a loggia with
+    Florence behind.
+  - The heading, «Проверь документ перед подачей», stands left over a
+    cream wash. On a phone it comes first and the scene follows as a
+    picture.
+  - /plan keeps the questionnaire. «Проверить документ» in its tool row
+    links to /check.
+  - Old links to /plan#document-check move there. Every public button
+    now points at /check.
+- **Trevi.** «Ещё странно. Сделай более natural, ты по пропорциям улетел
+  не туда». The fountain is drawn at its true grand scale: a wide
+  travertine palace front, columns, the central niche with rock-work and a
+  broad pool. Vespi is small beside it, like a visitor. He sits on the rim
+  with his back to the water and flips a coin over his shoulder; ripples
+  show where the last one fell.
+- **Cabinet «Сейчас», the Tuscan ride.** «Это пространство становится
+  мыльным».
+  - The cause: the loop came from a 1024 px still and a 1080p video,
+    scaled to 2400 and compressed hard. When it took over from its
+    picture, the whole landscape went soft.
+  - The fix: the picture was upscaled to 4k in Higgsfield, and the loop
+    now takes only what moves (Vespi, the dust, some grass: about 17 % of
+    the frame) from the video. Everything else stays the sharp picture.
+  - The files are about the same size. The phone's WebM is lighter.
+  - Details: design/illustrations/motion-2026-11-20.json.
+- **Loops start sooner.** «Чтобы анимации запускались сразу». A scene on
+  the first screen asks for its loop together with its picture, not after
+  it.

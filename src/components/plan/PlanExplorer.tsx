@@ -1,13 +1,12 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { WIZ, type WizAnswers } from "@/data/wizard";
 import { buildPlan } from "@/lib/planBuilder";
 import { EMPTY_PLAN_DRAFT, usePlanDraft } from "@/lib/usePlanDraft";
-import { DocCheck } from "./DocCheck";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
 import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
@@ -18,29 +17,47 @@ import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 
-const subscribeTool = (listener: () => void) => {
-  window.addEventListener("hashchange", listener);
-  window.addEventListener("popstate", listener);
-  return () => { window.removeEventListener("hashchange", listener); window.removeEventListener("popstate", listener); };
-};
-const currentTool = () => window.location.hash === "#document-check" ? "document-check" : "questionnaire";
+/* The university chosen in the catalogue, above both free tools (the plan and,
+   since 20 Nov, the separate document check page /check). */
+export function PlanUniversityContext() {
+  const { primary } = useUniversityChoice();
+  if (!primary) return null;
+  return <>
+    <div className={workspace.universityChoice} data-plan-university={primary.id}>
+      <p><span>Основной вуз</span><strong>{primary.name}</strong></p>
+      <Link href="/universities#compare-universities">Изменить выбор</Link>
+    </div>
+    <details className={workspace.selectedContext} data-plan-university-context>
+      <summary className={disclosure.row}>Условия {primary.name}</summary>
+      <dl><div><dt>Экзамен / отбор</dt><dd>{primary.test}</dd></div><div><dt>Подача · по базе</dt><dd>{primary.dl}</dd></div><div><dt>Стоимость в год</dt><dd>{primary.tu}</dd></div></dl>
+      <p>Это контекст выбранного вуза. Персональные шаги ниже формируются по твоим ответам; условия конкретной программы нужно сверить.</p>
+    </details>
+  </>;
+}
+
+/* Owner, 20 Nov, on /plan#document-check under the plan's loggia cover:
+   «почему здесь сверху всё ещё стоит вот эта иллюстрация, для проверки
+   документов должна быть отдельная страница». The two free tools are two
+   pages now; this row links them. */
+export function PlanToolNav({ current }: { current: "plan" | "check" }) {
+  return <nav className={workspace.toolNav} aria-label="Бесплатные инструменты">
+    <Link href="/plan#questionnaire" aria-current={current === "plan" ? "page" : undefined}>Составить план</Link>
+    <Link href="/check" aria-current={current === "check" ? "page" : undefined} data-check-page-link>Проверить документ</Link>
+  </nav>;
+}
 
 export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
-  const { primary } = useUniversityChoice();
-  const tool = useSyncExternalStore(subscribeTool, currentTool, () => "questionnaire");
   const plan = draft.complete ? buildPlan(draft.answers) : null;
 
-  // Owner, 14 Nov 2026 (uxaudit re-run, «исправь все неточности»): «Проверить
-  // документ» on the home page lands here with #document-check, but the block is
-  // hidden until the hash is read on the client, so the browser has nothing to
-  // scroll to and the visitor sees the loggia cover with the uploader 866 px
-  // below. Once the document tool is shown for that hash, bring it into view.
+  // The document check has its own page since 20 Nov. Old links and
+  // bookmarks to /plan#document-check land there.
   useEffect(() => {
-    if (tool !== "document-check" || window.location.hash !== "#document-check") return;
-    const frame = requestAnimationFrame(() => revealElement(document.getElementById("document-check"), "start"));
-    return () => cancelAnimationFrame(frame);
-  }, [tool]);
+    const move = () => { if (window.location.hash === "#document-check") window.location.replace("/check"); };
+    move();
+    window.addEventListener("hashchange", move);
+    return () => window.removeEventListener("hashchange", move);
+  }, []);
 
   function focusPlan() {
     requestAnimationFrame(() => {
@@ -91,21 +108,10 @@ export function PlanExplorer() {
       </section>
 
       <section className={workspace.tools} data-public-paper-zone="plan-tools">
-        {primary && <div className={workspace.universityChoice} data-plan-university={primary.id}>
-          <p><span>Основной вуз</span><strong>{primary.name}</strong></p>
-          <Link href="/universities#compare-universities">Изменить выбор</Link>
-        </div>}
-        {primary && <details className={workspace.selectedContext} data-plan-university-context>
-          <summary className={disclosure.row}>Условия {primary.name}</summary>
-          <dl><div><dt>Экзамен / отбор</dt><dd>{primary.test}</dd></div><div><dt>Подача · по базе</dt><dd>{primary.dl}</dd></div><div><dt>Стоимость в год</dt><dd>{primary.tu}</dd></div></dl>
-          <p>Это контекст выбранного вуза. Персональные шаги ниже формируются по твоим ответам; условия конкретной программы нужно сверить.</p>
-        </details>}
-        <nav className={workspace.toolNav} aria-label="Бесплатные инструменты">
-          <a href="#questionnaire" aria-current={tool === "questionnaire" ? "page" : undefined}>Составить план</a>
-          <a href="#document-check" aria-current={tool === "document-check" ? "page" : undefined}>Проверить документ</a>
-        </nav>
+        <PlanUniversityContext />
+        <PlanToolNav current="plan" />
         <div className={styles.planWorkspace}>
-          <div id="questionnaire" hidden={tool !== "questionnaire"} tabIndex={-1} className={workspace.questionnaire}>
+          <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />
             <div className={workspace.heading}>
               <h2>Твой план поступления</h2>
@@ -122,10 +128,6 @@ export function PlanExplorer() {
               <p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p>
               {Object.keys(draft.answers).length > 0 && <button type="button" className="min-h-11 underline underline-offset-4" onClick={() => { updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }}>Начать заново</button>}
             </div>}
-          </div>
-          <div id="document-check" hidden={tool !== "document-check"} className={workspace.document}>
-            <GuidePlanContext target="document" />
-            <DocCheck />
           </div>
         </div>
       </section>

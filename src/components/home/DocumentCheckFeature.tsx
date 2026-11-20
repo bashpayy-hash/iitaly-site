@@ -76,7 +76,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
         <div className={styles.ctaCopy}>
           <p className={styles.ctaTitle}>Проверь один документ бесплатно</p>
           <p className={styles.ctaText}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>
-          <AppleButtonLink href="/plan#document-check" className={styles.ctaButton}>Проверить документ</AppleButtonLink>
+          <AppleButtonLink href="/check" className={styles.ctaButton}>Проверить документ</AppleButtonLink>
         </div>
         <img className={styles.ctaArt} src={CTA_ART.src} srcSet={CTA_ART.srcSet} sizes="(max-width: 767px) 64px, 260px" width={CTA_ART.width} height={CTA_ART.height} alt="" loading="lazy" decoding="async" draggable={false} data-document-check-art />
       </BentoCell>}

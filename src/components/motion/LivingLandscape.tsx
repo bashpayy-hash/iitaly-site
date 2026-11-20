@@ -103,6 +103,7 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     const frameCallback = typeof node.requestVideoFrameCallback === "function";
     const box = node.getBoundingClientRect();
     let visible = box.bottom > 0 && box.top < window.innerHeight;
+    const firstScreen = visible;
     let armed = false, shown = false, running = false, handle = 0;
 
     const draw = () => context.drawImage(node, 0, 0, paint.width, paint.height);
@@ -151,7 +152,11 @@ export function LivingLandscape({ base, className = "", label, widths = [640, 12
     const load = () => {
       if (armed) return;
       armed = true;
-      if (document.readyState === "complete" || !poster || (poster.complete && poster.naturalWidth > 0)) { requestOnce(); return; }
+      // Owner, 20 Nov: «чтобы анимации запускались сразу». A scene on the
+      // first screen asks for its loop together with its picture instead of
+      // after it: the picture shows at once either way, and the loop is ready
+      // a picture-load sooner. Scenes further down still wait for theirs.
+      if (firstScreen || document.readyState === "complete" || !poster || (poster.complete && poster.naturalWidth > 0)) { requestOnce(); return; }
       poster.addEventListener("load", requestOnce, { once: true });
       poster.addEventListener("error", requestOnce, { once: true });
       window.addEventListener("load", requestOnce, { once: true });
