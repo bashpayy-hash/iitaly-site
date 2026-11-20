@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
 import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
+import { AppleButton } from "@/components/apple/Button";
 import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import { DocCheck } from "./DocCheck";
@@ -15,6 +16,35 @@ import check from "./check-page.module.css";
    cover is its own scene: Vespi checking a certificate through a magnifying
    glass in a loggia with Florence behind (design/illustrations/scenes-2026-11-20.json).
    The heading says only what the home section already says. */
+/* CRO audit (owner, 20 Nov: «делай тогда те самые 5 правок»). Whoever tapped
+   «Проверить документ» landed on a heading and a picture: the upload began
+   1.9 screens down on a phone and below the fold on a laptop. The first screen
+   now carries the action. It opens the same file picker as the form below (one
+   input, one state) and then brings the chosen file and «Проверить документ»
+   into view; while the service is still being checked it just scrolls there. */
+function UploadNow() {
+  function choose() {
+    const zone = document.getElementById("document-check");
+    const input = zone?.querySelector<HTMLInputElement>('input[type="file"]');
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!zone || !input || input.disabled) {
+      zone?.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
+      return;
+    }
+    input.addEventListener("change", () => {
+      window.setTimeout(() => {
+        const run = [...zone.querySelectorAll("button")].find(button => /Проверить документ/.test(button.textContent || ""));
+        (run ?? zone).scrollIntoView({ block: "center", behavior: smooth ? "smooth" : "auto" });
+      }, 200);
+    }, { once: true });
+    input.click();
+  }
+  return <div className="mt-6" data-check-upload-now>
+    <AppleButton type="button" variant="filled" onClick={choose} className="max-sm:w-full">Загрузить документ</AppleButton>
+    <p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Фото, PDF или Word · первая проверка бесплатно</p>
+  </div>;
+}
+
 export function DocumentCheckPage() {
   return (
     <>
@@ -36,6 +66,7 @@ export function DocumentCheckPage() {
               Справка, перевод, выписка или аттестат: ИИ сверит их с требованиями твоего вуза, DSU и визы
               на твой учебный год, обычно за 10–30 секунд. Первая проверка бесплатно, без регистрации.
             </p>
+            <UploadNow />
           </div>
         </div>
       </section>

@@ -343,7 +343,11 @@ try {
     if (!baseline) {
       const explanation = page.locator('[data-vespi-question-reason]');
       assert(await explanation.isVisible(), 'Each question gives a short reason');
-      assert.match(await explanation.innerText(), /аттестат|лет|образован|допуск/i, 'Education context explains why the qualification matters');
+      // CRO audit (owner, 20 Nov): one short line stays visible, the longer
+      // reason is one tap away behind «Зачем спрашиваю».
+      const why = page.locator('[data-question-why]');
+      assert.equal(await why.count(), 1, 'The longer reason is behind «Зачем спрашиваю»');
+      assert.match(`${await explanation.innerText()} ${await why.textContent()}`, /аттестат|лет|образован|допуск/i, 'Education context explains why the qualification matters');
       await noLegacyPortraits(page.locator('[data-plan-question]'), `plan questionnaire ${width}`);
     }
     await capture('plan-question');

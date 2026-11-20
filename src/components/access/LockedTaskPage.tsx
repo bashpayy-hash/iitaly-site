@@ -5,6 +5,7 @@ import { TASK_META } from "@/lib/portalMeta";
 import { taskDate, taskExplanation, taskTitle } from "@/lib/portalNavigation";
 import { PortalBreadcrumbs, usePortalPageFocus } from "@/components/portal/PortalPageNavigation";
 import styles from "@/components/portal/portal-pages.module.css";
+import { RISK_LINE } from "./offerCopy";
 import { useWallPurchase } from "./useWallPurchase";
 
 /* Страница закрытого шага локального профиля (owner, 5 Nov: без новых
@@ -30,6 +31,8 @@ export function LockedTaskPage({ task, stage, teaser }: { task: PortalTask; stag
           <button type="button" className={styles.primary} data-wall-buy data-wall-place="portal-task" aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button>
           <a className={styles.quietLink} href="/prices#main-package">Что входит и возврат 7 дней</a>
         </div>
+        {/* CRO audit (owner, 20 Nov): the same risk line as on the plan. */}
+        <p className={styles.note} data-wall-risk>{RISK_LINE}</p>
       </div>
     </div>
     {wall.modal}

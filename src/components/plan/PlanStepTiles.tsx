@@ -7,7 +7,9 @@ import styles from "./plan-step-tiles.module.css";
 import { Lock } from "lucide-react";
 import { revealElement } from "@/components/motion/scroll";
 
-export type PlanTileStep = { title: string; line: string; locked?: boolean };
+/** `title` is what the tile shows; `kind` (the builder's own title) picks the
+ *  phase and the cartouche, so a reworded title keeps its group and art. */
+export type PlanTileStep = { title: string; kind?: string; line: string; locked?: boolean };
 
 /* Шаги плана — хронология (owner, 6 Nov, ночь: «по итогу уже хорошо, но
    нужно ещё нагляднее, в хронологическом порядке»). Раньше — сетка 2×N в
@@ -40,7 +42,7 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
   // Consecutive steps of one stage form a group; the builder's order is kept.
   const groups: { phase: string; from: number; items: number[] }[] = [];
   steps.forEach((step, position) => {
-    const phase = planStepPhase(step.title);
+    const phase = planStepPhase(step.kind ?? step.title);
     const last = groups[groups.length - 1];
     if (last && last.phase === phase) last.items.push(position);
     else groups.push({ phase, from: position, items: [position] });
@@ -55,7 +57,7 @@ export function PlanStepTiles({ steps, index, href, onSelect, label = "Шаги 
             {group.items.map(position => {
               const step = steps[position];
               const selected = position === index;
-              const { label: eyebrow, art, frame } = planStepArt(step.title);
+              const { label: eyebrow, art, frame } = planStepArt(step.kind ?? step.title);
               return <li key={position} className={styles.tile} data-plan-step-tile={position + 1} data-plan-step-locked={step.locked || undefined} data-flight-selected={selected} data-art={art}>
                 <span className={styles.stop} aria-hidden="true" data-plan-stop={position + 1}>{position + 1}</span>
                 <a className={styles.open} href={href(position)} data-flight-stop={position} aria-current={selected ? "step" : undefined} aria-expanded={selected}

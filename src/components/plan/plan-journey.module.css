@@ -6,3 +6,12 @@
 .reminders { margin-top:20px; padding-block:8px; border-block:1px solid #DCD3C3; }.reminders summary { min-height:44px; padding-block:10px; font-size:16px; font-weight:500; cursor:pointer; }.reminders[open] { padding-bottom:20px; }
 
 .ready { max-width:60ch; margin:0; font-size:16px; line-height:1.55; color:var(--color-cloud-body); text-wrap:pretty; }
+/* CRO audit (20 Nov): the offer on the plan result, before payment. */
+.offer { margin-top:20px; padding:20px 22px; border:1px solid #E2D9CB; border-radius:20px; background:#FFFDF9; }
+.offerTitle { margin:0; color:var(--color-cloud-white, #141413); font-size:17px; font-weight:600; line-height:1.35; text-wrap:balance; }
+.offerList { display:grid; gap:6px; margin:12px 0 0; padding:0; list-style:none; color:var(--color-cloud-body); font-size:15px; line-height:1.45; }
+.offerList li { position:relative; padding-left:22px; }
+.offerList li::before { content:""; position:absolute; left:2px; top:.5em; width:10px; height:6px; border-left:2px solid #2F6B4F; border-bottom:2px solid #2F6B4F; transform:rotate(-45deg); }
+.offerActions { display:flex; flex-wrap:wrap; gap:10px 12px; margin-top:16px; }
+.offerRisk { margin:10px 0 0; color:#6B655E; font-size:13px; line-height:1.5; text-wrap:pretty; }
+@media (max-width:639px) { .offer { padding:18px 16px; border-radius:18px; } .offerActions { flex-direction:column; } }
