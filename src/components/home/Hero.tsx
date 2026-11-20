@@ -6,6 +6,7 @@ import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import Link from "next/link";
 import { TermHint } from "@/components/ui/PlainTerms";
 import assistant from "./home-assistant.module.css";
+import { HERO_TRUST_LINE } from "@/components/access/offerCopy";
 
 /* Первый экран — welcome (owner, 4 Nov): Веспи в аркаде Болоньи в вечернем
    свете; поверх кадра — видеопетля той же сцены, как у пейзажей кабинета и
@@ -34,8 +35,13 @@ export function Hero() {
           <LivingLandscape className={styles.heroLandscape} base="/illustrations/motion/bologna-cafe" label="bologna-cafe" widths={[960, 1600, 2400]} webmWidths={[960]} startAt={24.5 / 30} />
         </div>
         <div className={`${styles.heroCopy} ${assistant.heroCopy} ${styles.heroPanel}`} data-hero-panel>
-          <h1 className={styles.heroTitle}>Твоё будущее.<br /><span>Теперь в Италии.</span></h1>
-          <p className={styles.heroDescription}>Подбор вузов, документы, стипендия <TermHint term="DSU">DSU</TermHint> и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
+          {/* CRO audit (owner, 20 Nov: «делай тогда те самые 5 правок»). A cold
+              visitor from an ad could not tell in five seconds what this is
+              («Твоё будущее. Теперь в Италии.» — agency? study? travel?). The
+              heading now names the job and the difference; the line under the
+              buttons takes the risk away with facts the site already states. */}
+          <h1 className={styles.heroTitle}>Поступление в&nbsp;Италию<br /><span>без агентства.</span></h1>
+          <p className={styles.heroDescription}>Из Казахстана: подбор вузов, документы, стипендия <TermHint term="DSU">DSU</TermHint> и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <div className={assistant.entryActions}>
             {/* Owner, 6 Nov: «проверка документов — главная фишка сайта»:
                 она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}
@@ -46,6 +52,7 @@ export function Hero() {
             <div className={assistant.entryAlternatives}>
               <Link href="/universities">Смотреть университеты</Link>
             </div>
+            <p className={assistant.entryTrust} data-hero-trust data-fab-yield>{HERO_TRUST_LINE}</p>
           </div>
         </div>
       </div>

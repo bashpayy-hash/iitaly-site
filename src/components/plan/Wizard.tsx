@@ -5,7 +5,6 @@ import { WIZ, type WizAnswers } from "@/data/wizard";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
-import { AssessmentTransition, useAssessmentTransition } from "./AssessmentTransition";
 import { AppleButton } from "@/components/apple/Button";
 import type { PlanDraft } from "@/lib/usePlanDraft";
 import { Check } from "lucide-react";
@@ -16,6 +15,7 @@ import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuCh
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { PlainTermNotes } from "@/components/ui/PlainTerms";
+import { displayStepTitle } from "@/lib/portalNavigation";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -29,7 +29,10 @@ function ruPlural(n: number, one: string, few: string, many: string): string {
 
 export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onDraftChange: (draft: PlanDraft) => void; onDone: (answers: WizAnswers) => void }) {
   const { step, answers } = draft;
-  const { preparing, begin, finish: finishTransition } = useAssessmentTransition();
+  /* CRO audit (owner, 20 Nov: «делай тогда те самые 5 правок»): after the last
+     answer the 1.2 s «Ответы собраны. Переходим к плану» hand-off stood
+     between the student and the result. The preview opens at once; the cabinet
+     assessment keeps its own transition. */
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -40,7 +43,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   const finished = step >= WIZ.length;
 
   useEffect(() => {
-    if (!stepChanged.current || preparing) return;
+    if (!stepChanged.current) return;
     const live = liveRef.current;
     live?.focus({ preventScroll: true });
     // A question tile can be taller than a phone screen: if its title went
@@ -48,7 +51,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
     // gliding (motion pass, 5 Nov), not thrown.
     if (live) revealElement(live, live.getBoundingClientRect().top < 96 ? "start" : "nearest");
     stepChanged.current = false;
-  }, [step, preparing]);
+  }, [step]);
 
   // Реальный превью того же движка, что строит финальный план (buildPlan) —
   // не отдельная выдуманная "заглушка ради демо-эффекта". Показываем его
@@ -69,7 +72,6 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   function choose(id: string, value: string) {
     stepChanged.current = true;
     if (step === 0) track("plan_started");
-    if (step + 1 === WIZ.length) begin();
     onDraftChange({ answers: { ...answers, [id]: value }, step: step + 1, complete: false });
     track("wiz_step", { s: id });
     track("plan_step_completed", { step: step, of: WIZ.length });
@@ -109,15 +111,15 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           скринридера остаётся невидимый progressbar. */}
       <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
 
-      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={preparing || finished ? styles.panel : styles.stage} data-fab-yield>
-        {preparing ? <AssessmentTransition onSkip={finishTransition} /> : finished ? (
+      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={finished ? styles.panel : styles.stage} data-fab-yield>
+        {finished ? (
           <>
             {preview && (
               <div className="mb-6 rounded-apple-card border border-white/15 bg-frost p-4">
                 <p className="text-[13px] font-semibold text-crimson">
                   Уже готово по твоим ответам
                 </p>
-                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0]?.t}</p>
+                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0] && displayStepTitle(preview.steps[0].t)}</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.summary || preview.steps[0]?.p}</p>
                 {preview.steps[0]?.action && <p className="mt-3 text-apple-body-sm text-cloud-white">{preview.steps[0].action}</p>}
                 <p className="mt-2 text-apple-caption text-cloud-meta">
@@ -198,7 +200,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
       <div className="mt-4 flex items-center justify-between">
         <button
           type="button"
-          onClick={() => { finishTransition(); stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
+          onClick={() => { stepChanged.current = true; onDraftChange({ ...draft, step: Math.max(0, step - 1) }); }}
           className={`min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white ${step > 0 ? "visible" : "invisible"}`}
         >
           Назад
@@ -256,9 +258,16 @@ function WizStep({
       <div className={styles.questionHead} data-plan-question={question.id}>
         <p className={styles.questionStep} data-plan-step>Вопрос {index + 1} из {total} · {STEP_TITLES[question.id] || question.q}</p>
         <h2>{question.q}</h2>
+        {/* CRO audit (20 Nov): about 520 words across ten questions took the
+            whole two minutes a cold visitor gives the site. One short line
+            stays; why the question matters is one tap away. */}
         <p className={styles.questionReason} data-vespi-question-reason>
-          {question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}
+          {question.hint ? <>{question.hint}.</> : QUESTION_CONTEXT[question.id]}
         </p>
+        {question.hint && QUESTION_CONTEXT[question.id] && <details className={styles.questionWhy} data-question-why>
+          <summary>Зачем спрашиваю</summary>
+          <p>{QUESTION_CONTEXT[question.id]}</p>
+        </details>}
       </div>
       <div className={styles.options} ref={optionsRef} data-dsu-checked={dsu && known ? "" : undefined}>
         {!dsu ? question.opts.map(o => option(o))

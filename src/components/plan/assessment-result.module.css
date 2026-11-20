@@ -84,3 +84,11 @@
 
 /* Owner, 14 Nov 2026 («пометка закрыт исправь»): a locked step reads a lock and «с маршрутом», as on the guides band, not «· закрыт» next to «Открыть шаг». */
 .lockGlyph { display:inline-block; margin:0 1px 0 0; vertical-align:-1px; }
+/* CRO audit (20 Nov): on a locked step the purchase is the one action —
+   «Назад» and «Далее» lose their outline and read as quiet links, and the
+   risk line stands under the button. */
+.step[data-step-locked] .stepActions>button:first-child,
+.step[data-step-locked] .stepActions .quietNext{box-shadow:none;background:transparent;color:#57514B;padding-inline:10px;text-decoration:underline;text-decoration-color:#C9C1B6;text-underline-offset:4px}
+@media (hover: hover) and (pointer: fine) { .step[data-step-locked] .stepActions>button:first-child:not(:disabled):hover,.step[data-step-locked] .stepActions .quietNext:hover{background:transparent;color:#241F1C;text-decoration-color:currentColor} }
+.wallRisk{margin:10px 0 0;color:#6B655E;font-size:13px;line-height:1.5;text-align:right;text-wrap:pretty}
+@media(max-width:600px){.step[data-step-locked] .stepGroup{flex-direction:column;align-items:stretch}.step[data-step-locked] .stepGroup>*{flex:none}.wallRisk{text-align:center}}

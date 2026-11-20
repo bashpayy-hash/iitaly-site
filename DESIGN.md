@@ -2521,3 +2521,43 @@ The owner on the dark band: «там пустовато, добавь иллюс
 - `design-review` checks: decorative, 30 lights, cropped by the band rather
   than stretching it, heading above the map, lights on when seen and off
   when the band leaves the screen.
+
+## CRO pass: five changes from the buyer-journey audit · 20 November 2026
+
+The owner asked for a live simulation of a cold, skeptical buyer from an ad on
+a phone (two minutes at most) and a CRO audit with the marketingskills
+frameworks (cro, signup, paywalls, copywriting — read as text, not installed),
+then: «делай тогда те самые 5 правок».
+
+1. **/check: the upload on the first screen.** «Проверить документ» led to a
+   heading and a picture; the upload began 1.9 screens down on a phone and
+   below the fold on a laptop. «Загрузить документ» now stands under the
+   heading (phone: y 411–459 of 664; laptop 478–526 of 900). It opens the same
+   file input as the form below and then brings the file and «Проверить
+   документ» into view; while the service is still being checked it scrolls
+   there.
+2. **Home first screen says the job.** «Поступление в Италию / без агентства.»
+   (was «Твоё будущее. Теперь в Италии.» — agency? study? travel?), the line
+   starts «Из Казахстана:», and under the buttons: «Первый шаг и одна проверка
+   документа — бесплатно · Возврат 7 дней · Агентства — от 500 000 ₸». On
+   phones the heading is a step smaller so it stays on two lines.
+3. **Plan result sells the next step; the 11-class step reads as solvable.**
+   Before payment the result opens with the offer: what 10 990 ₸ opens (the
+   remaining steps, unlimited checks, reminders), «Открыть маршрут за 10 990 ₸»,
+   the cabinet as the second button and the risk line. The 11-class first step
+   is shown as «11 классов — не приговор: добери 12-й год» with «Вуз должен
+   признать компенсацию 11-летней школы: недостающий год закрывают одним из
+   трёх способов». The builder keeps the old title as the step's key (the local
+   cabinet derives task ids from it), so saved progress stays attached; the
+   tile's group and cartouche still follow the key.
+4. **Paywall with the risk taken away.** On a locked plan step and a locked
+   cabinet step: «Возврат 7 дней · один платёж, без подписки · агентства — от
+   500 000 ₸» under the button; on the plan «Назад» and «Далее» are quiet text
+   links so the purchase is the one action.
+5. **Shorter questionnaire.** One short line per question; why it matters is
+   behind «Зачем спрашиваю». The 1.2 s «Ответы собраны» hand-off after the last
+   answer is gone in the public and local questionnaire (the cloud assessment
+   keeps it); the preview with «Открыть мой план» opens at once.
+
+Shared copy: `src/components/access/offerCopy.ts`. Reviews:
+`design-assessment-review` now checks the direct preview.

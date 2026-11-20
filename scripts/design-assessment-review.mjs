@@ -107,6 +107,15 @@ async function answerPublic(page, count = 10) {
   }
 }
 
+// CRO audit (owner, 20 Nov: «делай тогда те самые 5 правок»): the public and
+// the local questionnaire open the preview at once — the 1.2 s «Ответы собраны»
+// hand-off stood between a cold visitor and the result. The cloud assessment
+// keeps its transition (assertTransition below).
+async function assertDirectPreview(page) {
+  await page.getByRole('button', { name: 'Открыть мой план', exact: true }).waitFor({ timeout: 3000 });
+  assert.equal(await page.evaluate(() => window.__assessmentTransitionSeen), false, 'The questionnaire opens the preview without a hand-off screen');
+}
+
 async function assertTransition(page, { skip = false, reduced = false, preview = false } = {}) {
   const ready = preview ? page.getByRole('button', { name: 'Открыть мой план', exact: true }) : page.locator('[data-assessment-result]');
   const preparing = page.locator('[data-assessment-preparing]');
@@ -127,7 +136,7 @@ try {
     const { page, context } = await setup({ width });
     await page.goto(`${origin}/plan#questionnaire`, { waitUntil: 'networkidle' });
     await answerPublic(page);
-    await assertTransition(page, { preview: true });
+    await assertDirectPreview(page);
     assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).complete), false, 'Preview does not silently complete the questionnaire');
     await page.reload({ waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Открыть мой план', exact: true }).waitFor();
@@ -141,7 +150,7 @@ try {
     assert.equal(await page.locator('[data-plan-question]').getAttribute('data-plan-question'), 'intake');
     await page.locator('[data-plan-wizard] button[aria-pressed]').nth(1).click();
     assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).answers.intake), '2026/27', 'Editing the first answer updates the persisted draft');
-    results.push({ surface: 'public', width, automaticTransition: true, reloadWithoutTransition: true, editableAnswers: true });
+    results.push({ surface: 'public', width, directPreview: true, reloadWithoutTransition: true, editableAnswers: true });
     await context.close();
   }
 
@@ -150,14 +159,14 @@ try {
     await page.goto(`${origin}/portal?view=plan&task=profile`, { waitUntil: 'networkidle' });
     await page.locator('[data-plan-question="dsuRegion"]').waitFor();
     await answerPublic(page, 1);
-    await assertTransition(page, { skip: true, preview: true });
-    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).complete), false, 'Skipping animation does not mark the local profile completed');
+    await assertDirectPreview(page);
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).complete), false, 'The preview does not mark the local profile completed');
     await capture(page, 'local-preview-390', true);
     await page.getByRole('button', { name: 'Открыть мой план', exact: true }).click();
     await page.locator('[data-local-workspace]').waitFor();
     assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).complete), true, 'Only the explicit action completes the local profile');
     assert.equal(await page.evaluate(() => localStorage.getItem('iitaly_portal_code')), null, 'Local completion creates no cloud credentials');
-    results.push({ surface: 'local', width: 390, skipWorks: true, explicitCompletion: true });
+    results.push({ surface: 'local', width: 390, directPreview: true, explicitCompletion: true });
     await context.close();
   }
 

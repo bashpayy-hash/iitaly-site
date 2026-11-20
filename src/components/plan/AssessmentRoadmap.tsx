@@ -11,6 +11,8 @@ import disclosure from "@/components/ui/disclosure.module.css";
 import { PlanStepTiles } from "./PlanStepTiles";
 import { Lock } from "lucide-react";
 import { PlainTermNotes } from "@/components/ui/PlainTerms";
+import { RISK_LINE } from "@/components/access/offerCopy";
+import { displayStepTitle } from "@/lib/portalNavigation";
 
 function StepReferences({ step }: { step: PlanStep }) {
   return <details className={styles.references}>
@@ -44,21 +46,21 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
     ? <button type="button" className={open ? undefined : styles.quietNext} data-instruction-next onClick={() => select(index + 1)}>Далее</button>
     : <a className={open ? undefined : styles.quietNext} href="/portal">В личный кабинет</a>;
   return <div className={styles.result} data-assessment-route>
-    <PlanStepTiles steps={plan.steps.map((item, position) => ({ title: item.t, line: item.summary || item.p, locked: !planStepOpen(position) }))} index={index} href={href} onSelect={select}
+    <PlanStepTiles steps={plan.steps.map((item, position) => ({ title: displayStepTitle(item.t), kind: item.t, line: item.summary || item.p, locked: !planStepOpen(position) }))} index={index} href={href} onSelect={select}
       detail={position => position === index && <section className={styles.step} data-instruction-point={index + 1} data-step-locked={!open || undefined} aria-labelledby="plan-reading-heading">
         {/* Позиция «шаг 1 из 12» видна в ярлыке плитки (owner, 16 Nov: «не
             нагружает ли это пользователя, вот эти пространства странноватые»):
             одинокая строка над описанием оставляла пустую полосу под
             заголовком. Здесь она остаётся для чтения с экрана. */}
         <p className={styles.srOnly} role="status">Шаг {index + 1} из {plan.steps.length}{open ? "" : <> · <Lock size={12} strokeWidth={2.2} aria-hidden="true" className={styles.lockGlyph} /> с маршрутом</>}</p>
-        <h2 id="plan-reading-heading" className={styles.srOnly}>{step.t}</h2>
+        <h2 id="plan-reading-heading" className={styles.srOnly}>{displayStepTitle(step.t)}</h2>
         {open ? <>
           <p className={styles.summary}>{step.summary || step.p}</p>
           <div data-assessment-next-action>
             {step.action && <p className={styles.action}><span>{step.action}</span></p>}
             <StepReferences step={step} />
           </div>
-          <PlainTermNotes text={[step.t, step.summary, step.p, step.action].filter(Boolean).join(" ")} />
+          <PlainTermNotes text={[displayStepTitle(step.t), step.summary, step.p, step.action].filter(Boolean).join(" ")} />
         </> : <>
           <p className={styles.summary}>{teaser(step)}</p>
           <p className={styles.lockedNote} data-step-locked-note>Действие, требования и источники откроются после оплаты вместе с остальными шагами маршрута, проверкой документов без лимита и напоминаниями. Один платёж, без подписки.</p>
@@ -70,6 +72,9 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
             {forward}
           </span>}
         </nav>
+        {/* CRO audit (owner, 20 Nov): the risk taken away right at the button;
+            «Назад» and «Далее» are quiet text so the purchase is the one action. */}
+        {!open && <p className={styles.wallRisk} data-wall-risk>{RISK_LINE}</p>}
       </section>} />
     <details className={styles.documents}>
       <summary className={disclosure.row}><span>Какие документы понадобятся</span></summary>

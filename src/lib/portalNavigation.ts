@@ -24,6 +24,18 @@ export function directTaskCopy(text: string): string {
   return direct.charAt(0).toLocaleUpperCase("ru") + direct.slice(1);
 }
 
+/* CRO audit (owner, 20 Nov): the first step of an 11-class leaver read as a
+   verdict («Согласуй компенсацию 11-летней школы» — «мне нельзя?»). It now
+   says it is solvable. The plan builder keeps the old title because the local
+   cabinet derives the step's id from it (localWorkspace.ts), so progress
+   already saved on a device stays attached; only the shown title changes. */
+const STEP_TITLE_ALIASES: Record<string, string> = {
+  "Согласуй компенсацию 11-летней школы": "11 классов — не приговор: добери 12-й год",
+};
+export function displayStepTitle(title: string): string {
+  return STEP_TITLE_ALIASES[title] ?? title;
+}
+
 export function taskTitle(task: PortalTask): string {
   const titles: Record<string, string> = {
     chances: "Рассчитать бюджет и оценить шансы на стипендию DSU",
@@ -36,7 +48,7 @@ export function taskTitle(task: PortalTask): string {
     cimea: "Уточнить подтверждение квалификации (DoV / CIMEA)",
     iseeu: "Подготовить справку о доходах (ISEEU)",
   };
-  return titles[task.id] || directTaskCopy(task.t);
+  return titles[task.id] || directTaskCopy(displayStepTitle(task.t));
 }
 
 export function taskAction(task: PortalTask): string {

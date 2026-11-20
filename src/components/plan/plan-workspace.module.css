@@ -162,3 +162,9 @@
    and «чек-лист посольства в / Астане» no longer leave a word alone. */
 @media (max-width:767px) { .question { border-radius:24px; } }
 .option b, .option small { text-wrap:balance; }
+/* CRO audit (20 Nov): the reason for a question is one quiet tap away. */
+.questionWhy { margin:8px auto 0; max-width:46ch; color:#6B655E; font-size:14px; line-height:1.45; }
+.questionWhy summary { display:inline-flex; align-items:center; min-height:44px; padding-inline:6px; list-style:none; cursor:pointer; text-decoration:underline; text-decoration-color:currentColor; text-underline-offset:4px; }
+.questionWhy summary::-webkit-details-marker { display:none; }
+.questionWhy p { margin:0 0 4px; }
+.question[data-tone=dark] .questionWhy { color:#CFC6BA; }
