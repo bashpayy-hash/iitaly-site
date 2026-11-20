@@ -34,7 +34,8 @@ export function guideAction(id: GuideId) {
   if (help.action === "trainer") return { href: "/guides/permesso-modulo-1", label: "Открыть тренажёр Modulo 1", note: "Учебное заполнение, не подача заявления." };
   const target = help.action === "document" ? "document-check" : "questionnaire";
   return {
-    href: `/plan?fromGuide=${id}#${target}`,
+    // The document check has its own page since 20 Nov.
+    href: target === "document-check" ? `/check?fromGuide=${id}` : `/plan?fromGuide=${id}#${target}`,
     label: help.action === "document" ? "Проверить документ" : "Составить план",
     note: help.action === "document" ? "Проверка одного документа бесплатна. Решение о приёме принимает получатель." : "Бесплатно, без регистрации. Допуск подтверждает выбранный вуз.",
   };

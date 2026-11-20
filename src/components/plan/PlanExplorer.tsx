@@ -53,7 +53,7 @@ export function PlanExplorer() {
   // The document check has its own page since 20 Nov. Old links and
   // bookmarks to /plan#document-check land there.
   useEffect(() => {
-    const move = () => { if (window.location.hash === "#document-check") window.location.replace("/check"); };
+    const move = () => { if (window.location.hash === "#document-check") window.location.replace(`/check${window.location.search}`); };
     move();
     window.addEventListener("hashchange", move);
     return () => window.removeEventListener("hashchange", move);

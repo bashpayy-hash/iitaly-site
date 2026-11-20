@@ -65,7 +65,9 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where+' overflow');
     }
     await visit('/plan');
+    // 20 Nov: the document check is its own page, /check (owner: «для проверки документов должна быть отдельная страница»).
     await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
+    await page.waitForURL(/\/check$/);
     await page.getByText('Проверка документов пока недоступна',{exact:true}).waitFor();
     assert(await page.getByLabel('Выбрать документ для проверки').isDisabled());
     assert.equal(documentRequests.length,0,'No document is sent while provider credentials are invalid');
@@ -73,6 +75,7 @@ try {
     await page.getByRole('button',{name:'Проверить доступность',exact:true}).click();
     await page.waitForFunction(()=>!document.querySelector('input[type="file"]').disabled);
     await page.getByRole('link',{name:'Составить план',exact:true}).click();
+    await page.waitForURL(/\/plan#questionnaire$/);
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     await page.getByRole('button').filter({hasText:'11 классов'}).click();
     await visit('/guides');
@@ -141,6 +144,7 @@ try {
     await page.getByRole('button',{name:'Начать заново',exact:true}).click();
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
     await page.getByRole('navigation',{name:'Бесплатные инструменты'}).getByRole('link',{name:'Проверить документ',exact:true}).click();
+    await page.waitForURL(/\/check$/);
     await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'example.txt',mimeType:'text/plain',buffer:Buffer.from('Синтетический тест: доход семьи за указанный год.')});
     const doc=page.locator('#document-check');
     await doc.getByRole('button',{name:'Проверить документ',exact:true}).click();

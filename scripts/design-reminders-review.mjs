@@ -125,7 +125,11 @@ try {
     // The free plan must not claim an AI document verdict. The separate upload
     // flow deliberately names its processor in the data disclosure.
     assert.doesNotMatch(await page.locator('#questionnaire').innerText(), /Claude|Anthropic|Клод/i);
-    assert.match(await page.locator('#document-check').innerText(), /После нажатия «Проверить документ» файл передаётся в Anthropic/);
+    // 20 Nov: the upload flow is its own page, /check; it still names its processor.
+    const checkPage = await page.context().newPage();
+    await checkPage.goto(origin + '/check', { waitUntil: 'networkidle' });
+    assert.match(await checkPage.locator('#document-check').innerText(), /После нажатия «Проверить документ» файл передаётся в Anthropic/);
+    await checkPage.close();
     assert.match(mainText, /План собран по твоим ответам/);
     const documents = page.locator('[data-assessment-result] details').filter({ has: page.getByText('Какие документы понадобятся', { exact: true }) });
     await documents.locator('summary').click();
