@@ -52,7 +52,7 @@ export function Hero() {
             <div className={assistant.entryAlternatives}>
               <Link href="/universities">Смотреть университеты</Link>
             </div>
-            <p className={assistant.entryTrust} data-hero-trust data-fab-yield>{HERO_TRUST_LINE}</p>
+            <p className={assistant.entryTrust} data-hero-trust>{HERO_TRUST_LINE}</p>
           </div>
         </div>
       </div>
