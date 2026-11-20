@@ -142,9 +142,13 @@ try {
     await page.getByRole('button', { name: 'Открыть мой план', exact: true }).waitFor();
     assert.equal(await page.evaluate(() => window.__assessmentTransitionSeen), false, 'Restored preview never repeats the transition');
     await page.getByRole('button', { name: 'Открыть мой план', exact: true }).click();
-    await page.locator('[data-assessment-next-action]').waitFor();
-    assert((await page.locator('[data-assessment-next-action]').innerText()).length > 30, 'A concrete first action is visible without opening an accordion');
-    assert(await page.locator('[data-assessment-route]').isVisible(), 'Later route remains available');
+    // Owner, 20 Nov: the whole route at once, the first step with what it is
+    // about; its action opens on the step's own page.
+    const first = page.locator('[data-plan-path-step][data-state=current]');
+    await first.waitFor();
+    assert((await first.innerText()).length > 30, 'The first step and what it is about are visible without opening anything');
+    assert.equal(await first.getAttribute('href'), '/plan/1');
+    assert(await page.locator('[data-plan-path]').isVisible(), 'The whole route is visible');
     await capture(page, `public-result-${width}`);
     await page.getByRole('button', { name: 'Изменить ответы', exact: true }).click();
     assert.equal(await page.locator('[data-plan-question]').getAttribute('data-plan-question'), 'intake');

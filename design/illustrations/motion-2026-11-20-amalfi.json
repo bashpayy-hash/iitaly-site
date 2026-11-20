@@ -1,0 +1,57 @@
+{
+  "date": "2026-11-20",
+  "request": "Owner, /portal screenshot of the cabinet hero: «мотоциклский райд… в виде гифки будет очень плох. Либо через Хиксвилл сделай это видео и запускай просто как видео… переделай кадр… другую локацию, пусть он едет где-то там по Амальфи… сохраняя все пропорции… максимально бесшовно».",
+  "replaces": "The Tuscan ride (tuscany-ride-*.mp4/webm, landscapes/tuscany-*.webp) — removed.",
+  "generation": [
+    "Empty Amalfi coastal road, 4:3 (Higgsfield image, job 974e7810-a804-4647-8954-839f7c05da1d): the road across the lower third, sea and sky above, Positano-like village on the right, lemon tree and bougainvillea in front.",
+    "Vespi riding the same road as a reference (Higgsfield image, job f61f937b-6eb6-49fa-8cbe-0735dc5c62d3), Vespi identity from the three approved references.",
+    "Video (Higgsfield, job 2a0b9690-4723-41a7-931a-be5f4b37355c): start and end frame are the empty road, the riding still is the reference; 10 s, 4:3, 2176 × 1632, 24 fps, no audio. Vespi enters on the left at frame 42 and leaves on the right by frame 218."
+  ],
+  "diagnosis": "The video frames are sharp, but the whole background drifts by about 1 px (median optical flow 0.4–1.4 px) and its first and last frames differ by 2.4/255 at the edges of every detail: a plain loop would twitch at the wrap and the shimmer costs bitrate (1600 px at CRF 22 came to 6 MB).",
+  "fix": [
+    "Plate: one empty-road frame of the video (source frame 30), still for the whole loop.",
+    "Per frame, Vespi is found by his red helmet (saturated red where the plate has none); a box sized from the helmet (1.2 helmet heights behind, 1.55 ahead, 2.95 down) holds the convex hull of everything that differs from the plate by more than 30/255 after a 3 px blur — Vespi and his scooter, never the drifting background around him. Hull dilated 4 px, feathered 2.5 px.",
+    "His shadow on the road: a band under the wheels (up to 2.6 helmet heights ahead, the sun is behind him), taken where the frame is darker than the plate, soft.",
+    "Loop: source frames 34–220 with Vespi composited, then 18 frames of the plate; 205 frames, 8.54 s at 24 fps. Vespi is on screen 7.4 s, the empty road between rides 1.2 s. Frames without Vespi are the plate itself, so the wrap is exact (difference 0).",
+    "Encode: x264 slow, CRF 21 / 22 / 25 at 2176 / 1600 / 960, one keyframe (keyint 400, scenecut 0), BT.709 tags, faststart; VP9 960 CRF 36, g 400.",
+    "Posters landscapes/amalfi-{960,1600,2176}.webp: frame 72 of the loop (Vespi left of centre on the road), decoded with the BT.709 matrix, WebP q82. LivingLandscape starts at 72.5/24.",
+    "Proportions: 4:3 like the Tuscan scene (1600 × 1200 against 1600 × 1207); the hero keeps its tile, crop and object-position (50% 100%), the road and Vespi stay below the panel."
+  ],
+  "files": [
+    {
+      "file": "public/illustrations/motion/amalfi-ride-2176.mp4",
+      "bytes": 2681407,
+      "sha256": "e1664cc09bf7aa12022b698bcdab282a3dca18a939622c7cd9eed719f2556de6"
+    },
+    {
+      "file": "public/illustrations/motion/amalfi-ride-1600.mp4",
+      "bytes": 1435584,
+      "sha256": "da5af18a701fee497a6de9190eb682c41115260fc84013a7af00b9e1f23cb46d"
+    },
+    {
+      "file": "public/illustrations/motion/amalfi-ride-960.mp4",
+      "bytes": 435664,
+      "sha256": "15fdd57835d0bc86d5d726ed14279288d0b519caae6b70744a7fcc7ac3ef03ef"
+    },
+    {
+      "file": "public/illustrations/motion/amalfi-ride-960.webm",
+      "bytes": 384656,
+      "sha256": "605fde2bde04e39bcd07d78828c441968e54ea555c4c56f2fa4ece2582850996"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-2176.webp",
+      "bytes": 540798,
+      "sha256": "79806c9455c60ca1bff8b35e46c8fdf078af41ddf705ccd491ba5876edc21f79"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-1600.webp",
+      "bytes": 337814,
+      "sha256": "147d5c89fb16f865d373232315eeaa09d0bcea5f23e2e717f0e26038b4eab9de"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-960.webp",
+      "bytes": 146806,
+      "sha256": "9d5db9d7537eb703077c228e7d9c6adb89d3c3da085ce7cc8a65c4fcb2cacef4"
+    }
+  ]
+}

@@ -14,6 +14,20 @@ import { PlainTermNotes } from "@/components/ui/PlainTerms";
 import { RISK_LINE } from "@/components/access/offerCopy";
 import { displayStepTitle } from "@/lib/portalNavigation";
 
+/** «Какие документы понадобятся» under the route — on /plan and in the cabinet. */
+export function PlanDocuments({ plan }: { plan: Plan }) {
+  const paid = usePaidDevice();
+  return <details className={styles.documents}>
+    <summary className={disclosure.row}><span>Какие документы понадобятся</span></summary>
+    <p>Это ориентир для сбора. Точный комплект зависит от программы и твоей ситуации; файлы ещё не проверены.</p>
+    {/* До оплаты — только названия (owner, 12 Nov: «слишком много
+       информации бесплатно»): что именно нужно по каждому документу —
+       готовый чек-лист, а это и есть маршрут. */}
+    <ul>{plan.docs.map(doc => <li key={doc.n}><strong>{doc.n}</strong>{paid && <p>{doc.d}</p>}</li>)}</ul>
+    {!paid && <p data-plan-docs-locked>Что именно нужно по каждому из {plan.docs.length} документов — в маршруте вместе с проверкой файлов.</p>}
+  </details>;
+}
+
 function StepReferences({ step }: { step: PlanStep }) {
   return <details className={styles.references}>
     <summary className={disclosure.row}>Условия и официальные источники</summary>
@@ -41,7 +55,6 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
   const step = plan.steps[index];
   const open = planStepOpen(index);
   const wall = useWallPurchase("plan-step", !open);
-  const paid = usePaidDevice();
   const forward = index < plan.steps.length - 1
     ? <button type="button" className={open ? undefined : styles.quietNext} data-instruction-next onClick={() => select(index + 1)}>Далее</button>
     : <a className={open ? undefined : styles.quietNext} href="/portal">В личный кабинет</a>;
@@ -76,15 +89,7 @@ export function AssessmentRoadmap({ plan }: { plan: Plan }) {
             «Назад» and «Далее» are quiet text so the purchase is the one action. */}
         {!open && <p className={styles.wallRisk} data-wall-risk>{RISK_LINE}</p>}
       </section>} />
-    <details className={styles.documents}>
-      <summary className={disclosure.row}><span>Какие документы понадобятся</span></summary>
-      <p>Это ориентир для сбора. Точный комплект зависит от программы и твоей ситуации; файлы ещё не проверены.</p>
-      {/* До оплаты — только названия (owner, 12 Nov: «слишком много
-         информации бесплатно»): что именно нужно по каждому документу —
-         готовый чек-лист, а это и есть маршрут. */}
-      <ul>{plan.docs.map(doc => <li key={doc.n}><strong>{doc.n}</strong>{paid && <p>{doc.d}</p>}</li>)}</ul>
-      {!paid && <p data-plan-docs-locked>Что именно нужно по каждому из {plan.docs.length} документов — в маршруте вместе с проверкой файлов.</p>}
-    </details>
+    <PlanDocuments plan={plan} />
     {wall.modal}
   </div>;
 }
