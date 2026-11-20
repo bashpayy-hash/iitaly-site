@@ -50,14 +50,21 @@
   },
   {
    "name": "vespi-trevi",
-   "job": "a1be3f42-daf3-4ba3-b8bd-985ef4af2f2c",
+   "job": "8963c1ed-5b6c-4ca2-a35b-614a0fd2464d",
    "vespi": true,
-   "subject": "Vespi tossing a gold coin into a miniature Trevi Fountain",
+   "subject": "Vespi in his true proportions, about a third of the fountain's height, standing on the paving with his back to the water and tossing a gold coin over his shoulder; the coin arcs into the basin. gpt_image_2_6, the three Vespi identity references plus the previous piece (a1be3f42) for the fountain; padded to the old 560x448 frame so PortalRoad and GuideRoad keep their sizes.",
    "files": [
     "public/illustrations/scenery/vespi-trevi-280.webp",
-    "public/illustrations/scenery/vespi-trevi-560.webp"
+    "public/illustrations/scenery/vespi-trevi-560.webp",
+    "public/illustrations/scenery/vespi-trevi-grey-280.webp",
+    "public/illustrations/scenery/vespi-trevi-grey-560.webp"
    ],
-   "master": "design/illustrations/source/scenery/vespi-trevi.webp"
+   "master": "design/illustrations/source/scenery/vespi-trevi.webp",
+   "earlier_jobs": [
+    "a1be3f42-daf3-4ba3-b8bd-985ef4af2f2c"
+   ],
+   "date": "2026-11-20",
+   "request": "Owner, 20 Nov, on the cabinet road: «у фонтана Треви… пропорции какие-то не такие. Он кидает монетку, но кидает её странно»."
   },
   {
    "name": "vespi-gondola",

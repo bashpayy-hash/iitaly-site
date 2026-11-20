@@ -43,39 +43,53 @@ const COMPARE = [
   { row: "Сколько стоит", agency: "Отдельный договор с агентством", agencyPrice: `Сопровождение — обычно ${fmtPrice(AGENCY_SUPPORT.from)}–⁠${priceLabel(AGENCY_SUPPORT.to)}`, us: `Входит в ${priceLabel(PRICE_MAIN)} за весь путь, первая проверка бесплатно` },
 ] as const;
 
+/* Owner, 20 Nov, on the home section: «саму кнопку «Проверь документы», она
+   должна быть главной, и эти блоки должны быть снизу… блок «Проверь
+   документы» должен быть вот такой большой». The invitation comes first, full
+   width, with the cartouche of the check and the main button; the facts and
+   the comparison follow. On /prices («страница с ценами довольно пустая…
+   одна большая иллюстрация с Веспи, который что-то делает по тематике… на
+   фоне») the heading stands on a wide scene: Vespi checking documents at a
+   desk (design/illustrations/scenes-2026-11-20.json). */
+const SCENE = {
+  src: "/illustrations/scenes/prices-check-1600.webp",
+  srcSet: "/illustrations/scenes/prices-check-960.webp 960w, /illustrations/scenes/prices-check-1600.webp 1600w, /illustrations/scenes/prices-check-2400.webp 2400w",
+};
+
 export function DocumentCheckFeature({ compact = false }: { compact?: boolean }) {
+  const head = <div className={styles.head}>
+    <h2 id={compact ? "document-check-promo-title" : "document-check-feature-title"} className={styles.title}>
+      Проверка документов.<br /><span>Пункт за пунктом — в любое время.</span>
+    </h2>
+    <p className={styles.lead}>
+      Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы
+      на твой учебный год и скажет, что исправить, — пока агентство ещё не открылось.
+    </p>
+  </div>;
   return <section className={`${styles.section} ${compact ? styles.compact : ""}`} data-section={compact ? undefined : "document-check-feature"} data-document-check-feature aria-labelledby={compact ? "document-check-promo-title" : "document-check-feature-title"}>
-    <div className={styles.head}>
-      <h2 id={compact ? "document-check-promo-title" : "document-check-feature-title"} className={styles.title}>
-        Проверка документов.<br /><span>Пункт за пунктом — в любое время.</span>
-      </h2>
-      <p className={styles.lead}>
-        Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы
-        на твой учебный год и скажет, что исправить, — пока агентство ещё не открылось.
-      </p>
-    </div>
+    {compact ? <div className={styles.scene} data-document-check-scene>
+      <img className={styles.sceneArt} src={SCENE.src} srcSet={SCENE.srcSet} sizes="(max-width: 700px) 100vw, 1160px" width={2400} height={1357} alt="" loading="lazy" decoding="async" draggable={false} />
+      {head}
+    </div> : head}
     <Bento label="Чем проверка документов отличается от агентства" className={styles.bento}>
+      {!compact && <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={styles.cta} data-document-check-cta>
+        <div className={styles.ctaCopy}>
+          <p className={styles.ctaTitle}>Проверь один документ бесплатно</p>
+          <p className={styles.ctaText}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>
+          <AppleButtonLink href="/plan#document-check" className={styles.ctaButton}>Проверить документ</AppleButtonLink>
+        </div>
+        <img className={styles.ctaArt} src={CTA_ART.src} srcSet={CTA_ART.srcSet} sizes="(max-width: 767px) 64px, 260px" width={CTA_ART.width} height={CTA_ART.height} alt="" loading="lazy" decoding="async" draggable={false} data-document-check-art />
+      </BentoCell>}
       {FACTS.map(fact => <BentoCell key={fact.value} span={{ md: 3, lg: 3 }} className={styles.fact} data-bento-row data-document-check-fact>
         <BentoStat value={fact.value} label={fact.label} note={fact.note} />
       </BentoCell>)}
-      <BentoCell span={{ md: 6, lg: compact ? 12 : 8 }} data-document-check-compare>
+      <BentoCell span={{ md: 6, lg: 12 }} data-document-check-compare>
         <table className={styles.compare}>
           <caption className={bento.heading}>Проверка у агентства и здесь</caption>
           <thead><tr><th scope="col"><span className={styles.srOnly}>Что сравниваем</span></th><th scope="col">Агентство</th><th scope="col">IITALY</th></tr></thead>
           <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{item.agencyPrice}</span>}</td><td>{item.us}</td></tr>)}</tbody>
         </table>
       </BentoCell>
-      {!compact && <BentoCell span={{ md: 6, lg: 4 }} tone="action" className={styles.cta} data-document-check-cta>
-        <div className={bento.body}>
-          <p className={bento.heading}>Проверь один документ бесплатно</p>
-          <p className={bento.text}>Без регистрации. Проверка помогает не потерять время на ошибках; решение о приёме принимает вуз.</p>
-        </div>
-        {/* Owner, 19 Nov: «проверка документов это киллер фича, её нужно
-            активнее рекламировать» — the cell gets the document-check cartouche
-            instead of an empty dotted field. */}
-        <img className={styles.ctaArt} src={CTA_ART.src} srcSet={CTA_ART.srcSet} sizes="(max-width: 640px) 120px, 160px" width={CTA_ART.width} height={CTA_ART.height} alt="" loading="lazy" decoding="async" draggable={false} data-document-check-art />
-        <div className={bento.actions}><AppleButtonLink href="/plan#document-check">Проверить документ</AppleButtonLink></div>
-      </BentoCell>}
     </Bento>
   </section>;
 }
