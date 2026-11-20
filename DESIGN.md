@@ -2411,7 +2411,11 @@ hero picture above its panel, one sticky header, «Меню», no
   off at 641–1263 px. The cabinet header is on the cabinet frame (12 px on
   phones, 20 px to 900 px). /prices' document check fills its column.
 - **One radius.** Top-level cards are 24 px on phones (they were 28 beside
-  24 on the same page).
+  24 on the same page). The /prices package card keeps 28 px: its style is
+  pinned by `design-prices-landscape-review`.
+- **Tablet in-betweens.** The topic and visa source lists stay one column
+  with full notes until their tray is 660 px wide (at 600–715 px windows they
+  split into two 160 px columns with cut notes).
 - **Headings.** A sentence after `<br>` is its own balanced block (home
   document check, «Одна Италия…», «Знакомься, это Веспи…»); the dash in
   «Пункт за пунктом — в любое время.» is bound to «пунктом» with a no-break
@@ -2424,8 +2428,10 @@ hero picture above its panel, one sticky header, «Меню», no
 - **Left as they are:** map pins (approved geometry), Modulo 1 paper fields
   (paper geometry; iOS zooms on focus), carousel dots 14 px wide at ≤480,
   secondary text at 14–15 px, two-line pills at 280 px (Galaxy Fold).
-- **Desktop.** 1280 px is pixel-identical except /prices, where the same
-  heading fix now reads «Пункт за пунктом — / в любое время.».
+- **Desktop.** 1280 px is pixel-identical except two headings that were
+  wrong there too: /prices reads «Пункт за пунктом — / в любое время.», and
+  the home «Твой собственный выбор.» is one line (from 1240 px it needed
+  809 px in an 800 px column; the column is 840 px).
 
 Audit and verification: `/tmp/claude-0/polish/responsive-audit.md` in the
 session that made it; the findings are summarised above.
