@@ -64,7 +64,7 @@ export function ChangesExplorer() {
           <p className="text-sm font-medium text-sec-deep">
             Казахстан — Италия · 2026/27 и 2027/28
           </p>
-          <h1 className="mt-2 font-apple-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[44px] lg:text-[52px]">
+          <h1 className="mt-2 font-apple-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[52px]">
             Поступление в Италию: актуальные правила
           </h1>
 

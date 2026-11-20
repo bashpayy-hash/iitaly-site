@@ -115,6 +115,15 @@
    phone tray a note such as «Госуслуга Казахстана; выбрать услугу для…» lost
    its end to the ellipsis. There the note reads in full. */
 @container (max-width: 559px) { .listNote { display: block; -webkit-line-clamp: unset; overflow: visible; } }
+/* 20 Nov (responsive-craft drag): with a 560–659px tray (a 600–715px window)
+   the sources cell spans four of six columns, about 370px, yet its list
+   already split into two 160px columns with notes cut to two lines. Until the
+   tray is 660px wide the list stays one column and the notes read in full, as
+   on phones. */
+@container (min-width: 560px) and (max-width: 659px) {
+  .list[data-columns="2"] { grid-template-columns: minmax(0, 1fr); }
+  .listNote { display: block; -webkit-line-clamp: unset; overflow: visible; }
+}
 
 /* Ячейка-ссылка чуть приподнимается под курсором. */
 a.cell { text-decoration: none; transition: transform .25s cubic-bezier(.16, 1, .3, 1), box-shadow .25s cubic-bezier(.16, 1, .3, 1); }

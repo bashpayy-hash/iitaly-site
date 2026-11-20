@@ -385,10 +385,13 @@
    the band cut Vespi's helmet; it now centres on him. */
 @media (max-width: 1023px) and (min-aspect-ratio: 4/5) { .heroLandscape { object-position: 28% 38%; } }
 @media (max-width: 767px) {
-  /* Design code: cards and sections 28px, 24px on phones. These five were
-     still 28px beside 24px trays, the FAQ and the roads on the same page. */
+  /* Design code: cards and sections 28px, 24px on phones. These four were
+     still 28px beside 24px trays, the FAQ and the roads on the same page. The
+     package card (.offerCard, #main-package) keeps 28px: its whole style is
+     pinned by design-prices-landscape-review («Pricing card design is
+     preserved»). */
   .journey { border-radius: 24px 24px 0 0; }
-  .summaryCard, .offerCard, .termsBox, .optionalService { border-radius: 24px; }
+  .summaryCard, .termsBox, .optionalService { border-radius: 24px; }
   /* «Одна Италия. Твой собственный выбор.»: 38px at every phone width broke
      the second sentence into «Твой / собственный / выбор.» at 320–360px. It
      scales down there, so every phone shows the same three lines. */
@@ -399,6 +402,12 @@
   /* Menu items on the page's 20px edge, under the logo (they were at 24px). */
   .mobileMenu nav { padding-inline: 20px; }
 }
+/* Desktop too (drag 280→1440): from 1240px the title reaches its 68px cap and
+   «Твой собственный выбор.» needs 809px in an 800px column, so every wide
+   screen read «Твой собственный / выбор.» while 1180px read one line. The
+   column is 840px; 1280px and wider now show the second sentence on one line,
+   as the design had it below 1240. */
+.universityTitle { max-width: 840px; }
 /* A sentence after a forced break is its own balanced block: as an inline
    span it was never balanced and ended «…собственный / выбор.» on phones. The
    home hero's gradient span stays inline (a block would stretch its gradient). */
