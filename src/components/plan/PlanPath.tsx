@@ -45,11 +45,11 @@ export function PlanPath({ plan }: { plan: Plan }) {
   const current = steps.findIndex((_, position) => open(position) && !done(position));
   const left = total - readCount;
   const lockedLeft = total - openCount;
-  const cheer = readCount === total ? "Весь маршрут разобран. Дальше — действия и сроки в личном кабинете."
-    : readCount === 0 ? (paid ? "Начни с первого шага — дальше путь подскажет следующий." : "Начни с первого шага — он открыт бесплатно.")
-    : current === -1 ? `${openCount === 1 ? "Первый шаг разобран" : "Открытые шаги разобраны"} — хорошее начало. Ещё ${lockedLeft} ${stepsWord(lockedLeft)} ${lockedLeft % 10 === 1 && lockedLeft % 100 !== 11 ? "откроется" : "откроются"} с маршрутом.`
-    : readCount * 2 >= total ? `Больше половины позади — осталось ${left} ${stepsWord(left)}.`
-    : `Хорошее начало — осталось ${left} ${stepsWord(left)}.`;
+  const cheer = readCount === total ? "Весь маршрут разобран. Дальше\u00A0— действия и сроки в личном кабинете."
+    : readCount === 0 ? (paid ? "Начни с первого шага\u00A0— дальше путь подскажет следующий." : "Начни с первого шага\u00A0— он открыт бесплатно.")
+    : current === -1 ? `${openCount === 1 ? "Первый шаг разобран" : "Открытые шаги разобраны"}\u00A0— хорошее начало. Ещё ${lockedLeft} ${stepsWord(lockedLeft)} ${lockedLeft % 10 === 1 && lockedLeft % 100 !== 11 ? "откроется" : "откроются"} с маршрутом.`
+    : readCount * 2 >= total ? `Больше половины позади\u00A0— осталось ${left} ${stepsWord(left)}.`
+    : `Хорошее начало\u00A0— осталось ${left} ${stepsWord(left)}.`;
   const lg = planSpans(total, current, 12, [3, 4], [12]);
   const md = planSpans(total, current, 6, [2, 3], [6]);
 
@@ -97,7 +97,7 @@ export function PlanPath({ plan }: { plan: Plan }) {
               : state === "locked" ? null
               : <>Открыть шаг <ArrowRight size={14} strokeWidth={2.2} /></>}
           </span>
-          <span className={styles.srOnly}> — {WORDS[state]}</span>
+          <span className={styles.srOnly}>&nbsp;— {WORDS[state]}</span>
           {art && <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="120px" width={art.width} height={art.height} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} />}
         </BentoCell>;
       })}

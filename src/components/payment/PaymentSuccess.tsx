@@ -48,7 +48,7 @@ export function PaymentSuccess() {
       clearPendingPayment();
       setView({
         kind: "paid",
-        text: "Оплата получена. Для этой услуги кабинет не нужен — мы свяжемся по оставленному номеру.",
+        text: "Оплата получена. Для этой услуги кабинет не нужен\u00A0— мы свяжемся по оставленному номеру.",
       });
       return;
     }
@@ -186,7 +186,7 @@ export function PaymentSuccess() {
             {(view.kind === "missing" || view.kind === "error" || view.kind === "waiting") && (
               <div className="mt-6 border-t border-white/15 pt-5">
                 <p className="text-apple-body-sm text-cloud-body">
-                  Уже оплатил, но доступа нет? Напиши в поддержку — поможем найти заказ. Повторно платить не нужно.
+                  Уже оплатил, но доступа нет? Напиши в поддержку&nbsp;— поможем найти заказ. Повторно платить не нужно.
                 </p>
                 {/* The site's pair (21 Nov pass): one filled action and a quiet
                     link, not two outlined pills of different weight. */}

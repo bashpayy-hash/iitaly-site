@@ -94,7 +94,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
       });
       setSending(false);
       if (!result.ok) {
-        setPhoneError("Не удалось отправить номер. Попробуй ещё раз или нажми «Открыть мой план» — он уже готов.");
+        setPhoneError("Не удалось отправить номер. Попробуй ещё раз или нажми «Открыть мой план»\u00A0— он уже готов.");
         return;
       }
       track("lead_captured", { from: "wizard" });
@@ -286,7 +286,7 @@ function WizStep({
         {/* Owner, 14 Nov 2026 (UX audit, item 5): «Осенью 2027» and «В 2026/27»
            read as the same thing to a school student. One line says which
            intake each one is: the academic year starts in autumn. */}
-        {question.id === "intake" && <p className={styles.optionsNote} data-intake-note>Учебный год в Италии начинается осенью. «Осенью 2027» — набор 2027/28, к нему готовятся сейчас. «В 2026/27» — учебный год, который уже идёт: проверим, куда ещё можно успеть.</p>}
+        {question.id === "intake" && <p className={styles.optionsNote} data-intake-note>Учебный год в Италии начинается осенью. «Осенью 2027»&nbsp;— набор 2027/28, к нему готовятся сейчас. «В 2026/27»&nbsp;— учебный год, который уже идёт: проверим, куда ещё можно успеть.</p>}
       </div>
       {/* Owner, 14 Nov 2026 («дай тогда расшифровку терминам»): the words a school
          student meets here for the first time (DSU, ISEE, CIMEA…) get one plain

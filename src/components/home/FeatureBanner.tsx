@@ -24,10 +24,16 @@ const STAGE_CARDS = [
   { label: "До отъезда", object: "suitcase", frame: cartoucheFrame("suitcase") },
   { label: "В Италии", object: "keys", frame: cartoucheFrame("keys") },
 ];
+/* The line under a topic's name is as short as the line under a stage's name
+   in the row above («Документы, стипендия и виза»). Owner, 21 Nov: «идёт
+   перенасыщение каких-то блоков текстом»: these cards carried the teaser's
+   whole first sentence, 13–14 words in a 140–180px column — four lines on a
+   tablet, six on a phone. They keep the words that say what the thing is;
+   why it matters is told on the topic's own page. */
 const ARRIVAL_CARDS = [
-  { id: "permesso", label: "Permesso", object: "permesso-card", frame: cartoucheFrame("permesso-card") },
-  { id: "codice", label: "Codice fiscale", object: "tax-card", frame: cartoucheFrame("tax-card") },
-  { id: "health-travel", label: "Страховка", object: "insurance", frame: cartoucheFrame("insurance") },
+  { id: "permesso", label: "Permesso", object: "permesso-card", frame: cartoucheFrame("permesso-card"), line: "Вид на жительство студента" },
+  { id: "codice", label: "Codice fiscale", object: "tax-card", frame: cartoucheFrame("tax-card"), line: "Личный налоговый номер в Италии" },
+  { id: "health-travel", label: "Страховка", object: "insurance", frame: cartoucheFrame("insurance"), line: "Медицинская страховка и правила поездок" },
 ];
 
 function ThemeCard({ id, object, frame, label, title, line, href }: { id: string; object: string; frame: Frame; label: string; title: string; line: string; href: string }) {
@@ -41,11 +47,6 @@ function ThemeCard({ id, object, frame, label, title, line, href }: { id: string
   </li>;
 }
 
-/* The topic teaser says what it is and why it matters in two sentences
-   (owner, 19 Nov). A card beside its picture keeps the first one: the second
-   lives on the guide itself. */
-const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0];
-
 export function FeatureBanner() {
   const permesso = GUIDE_TOPICS.find(item => item.id === "permesso")!;
   return <section className={styles.section} data-section="feature" aria-label="План и первые шаги в Италии">
@@ -56,7 +57,7 @@ export function FeatureBanner() {
     </SceneCard>
     <SceneCard title={<>После визы<br />путь продолжается.</>} href={guideHref(permesso.id)} actionLabel={`Открыть гайд: ${permesso.title}`} action="Открыть гайд" caption="Первые формальности в новом городе. Выбирай одну тему, разбирайся с ней и переходи дальше.">
       <ul className={`${styles.cards} ${styles.cardsAlt}`} aria-label="Темы после приезда">
-        {ARRIVAL_CARDS.map(card => { const topic = GUIDE_TOPICS.find(item => item.id === card.id)!; return <ThemeCard key={card.id} {...card} title={topic.title} line={firstSentence(topic.teaser)} href={guideHref(card.id)} />; })}
+        {ARRIVAL_CARDS.map(card => { const topic = GUIDE_TOPICS.find(item => item.id === card.id)!; return <ThemeCard key={card.id} {...card} title={topic.title} href={guideHref(card.id)} />; })}
       </ul>
     </SceneCard>
   </section>;

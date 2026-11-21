@@ -17,7 +17,7 @@ export function PlainTermNotes({ text, tone = "light", limit = 2 }: { text: stri
   const terms = plainTerms(text, limit);
   if (!terms.length) return null;
   return <ul className={styles.terms} data-tone={tone} data-plain-terms aria-label="Что значат слова">
-    {terms.map(item => <li key={item.term}><strong>{item.term}</strong> — {item.plain}</li>)}
+    {terms.map(item => <li key={item.term}><strong>{item.term}</strong>&nbsp;— {item.plain}</li>)}
   </ul>;
 }
 
@@ -39,7 +39,7 @@ export function TermHint({ term, children }: { term: string; children: ReactNode
     {children}
     <button type="button" className={styles.hint} aria-label={`Что такое ${term}`} aria-expanded={open} aria-controls={id} onClick={() => setOpen(value => !value)}><span aria-hidden="true">i</span></button>
     {open && createPortal(<div id={id} role="note" className={styles.sheet} data-term-hint={term}>
-      <strong>{term}</strong> — {plain}
+      <strong>{term}</strong>&nbsp;— {plain}
       <button type="button" className={styles.close} aria-label="Закрыть" onClick={() => setOpen(false)}><X size={18} aria-hidden="true" /></button>
     </div>, document.body)}
   </span>;

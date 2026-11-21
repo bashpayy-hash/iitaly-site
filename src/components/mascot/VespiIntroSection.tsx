@@ -16,7 +16,7 @@ export function VespiIntroSection({ placement = "home", href = "/portal", action
   const id = placement === "home" ? "vespi-editorial-title" : `vespi-intro-${placement}`;
   return <section className={`${styles.intro} ${styles[placement]}`} aria-labelledby={id} data-vespi-intro={placement} data-vespi-editorial={placement === "home" ? "" : undefined}>
     <div className={styles.copy}>
-      <h2 id={id}>Знакомься, это Веспи —<br /><span>твой ИИ-проводник в Италию.</span></h2>
+      <h2 id={id}>Знакомься, это Веспи&nbsp;—<br /><span>твой ИИ-проводник в Италию.</span></h2>
       <ul aria-label="Чем поможет Веспи">{BENEFITS.map(item => <li key={item}>{item}</li>)}</ul>
       {withAction && <Link href={href} className={styles.action} onClick={onAction}>{action}</Link>}
     </div>

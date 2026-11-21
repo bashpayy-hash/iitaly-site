@@ -54,9 +54,9 @@ function inspectorMessage(step: State["step"], availabilityPending: boolean, una
   if (walled) return "Бесплатная проверка одного файла уже использована на этом устройстве. Следующие документы проверяются в кабинете.";
   if (step === "reading") return "Читаю выбранный файл. Проверка начнётся после твоего подтверждения.";
   if (step === "checking") return "Проверяю содержание и применимые требования. Покажу итог, замечания и что делать дальше.";
-  if (step === "ready") return "Файл выбран. Уточни заявку и нажми «Проверить документ» — до этого файл не отправляется на ИИ-анализ.";
+  if (step === "ready") return "Файл выбран. Уточни заявку и нажми «Проверить документ»\u00A0— до этого файл не отправляется на ИИ-анализ.";
   if (step === "retry") return "Проверка не завершилась. Файл остался выбран; причину покажу ниже.";
-  if (step === "error") return "Не удалось подготовить файл. Причина ниже — выбери документ ещё раз после исправления.";
+  if (step === "error") return "Не удалось подготовить файл. Причина ниже\u00A0— выбери документ ещё раз после исправления.";
   return "Загрузи справку о доходах, состав семьи, банковскую выписку или перевод. Для проверки требований укажи программу и учебный год.";
 }
 
@@ -258,12 +258,20 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
         </p>
       </fieldset>
 
-        <ul className={styles.auditScope} aria-label="Что проверяем в файле">
-          <li><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
-          <li><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
-          <li><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
-          <li><span>Выписка: владелец, период и читаемость данных.</span></li>
-        </ul>
+        {/* Owner, 21 Nov: «идёт перенасыщение каких-то блоков текстом». This
+            column held a heading, a paragraph, two fields, a note and these
+            four lines — 121 words in the tool before a file is chosen. What
+            the check looks at is a reference: it opens on request, every
+            word of it kept. */}
+        <details className={styles.auditScopeBox} data-document-scope>
+          <summary className={disclosure.row}>Что проверяем в файле</summary>
+          <ul className={styles.auditScope}>
+            <li><span>Апостиль: наличие и читаемость, если он нужен получателю.</span></li>
+            <li><span>Даты справок DSU: только по подтверждённым правилам выбранного конкурса.</span></li>
+            <li><span>Перевод: имена, комплектность и видимые несоответствия.</span></li>
+            <li><span>Выписка: владелец, период и читаемость данных.</span></li>
+          </ul>
+        </details>
       </div>
       <div className={styles.auditTool}>
 
@@ -283,7 +291,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       {walled && !("file" in state) ? (
         <div className="mt-5 flex flex-wrap items-center gap-3 rounded-[20px] border border-white/15 p-4" data-document-walled>
           <AppleButton type="button" variant="filled" size="sm" onClick={wall.open} data-wall-buy data-wall-place="document-check" aria-haspopup="dialog">{wall.label}</AppleButton>
-          <span className="text-apple-caption text-cloud-meta">Бесплатная проверка одного файла использована. В кабинете — проверки без лимита и повторные версии.</span>
+          <span className="text-apple-caption text-cloud-meta">Бесплатная проверка одного файла использована. В кабинете&nbsp;— проверки без лимита и повторные версии.</span>
         </div>
       ) : state.step === "idle" || state.step === "error" || state.step === "reading" ? (
         <label
@@ -437,7 +445,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
           {result.review.profileLabel}{result.review.academicYear !== "unspecified" ? ` · ${result.review.academicYear}` : ""}
         </p>
         <p className="mt-1">{result.review.notice}</p>
-        {result.review.referenceYear !== null && <p className="mt-1">Год доходов: {result.review.referenceYear}. Имущество — на 31 декабря {result.review.referenceYear}; допустимые альтернативы зависят от программы.</p>}
+        {result.review.referenceYear !== null && <p className="mt-1">Год доходов: {result.review.referenceYear}. Имущество&nbsp;— на 31 декабря {result.review.referenceYear}; допустимые альтернативы зависят от программы.</p>}
         <details className="mt-3 text-apple-caption">
           <summary className={`${disclosure.inline} min-h-11 py-3 font-semibold text-crimson focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson`}>
             Официальные источники · сверены {result.review.verifiedOn.split("-").reverse().join(".")}
@@ -495,10 +503,10 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
       )}
 
       {locked && <div className="mt-4 border-t border-white/15 pt-4 text-apple-body-sm text-cloud-body" data-document-fixes-locked>
-        <p><b className="text-cloud-white">{fixCount > 0 ? `Как исправить ${fixCount} ${plural(fixCount, "замечание", "замечания", "замечаний")}` : "Что делать дальше"} — в маршруте.</b> Там же повторные проверки исправленного файла и весь пакет документов под твой случай. Один платёж, не подписка.</p>
+        <p><b className="text-cloud-white">{fixCount > 0 ? `Как исправить ${fixCount} ${plural(fixCount, "замечание", "замечания", "замечаний")}` : "Что делать дальше"}&nbsp;— в маршруте.</b> Там же повторные проверки исправленного файла и весь пакет документов под твой случай. Один платёж, не подписка.</p>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
           <AppleButton type="button" variant="filled" size="sm" data-wall-buy data-wall-place="document-fixes" aria-haspopup="dialog" onClick={fixWall.open}>{fixWall.label}</AppleButton>
-          <a href="/portal?view=login" className="inline-flex min-h-11 items-center text-apple-caption text-cloud-meta underline underline-offset-4">Уже оплачено — войти</a>
+          <a href="/portal?view=login" className="inline-flex min-h-11 items-center text-apple-caption text-cloud-meta underline underline-offset-4">Уже оплачено&nbsp;— войти</a>
         </div>
         {fixWall.modal}
       </div>}

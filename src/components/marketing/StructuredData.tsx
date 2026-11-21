@@ -27,7 +27,7 @@ export function StructuredData() {
   const service = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "IITALY — сопровождение поступления в Италию",
+    name: "IITALY\u00A0— сопровождение поступления в Италию",
     provider: { "@type": "Organization", name: "IITALY", url: "https://iitaly.net" },
     areaServed: "Kazakhstan",
     serviceType: "Сопровождение поступления в университеты Италии",

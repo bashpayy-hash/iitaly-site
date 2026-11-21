@@ -2900,3 +2900,63 @@ designs», item 5 — ShaderGradient, «grainy moving gradients»: «приме�
   `transform` only with three different periods, none with «меньше
   движения», and 4.5:1 for every line at eight moments of the cycle.
 
+## Text stands evenly; blocks say one thing once · 21 November 2026 (night)
+
+Owner, with three tablet screenshots (the «Как это работает» cards and the
+offer on /check, the free/paid cell of a guide topic, the cover of /check with
+a paragraph over Vespi's helmet): «в целом много где тексты не прям ровные, и
+идёт перенасыщение каких-то блоков текстом. Вот тоже исправь эту причину».
+
+Measured first: every text block on 18 pages at 1440 / 1024 / 820 / 390 (lines,
+their widths, words per card, sibling cards, repeated phrases). The causes and
+what replaced them:
+
+- **No line-breaking rule.** `text-wrap` stood in 28 of 80 stylesheets; the
+  rest broke greedily. Found: 57 orphan words, 15 ragged paragraphs. Now one
+  rule for the site (`src/app/typography.css`, layer `base`, zero specificity):
+  headings balance, running text is broken by the whole paragraph. After: 2
+  orphans.
+- **A dash could start a line** (5 found, one in the owner's screenshot). The
+  dash is bound to the word before it with a non-breaking space in the copy of
+  the public pages — 101 dashes in 34 files, by a script over string literals
+  and markup; the cabinet, the Modulo 1 trainer and the map with the
+  comparison are protected and untouched.
+- **Words over the picture's subject.** On /check the cover's words kept
+  their 560px while the picture, cropped by height on a tablet, put Vespi at
+  64% of the cover: the paragraph's box lay 28–80px over his helmet from 761
+  to 834px. Whether it showed depended on where the lines happened to break —
+  on the owner's iPad the type sets narrower than in Chromium, so they reached
+  him. Up to 1023px the words take at most 60% of the cover: 33–47px short of
+  the helmet at every width.
+- **Columns too narrow for their sentences.** The note of a guide overview
+  stood in a third of the grid (207px: six to eight lines of 13–21
+  characters) — it reads across the grid now. On a phone a topic's intro
+  stood beside the 120px cartouche (218px: seven lines) — the title keeps its
+  place beside the cartouche, the intro runs under both.
+- **Unequal and repeated text.**
+  - /check, «Как это работает»: 21, 12 and 13 words → 13, 12 and 11, one
+    sentence each. The cover's paragraph 28 → 22 words; «первая проверка
+    бесплатно» is said once on the cover, not three times before the tool.
+    The offer lost the same sentence. «Что проверяем в файле» (four lines)
+    opens on request.
+  - A guide topic's free/paid cell: 23 and 28 words → 9 and 22; the five free
+    guides are not listed by name (the directory marks them). The boundary is
+    the same.
+  - The document check on the home page and /prices: each fact had a third
+    line repeating the comparison under it, the invitation above it or the
+    lead; a fact is a value and its name (−40 words). The lead ends where its
+    statement ends. `design-content.mjs` lists these for /prices.
+  - Home, «После визы»: a topic card carried the teaser's first sentence
+    (13–14 words in a 140–180px column, six lines on a phone); now one line of
+    3–5 words, like the stage cards above.
+- Prices, terms, the comparison with an agency, guide teasers written at the
+  owner's request (19 Nov) and all reference text (rules, FAQ answers, step
+  bodies) are unchanged.
+- **Not done here:** binding short prepositions («в», «и», «на») to the next
+  word. It needs the same non-breaking space in every sentence of the site and
+  touches most text assertions in the reviews; it is a pass of its own.
+- `design-text-review` (new, in CI) holds the rules on 12 pages at three
+  widths: a line-breaking rule on every heading and paragraph, no loose dash,
+  the /check cover's gap to Vespi at four tablet widths, the word budgets, the
+  disclosure, the note's and the intro's width.
+

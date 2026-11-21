@@ -24,7 +24,7 @@ export function PlanDocuments({ plan }: { plan: Plan }) {
        информации бесплатно»): что именно нужно по каждому документу —
        готовый чек-лист, а это и есть маршрут. */}
     <ul>{plan.docs.map(doc => <li key={doc.n}><strong>{doc.n}</strong>{paid && <p>{doc.d}</p>}</li>)}</ul>
-    {!paid && <p data-plan-docs-locked>Что именно нужно по каждому из {plan.docs.length} документов — в маршруте вместе с проверкой файлов.</p>}
+    {!paid && <p data-plan-docs-locked>Что именно нужно по каждому из {plan.docs.length} документов&nbsp;— в маршруте вместе с проверкой файлов.</p>}
   </details>;
 }
 

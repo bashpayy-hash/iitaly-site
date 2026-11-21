@@ -17,7 +17,7 @@ export function MarketingFooter() {
           {/* Footer links prefetch on hover or touch only (motion pass, 5 Nov): they
               enter the viewport mid-scroll, and parsing their route payloads
               there costs frames on a phone. */}
-          <Link href="/" className={styles.wordmark} aria-label="IITALY — главная" prefetch={false}><BrandLogo /></Link>
+          <Link href="/" className={styles.wordmark} aria-label="IITALY&nbsp;— главная" prefetch={false}><BrandLogo /></Link>
           <p className={styles.footerTagline}>Италия ближе, чем кажется.</p>
           <p>ИИ-сервис поступления в университеты Италии · Казахстан</p>
         </div>

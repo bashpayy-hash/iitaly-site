@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Onest, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import "./tenge.css";
+import "./typography.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { ChatMount } from "@/components/chat/ChatMount";

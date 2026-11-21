@@ -71,7 +71,7 @@ export function PlanStepPage({ position }: { position: number }) {
   if (!(position >= 0 && position < total)) return <div className={styles.empty} data-plan-step-empty>
     <Crumbs />
     <h1>В твоём маршруте {total} {stepsWord(total)}</h1>
-    <p>Такого шага в нём нет — возможно, ответы изменились.</p>
+    <p>Такого шага в нём нет&nbsp;— возможно, ответы изменились.</p>
     <Link className={styles.primary} href={PLAN_ROUTE_HREF}>Весь маршрут</Link>
   </div>;
 
@@ -87,7 +87,7 @@ export function PlanStepPage({ position }: { position: number }) {
   const readCount = steps.filter((item, index) => open(index) && (read.has(planStepKey(item)) || (index === position && isOpen))).length;
   const openCount = steps.filter((_, index) => open(index)).length;
   const caption = paid ? "Всё открыто: на этом устройстве выполнен вход в кабинет"
-    : openCount < total ? `Открыто ${openCount} из ${total} · остальные — с маршрутом` : undefined;
+    : openCount < total ? `Открыто ${openCount} из ${total} · остальные\u00A0— с маршрутом` : undefined;
   const sentences = guideSentences(step.summary || step.p);
   const hidden = 2;
 
@@ -135,7 +135,7 @@ export function PlanStepPage({ position }: { position: number }) {
     </div>}
 
     {next === null && <section className={page.finish} aria-label="Маршрут пройден">
-      <p>Это последний шаг маршрута. Сроки, документы и напоминания по всем шагам — в личном кабинете.</p>
+      <p>Это последний шаг маршрута. Сроки, документы и напоминания по всем шагам&nbsp;— в личном кабинете.</p>
       <Link className={styles.primary} href="/portal">Продолжить в личном кабинете</Link>
     </section>}
 

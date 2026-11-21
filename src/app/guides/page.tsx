@@ -13,7 +13,7 @@ export default function GuidesPage() {
     <div className={paper.guideIntro} data-public-paper-zone="guides-intro">
     <header className={ui.indexHeader}>
       <p className={ui.eyebrow}>Гайды и виза</p><h1>Один вопрос. Понятный ответ.</h1>
-      <p className={ui.intro}><strong>Выбери вопрос, который решаешь сейчас.</strong> Документы, поступление и жизнь в Италии — по одной теме за раз.</p>
+      <p className={ui.intro}><strong>Выбери вопрос, который решаешь сейчас.</strong> Документы, поступление и жизнь в Италии&nbsp;— по одной теме за раз.</p>
       <GuideReviewed />
     </header>
     </div>

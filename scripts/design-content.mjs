@@ -3,8 +3,23 @@ import assert from 'node:assert/strict';
 // User request 2026-10-18: shorten repeated Vespi interface copy. This exact
 // replacement retains unlimited rechecks and the institution's decision; all
 // other pricing text, amounts and product conditions still match the base.
-const approvedRemovedUiLabels = new Set(['Веспи · сверим до подачи']);
+const approvedRemovedUiLabels = new Set(['Веспи · сверим до подачи',
+  // 2026-11-21, owner with tablet screenshots: «идёт перенасыщение каких-то
+  // блоков текстом… исправь эту причину». Each fact of the document check
+  // had a third line repeating the section's own comparison rows, invitation
+  // and lead; a fact is now a value and its name. Prices, terms and the
+  // comparison with an agency are untouched.
+  'Без очереди и записи к менеджеру.',
+  'Проверяй, когда документ готов, а не когда открыт офис.',
+  'Исправил — проверь снова, сколько нужно. Первая — бесплатно.',
+  'Сверка с правилами твоего вуза, DSU и визы на твой учебный год.',
+]);
 const approvedUiCopyChanges = new Map([
+  // 2026-11-21, same request: the section's lead ends where its statement
+  // ends; the aside about an agency's opening hours is the first row of the
+  // comparison under it.
+  ['Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы на твой учебный год и скажет, что исправить, — пока агентство ещё не открылось.',
+    'Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы на твой учебный год и скажет, что исправить.'],
   // 2026-10-26: make purchasing explicit at both pricing entry points.
   ['Оформить и оплатить', 'Купить за'],
   ['AI-сверка без лимита помогает найти замечания до подачи. Загрузи исправленную версию — повторная проверка входит в цену. Решение о приёме документа остаётся за вузом или консульством.',

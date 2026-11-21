@@ -30,17 +30,23 @@ const CTA_ART = cartoucheFrame("doc-check");
 
 const AGENCY_SUPPORT = { from: 500_000, to: 1_000_000 };
 
+/* Owner, 21 Nov: «идёт перенасыщение каких-то блоков текстом». Each fact had a
+   third line that the section already says elsewhere: «без очереди к
+   менеджеру» and «проверь снова» are the rows of the comparison below, «первая
+   — бесплатно» is the invitation above, «сверка с правилами вуза, DSU и визы»
+   is the lead. A fact is a value and its name; the section lost 40 words and
+   no statement (design-content.mjs lists the removed lines for /prices). */
 const FACTS = [
-  { value: "10–30 секунд", label: "обычно до ответа", note: "Без очереди и записи к менеджеру." },
-  { value: "24/7", label: "днём, ночью, в выходные", note: "Проверяй, когда документ готов, а не когда открыт офис." },
-  { value: "Без лимита", label: "проверок с маршрутом", note: "Исправил — проверь снова, сколько нужно. Первая — бесплатно." },
-  { value: "По пунктам", label: "имена, даты, печати, перевод", note: "Сверка с правилами твоего вуза, DSU и визы на твой учебный год." },
+  { value: "10–30 секунд", label: "обычно до ответа" },
+  { value: "24/7", label: "днём, ночью, в выходные" },
+  { value: "Без лимита", label: "проверок с маршрутом" },
+  { value: "По пунктам", label: "имена, даты, печати, перевод" },
 ] as const;
 
 const COMPARE = [
   { row: "Когда ответят", agency: "В рабочие часы менеджера", us: "В любое время, обычно за 10–30 секунд" },
   { row: "Повторная проверка после правки", agency: "Снова ждать ответа", us: "Сразу и сколько угодно раз" },
-  { row: "Сколько стоит", agency: "Отдельный договор с агентством", agencyPrice: `Сопровождение — обычно ${fmtPrice(AGENCY_SUPPORT.from)}–⁠${priceLabel(AGENCY_SUPPORT.to)}`, us: `Входит в ${priceLabel(PRICE_MAIN)} за весь путь, первая проверка бесплатно` },
+  { row: "Сколько стоит", agency: "Отдельный договор с агентством", agencyPrice: `Сопровождение\u00A0— обычно ${fmtPrice(AGENCY_SUPPORT.from)}–⁠${priceLabel(AGENCY_SUPPORT.to)}`, us: `Входит в ${priceLabel(PRICE_MAIN)} за весь путь, первая проверка бесплатно` },
 ] as const;
 
 /* Owner, 20 Nov, on the home section: «саму кнопку «Проверь документы», она
@@ -63,7 +69,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
     </h2>
     <p className={styles.lead}>
       Загрузи справку, перевод, выписку или аттестат. ИИ сверит их с требованиями твоего вуза, DSU и визы
-      на твой учебный год и скажет, что исправить, — пока агентство ещё не открылось.
+      на твой учебный год и скажет, что исправить.
     </p>
   </div>;
   return <section className={`${styles.section} ${compact ? styles.compact : ""}`} data-section={compact ? undefined : "document-check-feature"} data-document-check-feature aria-labelledby={compact ? "document-check-promo-title" : "document-check-feature-title"}>
@@ -81,7 +87,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
         <img className={styles.ctaArt} src={CTA_ART.src} srcSet={CTA_ART.srcSet} sizes="(max-width: 767px) 64px, 260px" width={CTA_ART.width} height={CTA_ART.height} alt="" loading="lazy" decoding="async" draggable={false} data-document-check-art />
       </BentoCell>}
       {FACTS.map(fact => <BentoCell key={fact.value} span={{ md: 3, lg: 3 }} className={styles.fact} data-bento-row data-document-check-fact>
-        <BentoStat value={fact.value} label={fact.label} note={fact.note} />
+        <BentoStat value={fact.value} label={fact.label} />
       </BentoCell>)}
       <BentoCell span={{ md: 6, lg: 12 }} data-document-check-compare>
         <table className={styles.compare}>

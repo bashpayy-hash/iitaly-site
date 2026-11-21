@@ -61,7 +61,7 @@ export function StoryPath({ stops, index, href, onSelect, label, noun = "Пун�
             const common = {
               className: styles.stop, "data-path-stop": position, "data-state": state, "data-locked": stop.locked || undefined, "data-checked": stop.checked || undefined, title: stop.title,
               "aria-current": position === index ? "step" as const : undefined,
-              "aria-label": `${noun} ${position + 1} из ${count}: ${stop.title}${stop.checked ? " — отмечено" : ""}${stop.locked ? " — откроется с маршрутом" : ""}`,
+              "aria-label": `${noun} ${position + 1} из ${count}: ${stop.title}${stop.checked ? "\u00A0— отмечено" : ""}${stop.locked ? "\u00A0— откроется с маршрутом" : ""}`,
             };
             return <li key={stop.id}>
               {onSelect ? <a {...common} href={href(position)} onClick={event => {

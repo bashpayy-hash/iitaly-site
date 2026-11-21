@@ -50,10 +50,16 @@ function UploadNow() {
   </div>;
 }
 
+/* Owner, 21 Nov, with this row on a tablet: «тексты не прям ровные, и идёт
+   перенасыщение каких-то блоков текстом». The first card had 21 words beside
+   12 and 13 — six ragged lines in a 200px column next to three. One short
+   sentence each now, 11–13 words; what the dropped words said (the kinds of
+   competition, «пункт за пунктом») stands in the tool above and in the
+   heading of the home section. */
 const HOW = [
-  { title: "Выбери заявку", text: "Программа и учебный год: общий DSU, конкурс региона или вуза. Если ещё не знаешь — проверим содержание по общим правилам DSU." },
+  { title: "Выбери заявку", text: "Программа и учебный год. Если ещё не знаешь, проверим по общим правилам DSU." },
   { title: "Загрузи файл", text: "Справка, перевод, выписка или аттестат: фото, PDF или Word до 5 МБ." },
-  { title: "Получи разбор", text: "Обычно за 10–30 секунд: что в порядке и что уточнить — пункт за пунктом." },
+  { title: "Получи разбор", text: "Обычно за 10–30 секунд: что в порядке и что нужно уточнить." },
 ] as const;
 
 /* What opens with the route — the same purchase as on /prices and the walls. */
@@ -64,8 +70,8 @@ function CheckOffer() {
     <Bento label="Проверки без лимита" className={check.bento}>
       <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={check.offer}>
         <div className={check.offerCopy}>
-          <h2 id="check-offer-title" className={check.offerTitle}>Проверки без лимита — с маршрутом</h2>
-          <p className={check.offerText}>{paid ? "На этом устройстве кабинет уже открыт: проверяй документы там, сколько нужно." : "Исправил — проверь снова, сколько нужно. Вместе с маршрутом: шаги с датами, чек-листы и напоминания о сроках. Первая проверка — бесплатно."}</p>
+          <h2 id="check-offer-title" className={check.offerTitle}>Проверки без лимита&nbsp;— с маршрутом</h2>
+          <p className={check.offerText}>{paid ? "На этом устройстве кабинет уже открыт: проверяй документы там, сколько нужно." : "Исправил\u00A0— проверь снова, сколько нужно. Вместе с маршрутом: шаги с датами, чек-листы и напоминания о сроках."}</p>
           <div className={check.offerActions}>
             {paid ? <Link className={check.offerButton} href="/portal?view=docs">Открыть документы в кабинете</Link>
               : <button type="button" className={check.offerButton} onClick={wall.open} data-wall-buy data-wall-place="document-check" aria-haspopup="dialog">{wall.label}</button>}
@@ -96,9 +102,12 @@ export function DocumentCheckPage() {
             <AppleHeading as="h1" className="mt-3 max-w-xl">
               Проверь <span className="warm-highlight">документ</span> перед подачей
             </AppleHeading>
+            {/* 21 Nov: 28 words here said «первая проверка бесплатно» a line
+                above the same words under the button, and «без регистрации»
+                stands in «Как это работает». One sentence and the time. */}
             <p className="mt-5 max-w-lg text-apple-body">
-              Справка, перевод, выписка или аттестат: ИИ сверит их с требованиями твоего вуза, DSU и визы
-              на твой учебный год, обычно за 10–30 секунд. Первая проверка бесплатно, без регистрации.
+              ИИ сверит справку, перевод, выписку или аттестат с требованиями твоего вуза, DSU и визы
+              на твой учебный год. Обычно за 10–30 секунд.
             </p>
             <UploadNow />
           </div>

@@ -234,7 +234,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               <div className="text-center">
                 <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">
-                  Переведи сумму и пришли чек — после подтверждения мы активируем доступ или начнём выполнение услуги.
+                  Переведи сумму и пришли чек&nbsp;— после подтверждения мы активируем доступ или начнём выполнение услуги.
                 </p>
               </div>
 

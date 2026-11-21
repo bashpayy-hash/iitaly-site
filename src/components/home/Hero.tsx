@@ -42,7 +42,7 @@ export function Hero() {
               heading now names the job and the difference; the line under the
               buttons takes the risk away with facts the site already states. */}
           <h1 className={styles.heroTitle}>Поступление в&nbsp;Италию<br /><span>без агентства.</span></h1>
-          <p className={styles.heroDescription}>Из Казахстана: подбор вузов, документы, стипендия <TermHint term="DSU">DSU</TermHint> и виза — по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
+          <p className={styles.heroDescription}>Из Казахстана: подбор вузов, документы, стипендия <TermHint term="DSU">DSU</TermHint> и виза&nbsp;— по понятному плану с ИИ. Один платёж {priceLabel(PRICE_MAIN)} вместо агентства.</p>
           <div className={assistant.entryActions}>
             {/* Owner, 6 Nov: «проверка документов — главная фишка сайта»:
                 она стоит второй кнопкой рядом с планом, а не мелкой ссылкой. */}
@@ -58,7 +58,7 @@ export function Hero() {
         </div>
       </div>
       <div className={styles.stage}>
-        <div className={styles.stageLabel}><span>Большой путь. По одному шагу.</span><span>Казахстан — Италия</span></div>
+        <div className={styles.stageLabel}><span>Большой путь. По одному шагу.</span><span>Казахстан&nbsp;— Италия</span></div>
         <div className={styles.journey} data-journey-preview>
           {/* Owner, 20 Nov (evening, iPad): «там слишком белое, добавь туда
               такую иллюстрацию по теме, чтобы обыгрывалось пространство, в
@@ -79,12 +79,12 @@ export function Hero() {
             <div className={styles.journeyBody}>
               <div>
                 <h2>Найти место,<br />где хочется учиться.</h2>
-                <p>43 университета в 30 городах. Программы, требования и дедлайны — в одной базе.</p>
+                <p>43 университета в 30 городах. Программы, требования и дедлайны&nbsp;— в одной базе.</p>
               </div>
               <div>
                 <span className={styles.journeyLabel}>Стипендия DSU</span>
                 <strong className={styles.scholarship}>По региону</strong>
-                <p>Сумма, справки и сроки — по конкурсу твоего года. Жильё и денежная выплата не гарантированы.</p>
+                <p>Сумма, справки и сроки&nbsp;— по конкурсу твоего года. Жильё и денежная выплата не гарантированы.</p>
               </div>
             </div>
           </div>
