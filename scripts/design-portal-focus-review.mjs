@@ -181,7 +181,7 @@ try {
     // Hero tile: greeting as the label, the next step as the headline, one
     // plain line, facts as words, one button — all on a solid paper panel.
     // Owner, 6 Nov: «иллюстрация должна быть на фоне, и Веспи должен реально
-    // ехать»: the landscape (a loop where Vespi rides along the road) is the
+    // ехать»: the landscape (since 21 Nov one still picture of Vespi riding) is the
     // background of the whole tile; on phones it sits on top and the panel
     // overlaps it like a sheet. No white haze or gradient over the photo.
     // Then the two feature tiles, then «Весь путь», 12px apart.
@@ -207,18 +207,14 @@ try {
     assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=landscapeFloor-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its scene');
     assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The scene clips its landscape');
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape');
-    assert.equal(await page.locator('[data-portal-ride]').count(),1,'Vespi rides through the hero (a CSS ride over the still road)');
-    // Owner, 21 Nov: «нет нормальной физики», then «чтобы чувствовалось, что он
-    // реально куда-то едет вглубь» — the road runs away from the viewer and Vespi,
-    // seen from behind, rides along it into the distance: the suspension takes the
-    // joints, the head answers on its own layer, and he shrinks toward the
-    // vanishing point (read from the stylesheet, so it holds with «меньше движения»).
-    assert.equal(await page.locator('[data-portal-ride-chassis] [data-portal-ride-head]').count(),1,'The head rides on its own layer');
-    const depth=await page.evaluate(()=>{for(const sheet of document.styleSheets){let rules;try{rules=sheet.cssRules;}catch{continue;}for(const rule of rules)if(rule instanceof CSSKeyframesRule&&rule.name.endsWith('amalfi-ride-size')){const scales=[...rule.cssRules].map(frame=>parseFloat(frame.style.scale));return {first:scales[0],least:Math.min(...scales),grows:scales.some((value,index)=>index>0&&value>scales[index-1]+1e-6)};}}return null;});
-    assert(depth&&depth.first===1&&depth.least<.1&&!depth.grows,`Vespi rides away into the depth: he only shrinks, more than ten times: ${JSON.stringify(depth)}`);
-    const riderBox=await page.locator('[data-portal-ride-chassis]').boundingBox(),sceneBox=await page.locator('[data-portal-hero-scene]').boundingBox();
-    assert(riderBox&&riderBox.x>=sceneBox.x&&riderBox.x+riderBox.width<=sceneBox.x+sceneBox.width&&riderBox.y+riderBox.height<=sceneBox.y+sceneBox.height+1,'Standing still («меньше движения») he is whole on the road ahead');
-    assert.equal(await page.locator('[data-portal-ride] img').evaluateAll(imgs=>imgs.every(img=>img.complete&&img.naturalWidth>0)),true,'The rider layers load');
+    // Owner, 21 Nov, after the loop and four passes at a moving cut-out: «просто
+    // убери видео, просто сделай динамичную, классную картинку, где он просто
+    // едет, всё, больше ничего не надо». The hero is one still picture — Vespi
+    // rides inside it — and nothing in the scene moves.
+    assert.equal(await page.locator('[data-portal-hero-scene] img').count(),1,'The hero scene is one picture');
+    assert.equal(await page.locator('[data-portal-hero-scene] :is(video,canvas), [data-portal-ride]').count(),0,'No video, canvas or moving cut-out in the hero');
+    assert.equal(await page.locator('[data-portal-hero-scene]').evaluate(el=>el.getAnimations({subtree:true}).length),0,'Nothing is animated in the hero scene');
+    assert.match(await page.locator('[data-portal-landscape]').evaluate(img=>img.currentSrc),width<=640?/amalfi-ride-phone-\d+\.webp$/:/amalfi-ride-\d+\.webp$/,'A phone gets its own closer frame of the picture');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),width>640?'28px':'24px');
     assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');
