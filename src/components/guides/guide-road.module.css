@@ -1,9 +1,11 @@
 /* Дорога гайдов поверх стилей дороги кабинета (portal-path.module.css):
-   только то, что у гайдов иначе. Подписи переносятся по слогам, а не по
-   букве; у подсвеченного раздела на телефоне хватает места под подпись его
+   только то, что у гайдов иначе. Подписи переносятся по словам; у подсвеченного раздела на телефоне хватает места под подпись его
    последнего шага; макет у последней остановки короткой дороги не выходит
    за плитку. */
-.guideRoad [data-road-text] > span,.guideRoad [data-road-step-title] { overflow-wrap:break-word; hyphens:auto; }
+/* 21 Nov pass: with automatic hyphenation the labels broke mid-word
+   («офици-альный», «про-верь», «Подтверждён-ная») beside free space. A word
+   now moves to the next line whole; only one longer than its column breaks. */
+.guideRoad [data-road-text] > span,.guideRoad [data-road-step-title] { overflow-wrap:break-word; hyphens:manual; }
 .tail { height:56px; list-style:none; }
 @media (max-width:640px) {
   /* 19 Nov: step captions stand beside their circles on phones

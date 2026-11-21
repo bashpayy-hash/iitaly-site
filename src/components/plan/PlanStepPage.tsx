@@ -8,7 +8,6 @@ import { buildPlan, type PlanStep } from "@/lib/planBuilder";
 import { usePlanDraft } from "@/lib/usePlanDraft";
 import { WIZ } from "@/data/wizard";
 import { planStepOpen } from "@/lib/access";
-import { displayStepTitle } from "@/lib/portalNavigation";
 import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { RISK_LINE } from "@/components/access/offerCopy";
 import { SourceRefs } from "@/components/SourceRefs";
@@ -20,7 +19,7 @@ import { GuideWall } from "@/components/guides/GuideWall";
 import { useGuideRead } from "@/components/guides/guideReading";
 import { guideSentences } from "@/components/guides/guideText";
 import { planStepArt, planStepPhase } from "./planStepArt";
-import { PLAN_ROUTE_HREF, planStepHref, planStepKey, stepsWord } from "./planRoute";
+import { PLAN_ROUTE_HREF, planStepHref, planStepKey, stepTitleText, stepsWord } from "./planRoute";
 import ui from "@/components/guides/guide-pages.module.css";
 import page from "@/components/guides/guide-step-page.module.css";
 import wall from "@/components/guides/guide-wall.module.css";
@@ -77,7 +76,7 @@ export function PlanStepPage({ position }: { position: number }) {
   </div>;
 
   const step = steps[position];
-  const title = displayStepTitle(step.t);
+  const title = stepTitleText(step.t);
   const open = (index: number) => paid || planStepOpen(index);
   const isOpen = open(position);
   const art = planStepArt(step.t).frame;
@@ -98,13 +97,13 @@ export function PlanStepPage({ position }: { position: number }) {
       <div>
         <p className={page.position}>{planStepPhase(step.t)}</p>
         <h1 id="plan-step-title" tabIndex={-1}>{title}</h1>
-        <p className={ui.reviewed}>Правила проверены {plan.reviewed}</p>
+        <p className={ui.reviewed}>Правила проверены <span className={ui.date}>{plan.reviewed}</span></p>
       </div>
       <img className={`${page.art} ${styles.art}`} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 30vw, 200px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />
     </header>
     <div className={page.path}>
       <StoryPath label="Шаги маршрута" noun="Шаг" index={position} caption={caption} href={planStepHref} prefetch={false}
-        stops={steps.map((item, index) => ({ id: String(index), title: displayStepTitle(item.t), locked: !open(index), checked: index !== position && open(index) && read.has(planStepKey(item)) }))} />
+        stops={steps.map((item, index) => ({ id: String(index), title: stepTitleText(item.t), locked: !open(index), checked: index !== position && open(index) && read.has(planStepKey(item)) }))} />
     </div>
     <GuideReadMark readKey={key} open={isOpen} />
 
@@ -142,14 +141,15 @@ export function PlanStepPage({ position }: { position: number }) {
 
     <nav className={page.pager} aria-label="Соседние шаги" data-fab-yield>
       {previous !== null
-        ? <Link className={page.pagerCard} href={planStepHref(previous)} data-plan-step-prev><span><small>Назад</small>{displayStepTitle(steps[previous].t)}</span></Link>
+        ? <Link className={page.pagerCard} href={planStepHref(previous)} data-plan-step-prev><span><small>Назад</small>{stepTitleText(steps[previous].t)}</span></Link>
         : <Link className={page.pagerCard} href={PLAN_ROUTE_HREF}><span><small>К плану</small>Весь маршрут</span></Link>}
       {next !== null
-        ? <Link className={`${page.pagerCard} ${page.forward}`} href={planStepHref(next)} data-instruction-next data-plan-step-next><span><small>Дальше</small>{displayStepTitle(steps[next].t)}</span></Link>
+        ? <Link className={`${page.pagerCard} ${page.forward}`} href={planStepHref(next)} data-instruction-next data-plan-step-next><span><small>Дальше</small>{stepTitleText(steps[next].t)}</span></Link>
         : <Link className={`${page.pagerCard} ${page.forward}`} href={PLAN_ROUTE_HREF}><span><small>Готово</small>Вернуться к маршруту</span></Link>}
     </nav>
-    <footer className={ui.articleFooter}>
+    {/* On the first and the last step the pager itself leads back to the route. */}
+    {previous !== null && next !== null && <footer className={ui.articleFooter}>
       <Link href={PLAN_ROUTE_HREF} className={ui.textLink}>Весь маршрут</Link>
-    </footer>
+    </footer>}
   </article>;
 }

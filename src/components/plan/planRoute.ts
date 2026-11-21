@@ -1,4 +1,5 @@
 import type { PlanStep } from "@/lib/planBuilder";
+import { displayStepTitle } from "@/lib/portalNavigation";
 import { planStepPhase } from "./planStepArt";
 
 /* Маршрут плана как путь (owner, 20 Nov, скрин /plan: «очень громоздкие,
@@ -12,6 +13,11 @@ import { planStepPhase } from "./planStepArt";
 /** Pages built for step addresses. A plan has 9–12 steps today; the rest is
  *  headroom, and an address past the plan shows a way back. */
 export const PLAN_STEP_PAGES = 16;
+
+/** A step title for the screen: «12-й», «11-летней» never break at their
+ *  hyphen (21 Nov pass: the route's first title ended «…добери 12-» / «й
+ *  год»). The words are the builder's own; only the hyphen is the no-break one. */
+export const stepTitleText = (title: string) => displayStepTitle(title).replace(/(\d)-(?=\p{L})/gu, "$1\u2011");
 
 export const planStepHref = (position: number) => `/plan/${position + 1}`;
 export const PLAN_ROUTE_HREF = "/plan#route";

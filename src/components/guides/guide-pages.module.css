@@ -7,6 +7,7 @@
 .shell .indexHeader h1 { margin:0 0 18px; font:600 48px/1.1 var(--font-apple-display); letter-spacing:-.03em; }
 .intro { max-width:65ch; font-size:18px; line-height:1.6; color:#57514B; }
 .reviewed { margin-top:16px; font-size:13px; line-height:1.5; color:#57514B; }
+.reviewed time, .reviewed .date { white-space:nowrap; }
 .search { display:block; max-width:720px; margin-top:32px; }
 .search > label { display:block; margin-bottom:10px; font-size:14px; font-weight:500; }
 .searchField { display:flex; align-items:center; gap:12px; min-height:56px; padding:4px 12px 4px 18px; border:1px solid #CFC8BE; border-radius:16px; background:#FFFDF9; }
@@ -28,7 +29,9 @@
 .breadcrumbs { margin-bottom:24px; color:#57514B; font-size:13px; line-height:1.5; }
 .breadcrumbs ol { display:flex; flex-wrap:wrap; align-items:center; gap:0 8px; list-style:none; margin:0; padding:0; }
 .breadcrumbs li { display:flex; align-items:center; gap:8px; min-width:0; }
-.breadcrumbs li+li::before { content:"/"; color:#766E64; }
+/* The slash stays with the crumb before it (21 Nov pass: on a phone the
+   second line of the path began with «/»). */
+.breadcrumbs li:not(:last-child)::after { content:"/"; color:#766E64; }
 /* 19 Nov (phone pass): a short crumb («Виза D») was 43px wide; every crumb is at least a 44px target. */
 .breadcrumbs a { display:inline-flex; align-items:center; min-width:44px; min-height:44px; text-decoration:underline; text-underline-offset:4px; }
 .articleHeader { margin-bottom:32px; }
@@ -58,6 +61,9 @@
 .textLink svg { flex:none; }
 @media (hover: hover) and (pointer: fine) { .textLink:hover { text-decoration-thickness:2px; } }
 .articleFooter { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px 32px; margin-top:40px; padding-top:20px; border-top:1px solid #DCD5CA; }
+/* After the sources accordion its own bottom rule is the divider (21 Nov
+   pass: the footer drew a second rule 41px lower with nothing between). */
+.readingBody:has(> .sources:last-child) + .articleFooter { margin-top:0; border-top:0; }
 .indexFooter { margin-top:32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px 24px; }
 .visaTimeline { padding:0; list-style:none; counter-reset:visa; }
 .visaTimeline li { counter-increment:visa; display:grid; grid-template-columns:24px minmax(0,1fr); gap:16px; padding:22px 0; border-top:1px solid #DCD5CA; }
@@ -93,7 +99,8 @@
 @media(max-width:899px) { .container { padding-left:24px; padding-right:24px; } }
 @media(max-width:767px) { .container { padding-left:20px; padding-right:20px; } }
 /* Owner, 14 Nov 2026: a free topic reads on one screen («Вся тема коротко»). */
-.brief { margin:32px 0 8px; }
+/* 36px before the road card below, like the other joins on the page (was 8px). */
+.brief { margin:32px 0 36px; }
 .brief h2 { margin:0 0 16px; font-size:20px; font-weight:600; line-height:1.4; }
 .brief ol { display:grid; gap:0; margin:0; padding:0; list-style:none; counter-reset:brief; border-top:1px solid #E7E1D8; }
 .brief li { counter-increment:brief; display:grid; grid-template-columns:32px minmax(0,1fr); column-gap:12px; padding:16px 0; border-bottom:1px solid #E7E1D8; }

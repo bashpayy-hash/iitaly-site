@@ -108,7 +108,7 @@ export default function PrivacyPage() {
     <MarketingLayout>
         <section className="px-5 md:px-6 py-10 sm:py-14" data-legal-page>
           <div className="mx-auto max-w-[760px]">
-            <h1 className="font-apple-display text-[clamp(22px,8vw,36px)]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
+            <h1 className="font-apple-display text-[clamp(30px,3.6vw,46px)]! font-semibold leading-[1.1]! tracking-[-0.03em]">
               Политика конфиденциальности
             </h1>
             <p className="mt-3 text-[13px] text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
@@ -117,7 +117,7 @@ export default function PrivacyPage() {
               {SECTIONS.map((s) => (
                 <div key={s.title}>
                   <h2 className="font-apple-display text-[22px]! font-semibold leading-[1.3]! tracking-[-0.02em]! text-ink">{s.title}</h2>
-                  <div className="mt-2 text-[16px] leading-[1.6] text-ink-soft [&_a]:font-semibold [&_a]:text-red [&_b]:text-ink">
+                  <div className="mt-2 text-[16px] leading-[1.6] text-ink-soft [&_a]:font-semibold [&_a]:text-red [&_a]:underline [&_a]:underline-offset-4 [&_b]:text-ink">
                     {s.body}
                   </div>
                 </div>

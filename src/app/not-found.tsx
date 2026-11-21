@@ -25,7 +25,7 @@ export default function NotFound() {
             поступления на месте — вот куда можно вернуться.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-            <Link href="/" className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#B83A27] px-6 text-[15px] font-medium text-[#FAF6EE] transition-colors hover:bg-[#A33421]">На главную</Link>
+            <Link href="/" className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#141413] px-6 text-[15px] font-medium text-[#FFFDF9] transition-colors hover:bg-[#2A2420]">На главную</Link>
             <Link href="/plan#questionnaire" className="inline-flex min-h-[44px] items-center text-[15px] font-medium text-ink underline underline-offset-4">Составить план</Link>
             <Link href="/universities" className="inline-flex min-h-[44px] items-center text-[15px] font-medium text-ink underline underline-offset-4">Смотреть университеты</Link>
           </div>

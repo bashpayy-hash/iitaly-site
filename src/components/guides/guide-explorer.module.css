@@ -1,9 +1,13 @@
 /* Шапка справочника над плитками: три раздела и, при выбранном разделе,
    ссылка на него целиком. Счётчик виден только при поиске (owner, 3 Nov:
    над полосой — ничего). Сами плитки — guide-tiles.module.css. */
-.categories { display:flex; gap:8px; overflow:auto; padding:4px 0 20px; scrollbar-width:thin; }
+/* 12px under the search field (21 Nov pass: 5px, the chips looked glued to
+   it). On a phone the rail runs to the screen's edge instead of being cut at
+   the gutter with a strip of paper to its right. */
+.categories { display:flex; gap:8px; overflow:auto; padding:12px 0 20px; scrollbar-width:thin; }
+@media (max-width:767px) { .categories { margin-inline:-20px; padding-inline:20px; scroll-padding-inline:20px; scrollbar-width:none; } .categories::-webkit-scrollbar { display:none; } }
 .categories button { flex-shrink:0; min-height:44px; padding:10px 16px; border:1px solid #DCD3C3; border-radius:999px; background:transparent; color:#57514B; font-size:13px; }
-.categories button[aria-pressed=true] { border-color:#352B28; background:#352B28; color:#FAF9F3; }
+.categories button[aria-pressed=true] { border-color:#141413; background:#141413; color:#FFFDF9; }
 .resultRow { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:4px 20px; margin:-8px 0 16px; }
 .resultCount { margin:0 0 16px; color:#57514B; font-size:14px; line-height:1.5; }
 .stageLink { display:inline-flex; align-items:center; gap:6px; min-height:44px; color:#241F1C; font-size:14px; text-decoration:underline; text-underline-offset:4px; }

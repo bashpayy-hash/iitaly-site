@@ -3,7 +3,10 @@
 .routeHeading button { min-height: 44px; color: var(--i-link); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 639px) { .routeHeading h2 { font-size: 24px; } }
 
-.reminders { margin-top:20px; padding-block:8px; border-block:1px solid #DCD3C3; }.reminders summary { min-height:44px; padding-block:10px; font-size:16px; font-weight:500; cursor:pointer; }.reminders[open] { padding-bottom:20px; }
+/* One list of two rows: «Напоминания» follows «Какие документы понадобятся»
+   directly and shares its rule (21 Nov pass: each drew both of its rules, a
+   doubled line 21px apart in two tones of beige). */
+.reminders { margin-top:0; padding-block:8px; border-bottom:1px solid var(--portal-border, #E4DDD5); }.reminders summary { min-height:44px; padding-block:10px; font-size:16px; font-weight:500; cursor:pointer; }.reminders[open] { padding-bottom:20px; }
 
 .ready { max-width:60ch; margin:0; font-size:16px; line-height:1.55; color:var(--color-cloud-body); text-wrap:pretty; }
 /* CRO audit (20 Nov): the offer on the plan result, before payment. */

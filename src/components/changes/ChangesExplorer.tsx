@@ -49,10 +49,20 @@ const STATUS_TONE: Record<StatusKind, string> = {
   deadline: "bg-[#F4DED8] text-red-deep",
 };
 
+/** Grid spans that leave no hole: on six columns three cards to a row, a
+ *  last row of two as halves, of one as a full row; on two columns an odd
+ *  last card takes the whole row. */
+function statusSpan(index: number, total: number) {
+  const tail = total % 3, lastRowStart = total - (tail || 3);
+  const wide = index < lastRowStart || tail === 0 ? "lg:col-span-2" : tail === 2 ? "lg:col-span-3" : "lg:col-span-6";
+  const tablet = total % 2 === 1 && index === total - 1 ? "sm:col-span-2 " : "";
+  return tablet + wide;
+}
+
 export function ChangesExplorer() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-[#DCD5CA] bg-cream px-5 md:px-6 pt-10 pb-8 sm:pt-14">
+      <section className="relative overflow-hidden border-b border-[#DCD5CA] bg-cream px-5 md:px-6 min-[900px]:px-8 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="guides" grain />
         <IllustrationBackdrop
           asset={TUSCANY_HILLS}
@@ -60,11 +70,16 @@ export function ChangesExplorer() {
           className="-bottom-6 left-0 w-[72%] opacity-[0.18] sm:w-[min(520px,42%)] sm:opacity-[0.2]"
         />
         <RouteRibbon className="opacity-40" />
-        <div className="relative mx-auto max-w-[900px]">
+        {/* One column for the whole page (21 Nov pass): the sections sat in
+            two centred columns, 900 and 1100px, so their headings stepped
+            left and right down the page and none stood under the logo. Now
+            every section starts at the site's gutter; reading blocks keep
+            their own measure inside it. */}
+        <div className="relative mx-auto max-w-[1216px]">
           <p className="text-sm font-medium text-sec-deep">
             Казахстан — Италия · 2026/27 и 2027/28
           </p>
-          <h1 className="mt-2 font-apple-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[52px]">
+          <h1 className="mt-2 max-w-[900px] font-apple-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[52px]">
             Поступление в Италию: актуальные правила
           </h1>
 
@@ -99,14 +114,16 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- статусы --- */}
-      <section className="px-5 md:px-6 py-12 sm:py-16">
-        <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+      <section className="px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1216px]">
+          <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Главные статусы на {VERIFIED_AT_HUMAN}
           </h2>
-          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {STATUSES.map((s) => (
-              <Reveal as="li" key={s.title} variant="fade">
+          {/* Every row full: three and two on a wide column, pairs and one
+              wide card on a tablet (no half-empty last row). */}
+          <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+            {STATUSES.map((s, index) => (
+              <Reveal as="li" key={s.title} variant="fade" className={statusSpan(index, STATUSES.length)}>
                 <div className={`h-full rounded-[20px] px-5 py-4 ${STATUS_TONE[s.kind]}`}>
                   <p className="text-[13px] font-semibold">{s.status}</p>
                   <b className="mt-1 block text-sm text-ink">{s.title}</b>
@@ -120,9 +137,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- одиннадцать правил: оглавление из раскрывающихся строк --- */}
-      <section className="border-t border-[#DCD5CA] bg-paper px-5 md:px-6 py-12 sm:py-16">
-        <div className="mx-auto max-w-[900px]">
-          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1216px] [&>*]:max-w-[900px]">
+          <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Что учитывать при подаче
           </h2>
           <p className="mt-3 text-base text-ink-soft">
@@ -196,9 +213,9 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- маршруты --- */}
-      <section className="border-t border-[#DCD5CA] px-5 md:px-6 py-12 sm:py-16">
-        <div className="mx-auto max-w-[1100px]">
-          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1216px]">
+          <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Маршруты поступления
           </h2>
 
@@ -267,16 +284,16 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- FAQ --- */}
-      <section className="border-t border-[#DCD5CA] bg-paper px-5 md:px-6 py-12 sm:py-16">
-        <div className="mx-auto max-w-[900px]">
-          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1216px] [&>*]:max-w-[900px]">
+          <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Частые вопросы
           </h2>
           <div className="mt-6 divide-y divide-line border-y border-line" data-change-faq>
             {FAQ.map((f) => (
               <details key={f.q} className="group">
                 <summary className={SUMMARY}>
-                  <span className="text-base font-semibold">{f.q}</span>
+                  <span className="font-apple-display text-[17px] font-semibold leading-snug sm:text-lg">{f.q}</span>
                 </summary>
                 <p className="pb-5 text-[15px] leading-relaxed text-ink-soft">{f.a}</p>
               </details>
@@ -286,14 +303,14 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- источники и дисклеймер --- */}
-      <section className="border-t border-[#DCD5CA] px-5 md:px-6 py-12 sm:py-16">
-        <div className="mx-auto max-w-[900px]">
-          <h2 className="font-apple-display text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[34px]">
+      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1216px] [&>*]:max-w-[900px]">
+          <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Первичные источники
           </h2>
           <details className="group mt-4 border-y border-line" data-change-sources>
             <summary className={SUMMARY}>
-              <span className="text-base font-semibold">Все ссылки на официальные страницы · {SOURCES.length}</span>
+              <span className="font-apple-display text-[17px] font-semibold leading-snug sm:text-lg">Все ссылки на официальные страницы · {SOURCES.length}</span>
             </summary>
             <ul className="space-y-2.5 pb-5 text-[15px]">
               {SOURCES.map((s) => (

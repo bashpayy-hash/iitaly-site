@@ -6,9 +6,12 @@
 .intro li + li::before { content:"·"; padding:0 9px; }
 .action { display:inline-flex; align-items:center; justify-content:center; gap:20px; min-height:48px; padding:12px 22px; margin-top:22px; border-radius:999px; background:var(--color-ink); color:var(--color-paper); font-size:15px; line-height:1.4; font-weight:500; }
 .action:focus-visible { outline:2px solid var(--color-ink); outline-offset:4px; }
-.portrait { position:absolute; inset:0 -10px 0 auto; z-index:1; width:350px; overflow:clip; border-radius:0 28px 28px 0; pointer-events:none; }
+/* Vespi looks in from behind the card's right edge. The post he holds in the
+   picture stays behind that edge (21 Nov pass: the box ran 10px past the card
+   and a 4px strip of the post showed outside it, like a stray line). */
+.portrait { position:absolute; inset:0 0 0 auto; z-index:1; width:340px; overflow:clip; border-radius:0 28px 28px 0; pointer-events:none; }
 .portrait img { display:block; position:absolute; width:360px; max-width:none; bottom:-72px; right:-5px; height:auto; transform:rotate(-5deg); }
-.portrait .spatial { position:absolute; right:-18px; top:50%; width:360px; height:288px; transform:translateY(-50%); }
+.portrait .spatial { position:absolute; right:-23px; top:50%; width:360px; height:288px; transform:translateY(-50%); }
 .intro .spatial img { position:static; width:100%; height:100%; transform:none; object-fit:contain; }
 .home .portrait { top:-30px; }
 .home .portrait img { top:0; bottom:auto; }
@@ -30,7 +33,7 @@
   .intro ul { display:block; max-width:25ch; margin-top:16px; }
   .intro li + li { margin-top:5px; }
   .intro li + li::before { content:none; }
-  .portrait { width:190px; right:-4px; top:42px; border-radius:0 24px 24px 0; }
+  .portrait { width:190px; right:0; top:42px; border-radius:0 24px 24px 0; }
   .portrait img { width:230px; right:-48px; bottom:-42px; }
   .intro .copy { grid-column:1/-1; }
   .intro .copy ul { padding-right:124px; max-width:100%; }
@@ -62,6 +65,10 @@
    - at 360px and below the title steps down to 24px: at 27px it took five
      lines and broke «ИИ-» at 320. */
 .intro h2 span { display:block; }
-@media(max-width:899px) { .home { margin-inline:24px; } }
+/* 21 Nov pass: the card stood 60px under the map band and 124px above «Один
+   шаг» (100px on a tablet) while the page's sections are 80px apart (64px on
+   a tablet). The bottom margin adds to the next section's own top padding. */
+@media(min-width:900px) { .home { margin-block:80px 16px; } }
+@media(max-width:899px) { .home { margin-inline:24px; margin-block:64px 24px; } }
 @media(max-width:767px) { .home { margin:48px 20px; } .intro { border-radius:24px; } .portrait { border-radius:0 24px 24px 0; } }
 @media(max-width:360px) { .home h2 { font-size:24px; } }
