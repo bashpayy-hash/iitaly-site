@@ -99,7 +99,8 @@
 @media(max-width:899px) { .container { padding-left:24px; padding-right:24px; } }
 @media(max-width:767px) { .container { padding-left:20px; padding-right:20px; } }
 /* Owner, 14 Nov 2026: a free topic reads on one screen («Вся тема коротко»). */
-.brief { margin:32px 0 8px; }
+/* 36px before the road card below, like the other joins on the page (was 8px). */
+.brief { margin:32px 0 36px; }
 .brief h2 { margin:0 0 16px; font-size:20px; font-weight:600; line-height:1.4; }
 .brief ol { display:grid; gap:0; margin:0; padding:0; list-style:none; counter-reset:brief; border-top:1px solid #E7E1D8; }
 .brief li { counter-increment:brief; display:grid; grid-template-columns:32px minmax(0,1fr); column-gap:12px; padding:16px 0; border-bottom:1px solid #E7E1D8; }

@@ -23,6 +23,13 @@ const links = [
   { href: "/guides", label: "Гайды и виза" },
 ];
 
+/** The section a page belongs to: its own address, or a page under it — a
+ *  guide under «Гайды и виза», a plan step (/plan/3) under «Мой план». */
+function isCurrent(pathname: string, href: string) {
+  const section = href.split("#")[0];
+  return pathname === section || ((section === "/guides" || section === "/plan") && pathname.startsWith(`${section}/`));
+}
+
 /** Shared site chrome. The brand always returns to the public home page. */
 export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
@@ -51,7 +58,7 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
             <Link key={href} href={href} prefetch={false} onClick={event => {
               if (variant !== "portal" || href !== "/portal" || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               event.preventDefault(); navigatePortal(href);
-            }} aria-current={(pathname === href.split("#")[0] || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
+            }} aria-current={isCurrent(pathname, href) ? "page" : undefined}>{label}</Link>
           ))}
         </nav>
         {variant === "portal" ? actions : <Link href="/portal" className={styles.portalLink} prefetch={false} aria-current={pathname === "/portal" ? "page" : undefined}>Личный кабинет</Link>}
@@ -72,7 +79,7 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
               <Link key={href} href={href} prefetch={false} onClick={event => {
                 if (variant !== "portal" || href !== "/portal" || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                 event.preventDefault(); navigatePortal(href);
-              }} aria-current={(pathname === href.split("#")[0] || (href === "/guides" && pathname.startsWith("/guides/"))) ? "page" : undefined}>{label}</Link>
+              }} aria-current={isCurrent(pathname, href) ? "page" : undefined}>{label}</Link>
             ))}
             {variant === "public" && <><Link href="/portal" prefetch={false}>Личный кабинет</Link>
             <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("iitaly:open-chat", { detail: { source: "header" } }))}>Задать вопрос</button></>}

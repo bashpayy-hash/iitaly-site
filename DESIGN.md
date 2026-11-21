@@ -2727,3 +2727,69 @@ Owner: «ты по итогу не исправил, как Веспи по Ам
   stands whole above the sheet's top edge.
 - Suspension, head and wheels as before, on the new clock (9.2 s loop).
   `design/illustrations/motion-2026-11-21-amalfi-physics.json`, «trajectory_same_day».
+
+## One style across the site: the consistency pass · 21 November 2026 (night)
+
+Owner: «пройдись по всему сайту, чтобы не было неровностей, чтобы был весь
+один стиль». Every page was measured at 390, 820 and 1440px (gutters,
+heading scale, buttons, radii, grids, vertical gaps) and read as full-page
+screenshots at the three widths; what follows is what was off and is now on
+the system.
+
+- **One edge.** /check: the sections under the tool stood 32px from the edge
+  on a tablet and 16px on a phone (the cover above them 24 and 20). The
+  universities comparison sat in a 1200px column, 8px inside the map. The
+  cabinet login cards stood 8px inside the logo on a desktop and 4px outside
+  it on tablet and phone. /changes-2026-27 used two centred columns, 900 and
+  1100px, so its headings stepped left and right down the page. All of them
+  now start at the site's gutter: 1216px column, 24px on a tablet, 20px on a
+  phone.
+- **One frame in the cabinet.** The overview followed the window's height
+  while the header, «Документы» and «Настройки» kept 1296px: on a 1440 × 900
+  window the logo hung 58px left of the hero tile and the page changed width
+  from tab to tab. The header and every view share the overview's column
+  (`--cabinet-frame`).
+- **One heading scale.** Page titles are `clamp(34px, 4vw, 56px)` on every
+  section page — «Университеты Италии» was 64px on a desktop and 28px on a
+  phone. Section headings on /check share the landing's scale (40px stood
+  beside 52px). Reading pages keep `clamp(30px, 3.6vw, 46px)`, now on the
+  legal pages too (they were 48px on a tablet beside 34px elsewhere). On
+  /changes the section headings are 34px again (a shared rule had made them
+  52px, next to a 56px title). «Одна Италия» is weight 600 like every other
+  heading. Scene-card headings on the home page are ink, not brown.
+- **Whole tiles.** Home «Твой маршрут»: square bottom corners and pure white
+  → a 28px tile in warm white. The «Знакомься, это Веспи» card: the post
+  Vespi holds showed as a 4px strip outside the card; he now looks in from
+  behind its edge. Cards on /universities and the login are warm white
+  (#FFFDF9), not #FFF; the /prices cards keep their white (the pricing card's
+  look is held by its own review). The /check workbench is 28px, scene pictures
+  20px, login cards 28/24px with 16px fields, in two tiles of one height.
+- **Even rhythm.** Home: 80px around the Vespi card (was 60 above, 124
+  below; 64 on a tablet). /prices: blocks 24px apart (were 16, 24, 40, 40,
+  32). Guides: chips 12px under the search (5px); 36px before «Разбор по
+  шагам» (8px). Doubled rules are gone under «Официальные источники» on visa
+  pages and between the two rows under the plan. /changes: every row of
+  status cards is full; no pure-white bands.
+- **One button.** The cabinet's dark buttons are the site's black at 48px
+  (they were #241F1C, #352B28 and #141413). The dark map band on the home
+  page uses the light pill of the dark guide gallery instead of a pink
+  outline. /check: «Открыть маршрут за 10 990 ₸» stays on one line on a
+  phone (it wrapped to 75px). 404 and payment status: one black primary and
+  a quiet link. The guarantees on /prices use the site's disclosure sign and
+  a terracotta rubric, not green. The active chip on /guides is ink.
+- **Details.** The cabinet's progress knob has its green ring again (the
+  cabinet's «no inherited shadows» rule had removed it: at 0% the bar looked
+  bitten). Guide road labels no longer break mid-word; «12-й» never breaks at
+  its hyphen; the breadcrumb slash stays with the crumb before it; the date
+  in «Правила проверены…» stays whole. «Мой план» is marked current on plan
+  step pages. On a phone the guides chip rail runs to the screen's edge, the
+  universities count is a chip of its own width and «Выбери город» is as tall
+  as its words. The footer's seven links are two lists (four and three), not
+  rows of two with one left over. /check: the two selects stand side by side
+  only where both values fit.
+- **Left as they are, deliberately:** the cabinet's own outer frame and its
+  Inter Tight weight (600) on buttons; the terracotta action in the cabinet
+  hero; the narrow centred column of /prices; the Modulo 1 trainer (a copy of
+  a paper form); the bento trays' 8px inner gap; fact tiles that mute a value
+  that is not a figure («по ситуации»).
+

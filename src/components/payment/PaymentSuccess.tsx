@@ -188,12 +188,14 @@ export function PaymentSuccess() {
                 <p className="text-apple-body-sm text-cloud-body">
                   Уже оплатил, но доступа нет? Напиши в поддержку — поможем найти заказ. Повторно платить не нужно.
                 </p>
-                <div className="mt-4 flex flex-wrap justify-center gap-3">
+                {/* The site's pair (21 Nov pass): one filled action and a quiet
+                    link, not two outlined pills of different weight. */}
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
                   <a href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center rounded-pill border border-crimson px-5 py-3 text-sm font-semibold text-crimson">
+                    className="inline-flex min-h-12 items-center justify-center rounded-pill bg-[#141413] px-6 text-[15px] font-medium text-[#FFFDF9]">
                     Написать в поддержку
                   </a>
-                  <Link href="/portal" className="inline-flex min-h-11 items-center justify-center rounded-pill border border-white/20 px-5 py-3 text-sm text-cloud-white">
+                  <Link href="/portal" className="inline-flex min-h-11 items-center text-[15px] font-medium text-ink underline underline-offset-4">
                     Войти в кабинет
                   </Link>
                 </div>

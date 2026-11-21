@@ -33,7 +33,7 @@
   .intro ul { display:block; max-width:25ch; margin-top:16px; }
   .intro li + li { margin-top:5px; }
   .intro li + li::before { content:none; }
-  .portrait { width:190px; right:-4px; top:42px; border-radius:0 24px 24px 0; }
+  .portrait { width:190px; right:0; top:42px; border-radius:0 24px 24px 0; }
   .portrait img { width:230px; right:-48px; bottom:-42px; }
   .intro .copy { grid-column:1/-1; }
   .intro .copy ul { padding-right:124px; max-width:100%; }

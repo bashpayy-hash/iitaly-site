@@ -24,7 +24,7 @@
 
 /* Сравнение: три строки, у IITALY — тёмный текст, у агентства — тише. */
 .compare { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.45; }
-.compare caption { margin-bottom: 14px; text-align: left; }
+.compare caption { padding-bottom: 12px; text-align: left; }
 .compare th, .compare td { padding: 12px 10px; border-top: 1px solid rgba(53, 43, 40, .1); text-align: left; vertical-align: top; }
 .compare thead th { padding-top: 0; border-top: 0; color: #6B6761; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
 .compare thead th:last-child { color: #A33421; }

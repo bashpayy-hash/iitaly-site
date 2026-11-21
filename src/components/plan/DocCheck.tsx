@@ -212,7 +212,9 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
         <p className={styles.auditStatus} data-document-assistant={state.step}>{inspectorMessage(state.step, availabilityPending, unavailable, walled && !("file" in state))}</p>
       <fieldset disabled={state.step === "checking" || state.step === "reading"} className="mt-5 space-y-3 disabled:opacity-60">
         <legend className="text-apple-body-sm font-semibold text-cloud-white">Для какой заявки?</legend>
-        <div className="grid gap-3 sm:grid-cols-2">
+        {/* Side by side only where both values fit (21 Nov pass: in the tablet's
+            two-column card each select was 145px and cut «Ещё не определился»). */}
+        <div className="grid gap-3 xl:grid-cols-2">
           <label className="min-w-0 text-apple-caption text-cloud-body">
             Программа
             <select value={context.profile}

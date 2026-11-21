@@ -75,7 +75,9 @@
 .footer { padding: 56px max(32px, calc((100vw - 1216px)/2)) 28px; background: transparent; color: #6b6761; font-size: 13px; line-height: 1.6; }
 .footerTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 36px; padding-bottom: 40px; }
 .footerTagline { margin: 16px 0 8px; color: #141413; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
-.footer nav { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 40px; padding-top: 10px; }
+/* Two lists, four links and three (21 Nov pass): with the seventh link,
+   «Проверка документов», rows of two left «Личный кабинет» alone in a row. */
+.footer nav { display: grid; grid-auto-flow: column; grid-template-rows: repeat(4, auto); grid-template-columns: repeat(2, auto); gap: 4px 40px; padding-top: 10px; }
 .footer nav a { display: flex; align-items: center; min-height: 44px; font-size: 14px; }
 /* «Условия сервиса» и «Политика» внизу были высотой 21px — пальцем не попасть
    (аудит 12 Nov, 320–390px). Та же высота 44px, что у ссылок меню подвала. */
