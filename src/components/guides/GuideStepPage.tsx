@@ -11,6 +11,7 @@ import { GuideSentences } from "./GuideSentences";
 import { GuideLockedStep } from "./GuideLockedStep";
 import { GuideStepPath } from "./GuideStepPath";
 import { GuideReadMark } from "./GuideReadMark";
+import { GuideBandField } from "./GuideBandField";
 import ui from "./guide-pages.module.css";
 import styles from "./guide-step-page.module.css";
 
@@ -39,6 +40,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
     <article className={ui.article} data-guide-step={id} data-guide-current={id} data-instruction-point={step} aria-labelledby="guide-step-title">
       {/* The same textured band as the topic page (owner, 20 Nov, late). */}
       <div className={ui.band} data-guide-band>
+      <GuideBandField />
       <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, { title:guide.title, href:guideHref(id) }, { title:point.title }]} />
       <header className={styles.header}>
         <div>

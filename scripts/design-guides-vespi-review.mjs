@@ -117,6 +117,66 @@ try {
     assert(await refs.count()>0);
     for(const ref of await refs.all())assert.match(await ref.getAttribute('rel'),/noopener/);
     await audit('article '+width);await screenshot('guides-apostille');
+    // Owner, 21 Nov, with a reel's «ShaderGradient — grainy moving gradients»: «примени этот плагин где
+    // полезно будет». The band's wash is alive without the library: three colour fields drift on closed
+    // paths, only `transform` is animated (the compositor moves ready layers), the grain stands still.
+    // With «меньше движения» nothing moves. The grey text keeps 4.5:1 measured on the rendered pixels,
+    // grain included, at moments spread over the cycle — the sage passes under every line.
+    for (const path of ['/guides/apostille', '/guides/apostille/1']) {
+      const probe = await context.newPage();
+      await probe.goto(origin + path, { waitUntil: 'networkidle' }); await probe.evaluate(() => document.fonts.ready);
+      const field = probe.locator('[data-guide-band] > [data-guide-band-field]');
+      assert.equal(await field.count(), 1, `${path}: the band carries its colour field`);
+      assert.equal(await field.evaluate(el => el.getAnimations({ subtree: true }).length), 0, `${path}: with «меньше движения» the band stands still`);
+      await probe.emulateMedia({ reducedMotion: 'no-preference' });
+      const drift = await field.evaluate(el => el.getAnimations({ subtree: true }).map(a => ({
+        endless: a.effect.getComputedTiming().iterations === Infinity, period: a.effect.getComputedTiming().duration,
+        props: [...new Set(a.effect.getKeyframes().flatMap(frame => Object.keys(frame).filter(key => !['offset', 'computedOffset', 'easing', 'composite'].includes(key))))].join(),
+      })));
+      assert.equal(drift.length, 3, `${path}: three colour fields drift`);
+      assert(drift.every(a => a.endless && a.period >= 20000 && a.props === 'transform'), `${path}: slow, endless, transform only: ${JSON.stringify(drift)}`);
+      assert.equal(new Set(drift.map(a => a.period)).size, 3, `${path}: three different periods, so the picture does not repeat soon`);
+      const lines = await probe.evaluate(() => {
+        const band = document.querySelector('[data-guide-band]'), found = [], walk = document.createTreeWalker(band, NodeFilter.SHOW_TEXT);
+        for (let node; (node = walk.nextNode());) {
+          if (!node.textContent.trim()) continue;
+          const range = document.createRange(); range.selectNodeContents(node);
+          const color = getComputedStyle(node.parentElement).color.match(/\d+/g).slice(0, 3).map(Number);
+          for (const r of range.getClientRects()) found.push({ x: r.x, y: r.y, w: r.width, h: r.height, color });
+        }
+        return found;
+      });
+      assert(lines.length >= 3, `${path}: the band has its text`);
+      const box = await probe.locator('[data-guide-band-field]').boundingBox();
+      const clip = { x: 0, y: Math.max(0, box.y), width, height: Math.min(box.height, (width < 600 ? 844 : 1000) - Math.max(0, box.y)) };
+      await probe.addStyleTag({ content: '[data-guide-band] > :not([data-guide-band-field]) { visibility:hidden !important; }' });
+      let worst = { ratio: Infinity };
+      for (const second of [0, 9, 22, 44, 88, 131, 146, 336]) {
+        await field.evaluate((el, ms) => el.getAnimations({ subtree: true }).forEach(a => { a.pause(); a.currentTime = ms; }), second * 1000);
+        const shot = (await probe.screenshot({ clip })).toString('base64');
+        const found = await probe.evaluate(async ({ shot, lines, top }) => {
+          const image = new Image(); image.src = 'data:image/png;base64,' + shot; await image.decode();
+          const canvas = document.createElement('canvas'); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true }); ctx.drawImage(image, 0, 0);
+          const linear = v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; };
+          const luminance = ([r, g, b]) => .2126 * linear(r) + .7152 * linear(g) + .0722 * linear(b);
+          let worst = { ratio: Infinity };
+          // The background under a line, as the eye takes it: the mean of 16px cells (the grain is finer).
+          for (const line of lines) for (let y = Math.floor(line.y - top); y < line.y - top + line.h; y += 16) for (let x = Math.floor(line.x); x < line.x + line.w; x += 16) {
+            const w = Math.min(16, canvas.width - x), h = Math.min(16, canvas.height - y); if (x < 0 || y < 0 || w < 4 || h < 4) continue;
+            const data = ctx.getImageData(x, y, w, h).data, mean = [0, 0, 0];
+            for (let i = 0; i < data.length; i += 4) { mean[0] += data[i]; mean[1] += data[i + 1]; mean[2] += data[i + 2]; }
+            const back = luminance(mean.map(v => v / (data.length / 4))), text = luminance(line.color);
+            const ratio = (Math.max(back, text) + .05) / (Math.min(back, text) + .05);
+            if (ratio < worst.ratio) worst = { ratio: Math.round(ratio * 100) / 100, color: line.color.join() };
+          }
+          return worst;
+        }, { shot, lines, top: clip.y });
+        if (found.ratio < worst.ratio) worst = { ...found, second };
+      }
+      assert(worst.ratio >= 4.5, `${path} at ${width}: text on the moving band keeps 4.5:1, worst ${JSON.stringify(worst)}`);
+      await probe.close();
+    }
     const documentAction=page.locator('[data-guide-inline-action]');
     await documentAction.scrollIntoViewIfNeeded();
     assert(await documentAction.evaluate(action=>{

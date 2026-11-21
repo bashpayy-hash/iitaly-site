@@ -8,7 +8,9 @@
    ту же шкалу и тот же заголовочный шрифт, что тема над ним. */
 [data-guides-pages] article .header h1 { font:600 clamp(30px,3.6vw,46px)/1.06 var(--font-apple-display); letter-spacing:-.03em; }
 .header h1:focus { outline:none; }
-.position { margin:0; font:600 13px/1.5 var(--font-sans); color:#A33421; }
+/* The topic's name over the step title stands on the sage band: terracotta
+   #A33421 had 3.0:1 there (measured 21 Nov), the band's grey has 4.7:1. */
+.position { margin:0; font:600 13px/1.5 var(--font-sans); color:#3F3933; }
 .art { width:100%; height:auto; }
 /* Боксы разбора идут на всю колонку, как карточки «назад / дальше» под ними
    (10 Nov, проход по неровностям); длину строки держит сам текст. */

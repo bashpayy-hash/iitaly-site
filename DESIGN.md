@@ -2862,3 +2862,41 @@ Owner, after the ride into the depth: «Ладно, просто убери ви
 - An upscaled copy was tried and dropped: it turned the plush into plastic.
   `design/illustrations/landscape-2026-11-21-amalfi-still.json`.
 
+## The guide band is alive: a grainy gradient that moves · 21 November 2026 (evening)
+
+Owner, with a screenshot of a reel «10/10 niche GH libraries to unslop your AI
+designs», item 5 — ShaderGradient, «grainy moving gradients»: «примени этот
+плагин где полезно будет который пятый».
+
+- **The effect, not the library.** `@shadergradient/react` 2.4.20 is 114 KB of
+  gzipped code (measured on the published package) and needs `three` and
+  `@react-three/fiber` on top, with a WebGL canvas that renders every frame.
+  The site is for a cheap phone on a slow connection, dependencies are
+  protected, and there is no 3D here. What the library shows — a grainy
+  gradient that slowly flows — is built with what the site already has.
+- **Where.** On the sage-to-sand band of topic, visa and guide-step pages:
+  the one place that already was a grainy gradient. Not in the cabinet (no
+  gradients there), not on the heroes that are illustrations, not on the
+  night map.
+- **How.** The band's wash is no longer one painted background but a field
+  (`GuideBandField`): the base wash, three soft colour fields — sage, sand
+  and a cream light — and the grain on top. Each field walks a closed figure
+  (sines of different frequencies on x and y, a little turn and swell), baked
+  into `transform` keyframes, linear between 24 samples; periods 34, 43 and
+  29 s, so the picture does not repeat for minutes. The grain stands still.
+- **Cost, measured.** Five seconds of the moving band in a trace, desktop and
+  a phone with the processor slowed six times: 0 paints, 0 layouts, 0 long
+  tasks — the compositor moves three ready layers. No script, no request.
+- **Still when asked.** With «меньше движения» the fields stand where the
+  painted wash had its sage and sand.
+- **Text on the band is readable at every moment.** Measured on rendered
+  pixels, grain included (16 px cells under each line, 60 moments of the
+  cycle, 320–1440 px): the grey #4E4A44 had 3.7–4.0:1 over the darkest sage
+  already on the painted wash — the 4.8:1 noted on 20 Nov did not count the
+  grain. Grey text on the band is now #3F3933, the third of the site's four
+  greys: at least 4.75:1 at any moment. The topic's name over a step title
+  was terracotta #A33421 with 3.0:1 there; it takes the same grey.
+- The guides review checks: the field is there, three endless animations of
+  `transform` only with three different periods, none with «меньше
+  движения», and 4.5:1 for every line at eight moments of the cycle.
+
