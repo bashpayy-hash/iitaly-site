@@ -24,12 +24,12 @@ export function PricesHero({ onBuy }: { onBuy: () => void }) {
       <div data-role="heading">
         <p className="warm-badge">Цена</p>
         <h1 className="mx-auto mt-2 max-w-2xl font-apple-display text-[32px] leading-[1.05] font-semibold uppercase text-cloud-white sm:text-[44px]">
-          <span className="warm-highlight">{priceLabel(PRICE_MAIN)}</span> — и система ведёт тебя до конца
+          <span className="warm-highlight">{priceLabel(PRICE_MAIN)}</span>&nbsp;— и система ведёт тебя до конца
         </h1>
       </div>
       <p className="mx-auto mt-5 max-w-2xl text-apple-body text-cloud-body">
         Один платёж за всё поступление. Не подписка, не тарифы, без доплат
-        за этапы. Работу выполняет система — поэтому это стоит столько, а
+        за этапы. Работу выполняет система&nbsp;— поэтому это стоит столько, а
         не как в агентстве.
       </p>
       <div className={styles.purchaseActions}>

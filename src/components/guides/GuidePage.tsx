@@ -49,7 +49,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
   const nextId = stage.ids[stage.ids.findIndex(topic => topic === id) + 1];
   const next = GUIDE_TOPICS.find(topic => topic.id === nextId);
   const art = guideArt(id);
-  const note = guide.warn || (id === "tests" ? "У каждого вуза свои окна приёма CEnT-S. Не жди дедлайна подачи — сдай тест заранее, чтобы успеть получить нормализованный балл." : "");
+  const note = guide.warn || (id === "tests" ? "У каждого вуза свои окна приёма CEnT-S. Не жди дедлайна подачи\u00A0— сдай тест заранее, чтобы успеть получить нормализованный балл." : "");
   return <GuideFrame narrow>
     <GuideReadingContext id={helpId} />
     <article className={ui.article} data-guide-panel={id} data-guide-current={id} data-guide-part={visaPart} aria-labelledby="guide-title">
@@ -93,7 +93,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
           <GuideRoad id={id} heading="Разбор по шагам" stations={topicRoad(id)} showStations={false} scenery={GUIDE_TOPICS.findIndex(topic => topic.id === id)} /></>}
         {id === "permesso" && <section className={ui.note}>
           <h2>Актуальная ремарка к тренажёру</h2>
-          <p>Poste отдельно указывает €16 за marca da bollo, €30 за приём kit и €30,46 за электронную карточку; дополнительный contributo зависит от длительности и типа permesso. Для rinnovo требования также зависят от кода 24 / 31 — сверяй свой тип на Portale Immigrazione и у Questura.</p>
+          <p>Poste отдельно указывает €16 за marca da bollo, €30 за приём kit и €30,46 за электронную карточку; дополнительный contributo зависит от длительности и типа permesso. Для rinnovo требования также зависят от кода 24 / 31&nbsp;— сверяй свой тип на Portale Immigrazione и у Questura.</p>
           <p>Rilascio и rinnovo · учебное заполнение · сохранение черновика только по твоему действию в браузере.</p>
         </section>}
         {part && note && <p className={ui.note}>{note}</p>}

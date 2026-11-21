@@ -5,7 +5,7 @@ import { Vespa } from "@/components/Vespa";
 
 export const metadata: Metadata = {
   title: "Страница не найдена",
-  description: "Такой страницы нет — возможно, ссылка устарела или адрес введён с ошибкой.",
+  description: "Такой страницы нет\u00A0— возможно, ссылка устарела или адрес введён с ошибкой.",
   robots: { index: false, follow: true },
 };
 
@@ -22,7 +22,7 @@ export default function NotFound() {
           <h1 className="mt-3 font-apple-display text-[clamp(22px,8vw,36px)]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">Такой страницы нет</h1>
           <p className="mt-4 max-w-md text-[17px] leading-[1.5] text-ink-soft">
             Ссылка устарела или адрес введён с ошибкой. Сама система
-            поступления на месте — вот куда можно вернуться.
+            поступления на месте&nbsp;— вот куда можно вернуться.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
             <Link href="/" className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#141413] px-6 text-[15px] font-medium text-[#FFFDF9] transition-colors hover:bg-[#2A2420]">На главную</Link>

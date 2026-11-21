@@ -18,6 +18,15 @@
 .doseText { margin:0; max-width:52ch; font-size:14px; line-height:1.55; color:#3F3933; }
 @media(max-width:700px) {
   .topicHeader { grid-template-columns:minmax(0,1fr) 120px; gap:12px; }
+  /* Owner, 21 Nov: «тексты не прям ровные». Beside the 120px cartouche the
+     intro had a 218px column: its 22–26 words made six or seven lines of
+     19–23 characters. The title keeps its place beside the cartouche; the
+     intro and the date run under both, across the page. */
+  .topicHeader > div { display:contents; }
+  .topicHeader > div > h1 { grid-column:1; grid-row:1; align-self:center; margin-bottom:0; }
+  .topicHeader > .topicArt { grid-column:2; grid-row:1; }
+  .topicHeader > div > :not(h1) { grid-column:1 / -1; }
+  .topicHeader > div > p + * { margin-top:0; }
   .facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .facts > div { padding:14px 16px 12px; }
 }

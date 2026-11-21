@@ -18,7 +18,7 @@ export function GuideWall({ place, note = GUIDE_WALL_NOTE, flat = false }: { pla
     <div className={styles.actions}>
       <button type="button" className={styles.buy} data-wall-buy data-wall-place={place} aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button>
       <a className={styles.link} href="/prices#main-package">Что входит и возврат 7 дней</a>
-      <a className={styles.link} href="/portal?view=login" data-guide-wall-login>Уже оплачено — войти</a>
+      <a className={styles.link} href="/portal?view=login" data-guide-wall-login>Уже оплачено&nbsp;— войти</a>
     </div>
     {wall.modal}
   </div>;

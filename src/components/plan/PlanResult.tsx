@@ -36,7 +36,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
           second, quiet way on. After payment only the cabinet remains. */}
       {paid ? <div className="mt-5"><AppleButtonLink href="/portal" variant="filled" className="max-sm:w-full">Продолжить в личном кабинете</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
       : <div className={styles.offer} data-plan-offer>
-        <p className={styles.offerTitle}>Первый шаг уже открыт. Остальной маршрут — за один платёж:</p>
+        <p className={styles.offerTitle}>Первый шаг уже открыт. Остальной маршрут&nbsp;— за один платёж:</p>
         <ul className={styles.offerList}>
           <li>ещё {more} {stepsWord(more)} с датами и чек-листами</li>
           <li>проверка документов без лимита</li>

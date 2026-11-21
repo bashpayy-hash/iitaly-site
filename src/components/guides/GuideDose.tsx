@@ -34,7 +34,7 @@ export function GuideDose({ place, free, paid: paidText, span }: { place: WallPl
     <div className={walls.actions}>
       <button type="button" className={walls.buy} data-wall-buy data-wall-place={place} aria-haspopup="dialog" onClick={wall.open}>{wall.label}</button>
       <a className={walls.link} href="/prices#main-package">Что входит и возврат 7 дней</a>
-      <a className={walls.link} href="/portal?view=login">Уже оплачено — войти</a>
+      <a className={walls.link} href="/portal?view=login">Уже оплачено&nbsp;— войти</a>
     </div>
     {wall.modal}
   </BentoCell>;

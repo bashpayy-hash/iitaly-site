@@ -77,7 +77,7 @@ export function ChangesExplorer() {
             their own measure inside it. */}
         <div className="relative mx-auto max-w-[1216px]">
           <p className="text-sm font-medium text-sec-deep">
-            Казахстан — Италия · 2026/27 и 2027/28
+            Казахстан&nbsp;— Италия · 2026/27 и 2027/28
           </p>
           <h1 className="mt-2 max-w-[900px] font-apple-display text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-balance sm:text-[44px] lg:text-[52px]">
             Поступление в Италию: актуальные правила
@@ -96,7 +96,7 @@ export function ChangesExplorer() {
           <p className="mt-4 max-w-2xl text-base text-ink-soft sm:text-lg">
             Аттестат, документы, DSU, виза и первые недели в Италии.
             Здесь собраны проверенные изменения для Казахстана и уже
-            опубликованные условия 2027/28. У каждого правила — источник
+            опубликованные условия 2027/28. У каждого правила&nbsp;— источник
             и область применения.
           </p>
 
@@ -104,7 +104,7 @@ export function ChangesExplorer() {
             role="note"
             className="mt-6 max-w-2xl rounded-[20px] bg-[#FFFDF9] px-5 py-4 text-sm text-ink"
           >
-            <b>Важно:</b> зачисление в университет и выдача визы — разные
+            <b>Важно:</b> зачисление в университет и выдача визы&nbsp;— разные
             процедуры. Принятие заявки вузом или её валидация в Universitaly не
             гарантирует ни запись в консульство, ни выдачу визы. У университета,
             конкретной программы и консульства могут быть более ранние
@@ -143,7 +143,7 @@ export function ChangesExplorer() {
             Что учитывать при подаче
           </h2>
           <p className="mt-3 text-base text-ink-soft">
-            Открой правило — внутри подробности и ссылка на источник.
+            Открой правило&nbsp;— внутри подробности и ссылка на источник.
           </p>
           <ol className="mt-6 divide-y divide-line border-y border-line" data-change-rules>
             {CHANGES.map((c) => (

@@ -9,7 +9,7 @@ export const GUIDE_STAGES = [
 ] satisfies { id: string; title: string; description: string; ids: GuideId[] }[];
 
 export const VISA_GUIDE: GuideCard = {
-  id: "visa", title: "Виза D", teaser: "Учебная виза D — без неё не въехать в Италию на учёбу. Подаётся через VFS: нужны средства, пакет документов и соблюдение сроков.", rows: [],
+  id: "visa", title: "Виза D", teaser: "Учебная виза D\u00A0— без неё не въехать в Италию на учёбу. Подаётся через VFS: нужны средства, пакет документов и соблюдение сроков.", rows: [],
   warn: "Университет, консульство и стипендиальный орган проверяют разные условия. Начни с своего учебного года и официального чек-листа.",
   sources: ["visa", "procedure", "visaWhere", "visaFees", "visaTiming"],
 };

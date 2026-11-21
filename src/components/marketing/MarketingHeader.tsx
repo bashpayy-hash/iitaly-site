@@ -52,7 +52,7 @@ export function MarketingHeader({ variant = "public", actions }: { variant?: "pu
             viewport (motion pass, 5 Nov): on a phone the route payloads of
             every visible link were parsed on the main thread in the first
             seconds, exactly when the first flick happens. */}
-        <Link href="/" className={`${styles.wordmark} logo-link`} aria-label="IITALY — главная" prefetch={false}><BrandLogo /></Link>
+        <Link href="/" className={`${styles.wordmark} logo-link`} aria-label="IITALY&nbsp;— главная" prefetch={false}><BrandLogo /></Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           {visibleLinks.map(({ href, label }) => (
             <Link key={href} href={href} prefetch={false} onClick={event => {

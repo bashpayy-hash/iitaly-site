@@ -5,7 +5,7 @@
    подписью. Значения ответов — контракт с планом и кабинетом — не меняются. */
 export const DSU_QUESTION = "dsuRegion";
 export const DSU_CHECKED = ["piemonte", "iulm", "padova"];
-export const DSU_CHECKED_NOTE = "Правила этих конкурсов мы уже сверили. Твоего нет в списке — выбери «Другой регион или вуз».";
+export const DSU_CHECKED_NOTE = "Правила этих конкурсов мы уже сверили. Твоего нет в списке\u00A0— выбери «Другой регион или вуз».";
 export const DSU_CHECKED_CAPTION = "Конкурсы, правила которых мы уже сверили:";
 export const DSU_LABELS = {
   unknown: { t: "Пока не знаю", s: "подберём регион и конкурс вместе" },

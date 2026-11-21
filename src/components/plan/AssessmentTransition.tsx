@@ -25,7 +25,7 @@ export function AssessmentTransition({ onSkip }: { onSkip: () => void }) {
     </div>
     <div role="status" aria-live="polite">
       <h3>Ответы собраны. Переходим к плану</h3>
-      <p>Сначала — с чего начать. Затем — остальные шаги и нужные документы.</p>
+      <p>Сначала&nbsp;— с чего начать. Затем&nbsp;— остальные шаги и нужные документы.</p>
     </div>
     <button type="button" onClick={onSkip}>Показать план</button>
   </section>;

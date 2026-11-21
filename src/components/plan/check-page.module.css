@@ -5,7 +5,16 @@
 .art { object-position:72% 100%; }
 .veil { background:linear-gradient(90deg, rgba(250,248,244,.9) 0%, rgba(250,248,244,.72) 36%, rgba(250,248,244,0) 62%); }
 .copy { justify-self:start; max-width:560px; text-align:left; }
-.copy p { margin-left:0; }
+/* Left-aligned words break like text, not like a centred heading: the plan's
+   cover balances its lines, which here left the right half of the box empty. */
+.copy p { margin-left:0; text-wrap:pretty; }
+/* A tablet (owner, 21 Nov, a screenshot at 820px: the paragraph ran over
+   Vespi's helmet). The picture is cropped by height there, so Vespi stands
+   from 64% of the cover, while the words kept their 560px: measured, the
+   paragraph's box lay 28–80px over the helmet from 761 to 834px and touched
+   it at 900px. Up to 1023px the words take at most 60% of the cover's inner
+   width — 33–47px short of the helmet at any width in between. */
+@media (min-width:761px) and (max-width:1023px) { .copy { max-width:min(560px, 60%); } }
 /* On a phone the heading would lie over Vespi's face: the heading comes first
    on the paper, the scene follows as a picture, Vespi in full view. */
 @media (max-width:760px) {

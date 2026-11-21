@@ -28,7 +28,6 @@ const topics = (n: number) => n % 10 === 1 && n % 100 !== 11 ? "тема" : n % 
 const VISA_POINTS = VISA_TIMELINE.length + VISA_DOCS.length + VISA_REJECT_REASONS.length;
 const ROUTE_TAIL = "Один платёж, не подписка.";
 
-const FREE_TITLES = FREE_GUIDES.map(id => GUIDE_TOPICS.find(topic => topic.id === id)!.title);
 const PAID_TOPICS = GUIDE_TOPICS.filter(topic => topic.id !== "visa" && !guideFree(topic.id)).length;
 
 /** Что в теме открыто сейчас и что откроется с маршрутом — словами ячейки дозирования. */
@@ -37,9 +36,14 @@ function topicDose(guide: GuideCard) {
   if (guideFree(guide.id)) return {
     free: `Вся тема целиком: ${total} ${pointsNom(total)} разбора. Это один из ${FREE_GUIDES.length} бесплатных гайдов.`,
     paid: `Ещё ${PAID_TOPICS} ${topics(PAID_TOPICS)}, ${VISA_POINTS} пунктов визы, тренажёр Modulo 1 и проверка документов без лимита. ${ROUTE_TAIL}` };
+  /* Owner, 21 Nov, with this cell on a tablet: «идёт перенасыщение каких-то
+     блоков текстом». The free side listed the five free guides by name (23
+     words; the directory marks them «Бесплатно»), the paid side took 28. Now
+     9 and 22: what is open here, what the route adds, one payment. The
+     boundary itself is the same. */
   return {
-    free: `Названия ${total} ${points(total)} разбора. Целиком бесплатны первые ${FREE_GUIDES.length} гайдов: ${FREE_TITLES.map(title => `«${title}»`).join(", ")}.`,
-    paid: `Полный разбор этой темы: что именно сделать, суммы, сроки и ссылки. Вместе с остальными гайдами, визой, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}` };
+    free: `Названия ${total} ${points(total)} разбора и первые ${FREE_GUIDES.length} гайдов целиком.`,
+    paid: `Полный разбор: что сделать, суммы, сроки и ссылки. А ещё остальные гайды, виза и проверки документов без лимита. ${ROUTE_TAIL}` };
 }
 
 function Fact({ value, label, known = true, span, ...data }: { value: string; label: string; known?: boolean; span: BentoSpan } & { [key: `data-${string}`]: string | boolean | undefined }) {
@@ -67,9 +71,12 @@ function Note({ text, span }: { text: string; span: BentoSpan }) {
   </BentoCell>;
 }
 
-/** Источники и примечание: широкие источники слева, примечание справа. */
+/** Источники и примечание — каждое во всю ширину сетки.
+    Owner, 21 Nov: «тексты не прям ровные». The note stood in a third of the
+    grid beside the sources: a 207px column, where its 16–23 words made six to
+    eight ragged lines of 13–21 characters. Across the grid it reads in two. */
 function Closing({ ids, note }: { ids: readonly SourceId[]; note: string }) {
-  return note ? <><Sources ids={ids} span={{ md: 4 }} /><Note text={note} span={{ md: 2 }} /></> : <Sources ids={ids} span={{ md: 6 }} />;
+  return note ? <><Sources ids={ids} span={{ md: 6 }} /><Note text={note} span={{ md: 6 }} /></> : <Sources ids={ids} span={{ md: 6 }} />;
 }
 
 export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: string }) {
@@ -108,7 +115,7 @@ export function VisaOverview({ guide, note }: { guide: GuideCard; note: string }
       <div className={bento.actions}><Link href={`/guides/visa/${funds.id}`} className={ui.primary}>Посчитать в тенге</Link></div>
     </BentoCell>
     <GuideDose place="guide-overview" span={{ md: 6 }} free={`Ключевые факты, ссылка на VFS, калькулятор средств и названия ${VISA_POINTS} пунктов.`}
-      paid={`Все ${VISA_POINTS} пунктов подробно: когда подавать, документы для визы, проверка перед подачей. Вместе с гайдами, тренажёром Modulo 1 и проверкой документов без лимита. ${ROUTE_TAIL}`} />
+      paid={`Все ${VISA_POINTS} пунктов подробно: когда подавать, документы, проверка перед подачей. А ещё гайды и проверки документов без лимита. ${ROUTE_TAIL}`} />
     <Closing ids={guide.sources} note={note} />
   </Bento>;
 }

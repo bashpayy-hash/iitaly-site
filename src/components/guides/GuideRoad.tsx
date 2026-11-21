@@ -133,8 +133,8 @@ export function GuideRoad({ id, heading, stations, showStations = true, scenery 
   const available = allKeys;
   const readCount = available.filter(key => read.has(key)).length;
   const caption = paid ? "всё открыто: на этом устройстве выполнен вход в кабинет"
-    : openKeys.length === 0 ? "разбор этой темы — с маршрутом"
-    : openKeys.length < allKeys.length ? `открыто ${openKeys.length}, ещё ${allKeys.length - openKeys.length} — с маршрутом` : "";
+    : openKeys.length === 0 ? "разбор этой темы\u00A0— с маршрутом"
+    : openKeys.length < allKeys.length ? `открыто ${openKeys.length}, ещё ${allKeys.length - openKeys.length}\u00A0— с маршрутом` : "";
   const anyRead = readCount > 0;
   const roadRef = useRef<HTMLDivElement>(null), lineRef = useRef<SVGSVGElement>(null);
   useRouteLine(roadRef, lineRef, `${paid}|${[...read].join()}|${showStations}`);
@@ -191,7 +191,7 @@ export function GuideRoad({ id, heading, stations, showStations = true, scenery 
                       <span className={styles.stepLabel}>
                         {nodeState === "current" && <span className={styles.nowChip} aria-hidden="true">{anyRead ? "Читать дальше" : "Начни здесь"}</span>}
                         <span className={styles.stepTitle} data-road-step-title>{step.title}</span>
-                        <span className={styles.srOnly}> — {words[nodeState]}</span>
+                        <span className={styles.srOnly}>&nbsp;— {words[nodeState]}</span>
                       </span>
                     </Link>
                   </li>
