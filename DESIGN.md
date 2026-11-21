@@ -2840,3 +2840,25 @@ Owner, with a screenshot of the hero: «Здесь всё равно чувст�
   it, on a phone the picture stands whole above the sheet.
 - Still CSS on the compositor, no video. `design/illustrations/motion-2026-11-21-amalfi-depth.json`.
 
+## The cabinet hero is one still picture · 21 November 2026 (afternoon)
+
+Owner, after the ride into the depth: «Ладно, просто убери видео, просто
+сделай динамичную, классную картинку, где он просто едет, всё, больше ничего
+не надо».
+
+- **Nothing moves in the hero.** No video, no canvas, no cut-out on CSS: the
+  ride and its keyframes are gone (the cabinet stylesheet is 20 KB lighter).
+- **The motion is in the picture.** Vespi rides toward us down the Amalfi
+  road at golden hour, scarf streaming, headlight on, petals in the air, the
+  asphalt streaked toward the vanishing point behind him; the village with
+  the dome on one side, the sea with the low sun on the other. His face is
+  in full: two dot eyes and a small smile.
+- **One picture, three frames.** A desktop shows the whole view around the
+  panel. A tablet hides the upper two thirds under the panel, so the stage is
+  enlarged there and Vespi sits whole in the band under it. A phone gets a
+  closer frame of the same picture as its own, lighter file.
+- **He keeps to the right.** The generated picture had him on the left of his
+  road; it is mirrored, so he rides where traffic in Italy does.
+- An upscaled copy was tried and dropped: it turned the plush into plastic.
+  `design/illustrations/landscape-2026-11-21-amalfi-still.json`.
+
