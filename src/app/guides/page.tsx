@@ -2,7 +2,6 @@ import paper from "@/components/marketing/public-paper.module.css";
 import Link from "next/link";
 import { GuideFrame, GuideReviewed } from "@/components/guides/GuidePage";
 import { GuideDirectory } from "@/components/guides/GuideDirectory";
-import { DocCheckPromo } from "@/components/guides/DocCheckPromo";
 import { GuideRoad } from "@/components/guides/GuideRoad";
 import { guidesRoad } from "@/components/guides/guideRoads";
 import { GuideHelperLink, GuideReadingContext } from "@/components/guides/GuideReadingContext";
@@ -19,8 +18,6 @@ export default function GuidesPage() {
     </header>
     </div>
     <GuideDirectory />
-    {/* Owner, 19 Nov: the document check, advertised more actively. */}
-    <div className={ui.indexPromo}><DocCheckPromo topic="guides" /></div>
     {/* Owner, 10 Nov: the whole guide as one road, the same format as the cabinet's path. */}
     <div className={ui.indexRoad}><GuideRoad id="guides" heading="Весь путь по гайдам и визе" stations={guidesRoad()} /></div>
     <div className={ui.indexFooter}>

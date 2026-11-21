@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element -- Local riso art with explicit dimensions. */
-import { DocCheckPromo } from "./DocCheckPromo";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
@@ -72,9 +71,10 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
       {/* Owner, 12 Nov (Lamossa Studio): facts, the next action, the note and
           the sources as one bento above the steps (GuideOverview.tsx). */}
       {!part && (id === "visa" ? <VisaOverview guide={guide} note={note} /> : <GuideTopicOverview guide={guide} note={note} />)}
-      {/* Owner, 19 Nov: «проверка документов это киллер фича, её нужно активнее
-          рекламировать» — where the topic is about a paper the reader holds. */}
-      {(!part || visaPart === "documents") && <DocCheckPromo topic={id} />}
+      {/* The document check is its own section in the main navigation
+          (owner, 21 Nov: «вместо того, чтобы бесконечно в разных ответвлениях
+          писать… сделай так, чтобы проверка документов была отдельным
+          разделом»), so a topic page carries no promo for it. */}
       <div className={ui.readingBody}>
         {id === "visa" ? <>
           {part && <VisaSection part={visaPart} />}

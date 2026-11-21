@@ -15,6 +15,10 @@ const links = [
   // «Мой план» opens on the questionnaire, not on the loggia cover, so the
   // first question is on a phone's first screen. The cover stays for /plan typed by hand.
   { href: "/plan#questionnaire", label: "Мой план" },
+  // Owner, 21 Nov 2026: «просто сделай так, чтобы проверка документов была
+  // отдельным разделом» — one place in the main navigation instead of a
+  // promo in every guide, plan step and cabinet view.
+  { href: "/check", label: "Проверка документов" },
   { href: "/prices", label: "Цены" },
   { href: "/guides", label: "Гайды и виза" },
 ];
@@ -23,7 +27,7 @@ const links = [
 export function MarketingHeader({ variant = "public", actions }: { variant?: "public" | "portal"; actions?: ReactNode }) {
   const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
-  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices").map(link => link.href.startsWith("/plan") ? { ...link, href: "/portal" } : link) : links;
+  const visibleLinks = variant === "portal" ? links.filter(link => link.href !== "/prices" && link.href !== "/check").map(link => link.href.startsWith("/plan") ? { ...link, href: "/portal" } : link) : links;
 
   useEffect(() => {
     function closeOutside(event: PointerEvent) {

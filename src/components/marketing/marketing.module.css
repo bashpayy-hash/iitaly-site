@@ -64,7 +64,7 @@
 @media (hover: hover) and (pointer: fine) { .wordmark:hover { opacity:0.8; transform:translateY(-1px); } }
 @media(prefers-reduced-motion:reduce) { .wordmark { transition:none; }@media (hover: hover) and (pointer: fine) { .wordmark:hover { transform:none; } } }
 .desktopNav { display: flex; align-items: center; gap: 32px; height: 100%; }
-.desktopNav a { position: relative; display: flex; align-items: center; height: 100%; font-size: 14px; color: #56524c; }
+.desktopNav a { position: relative; display: flex; align-items: center; height: 100%; font-size: 14px; color: #56524c; white-space: nowrap; }
 .desktopNav a[aria-current="page"] { color: #141413; }
 @media (hover: hover) and (pointer: fine) { .desktopNav a:hover { color: #141413; } }
 .desktopNav a[aria-current="page"] { font-weight:600; }
@@ -299,9 +299,13 @@
   composes: paper from "./surface-depth.module.css"; border-radius: 12px; background: #fff; }
 @media (hover: hover) and (pointer: fine) { .optionalService:hover { border-color: var(--i-link); background: #fff5f7; } }
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) { .howHeading { position: sticky; top: 100px; } }
+/* Five sections since 21 Nov («Проверка документов»): one line down to the
+   tablet — tighter gaps below 1080px, smaller type below 900px. */
+@media (max-width: 1079px) { .navInner, .desktopNav { gap: 22px; } }
 @media (max-width: 899px) {
-  .navInner { padding: 0 24px; gap: 20px; }
-  .desktopNav { gap: 18px; }
+  .navInner { padding: 0 24px; gap: 16px; }
+  .desktopNav { gap: 14px; }
+  .desktopNav a, .portalLink { font-size: 13px; }
   .howInner { gap: 48px; }
 }
 @media (max-width: 767px) {

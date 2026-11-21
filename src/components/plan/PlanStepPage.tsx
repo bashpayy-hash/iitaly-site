@@ -150,7 +150,6 @@ export function PlanStepPage({ position }: { position: number }) {
     </nav>
     <footer className={ui.articleFooter}>
       <Link href={PLAN_ROUTE_HREF} className={ui.textLink}>Весь маршрут</Link>
-      <Link href="/check" className={ui.textLink}>Проверить документ</Link>
     </footer>
   </article>;
 }

@@ -24,6 +24,7 @@ export function MarketingFooter() {
         <nav aria-label="Навигация в подвале">
           <Link href="/plan#questionnaire" prefetch={false}>Мой план</Link>
           <Link href="/universities" prefetch={false}>Университеты</Link>
+          <Link href="/check" prefetch={false}>Проверка документов</Link>
           <Link href="/prices" prefetch={false}>Цены</Link>
           <Link href="/guides" prefetch={false}>Гайды и виза</Link>
           <Link href="/changes-2026-27" prefetch={false}>Правила 2026/27</Link>

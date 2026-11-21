@@ -223,51 +223,550 @@ button.nowPrimary { border:0; cursor:pointer; }
 .heroScene { container-type:size; }
 .heroStage { position:absolute; left:50%; bottom:0; width:max(100cqw, 133.334cqh); aspect-ratio:4 / 3; translate:-50% 0; }
 .heroStageArt { position:absolute; inset:0; width:100%; height:100%; max-width:none; }
+/* Physics of the ride (owner, 21 Nov: «бесшовность появилась, но… там нет
+   нормальной физики»). Baked from a small simulation into keyframes on the
+   same 8.767 s loop (design/illustrations/motion-2026-11-21-amalfi-physics.json):
+   - the scooter climbs a little slower and picks up speed on the flat;
+   - the body leans with the road under it, pivoting where the tyres touch;
+   - the wheels turn by the distance travelled over the tyre radius;
+   - two-axle suspension over three joints in the asphalt and fine roughness:
+     the front wheel meets a joint first, the rear one wheelbase later;
+   - the head sits on a soft neck and answers the seat's jolts a beat late.
+   The wheels never leave the road and nothing hops as one rigid block. Every
+   layer moves by translate/rotate/scale only, on the compositor. */
 .ride { position:absolute; inset:0; pointer-events:none; animation:amalfi-ride 8.767s linear -3.496s infinite; will-change:translate; }
 .rideBody { position:absolute; left:35.892%; top:64.216%; width:16.406%; aspect-ratio:357 / 425; transform-origin:45.378% 31.294%; animation:amalfi-ride-size 8.767s linear -3.496s infinite; }
-/* A light jolt of the road, the shadow stays on the ground. */
-.rideVespi { position:absolute; inset:0; width:100%; height:100%; animation:amalfi-ride-bump .36s ease-in-out infinite alternate; }
+.rideTilt, .rideChassis { position:absolute; inset:0; transform-origin:53.922% 92.353%; }
+.rideTilt { animation:amalfi-ride-tilt 8.767s linear -3.496s infinite; }
+.rideChassis { animation:amalfi-ride-bounce 8.767s linear -3.496s infinite; }
+.rideVespi { position:absolute; inset:0; width:100%; height:100%; }
+.rideHead { position:absolute; left:16.807%; top:0; width:60.504%; height:auto; aspect-ratio:216 / 164; transform-origin:56.481% 91.463%; animation:amalfi-ride-head 8.767s linear -3.496s infinite; }
+/* Five wheel nuts and the valve turn on each hub; the rim's ellipse is the
+   wheel seen at three quarters. The fork strut and the cowl stay in front. */
+.rideWheel { position:absolute; width:13.445%; aspect-ratio:1; }
+.rideWheel svg { display:block; width:100%; height:100%; overflow:visible; animation:amalfi-ride-spin 8.767s linear -3.496s infinite; }
+.rideWheelFront { left:78.992%; top:75.059%; scale:.94 1; clip-path:polygon(0 0, 39% 0, 39% 30%, 33% 30%, 33% 64%, 64% 64%, 64% 30%, 61% 30%, 61% 0, 100% 0, 100% 100%, 0 100%); }
+.rideWheelRear { left:16.807%; top:79.529%; scale:.96 1; clip-path:polygon(0 36%, 72% 36%, 72% 56%, 100% 56%, 100% 100%, 0 100%); }
 /* No gradients in the cabinet (owner, 3 Nov): a solid ellipse, blurred once
-   with the moving layer. */
+   with the moving layer. It stays on the road: it leans with the slope but not
+   with the bumps. */
 .rideShadow { position:absolute; left:12%; right:-8%; bottom:-1.5%; height:6%; border-radius:50%; background:rgba(74, 38, 36, .3); filter:blur(5px); }
-@keyframes amalfi-ride-bump { from { translate:0 0; } to { translate:0 -.7%; } }
 @keyframes amalfi-ride {
   0% { translate: -53.118% 3.811%; }
-  6.328% { translate: -44.689% 2.957%; }
-  12.656% { translate: -36.261% 2.12%; }
-  18.984% { translate: -27.832% 1.426%; }
-  25.312% { translate: -19.403% 0.883%; }
-  31.64% { translate: -10.975% 0.474%; }
-  37.969% { translate: -2.546% 0.182%; }
-  44.297% { translate: 5.883% -0.012%; }
-  50.625% { translate: 14.311% -0.123%; }
-  56.953% { translate: 22.74% -0.169%; }
-  63.281% { translate: 31.169% -0.168%; }
-  69.609% { translate: 39.597% -0.137%; }
-  75.937% { translate: 48.026% -0.094%; }
-  82.265% { translate: 56.455% -0.053%; }
+  6.92% { translate: -44.689% 2.957%; }
+  13.82% { translate: -36.261% 2.12%; }
+  20.559% { translate: -27.832% 1.426%; }
+  27.138% { translate: -19.403% 0.883%; }
+  33.58% { translate: -10.975% 0.474%; }
+  39.908% { translate: -2.546% 0.182%; }
+  46.145% { translate: 5.883% -0.012%; }
+  52.305% { translate: 14.311% -0.123%; }
+  58.409% { translate: 22.74% -0.169%; }
+  64.471% { translate: 31.169% -0.168%; }
+  70.508% { translate: 39.597% -0.137%; }
+  76.534% { translate: 48.026% -0.094%; }
+  82.563% { translate: 56.455% -0.053%; }
   88.593% { translate: 64.883% -0.015%; }
   100% { translate: 64.883% -0.015%; }
 }
 @keyframes amalfi-ride-size {
   0% { scale: 1.025; }
-  6.328% { scale: 1.021; }
-  12.656% { scale: 1.017; }
-  18.984% { scale: 1.013; }
-  25.312% { scale: 1.009; }
-  31.64% { scale: 1.005; }
-  37.969% { scale: 1.001; }
-  44.297% { scale: 0.997; }
-  50.625% { scale: 0.993; }
-  56.953% { scale: 0.989; }
-  63.281% { scale: 0.985; }
-  69.609% { scale: 0.982; }
-  75.937% { scale: 0.978; }
-  82.265% { scale: 0.974; }
+  6.92% { scale: 1.021; }
+  13.82% { scale: 1.017; }
+  20.559% { scale: 1.013; }
+  27.138% { scale: 1.009; }
+  33.58% { scale: 1.005; }
+  39.908% { scale: 1.001; }
+  46.145% { scale: 0.997; }
+  52.305% { scale: 0.993; }
+  58.409% { scale: 0.989; }
+  64.471% { scale: 0.985; }
+  70.508% { scale: 0.982; }
+  76.534% { scale: 0.978; }
+  82.563% { scale: 0.974; }
   88.593% { scale: 0.97; }
   100% { scale: 0.97; }
 }
-@media (prefers-reduced-motion: reduce) { .ride, .rideBody, .rideVespi { animation:none; } }
+@keyframes amalfi-ride-tilt {
+  0% { rotate: -3.36deg; }
+  6.92% { rotate: -3.31deg; }
+  13.82% { rotate: -2.91deg; }
+  20.559% { rotate: -2.16deg; }
+  27.138% { rotate: -1.44deg; }
+  33.58% { rotate: -0.8deg; }
+  39.908% { rotate: -0.25deg; }
+  46.145% { rotate: 0.21deg; }
+  52.305% { rotate: 0.59deg; }
+  58.409% { rotate: 0.87deg; }
+  64.471% { rotate: 1.07deg; }
+  70.508% { rotate: 1.18deg; }
+  76.534% { rotate: 1.2deg; }
+  82.563% { rotate: 1.19deg; }
+  88.593% { rotate: 1.18deg; }
+  100% { rotate: 1.18deg; }
+}
+@keyframes amalfi-ride-spin {
+  0% { rotate: 0deg; }
+  6.92% { rotate: 263.5deg; }
+  13.82% { rotate: 526.9deg; }
+  20.559% { rotate: 790.1deg; }
+  27.138% { rotate: 1053.2deg; }
+  33.58% { rotate: 1316deg; }
+  39.908% { rotate: 1578.8deg; }
+  46.145% { rotate: 1841.6deg; }
+  52.305% { rotate: 2104.3deg; }
+  58.409% { rotate: 2367deg; }
+  64.471% { rotate: 2629.7deg; }
+  70.508% { rotate: 2892.4deg; }
+  76.534% { rotate: 3155.2deg; }
+  82.563% { rotate: 3417.9deg; }
+  88.593% { rotate: 3680.6deg; }
+  100% { rotate: 3680.6deg; }
+}
+@keyframes amalfi-ride-bounce {
+  0% { translate: 0 0%; rotate: 0deg; }
+  1.331% { translate: 0 -0.01%; rotate: 0.133deg; }
+  2.994% { translate: 0 0.123%; rotate: 0.092deg; }
+  3.422% { translate: 0 0.113%; rotate: 0.056deg; }
+  4.23% { translate: 0 -0.007%; rotate: -0.017deg; }
+  4.658% { translate: 0 -0.039%; rotate: -0.041deg; }
+  6.321% { translate: 0 -0.01%; rotate: 0.114deg; }
+  6.654% { translate: 0 0.028%; rotate: 0.099deg; }
+  7.557% { translate: 0 0.112%; rotate: -0.039deg; }
+  7.842% { translate: 0 0.102%; rotate: -0.038deg; }
+  8.698% { translate: 0 0.042%; rotate: 0.071deg; }
+  9.315% { translate: 0 0.029%; rotate: 0.085deg; }
+  10.076% { translate: 0 0.041%; rotate: 0.026deg; }
+  11.026% { translate: 0 0.072%; rotate: -0.211deg; }
+  11.407% { translate: 0 0.06%; rotate: -0.238deg; }
+  12.642% { translate: 0 -0.084%; rotate: -0.087deg; }
+  13.45% { translate: 0 -0.086%; rotate: -0.166deg; }
+  14.163% { translate: 0 -0.037%; rotate: -0.146deg; }
+  15.161% { translate: 0 0.121%; rotate: 0.056deg; }
+  15.969% { translate: 0 0.159%; rotate: 0.164deg; }
+  16.73% { translate: 0 0.133%; rotate: 0.127deg; }
+  17.965% { translate: 0 0.018%; rotate: -0.083deg; }
+  18.441% { translate: 0 -0.019%; rotate: -0.11deg; }
+  19.296% { translate: 0 -0.03%; rotate: 0.024deg; }
+  20.247% { translate: 0 0.064%; rotate: 0.364deg; }
+  20.627% { translate: 0 0.062%; rotate: 0.422deg; }
+  21.245% { translate: 0 -0.024%; rotate: 0.302deg; }
+  22.005% { translate: 0 -0.087%; rotate: 0.049deg; }
+  22.671% { translate: 0 -0.003%; rotate: -0.161deg; }
+  23.336% { translate: 0 0.074%; rotate: -0.287deg; }
+  23.716% { translate: 0 0.102%; rotate: -0.291deg; }
+  24.477% { translate: 0 0.128%; rotate: -0.165deg; }
+  25.047% { translate: 0 0.077%; rotate: -0.107deg; }
+  25.712% { translate: 0 -0.031%; rotate: -0.052deg; }
+  25.903% { translate: 0 -0.067%; rotate: -0.071deg; }
+  26.045% { translate: 0 -0.121%; rotate: -0.154deg; }
+  26.188% { translate: 0 -0.208%; rotate: -0.321deg; }
+  26.616% { translate: 0 -0.55%; rotate: -1.099deg; }
+  26.758% { translate: 0 -0.634%; rotate: -1.302deg; }
+  26.901% { translate: 0 -0.675%; rotate: -1.428deg; }
+  27.043% { translate: 0 -0.67%; rotate: -1.456deg; }
+  27.186% { translate: 0 -0.621%; rotate: -1.404deg; }
+  27.376% { translate: 0 -0.503%; rotate: -1.264deg; }
+  27.946% { translate: 0 -0.072%; rotate: -0.639deg; }
+  28.231% { translate: 0 0.104%; rotate: -0.319deg; }
+  28.564% { translate: 0 0.23%; rotate: 0.056deg; }
+  28.897% { translate: 0 0.273%; rotate: 0.331deg; }
+  29.182% { translate: 0 0.252%; rotate: 0.468deg; }
+  29.515% { translate: 0 0.188%; rotate: 0.493deg; }
+  29.847% { translate: 0 0.106%; rotate: 0.4deg; }
+  30.37% { translate: 0 -0.011%; rotate: 0.137deg; }
+  30.988% { translate: 0 -0.076%; rotate: -0.044deg; }
+  32.034% { translate: 0 -0.039%; rotate: -0.204deg; }
+  32.699% { translate: 0 -0.048%; rotate: -0.166deg; }
+  33.412% { translate: 0 -0.037%; rotate: 0.065deg; }
+  33.602% { translate: 0 -0.071%; rotate: 0.188deg; }
+  33.792% { translate: 0 -0.162%; rotate: 0.453deg; }
+  34.22% { translate: 0 -0.498%; rotate: 1.25deg; }
+  34.363% { translate: 0 -0.584%; rotate: 1.416deg; }
+  34.505% { translate: 0 -0.631%; rotate: 1.482deg; }
+  34.648% { translate: 0 -0.631%; rotate: 1.451deg; }
+  34.79% { translate: 0 -0.593%; rotate: 1.337deg; }
+  34.98% { translate: 0 -0.502%; rotate: 1.116deg; }
+  35.503% { translate: 0 -0.176%; rotate: 0.422deg; }
+  35.836% { translate: 0 0.031%; rotate: 0.073deg; }
+  36.074% { translate: 0 0.145%; rotate: -0.141deg; }
+  36.406% { translate: 0 0.228%; rotate: -0.368deg; }
+  36.739% { translate: 0 0.252%; rotate: -0.441deg; }
+  37.072% { translate: 0 0.219%; rotate: -0.402deg; }
+  37.785% { translate: 0 0.062%; rotate: -0.096deg; }
+  38.307% { translate: 0 -0.041%; rotate: 0.028deg; }
+  39.543% { translate: 0 -0.037%; rotate: 0.228deg; }
+  40.208% { translate: 0 -0.031%; rotate: 0.213deg; }
+  41.254% { translate: 0 0.016%; rotate: -0.053deg; }
+  41.729% { translate: 0 -0.013%; rotate: -0.14deg; }
+  42.442% { translate: 0 -0.044%; rotate: -0.094deg; }
+  43.393% { translate: 0 0.064%; rotate: -0.043deg; }
+  43.916% { translate: 0 0.098%; rotate: 0.079deg; }
+  44.581% { translate: 0 0.114%; rotate: 0.166deg; }
+  44.866% { translate: 0 0.109%; rotate: 0.155deg; }
+  45.532% { translate: 0 0.028%; rotate: 0.103deg; }
+  45.959% { translate: 0 -0.014%; rotate: 0.014deg; }
+  46.767% { translate: 0 0.006%; rotate: -0.119deg; }
+  47.48% { translate: 0 0.053%; rotate: -0.023deg; }
+  48.241% { translate: 0 0.1%; rotate: 0.178deg; }
+  49.191% { translate: 0 0.044%; rotate: 0.307deg; }
+  49.857% { translate: 0 0.008%; rotate: 0.189deg; }
+  50.237% { translate: 0 -0.004%; rotate: 0.039deg; }
+  51.045% { translate: 0 0.05%; rotate: -0.124deg; }
+  51.758% { translate: 0 0.132%; rotate: -0.118deg; }
+  52.09% { translate: 0 0.148%; rotate: -0.077deg; }
+  53.183% { translate: 0 0.062%; rotate: 0.141deg; }
+  53.801% { translate: 0 0.031%; rotate: 0.173deg; }
+  54.039% { translate: 0 0.018%; rotate: 0.138deg; }
+  54.704% { translate: 0 0.008%; rotate: -0.072deg; }
+  55.037% { translate: 0 0.032%; rotate: -0.166deg; }
+  55.37% { translate: 0 0.072%; rotate: -0.209deg; }
+  55.893% { translate: 0 0.117%; rotate: -0.189deg; }
+  56.51% { translate: 0 0.133%; rotate: -0.085deg; }
+  56.748% { translate: 0 0.091%; rotate: -0.107deg; }
+  57.176% { translate: 0 -0.144%; rotate: -0.487deg; }
+  57.366% { translate: 0 -0.214%; rotate: -0.551deg; }
+  57.509% { translate: 0 -0.223%; rotate: -0.514deg; }
+  57.794% { translate: 0 -0.18%; rotate: -0.377deg; }
+  58.221% { translate: 0 -0.074%; rotate: -0.152deg; }
+  58.649% { translate: 0 0.052%; rotate: 0.001deg; }
+  59.077% { translate: 0 0.13%; rotate: 0.085deg; }
+  59.552% { translate: 0 0.161%; rotate: 0.055deg; }
+  61.026% { translate: 0 0.024%; rotate: -0.182deg; }
+  61.453% { translate: 0 -0.007%; rotate: -0.092deg; }
+  61.929% { translate: 0 0.006%; rotate: 0.081deg; }
+  62.166% { translate: 0 0.013%; rotate: 0.121deg; }
+  63.164% { translate: 0 0.009%; rotate: -0.074deg; }
+  63.782% { translate: 0 0.024%; rotate: -0.143deg; }
+  63.972% { translate: 0 -0.037%; rotate: -0.049deg; }
+  64.353% { translate: 0 -0.233%; rotate: 0.349deg; }
+  64.543% { translate: 0 -0.266%; rotate: 0.437deg; }
+  64.875% { translate: 0 -0.207%; rotate: 0.363deg; }
+  65.778% { translate: 0 0.099%; rotate: 0.112deg; }
+  66.349% { translate: 0 0.187%; rotate: 0.013deg; }
+  66.871% { translate: 0 0.145%; rotate: -0.052deg; }
+  68.107% { translate: 0 -0.125%; rotate: -0.164deg; }
+  68.582% { translate: 0 -0.135%; rotate: -0.205deg; }
+  69.153% { translate: 0 -0.056%; rotate: -0.259deg; }
+  69.438% { translate: 0 -0.026%; rotate: -0.193deg; }
+  70.293% { translate: 0 0.031%; rotate: 0.128deg; }
+  70.721% { translate: 0 0.033%; rotate: 0.138deg; }
+  71.434% { translate: 0 -0.017%; rotate: 0.137deg; }
+  72.1% { translate: 0 0%; rotate: 0.053deg; }
+  73.003% { translate: 0 0.014%; rotate: -0.349deg; }
+  73.43% { translate: 0 -0.002%; rotate: -0.438deg; }
+  73.811% { translate: 0 0.014%; rotate: -0.319deg; }
+  74.523% { translate: 0 0.02%; rotate: 0.123deg; }
+  74.904% { translate: 0 -0.014%; rotate: 0.303deg; }
+  75.331% { translate: 0 -0.044%; rotate: 0.371deg; }
+  75.807% { translate: 0 -0.058%; rotate: 0.373deg; }
+  76.044% { translate: 0 -0.05%; rotate: 0.329deg; }
+  76.187% { translate: 0 -0.068%; rotate: 0.249deg; }
+  76.567% { translate: 0 -0.191%; rotate: -0.2deg; }
+  76.757% { translate: 0 -0.211%; rotate: -0.365deg; }
+  77.042% { translate: 0 -0.192%; rotate: -0.49deg; }
+  77.328% { translate: 0 -0.162%; rotate: -0.546deg; }
+  77.613% { translate: 0 -0.131%; rotate: -0.522deg; }
+  77.898% { translate: 0 -0.109%; rotate: -0.446deg; }
+  79.466% { translate: 0 0.071%; rotate: 0.174deg; }
+  79.894% { translate: 0 0.055%; rotate: 0.344deg; }
+  80.322% { translate: 0 -0.011%; rotate: 0.385deg; }
+  80.512% { translate: 0 -0.031%; rotate: 0.373deg; }
+  80.797% { translate: 0 -0.03%; rotate: 0.276deg; }
+  81.605% { translate: 0 0.093%; rotate: 0.044deg; }
+  82.08% { translate: 0 0.12%; rotate: -0.009deg; }
+  82.651% { translate: 0 0.068%; rotate: -0.108deg; }
+  83.173% { translate: 0 -0.019%; rotate: -0.237deg; }
+  83.364% { translate: 0 -0.089%; rotate: -0.157deg; }
+  83.744% { translate: 0 -0.243%; rotate: 0.211deg; }
+  83.934% { translate: 0 -0.258%; rotate: 0.293deg; }
+  84.362% { translate: 0 -0.242%; rotate: 0.382deg; }
+  85.027% { translate: 0 -0.161%; rotate: 0.308deg; }
+  86.12% { translate: 0 0.015%; rotate: -0.038deg; }
+  86.928% { translate: 0 0.119%; rotate: -0.202deg; }
+  87.213% { translate: 0 0.106%; rotate: -0.178deg; }
+  87.831% { translate: 0 0.105%; rotate: 0.017deg; }
+  88.116% { translate: 0 0.108%; rotate: 0.051deg; }
+  88.639% { translate: 0 0.122%; rotate: 0.027deg; }
+  89.637% { translate: 0 -0.006%; rotate: 0.011deg; }
+  90.35% { translate: 0 -0.042%; rotate: -0.003deg; }
+  92.631% { translate: 0 0.011%; rotate: 0.001deg; }
+  99.951% { translate: 0 0%; rotate: 0deg; }
+}
+@keyframes amalfi-ride-head {
+  0% { translate: 0 0%; rotate: 0deg; }
+  1.188% { translate: 0 0.03%; rotate: 0.03deg; }
+  2.234% { translate: 0 -0.255%; rotate: 0.1deg; }
+  2.662% { translate: 0 -0.266%; rotate: 0.16deg; }
+  3.184% { translate: 0 0.035%; rotate: 0.01deg; }
+  3.85% { translate: 0 0.518%; rotate: -0.44deg; }
+  4.182% { translate: 0 0.588%; rotate: -0.52deg; }
+  4.563% { translate: 0 0.342%; rotate: -0.38deg; }
+  5.228% { translate: 0 -0.358%; rotate: 0.27deg; }
+  5.561% { translate: 0 -0.473%; rotate: 0.44deg; }
+  5.846% { translate: 0 -0.407%; rotate: 0.48deg; }
+  6.321% { translate: 0 -0.171%; rotate: 0.34deg; }
+  6.939% { translate: 0 -0.204%; rotate: 0.17deg; }
+  7.224% { translate: 0 -0.126%; rotate: 0.02deg; }
+  7.842% { translate: 0 0.291%; rotate: -0.33deg; }
+  8.317% { translate: 0 0.566%; rotate: -0.44deg; }
+  8.698% { translate: 0 0.453%; rotate: -0.35deg; }
+  9.506% { translate: 0 -0.208%; rotate: 0.06deg; }
+  10.076% { translate: 0 -0.461%; rotate: 0.25deg; }
+  10.789% { translate: 0 -0.319%; rotate: 0.19deg; }
+  11.739% { translate: 0 0.542%; rotate: -0.18deg; }
+  12.025% { translate: 0 0.669%; rotate: -0.25deg; }
+  12.547% { translate: 0 0.458%; rotate: -0.24deg; }
+  13.165% { translate: 0 -0.327%; rotate: 0.02deg; }
+  13.593% { translate: 0 -0.593%; rotate: 0.19deg; }
+  13.973% { translate: 0 -0.608%; rotate: 0.35deg; }
+  14.686% { translate: 0 -0.273%; rotate: 0.53deg; }
+  15.114% { translate: 0 0.029%; rotate: 0.36deg; }
+  15.827% { translate: 0 0.468%; rotate: -0.23deg; }
+  16.302% { translate: 0 0.461%; rotate: -0.57deg; }
+  16.682% { translate: 0 0.287%; rotate: -0.64deg; }
+  17.062% { translate: 0 0.082%; rotate: -0.57deg; }
+  17.633% { translate: 0 -0.106%; rotate: -0.29deg; }
+  18.726% { translate: 0 -0.094%; rotate: 0.43deg; }
+  19.676% { translate: 0 -0.114%; rotate: 0.62deg; }
+  20.247% { translate: 0 -0.122%; rotate: 0.37deg; }
+  21.102% { translate: 0 0.278%; rotate: -0.72deg; }
+  21.34% { translate: 0 0.338%; rotate: -0.91deg; }
+  21.53% { translate: 0 0.287%; rotate: -0.95deg; }
+  21.768% { translate: 0 0.144%; rotate: -0.85deg; }
+  22.005% { translate: 0 -0.038%; rotate: -0.63deg; }
+  22.433% { translate: 0 -0.512%; rotate: 0.06deg; }
+  22.623% { translate: 0 -0.633%; rotate: 0.33deg; }
+  23.003% { translate: 0 -0.559%; rotate: 0.67deg; }
+  23.384% { translate: 0 -0.293%; rotate: 0.78deg; }
+  24.049% { translate: 0 0.382%; rotate: 0.46deg; }
+  24.619% { translate: 0 0.646%; rotate: -0.17deg; }
+  24.905% { translate: 0 0.63%; rotate: -0.45deg; }
+  25.285% { translate: 0 0.491%; rotate: -0.71deg; }
+  25.998% { translate: 0 0.058%; rotate: -0.74deg; }
+  26.14% { translate: 0 0.086%; rotate: -0.91deg; }
+  26.473% { translate: 0 0.278%; rotate: -1.47deg; }
+  26.663% { translate: 0 0.307%; rotate: -1.58deg; }
+  26.758% { translate: 0 0.244%; rotate: -1.51deg; }
+  26.853% { translate: 0 0.114%; rotate: -1.34deg; }
+  26.996% { translate: 0 -0.176%; rotate: -0.86deg; }
+  27.091% { translate: 0 -0.423%; rotate: -0.39deg; }
+  27.376% { translate: 0 -1.236%; rotate: 1.29deg; }
+  27.471% { translate: 0 -1.436%; rotate: 1.73deg; }
+  27.566% { translate: 0 -1.58%; rotate: 2.06deg; }
+  27.756% { translate: 0 -1.727%; rotate: 2.45deg; }
+  28.041% { translate: 0 -1.63%; rotate: 2.64deg; }
+  28.231% { translate: 0 -1.304%; rotate: 2.59deg; }
+  28.374% { translate: 0 -0.908%; rotate: 2.46deg; }
+  28.517% { translate: 0 -0.391%; rotate: 2.21deg; }
+  28.612% { translate: 0 -0.018%; rotate: 1.97deg; }
+  28.707% { translate: 0 0.349%; rotate: 1.64deg; }
+  28.849% { translate: 0 0.847%; rotate: 0.99deg; }
+  29.039% { translate: 0 1.362%; rotate: -0.07deg; }
+  29.182% { translate: 0 1.616%; rotate: -0.86deg; }
+  29.372% { translate: 0 1.782%; rotate: -1.68deg; }
+  29.562% { translate: 0 1.796%; rotate: -2.17deg; }
+  29.752% { translate: 0 1.664%; rotate: -2.43deg; }
+  29.99% { translate: 0 1.272%; rotate: -2.53deg; }
+  30.275% { translate: 0 0.577%; rotate: -2.44deg; }
+  30.56% { translate: 0 -0.175%; rotate: -2.03deg; }
+  30.75% { translate: 0 -0.612%; rotate: -1.52deg; }
+  31.036% { translate: 0 -1.076%; rotate: -0.39deg; }
+  31.321% { translate: 0 -1.251%; rotate: 0.78deg; }
+  31.511% { translate: 0 -1.263%; rotate: 1.35deg; }
+  31.749% { translate: 0 -1.115%; rotate: 1.75deg; }
+  31.986% { translate: 0 -0.773%; rotate: 1.87deg; }
+  32.366% { translate: 0 -0.011%; rotate: 1.7deg; }
+  32.794% { translate: 0 0.627%; rotate: 1.06deg; }
+  33.079% { translate: 0 0.788%; rotate: 0.52deg; }
+  33.555% { translate: 0 0.796%; rotate: -0.44deg; }
+  33.697% { translate: 0 0.982%; rotate: -0.73deg; }
+  33.982% { translate: 0 1.581%; rotate: -1.28deg; }
+  34.172% { translate: 0 1.804%; rotate: -1.52deg; }
+  34.363% { translate: 0 1.674%; rotate: -1.6deg; }
+  34.458% { translate: 0 1.43%; rotate: -1.56deg; }
+  34.553% { translate: 0 1.03%; rotate: -1.47deg; }
+  34.695% { translate: 0 0.13%; rotate: -1.23deg; }
+  34.885% { translate: 0 -1.216%; rotate: -0.74deg; }
+  35.028% { translate: 0 -1.937%; rotate: -0.28deg; }
+  35.123% { translate: 0 -2.239%; rotate: 0.03deg; }
+  35.266% { translate: 0 -2.493%; rotate: 0.46deg; }
+  35.551% { translate: 0 -2.632%; rotate: 1.13deg; }
+  35.741% { translate: 0 -2.562%; rotate: 1.4deg; }
+  35.931% { translate: 0 -2.328%; rotate: 1.51deg; }
+  36.074% { translate: 0 -1.964%; rotate: 1.48deg; }
+  36.169% { translate: 0 -1.585%; rotate: 1.4deg; }
+  36.264% { translate: 0 -1.087%; rotate: 1.28deg; }
+  36.596% { translate: 0 0.979%; rotate: 0.7deg; }
+  36.739% { translate: 0 1.651%; rotate: 0.36deg; }
+  36.834% { translate: 0 1.962%; rotate: 0.13deg; }
+  36.977% { translate: 0 2.262%; rotate: -0.2deg; }
+  37.119% { translate: 0 2.427%; rotate: -0.51deg; }
+  37.309% { translate: 0 2.502%; rotate: -0.81deg; }
+  37.594% { translate: 0 2.405%; rotate: -1.13deg; }
+  37.785% { translate: 0 2.177%; rotate: -1.23deg; }
+  37.975% { translate: 0 1.728%; rotate: -1.23deg; }
+  38.165% { translate: 0 1.032%; rotate: -1.13deg; }
+  38.497% { translate: 0 -0.519%; rotate: -0.71deg; }
+  38.688% { translate: 0 -1.226%; rotate: -0.35deg; }
+  38.925% { translate: 0 -1.738%; rotate: 0.1deg; }
+  39.163% { translate: 0 -1.906%; rotate: 0.49deg; }
+  39.496% { translate: 0 -1.699%; rotate: 0.79deg; }
+  39.876% { translate: 0 -0.993%; rotate: 0.79deg; }
+  40.256% { translate: 0 -0.103%; rotate: 0.61deg; }
+  40.446% { translate: 0 0.233%; rotate: 0.46deg; }
+  40.826% { translate: 0 0.678%; rotate: 0.1deg; }
+  41.111% { translate: 0 0.812%; rotate: -0.16deg; }
+  41.682% { translate: 0 0.702%; rotate: -0.55deg; }
+  41.967% { translate: 0 0.563%; rotate: -0.59deg; }
+  42.395% { translate: 0 0.091%; rotate: -0.34deg; }
+  42.965% { translate: 0 -0.577%; rotate: 0.24deg; }
+  43.298% { translate: 0 -0.755%; rotate: 0.49deg; }
+  43.488% { translate: 0 -0.677%; rotate: 0.54deg; }
+  43.916% { translate: 0 -0.253%; rotate: 0.49deg; }
+  44.533% { translate: 0 0.334%; rotate: 0.06deg; }
+  45.199% { translate: 0 0.541%; rotate: -0.52deg; }
+  45.674% { translate: 0 0.413%; rotate: -0.68deg; }
+  46.007% { translate: 0 0.082%; rotate: -0.56deg; }
+  46.435% { translate: 0 -0.373%; rotate: -0.13deg; }
+  46.72% { translate: 0 -0.544%; rotate: 0.17deg; }
+  47.29% { translate: 0 -0.39%; rotate: 0.61deg; }
+  47.765% { translate: 0 -0.083%; rotate: 0.67deg; }
+  48.241% { translate: 0 0.238%; rotate: 0.4deg; }
+  48.954% { translate: 0 0.491%; rotate: -0.36deg; }
+  49.286% { translate: 0 0.381%; rotate: -0.59deg; }
+  49.619% { translate: 0 0.112%; rotate: -0.66deg; }
+  50.142% { translate: 0 -0.31%; rotate: -0.5deg; }
+  50.522% { translate: 0 -0.491%; rotate: -0.17deg; }
+  51.14% { translate: 0 -0.47%; rotate: 0.5deg; }
+  51.472% { translate: 0 -0.268%; rotate: 0.69deg; }
+  51.995% { translate: 0 0.2%; rotate: 0.56deg; }
+  52.328% { translate: 0 0.509%; rotate: 0.29deg; }
+  52.613% { translate: 0 0.672%; rotate: -0.04deg; }
+  52.993% { translate: 0 0.657%; rotate: -0.39deg; }
+  53.421% { translate: 0 0.332%; rotate: -0.56deg; }
+  53.991% { translate: 0 -0.29%; rotate: -0.4deg; }
+  54.562% { translate: 0 -0.616%; rotate: -0.13deg; }
+  55.18% { translate: 0 -0.535%; rotate: 0.34deg; }
+  55.512% { translate: 0 -0.301%; rotate: 0.52deg; }
+  55.798% { translate: 0 -0.007%; rotate: 0.56deg; }
+  56.178% { translate: 0 0.372%; rotate: 0.42deg; }
+  56.605% { translate: 0 0.593%; rotate: 0.13deg; }
+  56.748% { translate: 0 0.702%; rotate: -0.14deg; }
+  57.128% { translate: 0 1.019%; rotate: -1.18deg; }
+  57.318% { translate: 0 0.977%; rotate: -1.35deg; }
+  57.413% { translate: 0 0.86%; rotate: -1.29deg; }
+  57.556% { translate: 0 0.56%; rotate: -1.03deg; }
+  57.889% { translate: 0 -0.324%; rotate: -0.12deg; }
+  58.174% { translate: 0 -0.913%; rotate: 0.64deg; }
+  58.364% { translate: 0 -1.178%; rotate: 1.02deg; }
+  58.602% { translate: 0 -1.28%; rotate: 1.28deg; }
+  58.839% { translate: 0 -1.142%; rotate: 1.3deg; }
+  59.124% { translate: 0 -0.754%; rotate: 1.06deg; }
+  59.41% { translate: 0 -0.198%; rotate: 0.57deg; }
+  59.932% { translate: 0 0.781%; rotate: -0.53deg; }
+  60.218% { translate: 0 0.977%; rotate: -0.94deg; }
+  60.503% { translate: 0 0.986%; rotate: -1.15deg; }
+  60.74% { translate: 0 0.827%; rotate: -1.16deg; }
+  61.026% { translate: 0 0.473%; rotate: -0.95deg; }
+  61.311% { translate: 0 0.173%; rotate: -0.58deg; }
+  61.929% { translate: 0 -0.475%; rotate: 0.51deg; }
+  62.119% { translate: 0 -0.581%; rotate: 0.71deg; }
+  62.309% { translate: 0 -0.631%; rotate: 0.77deg; }
+  62.737% { translate: 0 -0.532%; rotate: 0.64deg; }
+  63.687% { translate: 0 0.067%; rotate: -0.01deg; }
+  63.877% { translate: 0 0.386%; rotate: -0.21deg; }
+  64.21% { translate: 0 1.306%; rotate: -0.65deg; }
+  64.4% { translate: 0 1.471%; rotate: -0.73deg; }
+  64.495% { translate: 0 1.38%; rotate: -0.71deg; }
+  64.638% { translate: 0 1.026%; rotate: -0.59deg; }
+  65.018% { translate: 0 -0.472%; rotate: -0.01deg; }
+  65.208% { translate: 0 -1.074%; rotate: 0.3deg; }
+  65.398% { translate: 0 -1.463%; rotate: 0.57deg; }
+  65.636% { translate: 0 -1.639%; rotate: 0.77deg; }
+  65.921% { translate: 0 -1.458%; rotate: 0.79deg; }
+  66.206% { translate: 0 -0.887%; rotate: 0.58deg; }
+  66.444% { translate: 0 -0.171%; rotate: 0.29deg; }
+  66.681% { translate: 0 0.566%; rotate: -0.09deg; }
+  66.871% { translate: 0 1.036%; rotate: -0.41deg; }
+  67.109% { translate: 0 1.416%; rotate: -0.75deg; }
+  67.347% { translate: 0 1.537%; rotate: -0.96deg; }
+  67.679% { translate: 0 1.389%; rotate: -1.05deg; }
+  67.965% { translate: 0 0.949%; rotate: -0.89deg; }
+  68.25% { translate: 0 0.225%; rotate: -0.49deg; }
+  68.725% { translate: 0 -0.972%; rotate: 0.35deg; }
+  68.915% { translate: 0 -1.259%; rotate: 0.67deg; }
+  69.153% { translate: 0 -1.378%; rotate: 0.93deg; }
+  69.438% { translate: 0 -1.166%; rotate: 1.08deg; }
+  69.771% { translate: 0 -0.605%; rotate: 1.03deg; }
+  70.198% { translate: 0 0.231%; rotate: 0.61deg; }
+  70.484% { translate: 0 0.582%; rotate: 0.18deg; }
+  71.006% { translate: 0 0.827%; rotate: -0.63deg; }
+  71.244% { translate: 0 0.755%; rotate: -0.83deg; }
+  71.434% { translate: 0 0.594%; rotate: -0.89deg; }
+  71.814% { translate: 0 0.086%; rotate: -0.75deg; }
+  72.195% { translate: 0 -0.434%; rotate: -0.41deg; }
+  72.622% { translate: 0 -0.698%; rotate: -0.07deg; }
+  73.003% { translate: 0 -0.512%; rotate: 0.11deg; }
+  73.383% { translate: 0 -0.102%; rotate: 0.26deg; }
+  73.763% { translate: 0 0.245%; rotate: 0.52deg; }
+  74.143% { translate: 0 0.507%; rotate: 0.67deg; }
+  74.476% { translate: 0 0.599%; rotate: 0.56deg; }
+  74.904% { translate: 0 0.536%; rotate: 0.15deg; }
+  75.236% { translate: 0 0.237%; rotate: -0.21deg; }
+  75.522% { translate: 0 -0.092%; rotate: -0.41deg; }
+  76.092% { translate: 0 -0.596%; rotate: -0.52deg; }
+  76.472% { translate: 0 -0.392%; rotate: -0.95deg; }
+  76.615% { translate: 0 -0.314%; rotate: -1.02deg; }
+  76.71% { translate: 0 -0.309%; rotate: -0.97deg; }
+  76.852% { translate: 0 -0.348%; rotate: -0.77deg; }
+  77.375% { translate: 0 -0.294%; rotate: 0.26deg; }
+  77.66% { translate: 0 -0.106%; rotate: 0.73deg; }
+  77.945% { translate: 0 0.128%; rotate: 1deg; }
+  78.231% { translate: 0 0.274%; rotate: 1.11deg; }
+  78.563% { translate: 0 0.331%; rotate: 0.99deg; }
+  78.944% { translate: 0 0.19%; rotate: 0.71deg; }
+  79.466% { translate: 0 0.081%; rotate: 0.01deg; }
+  80.084% { translate: 0 0.297%; rotate: -0.88deg; }
+  80.274% { translate: 0 0.321%; rotate: -1.05deg; }
+  80.464% { translate: 0 0.268%; rotate: -1.12deg; }
+  80.655% { translate: 0 0.091%; rotate: -1.08deg; }
+  80.845% { translate: 0 -0.169%; rotate: -0.92deg; }
+  81.177% { translate: 0 -0.626%; rotate: -0.39deg; }
+  81.367% { translate: 0 -0.75%; rotate: -0.07deg; }
+  81.7% { translate: 0 -0.679%; rotate: 0.35deg; }
+  82.128% { translate: 0 -0.174%; rotate: 0.58deg; }
+  82.365% { translate: 0 0.208%; rotate: 0.5deg; }
+  82.651% { translate: 0 0.559%; rotate: 0.28deg; }
+  83.173% { translate: 0 0.797%; rotate: -0.2deg; }
+  83.364% { translate: 0 0.988%; rotate: -0.37deg; }
+  83.649% { translate: 0 1.23%; rotate: -0.48deg; }
+  83.744% { translate: 0 1.165%; rotate: -0.45deg; }
+  83.886% { translate: 0 0.885%; rotate: -0.33deg; }
+  84.552% { translate: 0 -0.953%; rotate: 0.33deg; }
+  84.789% { translate: 0 -1.286%; rotate: 0.47deg; }
+  85.027% { translate: 0 -1.395%; rotate: 0.51deg; }
+  85.217% { translate: 0 -1.359%; rotate: 0.5deg; }
+  85.455% { translate: 0 -1.168%; rotate: 0.45deg; }
+  86.5% { translate: 0 0.425%; rotate: -0.04deg; }
+  87.261% { translate: 0 1.036%; rotate: -0.4deg; }
+  87.451% { translate: 0 1.003%; rotate: -0.39deg; }
+  87.784% { translate: 0 0.753%; rotate: -0.28deg; }
+  88.402% { translate: 0 -0.199%; rotate: -0.06deg; }
+  88.687% { translate: 0 -0.433%; rotate: -0.04deg; }
+  89.209% { translate: 0 -0.291%; rotate: -0.15deg; }
+  89.59% { translate: 0 -0.126%; rotate: -0.14deg; }
+  90.208% { translate: 0 -0.01%; rotate: 0.04deg; }
+  90.778% { translate: 0 -0.065%; rotate: 0.25deg; }
+  91.206% { translate: 0 -0.109%; rotate: 0.31deg; }
+  91.633% { translate: 0 -0.098%; rotate: 0.25deg; }
+  92.727% { translate: 0 0.087%; rotate: -0.13deg; }
+  93.297% { translate: 0 0.117%; rotate: -0.22deg; }
+  95.388% { translate: 0 -0.066%; rotate: 0.12deg; }
+  97.574% { translate: 0 0.027%; rotate: -0.06deg; }
+  99.951% { translate: 0 -0.005%; rotate: 0.03deg; }
+}
+@media (prefers-reduced-motion: reduce) { .ride, .rideBody, .rideTilt, .rideChassis, .rideHead, .rideWheel svg { animation:none; } }
 
 .heroPanel { position:relative; z-index:1; display:grid; justify-items:center; width:min(100%,600px); padding:26px 32px 28px; border-radius:24px; background:#FFFDF9; box-shadow:0 1px 2px rgba(42,36,32,.08),0 14px 36px rgba(42,36,32,.14); }
 .canvas[data-portal-page=overview] .welcome { grid-area:auto; justify-self:center; max-width:640px; padding:0; }

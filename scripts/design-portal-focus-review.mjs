@@ -206,6 +206,11 @@ try {
     assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The scene clips its landscape');
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape');
     assert.equal(await page.locator('[data-portal-ride]').count(),1,'Vespi rides through the hero (a CSS ride over the still road)');
+    // Owner, 21 Nov: «нет нормальной физики» — the ride leans with the road, the
+    // suspension takes the bumps, the head nods on its own layer, both wheels turn.
+    assert.equal(await page.locator('[data-portal-ride-chassis] [data-portal-ride-head]').count(),1,'The head rides on its own layer');
+    assert.equal(await page.locator('[data-portal-ride-wheel]').count(),2,'Both wheels turn');
+    assert.equal(await page.locator('[data-portal-ride] img').evaluateAll(imgs=>imgs.every(img=>img.complete&&img.naturalWidth>0)),true,'The rider layers load');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),width>640?'28px':'24px');
     assert.equal(await page.locator('[data-now-open]').count(),1,'The hero leads to the step breakdown');

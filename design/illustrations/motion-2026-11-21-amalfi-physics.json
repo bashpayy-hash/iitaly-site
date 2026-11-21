@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-21",
+  "request": "Owner, after the CSS ride: «в личном кабинете бесшовность появилась, но физика этого рейса… там нет нормальной физики».",
+  "replaces": "The rigid cut-out landscapes/amalfi-vespi.webp that slid along the road with a uniform 0.7% bump every 0.36 s (motion-2026-11-20-amalfi.json, css_ride_same_evening).",
+  "diagnosis": "The rider moved as one rigid sticker: constant speed up the climb, the same angle on the slope and on the flat, wheels that never turned, and a regular whole-body bob that read as hopping rather than riding.",
+  "method": [
+    "Same tracked path and 8.767 s loop (rider on stage 0–88.593%, then empty road). A small simulation in Python is baked into CSS keyframes; nothing runs in JavaScript.",
+    "Speed: segment time ∝ length / (1 + 1.6·sin(road angle)) — about 303 px/s on the climb, 347 px/s on the flat; the total ride time is unchanged.",
+    "Lean: the body turns with the road tangent relative to the sprite's own angle (-0.99°), from -3.36° on the climb to 1.20° on the flat, pivoting at the midpoint between the tyre contacts.",
+    "Wheels: five nuts and a valve turn on each hub by distance / tyre radius (40 sprite px), 3681° over the ride; the rim's three-quarter ellipse is kept, the fork strut and the cowl stay in front (clip-path).",
+    "Suspension: road profile with three joints in the asphalt (6, 4.2 and 2.8 sprite px) plus fine roughness (±1.1 px); each axle is a base-excited spring–damper (2.6 Hz, ζ 0.38); the front wheel meets a joint first, the rear one a wheelbase (216 px) later. Heave -1.2…2.9 px, pitch -1.48…1.46°.",
+    "Rider: the head is its own layer on a soft neck (pivot 182,150 in the sprite), driven by the seat's vertical acceleration and the pitch acceleration (3.1 Hz / 2.7 Hz, light damping): it lifts and nods a beat after each jolt, -4.1…4.3 px and -2.5…2.6°.",
+    "All motion settles before the rider leaves the stage, so the loop wraps at rest. Keyframes simplified with Ramer–Douglas–Peucker (168 for the chassis, 271 for the head)."
+  ],
+  "sprite_split": "The shipped cut-out is split into a body layer (357 × 425) and a head layer (216 × 164, from 60,0 of the sprite) along the top of the scarf, feathered 1.6 px; the body keeps a 7 px band under the head so a lift or nod never opens a gap. No new artwork: same pixels, same face (open dot eyes, small smile).",
+  "unchanged": [
+    "Road picture landscapes/amalfi-road-*.webp",
+    "Path, loop length and delay",
+    "Reduced motion: no animation, Vespi stands where the poster had him",
+    "No gradients in the cabinet"
+  ],
+  "files": [
+    {
+      "file": "public/illustrations/landscapes/amalfi-vespi-body.webp",
+      "bytes": 39076,
+      "sha256": "28a2c61187c1ff81cf9d037e6c9bebce1d9f9640c0694138e9e610edfbc5afec"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-vespi-head.webp",
+      "bytes": 11420,
+      "sha256": "257ffa7ee6712379f82582f1f81d44b16c9565361ce7efeb30c452c3e5cc4786"
+    }
+  ]
+}

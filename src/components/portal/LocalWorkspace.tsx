@@ -206,23 +206,22 @@ export function LocalWorkspace() {
           {location.view === "docs" && !showDetail && <>
             {/* Owner, 20 Nov, вечер (скрин с iPad): «эта страница выглядит на
                 такой подвальный вайб… сделай как принцип на лендинге». The landing's
-                pattern: a two-tone heading, then one bento tray — the free check as
-                the action cell with Vespi at the stamp, the documents as even paper
+                pattern: a two-tone heading, then one bento tray of even paper
                 cells (packSpans: every row full, two to a row on a tablet and wider). */}
-            <header className={styles.docsHead} data-documents-head>
-              <h1 className={styles.docsTitle}>Документы твоего маршрута. <span>Где взять и как проверить.</span></h1>
-              <p className={styles.docsLead}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p>
+            {/* The free check is its own section of the site now (owner, 21 Nov:
+                «сделай так, чтобы проверка документов была отдельным разделом»):
+                the vault names it in one line instead of a big action cell, and
+                Vespi at the stamp stands beside the heading. */}
+            <header className={`${styles.docsHead} ${styles.docsHeadScene}`} data-documents-head>
+              <div className={styles.docsHeadCopy}>
+                <h1 className={styles.docsTitle}>Документы твоего маршрута. <span>Где взять и как проверить.</span></h1>
+                <p className={styles.docsLead}>Здесь все бумаги для поступления, стипендии и визы. Нажми на документ — узнаешь, где его взять и как проверить.</p>
+                <p className={styles.docsFree} data-documents-free-note>Первая проверка файла — бесплатно, без регистрации, в разделе <Link href="/check">«Проверка документов»</Link>.</p>
+              </div>
+              <StageScene name="stamp" className={styles.docsScene} priority />
             </header>
             {!documents.length && <div className={styles.paper}><h2>Сначала уточним твой маршрут</h2><p>После анкеты здесь появятся документы по твоей ситуации. Поздние этапы откроются по мере выполнения текущих шагов.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); const task = tasks.find(item => item.id === "profile"); if (task) openTask(task); }}>Заполнить анкету</a></div>}
-            <Bento as="div" className={styles.docsTray} data-documents-tray>
-              <BentoCell span={{ md: 6, lg: 12 }} tone="action" className={styles.docsCheck} data-documents-check>
-                <div className={styles.docsCheckCopy}>
-                  <h2 className={styles.docsCheckTitle}>Проверь документ перед подачей</h2>
-                  <p className={styles.docsCheckText} data-documents-free-note>Первая проверка — бесплатно, без регистрации. Проверки в кабинете без лимита открываются вместе с маршрутом.</p>
-                  <Link className={styles.docsCheckButton} href="/check">Проверить документ</Link>
-                </div>
-                <StageScene name="stamp" className={styles.docsScene} priority />
-              </BentoCell>
+            {documents.length > 0 && <Bento as="div" className={styles.docsTray} data-documents-tray>
               {(() => {
                 const lg = planSpans(documents.length, -1, 12, [6, 4], [6]), md = planSpans(documents.length, -1, 6, [3, 2], [3]);
                 return documents.map((task, index) => {
@@ -236,7 +235,7 @@ export function LocalWorkspace() {
                   </a>;
                 });
               })()}
-            </Bento>
+            </Bento>}
           </>}
           {location.view === "settings" && <>
             {/* Settings in the same bento as the documents (owner, 20 Nov, вечер:
