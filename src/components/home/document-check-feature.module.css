@@ -105,7 +105,3 @@
   .compare tbody td:first-of-type::before { content: "Агентство: "; color: #6B6761; }
   .compare tbody td:last-child::before { content: "IITALY: "; color: #A33421; font-weight: 600; }
 }
-/* On /check itself: the same facts and comparison, under the page's own sections. */
-.section.onPage { padding-top:32px; padding-bottom:24px; }
-@media (max-width:899px) { .section.onPage { padding:32px 24px 24px; } }
-@media (max-width:767px) { .section.onPage { padding:24px 20px 16px; } }

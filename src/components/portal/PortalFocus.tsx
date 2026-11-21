@@ -61,8 +61,8 @@ const STAGE_SCENE: Record<PortalStageKey, StageSceneName> = {
   start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys",
 };
 
-/* Five wheel nuts and the valve on a hub, in the rim's own units (radius 24
-   of the 357 px rider sprite). The span keeps the rim's three-quarter ellipse;
+/* Five wheel nuts and the valve on a hub, in the rim's own units (the box is
+   the rim: 53 px of the 357 px rider sprite). The span keeps the rim's three-quarter ellipse;
    the drawing inside turns with the distance travelled. */
 const NUT_ANGLES = [0, 72, 144, 216, 288];
 function RideWheel({ className, shade }: { className: string; shade: "front" | "rear" }) {
@@ -70,7 +70,7 @@ function RideWheel({ className, shade }: { className: string; shade: "front" | "
   const valve = shade === "front" ? "#EFE9E0" : "#C9C0B5";
   return <span className={`${styles.rideWheel} ${className}`} data-portal-ride-wheel={shade}>
     <svg viewBox="-24 -24 48 48" aria-hidden="true" focusable="false">
-      {NUT_ANGLES.map(angle => <circle key={angle} cx={12 * Math.cos(angle * Math.PI / 180)} cy={12 * Math.sin(angle * Math.PI / 180)} r={2.9} fill={nut} fillOpacity={shade === "front" ? .92 : .85} />)}
+      {NUT_ANGLES.map(angle => <circle key={angle} cx={15 * Math.cos(angle * Math.PI / 180)} cy={15 * Math.sin(angle * Math.PI / 180)} r={2.7} fill={nut} fillOpacity={shade === "front" ? .92 : .85} />)}
       <circle cx={0} cy={-20} r={1.7} fill={valve} />
     </svg>
   </span>;
@@ -193,7 +193,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
           (design/illustrations/motion-2026-11-20-amalfi.json). Owner, 21 Nov:
           «нет нормальной физики» — the ride now leans with the road, the
           wheels turn, the suspension takes the joints in the asphalt and the
-          head nods on its neck (portal-focus.module.css). */}
+          head nods on its neck (portal-focus.module.css). Third pass the
+          same day: «нужно, чтобы он на дорогу смотрел» — the rider is redrawn
+          from the same angle with the head turned ahead, along the road. */}
       <div className={styles.heroScene} data-portal-hero-scene>
         <div className={styles.heroStage} data-portal-stage>
           <img className={styles.heroStageArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={2176} height={1632} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
@@ -202,10 +204,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
               <span className={styles.rideTilt}>
                 <span className={styles.rideShadow} />
                 <span className={styles.rideChassis} data-portal-ride-chassis>
-                  <img className={styles.rideVespi} src="/illustrations/landscapes/amalfi-vespi-body.webp" width={357} height={425} alt="" decoding="async" draggable={false} />
+                  <img className={styles.rideVespi} src="/illustrations/landscapes/amalfi-rider-body.webp" width={357} height={425} alt="" decoding="async" draggable={false} />
                   <RideWheel className={styles.rideWheelRear} shade="rear" />
                   <RideWheel className={styles.rideWheelFront} shade="front" />
-                  <img className={styles.rideHead} src="/illustrations/landscapes/amalfi-vespi-head.webp" width={216} height={164} alt="" decoding="async" draggable={false} data-portal-ride-head />
+                  <img className={styles.rideHead} src="/illustrations/landscapes/amalfi-rider-head.webp" width={156} height={144} alt="" decoding="async" draggable={false} data-portal-ride-head />
                 </span>
               </span>
             </span>
