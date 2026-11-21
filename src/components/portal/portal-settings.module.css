@@ -110,7 +110,7 @@
 /* Настройки блоками (owner, 4 Nov; ProfileSection.tsx): заголовок со сценой
    справа, под ним плитки 28px — светлые и одна тёмная (напоминания), как
    плитки кабинета; ярлык моно, заголовок 24px, пилюли 44px. */
-.page { max-width: 1296px; }
+.page { max-width: var(--cabinet-column, 1296px); }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 520px); align-items: center; gap: 32px 48px; margin-top: 12px; }
 .heroCopy { min-width: 0; }
 .eyebrow,.tileLabel { margin: 0; font: 600 13px/1.5 var(--font-sans); color: #A33421; }

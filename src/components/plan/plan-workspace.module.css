@@ -86,7 +86,7 @@
 .question[data-tone=dark] .mark { background:#2A2420; color:#F29A89; }
 .questionArt { display:block; width:min(60%,300px); height:auto; margin-top:auto; padding:28px 0 36px; }
 .workbench {
-  composes: paper from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr); gap:32px; padding:32px; background:#F4EFEA; border:1px solid rgba(20,20,19,.08); border-radius:32px; }
+  composes: paper from "../marketing/surface-depth.module.css"; display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.15fr); gap:32px; padding:32px; background:#F4EFEA; border:1px solid rgba(20,20,19,.08); border-radius:28px; }
 .auditContext,.auditTool { min-width:0; }
 .auditBadge { display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--color-cloud-body); }
 

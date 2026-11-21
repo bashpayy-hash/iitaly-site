@@ -16,8 +16,12 @@
   --login-action: #141413;
   --login-action-deep: #141413;
   min-height: calc(100svh - 64px);
-  padding: 48px 24px 72px;
-  background: #faf8f5;
+  /* The site's gutter and 1216px column (21 Nov pass): the two cards stood
+     8px inside the logo on a desktop and 4px outside it on tablet and phone. */
+  padding: 48px 32px 72px;
+  /* No fill of its own: the flat #FAF8F5 showed a seam against the textured
+     paper of the header and the strip under the cards. */
+  background: transparent;
   color: var(--login-ink);
 }
 
@@ -28,10 +32,11 @@
 .shell {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(340px, 1fr);
-  align-items: start;
-  gap: 24px;
+  /* Two tiles of one height, 12px apart like every pair of tiles on the site. */
+  align-items: stretch;
+  gap: 12px;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1216px;
   margin: 0 auto;
 }
 
@@ -45,8 +50,8 @@
   overflow: hidden;
   padding: 36px;
   border: 1px solid var(--login-line);
-  border-radius: 24px;
-  background: #fff;
+  border-radius: 28px;
+  background: #fffdf9;
 }
 
 .copy { position: relative; z-index: 1; }
@@ -113,8 +118,8 @@
   margin: 0;
   padding: 36px;
   border: 1px solid var(--login-line);
-  border-radius: 24px;
-  background: #fff;
+  border-radius: 28px;
+  background: #fffdf9;
 }
 .cardTitle {
   margin: 0;
@@ -139,8 +144,8 @@
   min-width: 0;
   min-height: 52px;
   border: 1px solid #cecac4;
-  border-radius: 12px;
-  background: #fff;
+  border-radius: 16px;
+  background: #fffdf9;
   padding: 13px 14px;
   color: var(--login-ink);
   font: inherit;
@@ -243,8 +248,8 @@
   .intro { min-height: 640px; }
 }
 @media (max-width: 1000px) and (min-width: 761px) {
-  .page { padding: 32px 20px 48px; }
-  .shell { grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr); gap: 16px; }
+  .page { padding: 32px 32px 48px; }
+  .shell { grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr); }
   .intro, .card { padding: 26px; }
   .intro { min-height: 560px; }
   .title { font-size: 34px; }
@@ -252,10 +257,11 @@
   .route { gap: 6px; font-size: 11px; }
   .cardTitle { font-size: 24px; }
 }
+@media (max-width: 899px) and (min-width: 761px) { .page { padding-inline: 24px; } }
 @media (max-width: 760px) {
-  .page { min-height: 0; padding: 24px 16px 40px; }
-  .shell { grid-template-columns: minmax(0, 1fr); max-width: 520px; gap: 16px; }
-  .intro { min-height: 0; padding: 24px; border-radius: 20px; }
+  .page { min-height: 0; padding: 24px 20px 40px; }
+  .shell { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
+  .intro { min-height: 0; padding: 24px; border-radius: 24px; }
   .title { max-width: 360px; font-size: clamp(28px, 7.4vw, 34px); }
   .lead { margin-top: 12px; font-size: 15px; line-height: 1.5; }
   /* In normal flow on phones: translated copy or larger text cannot overlap the art. */
@@ -270,7 +276,7 @@
   }
   .artImage { object-position: 70% 60%; }
   .route { display: none; }
-  .card { padding: 24px; border-radius: 20px; }
+  .card { padding: 24px; border-radius: 24px; }
   .cardTitle { font-size: 24px; }
   .fields { margin-top: 24px; gap: 16px; }
 }

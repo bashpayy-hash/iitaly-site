@@ -16,7 +16,7 @@ export default function TermsPage() {
     <MarketingLayout>
         <section className="px-5 md:px-6 py-10 sm:py-14" data-legal-page>
           <div className="mx-auto max-w-[760px]">
-            <h1 className="font-apple-display text-[clamp(22px,8vw,36px)]! font-semibold leading-[1.1]! tracking-[-0.03em] sm:text-[48px]!">
+            <h1 className="font-apple-display text-[clamp(30px,3.6vw,46px)]! font-semibold leading-[1.1]! tracking-[-0.03em]">
               Условия сервиса
             </h1>
             <p className="mt-3 text-[13px] text-ink-soft">IITALY · обновлено 19 сентября 2026</p>
@@ -70,7 +70,7 @@ export default function TermsPage() {
                     ? "если платные функции кабинета ещё не использовались: не загружались документы на проверку и не отмечались шаги маршрута выполненными."
                     : "если личный кабинет ещё не активирован и персональный маршрут не выдан."}
                   {" "}Чтобы запросить возврат, напиши в WhatsApp IITALY по номеру{" "}
-                  <a className="font-bold text-red underline underline-offset-4" href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer">
+                  <a className="font-semibold text-red underline underline-offset-4" href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer">
                     {PAY_PHONE}
                   </a>.
                 </p>

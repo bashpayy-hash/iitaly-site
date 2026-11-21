@@ -6,14 +6,13 @@ import Link from "next/link";
 import { ArrowRight, Check, Lock } from "lucide-react";
 import type { Plan } from "@/lib/planBuilder";
 import { planStepOpen } from "@/lib/access";
-import { displayStepTitle } from "@/lib/portalNavigation";
 import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { useGuideRead } from "@/components/guides/guideReading";
 import { revealElement } from "@/components/motion/scroll";
 import { Bento, BentoCell } from "@/components/ui/Bento";
 import { planSpans } from "@/components/ui/bentoPack";
 import { planStepArt, planStepPhase } from "./planStepArt";
-import { planStepHref, planStepKey, stepsWord } from "./planRoute";
+import { planStepHref, planStepKey, stepTitleText, stepsWord } from "./planRoute";
 import styles from "./plan-path.module.css";
 
 type StepState = "done" | "current" | "todo" | "locked";
@@ -89,7 +88,7 @@ export function PlanPath({ plan }: { plan: Plan }) {
             <span className={styles.phase}>{phase}</span>
           </span>
           <span className={styles.body}>
-            <span className={styles.title} data-plan-path-title>{displayStepTitle(step.t)}</span>
+            <span className={styles.title} data-plan-path-title>{stepTitleText(step.t)}</span>
             {state === "current" && <span className={styles.line}>{firstSentence(step.summary || step.p)}</span>}
           </span>
           <span className={styles.foot} aria-hidden="true">

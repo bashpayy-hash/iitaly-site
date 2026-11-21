@@ -58,7 +58,7 @@ export function PricesExplorer() {
 
       <section className={`${heroArt.packages} px-5 py-10 md:px-6`}>
         <div className="mx-auto max-w-[900px]">
-          <div data-price-comparison data-fab-yield className="flex flex-col items-stretch gap-4 sm:flex-row">
+          <div data-price-comparison data-fab-yield className="flex flex-col items-stretch gap-3 sm:flex-row">
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
@@ -90,7 +90,7 @@ export function PricesExplorer() {
               стоит до состава пакета, со сравнением с агентством. */}
           <DocumentCheckFeature compact />
 
-          <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
+          <div id="main-package" className={`${styles.offerCard} ${styles.anchorTarget} mt-6 p-6 sm:p-8`}>
             <h2 className="font-apple-display text-apple-subheading font-semibold text-cloud-white">Что включено</h2>
             <p className="mt-2 text-apple-body-sm text-cloud-body">Весь маршрут поступления в одном кабинете</p>
             <div className="mt-5 grid grid-cols-[repeat(3,minmax(min-content,1fr))] divide-x divide-white/10 overflow-hidden rounded-[16px] border border-white/10">
@@ -145,14 +145,14 @@ export function PricesExplorer() {
             </AppleButton>
           </div>
 
-          <div id="terms-and-refund" className={`${styles.termsBox} ${styles.anchorTarget} mt-8 p-6 sm:p-8`}>
-            <b className="block text-[13px] font-semibold text-green">
+          <div id="terms-and-refund" className={`${styles.termsBox} ${styles.anchorTarget} mt-6 p-6 sm:p-8`}>
+            <b className="block text-[13px] font-semibold text-[#A33421]">
               Гарантии и как мы снимаем риск
             </b>
-            <div className="mt-3 divide-y divide-green/15">
+            <div className="mt-3 divide-y divide-line">
               {GUARANTEES.map((g) => (
                 <details key={g.title} open={g.title === "Возврат" || undefined} className="group py-3 first:pt-0 last:pb-0">
-                  <summary className={`${disclosure.row} text-apple-body-sm font-semibold text-cloud-white [--disclosure-bg:rgba(255,255,255,.1)] [--disclosure-bg-hover:rgba(255,255,255,.16)] [--disclosure-ink:var(--color-green)]`}>
+                  <summary className={`${disclosure.row} text-apple-body-sm font-semibold text-cloud-white`}>
                     {g.title}
                   </summary>
                   <p className="mt-2 text-apple-body-sm text-cloud-body">{g.body}</p>
@@ -161,7 +161,7 @@ export function PricesExplorer() {
             </div>
           </div>
 
-          <div className="mt-6 rounded-[24px] border border-white/15 p-6 sm:p-8 md:rounded-[28px]">
+          <div className={`${styles.summaryCard} mt-6 p-6 sm:p-8`}>
             <b className="block text-apple-body-sm font-semibold text-cloud-white">Что система делает сама, а где решаешь ты</b>
             <p className="mt-2 text-apple-body-sm text-cloud-body">
               Подбор программ, сроки, чек-листы, черновики и проверку

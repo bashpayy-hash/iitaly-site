@@ -3,7 +3,7 @@
   composes: chrome from "../marketing/surface-depth.module.css"; position:sticky; top:0; z-index:50; }
 .header > header { position:static; background:transparent; box-shadow:none; border-bottom:1px solid transparent; -webkit-backdrop-filter:none; backdrop-filter:none; }
 .header > header::after { display:none; }
-.routeShell { max-width:1360px; margin:auto; padding:4px 32px 10px; }
+.routeShell { max-width:var(--cabinet-frame, 1360px); margin:auto; padding:4px 32px 10px; }
 .headerActions { display:flex; gap:8px; align-items:center; }
 .headerActions > a { display:flex; align-items:center; justify-content:center; gap:7px; min-width:44px; min-height:44px; padding:8px 12px; border-radius:999px; font-size:14px; }
 @media (hover: hover) and (pointer: fine) { .headerActions > a:hover { background:var(--color-warm-stone); } }
@@ -33,7 +33,7 @@
 .coachNotice { display:flex; align-items:flex-start; gap:8px; margin-top:16px; color:var(--portal-muted); font-size:13px; line-height:1.5; }
 .coachNotice svg { flex-shrink:0; }
 .coach [data-vespi-message] { max-width:60ch; font-size:14px; line-height:1.6; }
-.primary { display:inline-flex; align-items:center; justify-content:center; gap:16px; min-height:48px; padding:12px 22px; margin-top:20px; border:0; border-radius:999px; background:var(--color-ink); color:white; font-size:14px; font-weight:600; line-height:1.45; text-align:center; }
+.primary { display:inline-flex; align-items:center; justify-content:center; gap:16px; min-height:48px; padding:12px 22px; margin-top:20px; border:0; border-radius:999px; background:#141413; color:#FFFDF9; font-size:15px; font-weight:600; line-height:1.45; text-align:center; }
 @media (hover: hover) and (pointer: fine) { .primary:hover { background:var(--color-ink-soft); } }
 .primary:disabled { background:var(--color-warm-stone); color:var(--color-cloud-body); cursor:not-allowed; }
 .heading { font:600 26px/1.2 var(--font-apple-display); letter-spacing:-.025em; margin-bottom:16px; }

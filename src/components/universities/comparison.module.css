@@ -1,6 +1,9 @@
 /* Scoped to the new comparison workspace; map, filters and global chrome are untouched. */
-.section { padding: 72px 24px 64px; background: transparent; border-top: 1px solid #e7e4df; color: #141413; font-family: var(--font-apple-text); }
-.inner { max-width: 1200px; margin: 0 auto; }
+.section { padding: 72px 32px 64px; background: transparent; border-top: 1px solid #e7e4df; color: #141413; font-family: var(--font-apple-text); }
+/* The site's 1216px column (21 Nov pass: at 1200px the comparison stood 8px
+   inside the map and the heading above it). */
+.inner { max-width: 1216px; margin: 0 auto; }
+@media (max-width: 899px) { .section { padding-inline: 24px; } }
 .intro { display: grid; grid-template-columns: minmax(0, 1fr); gap: 64px; align-items: center; margin-bottom: 36px; }
 .eyebrow { font-size: 12px; font-weight: 500; color: #6b6761; letter-spacing: .03em; }
 .intro h2 { max-width: 730px; margin-top: 12px; font-family: var(--font-apple-display); font-size: clamp(32px, 4vw, 48px); font-weight: 600; letter-spacing: -.045em; line-height: 1.08; text-wrap: balance; }
