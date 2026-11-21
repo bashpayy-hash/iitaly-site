@@ -24,6 +24,11 @@ import { useWallPurchase } from "@/components/access/useWallPurchase";
 
 /* Время шага в чипе показываем, только когда оно конкретное («15 мин»). */
 const concreteTime = (value?: string) => value && /\d/.test(value) ? value : "";
+/* The two feature tiles' scenes: a phone shows them 30–40px short of the
+   window, a tablet and a laptop at 43–46% of it, a desktop at 582px
+   (measured at 14 widths, 21 Nov). Told «100vw», a 360px tile on a phone took
+   the 1600px picture; told the truth it takes the 1024px or the 1200px one. */
+const FEATURE_SCENE_SIZES = "(max-width: 640px) 94vw, (max-width: 1279px) 46vw, 582px";
 
 type Props = {
   data: PortalData; selectedStageId?: string; shortlist: string[]; busy: boolean;
@@ -218,7 +223,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         Выбранные вузы уже названы в приветствии, поэтому отдельной строки нет. */}
     {!stagePage && <section className={path.features} aria-label="Главное в кабинете" data-cabinet-features>
       <a className={path.feature} href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents data-feature="documents" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
-        <StageScene name="stamp" className={path.featureScene} />
+        <StageScene name="stamp" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
         <span className={path.featureCopy}>
           <strong>Проверка документов</strong>
           <span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span>
@@ -226,7 +231,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <span className={path.featureAction} data-feature-action>Проверить документ</span>
       </a>
       <a className={path.feature} href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders data-feature="reminders" data-reminders-on={remindersOn || undefined} onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
-        <StageScene name="alarm" className={path.featureScene} />
+        <StageScene name="alarm" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
         <span className={path.featureCopy}>
           <strong>Напоминания о сроках</strong>
           <span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span>

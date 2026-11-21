@@ -42,7 +42,7 @@ function ThemeCard({ id, object, frame, label, title, line, href }: { id: string
       {/* Ярлык над названием — только когда он что-то добавляет (owner, 7 Nov:
           «Codice fiscale / Codice fiscale» читалось странно). */}
       <span className={styles.copy}>{label && label !== title && !title.startsWith(label) && <small>{label}</small>}<strong>{title}</strong><span>{line}</span></span>
-      <span className={styles.object}><img src={frame.src} srcSet={frame.srcSet} sizes="(max-width: 640px) 60vw, 280px" width={frame.width} height={frame.height} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
+      <span className={styles.object}><img src={frame.src} srcSet={frame.srcSet} sizes="(max-width: 640px) 30vw, (max-width: 1279px) 17vw, 226px" width={frame.width} height={frame.height} alt="" decoding="async" loading="lazy" data-scene-object={object} /></span>
     </Link>
   </li>;
 }

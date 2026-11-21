@@ -92,7 +92,7 @@ export function DocumentCheckPage() {
         <div className={`${workspace.hero} ${check.hero}`}>
           <div className={`${workspace.heroScene} ${check.scene}`} data-check-hero-scene aria-hidden="true">
             <img className={`${workspace.heroArt} ${check.art}`} src="/illustrations/scenes/check-loggia-1600.webp"
-              srcSet="/illustrations/scenes/check-loggia-960.webp 960w, /illustrations/scenes/check-loggia-1600.webp 1600w, /illustrations/scenes/check-loggia-2400.webp 2400w"
+              srcSet="/illustrations/scenes/check-loggia-960.webp 960w, /illustrations/scenes/check-loggia-1200.webp 1200w, /illustrations/scenes/check-loggia-1600.webp 1600w, /illustrations/scenes/check-loggia-2400.webp 2400w"
               sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={2400} height={1357} alt=""
               decoding="async" fetchPriority="high" draggable={false} data-check-scene="loggia" />
             <span className={`${workspace.heroVeil} ${check.veil}`} />

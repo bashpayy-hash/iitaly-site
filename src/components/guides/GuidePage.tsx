@@ -23,10 +23,14 @@ export function GuideFrame({ children, narrow = false }: { children: ReactNode; 
   return <div className={ui.shell} data-guides-pages><MarketingLayout><div className={`${ui.container} ${narrow ? ui.narrow : ""}`}>{children}</div></MarketingLayout></div>;
 }
 
+/* The path does not prefetch. Measured 21 Nov on a topic page, phone: the link
+   to the stage pulled the stage page in advance, and with it the pictures of
+   its first two tiles — 134 KB, the first at high priority, that the page
+   being read does not show. The pages are static and open at once without it. */
 export function GuideBreadcrumbs({ items }: { items: { title: string; href?: string }[] }) {
   return <nav className={ui.breadcrumbs} aria-label="Путь по справочнику"><ol>
-    <li><Link href="/guides">Гайды и виза</Link></li>
-    {items.map(item => <li key={item.title}>{item.href ? <Link href={item.href}>{item.title}</Link> : <span aria-current="page">{item.title}</span>}</li>)}
+    <li><Link href="/guides" prefetch={false}>Гайды и виза</Link></li>
+    {items.map(item => <li key={item.title}>{item.href ? <Link href={item.href} prefetch={false}>{item.title}</Link> : <span aria-current="page">{item.title}</span>}</li>)}
   </ol></nav>;
 }
 
@@ -67,7 +71,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
           <GuideReviewed />
         </div>
         {/* The topic's own picture is the first thing to paint on a phone. */}
-        {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 40vw, 220px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />}
+        {!part && <img className={steps.topicArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 374px) 96px, (max-width: 700px) 120px, 260px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />}
       </header>
       </div>
       {/* Owner, 12 Nov (Lamossa Studio): facts, the next action, the note and

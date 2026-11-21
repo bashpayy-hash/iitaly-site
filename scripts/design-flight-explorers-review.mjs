@@ -48,6 +48,8 @@ try{
     const visible=await tiles.evaluateAll((nodes,w)=>nodes.filter(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=w;}).length,width);
     assert(visible===(width>=1200?4:width>=900?3:width>=600?2:1),'Whole cards fill the width: '+visible);
     assert.equal(await page.locator('[data-carousel-dot]').count(),13,'One dot per topic');
+    // Accessibility scan, 21 Nov (WCAG 2.2, 2.5.8): where the row has room — a tablet and up — a dot's own box is 24px wide.
+    if(width>480)assert(await page.locator('[data-carousel-dot]').evaluateAll(dots=>dots.every(dot=>dot.getBoundingClientRect().width>=24&&dot.getBoundingClientRect().height>=24)),'Each dot is a 24px target');
     assert.equal(await page.locator('[data-carousel-dot][aria-current=true]').count(),1);
     // Reduced motion: the gallery stays put until the visitor presses play.
     assert.equal(await page.locator('[data-guide-carousel][data-playing]').count(),0);
