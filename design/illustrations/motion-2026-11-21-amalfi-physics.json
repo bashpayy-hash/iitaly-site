@@ -45,5 +45,41 @@
     ],
     "phone": "On a phone the sheet with the step covered the last 28 px of the picture, and with them the wheels on the near part of the road. The picture now stands whole above that strip; the strip is the road's colour (#B06150) and shows only in the sheet's two rounded corners.",
     "supersedes": "In «method» above: the speed, lean and keyframe-count lines of the first pass. The sprite split, the wheel nuts, the suspension model and the head model are unchanged."
+  },
+  "looks_ahead_same_day": {
+    "request": "Owner, with a screenshot of the cabinet hero: «там всё равно видно, что у него голова не в то направление направлена. Нужно, чтобы он на дорогу смотрел».",
+    "diagnosis": "The cut-out came from a frame where Vespi's face was turned three quarters toward the camera, while the scooter rides away from the viewer to the upper right. On the road he looked sideways, most visibly on the far bend.",
+    "generation": {
+      "jobs": {
+        "looks_ahead_three_quarter_rear": "d3d2cbba-8a30-43fd-ac47-55423c35b1ba",
+        "near_profile_one_eye_not_used": "ec5ade40-a995-47c7-bcb1-7e356d50706c"
+      },
+      "references": "The site's own two layers of the previous cut-out (body with scooter, head) and two approved Vespi identity pictures. No owner photographs.",
+      "brief": "The same scooter, body, scarf, materials, golden-hour light from the upper left and camera angle (three-quarter view from behind-left, heading away to the upper right); the head turned straight ahead in the direction of travel, so we see the back and left side of the helmet and only the edge of the left cheek. Transparent background, no ground, no shadow.",
+      "choice": "The three-quarter rear head: it is right along the whole road, including the bend where the road turns away. The near-profile variant kept one eye visible but still read as a sideways glance on the bend."
+    },
+    "fit": [
+      "The new picture is placed by a similarity transform that puts its two tyre contact points on the old ones (85,401 and 300,384 in the 357 × 425 sprite), supersampled ×3: the lane, the timing and the wheel overlays keep working.",
+      "Head layer 156 × 144 from (88,16), neck pivot (165,150); cut along the top of the scarf and under the cheek, feathered 1.6 px; the body keeps a 7 px band under the head.",
+      "Wheel overlays re-measured on the new rims: 53 px boxes, horizontal scale 0.83, nuts on a 15/24 orbit; the fork strut, the cowl and the exhaust stay in front (clip-path).",
+      "The new cut-out has no shadow of its own: the CSS shadow lies along the wheelbase (−4.5°), darkest where each tyre meets the asphalt. Solid colours, no gradient."
+    ],
+    "face_rule": "No eye is visible from this angle; the cheek keeps its blush. The rule «open dot eyes, small smile» is untouched wherever his face shows.",
+    "replaces": [
+      "public/illustrations/landscapes/amalfi-vespi-body.webp",
+      "public/illustrations/landscapes/amalfi-vespi-head.webp"
+    ],
+    "files": [
+      {
+        "file": "public/illustrations/landscapes/amalfi-rider-body.webp",
+        "bytes": 30472,
+        "sha256": "46f6f5849a70053ef3ac47b056d1170168303e834a50e8f284d6263df7c88394"
+      },
+      {
+        "file": "public/illustrations/landscapes/amalfi-rider-head.webp",
+        "bytes": 7622,
+        "sha256": "98c1431ee2fa65e17c239c58ba49c1129950b1018279d1c7346b69bd0d6c5c6c"
+      }
+    ]
   }
 }

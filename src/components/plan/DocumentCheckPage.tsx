@@ -9,7 +9,6 @@ import { DocCheck } from "./DocCheck";
 import { PlanUniversityContext } from "./PlanExplorer";
 import Link from "next/link";
 import { Bento, BentoCell } from "@/components/ui/Bento";
-import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
 import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { RISK_LINE } from "@/components/access/offerCopy";
@@ -109,9 +108,11 @@ export function DocumentCheckPage() {
       {/* A page of its own (owner, 20 Nov, evening: «я бы хотел, чтобы
           «Проверь документ» было полноценной страницей отдельной»). No plan /
           check tabs and no second «Проверь документ перед подачей» under the
-          hero: the tool, then how it works, why here rather than at an agency,
-          and what opens with the route. Everything said is what the check
-          already does (DocumentCheckFeature lists the sources of each fact). */}
+          hero: the tool, then how it works, and what opens with the route.
+          Owner, 21 Nov, on «Быстрее агентства» with its four facts and the
+          comparison table here: «убери… повторение… преимуществ» — the
+          advantages are told once, on the home page, and briefly in this
+          page's own hero. */}
       <section className={`${workspace.tools} ${check.tools}`} data-public-paper-zone="check-tools">
         <PlanUniversityContext />
         <div className={styles.planWorkspace}>
@@ -131,8 +132,6 @@ export function DocumentCheckPage() {
           </BentoCell>)}
         </Bento>
       </section>
-
-      <DocumentCheckFeature page />
 
       <CheckOffer />
     </>

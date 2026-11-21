@@ -2793,3 +2793,24 @@ the system.
   a paper form); the bento trays' 8px inner gap; fact tiles that mute a value
   that is not a figure («по ситуации»).
 
+## Vespi looks at the road; advantages told once · 21 November 2026 (morning after)
+
+Owner, with two screenshots: «вот здесь убери… повторение… преимуществ» (the
+«Быстрее агентства» section on /check) and «у него голова не в то
+направление направлена. Нужно, чтобы он на дорогу смотрел» (the cabinet hero).
+
+- **/check without the repeat.** «Быстрее агентства» — the four facts and the
+  comparison with an agency — is gone from the page of the tool itself. The
+  page is: the cover with the upload, the tool, «Как это работает», and what
+  opens with the route. The advantages stay on the home page, where they
+  argue for the check, and in one sentence of this page's cover.
+- **The rider is redrawn with his head turned ahead.** Same scooter, body,
+  light and angle; from behind-left we now see the back of the helmet and the
+  edge of a cheek, so he looks where he rides on every part of the road,
+  the far bend included. The picture is fitted to the old one by its tyre
+  contact points, so the lane, the perspective, the suspension and the
+  turning wheels are unchanged. A soft shadow lies under the wheelbase,
+  darkest under each tyre (the new cut-out brought none of its own).
+  `design/illustrations/motion-2026-11-21-amalfi-physics.json`,
+  «looks_ahead_same_day».
+
