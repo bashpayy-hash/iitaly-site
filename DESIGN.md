@@ -2918,7 +2918,7 @@ what replaced them:
   orphans.
 - **A dash could start a line** (5 found, one in the owner's screenshot). The
   dash is bound to the word before it with a non-breaking space in the copy of
-  the public pages — 101 dashes in 34 files, by a script over string literals
+  the public pages — 116 dashes in 38 files, by a script over string literals
   and markup; the cabinet, the Modulo 1 trainer and the map with the
   comparison are protected and untouched.
 - **Words over the picture's subject.** On /check the cover's words kept
