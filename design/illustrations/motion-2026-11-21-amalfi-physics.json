@@ -30,5 +30,20 @@
       "bytes": 11420,
       "sha256": "257ffa7ee6712379f82582f1f81d44b16c9565361ce7efeb30c452c3e5cc4786"
     }
-  ]
+  ],
+  "trajectory_same_day": {
+    "request": "Owner, after the first pass: «ты по итогу не исправил, как Веспи по Амальфи по нормальной траектории едет».",
+    "diagnosis": "The path itself was wrong. It came from head-matching on the generated clip and ran almost level (62 px of rise over 2 560 px) at one size (1.025 → 0.97), while on the picture the road runs away to the upper right: the painted edge line rises 366 px across the plate and the parapet beside it shrinks 2.4 times. Vespi started on the edge line and ended 330 px below it — riding across the road, not along it.",
+    "method": [
+      "The painted edge line is detected on the plate column by column (262 points, RMS 0.74 px) and fitted with a degree-6 polynomial; outside the plate it continues straight.",
+      "Depth scale along the road from the parapet height (188 px at the left edge, 134 at x = 1000, about 80 at the right): relative size 1.372 − 0.000382·x, times 0.9 overall, so Vespi is 1.24 of the cut-out at the left edge, 0.90 where the cut-out was taken and 0.49 at the right edge.",
+      "Lane: the midpoint between the tyre contacts runs 78 px (times the local scale) below the edge line. Scale and lean pivot on that midpoint, so the tyres stay on the lane.",
+      "Timing: ground-plane positions from the scale (focal length 2 135 px assumed), constant real speed along them. On screen 840 px/s at the left edge, 445 px/s at the middle, 142 px/s at the right edge of the 2 176 px plate; 7.8 s on the road, 1.4 s of empty road, loop 9.2 s.",
+      "Lean: lane tangent minus the cut-out's own wheelbase angle (−4.52°), capped at 11°; 45% as rotation, 55% as a vertical shear, so the scooter lines up with the lane and the rider stays upright.",
+      "Wheels: 6191° over the ride (distance / tyre radius). Suspension and head: the same model as the first pass on the new clock; the rear wheel meets a joint 0.39 s after the front; heave -0.7…1.8 px, pitch -0.60…1.04°, head -3.2…3.5 px and -1.7…1.6°. The road is faded out before the exit, so the loop wraps at rest.",
+      "Keyframes: 56 for the path and size, 18 for the lean, 153 for the chassis, 224 for the head."
+    ],
+    "phone": "On a phone the sheet with the step covered the last 28 px of the picture, and with them the wheels on the near part of the road. The picture now stands whole above that strip; the strip is the road's colour (#B06150) and shows only in the sheet's two rounded corners.",
+    "supersedes": "In «method» above: the speed, lean and keyframe-count lines of the first pass. The sprite split, the wheel nuts, the suspension model and the head model are unchanged."
+  }
 }

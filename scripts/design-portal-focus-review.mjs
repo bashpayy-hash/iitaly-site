@@ -202,7 +202,9 @@ try {
       assert(Math.abs(scene.y-hero.y)<=1&&scene.width>=hero.width-1&&scene.height>=hero.width*.7,'On a phone the landscape sits on top of the tile');
       assert(heroPanel.y<scene.y+scene.height&&heroPanel.y>=scene.y+scene.height-40,'The panel overlaps the landscape like a sheet');
     }
-    assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=scene.y+scene.height-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its scene');
+    // On a phone the picture stands whole above the sheet (21 Nov): it reaches the sheet's top edge, not the hidden strip under it.
+    const landscapeFloor=width>640?scene.y+scene.height:heroPanel.y;
+    assert(landscape.y<=scene.y+2&&landscape.y+landscape.height>=landscapeFloor-2&&landscape.x<=scene.x+2&&landscape.x+landscape.width>=scene.x+scene.width-2,'The landscape fills its scene');
     assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The scene clips its landscape');
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape');
     assert.equal(await page.locator('[data-portal-ride]').count(),1,'Vespi rides through the hero (a CSS ride over the still road)');
