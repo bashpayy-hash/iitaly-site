@@ -74,7 +74,7 @@ export function PlanExplorer() {
         <div className={workspace.hero}>
           <div className={workspace.heroScene} data-plan-hero-scene aria-hidden="true">
             <img className={workspace.heroArt} src="/illustrations/scenes/plan-loggia-1920.webp"
-              srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1920.webp 1920w, /illustrations/scenes/plan-loggia-2560.webp 2560w"
+              srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1200.webp 1200w, /illustrations/scenes/plan-loggia-1920.webp 1920w, /illustrations/scenes/plan-loggia-2560.webp 2560w"
               sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1080} alt=""
               decoding="async" fetchPriority="high" draggable={false} data-plan-scene="loggia" />
             {/* Starts at frame 104, just before Vespi turns the page: from frame 0 he

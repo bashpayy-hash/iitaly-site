@@ -88,6 +88,8 @@ async function preservedPricingCopy(base, head) {
   assert(!after.includes('→'),'No decorative arrow between the price cards');
   assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')).map(value=>wallCopy.get(value)??value),after,'Pricing copy outside the approved repeated header, launch price and wall cards');
   const packageCard=head.locator('#main-package');
+  // Accessibility scan, 21 Nov: the note inside the offer is not a second complementary region of the page.
+  assert.equal(await head.locator('main aside').count(),0,'No complementary landmark nested in main');
   assert.equal(await packageCard.getByRole('heading',{name:'Что включено',exact:true}).count(),1);
   assert.equal(await packageCard.getByText('Весь маршрут поступления в одном кабинете',{exact:true}).count(),1);
   assert.doesNotMatch(await packageCard.locator('h2').innerText(),/10\s*990\s*₸/,'The contents heading does not repeat the price; purchase controls state the total');

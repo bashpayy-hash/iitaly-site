@@ -116,7 +116,11 @@ export function PricesExplorer() {
                 </li>
               ))}
             </ul>
+            {/* A note inside the offer, not a region of the page: as an <aside>
+                within <main> it was announced as a second complementary landmark
+                (accessibility scan, 21 Nov). */}
             <VespiAssistant
+              as="div"
               variant="inspector"
               layout="editorial-callout"
               appearance="none"

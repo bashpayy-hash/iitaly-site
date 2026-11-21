@@ -29,7 +29,7 @@ export function Hero() {
     <section data-section="hero" className={styles.hero}>
       <div className={styles.heroScene} data-hero-scene>
         <div className={styles.heroSceneBox} aria-hidden="true">
-          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-cafe-1024.webp" srcSet="/illustrations/landscapes/bologna-cafe-640.webp 640w, /illustrations/landscapes/bologna-cafe-1024.webp 1024w, /illustrations/landscapes/bologna-cafe-1600.webp 1600w, /illustrations/landscapes/bologna-cafe-2400.webp 2400w" sizes="100vw" width={1024} height={680} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna-cafe" />
+          <img className={styles.heroLandscape} src="/illustrations/landscapes/bologna-cafe-1024.webp" srcSet="/illustrations/landscapes/bologna-cafe-640.webp 640w, /illustrations/landscapes/bologna-cafe-1024.webp 1024w, /illustrations/landscapes/bologna-cafe-1200.webp 1200w, /illustrations/landscapes/bologna-cafe-1600.webp 1600w, /illustrations/landscapes/bologna-cafe-2400.webp 2400w" sizes="100vw" width={1024} height={680} alt="" fetchPriority="high" decoding="async" draggable={false} data-hero-landscape="bologna-cafe" />
           {/* Owner, 17 Nov: «анимации идут не сразу и какое-то время просто стоят».
               The loop starts at frame 24, right before Vespi moves; the
               poster is that frame (design/illustrations/motion-2026-11-17.json). */}
@@ -71,8 +71,8 @@ export function Hero() {
           <div className={styles.journeyScene} data-journey-scene>
             {/* eslint-disable-next-line @next/next/no-img-element -- Local pre-sized WebP scene for the static export. */}
             <img className={styles.journeyArt} src="/illustrations/scenes/route-map-1600.webp"
-              srcSet="/illustrations/scenes/route-map-960.webp 960w, /illustrations/scenes/route-map-1600.webp 1600w, /illustrations/scenes/route-map-2400.webp 2400w"
-              sizes="(max-width: 1264px) calc(100vw - 48px), 1216px" width={2688} height={1520} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} data-journey-art />
+              srcSet="/illustrations/scenes/route-map-960.webp 960w, /illustrations/scenes/route-map-1200.webp 1200w, /illustrations/scenes/route-map-1600.webp 1600w, /illustrations/scenes/route-map-2400.webp 2400w"
+              sizes="(max-width: 767px) calc(100vw - 42px), (max-width: 1279px) 46vw, 607px" width={2688} height={1520} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} data-journey-art />
             <div className={styles.journeyHeader}>
               <div><span className={styles.journeyLogo}>Твой маршрут</span><p>Пример пути. Персональный план зависит от твоих ответов.</p></div>
             </div>

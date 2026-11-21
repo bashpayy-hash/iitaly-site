@@ -2960,3 +2960,70 @@ what replaced them:
   the /check cover's gap to Vespi at four tablet widths, the word budgets, the
   disclosure, the note's and the intro's width.
 
+## Agent Skills pass: security, speed, accessibility · 21 November 2026 (late)
+
+Owner, with a reel screenshot («Agent Skills» of addyosmani and `/graphify`):
+«В целом этот полезно? Если да то установи и используй для улучшения сайта».
+
+- **Agent Skills** were already installed (`.claude/install-skills.sh`, since
+  3 Nov). **Graphify** is not installed: it maps code for the agent and hooks
+  every search; it changes nothing on the site, and the repository is small.
+- Three skills were run against the live site, each «measure first».
+
+**Security (`security-and-hardening`) — nothing to change.** Live headers:
+CSP, HSTS with preload, nosniff, frame-ancestors, referrer and permissions
+policy. Production dependencies: 0 advisories (7 moderate in the lint
+toolchain, development only, not reachable at run time; dependencies are
+protected, so not bumped). No secrets in the tree or its history. The four
+raw-HTML sinks take constants of the repository; model replies are rendered
+as text. The checkout link is followed only over https (11 Nov).
+
+**Speed (`performance-optimization`).** Transfer weight of ten live pages on
+a phone and a desktop, then which file each picture took against the size it
+is drawn at. Three causes:
+
+- **No step between 960 and 1600px.** A phone needs 1040–1170 device pixels
+  for a full-width cover and took 1600 (1920 on /plan). Added 1200px for the
+  six covers and the nine cabinet scenes.
+- **`sizes` that were not true.** Cabinet tiles said «100vw» for a 360px box;
+  the directory's tiles said 340px for 180px; the home route picture said
+  1216px for 607px. Each now states the measured width. Cartouches got a
+  360px copy (41 KB on average against 61 KB) for the 88–120px uses.
+- **A breadcrumb that prefetched.** On a topic or step page the link to the
+  stage pulled the stage page and the pictures of its first two tiles —
+  134 KB, the first at high priority. The path no longer prefetches.
+
+| Throttled phone profile, median of 3 | Largest paint before | After |
+|---|---|---|
+| Home | 6.0 s | 4.4 s |
+| /check | 5.1 s | 4.0 s |
+| /plan | 6.2 s | 4.0 s |
+| Topic, directory, cabinet | no change beyond noise | |
+
+Picture bytes at load, like for like on the local build: phone /plan −41%,
+/check −29%, topic −44%, step −54%, cabinet −17%, /prices −19%; desktop
+/guides −60%, /plan −48%, topic −56%. Layout shift is 0 before and after.
+
+Ledger of what was tried:
+
+| Idea | Result | Verdict |
+|---|---|---|
+| 1200px covers and scenes | LCP −1.1…−2.1 s on three pages | kept |
+| True `sizes` + 360px cartouche | −20…−60% picture bytes | kept |
+| Breadcrumbs without prefetch (with the 360px cartouche) | −86 KB and 5–12 requests on topic and step pages | kept |
+| AVIF for cartouches | −30% at matching quality, needs `<picture>` in six components, sources are already lossy | not done |
+| Lazy tiles in the directory's row | all 13 load after `load` by the owner's request of 19 Nov | not touched |
+| Nav prefetch of other sections' scripts | ~90 KB after load, makes the next page instant | not touched |
+
+**Accessibility (axe on 17 live pages, phone and desktop).** Two findings:
+the directory's carousel dots were 20px wide (a pointer target needs 24px) —
+24px now from a tablet up; on a phone thirteen dots cannot stand 24px apart
+beside the play button, so they stay as they were (the row is swiped; a
+two-row variant was drawn and left for the owner's decision). The note in the
+/prices offer was an `<aside>` inside `<main>`; it is a plain block.
+
+`design-image-fit-review` (new, in CI): covers on two phones are the 1200px
+file or smaller and not upscaled; cabinet tiles the same; a topic and a step
+fetch one cartouche of 360px and no stage page; a 1× desktop takes 240px
+tiles. It fails on the previous build.
+

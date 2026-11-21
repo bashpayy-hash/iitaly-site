@@ -35,7 +35,12 @@
 /* Точки: активная вытягивается в капсулу; пока темы идут сами, капсула
    заполняется за 5 секунд — сколько осталось до следующей темы. */
 .dots { display:flex; align-items:center; min-height:48px; padding:0 12px; border-radius:999px; background:#3A322D; }
-.dot { position:relative; display:grid; place-items:center; width:20px; height:44px; padding:0; border:0; border-radius:999px; background:none; cursor:pointer; transition:width 320ms cubic-bezier(.22,1,.36,1); }
+/* A dot's own box is 24px wide (was 20): the size a pointer target needs to
+   be told from its neighbour (WCAG 2.2, 2.5.8; the accessibility scan of 21 Nov
+   counted 12 dots under it on /guides). The visible dot is unchanged. On a
+   phone thirteen dots cannot stand 24px apart beside the play button, so they
+   stay closer there; the row is swiped, and the play button is 44px. */
+.dot { position:relative; display:grid; place-items:center; width:24px; height:44px; padding:0; border:0; border-radius:999px; background:none; cursor:pointer; transition:width 320ms cubic-bezier(.22,1,.36,1); }
 .dot::before { content:""; width:8px; height:8px; border-radius:999px; background:#8A7F72; transition:width 320ms cubic-bezier(.22,1,.36,1),background-color 160ms cubic-bezier(.4,0,.2,1); }
 @media (hover: hover) and (pointer: fine) { .dot:hover::before { background:#CFC6BA; } }
 .dot[aria-current=true] { width:52px; }

@@ -73,13 +73,16 @@ export function objectFrame(name: string, height: number) {
   };
 }
 
-/** Квадратный 480px-картуш темы гайда и его уменьшенная копия для srcSet.
-    В имени файла хэш мастера (cartoucheFiles.ts): браузер хранит картуш год. */
+/** Квадратный 480px-картуш темы гайда и его уменьшенные копии для srcSet.
+    В имени файла хэш мастера (cartoucheFiles.ts): браузер хранит картуш год.
+    360px добавлен 21 Nov: картуш шириной 88–120px на телефоне с плотностью
+    2,75–3 просит 242–360 точек, и без этой копии брал 480px (в среднем 61 КБ
+    вместо 41). */
 export function cartoucheFrame(name: string) {
   const file = CARTOUCHE_FILES[name] ?? name;
   return {
     src: `/illustrations/cartouche/${file}-480.webp`,
-    srcSet: `/illustrations/cartouche/${file}-240.webp 240w, /illustrations/cartouche/${file}-480.webp 480w`,
+    srcSet: `/illustrations/cartouche/${file}-240.webp 240w, /illustrations/cartouche/${file}-360.webp 360w, /illustrations/cartouche/${file}-480.webp 480w`,
     width: 480,
     height: 480,
   };

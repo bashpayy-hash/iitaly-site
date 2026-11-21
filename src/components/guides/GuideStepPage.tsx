@@ -48,7 +48,7 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
           <h1 id="guide-step-title" tabIndex={-1}>{point.title}</h1>
           <GuideReviewed />
         </div>
-        <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 50vw, 240px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />
+        <img className={styles.art} src={art.src} srcSet={art.srcSet} sizes="(max-width: 700px) 120px, 220px" width={art.width} height={art.height} alt="" decoding="async" fetchPriority="high" />
       </header>
       </div>
       <div className={styles.path}><GuideStepPath index={step - 1} stops={points.map((item, index) => ({ title: item.title, href: item.href, locked: !guideStepOpen(id, index + 1) }))} /></div>

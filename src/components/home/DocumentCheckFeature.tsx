@@ -59,7 +59,7 @@ const COMPARE = [
    desk (design/illustrations/scenes-2026-11-20.json). */
 const SCENE = {
   src: "/illustrations/scenes/prices-check-1600.webp",
-  srcSet: "/illustrations/scenes/prices-check-960.webp 960w, /illustrations/scenes/prices-check-1600.webp 1600w, /illustrations/scenes/prices-check-2400.webp 2400w",
+  srcSet: "/illustrations/scenes/prices-check-960.webp 960w, /illustrations/scenes/prices-check-1200.webp 1200w, /illustrations/scenes/prices-check-1600.webp 1600w, /illustrations/scenes/prices-check-2400.webp 2400w",
 };
 
 export function DocumentCheckFeature({ compact = false }: { compact?: boolean }) {
@@ -74,7 +74,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
   </div>;
   return <section className={`${styles.section} ${compact ? styles.compact : ""}`} data-section={compact ? undefined : "document-check-feature"} data-document-check-feature aria-labelledby={compact ? "document-check-promo-title" : "document-check-feature-title"}>
     {compact ? <div className={styles.scene} data-document-check-scene>
-      <img className={styles.sceneArt} src={SCENE.src} srcSet={SCENE.srcSet} sizes="(max-width: 700px) 100vw, 1160px" width={2400} height={1357} alt="" loading="lazy" decoding="async" draggable={false} />
+      <img className={styles.sceneArt} src={SCENE.src} srcSet={SCENE.srcSet} sizes="(max-width: 1000px) 100vw, 900px" width={2400} height={1357} alt="" loading="lazy" decoding="async" draggable={false} />
       {head}
     </div> : head}
     <Bento label="Чем проверка документов отличается от агентства" className={styles.bento}>
