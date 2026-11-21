@@ -2707,3 +2707,23 @@ Owner, with screenshots of the cabinet hero, the dark promo on /guides and
   head nods on a soft neck a beat after each jolt. The wheels stay on the road;
   nothing hops as one block. All of it is baked into CSS keyframes on the
   compositor: `design/illustrations/motion-2026-11-21-amalfi-physics.json`.
+
+## The Amalfi ride follows the road · 21 November 2026 (later)
+
+Owner: «ты по итогу не исправил, как Веспи по Амальфи по нормальной
+траектории едет».
+
+- **The path was the fault, not the bounce.** The cut-out slid almost level
+  across the picture at one size, while the road runs away to the upper
+  right: Vespi began on the painted edge line and ended a third of the road
+  below it. Now the midpoint between his tyres keeps to the lane beside that
+  line, measured on the plate itself.
+- **Perspective.** He is 1.2 of the cut-out when he enters on the left, 0.9 in
+  the middle and half of it where the road leaves the frame, like the parapet
+  beside him. At a constant real speed he passes close and fast, then slows
+  on screen as he rides away and up the bend. The scooter lines up with the
+  lane (part rotation, part shear, so the rider stays upright).
+- **Phone.** The sheet with the step no longer hides the wheels: the picture
+  stands whole above the sheet's top edge.
+- Suspension, head and wheels as before, on the new clock (9.2 s loop).
+  `design/illustrations/motion-2026-11-21-amalfi-physics.json`, «trajectory_same_day».
