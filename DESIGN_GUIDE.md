@@ -428,6 +428,7 @@
 | Общий фронтенд-дизайн, интерфейсы, цвет | `frontend-design`, `interface-design` (его заметки в `.interface-design/system.md`), `hallmark`, `hue`, `ui-ux-pro-max`, `scroll-craft` |
 | Спецификация, план, ревью, тесты | `addyosmani/agent-skills` |
 | Картинки и видео-петли | **Higgsfield MCP** (`generate_image`, `generate_video`). См. §5. |
+| Инстаграм: посты, карусели, сценарии рилсов, подписи | С 21 ноября, закреплены на прочитанных версиях: из `coreyhaines31/marketingskills` — `social`, `video`, `image`, `content-strategy`, `ad-creative`, `influencer-marketing`, `copywriting`, `copy-editing`, `marketing-psychology`, `product-marketing`; из `charlie947/social-media-skills` — `reels-scripting`, `hook-generator`, `content-matrix`, `voice-builder`, `gemini-carousel`; `blader/humanizer`. `reels-scripting` для разбора чужого рилса просит ключи Apify и Gemini; без них работает от вставленного текста. Remotion не ставился: это отдельный видео-инструмент. |
 | Скриншоты и замеры | Playwright, Chromium уже стоит; ревью-скрипты в `scripts/design-*.mjs` |
 | 3D | `threejs-skills` — в запасе, 3D на сайте нет и без просьбы не будет |
 

@@ -36,6 +36,37 @@ log=/tmp/iitaly-skills-install.log
       || echo "failed impeccable"
     rm -rf "$src"
   fi
+  # Owner, 21 Nov 2026, with a reel's «Marketing» list (remotion,
+  # marketingskills, humanizer, social-media-skills): «для инсты установи
+  # полезные скиллы». Only what serves Instagram, not the whole packs (53 and
+  # 17 skills, mostly B2B and LinkedIn): posts, carousels, reels scripts,
+  # hooks, a content plan, a voice profile, captions without AI tells.
+  # Each repository is pinned to the commit that was read before it was added
+  # (MIT, instructions and reference files only), so a later change upstream
+  # does not reach the session unread. Remotion is not here: it is a video
+  # toolchain of its own, to be set up when a reel is built in code.
+  pinned() { # $1 = repository, $2 = commit, then folders inside it ("." = the root, named after $1)
+    repo=$1; sha=$2; shift 2
+    need=0; for skill in "$@"; do name=${skill##*/}; [ "$skill" = "." ] && name=${repo##*/}; [ -d "$HOME/.claude/skills/$name" ] || need=1; done
+    if [ "$need" = 0 ]; then echo "skip $repo"; return; fi
+    src=$(mktemp -d)
+    if timeout 300 git clone -q "https://github.com/$repo" "$src/repo" && git -C "$src/repo" checkout -q "$sha"; then
+      mkdir -p "$HOME/.claude/skills"
+      for skill in "$@"; do
+        name=${skill##*/}; [ "$skill" = "." ] && name=${repo##*/}
+        [ -d "$HOME/.claude/skills/$name" ] && continue
+        if [ "$skill" = "." ]; then mkdir "$HOME/.claude/skills/$name" && cp "$src/repo/SKILL.md" "$src/repo/LICENSE" "$HOME/.claude/skills/$name/" || echo "failed $repo"
+        else cp -R "$src/repo/$skill" "$HOME/.claude/skills/$name" || echo "failed $repo $skill"; fi
+      done
+    else echo "failed $repo"; fi
+    rm -rf "$src"
+  }
+  pinned coreyhaines31/marketingskills 5b2b400eec1e7e1cec76245a715d0b0d4fd2a9c1 \
+    skills/social skills/video skills/image skills/content-strategy skills/ad-creative \
+    skills/influencer-marketing skills/copywriting skills/copy-editing skills/marketing-psychology skills/product-marketing
+  pinned charlie947/social-media-skills 10ca79c0ec0be0f7654d19cd4f0c86b6fa6ed23b \
+    skills/reels-scripting skills/hook-generator skills/content-matrix skills/voice-builder skills/gemini-carousel
+  pinned blader/humanizer a32f24407364c74c812b43c15926d638bee1e072 .
   echo done
 ) > "$log" 2>&1 &
 exit 0
