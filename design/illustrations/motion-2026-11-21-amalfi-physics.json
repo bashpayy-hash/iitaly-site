@@ -81,5 +81,6 @@
         "sha256": "98c1431ee2fa65e17c239c58ba49c1129950b1018279d1c7346b69bd0d6c5c6c"
       }
     ]
-  }
+  },
+  "superseded_by_depth_scene": "The whole scene was redrawn the same day with the road running away from the viewer: see motion-2026-11-21-amalfi-depth.json. The files listed here are no longer on the site."
 }

@@ -61,21 +61,6 @@ const STAGE_SCENE: Record<PortalStageKey, StageSceneName> = {
   start: "choose", education12: "diploma", docs: "stamp", apply: "envelope", dsu: "coins", visa: "passport", arrival: "keys",
 };
 
-/* Five wheel nuts and the valve on a hub, in the rim's own units (the box is
-   the rim: 53 px of the 357 px rider sprite). The span keeps the rim's three-quarter ellipse;
-   the drawing inside turns with the distance travelled. */
-const NUT_ANGLES = [0, 72, 144, 216, 288];
-function RideWheel({ className, shade }: { className: string; shade: "front" | "rear" }) {
-  const nut = shade === "front" ? "#352D28" : "#231E1A";
-  const valve = shade === "front" ? "#EFE9E0" : "#C9C0B5";
-  return <span className={`${styles.rideWheel} ${className}`} data-portal-ride-wheel={shade}>
-    <svg viewBox="-24 -24 48 48" aria-hidden="true" focusable="false">
-      {NUT_ANGLES.map(angle => <circle key={angle} cx={15 * Math.cos(angle * Math.PI / 180)} cy={15 * Math.sin(angle * Math.PI / 180)} r={2.7} fill={nut} fillOpacity={shade === "front" ? .92 : .85} />)}
-      <circle cx={0} cy={-20} r={1.7} fill={valve} />
-    </svg>
-  </span>;
-}
-
 export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy, travel, onTravelStart, onSelectStage, onOpenTask, onComplete, onDocuments, onSettings, locked }: Props) {
   const [data, setDisplayed] = useState(savedData);
   const shown = useRef(savedData);
@@ -180,35 +165,27 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         этапы простыми словами со статусом. Ничего не показано дважды. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
       {/* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
-          фоне, и Веспи должен реально ехать»). Owner, 20 Nov (evening, iPad,
-          after a steady 30 fps loop): «эта сцена всё ещё капец лагучая… исправь
-          любой ценой». The loop is gone: no video is decoded and nothing is
-          redrawn on a canvas, which iPad Safari did unevenly. The Amalfi road is
-          one still picture; Vespi is a cut-out (his own matte, keyed against
-          the empty road) that rides across it on CSS transforms the compositor
-          runs at the screen's own rate — 60 or 120 Hz, in Low Power Mode too.
-          The stage keeps the picture's 4:3 and is cropped like object-fit:
-          cover at the bottom, so Vespi stays on the road at every width. With
-          «меньше движения» he stands on the road where the poster had him
-          (design/illustrations/motion-2026-11-20-amalfi.json). Owner, 21 Nov:
-          «нет нормальной физики» — the ride now leans with the road, the
-          wheels turn, the suspension takes the joints in the asphalt and the
-          head nods on its neck (portal-focus.module.css). Third pass the
-          same day: «нужно, чтобы он на дорогу смотрел» — the rider is redrawn
-          from the same angle with the head turned ahead, along the road. */}
+          фоне, и Веспи должен реально ехать»). Since 20 Nov there is no video:
+          one still picture and a cut-out moved by CSS transforms on the
+          compositor, at the screen's own rate (the canvas loop lagged on
+          iPad). Owner, 21 Nov, after four passes at the ride along the
+          parapet: «всё равно чувствуется плоскость… чтобы чувствовалось, что
+          он реально куда-то едет вглубь». The scene is redrawn: we stand on
+          the Amalfi road and look along it; Vespi, seen from behind, rides
+          away from us in the right lane and shrinks toward the vanishing
+          point (portal-focus.module.css). The stage keeps the picture's 4:3
+          and is cropped like object-fit: cover at the bottom, so he stays on
+          the lane at every width. With «меньше движения» he stands on the
+          lane ahead (design/illustrations/motion-2026-11-21-amalfi-depth.json). */}
       <div className={styles.heroScene} data-portal-hero-scene>
         <div className={styles.heroStage} data-portal-stage>
-          <img className={styles.heroStageArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={2176} height={1632} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
+          <img className={styles.heroStageArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={2096} height={1572} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
           <div className={styles.ride} data-portal-ride aria-hidden="true">
-            <span className={styles.rideBody}>
-              <span className={styles.rideTilt}>
-                <span className={styles.rideShadow} />
-                <span className={styles.rideChassis} data-portal-ride-chassis>
-                  <img className={styles.rideVespi} src="/illustrations/landscapes/amalfi-rider-body.webp" width={357} height={425} alt="" decoding="async" draggable={false} />
-                  <RideWheel className={styles.rideWheelRear} shade="rear" />
-                  <RideWheel className={styles.rideWheelFront} shade="front" />
-                  <img className={styles.rideHead} src="/illustrations/landscapes/amalfi-rider-head.webp" width={156} height={144} alt="" decoding="async" draggable={false} data-portal-ride-head />
-                </span>
+            <span className={styles.rideBody} data-portal-ride-body>
+              <span className={styles.rideShadow} />
+              <span className={styles.rideChassis} data-portal-ride-chassis>
+                <img className={styles.rideVespi} src="/illustrations/landscapes/amalfi-rider-rear-body.webp" width={336} height={684} alt="" decoding="async" draggable={false} />
+                <img className={styles.rideHead} src="/illustrations/landscapes/amalfi-rider-rear-head.webp" width={247} height={232} alt="" decoding="async" draggable={false} data-portal-ride-head />
               </span>
             </span>
           </div>
