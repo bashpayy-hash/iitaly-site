@@ -260,7 +260,10 @@ try {
   await mobile.keyboard.press('Escape');
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false);
   await mobile.getByLabel('Открыть меню').click();
-  await mobile.locator('[data-journey-preview]').click({ position: { x: 8, y: 8 } });
+  // A tap on the page under the open menu (five sections since 21 Nov, so the
+  // menu reaches further down than the journey card's corner).
+  const menuBottom = await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).evaluate(el => el.getBoundingClientRect().bottom);
+  await mobile.mouse.click(12, Math.min(menuBottom + 24, mobile.viewportSize().height - 12));
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false, 'Outside tap closes mobile navigation');
   await visit(mobile, '/guides#visa');
   await mobile.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });
