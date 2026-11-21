@@ -15,6 +15,7 @@ import { guideFree } from "./guideAccess";
 import { guideArt } from "./guideArt";
 import { GuideTopicOverview, VisaOverview } from "./GuideOverview";
 import steps from "./guide-steps.module.css";
+import { GuideBandField } from "./GuideBandField";
 import ui from "./guide-pages.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 
@@ -57,6 +58,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
           визой, на которые переходит пользователь после нажатия на иконку».
           The path and the topic header stand on that band, full width. */}
       <div className={ui.band} data-guide-band>
+      <GuideBandField />
       <GuideBreadcrumbs items={[{ title:stage.title, href:guideStageHref(stage.id) }, ...(part ? [{title:guide.title,href:guideHref(id)},{title:part.title}] : [{title:guide.title}])]} />
       <header className={`${ui.articleHeader} ${part ? "" : steps.topicHeader}`}>
         <div>

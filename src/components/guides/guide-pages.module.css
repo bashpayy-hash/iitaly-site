@@ -118,10 +118,20 @@
    sage-to-sand wash with paper grain, full width, under the path and the
    topic header; the bento and the reading stay on the plain canvas below.
    The grain is an inline SVG noise tile (no image request); the colours are
-   the site's olive and sand, light enough that the intro text keeps 4.5:1. */
+   the site's olive and sand.
+
+   Owner, 21 Nov, with a reel's «ShaderGradient — grainy moving gradients»:
+   «примени этот плагин где полезно будет». The wash is alive: it is no longer
+   one painted background but a field (GuideBandField) with three colour
+   fields — sage, sand and a cream light — that drift on closed paths. Only
+   `transform` is animated, linear between 24 samples of a smooth curve, so
+   the compositor moves three ready layers and nothing is repainted; the
+   periods (34, 43 and 29 s) do not divide each other, so the picture does not
+   repeat for minutes. The grain lies on top and stands still. At the first
+   frame, and with «меньше движения», sage and sand stand where the painted
+   wash had them. */
 .band { position:relative; isolation:isolate; margin:-40px 0 36px; padding:32px 0 36px; }
-.band::before {
-  content:"";
+.bandField {
   position:absolute;
   z-index:-1;
   top:0;
@@ -129,15 +139,115 @@
   left:50%;
   width:100vw;
   translate:-50% 0;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .2 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
-    radial-gradient(70% 120% at 4% 28%, rgba(170, 185, 148, .9), rgba(170, 185, 148, 0) 70%),
-    radial-gradient(60% 110% at 98% 86%, rgba(239, 206, 164, .85), rgba(239, 206, 164, 0) 72%),
-    linear-gradient(100deg, #C3CBAB 0%, #DAD5B8 44%, #ECD9BA 100%);
+  overflow:hidden;
+  background:linear-gradient(100deg, #C3CBAB 0%, #DAD5B8 44%, #ECD9BA 100%);
+}
+.bandField > span { position:absolute; border-radius:50%; }
+.bandField > span:nth-child(1) { left:-45%; top:-56%; width:98%; height:168%; background:radial-gradient(closest-side, rgba(170, 185, 148, .9), rgba(170, 185, 148, 0)); }
+.bandField > span:nth-child(2) { left:54.8%; top:6.8%; width:86.4%; height:158.4%; background:radial-gradient(closest-side, rgba(239, 206, 164, .85), rgba(239, 206, 164, 0)); }
+.bandField > span:nth-child(3) { left:20%; top:35%; width:56%; height:150%; background:radial-gradient(closest-side, rgba(250, 238, 206, .8), rgba(250, 238, 206, 0)); }
+.bandField::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .2 0 0 0 0 .15 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bandField > span { will-change:transform; animation:34s linear infinite band-drift-a; }
+  .bandField > span:nth-child(2) { animation-name:band-drift-b; animation-duration:43s; }
+  .bandField > span:nth-child(3) { animation-name:band-drift-c; animation-duration:29s; }
+}
+/* Baked by a script (scratch: grain/gen.py): x and y are sines of different
+   frequencies, so each field walks a closed figure and returns to its start. */
+@keyframes band-drift-a {
+  0% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(1); }
+  4.167% { transform:translate3d(0.48%, 2.36%, 0) rotate(1.55deg) scale(1.021); }
+  8.333% { transform:translate3d(1.88%, 3.03%, 0) rotate(3deg) scale(1.04); }
+  12.5% { transform:translate3d(4.1%, 1.82%, 0) rotate(4.24deg) scale(1.057); }
+  16.667% { transform:translate3d(7%, -0.93%, 0) rotate(5.2deg) scale(1.069); }
+  20.833% { transform:translate3d(10.38%, -4.49%, 0) rotate(5.8deg) scale(1.077); }
+  25% { transform:translate3d(14%, -7.9%, 0) rotate(6deg) scale(1.08); }
+  29.167% { transform:translate3d(17.62%, -10.26%, 0) rotate(5.8deg) scale(1.077); }
+  33.333% { transform:translate3d(21%, -10.93%, 0) rotate(5.2deg) scale(1.069); }
+  37.5% { transform:translate3d(23.9%, -9.73%, 0) rotate(4.24deg) scale(1.057); }
+  41.667% { transform:translate3d(26.12%, -6.98%, 0) rotate(3deg) scale(1.04); }
+  45.833% { transform:translate3d(27.52%, -3.42%, 0) rotate(1.55deg) scale(1.021); }
+  50% { transform:translate3d(28%, 0%, 0) rotate(0deg) scale(1); }
+  54.167% { transform:translate3d(27.52%, 2.36%, 0) rotate(-1.55deg) scale(0.979); }
+  58.333% { transform:translate3d(26.12%, 3.03%, 0) rotate(-3deg) scale(0.96); }
+  62.5% { transform:translate3d(23.9%, 1.82%, 0) rotate(-4.24deg) scale(0.943); }
+  66.667% { transform:translate3d(21%, -0.93%, 0) rotate(-5.2deg) scale(0.931); }
+  70.833% { transform:translate3d(17.62%, -4.49%, 0) rotate(-5.8deg) scale(0.923); }
+  75% { transform:translate3d(14%, -7.9%, 0) rotate(-6deg) scale(0.92); }
+  79.167% { transform:translate3d(10.38%, -10.26%, 0) rotate(-5.8deg) scale(0.923); }
+  83.333% { transform:translate3d(7%, -10.93%, 0) rotate(-5.2deg) scale(0.931); }
+  87.5% { transform:translate3d(4.1%, -9.73%, 0) rotate(-4.24deg) scale(0.943); }
+  91.667% { transform:translate3d(1.88%, -6.98%, 0) rotate(-3deg) scale(0.96); }
+  95.833% { transform:translate3d(0.48%, -3.42%, 0) rotate(-1.55deg) scale(0.979); }
+  100% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(1); }
+}
+@keyframes band-drift-b {
+  0% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(1); }
+  4.167% { transform:translate3d(-0.55%, 2.33%, 0) rotate(-2.07deg) scale(1.05); }
+  8.333% { transform:translate3d(-2.14%, 4.5%, 0) rotate(-4deg) scale(1.087); }
+  12.5% { transform:translate3d(-4.69%, 6.36%, 0) rotate(-5.66deg) scale(1.1); }
+  16.667% { transform:translate3d(-8%, 7.79%, 0) rotate(-6.93deg) scale(1.087); }
+  20.833% { transform:translate3d(-11.86%, 8.69%, 0) rotate(-7.73deg) scale(1.05); }
+  25% { transform:translate3d(-16%, 9%, 0) rotate(-8deg) scale(1); }
+  29.167% { transform:translate3d(-20.14%, 8.69%, 0) rotate(-7.73deg) scale(0.95); }
+  33.333% { transform:translate3d(-24%, 7.79%, 0) rotate(-6.93deg) scale(0.913); }
+  37.5% { transform:translate3d(-27.31%, 6.36%, 0) rotate(-5.66deg) scale(0.9); }
+  41.667% { transform:translate3d(-29.86%, 4.5%, 0) rotate(-4deg) scale(0.913); }
+  45.833% { transform:translate3d(-31.45%, 2.33%, 0) rotate(-2.07deg) scale(0.95); }
+  50% { transform:translate3d(-32%, 0%, 0) rotate(0deg) scale(1); }
+  54.167% { transform:translate3d(-31.45%, -2.33%, 0) rotate(2.07deg) scale(1.05); }
+  58.333% { transform:translate3d(-29.86%, -4.5%, 0) rotate(4deg) scale(1.087); }
+  62.5% { transform:translate3d(-27.31%, -6.36%, 0) rotate(5.66deg) scale(1.1); }
+  66.667% { transform:translate3d(-24%, -7.79%, 0) rotate(6.93deg) scale(1.087); }
+  70.833% { transform:translate3d(-20.14%, -8.69%, 0) rotate(7.73deg) scale(1.05); }
+  75% { transform:translate3d(-16%, -9%, 0) rotate(8deg) scale(1); }
+  79.167% { transform:translate3d(-11.86%, -8.69%, 0) rotate(7.73deg) scale(0.95); }
+  83.333% { transform:translate3d(-8%, -7.79%, 0) rotate(6.93deg) scale(0.913); }
+  87.5% { transform:translate3d(-4.69%, -6.36%, 0) rotate(5.66deg) scale(0.9); }
+  91.667% { transform:translate3d(-2.14%, -4.5%, 0) rotate(4deg) scale(0.913); }
+  95.833% { transform:translate3d(-0.55%, -2.33%, 0) rotate(2.07deg) scale(0.95); }
+  100% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(1); }
+}
+@keyframes band-drift-c {
+  0% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(1); }
+  4.167% { transform:translate3d(8.8%, 1.24%, 0) rotate(5deg) scale(1.013); }
+  8.333% { transform:translate3d(17%, -3.35%, 0) rotate(8.66deg) scale(1.019); }
+  12.5% { transform:translate3d(24.04%, -12.53%, 0) rotate(10deg) scale(1.016); }
+  16.667% { transform:translate3d(29.44%, -23.85%, 0) rotate(8.66deg) scale(1.006); }
+  20.833% { transform:translate3d(32.84%, -34.28%, 0) rotate(5deg) scale(0.988); }
+  25% { transform:translate3d(34%, -41.01%, 0) rotate(0deg) scale(0.964); }
+  29.167% { transform:translate3d(32.84%, -42.25%, 0) rotate(-5deg) scale(0.936); }
+  33.333% { transform:translate3d(29.44%, -37.66%, 0) rotate(-8.66deg) scale(0.905); }
+  37.5% { transform:translate3d(24.04%, -28.48%, 0) rotate(-10deg) scale(0.873); }
+  41.667% { transform:translate3d(17%, -17.16%, 0) rotate(-8.66deg) scale(0.844); }
+  45.833% { transform:translate3d(8.8%, -6.73%, 0) rotate(-5deg) scale(0.818); }
+  50% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(0.798); }
+  54.167% { transform:translate3d(-8.8%, 1.24%, 0) rotate(5deg) scale(0.785); }
+  58.333% { transform:translate3d(-17%, -3.35%, 0) rotate(8.66deg) scale(0.779); }
+  62.5% { transform:translate3d(-24.04%, -12.53%, 0) rotate(10deg) scale(0.782); }
+  66.667% { transform:translate3d(-29.44%, -23.85%, 0) rotate(8.66deg) scale(0.792); }
+  70.833% { transform:translate3d(-32.84%, -34.28%, 0) rotate(5deg) scale(0.81); }
+  75% { transform:translate3d(-34%, -41.01%, 0) rotate(0deg) scale(0.834); }
+  79.167% { transform:translate3d(-32.84%, -42.25%, 0) rotate(-5deg) scale(0.863); }
+  83.333% { transform:translate3d(-29.44%, -37.66%, 0) rotate(-8.66deg) scale(0.893); }
+  87.5% { transform:translate3d(-24.04%, -28.48%, 0) rotate(-10deg) scale(0.925); }
+  91.667% { transform:translate3d(-17%, -17.16%, 0) rotate(-8.66deg) scale(0.954); }
+  95.833% { transform:translate3d(-8.8%, -6.73%, 0) rotate(-5deg) scale(0.98); }
+  100% { transform:translate3d(0%, 0%, 0) rotate(0deg) scale(1); }
 }
 .band > header { margin-bottom:0; }
-.band .breadcrumbs a, .band .breadcrumbs { color:#4E4A44; }
-.band .intro { color:#4E4A44; }
-.band .reviewed { color:#4E4A44; }
+/* Grey text on the band is #3F3933, the third of the site's four greys.
+   Measured on real pixels, grain included, 21 Nov: #4E4A44 had 3.7–4.0:1
+   over the darkest sage on the painted wash (not the 4.8:1 once noted), and
+   the moving sage passes under every line. #3F3933 keeps at least 4.7:1 at
+   every moment of the cycle; the guides review samples it. */
+.band .breadcrumbs a, .band .breadcrumbs { color:#3F3933; }
+.band .intro { color:#3F3933; }
+.band .reviewed { color:#3F3933; }
 @media (max-width:700px) { .band { margin:-22px 0 28px; padding:22px 0 26px; } }
-@media (forced-colors: active) { .band::before { display:none; } }
+@media (forced-colors: active) { .bandField { display:none; } }
