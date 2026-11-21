@@ -70,5 +70,6 @@
     ],
     "tools": "scratchpad scripts matte.py (cut-out) and the keyframe generator; not part of the site."
   },
-  "superseded_21_nov": "The rigid cut-out landscapes/amalfi-vespi.webp is replaced by a body and a head layer with baked ride physics: see motion-2026-11-21-amalfi-physics.json."
+  "superseded_21_nov": "The rigid cut-out landscapes/amalfi-vespi.webp is replaced by a body and a head layer with baked ride physics: see motion-2026-11-21-amalfi-physics.json.",
+  "superseded_by_depth_scene": "The whole scene was redrawn the same day with the road running away from the viewer: see motion-2026-11-21-amalfi-depth.json. The files listed here are no longer on the site."
 }

@@ -2814,3 +2814,29 @@ Owner, with two screenshots: «вот здесь убери… повторен�
   `design/illustrations/motion-2026-11-21-amalfi-physics.json`,
   «looks_ahead_same_day».
 
+## The cabinet scene has depth: a road that runs away from us · 21 November 2026 (noon)
+
+Owner, with a screenshot of the hero: «Здесь всё равно чувствуется плоскость…
+всё переработай, чтобы чувствовалось то, что он реально куда-то едет вглубь».
+
+- **Why it stayed flat.** The road crossed the picture from side to side. A
+  cut-out moving along it never comes toward us or goes away; four passes at
+  its path, lean and wheels could not change that.
+- **A new scene.** The same Amalfi coast at golden hour, redrawn from the
+  road itself: we look along it, the parapet with bougainvillea and the sea
+  on the left, the stone wall with lemon terraces and the village on the
+  right, the two lanes converging to a vanishing point low in the frame.
+- **Vespi rides into it.** Seen from behind, he passes us in the right lane
+  and rides away at a constant speed, so perspective does the work: large
+  as he comes in at the lower right, a third of that two seconds later, a
+  small figure far down the road, gone where it bends. His helmet stays just
+  under the horizon the whole way, as it does for anything our own height.
+- **Measured, not guessed.** The vanishing point and the lane come from the
+  painted lines of the picture; position and size follow 1/distance. Joints
+  in the asphalt still lift him, he leans a little, the head answers late.
+  The turning wheel nuts are gone: from behind a wheel shows only its tread.
+- **Every width.** The horizon sits at 74% of the 4:3 stage: on a tablet the
+  whole road is in the band under the panel, on a desktop there is sea above
+  it, on a phone the picture stands whole above the sheet.
+- Still CSS on the compositor, no video. `design/illustrations/motion-2026-11-21-amalfi-depth.json`.
+

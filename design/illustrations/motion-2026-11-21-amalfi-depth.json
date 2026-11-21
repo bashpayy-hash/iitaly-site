@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-21",
+  "request": "Owner, with a screenshot of the cabinet hero after four passes at the ride along the parapet: «Здесь всё равно чувствуется плоскость, а нужно в Higgsfield всё переработай, чтобы чувствовалось то, что он реально куда-то едет вглубь».",
+  "diagnosis": "In the old plate the road crossed the picture from left to right. A cut-out moving along a road seen from the side changes its size by half at most and never comes toward or away from the viewer, so it read as a sticker sliding over a postcard, however its path, lean and suspension were tuned.",
+  "replaces": [
+    "landscapes/amalfi-road-{960,1600,2176}.webp",
+    "landscapes/amalfi-rider-body.webp",
+    "landscapes/amalfi-rider-head.webp",
+    "the side-view ride of motion-2026-11-21-amalfi-physics.json (path along the edge line, turning wheels, lean)"
+  ],
+  "generation": {
+    "plate": {
+      "job": "3781b572-6756-4e3f-8ff9-357258b4bafc",
+      "not_used": "3194a59a-3923-4cb9-b020-3c06f931b491 (the same view with an S-curve: one cut-out cannot turn with a curving road)",
+      "reference": "The previous plate of the site (amalfi-road-1600.webp), for the place, light, palette and rendering.",
+      "brief": "The same Amalfi coast at golden hour, seen from a new camera position: the viewer stands on the road about 1.5 m above the asphalt and looks along it; strong one-point perspective, a low horizon, an empty two-lane road with a dashed centre line and two edge lines converging to a vanishing point right of the centre; the parapet with bougainvillea and the sea on the left, a stone wall with lemon terraces and the village on the right. No vehicles, people or text."
+    },
+    "rider": {
+      "job": "f37e14e5-46c3-427e-8094-2165022384a6",
+      "not_used": "02695023-22f5-4f04-ac83-0b2b1ceeb477 (a 30° rear three-quarter view)",
+      "references": "The approved rider of the previous pass (job d3d2cbba-8a30-43fd-ac47-55423c35b1ba) and one approved Vespi identity picture. No owner photographs.",
+      "brief": "The same toy rider on the same cream scooter seen from behind and slightly from the left (about 15°), a little from above, riding straight away, upright; the back of the red helmet with its cream stripe, the olive scarf, the plush back and both arms to the handlebar, the rear body with the tail light, the rear tyre from behind. No face. Transparent background, no ground or shadow."
+    }
+  },
+  "geometry": {
+    "stage": "A 4:3 crop of the plate, 2096 × 1572 from (100, 0) of 2336 × 1744: the vanishing point sits at 63.4% of the width and 74.0% of the height, so on a tablet the whole road lies in the band under the panel.",
+    "vanishing_point": "(1429.5, 1163) on the plate: the two edge lines and the centre line were detected row by row and fitted; their three intersections agree within 7 px.",
+    "lane": "A lane half is 2.04 px wide per px below the vanishing point. With a 3.2 m lane the camera stands 1.57 m above the asphalt.",
+    "rider": "His tyre keeps the middle of the right lane, 1.6 m right of the centre line; he is 0.92 of the camera height tall, so his helmet stays just under the horizon at every distance. The camera is left of his axis, as in the picture of him."
+  },
+  "motion": [
+    "Constant real speed 4.6 m/s along the lane from 2.8 m to 50 m ahead of the camera (the bottom row of the plate is taken as 5.47 m, a 60° lens). On screen this is the perspective itself: position and size go as 1/distance.",
+    "He enters from the lower right corner as he passes the camera (66% of the stage height tall, mostly out of frame), is 23% tall when his tyre reaches the bottom edge after about 1.1 s, 9% at 20 m, 4.6% at 40 m, and fades between 40 and 50 m where the road bends away.",
+    "Loop 11.36 s: 10.26 s on the road, then empty road. The page opens with him 6.2 m ahead.",
+    "The layer is laid out at its nearest size and only scales down (1 → 0.056), so it is never upscaled.",
+    "Rear-view suspension: five joints in the asphalt (2.6–4 cm) and fine roughness through two axles 1.25 m apart (2.6 Hz, ζ 0.38): heave -2.4…4.8 px of the 684 px sprite; a slow weave leans him -1.1…1.9°; the head (its own layer, cut along the top of the scarf) lags by -5.4…5.4 px.",
+    "Keyframes simplified with Ramer–Douglas–Peucker, looser where he is small on screen: 72 for path, size and opacity, 99 for the chassis, 122 for the head. Transforms and opacity only.",
+    "Shadow: two solid ellipses blurred once, falling toward the viewer and to the right (the sun is ahead-left), darkest under the tyre. No gradients.",
+    "Without animation he stands on the lane 11 m ahead."
+  ],
+  "placeholders": {
+    "behind_the_picture": "#D09890",
+    "strip_under_the_phone_sheet": "#A16764"
+  },
+  "files": [
+    {
+      "file": "public/illustrations/landscapes/amalfi-depth-1600.webp",
+      "bytes": 317302,
+      "sha256": "85560edacd98b9ad2b9865ab24bd8e64c6d1342bea0488917d4a7279b6b800fc"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-depth-2096.webp",
+      "bytes": 489780,
+      "sha256": "b5df498eca27623c3414a9e33ea819f0367e68da97c8b27613373981e362981c"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-depth-960.webp",
+      "bytes": 120904,
+      "sha256": "de456fb09562c866ac057523129bfc06bd263b1e6d4dd5c4374149b96c74b868"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-rider-rear-body.webp",
+      "bytes": 47640,
+      "sha256": "edb4384644d515f7d92349e2d8f8a76836e03580239eb001c26171de3cd1636e"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-rider-rear-head.webp",
+      "bytes": 15032,
+      "sha256": "d572da9ddb85076907668ec105defd9a85c755e9ba3a2a25e33925014726b591"
+    }
+  ]
+}

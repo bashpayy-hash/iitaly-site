@@ -208,10 +208,16 @@ try {
     assert.match(await page.locator('[data-portal-hero-scene]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The scene clips its landscape');
     assert.match(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).overflow),/^(hidden|clip)$/,'The hero tile clips its landscape');
     assert.equal(await page.locator('[data-portal-ride]').count(),1,'Vespi rides through the hero (a CSS ride over the still road)');
-    // Owner, 21 Nov: «нет нормальной физики» — the ride leans with the road, the
-    // suspension takes the bumps, the head nods on its own layer, both wheels turn.
+    // Owner, 21 Nov: «нет нормальной физики», then «чтобы чувствовалось, что он
+    // реально куда-то едет вглубь» — the road runs away from the viewer and Vespi,
+    // seen from behind, rides along it into the distance: the suspension takes the
+    // joints, the head answers on its own layer, and he shrinks toward the
+    // vanishing point (read from the stylesheet, so it holds with «меньше движения»).
     assert.equal(await page.locator('[data-portal-ride-chassis] [data-portal-ride-head]').count(),1,'The head rides on its own layer');
-    assert.equal(await page.locator('[data-portal-ride-wheel]').count(),2,'Both wheels turn');
+    const depth=await page.evaluate(()=>{for(const sheet of document.styleSheets){let rules;try{rules=sheet.cssRules;}catch{continue;}for(const rule of rules)if(rule instanceof CSSKeyframesRule&&rule.name.endsWith('amalfi-ride-size')){const scales=[...rule.cssRules].map(frame=>parseFloat(frame.style.scale));return {first:scales[0],least:Math.min(...scales),grows:scales.some((value,index)=>index>0&&value>scales[index-1]+1e-6)};}}return null;});
+    assert(depth&&depth.first===1&&depth.least<.1&&!depth.grows,`Vespi rides away into the depth: he only shrinks, more than ten times: ${JSON.stringify(depth)}`);
+    const riderBox=await page.locator('[data-portal-ride-chassis]').boundingBox(),sceneBox=await page.locator('[data-portal-hero-scene]').boundingBox();
+    assert(riderBox&&riderBox.x>=sceneBox.x&&riderBox.x+riderBox.width<=sceneBox.x+sceneBox.width&&riderBox.y+riderBox.height<=sceneBox.y+sceneBox.height+1,'Standing still («меньше движения») he is whole on the road ahead');
     assert.equal(await page.locator('[data-portal-ride] img').evaluateAll(imgs=>imgs.every(img=>img.complete&&img.naturalWidth>0)),true,'The rider layers load');
     assert.equal(await page.locator('[data-portal-landscape]').evaluate(img=>img.complete&&img.naturalWidth>0),true,'The landscape loads');
     assert.equal(await page.locator('[data-portal-hero]').evaluate(el=>getComputedStyle(el).borderRadius),width>640?'28px':'24px');
