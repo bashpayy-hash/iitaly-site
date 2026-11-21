@@ -100,7 +100,7 @@ try {
     assert.equal(await scope.locator('li').count(), 4, '/check: all four lines of it are kept');
     await scope.locator('summary').click();
     assert.equal(await scope.locator('li').first().isVisible(), true, '/check: the list opens');
-    const said = (await page.locator('[data-section=check-header], [data-check-offer]').allInnerTexts()).join(' ').toLowerCase();
+    const said = (await page.locator('[data-section=check-header], [data-check-offer]').allInnerTexts()).join(' ').replace(/\s+/g, ' ').toLowerCase();
     assert.equal(said.split('проверка бесплатно').length - 1 + said.split('проверка — бесплатно').length - 1, 1, '/check: the cover and the offer say «первая проверка бесплатно» once between them');
 
     // 4. The home and prices section of the document check: a fact is a value

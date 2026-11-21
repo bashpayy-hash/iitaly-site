@@ -95,7 +95,7 @@ try{
   await clickPermessoTool(editor,'Увеличить лист');await noOverflow();
   await clickPermessoTool(editor,'Вместить лист');
   await pin('10');await mark('10').click();
-  await editor.getByText(/^Дальше: Поле 14 —/).waitFor();
+  await editor.getByText(/^Дальше: Поле 14\s—/).waitFor();
   await editor.locator('[data-next-field]').click();
   assert.equal(await editor.locator('[data-editor-field="14"][data-selected="true"]').count(),1,'Guidance resumes after the selected skipped field');
   await pin('29');await mark('29').click();await editor.locator('[data-next-field]').click();await loaded();

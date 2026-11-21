@@ -78,7 +78,7 @@ try{
   assert.equal(await zone('3').count(),1,'A multiline name is one zone');assert.equal(await group('3').locator('input[tabindex="-1"]').count(),2);
   await zone('3').focus();assert.notEqual(query(),'3','Focus is preview only');await zone('3').press('Enter');assert.equal(query(),'3');
   if(!touch){await p.keyboard.press('Escape');await editor.locator('[data-editor-field="3"][data-part="0"] input').fill('TEST STUDENT');}else await panel.getByRole('textbox',{name:'Ввести: Фамилия',exact:true}).fill('TEST STUDENT');
-  await clickPermessoTool(editor,'Показать пример');assert.match(await panel.innerText(),/Пример — не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
+  await clickPermessoTool(editor,'Показать пример');assert.match(await panel.innerText(),/Пример\s— не твои данные/);assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
   await clickPermessoTool(editor,'Мои данные');assert.equal(await editor.locator('[data-editor-field="3"][data-part="0"] input').inputValue(),'TEST STUDENT');
   assert.equal(await p.evaluate(()=>localStorage.getItem('iitaly:permesso-paper-editor:v1')),null);
   await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).click();await p.reload({waitUntil:'networkidle'});await sheet().waitFor();assert.equal(await editor.getByRole('button',{name:'Больше не показывать подсказку',exact:true}).count(),0);

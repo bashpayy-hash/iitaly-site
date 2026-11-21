@@ -136,7 +136,7 @@ try {
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop]').count(), 5);
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][aria-current=step]').getAttribute('data-path-stop'), '1');
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 5, 'Every stop is closed outside the first five topics');
-  assert.match(await guest.page.locator('[data-path-caption]').innerText(), /Разбор этой темы — с маршрутом/);
+  assert.match(await guest.page.locator('[data-path-caption]').innerText(), /Разбор этой темы\s— с маршрутом/);
   await visit(guest.page, '/guides/visa/timeline?point=2');
   assert.equal(await guest.page.locator('[data-story-path] [data-path-stop][data-locked]').count(), 5);
   assert.equal(await guest.page.locator('[data-instruction-point] img').count(), 1, 'The point carries an object on its topic');
@@ -145,7 +145,7 @@ try {
   assert.equal(await guest.page.locator('[data-wall-buy][data-wall-place="visa"]').count(), 1, 'A closed stop opens its wall');
   // A closed topic: every step closed, the caption says so; nothing counts as read.
   await visit(guest.page, '/guides/con');
-  assert.match(await guest.page.locator('[data-guide-road=con] [data-path-caption]').innerText(), /разбор этой темы — с маршрутом/);
+  assert.match(await guest.page.locator('[data-guide-road=con] [data-path-caption]').innerText(), /разбор этой темы\s— с маршрутом/);
   assert.equal(await guest.page.locator('[data-guide-road=con] [data-node-locked]').count(), await guest.page.locator('[data-guide-road=con] [data-road-node]').count(), 'Closed steps carry a lock on the road');
   assert.equal(await guest.page.locator('[data-guide-road=con] [data-node-state=done]').count(), 0);
   // A free topic: the guest above has read every step, all are green and none is locked.
