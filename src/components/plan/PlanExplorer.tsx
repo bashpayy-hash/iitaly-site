@@ -35,17 +35,6 @@ export function PlanUniversityContext() {
   </>;
 }
 
-/* Owner, 20 Nov, on /plan#document-check under the plan's loggia cover:
-   «почему здесь сверху всё ещё стоит вот эта иллюстрация, для проверки
-   документов должна быть отдельная страница». The two free tools are two
-   pages now; this row links them. */
-export function PlanToolNav({ current }: { current: "plan" | "check" }) {
-  return <nav className={workspace.toolNav} aria-label="Бесплатные инструменты">
-    <Link href="/plan#questionnaire" aria-current={current === "plan" ? "page" : undefined}>Составить план</Link>
-    <Link href="/check" aria-current={current === "check" ? "page" : undefined} data-check-page-link>Проверить документ</Link>
-  </nav>;
-}
-
 export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
   const plan = draft.complete ? buildPlan(draft.answers) : null;
@@ -101,7 +90,7 @@ export function PlanExplorer() {
             </AppleHeading>
             <p className="mx-auto mt-5 max-w-lg text-apple-body">
               {WIZ.length} вопросов, затем понятные шаги и список документов.
-              Бесплатно, без регистрации. Проверка файла доступна отдельно.
+              Бесплатно, без регистрации.
             </p>
           </div>
         </div>
@@ -109,7 +98,6 @@ export function PlanExplorer() {
 
       <section className={workspace.tools} data-public-paper-zone="plan-tools">
         <PlanUniversityContext />
-        <PlanToolNav current="plan" />
         <div className={styles.planWorkspace}>
           <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />

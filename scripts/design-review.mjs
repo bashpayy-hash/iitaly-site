@@ -185,10 +185,15 @@ try {
   assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
   // The document check lives behind its own tab; the picker must be focusable there.
   const fileInput = page.getByLabel('Выбрать документ для проверки');
-  await page.getByRole('link', { name: 'Проверить документ', exact: true }).click();
-  // 20 Nov: the check is its own page, /check; the picker unlocks once the
-  // service has answered the availability check.
+  // 21 Nov: the check is a section of the main navigation (owner: «сделай так,
+  // чтобы проверка документов была отдельным разделом»); /plan no longer
+  // repeats it in a tool switch of its own.
+  assert.equal(await page.getByRole('navigation', { name: 'Бесплатные инструменты' }).count(), 0, 'No second tool switch on /plan');
+  const checkSection = page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Проверка документов', exact: true });
+  await checkSection.click();
+  // The picker unlocks once the service has answered the availability check.
   await page.waitForURL(/\/check$/);
+  assert.equal(await checkSection.getAttribute('aria-current'), 'page', 'The check section is marked current on /check');
   await page.waitForFunction(() => document.querySelector('#document-check input[type="file"]')?.disabled === false);
   await fileInput.focus();
   assert.equal(await fileInput.evaluate(el => document.activeElement === el), true, 'Document picker remains keyboard accessible');
@@ -255,7 +260,10 @@ try {
   await mobile.keyboard.press('Escape');
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false);
   await mobile.getByLabel('Открыть меню').click();
-  await mobile.locator('[data-journey-preview]').click({ position: { x: 8, y: 8 } });
+  // A tap on the page under the open menu (five sections since 21 Nov, so the
+  // menu reaches further down than the journey card's corner).
+  const menuBottom = await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).evaluate(el => el.getBoundingClientRect().bottom);
+  await mobile.mouse.click(12, Math.min(menuBottom + 24, mobile.viewportSize().height - 12));
   assert.equal(await mobile.getByRole('navigation', { name: 'Мобильная навигация' }).isVisible(), false, 'Outside tap closes mobile navigation');
   await visit(mobile, '/guides#visa');
   await mobile.locator('[data-guide-panel="visa"]').waitFor({ state: 'visible' });

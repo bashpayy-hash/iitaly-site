@@ -64,10 +64,8 @@ try {
       assert.deepEqual(await editorialContrastFindings(page, violations),[],where+' accessibility');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,where+' overflow');
     }
-    await visit('/plan');
-    // 20 Nov: the document check is its own page, /check (owner: «для проверки документов должна быть отдельная страница»).
-    await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
-    await page.waitForURL(/\/check$/);
+    // The document check is its own section, /check (owner, 20–21 Nov: «для проверки документов должна быть отдельная страница», «отдельным разделом»).
+    await visit('/check');
     await page.getByText('Проверка документов пока недоступна',{exact:true}).waitFor();
     assert(await page.getByLabel('Выбрать документ для проверки').isDisabled());
     assert.equal(documentRequests.length,0,'No document is sent while provider credentials are invalid');
@@ -147,8 +145,7 @@ try {
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'true');
     await page.getByRole('button',{name:'Начать заново',exact:true}).click();
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
-    await page.getByRole('navigation',{name:'Бесплатные инструменты'}).getByRole('link',{name:'Проверить документ',exact:true}).click();
-    await page.waitForURL(/\/check$/);
+    await page.goto(origin+'/check');
     // /check asks the service whether it is available on arrival; the picker unlocks after the answer.
     await page.waitForFunction(()=>document.querySelector('#document-check input[type="file"]')?.disabled===false);
     await page.getByLabel('Выбрать документ для проверки').setInputFiles({name:'example.txt',mimeType:'text/plain',buffer:Buffer.from('Синтетический тест: доход семьи за указанный год.')});

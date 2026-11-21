@@ -2676,3 +2676,34 @@ home «Твой маршрут» card: «слишком белое… добав
   page loads on the tap); the media-switcher review waits for the restored
   university instead of network idle when it returns from /plan, where those
   prefetches could still be in flight.
+
+## Document check as a section of the site; a ride with physics · 21 November 2026
+
+Owner, with screenshots of the cabinet hero, the dark promo on /guides and
+/check: «вместо того, чтобы бесконечно в разных ответвлениях писать то, что
+есть опция проверки документа, просто сделай так, чтобы проверка документов
+была отдельным разделом… в личном кабинете бесшовность появилась, но…
+там нет нормальной физики».
+
+- **«Проверка документов» is a section of the main navigation** (/check),
+  between «Мой план» and «Цены», and a link in the footer. The header keeps
+  one line down to the tablet: gaps 22px below 1080px, 13px type and 14px gaps
+  below 900px. The cabinet's own header does not carry it.
+- **No promos for it elsewhere.** Gone: the dark «Готовишь документы? Проверь
+  их за 10–30 секунд» card on /guides and on topic and visa-documents pages
+  (DocCheckPromo), the «Составить план / Проверить документ» switch on /plan
+  and its «Проверка файла доступна отдельно», the «Проверить документ» link at
+  the foot of a plan step, and the big «Проверь документ перед подачей» cell
+  in the cabinet's documents. There the heading keeps Vespi at the stamp
+  beside it and one line names the free check with a link to the section.
+  Kept, because they are the site's main offer rather than a repeat: the
+  «Проверить документ» button in the home hero, the home section «Быстрее
+  агентства» and the compact block on /prices.
+- **The Amalfi ride has physics.** The cut-out is split into a body and a
+  head (same pixels). The scooter climbs a little slower and speeds up on the
+  flat, leans with the road under it, its wheels turn by the distance
+  travelled (five nuts and a valve on each hub), the suspension takes three
+  joints in the asphalt — front wheel first, rear a wheelbase later — and the
+  head nods on a soft neck a beat after each jolt. The wheels stay on the road;
+  nothing hops as one block. All of it is baked into CSS keyframes on the
+  compositor: `design/illustrations/motion-2026-11-21-amalfi-physics.json`.

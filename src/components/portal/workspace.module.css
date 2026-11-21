@@ -96,20 +96,18 @@
 @media(max-width:767px) { .docCard h3 { text-wrap:balance; } }
 
 /* Документы кабинета как лендинг (owner, 20 Nov, вечер): заголовок в два
-   тона, затем одна бенто-подложка — проверка документа и сами документы. */
+   тона и Веспи с печатью рядом, затем одна бенто-подложка с документами. */
 .docsHead { display:grid; gap:14px; max-width:820px; margin-bottom:24px; }
 .docsTitle { margin:0; color:#141413; font:600 clamp(30px, 3.4vw, 44px)/1.06 var(--font-apple-display); letter-spacing:-.03em; text-wrap:balance; }
 .docsTitle span { display:block; color:#6B6761; }
 .docsLead { margin:0; max-width:62ch; color:#56524C; font-size:17px; line-height:1.6; text-wrap:pretty; }
+.docsHeadScene { grid-template-columns:minmax(0, 1fr) clamp(220px, 34%, 340px); align-items:center; gap:28px 40px; max-width:none; }
+.docsHeadCopy { display:grid; gap:14px; min-width:0; }
+.docsFree { margin:0; color:#56524C; font-size:15px; line-height:1.55; text-wrap:pretty; }
+.docsFree a { color:#141413; font-weight:600; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+.docsHeadScene .docsScene { flex:none; width:100%; margin:0; }
+@media (max-width: 700px) { .docsHeadScene { grid-template-columns:minmax(0, 1fr); } .docsHeadScene .docsScene { display:none; } }
 .docsTray { width:100%; }
-.docsTray .docsCheck { display:grid; grid-template-columns:minmax(0, 1fr) clamp(200px, 30%, 300px); align-items:center; gap:24px 36px; padding:clamp(24px, 3.4vw, 40px); }
-.docsCheckCopy { display:grid; justify-items:start; gap:10px; min-width:0; }
-.docsCheckTitle { margin:0; color:#141413; font:600 clamp(24px, 2.6vw, 34px)/1.1 var(--font-apple-display); letter-spacing:-.025em; text-wrap:balance; }
-.docsCheckText { margin:0; max-width:48ch; color:#56524C; font-size:16px; line-height:1.55; text-wrap:pretty; }
-.docsCheckButton { display:inline-flex; align-items:center; justify-content:center; min-height:52px; margin-top:10px; padding:12px 28px; border-radius:999px; background:#141413; color:#FFFDF9; font-size:17px; font-weight:600; text-decoration:none; transition:transform .25s cubic-bezier(.16, 1, .3, 1); }
-@media (hover: hover) and (pointer: fine) { .docsCheckButton:hover { transform:translateY(-1px); } }
-.docsCheckButton:focus-visible { outline:2px solid #141413; outline-offset:3px; }
-.docsTray .docsScene { flex:none; width:100%; margin:0; }
 
 /* Документ — бумажная ячейка: для чего нужен, название, где взять, статус. */
 .docsTray .docCell { gap:10px; padding:20px 22px 20px; color:#241F1C; }
@@ -125,13 +123,11 @@
 .docOpen svg { transition:transform .32s cubic-bezier(.22, 1, .36, 1); }
 @media (hover: hover) and (pointer: fine) { .docCell:hover .docOpen svg { transform:translateX(2px); } }
 
-/* Узкая подложка (телефон): Веспи с печатью — над текстом, кнопка во всю ширину. */
+/* Узкая подложка (телефон): ячейки документов плотнее. */
 @container (max-width: 559px) {
-  .docsTray .docsCheck { display:flex; flex-direction:column-reverse; align-items:stretch; gap:16px; padding:20px 18px 22px; }
-  .docsCheckButton { width:100%; }
   .docsTray .docCell { padding:18px; }
 }
-@media (prefers-reduced-motion: reduce) { .docsCheckButton, .docOpen svg { transition:none; } }
+@media (prefers-reduced-motion: reduce) { .docOpen svg { transition:none; } }
 .docsTray + .next { margin-top:8px; }
 .docsTray .setCell { gap:10px; padding:22px 24px 24px; }
 .setTitle { margin:0; font:600 21px/1.25 var(--font-apple-display); letter-spacing:-.02em; }

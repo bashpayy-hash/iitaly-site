@@ -79,7 +79,7 @@ try {
     assert.equal(await page.locator('[data-plan-wizard] [data-flight-plan]').count(),0,'No progress bar over the questionnaire (owner, 4 Nov)');
     assert.equal(await page.locator('[data-plan-wizard] [role=progressbar]').getAttribute('aria-valuemax'),'10');
     assert.equal(await page.locator('#document-check [data-vespi]').count(),0,'Single mascot anchor: utility/report have no repeated portrait');
-    await page.getByRole('link',{name:'Проверить документ',exact:true}).click();
+    await visit('/check');
     await page.getByRole('button',{name:'Проверить пример справки',exact:true}).click();
     await page.locator('[data-document-example]').waitFor();
     assert.match(await page.locator('[data-document-example]').innerText(),/Демонстрация интерфейса.*вымышленный пример/s);

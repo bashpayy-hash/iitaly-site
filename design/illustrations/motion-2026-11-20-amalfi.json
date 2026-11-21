@@ -69,5 +69,6 @@
       "public/illustrations/landscapes/amalfi-{960,1600,2176}.webp"
     ],
     "tools": "scratchpad scripts matte.py (cut-out) and the keyframe generator; not part of the site."
-  }
+  },
+  "superseded_21_nov": "The rigid cut-out landscapes/amalfi-vespi.webp is replaced by a body and a head layer with baked ride physics: see motion-2026-11-21-amalfi-physics.json."
 }
