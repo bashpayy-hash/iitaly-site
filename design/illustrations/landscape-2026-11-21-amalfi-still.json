@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-21",
+  "request": "Owner, with a screenshot of the cabinet hero where the rider was a small figure far down the road: «Ладно, просто убери видео, просто сделай динамичную, классную картинку, где он просто едет, всё, больше ничего не надо».",
+  "decision": "No animation in the cabinet hero any more: no video, no canvas, no moving cut-out. One still picture in which Vespi rides; the motion is in the picture itself.",
+  "replaces": [
+    "landscapes/amalfi-depth-{960,1600,2096}.webp",
+    "landscapes/amalfi-rider-rear-{body,head}.webp",
+    "the CSS ride of motion-2026-11-21-amalfi-depth.json"
+  ],
+  "generation": {
+    "first_round": {
+      "side_panning": "409eef10-815e-4920-a1ee-4cccd53701a4",
+      "toward_camera": "ca724e48-3bf4-4c9f-aa45-edd811b37d51",
+      "riding_away_rear_view": "b5d899dd-387a-4286-ab02-2d0967c0ef3a",
+      "references": "The site's own depth plate (job 3781b572-6756-4e3f-8ff9-357258b4bafc), the approved riders (d3d2cbba-8a30-43fd-ac47-55423c35b1ba, f37e14e5-46c3-427e-8094-2165022384a6) and two approved Vespi identity pictures. No owner photographs.",
+      "finding": "In all three the rider took 34–41% of the frame height; under the cabinet's panel a tablet shows only the lower 32%."
+    },
+    "chosen": {
+      "job": "2e06b6ad-8655-40a0-9c0a-c9fdd427e904",
+      "from": "ca724e48-3bf4-4c9f-aa45-edd811b37d51, the same picture asked again from farther away and a little higher",
+      "not_used": "022f1dfe-fc4a-49e7-a77b-483438b661bb (the side panning shot zoomed out: the strongest speed blur, but a side view again, the one the owner called flat)",
+      "brief": "A toy scooter riding toward the camera down the Amalfi coast road at golden hour: the two-lane road recedes behind him to a vanishing point low in the frame; parapet with bougainvillea and the sea with the low sun on one side, a stone wall with lemon terraces and the village with the majolica dome on the other; the rider small, in the bottom quarter, tack-sharp, scarf streaming, headlight on, petals in the air; the asphalt and the roadside streaked toward the vanishing point. Face in full: two open dot eyes and a small smile."
+    },
+    "upscale_tried": {
+      "job": "6a87c1cb-7a45-4db1-9798-54c82f5d99dc",
+      "verdict": "Not used: the upscaler smoothed the plush and felt into plastic and redrew the helmet badge. The 2336 × 1744 original is shipped."
+    }
+  },
+  "edit": [
+    "Cropped to an exact 4:3 (2324 × 1743).",
+    "Mirrored: in the generated picture he came toward us on the left side of his road; mirrored he keeps to the right, as traffic in Italy does. Nothing in the picture has letters or a hand; the village is now on the left and the sea with the sun on the right."
+  ],
+  "layout": {
+    "desktop": "The stage is 1.15 of the tile and centred: the village, the road with Vespi and the sun over the sea all stand around the panel.",
+    "tablet": "The upper two thirds are under the panel, so the stage is 1.4 of the tile with the picture's 41% at the centre: Vespi is about 131 px tall on an 820 px iPad and sits whole in the band under the panel (his helmet starts at 70% of the tile, the panel ends at 68%; the band is at least 160–220 px by the tile's own padding).",
+    "phone": "A closer 4:3 frame of the same picture (4–68% of its width, 33.5–97.5% of its height: the village, the road and Vespi), shown whole above the sheet; its own file, so a phone loads 98–185 KB instead of 305–399 KB."
+  },
+  "placeholders": {
+    "behind_the_picture": "#C49094",
+    "strip_under_the_phone_sheet": "#8D605C"
+  },
+  "face_rule": "Two small open round black dot eyes and a small smile, pink cheeks — checked on the shipped picture at full size.",
+  "files": [
+    {
+      "file": "public/illustrations/landscapes/amalfi-ride-1200.webp",
+      "bytes": 166524,
+      "sha256": "a29dfd119983c74b5bfd0c73d06b4b367e238d2bdaffc243c5af1f4567edf480"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-ride-1800.webp",
+      "bytes": 305254,
+      "sha256": "26b1079b6264c162ce70f3b999bd842d73faa40aaf9df5255ad8c447e1b006a9"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-ride-2324.webp",
+      "bytes": 399170,
+      "sha256": "1b36ddad3473b8f57e24a617b51f7c4b3d7a44f1bd2f7247f68e72a2e7f5ddd4"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-ride-phone-1170.webp",
+      "bytes": 185094,
+      "sha256": "dda3a02697db66049a65ceb066543e4cb6d38447ab449f59a8862545597e5ff2"
+    },
+    {
+      "file": "public/illustrations/landscapes/amalfi-ride-phone-780.webp",
+      "bytes": 98340,
+      "sha256": "351004051e6c32719356ca854e34e997d3efffed7a575d0f5308fde069a89951"
+    }
+  ]
+}

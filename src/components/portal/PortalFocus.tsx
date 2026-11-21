@@ -165,30 +165,22 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         этапы простыми словами со статусом. Ничего не показано дважды. */}
     {!stagePage && <div className={styles.hero} data-portal-hero>
       {/* Пейзаж — фон всей плитки (owner, 6 Nov: «иллюстрация должна быть на
-          фоне, и Веспи должен реально ехать»). Since 20 Nov there is no video:
-          one still picture and a cut-out moved by CSS transforms on the
-          compositor, at the screen's own rate (the canvas loop lagged on
-          iPad). Owner, 21 Nov, after four passes at the ride along the
-          parapet: «всё равно чувствуется плоскость… чтобы чувствовалось, что
-          он реально куда-то едет вглубь». The scene is redrawn: we stand on
-          the Amalfi road and look along it; Vespi, seen from behind, rides
-          away from us in the right lane and shrinks toward the vanishing
-          point (portal-focus.module.css). The stage keeps the picture's 4:3
-          and is cropped like object-fit: cover at the bottom, so he stays on
-          the lane at every width. With «меньше движения» he stands on the
-          lane ahead (design/illustrations/motion-2026-11-21-amalfi-depth.json). */}
+          фоне, и Веспи должен реально ехать»). After the loop (lagged on iPad)
+          and four passes at a cut-out riding by CSS, the owner, 21 Nov:
+          «просто убери видео, просто сделай динамичную, классную картинку,
+          где он просто едет, всё, больше ничего не надо». So it is one still
+          picture and nothing moves: Vespi rides toward us down the Amalfi
+          road, scarf streaming, the asphalt streaked with speed, the sea, the
+          sun and the village behind him. A phone gets a closer frame of the
+          same picture; from a tablet up the stage itself is zoomed so that he
+          sits whole in the band under the panel (portal-focus.module.css,
+          design/illustrations/landscape-2026-11-21-amalfi-still.json). */}
       <div className={styles.heroScene} data-portal-hero-scene>
         <div className={styles.heroStage} data-portal-stage>
-          <img className={styles.heroStageArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={2096} height={1572} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
-          <div className={styles.ride} data-portal-ride aria-hidden="true">
-            <span className={styles.rideBody} data-portal-ride-body>
-              <span className={styles.rideShadow} />
-              <span className={styles.rideChassis} data-portal-ride-chassis>
-                <img className={styles.rideVespi} src="/illustrations/landscapes/amalfi-rider-rear-body.webp" width={336} height={684} alt="" decoding="async" draggable={false} />
-                <img className={styles.rideHead} src="/illustrations/landscapes/amalfi-rider-rear-head.webp" width={247} height={232} alt="" decoding="async" draggable={false} data-portal-ride-head />
-              </span>
-            </span>
-          </div>
+          <picture>
+            <source media={PORTAL_HERO.phone.media} srcSet={PORTAL_HERO.phone.srcSet} sizes={PORTAL_HERO.phone.sizes} width={PORTAL_HERO.phone.width} height={PORTAL_HERO.phone.height} />
+            <img className={styles.heroStageArt} src={PORTAL_HERO.src} srcSet={PORTAL_HERO.srcSet} sizes={PORTAL_HERO.sizes} width={PORTAL_HERO.width} height={PORTAL_HERO.height} alt="" aria-hidden="true" decoding="async" fetchPriority="high" data-portal-landscape="amalfi" />
+          </picture>
         </div>
       </div>
       <div className={styles.heroPanel} data-portal-hero-panel>
