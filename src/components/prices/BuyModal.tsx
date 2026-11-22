@@ -59,10 +59,15 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
     inFlight.current = false;
   }
 
+  /* Intuitiveness pass (owner, 21 Nov: «максимально интуитивно без потери
+     данных»): a tap outside the sheet or Escape used to wipe the four typed
+     fields. What was typed now stays for the next opening, in this component's
+     memory only (nothing is written to storage). A finished order starts clean. */
   function close() {
     if (step === "sending") return;
     onClose();
-    reset();
+    if (step === "manual") reset();
+    else setError(null);
   }
 
   async function submit() {

@@ -37,7 +37,9 @@ export function PricesHero({ onBuy }: { onBuy: () => void }) {
           Купить за {priceLabel(PRICE_MAIN)}
         </AppleButton>
       </div>
-      <nav className={`${marketing.taskLinks} ${styles.sectionLinks}`} aria-label="На странице цен">
+      {/* data-fab-yield: on a 320px phone «Спросить Веспи» lay over the third
+          link (intuitiveness pass, 21 Nov); the button steps aside for them. */}
+      <nav className={`${marketing.taskLinks} ${styles.sectionLinks}`} aria-label="На странице цен" data-fab-yield>
         <a href="#main-package">Состав пакета</a>
         <a href="#terms-and-refund">Условия и возврат</a>
         <a href="#expert-review">Проверка экспертом</a>

@@ -24,6 +24,7 @@ import { PortalUploadZone } from "@/components/portal/PortalUploadZone";
 import portalStyles from "@/components/portal/portal-document.module.css";
 import styles from "./plan-workspace.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
+import { revealElement } from "@/components/motion/scroll";
 
 const DOC_CHECK_ART = cartoucheFrame("doc-check");
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
@@ -50,7 +51,7 @@ type State =
 
 function inspectorMessage(step: State["step"], availabilityPending: boolean, unavailable: boolean, walled = false) {
   if (availabilityPending) return "Сначала проверю, доступна ли ИИ-сверка.";
-  if (unavailable) return "Проверка временно недоступна. Это не замечание к твоему документу и не связано с оплатой.";
+  if (unavailable) return "Проверка временно недоступна. Это не замечание к твоему документу.";
   if (walled) return "Бесплатная проверка одного файла уже использована на этом устройстве. Следующие документы проверяются в кабинете.";
   if (step === "reading") return "Читаю выбранный файл. Проверка начнётся после твоего подтверждения.";
   if (step === "checking") return "Проверяю содержание и применимые требования. Покажу итог, замечания и что делать дальше.";
@@ -75,6 +76,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
   const uploadId = useId();
   const [dragOver, setDragOver] = useState(false);
   const [showExample, setShowExample] = useState(false);
+  // The example opens under the upload card, usually below the phone's fold:
+  // without this the button looked dead (intuitiveness pass, 21 Nov).
+  const exampleRef = useRef<HTMLElement>(null);
+  useEffect(() => { if (showExample) revealElement(exampleRef.current, "nearest"); }, [showExample]);
   const [availability, setAvailability] = useState<DocumentAvailability | null>(null);
   const [availabilityPending, setAvailabilityPending] = useState(true);
   const unavailable = availability?.ok === false;
@@ -321,7 +326,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
               мозаичный картуш, что у тем гайдов: свиток с лупой и галочкой. */}
           <img src={DOC_CHECK_ART.src} srcSet={DOC_CHECK_ART.srcSet} sizes="88px" width={88} height={88} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} data-doc-check-art />
           <b className={styles.fileAction}>Выбрать документ</b>
-          <small>или перетащи сюда<br />{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
+          <small><span className={styles.dropHint}>или перетащи сюда<br /></span>{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>
       ) : (
         <div className="mt-5 flex items-start gap-3 rounded-[20px] border border-white/15 p-4 sm:items-center sm:gap-4">
@@ -369,7 +374,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       )}
 
       {state.step !== "checking" && state.step !== "reading" && state.step !== "done" && <button type="button" className={styles.example} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}>Проверить пример справки</button>}
-      {showExample && <section className={styles.exampleResult} data-document-example aria-label="Пример разбора, не проверка твоего файла">
+      {showExample && <section ref={exampleRef} className={styles.exampleResult} data-document-example aria-label="Пример разбора, не проверка твоего файла">
         <h3>Пример разбора справки</h3>
         <p>Демонстрация интерфейса. Это вымышленный пример, файл не отправлялся на ИИ-анализ.</p>
         <p><b>Нужно уточнить.</b> В примере не указан конкурс. Нельзя определить нужный год доходов.</p>

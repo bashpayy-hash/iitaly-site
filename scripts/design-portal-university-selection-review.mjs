@@ -106,6 +106,8 @@ async function openPicker(page) {
   await page.goto(`${origin}/portal?view=plan&task=shortlist`, { waitUntil: 'networkidle' });
   await picker(page).waitFor();
   await page.locator('[data-portal-university-picker]').waitFor();
+  // 21 Nov: the help row wrote its own «+» over the disclosure sign drawn by the shared style.
+  assert.equal(await page.locator('[data-step-help] > summary').evaluate(summary => /[+−]/.test(getComputedStyle(summary, '::after').content)), false, 'The step help has one disclosure sign');
   assert.equal(new URL(page.url()).pathname, '/portal');
   assert.equal(new URL(page.url()).searchParams.get('task'), 'shortlist');
   assert.equal(await page.getByRole('banner').count(), 1, 'Embedded catalogue does not duplicate the site header');

@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Local pre-sized WebP renders for the static export. */
 
-import { useEffect } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { WIZ, type WizAnswers } from "@/data/wizard";
@@ -9,6 +9,7 @@ import { buildPlan } from "@/lib/planBuilder";
 import { EMPTY_PLAN_DRAFT, usePlanDraft } from "@/lib/usePlanDraft";
 import { Wizard } from "./Wizard";
 import { PlanResult } from "./PlanResult";
+import { PlanAnswers } from "./PlanAnswers";
 import { AppleCaption, AppleHeading } from "@/components/apple/Typography";
 import styles from "@/components/marketing/marketing.module.css";
 import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
@@ -35,9 +36,37 @@ export function PlanUniversityContext() {
   </>;
 }
 
+/* «Начать заново» стирало все ответы одним нажатием, без подтверждения и без
+   возврата (проход на интуитивность, 21 Nov). Теперь кнопка сначала
+   спрашивает; безопасный ответ получает фокус. */
+function DraftFooter({ onRestart }: { onRestart: () => void }) {
+  const [asking, setAsking] = useState(false);
+  const keep = useRef<HTMLButtonElement>(null);
+  const restart = useRef<HTMLButtonElement>(null);
+  const refocus = useRef(false);
+  const question = useId();
+  useEffect(() => {
+    if (asking) keep.current?.focus({ preventScroll: true });
+    else if (refocus.current) { refocus.current = false; restart.current?.focus({ preventScroll: true }); }
+  }, [asking]);
+  return <div className={workspace.footer} data-plan-footer>
+    <p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p>
+    {asking
+      ? <div className={workspace.confirm} role="group" aria-labelledby={question} data-plan-restart-confirm>
+        <span id={question}>Стереть все ответы?</span>
+        <button ref={keep} type="button" onClick={() => { refocus.current = true; setAsking(false); }}>Оставить</button>
+        <button type="button" data-danger onClick={() => { setAsking(false); onRestart(); }}>Стереть</button>
+      </div>
+      : <button ref={restart} type="button" onClick={() => setAsking(true)}>Начать заново</button>}
+  </div>;
+}
+
 export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
   const plan = draft.complete ? buildPlan(draft.answers) : null;
+  // The list of answers opened from a ready plan (see PlanAnswers).
+  const [reviewing, setReviewing] = useState(false);
+  const review = !!plan && reviewing;
 
   // The document check has its own page since 20 Nov. Old links and
   // bookmarks to /plan#document-check land there.
@@ -56,7 +85,13 @@ export function PlanExplorer() {
     });
   }
 
+  function showPlan() {
+    setReviewing(false);
+    focusPlan();
+  }
+
   function handleDone(answers: WizAnswers) {
+    setReviewing(false);
     updateDraft({ answers, step: WIZ.length, complete: true });
     focusPlan();
   }
@@ -102,20 +137,24 @@ export function PlanExplorer() {
           <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />
             <div className={workspace.heading}>
-              <h2>Твой план поступления</h2>
+              <h2>{review ? "Твои ответы" : "Твой план поступления"}</h2>
               {!plan && <span className={workspace.badge}>~2 минуты · Персональный трек</span>}
+              {/* The same place as «Изменить ответы» beside «Твой маршрут»: the
+                  way back is where the way in was. */}
+              {review && <button type="button" className={workspace.headingAction} onClick={showPlan} data-plan-answers-back>Вернуться к плану</button>}
             </div>
-            {plan ? (
-              <PlanResult plan={plan} onReset={() => { updateDraft({ ...draft, complete: false, step: 0 }); focusPlan(); }} />
+            {review ? (
+              <PlanAnswers answers={draft.answers} onChange={(id, value) => updateDraft({ ...draft, answers: { ...draft.answers, [id]: value } })} onDone={showPlan} />
+            ) : plan ? (
+              <PlanResult plan={plan} onReset={() => { setReviewing(true); focusPlan(); }} />
             ) : (
               <Wizard draft={draft} onDraftChange={updateDraft} onDone={handleDone} />
             )}
             {/* With a ready plan the result already says where answers live and
                offers «Изменить ответы»; the footer would repeat both. */}
-            {!plan && <div className={workspace.footer}>
-              <p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p>
-              {Object.keys(draft.answers).length > 0 && <button type="button" className="min-h-11 underline underline-offset-4" onClick={() => { updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }}>Начать заново</button>}
-            </div>}
+            {(review || (!plan && Object.keys(draft.answers).length > 0))
+              ? <DraftFooter onRestart={() => { setReviewing(false); updateDraft(EMPTY_PLAN_DRAFT); focusPlan(); }} />
+              : !plan && <div className={workspace.footer}><p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p></div>}
           </div>
         </div>
       </section>

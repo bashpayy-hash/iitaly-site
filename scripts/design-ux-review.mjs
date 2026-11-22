@@ -141,9 +141,16 @@ try {
     const draft=await page.evaluate(()=>sessionStorage.getItem('iitaly_plan_draft_v1'));
     assert(!draft.includes('77001234567')&&!draft.includes('file'),'No contact or file in draft');
     assert.equal(leads.length,0,'No contact submission is required');
+    // Intuitiveness pass (21 Nov): «Изменить ответы» lists the ten answers and keeps
+    // the plan; one of them opens on a tap. «Начать заново» asks before it erases.
     await page.getByRole('button',{name:'Изменить ответы',exact:true}).click();
+    assert.match(await page.locator('[data-plan-answer=intake]').innerText(),/Осенью 2027/,'The list shows the given answer');
+    await page.locator('[data-plan-answer=intake]').click();
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'true');
+    await page.getByRole('button',{name:'К списку ответов',exact:true}).click();
     await page.getByRole('button',{name:'Начать заново',exact:true}).click();
+    assert.equal(await page.evaluate(()=>Object.keys(JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).answers).length),10,'Nothing is erased before the confirmation');
+    await page.getByRole('button',{name:'Стереть',exact:true}).click();
     assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
     await page.goto(origin+'/check');
     // /check asks the service whether it is available on arrival; the picker unlocks after the answer.

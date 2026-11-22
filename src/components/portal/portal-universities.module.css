@@ -9,8 +9,8 @@
 .help { margin-top: 12px; border-top: 1px solid var(--portal-border); font-size: 14px; line-height: 1.5; }
 .help summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; padding: 8px 0; list-style: none; cursor: pointer; }
 .help summary::-webkit-details-marker { display: none; }
-.help summary::after { content: "+"; font-size: 20px; }
-.help[open] summary::after { content: "−"; }
+/* The sign is drawn by disclosure.row; a second «+» written here stood on top
+   of it (intuitiveness pass, 21 Nov). */
 .help p { margin: 8px 0; max-width: 65ch; color: var(--portal-muted); }
 .loading { padding: 32px 0; color: var(--portal-muted); }
 .saveBar { position:fixed; left:max(32px,calc((100vw - var(--save-reserved) - 1296px)/2)); right:calc(var(--save-reserved) + max(32px,(100vw - var(--save-reserved) - 1296px)/2)); bottom:calc(12px + env(safe-area-inset-bottom,0px)); z-index:45; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 16px; border:1px solid var(--portal-border); border-radius:16px; background:var(--portal-surface); }
