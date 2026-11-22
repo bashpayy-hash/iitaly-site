@@ -200,6 +200,16 @@
    от верхнего края, чтобы и крайнее положение камеры не срезало шлем. */
 .feature .featureScene { margin:0; aspect-ratio:16 / 10; }
 .feature .featureScene[data-stage-scene=stamp] img { object-position:50% 0; transform-origin:50% 0; }
+/* Floor mosaics (22 Nov, owner: «с мозаикой… добавить каких-то приколов»).
+   The whole panel shows, at its own proportions; the camera's drift is a
+   breath here (1 → 1.035, from the centre), so it never cuts the clock's bells
+   or the pigeon at the edge. */
+.feature .featureScene[data-stage-scene^=mosaic] { aspect-ratio:1948 / 1260; background:#F3E7D3; }
+.feature .featureScene[data-stage-scene^=mosaic] img { object-position:50% 50%; transform-origin:50% 50%; }
+@media (prefers-reduced-motion:no-preference) {
+  .feature .featureScene[data-stage-scene^=mosaic] img { animation-name:mosaic-breath; }
+}
+@keyframes mosaic-breath { from { transform:scale(1); } to { transform:scale(1.035); } }
 .featureCopy { display:grid; gap:4px; padding:4px 14px 0; min-width:0; }
 .featureCopy strong { font:600 clamp(20px,1.9vw,24px)/1.2 var(--font-sans); letter-spacing:-.02em; text-wrap:balance; }
 .featureCopy span { color:var(--quiet); font-size:15px; line-height:1.45; }
@@ -226,6 +236,7 @@
   .features { grid-template-columns:minmax(0,1fr); }
   .feature { padding:10px 10px 20px; border-radius:24px; gap:14px; }
   .feature .featureScene { aspect-ratio:16 / 10; }
+  .feature .featureScene[data-stage-scene^=mosaic] { aspect-ratio:1948 / 1260; }
   .featureCopy { padding:2px 8px 0; }
   .featureAction { margin:0 8px; }
   /* На телефоне та же змейка, уже (±88px), как дорожка Duolingo. Названия

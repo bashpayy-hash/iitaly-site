@@ -12,19 +12,45 @@
 }
 .card:nth-child(2) .cardLink,.cardsAlt .card:nth-child(odd) .cardLink { --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89; }
 .cardsAlt .card:nth-child(2) .cardLink { --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; }
-.copy { display:grid; gap:4px; width:100%; padding:24px 22px 0; }
+/* A panel of the Galleria floor (owner, 22 Nov: «слишком plain white…
+   добавить какие-то текстуры или узоров… чтобы было на что обратить
+   внимание… стильно»). The cartouche on each card is laid in the tesserae of
+   the floor of the Galleria Vittorio Emanuele II; the card around it is that
+   floor now: a ground of small tesserae and a border of two ochre rows around
+   a slate-blue one, with a terracotta block at each corner, as in Roman floor
+   borders (terracotta instead of slate on the dark card). The textures are
+   drawn by design/illustrations/source/textures/mosaic-textures.py; 9 KB in all. */
+.cardLink {
+  --tile-ground:url("/textures/mosaic-ground.webp"); --tile-band:url("/textures/mosaic-band-h.webp"); --tile-band-v:url("/textures/mosaic-band-v.webp");
+  background:var(--tile-ground) 0 0 / 192px 192px, var(--tile-bg);
+}
+.card:nth-child(2) .cardLink,.cardsAlt .card:nth-child(odd) .cardLink { --tile-ground:url("/textures/mosaic-ground-dark.webp"); --tile-band:url("/textures/mosaic-band-dark-h.webp"); --tile-band-v:url("/textures/mosaic-band-dark-v.webp"); }
+.cardsAlt .card:nth-child(2) .cardLink { --tile-ground:url("/textures/mosaic-ground.webp"); --tile-band:url("/textures/mosaic-band-h.webp"); --tile-band-v:url("/textures/mosaic-band-v.webp"); }
+.cardLink::before {
+  content:""; position:absolute; inset:12px; pointer-events:none;
+  background:
+    url("/textures/mosaic-corner.webp") left -1px top -1px / 14px 14px no-repeat,
+    url("/textures/mosaic-corner.webp") right -1px top -1px / 14px 14px no-repeat,
+    url("/textures/mosaic-corner.webp") left -1px bottom -1px / 14px 14px no-repeat,
+    url("/textures/mosaic-corner.webp") right -1px bottom -1px / 14px 14px no-repeat,
+    var(--tile-band) left top / 192px 12px repeat-x,
+    var(--tile-band) left bottom / 192px 12px repeat-x,
+    var(--tile-band-v) left top / 12px 192px repeat-y,
+    var(--tile-band-v) right top / 12px 192px repeat-y;
+}
+.copy { display:grid; gap:4px; width:100%; padding:34px 34px 0; }
 .copy small { font:600 13px/1.5 var(--font-sans); color:var(--tile-label); }
 .copy strong { font-size:21px; font-weight:600; line-height:1.15; letter-spacing:-.02em; text-wrap:balance; }
 .copy span { font-size:14px; line-height:1.4; color:var(--tile-quiet); text-wrap:pretty; }
 /* Вещь темы стоит внизу плитки, по центру, не шире 68%. */
-.object { display:flex; flex:1; align-items:flex-end; justify-content:center; min-height:0; padding:0 20px 24px; }
+.object { display:flex; flex:1; align-items:flex-end; justify-content:center; min-height:0; padding:0 32px 36px; }
 .object img { display:block; width:auto; max-width:68%; height:auto; max-height:100%; object-fit:contain; transition:transform 320ms cubic-bezier(.22,1,.36,1); }
 @media (hover: hover) and (pointer: fine) { .cardLink:hover .object img { transform:translateY(-6px); } }
 .cardLink:focus-visible { outline:2px solid #B83A27; outline-offset:3px; }
-@media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .cardLink { aspect-ratio:3 / 4; } }
-@media(max-width:640px) { .cards { grid-template-columns:1fr; } .cardLink { flex-direction:row; align-items:center; aspect-ratio:auto; min-height:200px; } .copy { flex:1 1 auto; padding:22px 0 22px 20px; } .object { flex:0 0 42%; align-items:center; padding:16px 16px 16px 0; } .object img { max-width:100%; max-height:150px; } .copy strong { font-size:19px; } }
+@media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .cardLink { aspect-ratio:3 / 4; } .copy { padding:30px 30px 0; } .object { padding:0 28px 32px; } }
+@media(max-width:640px) { .cards { grid-template-columns:1fr; } .cardLink { flex-direction:row; align-items:center; aspect-ratio:auto; min-height:200px; } .cardLink::before { inset:8px; } .copy { flex:1 1 auto; padding:24px 0 24px 26px; } .object { flex:0 0 40%; align-items:center; padding:20px 24px 20px 0; } .object img { max-width:100%; max-height:150px; } .copy strong { font-size:19px; } }
 @media(prefers-reduced-motion:reduce) { .cardLink,.object img { transition:none; } @media (hover: hover) and (pointer: fine) { .cardLink:hover .object img { transform:none; } } }
-@media(forced-colors:active) { .cardLink { border:1px solid CanvasText; } }
+@media(forced-colors:active) { .cardLink { border:1px solid CanvasText; } .cardLink::before { display:none; } }
 /* Phone and tablet finish (owner, 20 Nov: «прошерсти на неточности,
    неровности и в целом адаптивность»):
    - 641–900px: the two scenes kept a 760px column, so on an iPad (820px) their
@@ -39,4 +65,4 @@
 @media(max-width:900px) { .section { max-width:none; padding-inline:32px; } }
 @media(max-width:899px) { .section { padding-inline:24px; } }
 @media(max-width:767px) { .section { padding:0 20px 48px; } }
-@media(max-width:374px) { .cardLink { gap:12px; } .copy { min-width:0; } .object { flex-basis:32%; min-width:0; } .copy strong { font-size:18px; } }
+@media(max-width:374px) { .cardLink { gap:12px; } .copy { min-width:0; padding:22px 0 22px 24px; } .object { flex-basis:32%; min-width:0; padding:18px 22px 18px 0; } .copy strong { font-size:18px; } }

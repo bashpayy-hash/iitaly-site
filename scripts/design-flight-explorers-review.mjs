@@ -152,6 +152,17 @@ try{
     assert.equal(await page.locator('[data-scene-card] [data-scene-object]').count(),6,'Every card shows its theme object (owner, 3 Nov)');
     assert.equal(await page.locator('[data-scene-card] img[src*="landscapes"]').count(),0,'Navigation cards carry no landscape photo (owner, 3 Nov: Vespi scenes belong in the cabinet)');
     assert.equal(await page.locator('[data-scene-photo=codice]').getAttribute('href'),'/guides/codice');
+    // Owner, 22 Nov: «слишком plain white… добавить какие-то текстуры или
+    // узоров… стильно». Each card is a panel of the Galleria floor: a ground
+    // of tesserae and a mosaic border inside the card, with every word and
+    // the cartouche inside the border.
+    const panels=await page.locator('[data-scene-card] [data-scene-photo]').evaluateAll(cards=>cards.map(card=>{
+      const own=getComputedStyle(card), frame=getComputedStyle(card,'::before'), box=card.getBoundingClientRect(), inset=parseFloat(frame.top)+12;
+      const inside=[...card.querySelectorAll('small,strong,span>span,img')].every(node=>{const b=node.getBoundingClientRect();return b.left>=box.left+inset-1&&b.right<=box.right-inset+1&&b.top>=box.top+inset-1&&b.bottom<=box.bottom-inset+1;});
+      return {ground:/mosaic-ground/.test(own.backgroundImage),band:/mosaic-band/.test(frame.backgroundImage)&&/mosaic-corner/.test(frame.backgroundImage),inside};
+    }));
+    assert(panels.every(panel=>panel.ground&&panel.band),`Home ${width}: every card has the tesserae ground and the mosaic border (${JSON.stringify(panels)})`);
+    assert(panels.every(panel=>panel.inside),`Home ${width}: words and cartouche stay inside the border (${JSON.stringify(panels)})`);
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});

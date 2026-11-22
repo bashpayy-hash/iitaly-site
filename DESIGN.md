@@ -3311,3 +3311,46 @@ real words with names may go there.
 
 Reviews: `design-funnel-review` and `design-reminders-review` follow the new
 words; the content guard holds the three changed lines of /prices.
+
+## The Galleria floor: mosaic tiles in the cabinet, floor panels on the home page · 22 November 2026 (night)
+
+Owner, with two screenshots. The guest cabinet's tiles «Проверка документов»
+and «Напоминания о сроках»: «вот эти вот две иллюстрации, они пока что
+странненькие… нужно как-то их поменять. Может, как-то с мозаикой
+сравнивать, может, добавить каких-то приколов». The home page's route cards:
+«слишком plain white… нужно с ними что-то тоже сделать… добавить какие-то
+текстуры или узоров… чтобы было на что обратить внимание… стильно».
+
+The site's mosaic is the floor of the Galleria Vittorio Emanuele II that the
+cartouches are laid in (19 Nov). Both answers come from it.
+
+**The cabinet's two tiles.** The felt Vespi in a photograph became a floor
+mosaic of the same Galleria, with one joke each:
+
+| Tile | Before | Now |
+|---|---|---|
+| Проверка документов | felt Vespi with a stamp at a desk | Vespi studies a scroll with a red seal through a brass magnifying glass, one eye huge behind it; a pigeon at the other end of the scroll checks it too; a stamp and an ink pad beside |
+| Напоминания о сроках | felt Vespi with an alarm clock on a balcony | Vespi rides his scooter, as at the top of the cabinet, with a ringing alarm clock strapped to the rack |
+
+Six variants were drawn (gpt_image_2_6 with Vespi, the permesso cartouche
+with Vespi in tesserae and the topic's own cartouche as references); the
+other four are in `design/illustrations/scenes-2026-11-22.json`. The panels
+show whole, at their own proportions; the scene's slow camera drift is a
+breath of 3.5% from the centre, so it never cuts the clock's bells or the
+pigeon. 1200 px is 229 KB at WebP q72: the joints between stones are the
+picture, and a filter that halved the file blurred them. The tiles are below
+the first screen and load lazily.
+
+**The home page's six route cards** are panels of that floor: a ground of
+small cream tesserae laid in slightly wavy rows (dark tesserae on the dark
+cards), and inside the card a border of two ochre rows around a slate-blue
+one (terracotta on the dark card) with a terracotta block at each corner, as
+in Roman floor borders. The palette is sampled from the cartouches. Words and
+the cartouche stay inside the border at 1440, 820, 390 and 320px; on phones the
+border stands 8px from the card's edge instead of 12. The textures are drawn
+by a script (`design/illustrations/source/textures/mosaic-textures.py`) and
+weigh about 15 KB together.
+
+Reviews: `design-portal-focus-review` names the two mosaic scenes;
+`design-flight-explorers-review` holds the ground, the border and that
+nothing leaves it.

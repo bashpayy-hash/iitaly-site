@@ -228,7 +228,12 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         Выбранные вузы уже названы в приветствии, поэтому отдельной строки нет. */}
     {!stagePage && <section className={path.features} aria-label="Главное в кабинете" data-cabinet-features>
       <a className={path.feature} href="/portal?view=docs" data-cabinet-tile="documents" data-cabinet-documents data-feature="documents" onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onDocuments(); }}>
-        <StageScene name="stamp" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
+        {/* Owner, 22 Nov (cabinet screenshot): «эти две иллюстрации… странненькие…
+            Может, как-то с мозаикой… добавить каких-то приколов». The felt
+            Vespi in a photo became a floor mosaic of the Galleria, like the
+            cartouches: Vespi studies a document through a magnifying glass,
+            one eye huge behind it, while a pigeon checks it too. */}
+        <StageScene name="mosaic-documents" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
         <span className={path.featureCopy}>
           <strong>Проверка документов</strong>
           <span>{docsTasks.length ? `Проверено ${checkedDocs} из ${docsTasks.length}` : "Список появится после анкеты"}</span>
@@ -236,7 +241,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <span className={path.featureAction} data-feature-action>Проверить документ</span>
       </a>
       <a className={path.feature} href="/portal?view=settings#notifications" data-cabinet-tile="reminders" data-cabinet-reminders data-feature="reminders" data-reminders-on={remindersOn || undefined} onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>
-        <StageScene name="alarm" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
+        {/* The same floor: Vespi rides his scooter with a ringing alarm clock
+            strapped to the rack, as in the ride at the top of the cabinet. */}
+        <StageScene name="mosaic-reminders" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
         <span className={path.featureCopy}>
           <strong>Напоминания о сроках</strong>
           <span>{remindersOn ? "Включены в Telegram" : guest ? "Подключаются с маршрутом" : "Пока выключены"}</span>
