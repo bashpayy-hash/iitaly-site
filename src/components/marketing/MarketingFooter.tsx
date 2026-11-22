@@ -2,6 +2,7 @@ import Link from "next/link";
 import styles from "./marketing.module.css";
 import { OFFICIAL_SOURCES } from "@/data/sources";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { TEST_OFFER_ON_SITE } from "@/components/access/testOffer";
 
 /**
  * Один подвал на все публичные страницы: бумага, монохромный логотип,
@@ -29,6 +30,8 @@ export function MarketingFooter() {
           <Link href="/guides" prefetch={false}>Гайды и виза</Link>
           <Link href="/changes-2026-27" prefetch={false}>Правила 2026/27</Link>
           <Link href="/portal" prefetch={false}>Личный кабинет</Link>
+          {/* Owner, 22 Nov: the friends' test «сам сайт неси, а не отдельной ссылкой». */}
+          {TEST_OFFER_ON_SITE && <Link href="/test" prefetch={false}>Тест для друзей</Link>}
         </nav>
       </div>
       <div className={styles.finePrint}>

@@ -3455,3 +3455,49 @@ word in ink (strong, but it outweighed everything above it). The first stays.
 
 `design-flight-explorers-review` now also holds the file to these two fills, so
 a multicolour word does not come back unnoticed.
+
+## /plan's hero as a still picture; the friends' test on the site · 22 November 2026 (night)
+
+Owner, on the /plan hero: «Так, вот здесь, знаешь, анимацию убери, поставь
+какую-то другую, но нормальную иллюстрацию. И потом внеси вот этот вот
+особый этот для друзей за 667 тенге… сам сайт неси, а не отдельной ссылкой».
+Earlier the same night, on generated Vespi: «ты вообще не соблюдаешь
+пропорции и вес тела».
+
+- **/plan hero.** The loggia poster and its video loop are gone (the four
+  webp sizes and four video files with them). It took three tries, and the
+  owner's words set the rule each time. The approved Vespi pasted behind a
+  desk in an empty generated study: «Это пиздец, экспериментируй… иллюстрация
+  должна быть динамичной, живой, итальянской. Пропорции должны сохраняться».
+  A bright, rendered terrace over Rome: «нет, другую иллюстрацию в другом,
+  более таком реалисте… Вернись к этому стилю, который был раньше… все
+  иллюстрации, которые на сайте… сделай в таком же стиле». The site's manner
+  is an editorial photograph of a real Italian place with the cotton toy
+  standing in it (the Bologna arcade, the Florence belvedere, the loggias):
+  natural muted light, real stone, shallow depth of field. A scene with
+  movement is made the same way, with the same prompt formula and one of the
+  site's own pictures as the style reference.
+  The hero now: a stone terrace over Florence at golden hour, Vespi mid-step
+  launching a paper plane, three more gliding toward the Duomo, sheets
+  lifting off an iron table under a lemon tree. His face, helmet, collar and
+  proportions were checked against the references at full size. Two swallows
+  that flew where the heading stands and one plane that touched the paragraph
+  were painted out into the sky. The picture is not upscaled (the upscaler
+  turns cotton into plastic). Phones get their own square crop around Vespi
+  (the tile there is a tall strip of the scene): sharper at the 1200px
+  ceiling a phone is sent. Seven other scenes in the same manner are kept as
+  alternatives. Recorded in `design/illustrations/scenes-2026-11-22.json`.
+  `design-media-switcher-review` holds the header to one still picture: no
+  video, no canvas.
+- **The friends' test on the site.** /prices ends its column with a card under
+  the main purchase: the red «Тест» pill, «Тестовый доступ для друзей»,
+  «667 ₸ вместо 10 990 ₸», one line (a real payment and a real cabinet, the
+  price lowered to check payment, the code and the cabinet), «Оплатить тест ·
+  667 ₸» opening the site's own purchase form for the test product, and «Подробнее
+  о тесте» to /test. The footer links «Тест для друзей» to /test on every page.
+  /test no longer says its link is given by hand. It stays out of the sitemap
+  and asks search engines not to index it. `TEST_OFFER_ON_SITE` in
+  `testOffer.ts` takes the card and the link off the site; the server's
+  catalogue line takes the product off sale.
+- Anyone who opens /prices can now buy the full cabinet for 667 ₸ instead of
+  10 990 ₸: that is the owner's call, said to him with the change.

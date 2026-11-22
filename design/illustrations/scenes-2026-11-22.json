@@ -39,6 +39,46 @@
           "why": "a second pigeon next to the documents tile"
         }
       ]
+    },
+    {
+      "name": "plan-terrace",
+      "use": "/plan hero «Опиши свою ситуацию» (replaces the plan-loggia poster and its video loop)",
+      "request": "Owner, 22 Nov: «анимацию убери, поставь какую-то другую, но нормальную иллюстрацию». Then, on the approved Vespi set behind a desk in an empty generated study: «Это пиздец, экспериментируй… иллюстрация должна быть динамичной, живой, итальянской. Пропорции должны сохраняться, но здесь у тебя нормально». Then, on a bright rendered terrace scene: «нет, другую иллюстрацию в другом, более таком реалисте… Вернись к этому стилю, который был раньше, который типа все иллюстрации, которые на сайте… сделай в таком же стиле».",
+      "model": "Higgsfield gpt_image_2_6, quality high, 2k, 16:9; references: Vespi ab833075-dfc7-4e28-824c-7e299aad556c, a448f972-9035-4be6-b0ca-1f0f7800f1a5, 0f6d7ac4-4e85-4761-9765-753f578eec1e, and the home page's Bologna arcade (13027cab-4b55-4cec-bdcc-b30adeddbf5c) for the photographic style",
+      "job": "fd6a9b32-9d4c-4100-b432-97738b5d8010",
+      "prompt": "Editorial travel photograph, 35mm, photorealistic, in the same photographic style, light and natural muted colours as the last reference image: a stone rooftop terrace in Florence at golden hour, a weathered balustrade, terracotta pots with a lemon tree and rosemary, the Duomo and terracotta rooftops softly out of focus beyond, a wide pale warm sky. The exact same handmade cotton toy character as in the references (smooth cream cotton body with fine fibres, a large satin red helmet with a cream stripe and a small olive side button, as wide as his body, tiny round open black dot eyes, a tiny smile, pink cheeks, short stubby arms and legs with mitten paws, olive green felt collar with a red button) stands on the terrace floor on tiptoe and launches a folded white paper plane with one raised paw; four more real paper planes glide away over the rooftops at the right, slightly motion-blurred, two swallows swoop past; a stack of blank paper on a small iron table lifts in the breeze. He is in the lower middle of the frame, in the bottom third, small in the scene, clearly a soft toy placed in the real place; the upper middle of the frame is calm open sky. Real stone textures, shallow depth of field, not an illustration, not a 3D render, no oversaturation. No text, no signs, no flags, no people, no logos.",
+      "review": "At full size: the helmet with its stripe and olive button, two open dot eyes, the small smile, pink cheeks, the felt collar with the red button and the small round body match the references; no people, letters, signs, flags or logos. Not upscaled (the upscaler turns the cotton into plastic: landscape-2026-11-21-amalfi-still.json).",
+      "retouch": "Painted out into the sky: two swallows that flew where the heading stands, and the paper plane that touched the end of the paragraph.",
+      "frame": "The 2688×1520 original cut to the tile's 1.84:1 (59 px of floor off the bottom): the helmet's top at 49% of the height. webp q82 at 960, 1200, 1920, 2560. Phones: the square around Vespi, 780 and 1170 (a phone is sent 1200px at most).",
+      "rejected": [
+        {
+          "what": "the approved Vespi pasted behind a desk in an empty generated study",
+          "why": "owner: static, dead"
+        },
+        {
+          "job": "a1c3e81c-48d7-4341-bc70-83bf8af2e65a",
+          "what": "a rendered, saturated terrace over Rome with planes and swallows, outpainted (11ace056…) and upscaled (4ddfa28b…)",
+          "why": "owner: not the site's realistic style"
+        },
+        {
+          "jobs": [
+            "891c8e37-292e-4fab-8d74-6fde0acd8b74",
+            "ce95eb82-c456-4ec1-9331-a0efd392ba5d",
+            "100d685d-cc2c-4351-ac27-01a17ae90127",
+            "0f322d7f-596c-4ebf-9316-9463b8debfa3",
+            "eadac81b-ec97-4189-ac42-9c16ceb97b25",
+            "fca729f4-e0db-4aec-9bf0-4cb620baee44",
+            "1a2cf2a7-e799-4e23-b5c7-bd943a3865c4"
+          ],
+          "what": "the same manner, other scenes: a cloister run with papers, a piazza with pigeons, a Trastevere lane on the scooter, a Val d'Orcia road, a Venetian boat, a station platform, the Bologna arcade on the scooter",
+          "why": "Vespi's helmet stands at 30–42% of the height there, under the text, or the heading's place is busy; kept as alternatives"
+        }
+      ],
+      "master": "design/illustrations/source/scenes/plan-terrace.webp",
+      "files": [
+        "public/illustrations/scenes/plan-terrace-{960,1200,1920,2560}.webp",
+        "public/illustrations/scenes/plan-terrace-phone-{780,1170}.webp"
+      ]
     }
   ],
   "files": [
