@@ -176,15 +176,19 @@ try{
       assert.equal((await node.first().innerText()).replace(/\s+/g,' ').trim(),heading,`Home ${width}: «${heading}» reads whole`);
       assert.equal(await node.first().locator('span').evaluateAll(words=>words.filter(word=>!word.querySelector('span')&&getComputedStyle(word).display==='inline-block').length),heading.split(' ').length,`Home ${width}: «${heading}» is split into its words`);
     }
-    // The footer ends in the wordmark laid as a floor mosaic (owner, same night:
-    // «А че надпись кирпичная, сделай мозаичной в общем стиле тогда»): one SVG,
-    // decorative, as wide as the content column and inside the page.
+    // The footer ends in the site's word (owner, same night): one SVG,
+    // decorative, at the content column's left edge and inside the page.
     const markNode=page.locator('[data-footer-mark]');
     await markNode.scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>{const img=document.querySelector('[data-footer-mark]');return img.complete&&img.naturalWidth>0;});
     // Then: «оно уже слишком большое… Сделай поменьше» — at most 600px, from the column's left edge.
     const mark=await markNode.evaluate(node=>{const box=node.getBoundingClientRect(),column=node.parentElement.querySelector('div').getBoundingClientRect();return {src:new URL(node.src).pathname,alt:node.alt,hidden:node.getAttribute('aria-hidden'),left:Math.abs(box.left-column.left)<=1,small:box.width<=600.5&&box.width>=Math.min(280,column.width)-1,fits:box.right<=innerWidth};});
-    assert.deepEqual(mark,{src:'/illustrations/footer-mark.svg',alt:'',hidden:'true',left:true,small:true,fits:true},`Home ${width}: the footer's mosaic wordmark`);
+    assert.deepEqual(mark,{src:'/illustrations/footer-mark.svg',alt:'',hidden:'true',left:true,small:true,fits:true},`Home ${width}: the footer's wordmark`);
+    // Then the mosaic itself: «слишком колхозно выглядит, нужно быть более
+    // stylish, more like in a modern attitude like of the website». The word is
+    // plain type in one stone tone with the first «i»'s dot in the site's red.
+    const fills=[...(await fs.readFile('public/illustrations/footer-mark.svg','utf8')).matchAll(/fill="([^"]+)"/g)].map(match=>match[1].toUpperCase());
+    assert.deepEqual(fills,['#E3DACB','#E63946'],'The footer word is one stone tone and a red dot, not a multicolour mosaic');
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});

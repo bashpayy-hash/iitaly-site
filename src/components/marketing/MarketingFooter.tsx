@@ -46,18 +46,17 @@ export function MarketingFooter() {
           <Link href="/privacy" prefetch={false}>Политика конфиденциальности</Link>
         </span>
       </div>
-      {/* The wordmark laid in the floor (owner, 22 Nov, after the reel's «fade-out
-          logo footer»: «давай имплементни, что считаешь нужным»), fading into the
-          paper. Then: «А че надпись кирпичная, сделай мозаичной в общем стиле
-          тогда» — a texture seen through the letters read as bricks; the word is
-          laid now as the cartouches are, rows of stones along every edge
-          (umber, ochre, terracotta), drawn by
-          design/illustrations/source/wordmark/mosaic-wordmark.py. «Так, оно уже
-          слишком большое… Сделай поменьше»: 600px at most. One SVG, sharp at
-          every size, 17 KB as sent, fetched only near the end of the page.
-          Decorative: the link with the name is the logo above. */}
+      {/* The word at the end of the page (owner, 22 Nov, after the reel's
+          «fade-out logo footer»). Its mosaic versions went the same night: first
+          «надпись кирпичная», then «оно уже слишком большое… Сделай поменьше»
+          (600px at most since), then «слишком колхозно выглядит, нужно быть
+          более stylish, more like in a modern attitude like of the website».
+          So it is plain type now, the header's face, in one warm stone tone a
+          few steps darker than the paper, with the dot of the first «i» in the
+          site's red; drawn by design/illustrations/source/wordmark/footer-wordmark.py
+          (1.8 KB). Decorative: the link with the name is the logo above. */}
       {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG, drawn once. */}
-      <img className={styles.footerMark} src="/illustrations/footer-mark.svg" width={1216} height={621} alt="" aria-hidden="true" loading="lazy" decoding="async" data-footer-mark />
+      <img className={styles.footerMark} src="/illustrations/footer-mark.svg" width={1216} height={636} alt="" aria-hidden="true" loading="lazy" decoding="async" data-footer-mark />
     </footer>
   );
 }
