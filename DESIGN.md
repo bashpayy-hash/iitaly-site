@@ -3187,3 +3187,63 @@ before it was touched.
 pager and its labels on locked steps, plan and guides; the guest cabinet's
 line, link and reminders tile; the cabinet's count against the plan's; the
 home button's name and target; «Посмотреть цену»; the next-topic link.
+
+## Six sets of skills, and an audit by one of them · 22 November 2026 (night)
+
+Owner, with a reel's «Design» and «Marketing» lists: «Вот, влей тогда Taste
+Skill, Hyperframes, GSAP, потом проведи с ними аудит, то, что нужно в целом
+можно исправить. Вот, Marketing Skill, Social Media Skills, Humanizer тоже
+устанавливай. Вот. Promotion, наверное, потом, но запомни, или сразу тоже
+установи, когда будем видео делать».
+
+**Installed** (`.claude/install-skills.sh`; they load from the next session).
+Each repository was read first and is pinned to the commit that was read, so
+a later change upstream does not reach a session unread.
+
+| Skills | From | Note |
+|---|---|---|
+| `design-taste-frontend` | Leonxlnx/taste-skill | Its `SKILL.md` declares a Stop hook that would run the skill's own `gate.mjs` at the end of every turn; the hook is removed on install. Its 38 MB kit of effects, photographs and icons is not installed: this site has its own world. Here it is a lens for review, and `DESIGN.md` decides what the site looks like |
+| `gsap-core`, `-react`, `-timeline`, `-scrolltrigger`, `-performance`, `-plugins`, `-utils` | greensock/gsap-skills | Plain instructions. The site itself has no GSAP: dependencies are protected and its motion is CSS |
+| `hyperframes`, `hyperframes-cli`, `hyperframes-registry` | heygen-com/hyperframes | Video from HTML. The skill asks to send a usage beacon when it starts: turn its telemetry off before the first command |
+| `social`, `video`, `image`, `content-strategy`, `ad-creative`, `influencer-marketing`, `copywriting`, `copy-editing`, `marketing-psychology`, `product-marketing` | coreyhaines31/marketingskills | Ten of 53: what serves Instagram |
+| `reels-scripting`, `hook-generator`, `content-matrix`, `voice-builder`, `gemini-carousel` | charlie947/social-media-skills | Five of 17 |
+| `humanizer` | blader/humanizer | Takes the marks of a model out of a text |
+
+Remotion is not installed: it is added (remotion-dev/skills, pinned the same
+way) the day a video is built with it.
+
+**The audit.** taste-skill's written rules, applied to fourteen pages at 1440
+and 390px with measurements made here. Its own scripts were not run:
+`consistency.mjs` alone is eleven thousand lines that nobody here has read.
+
+Within its budget: requests (55 at most), pictures (1 010 K at most, the
+largest 298 K), fonts (four files, 109 K, one family), layout shift (0), every
+picture has its size, headings go in order, every field has a label.
+
+**Fixed.**
+
+| What | Before | Now |
+|---|---|---|
+| The picture a link arrives with | `opengraph-image`, a file without an extension: the host served it as `text/plain` with `nosniff`, which is not a picture to WhatsApp, Instagram or Telegram | `/og.png`, served as a picture by its extension; the address carries the price printed on it |
+| The preview of a page | every page arrived as the home page: «IITALY — поступление в Италию ведёт ИИ», the home page's description, no address | 73 pages carry their own title, description and address (`src/app/pageMeta.ts`) |
+| A guide's tab and search result | «Апостиль», «Виза D»: a plain title in the guides layout cut the site's name off every page below | «Апостиль — IITALY» |
+| /changes, from 900 to 1279px | its left edge stood 8px left of the header's: `md:px-6 min-[900px]:px-8` never reached 32px, because the stylesheet writes an arbitrary breakpoint before `md` | the ranges do not overlap; the edge is the header's at every width |
+| /changes, the 25 source links | 22px tall, 10px apart, under a finger | 44px on a touch screen; under a mouse the list keeps its step |
+| The questionnaire's pictures | loaded with the page | lazy |
+| /plan's description | promised the document check, which has had its own page since 20 Nov | «Бесплатно, без регистрации» |
+
+**Not fixed, for the owner to decide.**
+
+- Styles weigh 303–373 K on every page (59–79 K as sent), of which a page
+  uses about a fifth: the build groups the styles of unrelated pages into
+  three shared files. Scripts are 687 K on the lightest page and up to
+  1 175 K. Splitting them is a change to `next.config.ts`, which is protected.
+- What taste-skill calls marks of a model in texts (headings of two short
+  fragments, strips of facts, badges) is this site's own manner; texts
+  change only when the owner asks.
+- Small things left as they are: the visa's fact icons are 240px files shown
+  at 50px; the carousel's dots are 14px on a phone (known, awaiting his word).
+
+`design-share-review` (new, in CI) holds the picture's type and size, every
+page's own preview, the site's name in every tab, the edge of /changes at six
+widths, the source links' height and the lazy pictures.

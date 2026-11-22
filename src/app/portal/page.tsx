@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/app/pageMeta";
 import { preload } from "react-dom";
 import { PortalExplorer } from "@/components/portal/PortalExplorer";
 import { PORTAL_HERO } from "./hero-image";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/portal" },
-  title: "Личный кабинет — твой маршрут поступления",
-  description:
-    "Личный маршрут поступления: один следующий шаг, дедлайны, документы и напоминания.",
+  ...pageMeta({
+    path: "/portal",
+    title: "Личный кабинет — твой маршрут поступления",
+    description:
+      "Личный маршрут поступления: один следующий шаг, дедлайны, документы и напоминания.",
+  }),
   robots: { index: false, follow: false },
 };
 

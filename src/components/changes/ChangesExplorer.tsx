@@ -62,7 +62,11 @@ function statusSpan(index: number, total: number) {
 export function ChangesExplorer() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-[#DCD5CA] bg-cream px-5 md:px-6 min-[900px]:px-8 pt-10 pb-8 sm:pt-14">
+      {/* 22 Nov: «md:px-6 min-[900px]:px-8» never reached 32px: the stylesheet
+          writes the arbitrary breakpoint before «md», so «md» won, and from 900
+          to 1279px this page's edge stood 8px left of the header's. The two
+          ranges no longer overlap. */}
+      <section className="relative overflow-hidden border-b border-[#DCD5CA] bg-cream px-5 md:max-[899px]:px-6 min-[900px]:px-8 pt-10 pb-8 sm:pt-14">
         <EditorialBackground variant="guides" grain />
         <IllustrationBackdrop
           asset={TUSCANY_HILLS}
@@ -114,7 +118,7 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- статусы --- */}
-      <section className="px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+      <section className="px-5 md:max-[899px]:px-6 min-[900px]:px-8 py-12 sm:py-16">
         <div className="mx-auto max-w-[1216px]">
           <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Главные статусы на {VERIFIED_AT_HUMAN}
@@ -137,7 +141,7 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- одиннадцать правил: оглавление из раскрывающихся строк --- */}
-      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] px-5 md:max-[899px]:px-6 min-[900px]:px-8 py-12 sm:py-16">
         <div className="mx-auto max-w-[1216px] [&>*]:max-w-[900px]">
           <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Что учитывать при подаче
@@ -213,7 +217,7 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- маршруты --- */}
-      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] px-5 md:max-[899px]:px-6 min-[900px]:px-8 py-12 sm:py-16">
         <div className="mx-auto max-w-[1216px]">
           <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Маршруты поступления
@@ -284,7 +288,7 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- FAQ --- */}
-      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] px-5 md:max-[899px]:px-6 min-[900px]:px-8 py-12 sm:py-16">
         <div className="mx-auto max-w-[1216px] [&>*]:max-w-[900px]">
           <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Частые вопросы
@@ -303,7 +307,7 @@ export function ChangesExplorer() {
       </section>
 
       {/* --- источники и дисклеймер --- */}
-      <section className="border-t border-[#DCD5CA] px-5 md:px-6 min-[900px]:px-8 py-12 sm:py-16">
+      <section className="border-t border-[#DCD5CA] px-5 md:max-[899px]:px-6 min-[900px]:px-8 py-12 sm:py-16">
         <div className="mx-auto max-w-[1216px] [&>*]:max-w-[900px]">
           <h2 className="font-apple-display text-[30px]! font-semibold leading-[1.15]! tracking-[-0.03em] sm:text-[34px]!">
             Первичные источники
@@ -312,14 +316,17 @@ export function ChangesExplorer() {
             <summary className={SUMMARY}>
               <span className="font-apple-display text-[17px] font-semibold leading-snug sm:text-lg">Все ссылки на официальные страницы · {SOURCES.length}</span>
             </summary>
-            <ul className="space-y-2.5 pb-5 text-[15px]">
+            {/* Audit by taste-skill's rules (22 Nov): twenty-five links stood 22px
+                tall, 10px apart, under a finger. On a touch screen each line is a
+                44px target; under a mouse the list keeps its former step. */}
+            <ul className="pb-5 text-[15px]">
               {SOURCES.map((s) => (
                 <li key={s.url}>
                   <a
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-ink underline decoration-line underline-offset-4 hover:decoration-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+                    className="inline-block py-[5px] pointer-coarse:py-[11px] text-ink underline decoration-line underline-offset-4 hover:decoration-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
                   >
                     {s.label}
                   </a>

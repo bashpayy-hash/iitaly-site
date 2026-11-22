@@ -5,6 +5,7 @@ import "./tenge.css";
 import "./typography.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { SHARE_IMAGE } from "./pageMeta";
 import { ChatMount } from "@/components/chat/ChatMount";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { PaperOverlayGate } from "@/components/PaperOverlayGate";
@@ -71,17 +72,21 @@ export const metadata: Metadata = {
   // поисковик считает их разными страницами и делит между ними вес.
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
+  // Картинка превью названа явно (22 Nov): файл opengraph-image статический
+  // экспорт писал без расширения, и хостинг отдавал его как text/plain.
   openGraph: {
     type: "website",
     siteName: "IITALY",
     title,
     description,
     locale: "ru_RU",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title,
     description,
+    images: [SHARE_IMAGE],
   },
 };
 

@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/app/pageMeta";
 import Link from "next/link";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { PAY_PHONE, PAY_WA } from "@/lib/payment";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/terms" },
+export const metadata: Metadata = pageMeta({
+  path: "/terms",
   title: "Условия сервиса",
   description: "Оплата, активация кабинета, объём услуги, возврат и ограничения IITALY.",
-};
+});
 
 export default function TermsPage() {
   return (
