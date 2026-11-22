@@ -47,20 +47,20 @@ try {
     const tall = locator => locator.evaluate(el => el.getBoundingClientRect().height);
     const overflows = () => page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
 
-    // 1. The questionnaire. An answered question can be passed with «Далее»:
+    // 1. The questionnaire. An answered question can be passed with «Дальше»:
     //    after «Назад» the only way forward was to tap the same answer again.
     await visit('/plan');
     const wizard = page.locator('[data-plan-wizard]');
     const question = () => page.locator('[data-plan-question]').getAttribute('data-plan-question');
     const answer = async () => { const id = await question(); await wizard.locator('button[aria-pressed]').first().click(); await page.waitForFunction(previous => document.querySelector('[data-plan-question]')?.getAttribute('data-plan-question') !== previous, id); };
-    assert.equal(await page.locator('[data-plan-next]').count(), 0, 'An unanswered question has no «Далее»');
+    assert.equal(await page.locator('[data-plan-next]').count(), 0, 'An unanswered question has no «Дальше»');
     await answer();
     await page.getByRole('button', { name: 'Назад', exact: true }).click();
     const next = page.locator('[data-plan-next]');
     await next.waitFor();
-    assert(await tall(next) >= 44, `«Далее» is a full-size target at ${width}`);
+    assert(await tall(next) >= 44, `«Дальше» is a full-size target at ${width}`);
     await next.click();
-    assert.equal(await question(), 'education', '«Далее» goes to the next question');
+    assert.equal(await question(), 'education', '«Дальше» goes to the next question');
     assert.equal((await draft()).answers.intake, '2027/28', '…and keeps the answer');
     for (let index = 1; index < 10; index++) await answer();
     // The first step's title in the hand-off never breaks after a hyphen («12-/й год»).
@@ -167,7 +167,7 @@ try {
     await recover.waitFor();
     const prices = page.locator('form a[href="/prices"]');
     const boxes = await Promise.all([recover, prices].map(target => target.boundingBox()));
-    assert(boxes.every(box => box.height >= 44), `Sign-in at ${width}: «восстановить» and «Посмотреть тарифы» are 44px targets (${boxes.map(box => Math.round(box.height))})`);
+    assert(boxes.every(box => box.height >= 44), `Sign-in at ${width}: «восстановить» and «Посмотреть цену» are 44px targets (${boxes.map(box => Math.round(box.height))})`);
     assert(boxes[0].y + boxes[0].height <= boxes[1].y + .5, 'Sign-in: the two targets do not overlap');
     await recover.click();
     const code = page.locator('[data-portal-recover-back]');

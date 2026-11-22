@@ -70,7 +70,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         </summary>
         <p className="mt-2 text-apple-body-sm text-cloud-body">
           Подключи Telegram в личном кабинете для напоминаний по сохранённому
-          маршруту. Сам по себе этот бесплатный квиз не включает рассылку.
+          маршруту. Сам по себе бесплатный план не включает рассылку.
         </p>
         <div className="mt-4">
           <AppleButtonLink href="/portal?view=help" variant="outlined" size="sm">

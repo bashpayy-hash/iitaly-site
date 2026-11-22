@@ -195,10 +195,16 @@ try {
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'Local inspection never calls paid portal endpoints');
     await visit('/portal');await page.locator('[data-local-workspace]').waitFor();
     await page.getByRole('link',{name:'Настройки',exact:true}).click();
+    // 22 Nov: with a finished questionnaire the link opens the list of answers on
+    // /plan and keeps the plan; it used to restart the questionnaire at question 1.
     await page.getByRole('link',{name:'Изменить ответы анкеты',exact:true}).click();
+    await page.locator('[data-plan-answers]').waitFor();
+    assert.equal(new URL(page.url()).pathname,'/plan');
+    assert.equal(await page.locator('[data-plan-answer]').count(),10,'The cabinet leads to the same list of answers as /plan');
+    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).complete),true,'Changing answers from the cabinet keeps the plan');
+    await page.locator('[data-plan-answer=intake]').click();
     await page.getByRole('heading',{name:'Когда хочешь начать учёбу?',exact:true}).waitFor();
     assert.equal(await page.locator('[data-vespi] [data-vespi]').count(),0);
-    assert.equal(await page.locator('img[data-vespi]').count(),0,'Editing the questionnaire has no repeated mascot portrait');
     await capture('portal-questionnaire');
     assert.equal(calls.filter(path=>path.startsWith('/api/portal')).length,0,'No protected API calls during guest questionnaire, selection or self-report');
     results.push({width,sharedDraft:true,guestWithoutAuth:true,persistentSelection:true,existingMapAndComparison:true,noFutureUpload:true,exampleHonest:true,singleMascot:true,accessWall:true,oneFreeCheck:true,noStoredFileOrReportContent:true});

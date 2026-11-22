@@ -309,7 +309,7 @@ export function PortalLogin({
             <button type="button" className={styles.textButton} onClick={openRecovery} data-portal-recover-open>восстановить</button>
           </p>
           <p className={styles.foot}>
-            Ещё нет кода? <Link href="/prices">Посмотреть тарифы</Link>
+            Ещё нет кода? <Link href="/prices">Посмотреть цену</Link>
           </p>
         </form>
         )}

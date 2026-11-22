@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- Local riso art with explicit dimensions. */
 import Link from "next/link";
+import { OpenOrLocked, RouteHint } from "@/components/access/RouteHint";
 import { GUIDE_TOPICS, guideHref, guidePoints, guideStageHref, stageForGuide } from "./guideCatalogue";
 import { guideArt } from "./guideArt";
 import { isGuideId } from "./guideJourney";
@@ -61,8 +62,8 @@ export function GuideStepPage({ id, step }: { id: string; step: number }) {
       <nav className={styles.pager} aria-label="Соседние шаги" data-fab-yield>
         {previous ? <Link className={styles.pagerCard} href={previous.href} data-guide-step-prev><span><small>Назад</small>{previous.title}</span></Link>
           : <Link className={styles.pagerCard} href={guideHref(id)}><span><small>К теме</small>{guide.title}</span></Link>}
-        {next ? <Link className={`${styles.pagerCard} ${styles.forward}`} href={next.href} data-guide-step-next><span><small>Дальше</small>{next.title}</span></Link>
-          : <Link className={`${styles.pagerCard} ${styles.forward}`} href={guideHref(id)}><span><small>Готово</small>Вернуться к теме</span></Link>}
+        {next ? <Link className={`${styles.pagerCard} ${styles.forward}`} href={next.href} data-guide-step-next><span><small>Дальше<RouteHint locked={!guideStepOpen(id, step + 1)} /></small>{next.title}</span></Link>
+          : <Link className={`${styles.pagerCard} ${styles.forward}`} href={guideHref(id)}><span><small><OpenOrLocked isOpen={open} open="Готово" locked="К теме" /></small><OpenOrLocked isOpen={open} open="Вернуться к теме" locked={guide.title} /></span></Link>}
       </nav>
       <footer className={ui.articleFooter}><GuideHelperLink id={helpId} /><Link href="/guides" className={ui.textLink}>Все темы</Link></footer>
     </article>

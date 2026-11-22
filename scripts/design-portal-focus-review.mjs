@@ -107,7 +107,7 @@ try {
     assert.equal(await page.locator('[data-portal-welcome] h1').innerText(),'Привет, Demo!');
     assert.match(await page.locator('[data-saved-universities]').innerText(),/Università di Padova/);
     assert.match(await page.locator('[data-saved-universities]').innerText(),/LUISS Guido Carli/);
-    assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 4 из 26 шагов · заранее 2');
+    assert.equal((await page.locator('[data-road-count]').innerText()).replace(/\s+/g,' '),'Шаги: 3 из 16 · Документы: 1 из 10 · заранее 2');
     assert.equal(await road(page).getAttribute('data-road-ahead'),'2');
     assert.equal(await page.locator('[data-portal-welcome] a,[data-portal-welcome] button').count(),0,'Greeting metadata is plain text');
     assert.equal(await page.locator('[data-portal-hero] [data-vespi-scene], [data-portal-cabin]').count(),0,'No mascot figure on the hero landscape (owner, 3 Nov: «смотрится топорно»)');
@@ -125,7 +125,7 @@ try {
       const style=q=>getComputedStyle(document.querySelector(q));
       const tile=style('[data-portal-road]');
       return {greeting:style('[data-portal-welcome] h1').fontFamily,title:style('[data-portal-now] [data-road-step-title]').fontFamily,
-        greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count]>strong').fontFamily,countWeight:style('[data-road-count]>strong').fontWeight,
+        greetingWeight:style('[data-portal-welcome] h1').fontWeight,count:style('[data-road-count] strong').fontFamily,countWeight:style('[data-road-count] strong').fontWeight,
         paper:style('[data-portal-editorial]').backgroundColor,grain:style('[data-portal-editorial]').backgroundImage,grainBlend:style('[data-portal-editorial]').backgroundBlendMode,
         tileRadius:tile.borderRadius,tileBackground:tile.backgroundColor,featureRadius:style('[data-cabinet-features] a').borderRadius};
     });
@@ -272,7 +272,7 @@ try {
       for(const part of ['svg','span']){
         await page.locator('header a.logo-link').locator(part).first().click();await page.waitForURL(origin+'/');
         await page.goBack({waitUntil:'networkidle'});await page.locator('[data-portal-focus]').waitFor();
-        assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 4 из 26 шагов · заранее 2');
+        assert.equal((await page.locator('[data-road-count]').innerText()).replace(/\s+/g,' '),'Шаги: 3 из 16 · Документы: 1 из 10 · заранее 2');
       }
     }
     assert.equal(calls.length,0);results.push({width,compactHeight:card.height,checkboxes:5,instructionsOnlyInDetail:true,singleVisibleMascot:true,axeOtherRules:true,consistentFonts:true});await context.close();

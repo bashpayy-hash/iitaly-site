@@ -109,7 +109,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
       <footer className={ui.articleFooter}>
         <GuideHelperLink id={helpId} />
         {part ? <Link href="/guides/visa" className={ui.textLink}>К вопросам о визе</Link>
-          : next ? <Link href={guideHref(next.id)} className={ui.textLink} data-guide-next-topic={next.id}>{next.title}</Link>
+          : next ? <Link href={guideHref(next.id)} className={ui.textLink} data-guide-next-topic={next.id}>Следующая тема: {next.title}</Link>
           : <Link href={guideStageHref(stage.id)} className={ui.textLink}>Все темы раздела</Link>}
       </footer>
     </article>

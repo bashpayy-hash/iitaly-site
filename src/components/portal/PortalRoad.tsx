@@ -3,7 +3,7 @@
 
 import { type CSSProperties, Fragment, type RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { PortalData, PortalStage, PortalTask } from "@/lib/portalApi";
-import { portalProgress, portalTaskDone } from "@/lib/portalProgress";
+import { portalProgress, portalProgressGroups, portalTaskDone } from "@/lib/portalProgress";
 import styles from "./portal-path.module.css";
 import { plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
@@ -198,6 +198,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
 }) {
   const progress = portalProgress(data);
   const { total, done } = progress;
+  const groups = portalProgressGroups(data);
   const destination = roadPosition(done, total);
   const [motion, setMotion] = useState(() => ({
     position: roadPosition(typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? done : travel?.fromDone ?? done, total),
@@ -330,7 +331,12 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
       {/* Owner, 14 Nov 2026 (UX audit, item 8): before the questionnaire only the
          first stage is real, so «0 из 2» next to a long road read as a mistake.
          The count names what it counts, and the rest says when it opens. */}
-      <p className={styles.count} data-road-count>Сделано <strong>{done}</strong> из {total} {stepWord(total)}{awaitingProfile && <span className={styles.ahead}> первого этапа · остальные откроются после анкеты</span>}{progress.ahead > 0 && <span className={styles.ahead}> · заранее {progress.ahead}</span>}</p>
+      {/* 22 Nov: with a finished questionnaire the count names its parts
+         (portalProgressGroups), so the plan's steps read as the same number
+         as on /plan. A dot is bound to the group before it. */}
+      <p className={styles.count} data-road-count>{awaitingProfile || groups.length < 2
+        ? <>Сделано <strong>{done}</strong> из {total} {stepWord(total)}{awaitingProfile && <span className={styles.ahead}> первого этапа · остальные откроются после анкеты</span>}</>
+        : groups.map((group, index) => <Fragment key={group.key}>{index > 0 && <span className={styles.countDot}>{"\u00A0· "}</span>}<span className={styles.countGroup} data-road-count-group={group.key}>{group.label}: <strong>{group.done}</strong> из {group.total}</span></Fragment>)}{progress.ahead > 0 && <span className={styles.ahead}> · заранее {progress.ahead}</span>}</p>
       <div className={styles.meter} aria-hidden="true" data-road-meter><div className={styles.rail}>
         <span className={styles.bar}><span data-flight-fill data-road-bar /></span>
         {ticks.map(at => <i key={at} className={styles.tick} style={{ left: `${at}%` }} />)}
@@ -380,7 +386,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const stepStates: NodeState[] = row.tasks.map(task => portalTaskDone(data, task) ? "done" : task.id === current?.id ? "current"
           : lockedTask?.(task) ? "locked" : opened && task.available !== false ? "todo" : "later");
         const station = point++;
-        const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "закрыт до оплаты" };
+        const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "откроется с маршрутом" };
         return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
           <a className={styles.unitHead} style={{ "--x": snake(station) } as CSSProperties} data-side={outside(station)} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>

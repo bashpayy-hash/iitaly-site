@@ -134,7 +134,9 @@ export function PlanStepPage({ position }: { position: number }) {
       <p className={styles.risk} data-wall-risk>{RISK_LINE}</p>
     </div>}
 
-    {next === null && <section className={page.finish} aria-label="Маршрут пройден">
+    {/* A guest on the locked last step has not passed the route: the closing
+        note and its cabinet button are for a step that was read (22 Nov). */}
+    {next === null && isOpen && <section className={page.finish} aria-label="Маршрут пройден">
       <p>Это последний шаг маршрута. Сроки, документы и напоминания по всем шагам&nbsp;— в личном кабинете.</p>
       <Link className={styles.primary} href="/portal">Продолжить в личном кабинете</Link>
     </section>}
@@ -144,8 +146,8 @@ export function PlanStepPage({ position }: { position: number }) {
         ? <Link className={page.pagerCard} href={planStepHref(previous)} data-plan-step-prev><span><small>Назад</small>{stepTitleText(steps[previous].t)}</span></Link>
         : <Link className={page.pagerCard} href={PLAN_ROUTE_HREF}><span><small>К плану</small>Весь маршрут</span></Link>}
       {next !== null
-        ? <Link className={`${page.pagerCard} ${page.forward}`} href={planStepHref(next)} data-instruction-next data-plan-step-next><span><small>Дальше</small>{stepTitleText(steps[next].t)}</span></Link>
-        : <Link className={`${page.pagerCard} ${page.forward}`} href={PLAN_ROUTE_HREF}><span><small>Готово</small>Вернуться к маршруту</span></Link>}
+        ? <Link className={`${page.pagerCard} ${page.forward}`} href={planStepHref(next)} data-instruction-next data-plan-step-next><span><small>Дальше{!open(next) && "\u00A0· с маршрутом"}</small>{stepTitleText(steps[next].t)}</span></Link>
+        : <Link className={`${page.pagerCard} ${page.forward}`} href={PLAN_ROUTE_HREF}><span><small>{isOpen ? "Готово" : "К плану"}</small>{isOpen ? "Вернуться к маршруту" : "Весь маршрут"}</span></Link>}
     </nav>
     {/* On the first and the last step the pager itself leads back to the route. */}
     {previous !== null && next !== null && <footer className={ui.articleFooter}>
