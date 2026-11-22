@@ -3,8 +3,9 @@
 Owner, on the first version (a brick-like texture seen through the letters):
 «А че надпись кирпичная, сделай мозаичной в общем стиле тогда». In the
 cartouches the stones follow the form (opus vermiculatum): rows of tesserae
-run along every edge, a slate-blue outer row, an ochre one inside it, then
-terracotta. This script lays the word the same way: the letters' distance
+run along every edge, a dark outer row, an ochre one inside it, then
+terracotta. Then: «Так, оно уже слишком большое… Сделай поменьше» — the word
+stands at 600px at most, with stones sized for that. This script lays the word the same way: the letters' distance
 field gives rows parallel to the outline, stones are seeded along each row at
 one stone's length, every pixel goes to its nearest seed, and the joints
 between stones are left open so the paper shows through.
@@ -24,9 +25,11 @@ from PIL import Image, ImageDraw, ImageFont
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 
-SLATE, OCHRE, TERRA = (70, 98, 124), (226, 168, 58), (176, 64, 42)
+# The outer row is umber, not the cartouches' slate blue: code and SVG on the
+# site carry warm colours only (design-warm-palette-review); raster art may differ.
+UMBER, OCHRE, TERRA = (86, 54, 38), (226, 168, 58), (176, 64, 42)
 WORD, TRACK, OUT_W, SS = "iItaly", -0.055, 2432, 2   # SS: drawn at twice the largest size, then reduced
-STONE = 17 * SS                                       # a stone's length at the drawing size (about 8.5 CSS px)
+STONE = 30 * SS                                       # a stone's length at the drawing size: about 7 CSS px at the footer's 600px
 
 def face():
     for path in glob.glob("out/_next/static/media/*.woff2"):
@@ -89,7 +92,7 @@ def svg(label, bands, rng):
     grouped by colour into one path per colour: sharp at every size, one file."""
     unit = 1216 / label.shape[1]                       # viewBox units are CSS pixels at 1216 wide
     joint = .55                                        # half the joint, in CSS pixels
-    shades = {0: SLATE, 1: OCHRE, 2: TERRA}
+    shades = {0: UMBER, 1: OCHRE, 2: TERRA}
     groups = {}
     for i, sl in enumerate(ndimage.find_objects(label), start=1):
         if sl is None: continue

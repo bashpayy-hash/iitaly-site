@@ -51,9 +51,10 @@ export function MarketingFooter() {
           paper. Then: «А че надпись кирпичная, сделай мозаичной в общем стиле
           тогда» — a texture seen through the letters read as bricks; the word is
           laid now as the cartouches are, rows of stones along every edge
-          (slate, ochre, terracotta), drawn by
-          design/illustrations/source/wordmark/mosaic-wordmark.py. One SVG, sharp
-          at every size, 47 KB as sent, fetched only near the end of the page.
+          (umber, ochre, terracotta), drawn by
+          design/illustrations/source/wordmark/mosaic-wordmark.py. «Так, оно уже
+          слишком большое… Сделай поменьше»: 600px at most. One SVG, sharp at
+          every size, 17 KB as sent, fetched only near the end of the page.
           Decorative: the link with the name is the logo above. */}
       {/* eslint-disable-next-line @next/next/no-img-element -- a static SVG, drawn once. */}
       <img className={styles.footerMark} src="/illustrations/footer-mark.svg" width={1216} height={621} alt="" aria-hidden="true" loading="lazy" decoding="async" data-footer-mark />

@@ -3394,8 +3394,8 @@ row at one stone's length, each pixel goes to its nearest seed, and every stone
 is shrunk toward its centre so the joint stays open to the paper. The face is
 Inter Tight 700, the wordmark's face where SF Pro Display is absent.
 
-One SVG with one path per colour (4 843 stones, 21 colours): sharp at every
-size, 190 KB raw and 47 KB as Netlify sends it, fetched only near the end of
+One SVG with one path per colour (first 4 843 stones; see below): sharp at every
+size, 47 KB as Netlify sends it at first, fetched only near the end of
 the page (`loading="lazy"`). The 15 KB brick texture is gone. The generator is
 `design/illustrations/source/wordmark/mosaic-wordmark.py` (deterministic; it
 reads the face from the build).
@@ -3421,3 +3421,11 @@ Owner: «Сделай еще тестовое отдельное отделен�
 `design-test-offer-review` (CI, group portal) holds the noindex, the absence
 from the sitemap and from every other page, the badge before the heading, the
 price line, and that the order names the test product.
+
+Same night, two corrections. CI's warm-palette review forbids cold colours in
+any code or SVG on the site (raster art is exempt), and the word's slate-blue
+outer row was seven cold literals: the outer row is umber now (86, 54, 38).
+Then the owner, on the live footer: «Так, оно уже слишком большое. Вот. Сделай
+поменьше». The word stands at half the column, 600px at most (280px on a
+phone), at the column's left edge; its stones are drawn larger for that size
+(1 494 stones, about 7px each), and the SVG is 17 KB as sent.

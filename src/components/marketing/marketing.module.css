@@ -87,10 +87,12 @@
 .finePrint { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; border-top: 1px solid var(--i-line); padding-top: 24px; }
 .finePrint p { max-width: 640px; }
 .finePrint > a { flex-shrink: 0; }
-/* The wordmark laid as a floor mosaic (footer-mark.svg), as wide as the content
-   column, its lower part fading into the paper. */
+/* The wordmark laid as a floor mosaic (footer-mark.svg), its lower part fading
+   into the paper. Owner, 22 Nov: «оно уже слишком большое… Сделай поменьше» —
+   half the column at most (600px), 280px on a phone, at the column's left
+   edge under the logo's column. */
 .footerMark {
-  display: block; width: 100%; height: auto; margin: 48px 0 0; user-select: none; pointer-events: none;
+  display: block; width: 48%; min-width: min(100%, 280px); max-width: 600px; height: auto; margin: 48px 0 0; user-select: none; pointer-events: none;
   -webkit-mask-image: linear-gradient(180deg, #000 42%, rgba(0,0,0,.4) 70%, transparent 98%);
   mask-image: linear-gradient(180deg, #000 42%, rgba(0,0,0,.4) 70%, transparent 98%);
 }
