@@ -173,8 +173,12 @@ export function LocalWorkspace() {
       {/* Funnel analysis (owner, 22 Nov: «где пользователю будет сложно
           ориентироваться»). A guest opened «Личный кабинет» and nothing said
           it is the free one kept on this device, nor led back to the plan it
-          is built from. The line names it; with a plan it links to that plan. */}
-      <div className={styles.localStatus} data-local-status><span>{draft.complete ? "Бесплатный кабинет: план сохранён на этом устройстве" : "Бесплатный кабинет: прогресс сохраняется на этом устройстве"}</span><span className={styles.localLinks}>{draft.complete && <Link href="/plan#route" prefetch={false} data-local-plan>Открыть план</Link>}<a href={cloudLoginHref}>Есть код доступа? Войти</a></span></div>
+          is built from. The line names it; with a plan it links to that plan.
+          Owner, 22 Nov, with an iPad screenshot: «Кнопка войти справа сверху
+          чуть кривая». The question and the way in were one underlined run of
+          words beside another underlined link. It is one link with the same
+          words; the question is plain and «Войти» has the header's own pill. */}
+      <div className={styles.localStatus} data-local-status><span>{draft.complete ? "Бесплатный кабинет: план сохранён на этом устройстве" : "Бесплатный кабинет: прогресс сохраняется на этом устройстве"}</span><span className={styles.localLinks}>{draft.complete && <Link href="/plan#route" prefetch={false} data-local-plan>Открыть план</Link>}<a className={styles.localSignIn} href={cloudLoginHref} data-local-signin><span>Есть код доступа?</span>{" "}<b>Войти</b></a></span></div>
       {storageError && <p role="alert" className={styles.readOnly}>{storageError}</p>}
       <div className={`${styles.layout} ${focusStyles.localLayout}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div ref={content} className={styles.content}>

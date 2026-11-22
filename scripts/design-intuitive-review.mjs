@@ -186,6 +186,45 @@ try {
       assert.deepEqual(out, [], `${path} at ${width}: every station status stays inside its tile`);
     }
 
+    // 9. A dropdown is drawn by the site. Owner, 22 Nov, with an iPad
+    //    screenshot of /check: «эти кнопки все еще кривоватые». No dropdown
+    //    switched the system look off, so Safari drew each as a 28px capsule
+    //    with its own arrows. Every one has the page's box and one chevron.
+    for (const path of ['/check', '/universities', '/guides/permesso-modulo-1/kody']) {
+      await visit(path);
+      const dropdowns = await page.locator('select').evaluateAll(list => list.filter(select => select.getClientRects().length).map(select => {
+        const style = getComputedStyle(select);
+        return { appearance: style.appearance, height: select.getBoundingClientRect().height, chevron: style.backgroundImage.startsWith('url("data:image/svg+xml'), room: parseFloat(style.paddingRight), cut: select.scrollWidth > select.clientWidth + 1 };
+      }));
+      assert(dropdowns.length > 0, `${path} at ${width}: a dropdown is on the page`);
+      for (const dropdown of dropdowns) {
+        assert.equal(dropdown.appearance, 'none', `${path} at ${width}: the system look of a dropdown is off`);
+        assert(dropdown.height >= 44, `${path} at ${width}: a dropdown is ${dropdown.height}px tall`);
+        assert(dropdown.chevron && dropdown.room >= 30, `${path} at ${width}: a dropdown has its chevron and room for it`);
+        assert.equal(dropdown.cut, false, `${path} at ${width}: a dropdown's text is not cut`);
+      }
+    }
+
+    // 10. The guest cabinet's way in. Same day: «Кнопка войти справа сверху
+    //     чуть кривая». It was one underlined run of words beside another
+    //     underlined link; the same words are one link whose «Войти» has the
+    //     header's pill.
+    await page.evaluate(() => localStorage.setItem('iitaly_plan_draft_v1', JSON.stringify({ answers: { intake: '2027/28', education: '11 классов', grades: 'отличник', goal: 'Бакалавриат', budget: 'Только со стипендией', field: 'Экономика и бизнес', lang: 'есть сертификат', age: 'adult', residence: 'kz', dsuRegion: 'other' }, step: 10, complete: true })));
+    await visit('/portal');
+    const strip = page.locator('[data-local-status]');
+    await strip.waitFor();
+    const signIn = page.getByRole('link', { name: 'Есть код доступа? Войти', exact: true });
+    assert.equal(await signIn.count(), 1, `Cabinet at ${width}: the way in is one link with the same words`);
+    const way = await signIn.evaluate(link => {
+      const pill = link.querySelector('b'), box = link.getBoundingClientRect(), pillBox = pill.getBoundingClientRect(), style = getComputedStyle(pill), row = link.closest('[data-local-status]').getBoundingClientRect();
+      return { height: box.height, underline: getComputedStyle(link).textDecorationLine, pill: pillBox.height, radius: parseFloat(style.borderTopLeftRadius), border: parseFloat(style.borderTopWidth), right: pillBox.right, row: row.right, inside: pillBox.top >= box.top && pillBox.bottom <= box.bottom };
+    });
+    assert(way.height >= 44, `Cabinet at ${width}: the way in is a 44px target (${way.height})`);
+    assert.equal(way.underline, 'none', `Cabinet at ${width}: the way in is not an underlined run of words`);
+    assert(way.pill >= 30 && way.radius >= way.pill / 2 && way.border >= 1 && way.inside, `Cabinet at ${width}: «Войти» is a pill inside its target`);
+    if (!phone) assert(Math.abs(way.right - way.row) <= 1, `Cabinet at ${width}: «Войти» ends at the content's right edge (${way.right} against ${way.row})`);
+    assert.equal(await overflows(), false, `The guest cabinet fits ${width}px`);
+
     assert.deepEqual(errors, [], `No page errors at ${width}`);
     results.push({ width, passed: true });
     await context.close();

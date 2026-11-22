@@ -3,6 +3,7 @@ import { Onest, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import "./tenge.css";
 import "./typography.css";
+import "./controls.css";
 import paper from "@/components/marketing/public-paper.module.css";
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { SHARE_IMAGE } from "./pageMeta";
