@@ -127,7 +127,9 @@ export function PaymentSuccess() {
             <div className="mt-6 rounded-2xl bg-carbon p-5 text-left">
               <p className="text-apple-caption text-cloud-meta">Фамилия</p>
               <b className="text-cloud-white">{view.surname}</b>
-              <p className="mt-4 text-apple-caption text-cloud-meta">Код кабинета</p>
+              {/* 22 Nov: this page called it «Код кабинета»; the sign-in, the
+                  form of purchase, /prices and the FAQ call it «Код доступа». */}
+              <p className="mt-4 text-apple-caption text-cloud-meta">Код доступа</p>
               <div className="mt-1 flex items-center justify-between gap-3">
                 <b className="font-mono text-lg text-cloud-white">{view.code}</b>
                 <button
@@ -139,6 +141,13 @@ export function PaymentSuccess() {
                 </button>
               </div>
             </div>
+            {/* 22 Nov: the code is shown once and e-mail at purchase is
+                optional, so the page says what the code is for before the
+                buyer leaves it. Both facts are what this page already does:
+                it keeps the code on this device (PORTAL_CODE above). */}
+            <p className="mt-4 text-apple-body-sm text-cloud-body" data-payment-keep>
+              Сохрани код: с ним и фамилией ты войдёшь с любого устройства. На этом устройстве вход уже выполнен.
+            </p>
             <Link
               href="/portal"
               className="mt-6 inline-flex min-h-11 items-center justify-center rounded-pill bg-crimson px-5 py-2 text-sm font-semibold text-white"
