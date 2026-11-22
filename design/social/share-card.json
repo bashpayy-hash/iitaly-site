@@ -2,7 +2,7 @@
   "file": "public/og.jpg",
   "width": 1200,
   "height": 630,
-  "price": 10990,
-  "bytes": 178611,
-  "sha256": "8847940b506aef0a6ce1182698955806dc4a5e4763ec54bcbee71e332f1d875c"
+  "bytes": 179343,
+  "sha256": "47d1207a73237c3e8f3e64ffbdbbb734f60b2858fbbcfb8f408dbc11973294b8",
+  "version": "47d1207a"
 }

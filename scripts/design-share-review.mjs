@@ -50,9 +50,11 @@ const meta = html => ({
 
 // Owner, 23 Nov, with the Telegram preview of the home page (words on plain
 // paper): «почему эта страница такая страшная, сделай ее нормально красивой с
-// иллюстрацией в нашем стиле». The picture is a drawn card with the /plan
+// иллюстрацией в нашем стиле»; then «убери ценник и казахстан италия, скажи
+// что это современный подход». The picture is a drawn card with the /plan
 // terrace now (design/social/source/share-card.mjs), a JPEG light enough for
-// WhatsApp, and the record beside it says which price it was drawn for.
+// WhatsApp. Its address ends in the file's hash, so a redrawn card is a new
+// address to every cache.
 const picture = await readFile(join(root, 'og.jpg'));
 assert.equal(picture.subarray(0, 3).toString('hex'), 'ffd8ff', 'out/og.jpg is a JPEG file');
 const jpegSize = buffer => { for (let at = 2; at < buffer.length;) { const marker = buffer[at + 1], length = buffer.readUInt16BE(at + 2); if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) return [buffer.readUInt16BE(at + 7), buffer.readUInt16BE(at + 5)]; at += 2 + length; } return null; };
@@ -60,11 +62,14 @@ assert.deepEqual(jpegSize(picture), [1200, 630], 'The share picture is 1200×630
 assert(picture.length <= 300 * 1024, `The share picture is light enough for WhatsApp to show (${Math.round(picture.length / 1024)} KB)`);
 for (const name of ['opengraph-image', 'twitter-image', 'og.png']) assert(!existsSync(join(root, name)), `out/${name}: the picture is og.jpg`);
 const card = JSON.parse(await readFile('design/social/share-card.json', 'utf8'));
-assert.equal(createHash('sha256').update(picture).digest('hex'), card.sha256, 'public/og.jpg is the card design/social/source/share-card.mjs drew (draw it again and commit both)');
+const hash = createHash('sha256').update(picture).digest('hex');
+assert.equal(hash, card.sha256, 'public/og.jpg is the card design/social/source/share-card.mjs drew (draw it again and commit both)');
 
 const home = meta(await readFile(join(root, 'index.html'), 'utf8'));
-assert.match(home.ogImage, /^https:\/\/iitaly\.net\/og\.jpg\?v=\d+$/, 'Home: the share picture is /og.jpg');
-assert.equal(Number(new URL(home.ogImage).searchParams.get('v')), card.price, `The price printed on the share picture (${card.price}) is the site's: after a price change run design/social/source/share-card.mjs`);
+assert.match(home.ogImage, /^https:\/\/iitaly\.net\/og\.jpg\?v=[0-9a-f]{8}$/, 'Home: the share picture is /og.jpg');
+assert.equal(new URL(home.ogImage).searchParams.get('v'), hash.slice(0, 8), 'The picture\'s address carries its hash: after a redraw copy the new version into SHARE_IMAGE (src/app/pageMeta.ts)');
+// Owner, 23 Nov: no price tag on the picture, so nothing ties it to the price.
+assert.equal(card.price, undefined, 'The share picture carries no price');
 let own = 0;
 const titles = new Map();
 for (const file of files) {
