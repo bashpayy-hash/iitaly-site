@@ -87,8 +87,8 @@
 .finePrint { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; border-top: 1px solid var(--i-line); padding-top: 24px; }
 .finePrint p { max-width: 640px; }
 .finePrint > a { flex-shrink: 0; }
-/* The wordmark laid as a floor mosaic (footer-mark.svg), its lower part fading
-   into the paper. Owner, 22 Nov: «оно уже слишком большое… Сделай поменьше» —
+/* The word in stone on paper (footer-mark.svg), its lower part fading into
+   the paper. Owner, 22 Nov: «оно уже слишком большое… Сделай поменьше» —
    half the column at most (600px), 280px on a phone, at the column's left
    edge under the logo's column. */
 .footerMark {

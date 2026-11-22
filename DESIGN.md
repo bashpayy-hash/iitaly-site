@@ -3429,3 +3429,29 @@ Then the owner, on the live footer: «Так, оно уже слишком бо�
 поменьше». The word stands at half the column, 600px at most (280px on a
 phone), at the column's left edge; its stones are drawn larger for that size
 (1 494 stones, about 7px each), and the SVG is 17 KB as sent.
+
+## The footer's word: plain type, stone on paper · 22 November 2026 (night)
+
+Owner, on the live mosaic word: «Также сделать другой дизайн вот этого, типа
+слишком колхозно выглядит, нужно быть более stylish, more like in a modern
+attitude like of the website».
+
+The rows of umber, ochre and terracotta stones read as folk craft next to a
+page of plain type. Three versions were set in the real footer at 1440 and
+390px: the word in one warm stone tone; the same word filled with square
+tesserae tone on tone (it read as a blurred, low-resolution picture); and the
+word in ink (strong, but it outweighed everything above it). The first stays.
+
+- «iItaly» in the header's face (Inter Tight 700, -0.055em), its outlines taken
+  from the font, filled with one warm stone tone, #E3DACB, a few steps darker
+  than the paper. The one colour is the dot of the first «i», in the site's
+  red #E63946: the accent the site already uses once per screen.
+- Size and place are unchanged («Сделай поменьше»: half the column, 600px at
+  most, 280px on a phone, at the column's left edge), and the CSS still fades
+  the lower part into the paper.
+- One SVG of two paths, 1.8 KB (it was 63 KB of stones). The generator is
+  `design/illustrations/source/wordmark/footer-wordmark.py`; the mosaic
+  generator is removed.
+
+`design-flight-explorers-review` now also holds the file to these two fills, so
+a multicolour word does not come back unnoticed.
