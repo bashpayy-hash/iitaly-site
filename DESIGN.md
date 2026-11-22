@@ -3247,3 +3247,29 @@ picture has its size, headings go in order, every field has a label.
 `design-share-review` (new, in CI) holds the picture's type and size, every
 page's own preview, the site's name in every tab, the edge of /changes at six
 widths, the source links' height and the lazy pictures.
+
+## Dropdowns drawn by the site; a pill for the cabinet's way in · 22 November 2026 (late night)
+
+Owner, with two iPad screenshots (the guest cabinet and /check): «Кнопка войти
+справа сверху чуть кривая, и на втором скрине эти кнопки все еще кривоватые».
+
+Both screenshots were measured pixel by pixel before anything was changed. The
+headers stand evenly: every item of both headers shares one top line, and the
+edges match the content's. What was uneven was the controls themselves.
+
+| Where | Before | Now |
+|---|---|---|
+| Every dropdown (9 on the site: /check, the cabinet's document page, /universities, the Modulo 1 codes) | no dropdown switched the system look off, so Safari on an iPad and an iPhone drew each as its own capsule: 28px tall on the screenshot where the page asks for 44px, larger text, system arrows, the page's radius ignored. Chromium obeyed the page, which is why no review saw it | `src/app/controls.css`: the system look is off for every `select`; the page's own height, radius and padding apply in every browser; one drawn chevron |
+| The guest cabinet's way in | «Есть код доступа? Войти», one underlined run of words beside the underlined «Открыть план», under the header's rule | the question is plain text and «Войти» is a quiet pill of the header's shape. One link, the same words, the same 44px target |
+
+On the first screenshot the line also stood 10px under the header's rule: the
+page was scrolled by 18px under the sticky header. At rest it has 25px above.
+
+`design-intuitive-review` now holds both: every dropdown on three pages has
+the system look off, is at least 44px tall, carries the chevron and does not
+cut its text; the cabinet's way in is one link with the same name, not
+underlined, with a pill that ends at the content's right edge.
+
+Not checkable here: Safari itself. The reviews run in Chromium, which already
+obeyed the page; the cause was read from the owner's screenshot and from the
+stylesheet, and the result needs one look on the iPad.

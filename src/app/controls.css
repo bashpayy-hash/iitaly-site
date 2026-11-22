@@ -1,0 +1,20 @@
+/* A dropdown is drawn by the site, not by the browser.
+   Owner, 22 Nov, with an iPad screenshot of /check: «на втором скрине эти
+   кнопки все еще кривоватые». No dropdown on the site switched the system
+   look off, so Safari on an iPad and an iPhone drew each one its own way: a
+   28px capsule with larger text and system arrows, whatever height, radius
+   and padding the page asked for (measured on the owner's screenshot; the
+   page asks for 44px and a 16px radius). With the system look off, the
+   page's own box applies in every browser, and the arrow is one drawn
+   chevron. These few properties are marked important because each
+   dropdown's own rule sets `background` as a whole, which would erase the
+   chevron and leave a dropdown that does not look like one. */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23141413' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1.5 1.75 6 6.25l4.5-4.5'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 12px 8px !important;
+  padding-right: 36px !important;
+}

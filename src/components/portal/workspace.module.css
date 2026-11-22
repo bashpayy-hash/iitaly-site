@@ -12,6 +12,10 @@
 .localStatus { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:4px 16px; font-size:13px; line-height:1.5; color:var(--color-cloud-body); padding-bottom:16px; }
 .localStatus a { display:inline-flex; align-items:center; min-height:44px; text-decoration:underline; text-underline-offset:4px; }
 .localLinks { display:flex; flex-wrap:wrap; gap:0 20px; }
+/* 22 Nov (owner, iPad: «Кнопка войти справа сверху чуть кривая»): «Войти» is a quiet pill of the header's shape; the question before it is plain text. */
+.localStatus a.localSignIn { gap:10px; text-decoration:none; }
+.localSignIn b { display:inline-flex; align-items:center; min-height:32px; padding:0 14px; border:1px solid var(--border, #DCD3C3); border-radius:999px; background:var(--card, #FFFDF8); color:var(--ink, #141413); font-weight:600; }
+@media (hover: hover) and (pointer: fine) { .localSignIn:hover b { border-color:currentColor; } }
 .layout { display:grid; grid-template-columns:180px minmax(0,1fr); gap:32px; margin-top:28px; }
 .nav { display:grid; align-content:start; gap:6px; position:sticky; top:calc(var(--portal-chrome-height, 180px) + 20px); }
 .nav a { display:flex; align-items:center; gap:10px; min-height:48px; padding:10px 14px; border-radius:14px; font-size:16px; }
