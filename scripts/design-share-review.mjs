@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -12,7 +13,7 @@ import { extname, join, relative, resolve, sep } from 'node:path';
 // taste-skill's written rules; this review holds what it fixed.
 // - The share picture was a file without an extension (opengraph-image), and
 //   the host served it as text/plain with nosniff: not a picture to WhatsApp,
-//   Instagram or Telegram. It is /og.png now.
+//   Instagram or Telegram. It is a file with an extension now (/og.jpg).
 // - Every page arrived in a chat as the home page: its title, its
 //   description, no address of its own. A page with its own address carries
 //   its own title, description and address in the preview.
@@ -47,13 +48,23 @@ const meta = html => ({
   twitterCard: read(html, /<meta name="twitter:card" content="([^"]*)"/),
 });
 
-const png = await readFile(join(root, 'og.png'));
-assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', 'out/og.png is a PNG file');
-assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [1200, 630], 'The share picture is 1200×630');
-for (const name of ['opengraph-image', 'twitter-image']) assert(!existsSync(join(root, name)), `out/${name}: a picture without an extension is served as text/plain`);
+// Owner, 23 Nov, with the Telegram preview of the home page (words on plain
+// paper): «почему эта страница такая страшная, сделай ее нормально красивой с
+// иллюстрацией в нашем стиле». The picture is a drawn card with the /plan
+// terrace now (design/social/source/share-card.mjs), a JPEG light enough for
+// WhatsApp, and the record beside it says which price it was drawn for.
+const picture = await readFile(join(root, 'og.jpg'));
+assert.equal(picture.subarray(0, 3).toString('hex'), 'ffd8ff', 'out/og.jpg is a JPEG file');
+const jpegSize = buffer => { for (let at = 2; at < buffer.length;) { const marker = buffer[at + 1], length = buffer.readUInt16BE(at + 2); if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) return [buffer.readUInt16BE(at + 7), buffer.readUInt16BE(at + 5)]; at += 2 + length; } return null; };
+assert.deepEqual(jpegSize(picture), [1200, 630], 'The share picture is 1200×630');
+assert(picture.length <= 300 * 1024, `The share picture is light enough for WhatsApp to show (${Math.round(picture.length / 1024)} KB)`);
+for (const name of ['opengraph-image', 'twitter-image', 'og.png']) assert(!existsSync(join(root, name)), `out/${name}: the picture is og.jpg`);
+const card = JSON.parse(await readFile('design/social/share-card.json', 'utf8'));
+assert.equal(createHash('sha256').update(picture).digest('hex'), card.sha256, 'public/og.jpg is the card design/social/source/share-card.mjs drew (draw it again and commit both)');
 
 const home = meta(await readFile(join(root, 'index.html'), 'utf8'));
-assert.match(home.ogImage, /^https:\/\/iitaly\.net\/og\.png\?v=\d+$/, 'Home: the share picture is /og.png');
+assert.match(home.ogImage, /^https:\/\/iitaly\.net\/og\.jpg\?v=\d+$/, 'Home: the share picture is /og.jpg');
+assert.equal(Number(new URL(home.ogImage).searchParams.get('v')), card.price, `The price printed on the share picture (${card.price}) is the site's: after a price change run design/social/source/share-card.mjs`);
 let own = 0;
 const titles = new Map();
 for (const file of files) {
@@ -61,7 +72,7 @@ for (const file of files) {
   const data = meta(await readFile(file, 'utf8'));
   assert.equal(data.ogImage, home.ogImage, `${page}: og:image is the site's picture`);
   assert.equal(data.twitterImage, home.ogImage, `${page}: twitter:image is the site's picture`);
-  assert.deepEqual([data.ogImageType, data.ogImageWidth, data.ogImageHeight], ['image/png', '1200', '630'], `${page}: the picture's type and size are named`);
+  assert.deepEqual([data.ogImageType, data.ogImageWidth, data.ogImageHeight], ['image/jpeg', '1200', '630'], `${page}: the picture's type and size are named`);
   assert.equal(data.twitterCard, 'summary_large_image', `${page}: the large card`);
   assert(page === 'index' ? data.title.startsWith('IITALY — ') : data.title.endsWith(' — IITALY'), `${page}: the tab names the site («${data.title}»)`);
   // A page that answers at its own address says so in its preview. Pages
@@ -82,7 +93,7 @@ for (const page of ['plan', 'check', 'prices', 'universities', 'guides', 'guides
 assert.equal(titles.get('guides/apostille'), 'Апостиль — IITALY', 'A guide topic names the site in its tab');
 
 // 2. The same pages in a browser.
-const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.txt':'text/plain', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.woff2':'font/woff2' };
+const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.txt':'text/plain', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.jpg':'image/jpeg', '.woff2':'font/woff2' };
 const server = createServer(async (req, res) => {
   try {
     const path = resolve(root, '.' + decodeURIComponent(new URL(req.url, 'http://localhost').pathname));
@@ -103,8 +114,8 @@ const results = [];
 
 try {
   // The share picture is a picture to whoever asks for it.
-  const picture = await fetch(`${origin}${new URL(home.ogImage).pathname}`);
-  assert.equal(picture.headers.get('content-type'), 'image/png', 'The share picture is served by its extension');
+  const served = await fetch(`${origin}${new URL(home.ogImage).pathname}`);
+  assert.equal(served.headers.get('content-type'), 'image/jpeg', 'The share picture is served by its extension');
 
   for (const width of [1440, 1279, 1024, 900, 820, 390]) {
     const phone = width < 600;
