@@ -3501,3 +3501,36 @@ Earlier the same night, on generated Vespi: «ты вообще не соблю�
   catalogue line takes the product off sale.
 - Anyone who opens /prices can now buy the full cabinet for 667 ₸ instead of
   10 990 ₸: that is the owner's call, said to him with the change.
+
+## The share picture: the terrace with Vespi under the headline · 23 November 2026
+
+Owner, with a Telegram screenshot of the home page's link preview (the card
+of 22 Nov: words on plain paper in a fallback typeface): «почему эта страница
+такая страшная, сделай ее нормально красивой с иллюстрацией в нашем стиле».
+Then, on the first new card (it carried «10 990 ₸ · разово» and «Казахстан →
+Италия»): «убери ценник и казахстан италия, скажи что это современный подход».
+
+- The card is the site's own hero: the /plan terrace over Florence with
+  Vespi launching a paper plane across the whole picture, the headline
+  «Поступление в Италию. По понятному плану.» in Inter Tight on the sky, the
+  logo with «Современный подход» beside it, and one paper pill, «iitaly.net».
+  No price and no «Казахстан → Италия». Three layouts were set first: paper
+  with the scene as a tile (the headline broke into four lines), the Florence
+  belvedere (the red line fell on the city), and this one.
+- The three planes that glide where the headline stands are painted out for
+  the card (`design/social/source/share-card-scene.py`); the plane in Vespi's
+  paw stays.
+- The old card's line of six subjects is not on the picture: a messenger
+  prints the page's description, with the same subjects, right above it.
+- It is `public/og.jpg`, a JPEG of 179 KB, drawn once by
+  `design/social/source/share-card.mjs` and committed. The route that built
+  `/og.png` with next/og is removed: a photograph as PNG weighs over a
+  megabyte, and WhatsApp shows no preview for a heavy picture. The generator
+  refuses to draw without the site's typefaces.
+- The picture's address ends in the first eight characters of its hash
+  (`design/social/share-card.json`, `SHARE_IMAGE_VERSION` in `pageMeta.ts`),
+  so a redrawn card is a new address to every cache. `design-share-review`
+  checks the JPEG (1200×630, 300 KB at most, served as image/jpeg), that it
+  is the drawn file, and that the address carries its hash.
+- Messengers keep the preview of a link they have already seen. Telegram
+  refreshes it when the link is sent to @WebpageBot.
