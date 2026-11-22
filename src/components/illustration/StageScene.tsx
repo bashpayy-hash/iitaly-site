@@ -9,7 +9,9 @@ import styles from "./stage-scene.module.css";
    на 20 секунд плывёт к Веспи и обратно, по стеклу проходит тёплый блик —
    только transform и opacity, без пересчёта макета; при reduced motion
    кадр стоит. Картинка декоративная (alt=""): смысл несёт текст рядом. */
-export type StageSceneName = "choose" | "diploma" | "stamp" | "envelope" | "coins" | "passport" | "keys" | "notebook" | "alarm";
+export type StageSceneName = "choose" | "diploma" | "stamp" | "envelope" | "coins" | "passport" | "keys" | "notebook" | "alarm"
+  /* The cabinet's two tiles since 22 Nov: floor mosaics, design/illustrations/scenes-2026-11-22.json. */
+  | "mosaic-documents" | "mosaic-reminders";
 
 /* `sizes` is the width the scene really takes where it stands. A picture is
    fetched at the size the browser is told, not the size it is drawn at:

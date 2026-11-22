@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-22",
+  "request": "Owner, 22 Nov, a screenshot of the guest cabinet's two tiles (the felt Vespi stamping at a desk, the felt Vespi with an alarm clock on a balcony): «вот эти вот две иллюстрации, они пока что странненькие… нужно как-то их поменять. Может, как-то с мозаикой сравнивать, может, добавить каких-то приколов.» The site's mosaic is the Galleria floor of the cartouches (cartouche-2026-11-19.json); the two tiles became floor mosaics with a joke each.",
+  "model": "Higgsfield gpt_image_2_6, quality high, 2k, 3:2; references: Vespi ab833075-dfc7-4e28-824c-7e299aad556c, the permesso-card cartouche with Vespi in tesserae 18835b04-9b33-4427-9593-a4cde32565ea, and the topic's own cartouche (doc-check 906d84f0-5b37-4814-8778-0badddea7efe, alarm 6f3afc11-ce5f-454c-b749-e723237bc5ff)",
+  "template": "A floor mosaic in the style of the floor of the Galleria Vittorio Emanuele II in Milan: polished marble tesserae, freshly laid, seen straight from above, matte, no bevel, no gloss, no drop shadow, flat like the reference cartouche, not a 3D render and not a photo. A wide rectangular panel filling the whole frame edge to edge: a cream ivory ground laid in neat rows, with delicate slate-blue and ochre scrollwork and leaf-green acanthus sprigs in the four corners. In the middle, laid in the same small tesserae: {scene} Vespi is the character from the reference images: a small round white figure with a red helmet with one white stripe down the middle, two small round black dot eyes, rosy cheeks, a small closed smile and a leaf-green scarf; keep his face exactly that simple, eyes always open. Keep all figures and objects inside the central two thirds of the panel, with calm empty ground around them. Palette: cream ivory, warm ochre, terracotta red, slate blue, leaf green, a little brass. No text, no letters, no numbers, no people.",
+  "items": [
+    {
+      "name": "mosaic-documents",
+      "use": "cabinet tile «Проверка документов» (PortalFocus, StageScene)",
+      "job": "752b39e1-e179-4555-9876-18b22f105156",
+      "scene": "Vespi leans over a long unrolled document with a red wax seal and studies it through a big round brass magnifying glass; behind the glass one of his dot eyes looks comically huge. A wooden rubber stamp and an ink pad lie beside him, and a pigeon at the other end of the document peers at it too, head tilted.",
+      "rejected": [
+        {
+          "job": "656ebeab-390e-450a-8dd7-afc2f6804b3c",
+          "scene": "Vespi stamps a document, a check mark on it",
+          "why": "no joke, closest to the old felt scene"
+        },
+        {
+          "job": "95c010b4-c433-41f7-b79b-dc490c6d121f",
+          "scene": "Vespi as a magistrate behind a desk, a stack of documents taller than him",
+          "why": "good second choice; the magnifying glass and the pigeon read faster at tile size"
+        }
+      ]
+    },
+    {
+      "name": "mosaic-reminders",
+      "use": "cabinet tile «Напоминания о сроках»",
+      "job": "cfd54e63-2887-4dc0-bddc-b2989560bde5",
+      "scene": "Vespi rides a small cream and red scooter towards the right; a big classical twin-bell alarm clock is strapped to the rear rack and rings, short radiating lines around its bells; his leaf-green scarf flies back.",
+      "rejected": [
+        {
+          "job": "cf60e18d-acbb-449d-91f9-4bc8ac1b3bcd",
+          "scene": "Vespi with an espresso cup and a moka pot beside a ringing alarm clock",
+          "why": "good second choice; the scooter echoes the ride at the top of the cabinet"
+        },
+        {
+          "job": "cbfc301d-9cce-4133-bfaa-d2d4375b8003",
+          "scene": "a messenger pigeon brings Vespi a sealed envelope before a ringing clock",
+          "why": "a second pigeon next to the documents tile"
+        }
+      ]
+    }
+  ],
+  "files": [
+    "public/illustrations/scenes/mosaic-documents-{640,1024,1200,1600}.webp",
+    "public/illustrations/scenes/mosaic-reminders-{640,1024,1200,1600}.webp"
+  ],
+  "masters": [
+    "design/illustrations/source/scenes/mosaic-documents.webp",
+    "design/illustrations/source/scenes/mosaic-reminders.webp"
+  ],
+  "processing": "2048x1360 PNG; 50 px cut from every edge (the outer border line, which the tile's rounded corners would have cut unevenly), 1948x1260; master WebP q90; site WebP q72 at 640, 1024, 1200 and 1600 px. q72 because the tesserae are fine detail: 1200 px is 229 KB (q80 284 KB; a median filter halved it but blurred the joints between stones). Lazy, below the cabinet's first screen.",
+  "textures": {
+    "use": "home, the six route cards under «Один шаг. Понятный маршрут.» and «После визы путь продолжается.»",
+    "request": "Owner, same day, on those cards: «слишком plain white… добавить какие-то текстуры или узоров… чтобы было на что обратить внимание… стильно».",
+    "generator": "design/illustrations/source/textures/mosaic-textures.py (deterministic)",
+    "files": [
+      "public/textures/mosaic-ground.webp",
+      "public/textures/mosaic-ground-dark.webp",
+      "public/textures/mosaic-band-h.webp",
+      "public/textures/mosaic-band-v.webp",
+      "public/textures/mosaic-band-dark-h.webp",
+      "public/textures/mosaic-band-dark-v.webp",
+      "public/textures/mosaic-corner.webp"
+    ],
+    "weight": "about 15 KB in all"
+  }
+}
