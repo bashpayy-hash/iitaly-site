@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/app/pageMeta";
 import Link from "next/link";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { PAY_PHONE, PAY_WA } from "@/lib/payment";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/privacy" },
+export const metadata: Metadata = pageMeta({
+  path: "/privacy",
   title: "Политика конфиденциальности",
   description: "Какие данные IITALY собирает, зачем они нужны, как работают Telegram-напоминания и как удалить данные.",
-};
+});
 
 const SECTIONS: { title: string; body: React.ReactNode }[] = [
   {

@@ -308,7 +308,7 @@ export function WizStep({
          line under the answers, from the cabinet's glossary. */}
       <PlainTermNotes tone={tone === "dark" ? "dark" : "light"} text={[question.q, question.hint, QUESTION_CONTEXT[question.id], ...question.opts.map(o => `${o.t} ${o.s ?? ""}`)].join(" ")} />
       {/* eslint-disable-next-line @next/next/no-img-element -- local riso art with explicit dimensions */}
-      {art && <img className={styles.questionArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 600px) 60vw, 300px" width={art.width} height={art.height} alt="" decoding="async" data-plan-question-art />}
+      {art && <img className={styles.questionArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 600px) 60vw, 300px" width={art.width} height={art.height} alt="" loading="lazy" decoding="async" data-plan-question-art />}
     </div>
   );
 }

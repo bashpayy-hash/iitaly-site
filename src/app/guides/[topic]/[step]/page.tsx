@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/app/pageMeta";
 import { notFound } from "next/navigation";
 import { GUIDE_TOPICS, guidePoints } from "@/components/guides/guideCatalogue";
 import { GuideStepPage } from "@/components/guides/GuideStepPage";
@@ -14,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ topic: st
   const point = guidePoints(topic)[Number(step) - 1];
   // A closed step never puts its text into the description.
   const description = point && guide && !guideStepOpen(topic, Number(step)) ? `${point.title} — шаг темы «${guide.title}». Разбор откроется с маршрутом IITALY.` : point?.text.slice(0, 160);
-  return { title: point && guide ? `${point.title} — ${guide.title}` : guide?.title, description, alternates: { canonical: `/guides/${topic}/${step}` } };
+  return pageMeta({ path: `/guides/${topic}/${step}`, title: point && guide ? `${point.title} — ${guide.title}` : guide?.title ?? "Гайд", description });
 }
 export default async function GuideStepRoute({ params }: { params: Promise<{ topic: string; step: string }> }) {
   const { topic, step } = await params;

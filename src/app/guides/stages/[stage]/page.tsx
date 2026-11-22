@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/app/pageMeta";
 import { notFound } from "next/navigation";
 import { GUIDE_STAGES } from "@/components/guides/guideCatalogue";
 import { GuideBreadcrumbs, GuideFrame } from "@/components/guides/GuidePage";
@@ -13,7 +14,7 @@ export const dynamicParams = false;
 export function generateStaticParams(){return GUIDE_STAGES.map(stage=>({stage:stage.id}));}
 export async function generateMetadata({params}:{params:Promise<{stage:string}>}):Promise<Metadata> {
   const {stage}=await params;const group=GUIDE_STAGES.find(item=>item.id===stage);
-  return {title:group?.title,description:group?.description,alternates:{canonical:`/guides/stages/${stage}`}};
+  return pageMeta({path:`/guides/stages/${stage}`,title:group?.title ?? "Гайды",description:group?.description});
 }
 export default async function GuideStageRoute({params}:{params:Promise<{stage:string}>}) {
   const {stage}=await params;const group=GUIDE_STAGES.find(item=>item.id===stage);if(!group)notFound();
