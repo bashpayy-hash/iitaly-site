@@ -176,9 +176,14 @@ try{
       assert.equal((await node.first().innerText()).replace(/\s+/g,' ').trim(),heading,`Home ${width}: «${heading}» reads whole`);
       assert.equal(await node.first().locator('span').evaluateAll(words=>words.filter(word=>!word.querySelector('span')&&getComputedStyle(word).display==='inline-block').length),heading.split(' ').length,`Home ${width}: «${heading}» is split into its words`);
     }
-    // The footer ends in the wordmark laid in tesserae, decorative, inside the page.
-    const mark=await page.locator('[data-footer-mark]').evaluate(node=>({hidden:node.getAttribute('aria-hidden'),text:node.textContent,tiles:/mosaic-letters/.test(getComputedStyle(node).backgroundImage),fits:node.getBoundingClientRect().right<=innerWidth}));
-    assert.deepEqual(mark,{hidden:'true',text:'iItaly',tiles:true,fits:true},`Home ${width}: the footer's mosaic wordmark`);
+    // The footer ends in the wordmark laid as a floor mosaic (owner, same night:
+    // «А че надпись кирпичная, сделай мозаичной в общем стиле тогда»): one SVG,
+    // decorative, as wide as the content column and inside the page.
+    const markNode=page.locator('[data-footer-mark]');
+    await markNode.scrollIntoViewIfNeeded();
+    await page.waitForFunction(()=>{const img=document.querySelector('[data-footer-mark]');return img.complete&&img.naturalWidth>0;});
+    const mark=await markNode.evaluate(node=>{const box=node.getBoundingClientRect(),column=node.parentElement.querySelector('div').getBoundingClientRect();return {src:new URL(node.src).pathname,alt:node.alt,hidden:node.getAttribute('aria-hidden'),width:Math.abs(box.left-column.left)<=1&&Math.abs(box.right-column.right)<=1,fits:box.right<=innerWidth};});
+    assert.deepEqual(mark,{src:'/illustrations/footer-mark.svg',alt:'',hidden:'true',width:true,fits:true},`Home ${width}: the footer's mosaic wordmark`);
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});

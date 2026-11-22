@@ -3380,3 +3380,22 @@ line now, so its words stay inline.
 `design-flight-explorers-review` holds the deck on phones (and no deck side by
 side), each heading split into its words and reading whole, and the footer's
 wordmark.
+
+## The footer's word laid as a mosaic, not bricks · 22 November 2026 (night)
+
+Owner, on the footer wordmark of the same evening: «А че надпись кирпичная,
+сделай мозаичной в общем стиле тогда». The first version showed a texture of
+stones in straight rows through the letters: a wall, not a floor.
+
+The word is laid now as the cartouches are (opus vermiculatum): the letters'
+distance field gives rows parallel to every edge, one slate-blue row outside,
+an ochre one inside it, terracotta to the middle; stones are seeded along each
+row at one stone's length, each pixel goes to its nearest seed, and every stone
+is shrunk toward its centre so the joint stays open to the paper. The face is
+Inter Tight 700, the wordmark's face where SF Pro Display is absent.
+
+One SVG with one path per colour (4 843 stones, 21 colours): sharp at every
+size, 190 KB raw and 47 KB as Netlify sends it, fetched only near the end of
+the page (`loading="lazy"`). The 15 KB brick texture is gone. The generator is
+`design/illustrations/source/wordmark/mosaic-wordmark.py` (deterministic; it
+reads the face from the build).
