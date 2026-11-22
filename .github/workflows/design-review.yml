@@ -82,7 +82,7 @@ jobs:
             reviews: >-
               design-portal-focus-review design-portal-route-action-review design-media-switcher-review
               design-vespi-system-review launch-chat-review launch-flow-review design-portal-progress-review
-              design-image-fit-review design-share-review
+              design-image-fit-review design-share-review design-test-offer-review
           - group: journey
             reviews: >-
               design-portal-pages-review portal-targeted-model-review design-portal-targeted-review

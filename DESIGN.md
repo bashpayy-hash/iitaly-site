@@ -3399,3 +3399,25 @@ size, 190 KB raw and 47 KB as Netlify sends it, fetched only near the end of
 the page (`loading="lazy"`). The 15 KB brick texture is gone. The generator is
 `design/illustrations/source/wordmark/mosaic-wordmark.py` (deterministic; it
 reads the face from the build).
+
+## A test purchase for friends: /test, 667 ₸ · 22 November 2026 (night)
+
+Owner: «Сделай еще тестовое отдельное отделение моим друзьям за 667 тенге,
+пометь что оно тестовое».
+
+- The server (bashpayy-hash/iitaly#32) has a second portal product,
+  «Тестовый доступ · для друзей», 667 ₸: the same cabinet as the full route.
+  The server owns the price; its name says «Тестовый» at Stripe and in the
+  order log, and the owner's paid alert starts with «🧪 ТЕСТ».
+- The site sells it only from /test: one card on the paper with a red «Тест»
+  pill before the heading «Тестовый доступ для друзей», «667 ₸ вместо 10 990 ₸»,
+  a line that says it is a test purchase (real Stripe payment, real cabinet),
+  three lines on what it opens, the site's own purchase form, and WhatsApp for
+  what breaks. No page links to it, it is not in the sitemap, and its robots
+  meta is noindex, nofollow.
+- Anyone with the link can buy the full cabinet for 667 ₸: the link is given
+  by hand. Turning it off is removing one line of the server's catalogue.
+
+`design-test-offer-review` (CI, group portal) holds the noindex, the absence
+from the sitemap and from every other page, the badge before the heading, the
+price line, and that the order names the test product.
