@@ -91,9 +91,11 @@ export function PricesExplorer() {
                   else is «Составить план» and gives a route, not an estimate
                   of chances. One name for the free way in. */}
               <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала составь план&nbsp;— это бесплатно</b>
+              {/* 22 Nov, later: the card above already says what is free; this
+                  line repeated it word for word. It says what the card does
+                  not: how long it takes. */}
               <span className="text-apple-body-sm text-cloud-body">
-                Расскажи о себе: ИИ покажет, с чего начать в твоём случае,
-                соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.
+                Десять вопросов, около двух минут. Платить, чтобы увидеть маршрут, не нужно.
               </span>
             </div>
             <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan#questionnaire")} className="w-full shrink-0 md:w-auto">

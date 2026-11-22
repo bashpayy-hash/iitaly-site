@@ -170,7 +170,11 @@ export function LocalWorkspace() {
       <a href="/portal?view=settings" aria-label="Настройки" title="Настройки" aria-current={location.view === "settings" ? "page" : undefined} onClick={event => link(event, { view: "settings", task: null, doc: null })}><Settings size={18} aria-hidden="true"/><span className={styles.settingsText}>Настройки</span></a>
     </div>} /></div>
     <main id="main" className={`${styles.frame} ${focusStyles.localFrame}`} onClickCapture={event => { if ((event.target as Element).closest("button")) feedback.prime(); }}>
-      <div className={styles.localStatus} data-local-status><span>{draft.complete ? "Твой план сохранён на этом устройстве" : "Прогресс сохраняется на этом устройстве"}</span><a href={cloudLoginHref}>Есть код доступа? Войти</a></div>
+      {/* Funnel analysis (owner, 22 Nov: «где пользователю будет сложно
+          ориентироваться»). A guest opened «Личный кабинет» and nothing said
+          it is the free one kept on this device, nor led back to the plan it
+          is built from. The line names it; with a plan it links to that plan. */}
+      <div className={styles.localStatus} data-local-status><span>{draft.complete ? "Бесплатный кабинет: план сохранён на этом устройстве" : "Бесплатный кабинет: прогресс сохраняется на этом устройстве"}</span><span className={styles.localLinks}>{draft.complete && <Link href="/plan#route" prefetch={false} data-local-plan>Открыть план</Link>}<a href={cloudLoginHref}>Есть код доступа? Войти</a></span></div>
       {storageError && <p role="alert" className={styles.readOnly}>{storageError}</p>}
       <div className={`${styles.layout} ${focusStyles.localLayout}`} data-focus-layout={showFocus ? "stage" : "detail"}>
         <div ref={content} className={styles.content}>
@@ -243,7 +247,16 @@ export function LocalWorkspace() {
                 side from a tablet up, the sound switch as one quiet row under them. */}
             <header className={styles.docsHead}><h1 className={styles.docsTitle}>Настройки. <span>Профиль, напоминания и звук.</span></h1></header>
             <Bento as="div" className={styles.docsTray} data-settings-tray>
-              <BentoCell span={{ md: 3, lg: 6 }} className={styles.setCell}><h2 className={styles.setTitle}>Локальный профиль</h2><p>Набор: {intake}. Ответы анкеты, выбранные вузы и отметки хранятся на этом устройстве. Сканов, номера телефона и полного разбора в этом хранилище нет. При изменении анкеты или списка вузов отметки маршрута и итоги проверок нужно пройти заново.</p><a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); updateDraft({ ...draft, step: 0, complete: false }); navigate({ view: "plan", task: "profile", doc: null }); }}>Изменить ответы анкеты</a></BentoCell>
+              <BentoCell span={{ md: 3, lg: 6 }} className={styles.setCell}><h2 className={styles.setTitle}>Локальный профиль</h2><p>Набор: {intake}. Ответы анкеты, выбранные вузы и отметки хранятся на этом устройстве. Сканов, номера телефона и полного разбора в этом хранилище нет. При изменении анкеты или списка вузов отметки маршрута и итоги проверок нужно пройти заново.</p>{/* 22 Nov: this link un-finished the questionnaire and restarted it at
+                  question 1, so the plan and its step pages vanished until all ten
+                  answers were given again. It opens the same list of answers as
+                  «Изменить ответы» on /plan; without a finished questionnaire the
+                  cabinet's own first step is the way in, as before. */}
+              {draft.complete
+                // A full load: /plan reads «answers=1» once, when it opens.
+                // eslint-disable-next-line @next/next/no-html-link-for-pages
+                ? <a className={styles.textLink} href="/plan?answers=1#questionnaire" data-local-answers>Изменить ответы анкеты</a>
+                : <a className={styles.textLink} href="/portal?view=plan&task=profile" onClick={event => { event.preventDefault(); navigate({ view: "plan", task: "profile", doc: null }); }}>Изменить ответы анкеты</a>}</BentoCell>
               <BentoCell span={{ md: 3, lg: 6 }} className={styles.setCell}><h2 className={styles.setTitle}>Напоминания выключены</h2><p>Telegram и почта подключаются в активированном облачном кабинете. Для входа нужны код доступа и фамилия. Локальный профиль не переносится туда автоматически.</p><a className={styles.primary} href={cloudLoginHref}>Подключить кабинет</a></BentoCell>
               <BentoCell span={{ md: 6, lg: 12 }} tone="quiet" className={styles.setSound}><PortalSoundSetting enabled={feedback.sound} onToggle={feedback.toggleSound} /></BentoCell>
             </Bento>

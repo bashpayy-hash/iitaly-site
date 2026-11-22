@@ -174,7 +174,7 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
         }
         if (route === '/guides/visa/documents') {
           await page.getByRole('button', { name:'Отметить собранным' }).click();
-          await page.getByRole('button', { name:'Далее', exact:true }).click();
+          await page.getByRole('button', { name:'Дальше', exact:true }).click();
           await page.getByRole('button', { name:'Назад', exact:true }).click();
           assert.equal(await page.getByRole('button', { name:'Собрано — снять отметку' }).getAttribute('aria-pressed'), 'true');
         }

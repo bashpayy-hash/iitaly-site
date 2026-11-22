@@ -3136,3 +3136,54 @@ the refund line under the button on the first screen with a WhatsApp link;
 the free way in by its name; two minutes; the field's name; the manual way
 back in recovery. The content guard holds the six changed lines of /prices
 with the owner's words.
+
+## The funnel walked again: repeats, mismatches, lost threads · 22 November 2026 (evening)
+
+Owner: «Да, вроде нормально, просто назови их… даже в личном кабинете» (about
+11 steps on the plan against 19 in the cabinet), and: «А что еще именно по
+воронке продаж повторяется, или есть неконсистенции, или есть какие-то, типа,
+где пользователю будет сложно ориентироваться в сайте, вот это проанализируй».
+
+An independent reviewer walked the live site at 390 and 1440px with three
+questions only: what repeats, what disagrees, where the thread is lost. It
+collected every call to action with its target. The states it could not reach
+(after payment, the paid cabinet) were read in code. Every finding was checked
+before it was touched.
+
+**Fixed.**
+
+| Where | Before | Now |
+|---|---|---|
+| The cabinet's count | «Сделано 1 из 19 шагов» beside the plan's 11 | «Шаги плана: 0 из 11 · Подготовка и документы: 1 из 8»; a route from the server: «Шаги · Документы» |
+| The hand-off after the last question | the first step's whole action, repeated on the result and on its page; «Ещё 10 шагов… откроются по кнопке ниже» over a plan where those ten are locked | the step's name and orientation; «Первый шаг открыт целиком. В плане ещё 10 шагов и список из 5 документов.» |
+| A locked step (plan and guides) | a dark «Назад» and a red «Дальше» under the wall's own button; the red one opened the next wall; the last locked step said «Готово» and offered the cabinet | the purchase is the one filled button; the pager is two quiet cards; «Дальше · с маршрутом»; the last one leads back to the plan or the topic |
+| The cabinet's «Изменить ответы анкеты» | un-finished the questionnaire and restarted it at question 1; the plan and its step pages vanished | opens the same list of answers as /plan; the plan stays |
+| The guest cabinet | nothing said it is the free one on this device; no way back to the plan; «Напоминания · Подключить Telegram» led to a sign-in form | «Бесплатный кабинет: план сохранён на этом устройстве» with «Открыть план»; the tile says «Подключаются с маршрутом · Как подключить» |
+| After payment | «Код кабинета»; nothing about keeping it | «Код доступа», as everywhere; one line on what the code is for |
+| /privacy | «Код доступа… не отправляется в Telegram» under «Код приходит только в Telegram и на почту» | the first is scoped to connecting reminders |
+| Home, under Vespi | «Начать с Веспи» led to the cabinet's «Заполнить анкету» | «Составить план с Веспи» leads to the plan |
+| Words | «Далее» in two controls, «Дальше» in the rest; «тарифы» on the sign-in against «не тарифы» on /prices; «квиз», «разбор ситуации»; «закрыт до оплаты» | «Дальше»; «Посмотреть цену»; «план»; «откроется с маршрутом» |
+| /prices | the line under «Сначала составь план» repeated the «Бесплатно» card above it; the link «Состав пакета» led to «Что включено» | the line says how long the plan takes; the link is «Что включено» |
+| A guide topic's bottom link | a bare topic name | «Следующая тема: …» |
+
+**Left for the owner**, because each changes a structure or wording he set:
+
+- «Мой план» is /plan in the public menu and the cabinet's home inside the
+  cabinet (its menu and breadcrumbs, and «Перейти в Мой план» of 2 Nov).
+- «Маршрут» names the paid product, the free list of steps and a guides
+  stage («Выбрать маршрут»).
+- /plan with a finished plan still opens with «Опиши свою ситуацию».
+- «Что включено» on /prices lists a shortlist of programmes and drafts of
+  motivation letters, named nowhere else; the guides' walls promise topics,
+  visa points and the Modulo 1 trainer, absent from that list.
+- Repeats by design: a free topic's steps repeat «Вся тема коротко» (14 Nov);
+  /guides lists the topics as a carousel and as a map; the home page shows
+  «После приезда» as a card and then as a section; /check tells its three
+  steps after the form; /universities says «выбери город» four times.
+- The assistant is «Веспи», «ИИ-помощник», «ИИ-консультант» and «Помощник».
+- /universities ends without a way on to the plan.
+
+`design-funnel-review` now also holds: the hand-off's promise; the quiet
+pager and its labels on locked steps, plan and guides; the guest cabinet's
+line, link and reminders tile; the cabinet's count against the plan's; the
+home button's name and target; «Посмотреть цену»; the next-topic link.

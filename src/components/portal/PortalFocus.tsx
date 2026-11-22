@@ -97,6 +97,11 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
   const savedStampCount = rows.filter(row => portalTaskDone(savedData, row)).length;
 
   const isLockedTask = (task: PortalTask | null | undefined) => Boolean(task && locked?.(task));
+  /* Only the free cabinet kept on the device passes `locked`. There the
+     reminders tile said «Пока выключены · Подключить Telegram» and led to a
+     sign-in form: reminders come with the route, and the tile says so
+     (funnel analysis, 22 Nov). */
+  const guest = Boolean(locked);
   // The purchase form behind every locked action; no new blocks on the page.
   const wall = useWallPurchase("portal-task", Boolean(locked) && data.roadmap.some(stage => stage.tasks.some(task => isLockedTask(task))));
   function check(row: PortalTask) {
@@ -234,9 +239,9 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <StageScene name="alarm" className={path.featureScene} sizes={FEATURE_SCENE_SIZES} />
         <span className={path.featureCopy}>
           <strong>Напоминания о сроках</strong>
-          <span>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</span>
+          <span>{remindersOn ? "Включены в Telegram" : guest ? "Подключаются с маршрутом" : "Пока выключены"}</span>
         </span>
-        <span className={path.featureAction} data-feature-action>{remindersOn ? "Настроить" : "Подключить Telegram"}</span>
+        <span className={path.featureAction} data-feature-action>{remindersOn ? "Настроить" : guest ? "Как подключить" : "Подключить Telegram"}</span>
       </a>
     </section>}
     {!stagePage && <div className={styles.routeCard} data-route-card>
@@ -298,10 +303,10 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
       <BentoCell span={{ md: 6, lg: 4 }} tone={stageDocs.length ? "plain" : "action"} className={styles.stageReminders} data-stage-reminders data-reminders-on={remindersOn || undefined}>
         <div className={bento.body}>
           <p className={bento.heading}>Напоминания о сроках</p>
-          <p className={bento.text}>{remindersOn ? "Включены в Telegram" : "Пока выключены"}</p>
+          <p className={bento.text}>{remindersOn ? "Включены в Telegram" : guest ? "Подключаются с маршрутом" : "Пока выключены"}</p>
         </div>
         <div className={bento.actions}>
-          <a className={stageDocs.length ? styles.quietAction : styles.primary} href="/portal?view=settings#notifications" data-stage-reminders-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>{remindersOn ? "Настроить" : "Подключить Telegram"}</a>
+          <a className={stageDocs.length ? styles.quietAction : styles.primary} href="/portal?view=settings#notifications" data-stage-reminders-open onClick={event => { if (!plainClick(event)) return; event.preventDefault(); onSettings(); }}>{remindersOn ? "Настроить" : guest ? "Как подключить" : "Подключить Telegram"}</a>
         </div>
       </BentoCell>
     </Bento>}

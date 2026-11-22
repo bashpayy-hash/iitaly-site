@@ -62,6 +62,12 @@ try {
       await wizard.locator('button[aria-pressed]').first().click();
       await page.waitForFunction(previous => document.querySelector('[data-plan-question]')?.getAttribute('data-plan-question') !== previous, id);
     }
+    // The hand-off names the first step and says what the plan holds. It used to
+    // print the step's whole action (repeated on the result and on the step's
+    // page) and promise that the other steps «откроются по кнопке ниже».
+    const handoff = flat(await wizard.innerText());
+    assert.match(handoff, /Первый шаг открыт целиком\. В плане ещё \d+ шаг\S* и список из \d+ документ/, 'Hand-off: says what the plan holds');
+    assert.doesNotMatch(handoff, /откроются по кнопке/, 'Hand-off: does not promise that locked steps open by the button');
     await page.getByRole('button', { name: 'Открыть мой план', exact: true }).click();
     const result = page.locator('[data-assessment-result]');
     await result.getByRole('heading', { name: 'Твой маршрут' }).waitFor();
@@ -91,6 +97,7 @@ try {
     assert.deepEqual(fold, { under: true, visible: true }, `/prices at ${width}: the refund line stands under the button on the first screen`);
     const main = flat(await page.locator('main').innerText());
     assert.doesNotMatch(main, /Проверить шансы|проверь шансы|Купить за/, '/prices: the free way in is «Составить план», the purchase «Открыть маршрут»');
+    assert.equal(flat(await page.locator('nav[aria-label="На странице цен"] a').first().innerText()), 'Что включено', '/prices: the first link is named as the heading it leads to');
     assert.equal(await page.getByRole('button', { name: 'Составить план бесплатно', exact: true }).count(), 1, '/prices: the free way in carries the name it has on the home page');
     // The form is headed by the name the site uses for what is sold.
     await page.locator('[data-pricing-buy=hero]').click();
@@ -107,11 +114,41 @@ try {
     assert.match(flat(await count.locator('[data-road-count-group=prep]').innerText()), /^Подготовка и документы: \d+ из \d+$/, 'Cabinet: what it adds to the plan is counted under its own name');
     assert.doesNotMatch(flat(await count.innerText()), /Сделано \d+ из \d+ шаг/, 'Cabinet: no second total of «шагов» beside the plan\'s');
 
+    // 3b. The guest cabinet says what it is and leads back to the plan; what
+    //     comes only with the route is not offered as a button that connects it.
+    const status = page.locator('[data-local-status]');
+    assert.match(flat(await status.innerText()), /^Бесплатный кабинет: план сохранён на этом устройстве/, 'Guest cabinet: named as the free one kept on the device');
+    assert.equal(await status.locator('[data-local-plan]').getAttribute('href'), '/plan#route', 'Guest cabinet: a way back to the plan');
+    const cabinet = flat(await page.locator('main').innerText());
+    assert.match(cabinet, /Напоминания о сроках Подключаются с маршрутом/, 'Guest cabinet: reminders are named as part of the route');
+    assert.doesNotMatch(cabinet, /Подключить Telegram/, 'Guest cabinet: no button promises to connect what the route brings');
+
     // 4. A locked plan step and the walls of the guides carry the same label.
     await visit('/plan/2'); await page.locator('[data-wall-buy]').first().waitFor(); await collect('/plan/2');
     await page.locator('[data-wall-buy]').first().click();
     assert.equal(flat(await sheet.getByRole('heading').first().innerText()), 'Весь маршрут поступления', 'A wall opens the same form under the same name');
     await page.keyboard.press('Escape'); await sheet.waitFor({ state: 'hidden' });
+
+    // 4a. Where a wall shows, the purchase is the one filled button: the pager
+    //     is two quiet cards, and a label never says «Дальше» over a wall or
+    //     «Готово» over a step that was not read.
+    const quiet = locator => locator.evaluate(card => getComputedStyle(card).backgroundColor === 'rgba(0, 0, 0, 0)');
+    assert.equal(await quiet(page.locator('[data-plan-step-next]')), true, '/plan/2: the pager is quiet under the wall');
+    await visit('/plan/1'); await page.locator('[data-plan-step-next]').waitFor();
+    assert.match(flat(await page.locator('[data-plan-step-next] small').innerText()), /^Дальше · с маршрутом$/, '/plan/1: the way on says the next step comes with the route');
+    assert.equal(await quiet(page.locator('[data-plan-step-next]')), false, '/plan/1: an open step keeps its way on');
+    await visit(`/plan/${steps}`); await page.locator('[data-wall-buy]').first().waitFor();
+    assert.match(flat(await page.locator('nav[aria-label="Соседние шаги"]').innerText()), /К плану Весь маршрут$/, 'The locked last step leads back to the plan, not to «Готово»');
+    assert.equal(await page.getByRole('link', { name: 'Продолжить в личном кабинете', exact: true }).count(), 0, 'The locked last step does not close the route with a cabinet button');
+    await visit('/guides/codice/1'); await page.locator('[data-wall-buy]').first().waitFor();
+    assert.equal(await quiet(page.locator('[data-guide-step-next]')), true, 'A locked guide step: the pager is quiet under the wall');
+    assert.match(flat(await page.locator('[data-guide-step-next] small').innerText()), /^Дальше · с маршрутом$/);
+    await visit('/guides/codice/2'); await page.locator('[data-wall-buy]').first().waitFor();
+    assert.match(flat(await page.locator('nav[aria-label="Соседние шаги"]').innerText()), /К теме Codice fiscale$/, 'The locked last step of a topic leads back to the topic');
+    await visit('/guides/apostille/1');
+    assert.equal(flat(await page.locator('[data-guide-step-next] small').innerText()), 'Дальше', 'A free topic: the way on carries no «с маршрутом»');
+    await visit('/guides/apostille');
+    assert.match(flat(await page.locator('[data-guide-next-topic]').innerText()), /^Следующая тема: /, 'A topic names its bottom link as the next topic');
 
     // 5. A guide topic reads first: the facts, the topic itself and its steps
     //    stand before any offer, free topic or paid.
@@ -135,6 +172,8 @@ try {
     await visit('/');
     assert.doesNotMatch(await page.locator('main').evaluate(node => node.textContent), /за 10 минут/, 'Home: the questionnaire is not «10 минут» in one place and «~2 минуты» in another');
     assert.match(await page.locator('main').evaluate(node => node.textContent), /за 2 минуты пройди опрос/, 'Home: the answer names the two minutes the questionnaire takes');
+    const intro = page.locator('[data-vespi-intro=home] a');
+    assert.deepEqual([flat(await intro.innerText()), await intro.getAttribute('href')], ['Составить план с Веспи', '/plan#questionnaire'], 'Home: the button under Vespi names where it leads');
     if (phone) {
       // The trust line under the first buttons is not read through the chat button.
       await page.waitForFunction(() => document.querySelector('#chat-launcher'));
@@ -152,6 +191,7 @@ try {
     await visit('/check');
     assert.equal(await page.locator('#document-check').getByRole('combobox', { name: 'Стипендиальная программа', exact: true }).count(), 1, '/check: the scholarship field is named as in the cabinet');
     await visit('/portal?auth=login');
+    assert.equal(await page.locator('form a[href="/prices"]').innerText(), 'Посмотреть цену', 'Sign-in: the price is not «тарифы», which /prices says it is not');
     await page.locator('[data-portal-recover-open]').click();
     assert.match(flat(await page.locator('[data-portal-recover]').getByText(/Код придёт/).innerText()), /пришлём вручную через WhatsApp/, 'Recovery: the manual way back is named before sending');
 

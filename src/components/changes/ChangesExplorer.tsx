@@ -343,7 +343,7 @@ export function ChangesExplorer() {
             </Link>{" "}
             или{" "}
             <Link href="/plan#questionnaire" className="font-semibold text-ink underline underline-offset-4">
-              бесплатный разбор ситуации
+              бесплатный план по твоей ситуации
             </Link>
             .
           </p>

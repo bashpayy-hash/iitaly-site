@@ -88,7 +88,7 @@ try {
     const code = form.getByLabel('Код доступа', { exact: true });
     const buttonBounds = await submit.boundingBox();
     assert(buttonBounds.height >= 44);
-    assert.equal(await form.getByRole('link', { name: 'Посмотреть тарифы' }).getAttribute('href'), '/prices');
+    assert.equal(await form.getByRole('link', { name: 'Посмотреть цену' }).getAttribute('href'), '/prices');
     await page.screenshot({ path: resolve(output, `login-${width}.png`), fullPage: true, animations: 'disabled' });
     await submit.click();
     await alert.waitFor();

@@ -65,7 +65,9 @@ export function PlanExplorer() {
   const [draft, updateDraft] = usePlanDraft();
   const plan = draft.complete ? buildPlan(draft.answers) : null;
   // The list of answers opened from a ready plan (see PlanAnswers).
-  const [reviewing, setReviewing] = useState(false);
+  // /plan?answers=1 opens it at once: the cabinet's «Изменить ответы анкеты»
+  // leads here instead of restarting the questionnaire (22 Nov).
+  const [reviewing, setReviewing] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("answers") === "1");
   const review = !!plan && reviewing;
 
   // The document check has its own page since 20 Nov. Old links and
@@ -87,6 +89,9 @@ export function PlanExplorer() {
 
   function showPlan() {
     setReviewing(false);
+    // Leave the address without the list's mark, so a reload shows the plan.
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("answers")) { url.searchParams.delete("answers"); window.history.replaceState(window.history.state, "", url); }
     focusPlan();
   }
 

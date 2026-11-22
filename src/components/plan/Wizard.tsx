@@ -121,16 +121,21 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
                 </p>
                 <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white" data-plan-preview-title>{preview.steps[0] && stepTitleText(preview.steps[0].t)}</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.summary || preview.steps[0]?.p}</p>
-                {preview.steps[0]?.action && <p className="mt-3 text-apple-body-sm text-cloud-white">{preview.steps[0].action}</p>}
+                {/* Funnel analysis (owner, 22 Nov: «что ещё по воронке продаж
+                    повторяется, или есть неконсистенции»). This screen printed
+                    the first step's whole action, which the result and the
+                    step's own page then repeated, and promised that «ещё 10
+                    шагов… откроются по кнопке ниже», while the button opens a
+                    plan where those ten are locked. It now names the step and
+                    says what the plan holds. */}
                 <p className="mt-2 text-apple-caption text-cloud-meta">
                   {(() => {
                     const stepsLeft = Math.max(preview.steps.length - 1, 0);
                     const docsCount = preview.docs.length;
                     return (
                       <>
-                        Ещё {stepsLeft} {ruPlural(stepsLeft, "шаг", "шага", "шагов")} и{" "}
-                        {docsCount} {ruPlural(docsCount, "документ", "документа", "документов")} в
-                        чек-листе откроются по кнопке ниже.
+                        Первый шаг открыт целиком. В плане ещё {stepsLeft} {ruPlural(stepsLeft, "шаг", "шага", "шагов")} и
+                        список из {docsCount} {ruPlural(docsCount, "документа", "документов", "документов")}.
                       </>
                     );
                   })()}
@@ -213,7 +218,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           onClick={() => { stepChanged.current = true; onDraftChange({ ...draft, step: step + 1 }); }}
           className="min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white"
         >
-          Далее
+          Дальше
         </button>}
       </div>
     </div>

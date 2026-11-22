@@ -96,7 +96,7 @@ export function MediaSwitcher({ items, index, onSelect, href, headingId, lastAct
     </section>
     <nav className={styles.navigation} data-fab-yield aria-label="Переход между пунктами">
       {index > 0 ? <button type="button" className={styles.back} onClick={() => onSelect(index - 1)}>Назад</button> : firstAction || <button type="button" className={styles.back} disabled>Назад</button>}
-      {last && lastAction ? lastAction : <button type="button" className={styles.next} data-instruction-next disabled={last} onClick={() => onSelect(index + 1)}>{last ? "Все пункты просмотрены" : "Далее"}</button>}
+      {last && lastAction ? lastAction : <button type="button" className={styles.next} data-instruction-next disabled={last} onClick={() => onSelect(index + 1)}>{last ? "Все пункты просмотрены" : "Дальше"}</button>}
     </nav>
   </div>;
 }

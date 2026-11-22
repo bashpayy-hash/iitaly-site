@@ -386,7 +386,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
         const stepStates: NodeState[] = row.tasks.map(task => portalTaskDone(data, task) ? "done" : task.id === current?.id ? "current"
           : lockedTask?.(task) ? "locked" : opened && task.available !== false ? "todo" : "later");
         const station = point++;
-        const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "закрыт до оплаты" };
+        const stepWords = { done: "готово", current: "сейчас", todo: "дальше", later: "позже", locked: "откроется с маршрутом" };
         return <li key={row.id} className={styles.row} data-road-unit={row.id} data-road-unit-state={state}>
           <a className={styles.unitHead} style={{ "--x": snake(station) } as CSSProperties} data-side={outside(station)} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>
