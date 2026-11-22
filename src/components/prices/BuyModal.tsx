@@ -164,8 +164,11 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
 
               {STRIPE_ENABLED ? (
                 <p className="mt-3 text-apple-body-sm text-cloud-body">
-                  Безопасная оплата через Stripe. Доступные карта, Apple Pay, Google Pay и другие
-                  совместимые способы Stripe покажет автоматически.
+                  {/* 22 Nov (copy-editing skill): «Доступные карта, Apple Pay…
+                      Stripe покажет автоматически» did not read as a sentence,
+                      and did not say why Apple Pay may be missing. */}
+                  Безопасная оплата через Stripe. Он сам покажет способы, доступные
+                  на твоём устройстве: карту, Apple Pay, Google Pay и другие.
                 </p>
               ) : (
                 <p className="mt-3 text-apple-body-sm text-cloud-body">

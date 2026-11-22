@@ -1,19 +1,6 @@
 import { PRICE_MAIN } from "@/data/pricing";
+import { FAQ, faqParagraphs } from "@/components/home/faqData";
 
-const faq = [
-  {
-    q: "Гарантируете поступление, визу или стипендию?",
-    a: "Нет. Решения принимают университет, консульство и регион. IITALY помогает выстроить маршрут, проверить документы и не пропустить сроки.",
-  },
-  {
-    q: "Можно вернуть деньги?",
-    a: "Да. В течение 7 календарных дней с оплаты возможен полный возврат, если личный кабинет ещё не активирован и персональный маршрут не выдан.",
-  },
-  {
-    q: "ИИ может ошибиться?",
-    a: "Да. Поэтому критичные требования нужно сверять с официальными источниками и, при необходимости, с человеком.",
-  },
-];
 
 export function StructuredData() {
   const organization = {
@@ -43,10 +30,12 @@ export function StructuredData() {
   const faqPage = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faq.map((item) => ({
+    // The answers the page shows (faqData.ts). This used to be an older copy
+    // whose refund condition was the one for manual payment (22 Nov).
+    mainEntity: FAQ.map((item) => ({
       "@type": "Question",
       name: item.q,
-      acceptedAnswer: { "@type": "Answer", text: item.a },
+      acceptedAnswer: { "@type": "Answer", text: faqParagraphs(item.a).join(" ") },
     })),
   };
 

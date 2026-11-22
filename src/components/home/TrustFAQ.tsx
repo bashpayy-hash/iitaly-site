@@ -2,8 +2,7 @@
 /* eslint-disable @next/next/no-img-element -- Local landscape renditions with explicit dimensions. */
 
 import { track } from "@/lib/track";
-import { STRIPE_ENABLED } from "@/lib/paymentMode";
-import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { FAQ, faqParagraphs } from "./faqData";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import styles from "./trust-faq.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
@@ -13,33 +12,7 @@ import disclosure from "@/components/ui/disclosure.module.css";
  *  площадке с видом на город» — the Florence belvedere scene
  *  (design/illustrations/landscapes-2026-11-03.json, «belvedere») fills a
  *  28px tile; the questions sit on a cream panel on its right so Vespi and
- *  the city stay in view. */
-const FAQ = [
-  {
-    q: "Как проходит работа с iItaly?",
-    a: `Начни бесплатно: за 2 минуты пройди опрос о своей ситуации или загрузи документ на проверку. До оплаты ты увидишь маршрут и условия проверки стипендии. Затем\u00A0— один платёж ${priceLabel(PRICE_MAIN)}, без подписки. ${STRIPE_ENABLED
-      ? "После подтверждения Stripe кабинет создаётся автоматически, а код доступа появляется сразу на сайте."
-      : "После подтверждения оплаты мы активируем кабинет и присылаем код доступа в WhatsApp."} В кабинете\u00A0— персональный чек-лист: аттестат, DoV/CIMEA, Universitaly и стипендия DSU. Документы проверяет ИИ до подачи. CIMEA Verification занимает 60 рабочих дней; сроки вуза и DSU нужно проверять отдельно. Досье на визу D готовим заранее: рассмотрение может занять до 90 дней. После прилёта кабинет ведёт по первым шагам в Италии\u00A0— codice fiscale, kit giallo и Questura.`,
-  },
-  {
-    q: "Гарантируете поступление, визу или стипендию?",
-    a: "Нет\u00A0— это решают университет, консульство и регион Италии, а не мы и не ИИ. Мы отвечаем за другое: правильный маршрут, проверенные документы и ничего не упущенное по срокам.",
-  },
-  {
-    q: "Что если университет откажет?",
-    a: "Это не конец доступа\u00A0— кабинет остаётся открытым, и система пересобирает план: другие университеты, следующий интейк, донабор. Отдельно за это не платишь.",
-  },
-  {
-    q: "Можно вернуть деньги?",
-    a: STRIPE_ENABLED
-      ? "Да. В течение 7 календарных дней с оплаты вернём деньги полностью, если ты ещё не использовал платные функции кабинета: не загружал документы на проверку и не отмечал шаги маршрута выполненными."
-      : "Да. В течение 7 календарных дней с оплаты вернём деньги полностью, если личный кабинет ещё не активирован и персональный маршрут не выдан.",
-  },
-  {
-    q: "ИИ может ошибиться?",
-    a: "Может. Обновлённые гайды ссылаются на правила 2026/27–2027/28 и региональные bando. Критичные условия по документам, визе и стипендии нужно подтверждать у принимающего органа.",
-  },
-];
+ *  the city stay in view. The questions and answers: faqData.ts. */
 
 /* After the 320ms reveal: if the opened answer ends below the panel's visible
    part, scroll the panel (not the page) just enough to show it. */
@@ -94,7 +67,7 @@ export function TrustFAQ() {
                 <summary className={`${styles.question} ${disclosure.row}`}>
                   {item.q}
                 </summary>
-                <p className={styles.answer}>{item.a}</p>
+                {faqParagraphs(item.a).map(paragraph => <p key={paragraph} className={styles.answer}>{paragraph}</p>)}
               </details>
             ))}
           </div>

@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- Reviewed local artwork supports static export. */
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { AppleButton } from "@/components/apple/Button";
-import { BUY_VERB } from "@/components/access/offerCopy";
+import { AGENCY_FROM, BUY_VERB } from "@/components/access/offerCopy";
 import { PAY_WA } from "@/lib/payment";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { BotanicalCanvas } from "@/components/marketing/BotanicalCanvas";
@@ -31,9 +31,11 @@ export function PricesHero({ onBuy }: { onBuy: () => void }) {
         </h1>
       </div>
       <p className="mx-auto mt-5 max-w-2xl text-apple-body text-cloud-body">
-        Один платёж за всё поступление. Не подписка, не тарифы, без доплат
-        за этапы. Работу выполняет система&nbsp;— поэтому это стоит столько, а
-        не как в агентстве.
+        {/* Copy-editing skill, 22 Nov (owner: «примени и если реально полезно
+            имплементи на сайте»): «Не подписка, не тарифы, без доплат» and
+            «…столько, а не как в агентстве» were a list of negatives and a
+            reversal. The line says what the system does and the agency's price. */}
+        {`Один платёж за всё поступление, без подписки и доплат за этапы. Маршрут, сроки и проверку документов ведёт система, поэтому это в десятки раз дешевле агентства: там сопровождение стоит от\u00A0${priceLabel(AGENCY_FROM)}.`}
       </p>
       <div className={styles.purchaseActions}>
         <AppleButton type="button" onClick={onBuy} aria-haspopup="dialog" data-pricing-buy="hero">

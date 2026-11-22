@@ -118,7 +118,7 @@ try {
     const choices = ['Осенью 2027', '11 классов', '4,7 и выше', 'Бакалавриат', 'Без стипендии будет сложно', 'Экономика, бизнес', 'Есть IELTS или TOEFL', 'Ещё не будет 18', 'В Казахстане', 'Уже знаю регион или вуз', 'Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({ hasText: choice }).click();
     await page.getByRole('button', { name: 'Открыть мой план', exact: true }).click();
-    await page.locator('summary').filter({hasText:'Напоминания на телефоне'}).click();
+    await page.locator('summary').filter({hasText:'Напоминания о сроках'}).click();
     await settle(page);
 
     const mainText = await page.locator('#main').innerText();
@@ -136,11 +136,11 @@ try {
     assert.match(await documents.innerText(), /Это ориентир для сбора/);
     assert.match(await documents.innerText(), /файлы ещё не проверены/);
 
-    const settings = page.getByRole('link', { name: 'Настроить напоминания', exact: true });
+    const settings = page.getByRole('link', { name: 'Как подключить', exact: true });
     assert.equal(await settings.getAttribute('href'), '/portal?view=help');
     await noOverflow(page, 'plan result ' + width);
     if ([1440, 390].includes(width)) {
-      await page.locator('details').filter({has:page.locator('summary').filter({hasText:'Напоминания на телефоне'})}).screenshot({ path: resolve(output, 'plan-reminders-' + width + '.png') });
+      await page.locator('details').filter({has:page.locator('summary').filter({hasText:'Напоминания о сроках'})}).screenshot({ path: resolve(output, 'plan-reminders-' + width + '.png') });
     }
 
     await settings.click();

@@ -171,7 +171,7 @@ try {
     //    that sends people to it.
     await visit('/');
     assert.doesNotMatch(await page.locator('main').evaluate(node => node.textContent), /за 10 минут/, 'Home: the questionnaire is not «10 минут» in one place and «~2 минуты» in another');
-    assert.match(await page.locator('main').evaluate(node => node.textContent), /за 2 минуты пройди опрос/, 'Home: the answer names the two minutes the questionnaire takes');
+    assert.match(await page.locator('main').evaluate(node => node.textContent), /за 2 минуты заполни анкету/, 'Home: the answer names the two minutes the questionnaire takes');
     const intro = page.locator('[data-vespi-intro=home] a');
     assert.deepEqual([flat(await intro.innerText()), await intro.getAttribute('href')], ['Составить план с Веспи', '/plan#questionnaire'], 'Home: the button under Vespi names where it leads');
     if (phone) {
