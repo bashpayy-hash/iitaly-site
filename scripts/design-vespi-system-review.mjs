@@ -216,7 +216,26 @@ try {
     });
     const page = await context.newPage(); activePage = page;
     page.on('pageerror', error => errors.push(error.message));
-    const visit = async path => { await page.goto(origin + path, { waitUntil: 'networkidle' }); await page.evaluate(() => document.fonts.ready); };
+    // Twice in CI (#274 and #278, 22 Nov) the second visit to /plan never
+    // went quiet within 30 s and the error kept no trace of why. It was not
+    // reproduced: 8 full local runs and 12 parallel guides → /plan sequences
+    // at 4× CPU throttling reached idle in 1–3.5 s; /plan has no service
+    // worker, socket, event stream or polling, and its video loop is not
+    // requested under reduced motion. If it happens again, the error names
+    // what was still loading.
+    const loading = new Map();
+    page.on('request', request => loading.set(request, Date.now()));
+    page.on('requestfinished', request => loading.delete(request));
+    page.on('requestfailed', request => loading.delete(request));
+    const visit = async path => {
+      try { await page.goto(origin + path, { waitUntil: 'networkidle' }); }
+      catch (error) {
+        const now = Date.now();
+        console.error(`Still loading on ${path} at ${width}px:\n` + ([...loading].map(([request, since]) => `  ${request.resourceType()} ${request.method()} ${request.url().replace(origin, '')} (${now - since} ms)`).join('\n') || '  nothing'));
+        throw error;
+      }
+      await page.evaluate(() => document.fonts.ready);
+    };
     const capture = async name => {
       if (width !== 1440 && width !== 390) return;
       await page.screenshot({ path: resolve(output, `${baseline ? 'before' : 'after'}-${name}-${width}.png`) });
