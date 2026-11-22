@@ -79,15 +79,26 @@ function Closing({ ids, note }: { ids: readonly SourceId[]; note: string }) {
   return note ? <><Sources ids={ids} span={{ md: 6 }} /><Note text={note} span={{ md: 6 }} /></> : <Sources ids={ids} span={{ md: 6 }} />;
 }
 
-export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: string }) {
-  const helpId = isGuideId(guide.id) ? guide.id : undefined;
-  const action = helpId ? guideAction(helpId) : null;
+/* Funnel pass (owner, 22 Nov: «сделай все так, чтобы все было
+   последовательным и воронка была максимально эффективной»). The overview
+   was one bento above the steps (12 Nov), and on a phone the reader of a free
+   topic met «Проверить документ» and «Открыть маршрут за 10 990 ₸» 1 400px
+   before the first line of the topic itself. The same cells now stand in two
+   groups: the facts above the reading, and what to do next, what the route
+   adds, the sources and the note after it. */
+export function GuideTopicOverview({ guide }: { guide: GuideCard }) {
   const facts = guideFacts(guide);
-  const factSpan: BentoSpan = action ? { md: 2 } : { md: 3 };
   return <Bento label="Коротко о теме" className={steps.overviewBento} data-guide-overview data-with-lead={Boolean(guide.lead)}>
     {guide.lead && <BentoCell span={{ md: 6 }} data-guide-lead><p className={steps.bentoLead}>{guide.lead}</p></BentoCell>}
-    {facts.map(fact => <Fact key={fact.label} value={fact.value} label={fact.label} known={fact.known} span={factSpan} data-guide-fact={fact.known} />)}
-    {action && helpId && <BentoCell span={{ md: 4 }} tone="action" data-guide-next={guide.id}>
+    {facts.map(fact => <Fact key={fact.label} value={fact.value} label={fact.label} known={fact.known} span={{ md: 3 }} data-guide-fact={fact.known} />)}
+  </Bento>;
+}
+
+export function GuideTopicAfter({ guide, note }: { guide: GuideCard; note: string }) {
+  const helpId = isGuideId(guide.id) ? guide.id : undefined;
+  const action = helpId ? guideAction(helpId) : null;
+  return <Bento label="Что дальше" className={steps.afterBento} data-guide-after>
+    {action && helpId && <BentoCell span={{ md: 6 }} tone="action" data-guide-next={guide.id}>
       <p className={bento.heading}>{GUIDE_HELP[helpId].next}</p>
       <div className={bento.actions}>
         <GuideActionLink id={helpId} />
@@ -99,7 +110,7 @@ export function GuideTopicOverview({ guide, note }: { guide: GuideCard; note: st
   </Bento>;
 }
 
-export function VisaOverview({ guide, note }: { guide: GuideCard; note: string }) {
+export function VisaOverview() {
   const funds = VISA_PARTS.find(part => part.id === "funds")!;
   return <Bento label="Коротко о визе" className={steps.overviewBento} data-guide-overview data-visa-overview>
     {VISA_KEY_FACTS.map(fact => <Fact key={fact.label} value={fact.value} label={fact.label} span={{ md: 2 }} data-guide-fact />)}
@@ -114,6 +125,11 @@ export function VisaOverview({ guide, note }: { guide: GuideCard; note: string }
       </div>
       <div className={bento.actions}><Link href={`/guides/visa/${funds.id}`} className={ui.primary}>Посчитать в тенге</Link></div>
     </BentoCell>
+  </Bento>;
+}
+
+export function VisaAfter({ guide, note }: { guide: GuideCard; note: string }) {
+  return <Bento label="Что дальше" className={steps.afterBento} data-guide-after data-visa-after>
     <GuideDose place="guide-overview" span={{ md: 6 }} free={`Ключевые факты, ссылка на VFS, калькулятор средств и названия ${VISA_POINTS} пунктов.`}
       paid={`Все ${VISA_POINTS} пунктов подробно: когда подавать, документы, проверка перед подачей. А ещё гайды и проверки документов без лимита. ${ROUTE_TAIL}`} />
     <Closing ids={guide.sources} note={note} />

@@ -148,7 +148,7 @@ try {
     assert.match(await page.locator('[data-wall-buy]').innerText(),/10\s990\s₸/,'The wall names the one-time price');
     await page.locator('[data-wall-buy]').click();
     const buy=page.getByRole('dialog');await buy.waitFor();
-    assert.match((await buy.innerText()).replace(/\s+/g,' '),/Поступление под ключ.*10 990 ₸/,'The wall opens the same purchase form as /prices');
+    assert.match((await buy.innerText()).replace(/\s+/g,' '),/Весь маршрут поступления.*10 990 ₸/,'The wall opens the same purchase form as /prices');
     await page.keyboard.press('Escape');await buy.waitFor({state:'hidden'});
     await capture('portal-wall');await audit('guest wall');
     await portalDestination(page, 'Документы');

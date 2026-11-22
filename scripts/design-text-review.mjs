@@ -125,7 +125,7 @@ try {
       assert.equal(dose.length, 2, `${path}: a free side and a paid side`);
       assert(dose.every(text => words(text) <= 24), `${path}: each side of the free/paid cell is brief (${dose.map(words)})`);
       assert.match(dose[1], /Один платёж, не подписка\./, `${path}: the paid side still names the single payment`);
-      const note = page.locator('[data-guide-overview] [data-guide-note]');
+      const note = page.locator('[data-guide-after] [data-guide-note]');
       if (await note.count()) {
         const share = await note.evaluate(cell => cell.getBoundingClientRect().width / cell.parentElement.getBoundingClientRect().width);
         assert(share > .9, `${path} at ${width}: the note reads across the grid (${share.toFixed(2)})`);

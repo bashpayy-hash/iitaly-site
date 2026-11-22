@@ -13,7 +13,7 @@ import { GuideLegacyPoint } from "./GuideLegacyPoint";
 import { guidePoints } from "./guideCatalogue";
 import { guideFree } from "./guideAccess";
 import { guideArt } from "./guideArt";
-import { GuideTopicOverview, VisaOverview } from "./GuideOverview";
+import { GuideTopicAfter, GuideTopicOverview, VisaAfter, VisaOverview } from "./GuideOverview";
 import steps from "./guide-steps.module.css";
 import { GuideBandField } from "./GuideBandField";
 import ui from "./guide-pages.module.css";
@@ -75,8 +75,10 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
       </header>
       </div>
       {/* Owner, 12 Nov (Lamossa Studio): facts, the next action, the note and
-          the sources as one bento above the steps (GuideOverview.tsx). */}
-      {!part && (id === "visa" ? <VisaOverview guide={guide} note={note} /> : <GuideTopicOverview guide={guide} note={note} />)}
+          the sources as a bento (GuideOverview.tsx). Since 22 Nov the facts
+          stand above the reading and the rest after it: the topic itself is
+          the first thing under its header. */}
+      {!part && (id === "visa" ? <VisaOverview /> : <GuideTopicOverview guide={guide} />)}
       {/* The document check is its own section in the main navigation
           (owner, 21 Nov: «вместо того, чтобы бесконечно в разных ответвлениях
           писать… сделай так, чтобы проверка документов была отдельным
@@ -103,6 +105,7 @@ export function GuideTopicPage({ id, visaPart }: { id: string; visaPart?: VisaPa
         {part && note && <p className={ui.note}>{note}</p>}
         {part && <GuideSources ids={guide.sources} />}
       </div>
+      {!part && (id === "visa" ? <VisaAfter guide={guide} note={note} /> : <GuideTopicAfter guide={guide} note={note} />)}
       <footer className={ui.articleFooter}>
         <GuideHelperLink id={helpId} />
         {part ? <Link href="/guides/visa" className={ui.textLink}>К вопросам о визе</Link>

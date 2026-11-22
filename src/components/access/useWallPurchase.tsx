@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { BuyModal, type BuyProduct } from "@/components/prices/BuyModal";
-import { PRICE_MAIN, priceLabel } from "@/data/pricing";
+import { PRICE_MAIN } from "@/data/pricing";
+import { BUY_LABEL, PRODUCT_ID } from "./offerCopy";
 import { track } from "@/lib/track";
 import { guestPreview } from "./usePaidDevice";
 
 export type WallPlace = "plan-result" | "plan-step" | "portal-task" | "document-check" | "guide-step" | "guide-overview" | "visa" | "permesso" | "chat" | "document-fixes";
 
-const PRODUCT = "Поступление под ключ";
-export const WALL_LABEL = `Открыть маршрут за ${priceLabel(PRICE_MAIN)}`;
+const PRODUCT = PRODUCT_ID;
+export const WALL_LABEL = BUY_LABEL;
 /* One wall_seen per place and address per page load: the same locked place
    is mounted again on every route change inside the cabinet. */
 const seen = new Set<string>();

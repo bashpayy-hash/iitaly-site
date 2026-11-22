@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element -- Reviewed local artwork supports static export. */
 import { PRICE_MAIN, priceLabel } from "@/data/pricing";
 import { AppleButton } from "@/components/apple/Button";
+import { BUY_VERB } from "@/components/access/offerCopy";
+import { PAY_WA } from "@/lib/payment";
+import { STRIPE_ENABLED } from "@/lib/paymentMode";
 import { BotanicalCanvas } from "@/components/marketing/BotanicalCanvas";
 import marketing from "@/components/marketing/marketing.module.css";
 import { PricesLandscape } from "./PricesLandscape";
@@ -34,9 +37,20 @@ export function PricesHero({ onBuy }: { onBuy: () => void }) {
       </p>
       <div className={styles.purchaseActions}>
         <AppleButton type="button" onClick={onBuy} aria-haspopup="dialog" data-pricing-buy="hero">
-          Купить за {priceLabel(PRICE_MAIN)}
+          {BUY_VERB} {priceLabel(PRICE_MAIN)}
         </AppleButton>
       </div>
+      {/* Funnel pass (22 Nov). «Возврат 7 дней» stood all over the site without
+          its condition, which was 3 768px down this page on a phone, and no
+          way to ask was named. Both stand under the button now, in the words
+          of /terms. */}
+      <p className={styles.purchaseNote} data-pricing-refund>
+        {STRIPE_ENABLED
+          ? "Возврат 7 дней, пока не загружал документы на проверку и не отмечал шаги выполненными."
+          : "Возврат 7 дней, пока кабинет не активирован и маршрут не выдан."}
+        {" "}Вопросы и возврат&nbsp;— в{" "}
+        <a href={`https://wa.me/${PAY_WA}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>.
+      </p>
       {/* data-fab-yield: on a 320px phone «Спросить Веспи» lay over the third
           link (intuitiveness pass, 21 Nov); the button steps aside for them. */}
       <nav className={`${marketing.taskLinks} ${styles.sectionLinks}`} aria-label="На странице цен" data-fab-yield>

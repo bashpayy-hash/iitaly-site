@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { PlanDocuments } from "./AssessmentRoadmap";
 import { PlanPath } from "./PlanPath";
 import { stepsWord } from "./planRoute";
@@ -29,26 +30,7 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.
       </p>
 
-      {/* CRO audit (owner, 20 Nov: «делай тогда те самые 5 правок»). The result
-          led only to the cabinet, and the price surfaced first inside step 2.
-          Before payment the main action is now the offer itself — what opens
-          for 10 990 ₸, the button, and the risk line; the cabinet stays as the
-          second, quiet way on. After payment only the cabinet remains. */}
-      {paid ? <div className="mt-5"><AppleButtonLink href="/portal" variant="filled" className="max-sm:w-full">Продолжить в личном кабинете</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>
-      : <div className={styles.offer} data-plan-offer>
-        <p className={styles.offerTitle}>Первый шаг уже открыт. Остальной маршрут&nbsp;— за один платёж:</p>
-        <ul className={styles.offerList}>
-          <li>ещё {more} {stepsWord(more)} с датами и чек-листами</li>
-          <li>проверка документов без лимита</li>
-          <li>напоминания о сроках</li>
-        </ul>
-        <div className={styles.offerActions}>
-          <AppleButton type="button" variant="filled" onClick={wall.open} data-wall-buy data-wall-place="plan-result" aria-haspopup="dialog" className="max-sm:w-full">{wall.label}</AppleButton>
-          <AppleButtonLink href="/portal" variant="outlined" className="max-sm:w-full">Продолжить в личном кабинете</AppleButtonLink>
-        </div>
-        <p className={styles.offerRisk} data-wall-risk>{RISK_LINE}</p>
-        <p className="mt-1 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p>
-      </div>}
+      {paid && <div className="mt-5"><AppleButtonLink href="/portal" variant="filled" className="max-sm:w-full">Продолжить в личном кабинете</AppleButtonLink><p className="mt-2 text-[13px] leading-relaxed text-cloud-meta">Ответы и набор уже сохранены на этом устройстве. Вход не нужен.</p></div>}
 
       {/* Owner, 20 Nov (скрин этого места: «очень громоздкие, большие
           степы… помещается только один или два»): весь маршрут короткими
@@ -58,6 +40,27 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
         <button type="button" onClick={onReset}>Изменить ответы</button>
       </div>
       <PlanPath plan={plan} />
+      {/* Funnel pass (owner, 22 Nov: «сделай все так, чтобы все было
+          последовательным и воронка была максимально эффективной»). Since the
+          CRO audit of 20 Nov the offer stood first: after ten answers the
+          first screen was a price, and the free step the page had promised
+          («понятные шаги… Бесплатно») was a screen lower. The route now comes
+          first, with «Начни здесь» on the first screen; the offer follows the
+          list it speaks about, with one filled button. The cabinet is a quiet
+          link in the line that says where the answers are kept. */}
+      {!paid && <div className={styles.offer} data-plan-offer>
+        <p className={styles.offerTitle}>Первый шаг уже открыт. Остальной маршрут&nbsp;— за один платёж:</p>
+        <ul className={styles.offerList}>
+          <li>ещё {more} {stepsWord(more)} с датами и чек-листами</li>
+          <li>проверка документов без лимита</li>
+          <li>напоминания о сроках</li>
+        </ul>
+        <div className={styles.offerActions}>
+          <AppleButton type="button" variant="filled" onClick={wall.open} data-wall-buy data-wall-place="plan-result" aria-haspopup="dialog" className="max-sm:w-full">{wall.label}</AppleButton>
+        </div>
+        <p className={styles.offerRisk} data-wall-risk>{RISK_LINE}</p>
+        <p className={styles.offerKept}>Ответы и набор уже сохранены на этом устройстве. <Link href="/portal">Продолжить в личном кабинете</Link> можно без входа.</p>
+      </div>}
       <PlanDocuments plan={plan} />
       {wall.modal}
 

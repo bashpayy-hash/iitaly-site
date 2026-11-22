@@ -9,6 +9,9 @@
 /* Вводный абзац темы — первая широкая ячейка бенто (GuideOverview.tsx). */
 .bentoLead { margin:0; max-width:72ch; font-size:17px; line-height:1.6; color:#3F3933; }
 .overviewBento { margin:0 0 12px; }
+/* 22 Nov: what to do next, what the route adds, sources and the note stand
+   after the reading (GuideTopicAfter). */
+.afterBento { margin:28px 0 0; }
 /* Дозирование в обзоре: слева что открыто, справа что с маршрутом. */
 .dose { display:grid; gap:16px; }
 @container (min-width:560px) { .dose { grid-template-columns:repeat(2,minmax(0,1fr)); gap:0; } .doseSide + .doseSide { padding-left:24px; border-left:1px solid #E4DCCF; } .doseSide:first-child { padding-right:24px; } }
