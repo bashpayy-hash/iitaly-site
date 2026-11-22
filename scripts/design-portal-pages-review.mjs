@@ -75,7 +75,7 @@ try {
   const {page,context,data,calls,fileCalls}=await open({width,height:900},'screenshot-parent',{docsCurrent:true,translationCurrent:true});
   // Owner, 5 Nov: the overview marks nothing; each stage is one row of «Весь путь».
   assert.equal(await page.locator('[data-task-check]').count(),0);
-  assert.equal(await page.locator('[data-road-count]').innerText(),'Сделано 4 из 26 шагов · заранее 2');
+  assert.equal((await page.locator('[data-road-count]').innerText()).replace(/\s+/g,' '),'Шаги: 3 из 16 · Документы: 1 из 10 · заранее 2');
   const initialCount = await page.locator('[data-road-count]').innerText();
   await noOverflow(page);await axe(page,`Overview ${width}`);
   await page.screenshot({path:resolve(output,`overview-${width}.png`),fullPage:true});

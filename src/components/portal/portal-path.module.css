@@ -12,6 +12,10 @@
 .percent strong { color:#1F6B47; font:600 clamp(30px,3vw,38px)/1 var(--font-sans); letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
 .count { margin:0; color:var(--quiet); font-size:15px; line-height:1.5; font-variant-numeric:tabular-nums; }
 .count strong { color:var(--ink); font-weight:600; }
+.countGroup { display:inline-block; white-space:nowrap; }
+/* On a phone the two counts stand one under the other; the dot between them
+   would hang at the end of the first line, so it is not drawn there. */
+@media (max-width:480px) { .countDot { opacity:0; } }
 .ahead { color:var(--quiet); }
 /* Полоса: дорожка, заливка, разрезы между этапами и бегунок. Рамка .meter
    обрезает по своему полю (overflow: clip) сдвинутую дорожку бегунка, чтобы

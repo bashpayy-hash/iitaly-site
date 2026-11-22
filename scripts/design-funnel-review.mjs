@@ -98,6 +98,15 @@ try {
     assert.equal(flat(await sheet.getByRole('heading').first().innerText()), 'Весь маршрут поступления', 'The purchase form names the route');
     await page.keyboard.press('Escape'); await sheet.waitFor({ state: 'hidden' });
 
+    // 3a. The free cabinet built from the same answers counts the plan's steps
+    //     under their own name and as the same number; the rest has a name too.
+    await visit('/portal');
+    const count = page.locator('[data-road-count]');
+    await count.waitFor();
+    assert.equal(flat(await count.locator('[data-road-count-group=plan]').innerText()), `Шаги плана: 0 из ${steps}`, 'Cabinet: the plan\'s steps are counted as on /plan');
+    assert.match(flat(await count.locator('[data-road-count-group=prep]').innerText()), /^Подготовка и документы: \d+ из \d+$/, 'Cabinet: what it adds to the plan is counted under its own name');
+    assert.doesNotMatch(flat(await count.innerText()), /Сделано \d+ из \d+ шаг/, 'Cabinet: no second total of «шагов» beside the plan\'s');
+
     // 4. A locked plan step and the walls of the guides carry the same label.
     await visit('/plan/2'); await page.locator('[data-wall-buy]').first().waitFor(); await collect('/plan/2');
     await page.locator('[data-wall-buy]').first().click();

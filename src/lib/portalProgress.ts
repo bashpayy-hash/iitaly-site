@@ -29,3 +29,24 @@ export function portalTaskStageOpen(data: PortalData, taskId: string): boolean {
   const stage = data.roadmap.find(row => row.tasks.some(task => task.id === taskId));
   return Boolean(stage && portalProgress(data).stages.find(row => row.id === stage.id)?.open);
 }
+
+/* What the route's count counts, by name. Owner, 22 Nov: the questionnaire
+   page said «11 шагов» and the cabinet built from the same answers «19 шагов»
+   («просто назови их… даже в личном кабинете»). The cabinet adds the
+   questionnaire, the choice of universities and the documents to the plan's
+   own steps, so each part is counted under its own name: the plan's steps are
+   the same number as on /plan. A route from the server has no plan steps of
+   its own; there the documents are named apart from the other steps. Done
+   work counts as in portalProgress: only inside the stages that are open. */
+export function portalProgressGroups(data: PortalData): { key: "plan" | "prep" | "step" | "doc"; label: string; done: number; total: number }[] {
+  const open = new Set(portalProgress(data).stages.filter(stage => stage.open).map(stage => stage.id));
+  const local = data.roadmap.some(stage => stage.tasks.some(task => task.id.startsWith("local-p")));
+  const groups = local
+    ? [{ key: "plan" as const, label: "Шаги плана" }, { key: "prep" as const, label: "Подготовка и документы" }]
+    : [{ key: "step" as const, label: "Шаги" }, { key: "doc" as const, label: "Документы" }];
+  const kind = (task: PortalTask) => local ? (task.id.startsWith("local-p") ? "plan" : "prep") : DOC_TASKS[task.id] ? "doc" : "step";
+  return groups.map(group => {
+    const rows = data.roadmap.flatMap(stage => stage.tasks.filter(task => kind(task) === group.key).map(task => ({ task, open: open.has(stage.id) })));
+    return { ...group, total: rows.length, done: rows.filter(row => row.open && portalTaskDone(data, row.task)).length };
+  }).filter(group => group.total > 0);
+}
