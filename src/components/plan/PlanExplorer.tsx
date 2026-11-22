@@ -143,7 +143,8 @@ export function PlanExplorer() {
             <GuidePlanContext target="plan" />
             <div className={workspace.heading}>
               <h2>{review ? "Твои ответы" : "Твой план поступления"}</h2>
-              {!plan && <span className={workspace.badge}>~2 минуты · Персональный трек</span>}
+              {/* «Персональный трек» was a third name for the route (22 Nov). */}
+              {!plan && <span className={workspace.badge}>~2 минуты</span>}
               {/* The same place as «Изменить ответы» beside «Твой маршрут»: the
                   way back is where the way in was. */}
               {review && <button type="button" className={workspace.headingAction} onClick={showPlan} data-plan-answers-back>Вернуться к плану</button>}

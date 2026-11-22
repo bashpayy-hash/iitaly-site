@@ -65,21 +65,25 @@ export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void 
       {wall.modal}
 
       <details className={styles.reminders}>
+        {/* 22 Nov (copy-editing skill, owner: «примени и если реально полезно
+            имплементи на сайте»). «Настроить напоминания» offered a setup the
+            free plan does not have, and the block said so twice. It has the
+            cabinet tile's names (22 Nov, funnel pass): «Напоминания о сроках»,
+            «Как подключить». */}
         <summary className={disclosure.row}>
-          Напоминания на телефоне
+          Напоминания о сроках
         </summary>
         <p className="mt-2 text-apple-body-sm text-cloud-body">
-          Подключи Telegram в личном кабинете для напоминаний по сохранённому
-          маршруту. Сам по себе бесплатный план не включает рассылку.
+          Приходят в Telegram, когда маршрут открыт. Подключаются в личном
+          кабинете; бесплатный план их не включает.
         </p>
         <div className="mt-4">
           <AppleButtonLink href="/portal?view=help" variant="outlined" size="sm">
-            Настроить напоминания
+            Как подключить
           </AppleButtonLink>
         </div>
         <p className="mt-3 text-[13px] leading-relaxed text-cloud-meta">
-          Для подключения понадобится активированный личный кабинет. Telegram
-          получит одноразовую ссылку, а не код доступа к кабинету.
+          Telegram получит одноразовую ссылку, а не код доступа к кабинету.
         </p>
       </details>
     </div>

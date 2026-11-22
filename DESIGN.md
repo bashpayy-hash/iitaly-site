@@ -3273,3 +3273,41 @@ underlined, with a pill that ends at the content's right edge.
 Not checkable here: Safari itself. The reviews run in Chromium, which already
 obeyed the page; the cause was read from the owner's screenshot and from the
 stylesheet, and the result needs one look on the iPad.
+
+## The marketing skills applied to the funnel's words · 22 November 2026 (night)
+
+Owner, about the skills installed the same day: «примени и если реально
+полезно имплементи на сайте».
+
+The `copy-editing` skill's seven sweeps and its check for the marks of a
+model were run over home, /plan, /check, /prices, a guide's wall, a locked
+step, the guest cabinet and the purchase form (text read from the build).
+`humanizer` looks for the same marks, so it adds nothing here. Facts, the
+price, the agency figure, refund and terms, the free/paid boundary and the
+owner's two-phrase headings were not touched.
+
+**Changed.**
+
+| Where | Before | Now | Why |
+|---|---|---|---|
+| Search engines' copy of the home FAQ | an older text of its own; its refund answer named the condition for manual payment («если личный кабинет ещё не активирован»): with Stripe the cabinet opens at payment, so a search result read as «no refund» | the answers the page shows, from one module (`faqData.ts`) | a search result contradicted /terms |
+| «Гарантируете поступление…?» (home) and «Мы не обещаем…» (/prices) | «…а не мы и не ИИ. Мы обещаем другое: … ничего не упущенное по срокам» | «Поступление решает университет, визу — консульство, стипендию — регион Италии. Мы даём маршрут под твой случай, проверку документов до подачи и напоминания о сроках.» | it promised what the heading says is not promised |
+| «Что если университет откажет?» / «Если вуз отказал» | «Это не конец доступа — …», «следующий интейк» | «Кабинет остаётся открытым, и система пересобирает план: …следующий набор…» | a reversal; a word an 11th-grader does not know |
+| /prices, under the price | «Не подписка, не тарифы, без доплат… поэтому это стоит столько, а не как в агентстве» | «…без подписки и доплат за этапы. Маршрут, сроки и проверку документов ведёт система, поэтому это в десятки раз дешевле агентства: там сопровождение стоит от 500 000 ₸.» | a list of negatives and a reversal; the agency's figure is the proof |
+| The purchase form | «Доступные карта, Apple Pay, Google Pay и другие совместимые способы Stripe покажет автоматически» | «Он сам покажет способы, доступные на твоём устройстве: карту, Apple Pay, Google Pay и другие.» | not a sentence; did not say why Apple Pay may be missing |
+| /plan, reminders under the result | «Напоминания на телефоне» · «Настроить напоминания» over «бесплатный план не включает рассылку», said twice | «Напоминания о сроках» · «Как подключить», as the cabinet's tile | a button offered a setup the free plan does not have |
+| Home FAQ, «Как проходит работа» | nine sentences in one block; «пройди опрос» | three paragraphs (before payment, the cabinet, timings); «заполни анкету», the cabinet's word | a wall of text; a third name for the questionnaire |
+| /plan's badge | «~2 минуты · Персональный трек» | «~2 минуты» | a third name for the route |
+
+**Left as they are.** «iItaly» in the FAQ is the wordmark, not a typo. The
+two-phrase headings are the owner's manner. «11 классов — не приговор» is the
+owner's wording of 20 Nov.
+
+**For the owner.** The package list on /prices says «shortlist» and «AI-проверка»
+where the site says «список» and «ИИ»: the list is guarded and is part of the
+open question of what «Что включено» promises. The funnel has no proof from
+people (reviews, how many students used it): the skills ask for it, and only
+real words with names may go there.
+
+Reviews: `design-funnel-review` and `design-reminders-review` follow the new
+words; the content guard holds the three changed lines of /prices.

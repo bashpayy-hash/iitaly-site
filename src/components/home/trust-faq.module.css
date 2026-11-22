@@ -40,6 +40,8 @@
 .question::-webkit-details-marker { display:none; }
 .question:focus-visible { outline:2px solid #A33421; outline-offset:4px; border-radius:4px; }
 .answer { max-width:60ch; margin:0 0 18px; color:#3F3933; font-size:15px; line-height:1.55; }
+/* 22 Nov: the first answer was nine sentences in one block; its three parts stand as paragraphs. */
+.answer + .answer { margin-top:-8px; }
 /* Раскрытие (owner, 8 Nov: «очень топорно»): ответ выезжает за 320 мс тем же
    ходом, что и знак «плюс»; закрытие — тем же путём назад. Где
    ::details-content не поддерживается, раскрытие прежнее, мгновенное. */
