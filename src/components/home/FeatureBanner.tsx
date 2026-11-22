@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SceneCard } from "@/components/journey/SceneCard";
 import { GUIDE_TOPICS, GUIDE_STAGES, guideHref, guideStageHref } from "@/components/guides/guideCatalogue";
 import { cartoucheFrame } from "@/components/guides/guideArt";
+import { WordReveal } from "@/components/motion/WordReveal";
 import styles from "./journey-scenes.module.css";
 
 /* Две сцены на главной. Owner, 3 Nov: «суть информации не сильно понятна —
@@ -50,12 +51,12 @@ function ThemeCard({ id, object, frame, label, title, line, href }: { id: string
 export function FeatureBanner() {
   const permesso = GUIDE_TOPICS.find(item => item.id === "permesso")!;
   return <section className={styles.section} data-section="feature" aria-label="План и первые шаги в Италии">
-    <SceneCard title={<>Один шаг.<br />Понятный маршрут.</>} href="/plan#questionnaire" actionLabel="Составить мой план" action="Составить мой план" caption="Ответь на вопросы о себе. План покажет, с чего начать и какой шаг будет следующим.">
+    <SceneCard title={<><WordReveal text="Один шаг." /><br /><WordReveal text="Понятный маршрут." start={2} /></>} href="/plan#questionnaire" actionLabel="Составить мой план" action="Составить мой план" caption="Ответь на вопросы о себе. План покажет, с чего начать и какой шаг будет следующим.">
       <ul className={styles.cards} aria-label="Этапы маршрута">
         {GUIDE_STAGES.map((stage, index) => <ThemeCard key={stage.id} id={stage.id} {...STAGE_CARDS[index]} title={stage.title} line={stage.description} href={guideStageHref(stage.id)} />)}
       </ul>
     </SceneCard>
-    <SceneCard title={<>После визы<br />путь продолжается.</>} href={guideHref(permesso.id)} actionLabel={`Открыть гайд: ${permesso.title}`} action="Открыть гайд" caption="Первые формальности в новом городе. Выбирай одну тему, разбирайся с ней и переходи дальше.">
+    <SceneCard title={<><WordReveal text="После визы" /><br /><WordReveal text="путь продолжается." start={2} /></>} href={guideHref(permesso.id)} actionLabel={`Открыть гайд: ${permesso.title}`} action="Открыть гайд" caption="Первые формальности в новом городе. Выбирай одну тему, разбирайся с ней и переходи дальше.">
       <ul className={`${styles.cards} ${styles.cardsAlt}`} aria-label="Темы после приезда">
         {ARRIVAL_CARDS.map(card => { const topic = GUIDE_TOPICS.find(item => item.id === card.id)!; return <ThemeCard key={card.id} {...card} title={topic.title} href={guideHref(card.id)} />; })}
       </ul>

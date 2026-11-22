@@ -163,6 +163,22 @@ try{
     }));
     assert(panels.every(panel=>panel.ground&&panel.band),`Home ${width}: every card has the tesserae ground and the mosaic border (${JSON.stringify(panels)})`);
     assert(panels.every(panel=>panel.inside),`Home ${width}: words and cartouche stay inside the border (${JSON.stringify(panels)})`);
+    // Owner, 22 Nov, after a reel of effects: «давай имплементни, что считаешь
+    // нужным». On a phone the three tiles of a scene stack under the header,
+    // each 12px lower; side by side they stay in place.
+    const stack=await page.locator('[data-scene-card] ul').first().locator('li').evaluateAll(items=>items.map(item=>({position:getComputedStyle(item).position,top:parseFloat(getComputedStyle(item).top)})));
+    if(width<=640){assert(stack.every(item=>item.position==='sticky'),`Home ${width}: the route tiles stack (${JSON.stringify(stack)})`);assert.deepEqual(stack.map(item=>item.top-stack[0].top),[0,12,24],`Home ${width}: each stacked tile 12px lower`);}
+    else assert(stack.every(item=>item.position!=='sticky'),`Home ${width}: tiles side by side do not stack`);
+    // Four headings reveal word by word on scroll, in CSS: the words are in the
+    // HTML as plain text and the heading reads as before.
+    for(const heading of ['Один шаг. Понятный маршрут.','После визы путь продолжается.','Одна Италия. Твой собственный выбор.','Можно ли нам доверять']){
+      const node=page.locator('main h2').filter({hasText:heading.split(' ')[0]}).filter({hasText:heading.split(' ').at(-1)});
+      assert.equal((await node.first().innerText()).replace(/\s+/g,' ').trim(),heading,`Home ${width}: «${heading}» reads whole`);
+      assert.equal(await node.first().locator('span').evaluateAll(words=>words.filter(word=>!word.querySelector('span')&&getComputedStyle(word).display==='inline-block').length),heading.split(' ').length,`Home ${width}: «${heading}» is split into its words`);
+    }
+    // The footer ends in the wordmark laid in tesserae, decorative, inside the page.
+    const mark=await page.locator('[data-footer-mark]').evaluate(node=>({hidden:node.getAttribute('aria-hidden'),text:node.textContent,tiles:/mosaic-letters/.test(getComputedStyle(node).backgroundImage),fits:node.getBoundingClientRect().right<=innerWidth}));
+    assert.deepEqual(mark,{hidden:'true',text:'iItaly',tiles:true,fits:true},`Home ${width}: the footer's mosaic wordmark`);
     await check(page,'Home '+width);
     await page.locator('[data-section=feature]').scrollIntoViewIfNeeded();
     await page.locator('[data-section=feature]').screenshot({path:path.join(destination,`scenes-${width}.png`)});
