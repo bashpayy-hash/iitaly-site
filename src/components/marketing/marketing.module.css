@@ -87,23 +87,16 @@
 .finePrint { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; border-top: 1px solid var(--i-line); padding-top: 24px; }
 .finePrint p { max-width: 640px; }
 .finePrint > a { flex-shrink: 0; }
-/* The wordmark as a floor inscription: the cartouches' tesserae (mosaic-letters,
-   drawn by design/illustrations/source/textures/mosaic-textures.py) seen
-   through the letters, the bottom half fading into the paper. As wide as the
-   content column; the paper's own colour where text cannot be clipped. */
+/* The wordmark laid as a floor mosaic (footer-mark.svg), its lower part fading
+   into the paper. Owner, 22 Nov: «оно уже слишком большое… Сделай поменьше» —
+   half the column at most (600px), 280px on a phone, at the column's left
+   edge under the logo's column. */
 .footerMark {
-  /* The word is 2.06em wide in this face: the size makes it as wide as the
-     content column (1216px at most). Stones grow with the letters. */
-  margin: 48px 0 0; font-family: var(--font-apple-display); font-weight: 700;
-  font-size: calc(min(100vw - 64px, 1216px) / 2.06); line-height: .86; letter-spacing: -.055em; white-space: nowrap; user-select: none;
-  color: #E9DCCB;
-  background: url("/textures/mosaic-letters.webp") 0 0 / max(140px, .44em) max(140px, .44em);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  -webkit-mask-image: linear-gradient(180deg, #000 30%, rgba(0,0,0,.35) 62%, transparent 96%);
-  mask-image: linear-gradient(180deg, #000 30%, rgba(0,0,0,.35) 62%, transparent 96%);
+  display: block; width: 48%; min-width: min(100%, 280px); max-width: 600px; height: auto; margin: 48px 0 0; user-select: none; pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 42%, rgba(0,0,0,.4) 70%, transparent 98%);
+  mask-image: linear-gradient(180deg, #000 42%, rgba(0,0,0,.4) 70%, transparent 98%);
 }
-@media (max-width: 899px) { .footerMark { font-size: calc((100vw - 48px) / 2.06); } }
-@media (max-width: 767px) { .footerMark { margin-top: 32px; font-size: calc((100vw - 40px) / 2.06); } }
+@media (max-width: 767px) { .footerMark { margin-top: 32px; } }
 @media (forced-colors: active) { .footerMark { display: none; } }
 .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 999px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1); }
 .button:active { transform: translateY(1px); }

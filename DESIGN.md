@@ -3380,3 +3380,52 @@ line now, so its words stay inline.
 `design-flight-explorers-review` holds the deck on phones (and no deck side by
 side), each heading split into its words and reading whole, and the footer's
 wordmark.
+
+## The footer's word laid as a mosaic, not bricks · 22 November 2026 (night)
+
+Owner, on the footer wordmark of the same evening: «А че надпись кирпичная,
+сделай мозаичной в общем стиле тогда». The first version showed a texture of
+stones in straight rows through the letters: a wall, not a floor.
+
+The word is laid now as the cartouches are (opus vermiculatum): the letters'
+distance field gives rows parallel to every edge, one slate-blue row outside,
+an ochre one inside it, terracotta to the middle; stones are seeded along each
+row at one stone's length, each pixel goes to its nearest seed, and every stone
+is shrunk toward its centre so the joint stays open to the paper. The face is
+Inter Tight 700, the wordmark's face where SF Pro Display is absent.
+
+One SVG with one path per colour (first 4 843 stones; see below): sharp at every
+size, 47 KB as Netlify sends it at first, fetched only near the end of
+the page (`loading="lazy"`). The 15 KB brick texture is gone. The generator is
+`design/illustrations/source/wordmark/mosaic-wordmark.py` (deterministic; it
+reads the face from the build).
+
+## A test purchase for friends: /test, 667 ₸ · 22 November 2026 (night)
+
+Owner: «Сделай еще тестовое отдельное отделение моим друзьям за 667 тенге,
+пометь что оно тестовое».
+
+- The server (bashpayy-hash/iitaly#32) has a second portal product,
+  «Тестовый доступ · для друзей», 667 ₸: the same cabinet as the full route.
+  The server owns the price; its name says «Тестовый» at Stripe and in the
+  order log, and the owner's paid alert starts with «🧪 ТЕСТ».
+- The site sells it only from /test: one card on the paper with a red «Тест»
+  pill before the heading «Тестовый доступ для друзей», «667 ₸ вместо 10 990 ₸»,
+  a line that says it is a test purchase (real Stripe payment, real cabinet),
+  three lines on what it opens, the site's own purchase form, and WhatsApp for
+  what breaks. No page links to it, it is not in the sitemap, and its robots
+  meta is noindex, nofollow.
+- Anyone with the link can buy the full cabinet for 667 ₸: the link is given
+  by hand. Turning it off is removing one line of the server's catalogue.
+
+`design-test-offer-review` (CI, group portal) holds the noindex, the absence
+from the sitemap and from every other page, the badge before the heading, the
+price line, and that the order names the test product.
+
+Same night, two corrections. CI's warm-palette review forbids cold colours in
+any code or SVG on the site (raster art is exempt), and the word's slate-blue
+outer row was seven cold literals: the outer row is umber now (86, 54, 38).
+Then the owner, on the live footer: «Так, оно уже слишком большое. Вот. Сделай
+поменьше». The word stands at half the column, 600px at most (280px on a
+phone), at the column's left edge; its stones are drawn larger for that size
+(1 494 stones, about 7px each), and the SVG is 17 KB as sent.
