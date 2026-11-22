@@ -46,6 +46,11 @@ export function MarketingFooter() {
           <Link href="/privacy" prefetch={false}>Политика конфиденциальности</Link>
         </span>
       </div>
+      {/* The wordmark laid in the floor (owner, 22 Nov, after the reel's «fade-out
+          logo footer»: «давай имплементни, что считаешь нужным»): «iItaly» across
+          the page in terracotta tesserae, fading into the paper. Decorative: the
+          link with the name is the logo above. */}
+      <p className={styles.footerMark} aria-hidden="true" data-footer-mark>iItaly</p>
     </footer>
   );
 }

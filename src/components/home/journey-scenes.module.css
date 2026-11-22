@@ -49,6 +49,18 @@
 .cardLink:focus-visible { outline:2px solid #B83A27; outline-offset:3px; }
 @media(max-width:900px) { .section { max-width:760px; padding:40px 20px 64px; } .cardLink { aspect-ratio:3 / 4; } .copy { padding:30px 30px 0; } .object { padding:0 28px 32px; } }
 @media(max-width:640px) { .cards { grid-template-columns:1fr; } .cardLink { flex-direction:row; align-items:center; aspect-ratio:auto; min-height:200px; } .cardLink::before { inset:8px; } .copy { flex:1 1 auto; padding:24px 0 24px 26px; } .object { flex:0 0 40%; align-items:center; padding:20px 24px 20px 0; } .object img { max-width:100%; max-height:150px; } .copy strong { font-size:19px; } }
+/* Stacking cards on phones (owner, 22 Nov: «давай имплементни, что считаешь
+   нужным», after the reel's «Stacking scroll cards»). The three tiles of a
+   scene stick under the site header one after another, each 12px lower, and
+   the next slides over the one before: the path reads as tiles laid one on
+   another. Only where the tiles stand in one column; the list ends, the deck
+   leaves with it. The tiles are opaque (the tesserae ground), so the covered
+   one never shows through. */
+@media (max-width:640px) {
+  .card { position:sticky; top:calc(var(--stack-top, 73px) + var(--stack, 0) * 12px); }
+  .card:nth-child(2) { --stack:1; }
+  .card:nth-child(3) { --stack:2; }
+}
 @media(prefers-reduced-motion:reduce) { .cardLink,.object img { transition:none; } @media (hover: hover) and (pointer: fine) { .cardLink:hover .object img { transform:none; } } }
 @media(forced-colors:active) { .cardLink { border:1px solid CanvasText; } .cardLink::before { display:none; } }
 /* Phone and tablet finish (owner, 20 Nov: «прошерсти на неточности,

@@ -3354,3 +3354,29 @@ weigh about 15 KB together.
 Reviews: `design-portal-focus-review` names the two mosaic scenes;
 `design-flight-explorers-review` holds the ground, the border and that
 nothing leaves it.
+
+## Three effects from a reel: a floor inscription, words that rise, a deck of tiles · 22 November 2026 (night)
+
+The owner sent a reel, «20 things to make your website look less AI-made», and
+asked: «что еще из этих можно имплементнуть? Подумай.» Five of the twenty were
+already here (grainy gradients, paper texture, the parallax of the home and FAQ
+scenes, a soft page transition, the cabinet's completion chord). Ten were left
+out because they belong to a tech startup's look, not to paper, mosaic and
+Vespi: pixel and mesh gradients, dithering, halftone, fluted glass, text
+scramble, spotlight and custom cursors, hover and click sounds; blur-in text
+costs frames on phones. Three were proposed and the owner answered: «Да,
+давай имплементни, что считаешь нужным».
+
+| Effect | Where | How |
+|---|---|---|
+| Fade-out logo footer | the end of every public page | «iItaly» across the content column, laid in terracotta tesserae with cream joints (a 15 KB texture seen through the letters), its lower half fading into the paper. Decorative (`aria-hidden`); the link with the name is the logo above |
+| Word-by-word reveal | four home headings: «Одна Италия. Твой собственный выбор.», «Один шаг. Понятный маршрут.», «После визы путь продолжается.», «Можно ли нам доверять» | `WordReveal`: each word rises a third of a line from 15% opacity as the heading crosses the lower part of the screen, the next 2.5% of the travel later. CSS only (`animation-timeline: view()`): the words are in the HTML, nothing waits for JavaScript, and a browser without scroll timelines or a reader with reduced motion sees the heading as before. Not the heroes (the first screen does not wait for animation) and not /prices (the content guard counts its text nodes) |
+| Stacking scroll cards | the two home scenes, phones only | the three tiles stick under the header one after another, each 12px lower, and the next slides over the one before; when the list ends the deck leaves with it |
+
+The headings measure the same as before at 1440 and 390px. «Одна Италия»'s
+second sentence had been styled as «every span of the heading»; it is a named
+line now, so its words stay inline.
+
+`design-flight-explorers-review` holds the deck on phones (and no deck side by
+side), each heading split into its words and reading whole, and the footer's
+wordmark.

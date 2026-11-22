@@ -3,6 +3,7 @@ import paper from "@/components/marketing/public-paper.module.css";
 import { AppleButtonLink } from "@/components/apple/Button";
 import styles from "@/components/marketing/marketing.module.css";
 import { ItalyNightMap } from "./ItalyNightMap";
+import { WordReveal } from "@/components/motion/WordReveal";
 
 /** An entry point, not a reimplementation of the protected university map. */
 export function Split() {
@@ -10,7 +11,7 @@ export function Split() {
     <section data-section="split" className={`${styles.university} ${paper.surface}`}>
       <PaperTexture dark />
       <ItalyNightMap />
-      <h2 className={styles.universityTitle}>Одна Италия.<br /><span>Твой собственный выбор.</span></h2>
+      <h2 className={styles.universityTitle}><WordReveal text="Одна Италия." /><br /><span className={styles.universityTitleLine}><WordReveal text="Твой собственный выбор." start={2} /></span></h2>
       <p>Найди свой университет: цены по ISEE, тесты, дедлайны и стипендия региона.</p>
       <div className={styles.universityNumbers}><div><b>43</b><small>университета</small></div><div><b>30</b><small>городов</small></div></div>
       <div className={styles.actions}><AppleButtonLink href="/universities" variant="outlined">Открыть карту Италии</AppleButtonLink></div>

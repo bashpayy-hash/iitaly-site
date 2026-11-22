@@ -3,6 +3,7 @@
 
 import { track } from "@/lib/track";
 import { FAQ, faqParagraphs } from "./faqData";
+import { WordReveal } from "@/components/motion/WordReveal";
 import { LivingLandscape } from "@/components/motion/LivingLandscape";
 import styles from "./trust-faq.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
@@ -41,7 +42,7 @@ export function TrustFAQ() {
         </div>
         <div className={styles.panel} data-faq-panel>
           <p className={styles.eyebrow}>Прежде чем платить</p>
-          <h2 id="home-faq-title" className={styles.title}>Можно ли нам доверять</h2>
+          <h2 id="home-faq-title" className={styles.title}><WordReveal text="Можно ли нам доверять" /></h2>
           {/* Плавное раскрытие (owner, 8 Nov: «очень топорно… иллюстрация
               увеличивается по мере того, как нажимаешь»): плитка держит высоту,
               кадр со смотровой не растёт. Owner, 20 Nov: «менюшка лагучая».

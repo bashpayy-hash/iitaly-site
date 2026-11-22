@@ -9,6 +9,10 @@ in slightly wavy rows, and a border of two ochre rows around a slate-blue one
 (ochre and terracotta on the dark card), with a terracotta corner block, as in
 the borders of Roman floors. The palette is sampled from the cartouches.
 
+The same day, the footer: the wordmark «iItaly» at the bottom of every public
+page, laid in terracotta tesserae with cream joints (mosaic-letters, shown
+through the letters with background-clip: text) and fading into the paper.
+
 Run from the repository root: python3 design/illustrations/source/textures/mosaic-textures.py
 Writes public/textures/mosaic-*.webp. Deterministic (fixed seeds).
 """
@@ -19,7 +23,7 @@ OUT = "public/textures"
 SLATE, OCHRE, TERRA = (70, 98, 124), (226, 168, 58), (170, 58, 34)
 
 
-def ground(name, base, spread, grout, W=384, rowh=12, seed=3, warm=1.3, sc=2):
+def ground(name, base, spread, grout, W=384, rowh=12, seed=3, warm=1.3, sc=2, q=78):
     """A seamless square of tesserae; shown at half size (192px) for sharpness."""
     random.seed(seed); n = W // rowh
     big = Image.new("RGB", (W * sc, W * sc), grout); d = ImageDraw.Draw(big)
@@ -40,7 +44,7 @@ def ground(name, base, spread, grout, W=384, rowh=12, seed=3, warm=1.3, sc=2):
                 for dy in (-W, 0, W):
                     d.polygon([((px + dx) * sc, (py + dy) * sc) for px, py in pts], fill=col)
             x += w
-    big.resize((W, W), Image.LANCZOS).save(f"{OUT}/{name}.webp", quality=78, method=6)
+    big.resize((W, W), Image.LANCZOS).save(f"{OUT}/{name}.webp", quality=q, method=6)
 
 
 def band(name, rows, W=192, H=12, sc=2, seed=9):
@@ -75,3 +79,4 @@ ground("mosaic-ground-dark", (44, 38, 34), 2.0, (33, 28, 25), seed=5, warm=.5)
 band("mosaic-band", [(0, 3.2, OCHRE), (3.9, 4.6, SLATE), (9.2, 2.8, OCHRE)])
 band("mosaic-band-dark", [(0, 3.2, OCHRE), (3.9, 4.6, TERRA), (9.2, 2.8, OCHRE)])
 corner("mosaic-corner", TERRA, OCHRE)
+ground("mosaic-letters", (176, 64, 42), 13, (244, 236, 224), W=252, rowh=14, seed=21, warm=.8, q=70)
