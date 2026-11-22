@@ -25,7 +25,9 @@
    one check free, refund in 7 days, agencies from 500 000 ₸. Quiet, one line
    on desktop, two on a phone. */
 .entryTrust { margin: 12px 0 0; max-width: 46ch; color: var(--color-cloud-meta, #6b6761); font-size: 13px; line-height: 1.5; text-wrap: pretty; }
-@media (max-width: 600px) { .entryTrust { margin-top: 10px; font-size: 13px; } }
+/* 22 Nov: on a 390×844 phone the chat button stood over the end of the first
+   line («…бесплатно»). The line keeps clear of the button's column. */
+@media (max-width: 600px) { .entryTrust { margin-top: 10px; padding-right: 60px; font-size: 13px; } }
 /* «Поступление в Италию» is longer than «Твоё будущее.»: at the phone size of
    the old heading it broke into three lines and pushed the risk line under the
    chat button. A step smaller keeps the heading on two lines. */

@@ -170,7 +170,7 @@ try {
     await page.waitForFunction(()=>!Array.from(document.querySelectorAll('#document-check button')).find(b=>b.textContent==='Повторить проверку')?.disabled);
     assert.equal(documentRequests.length,2,'Availability check does not resend a document');
     assert.deepEqual(documentRequests[0].context,{profile:'general',academicYear:'unspecified',applicantScope:'unspecified'},'Wizard answers must not silently choose scholarship rules');
-    await doc.getByRole('combobox',{name:'Программа',exact:true}).selectOption('piemonte');
+    await doc.getByRole('combobox',{name:'Стипендиальная программа',exact:true}).selectOption('piemonte');
     await doc.getByRole('combobox',{name:'Учебный год заявки',exact:true}).selectOption('2026/27');
     await doc.getByRole('checkbox',{name:/Моя ситуация/}).check();
     assert.equal(documentRequests.length,2,'Changing the context does not upload the file');

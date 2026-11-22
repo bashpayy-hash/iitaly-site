@@ -183,7 +183,7 @@ export function PortalLogin({
           <div>
             <p className={styles.eyebrow}>Вход</p>
             <h2 id="portal-recover-heading" ref={recoverHeadingRef} tabIndex={-1} className={styles.cardTitle}>Не помню код</h2>
-            <p id={recoverHintId} className={styles.hint}>Укажи фамилию и телефон, как при оплате. Код придёт в Telegram или на почту, если они подключены к кабинету.</p>
+            <p id={recoverHintId} className={styles.hint}>Укажи фамилию и телефон, как при оплате. Код придёт в Telegram или на почту, если они подключены к кабинету. Если нет&nbsp;— пришлём вручную через WhatsApp.</p>
           </div>
 
           {recoverState === "sent" || recoverState === "manual" ? (

@@ -5,6 +5,7 @@ import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
 import styles from "@/components/marketing/marketing.module.css";
+import { PRODUCT_ID, PRODUCT_TITLE } from "@/components/access/offerCopy";
 import {
   STRIPE_ENABLED,
   PAY_NAME,
@@ -155,7 +156,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           {step === "form" && (
             <form noValidate onSubmit={(event) => { event.preventDefault(); void submit(); }}>
               <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
-                {product.name}
+                {product.name === PRODUCT_ID ? PRODUCT_TITLE : product.name}
               </h3>
               <p className="mt-1 font-apple-display text-apple-heading-sm font-semibold text-crimson">
                 {fmt(product.price)} ₸

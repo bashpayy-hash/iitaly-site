@@ -17,4 +17,8 @@
 .offerList li::before { content:""; position:absolute; left:2px; top:.5em; width:10px; height:6px; border-left:2px solid #2F6B4F; border-bottom:2px solid #2F6B4F; transform:rotate(-45deg); }
 .offerActions { display:flex; flex-wrap:wrap; gap:10px 12px; margin-top:16px; }
 .offerRisk { margin:10px 0 0; color:#6B655E; font-size:13px; line-height:1.5; text-wrap:pretty; }
+/* 22 Nov: the offer follows the route; the cabinet is a link in the line
+   about where the answers are kept, not a second button. */
+.offerKept { margin:6px 0 0; color:#6B655E; font-size:13px; line-height:1.6; text-wrap:pretty; }
+.offerKept a { display:inline-block; padding-block:11px; margin-block:-11px; color:var(--i-link,#141413); text-decoration:underline; text-underline-offset:4px; }
 @media (max-width:639px) { .offer { padding:18px 16px; border-radius:18px; } .offerActions { flex-direction:column; } }

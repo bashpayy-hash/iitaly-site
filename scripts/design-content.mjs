@@ -15,6 +15,21 @@ const approvedRemovedUiLabels = new Set(['Веспи · сверим до под
   'Сверка с правилами твоего вуза, DSU и визы на твой учебный год.',
 ]);
 const approvedUiCopyChanges = new Map([
+  // 2026-11-22, owner, after the list of open funnel decisions: «сделай все
+  // так, чтобы все было последовательным и воронка была максимально
+  // эффективной сразу». One label for the purchase (the walls already said
+  // «Открыть маршрут за 10 990 ₸»); one name for the free way in (everywhere
+  // else it is «Составить план», and the page gives a route, not an estimate
+  // of chances); the step figure from the plan builder instead of «28» kept
+  // from the old site. Price, contents, guarantees and terms are untouched.
+  ['Купить за', 'Открыть маршрут за'],
+  ['28', '9–12'],
+  ['ИИ оценит шансы, соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа',
+    'ИИ соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа'],
+  ['Сначала проверь шансы — это бесплатно', 'Сначала составь план — это бесплатно'],
+  ['Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.',
+    'Расскажи о себе: ИИ покажет, с чего начать в твоём случае, соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.'],
+  ['Проверить шансы', 'Составить план бесплатно'],
   // 2026-11-21, same request: the section's lead ends where its statement
   // ends; the aside about an agency's opening hours is the first row of the
   // comparison under it.

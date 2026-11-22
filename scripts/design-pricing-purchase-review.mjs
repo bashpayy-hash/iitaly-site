@@ -31,7 +31,8 @@ await new Promise(done => server.listen(0, '127.0.0.1', done));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch();
 const results = [], errors = [];
-const purchase = /Купить за 10\s*990\s*₸/;
+// 22 Nov: one purchase label on the whole site, the one the walls carry.
+const purchase = /Открыть маршрут за 10\s*990\s*₸/;
 
 async function overflow(page) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false, 'No horizontal page overflow');

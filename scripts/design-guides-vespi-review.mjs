@@ -183,7 +183,7 @@ try {
       const r=action.getBoundingClientRect();return r.width>=44&&r.height>=44&&r.left>=0&&r.right<=innerWidth&&action.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));
     }),'The main action is visible and reachable');
     await documentAction.click();await page.locator('[data-guide-origin=apostille]').waitFor();
-    assert.equal(await page.getByRole('combobox',{name:'Программа',exact:true}).inputValue(),'general');
+    assert.equal(await page.getByRole('combobox',{name:'Стипендиальная программа',exact:true}).inputValue(),'general');
     assert.equal(await page.getByRole('combobox',{name:'Учебный год заявки',exact:true}).inputValue(),'unspecified');
     await page.getByRole('link',{name:'Вернуться к теме',exact:true}).click();
     await page.waitForURL('**/guides/apostille');

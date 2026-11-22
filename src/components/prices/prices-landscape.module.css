@@ -2,7 +2,10 @@
 .copy { position:relative; z-index:1; isolation:isolate; width:min(100%,760px); margin-inline:auto; }
 .purchaseActions { display:flex; justify-content:center; margin-top:24px; }
 .purchaseActions > button { min-width:240px; white-space:nowrap; }
-.sectionLinks { margin-top:16px; }
+/* The refund condition and the way to ask, under the button (22 Nov). */
+.purchaseNote { max-width:46ch; margin:14px auto 0; color:#4A443D; font-size:14px; line-height:1.5; text-wrap:balance; }
+.purchaseNote a { display:inline-block; padding-block:11px; margin-block:-11px; color:#141413; font-weight:600; text-decoration:underline; text-underline-offset:4px; }
+.sectionLinks { margin-top:12px; }
 .copy::before {
   content:""; position:absolute; z-index:-1; inset:-34px -20px -20px; pointer-events:none;
   background:radial-gradient(ellipse at center,var(--color-cream) 28%,color-mix(in srgb,var(--color-cream) 97%,transparent) 59%,color-mix(in srgb,var(--color-cream) 78%,transparent) 72%,transparent 90%);

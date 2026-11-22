@@ -3071,3 +3071,68 @@ rather than how a control behaves:
 the measures it holds read there: one link covered by the chat button, two
 road labels outside their tile, 22px and 17px targets, the drag hint shown on
 touch, the payment note twice.
+
+## One story from the first screen to the purchase · 22 November 2026 (later)
+
+Owner, after the list of six things the intuitiveness pass had left for his
+decision: «Так, получается, сделай все так, чтобы все было последовательным и
+воронка была максимально эффективной сразу, хорошо?» All six are done, and
+three more of the same kind that the walk through the pages turned up.
+
+**The order: what was promised first, the offer after it.**
+
+| Page | Before | Now |
+|---|---|---|
+| /plan, the result | after ten answers the first screen was the offer («Открыть маршрут за 10 990 ₸» and an outlined «Продолжить в личном кабинете»); the free step the page had promised stood a screen lower | the route first, «Начни здесь» on the first screen; the offer follows the list of steps it speaks about, with one filled button; the cabinet is a text link in the line about where the answers are kept |
+| A guide topic | one bento above the steps (12 Nov): on a phone a free topic showed «Проверить документ» and the purchase 1 400px before its first line | the facts above the reading; then the topic and its steps; then what to do next, what the route adds, the sources and the note. Same cells, two groups. The visa page the same way |
+
+The offer on the result had been put first by the CRO audit of 20 Nov, when
+the result had no offer at all. Its place after the route is not a retreat
+from that audit: the button, the three lines of what opens and the risk line
+are the same, and every locked step still leads to the wall.
+
+**One name for each thing.**
+
+| Thing | Before | Now |
+|---|---|---|
+| The purchase button | «Открыть маршрут за 10 990 ₸» on the walls, «Купить за 10 990 ₸» on /prices | «Открыть маршрут за 10 990 ₸» everywhere |
+| The form's heading | «Поступление под ключ» | «Весь маршрут поступления», the words of /prices. The string sent to the server stays «Поступление под ключ» (`PRODUCT_ID`): the server finds the price by it |
+| The free way in | «Составить план» on the home page, in guides and on /check; «Проверить шансы» on /prices, promising to say «реально ли поступить» | «Составить план бесплатно» on /prices too; the text promises what the plan gives: where to start, the route, the first step |
+| Time of the questionnaire | «~2 минуты» on /plan, «за 10 минут» in the home FAQ | two minutes in both |
+| Size of the route | 11 steps on the plan, «28 шагов в маршруте» on /prices, a figure kept from the old site | /prices takes the figure from the same `buildPlan`: «9–12», and on a device with a finished questionnaire that plan's own count |
+| The scholarship field of the check | «Программа» on /check, «Стипендиальная программа» in the cabinet | «Стипендиальная программа» in both |
+
+**Risk, said where the decision is made.** «Возврат 7 дней» stood all over the
+site without its condition; on /prices the condition was 3 768px below the
+button on a phone and no way to ask was named. Under the button now: «Возврат
+7 дней, пока не загружал документы на проверку и не отмечал шаги выполненными.
+Вопросы и возврат — в WhatsApp.» The words are those of /terms; the manual
+payment mode has its own condition there and here.
+
+**A lost code.** The recovery form already offered WhatsApp after sending; its
+first line now says so before sending. E-mail at purchase stays optional: a
+required field would cost purchases, and the manual way back covers the case.
+
+Also: on a 390×844 phone the chat button stood over the last word of the
+home page's trust line; the line keeps clear of the button's column.
+
+Not changed, with the reason:
+
+- The local cabinet counts 19 steps where the plan counts 11: it adds the
+  questionnaire, the choice of universities and six document tasks to the
+  plan's own steps, and its first open step is the choice of universities. Its
+  order is what `design-workspace-review` walks; the plan no longer sends
+  an unpaid visitor there with a button.
+- The paid cabinet's route comes from the server; its size was not touched.
+- «Виза D» is «С маршрутом» on its card and open on the map by the owner's
+  rule of 12 Nov (facts and the calculator open, the points with the route).
+- The boundary between free and paid, the price and the terms are the same.
+
+`design-funnel-review` (new, in CI): the free step on the first screen after
+the questionnaire; the offer after the route, one button; no offer among a
+topic's facts and the steps before it, free topic and paid; one purchase label
+on six places; the form's heading; the count on /prices equal to the plan's;
+the refund line under the button on the first screen with a WhatsApp link;
+the free way in by its name; two minutes; the field's name; the manual way
+back in recovery. The content guard holds the six changed lines of /prices
+with the owner's words.

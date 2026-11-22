@@ -221,7 +221,10 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
             two-column card each select was 145px and cut «Ещё не определился»). */}
         <div className="grid gap-3 xl:grid-cols-2">
           <label className="min-w-0 text-apple-caption text-cloud-body">
-            Программа
+            {/* The cabinet calls the same field «Стипендиальная программа»;
+                here it was «Программа» over options that are all scholarship
+                competitions, and read as a study programme (22 Nov). */}
+            Стипендиальная программа
             <select value={context.profile}
               onChange={e => updateContext({ profile: e.target.value as DocumentReviewContext["profile"] })}
               className="mt-1 block min-h-11 w-full rounded-[16px] border border-white/20 bg-white px-3 text-apple-body-sm text-cloud-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crimson">

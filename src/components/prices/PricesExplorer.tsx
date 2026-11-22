@@ -10,10 +10,15 @@ import { HeadingPin } from "@/components/motion/HeadingPin";
 import { PricesHero } from "./PricesHero";
 import heroArt from "./prices-landscape.module.css";
 import { STRIPE_ENABLED } from "@/lib/paymentMode";
+import { buildPlan } from "@/lib/planBuilder";
+import { usePlanDraft } from "@/lib/usePlanDraft";
+import { BUY_VERB, PRODUCT_ID } from "@/components/access/offerCopy";
 import styles from "@/components/marketing/marketing.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
+
+const PLAN_STEPS = `${buildPlan({ dsuRegion: "none", age: "adult" }).steps.length}–${buildPlan({ dsuRegion: "other", budget: "Только со стипендией", age: "minor" }).steps.length}`;
 
 const MICRO = [
   { name: "Срочная проверка · 1 документ", desc: "Вердикт человека в течение 24 часов", price: PRICE_EXPRESS_CHECK },
@@ -41,6 +46,12 @@ const GUARANTEES = [
 export function PricesExplorer() {
   const router = useRouter();
   const [buy, setBuy] = useState<BuyProduct | null>(null);
+  /* Funnel pass (22 Nov): «28 шагов в маршруте» stood here from the old site,
+     beside a plan that shows 9 to 12 steps and walls that sell «ещё 10 шагов».
+     The figure now comes from the same builder as the plan, and on a device
+     with a finished questionnaire it is that plan's own count. */
+  const [draft] = usePlanDraft();
+  const steps = draft.complete ? String(buildPlan(draft.answers).steps.length) : PLAN_STEPS;
 
   useEffect(() => {
     track("pricing_viewed");
@@ -54,7 +65,7 @@ export function PricesExplorer() {
 
   return (
     <>
-      <PricesHero onBuy={() => openBuy("Поступление под ключ", PRICE_MAIN)} />
+      <PricesHero onBuy={() => openBuy(PRODUCT_ID, PRICE_MAIN)} />
 
       <section className={`${heroArt.packages} px-5 py-10 md:px-6`}>
         <div className="mx-auto max-w-[900px]">
@@ -62,7 +73,7 @@ export function PricesExplorer() {
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
               <b className="block font-apple-text text-apple-subheading font-semibold text-cloud-white">Бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
-                ИИ оценит шансы, соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа
+                ИИ соберёт весь маршрут под твой случай, откроет первый шаг и одну проверку документа
               </span>
             </div>
             <div className={`${styles.summaryCard} flex-1 p-6 sm:p-8`}>
@@ -75,14 +86,18 @@ export function PricesExplorer() {
 
           <div data-fab-yield className={`${styles.summaryCard} mt-6 flex flex-col items-start justify-between gap-4 p-6 sm:p-8 md:flex-row md:items-center`}>
             <div className="min-w-0">
-              <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала проверь шансы&nbsp;— это бесплатно</b>
+              {/* Funnel pass (22 Nov): this was «Сначала проверь шансы» with the
+                  button «Проверить шансы», and led to a page that everywhere
+                  else is «Составить план» and gives a route, not an estimate
+                  of chances. One name for the free way in. */}
+              <b className="block text-apple-body-sm font-semibold text-cloud-white">Сначала составь план&nbsp;— это бесплатно</b>
               <span className="text-apple-body-sm text-cloud-body">
-                Расскажи о себе, и ИИ скажет, реально ли поступить, соберёт
-                маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.
+                Расскажи о себе: ИИ покажет, с чего начать в твоём случае,
+                соберёт маршрут и откроет первый шаг. Платить, чтобы это узнать, не нужно.
               </span>
             </div>
             <AppleButton type="button" variant="outlined" size="sm" onClick={() => router.push("/plan#questionnaire")} className="w-full shrink-0 md:w-auto">
-              Проверить шансы
+              Составить план бесплатно
             </AppleButton>
           </div>
 
@@ -95,7 +110,7 @@ export function PricesExplorer() {
             <p className="mt-2 text-apple-body-sm text-cloud-body">Весь маршрут поступления в одном кабинете</p>
             <div className="mt-5 grid grid-cols-[repeat(3,minmax(min-content,1fr))] divide-x divide-white/10 overflow-hidden rounded-[16px] border border-white/10">
               {[
-                { v: "28", l: "шагов в маршруте" },
+                { v: steps, l: "шагов в маршруте" },
                 { v: "43", l: "университета" },
                 { v: "30", l: "городов" },
               ].map((s) => (
@@ -103,7 +118,7 @@ export function PricesExplorer() {
                 // «университета» вылезало из ячейки (аудит 12 Nov). Мягкий перенос
                 // не годится: он меняет текст, а design-content сверяет тексты.
                 <div key={s.l} className="px-0.5 py-2.5 text-center sm:px-4">
-                  <p className="font-apple-display text-lg font-semibold text-cloud-white">{s.v}</p>
+                  <p className="font-apple-display text-lg font-semibold text-cloud-white" data-price-figure={s.l}>{s.v}</p>
                   <p className="mt-0.5 text-apple-caption text-cloud-meta">{s.l}</p>
                 </div>
               ))}
@@ -140,12 +155,12 @@ export function PricesExplorer() {
             <AppleButton
               type="button"
               variant="filled"
-              onClick={() => openBuy("Поступление под ключ", PRICE_MAIN)}
+              onClick={() => openBuy(PRODUCT_ID, PRICE_MAIN)}
               aria-haspopup="dialog"
               data-pricing-buy="package"
               className="mt-4 w-full sm:w-auto"
             >
-              Купить за {priceLabel(PRICE_MAIN)}
+              {BUY_VERB} {priceLabel(PRICE_MAIN)}
             </AppleButton>
           </div>
 
