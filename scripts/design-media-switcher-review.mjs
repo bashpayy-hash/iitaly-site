@@ -52,7 +52,7 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           // нормальную иллюстрацию» — one still picture, no loop.
           const scene = page.locator('[data-section=plan-header] [data-plan-hero-scene]');
           assert.equal(await scene.count(), 1, 'The plan header has its scene');
-          assert.equal(await scene.locator('img[data-plan-scene=study]').evaluate(element => element.naturalWidth > 0), true);
+          assert.equal(await scene.locator('img[data-plan-scene=terrace]').evaluate(element => element.naturalWidth > 0), true);
           assert.equal(await scene.locator('video, canvas').count(), 0, 'The plan header is a still picture, not an animation');
           assert.equal(await scene.evaluate(element => getComputedStyle(element.parentElement).borderRadius), width <= 640 ? '24px' : '28px');
           const [tile, title] = await Promise.all([scene.boundingBox(), page.locator('[data-section=plan-header] h1').boundingBox()]);

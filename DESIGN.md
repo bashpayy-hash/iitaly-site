@@ -3465,17 +3465,30 @@ Earlier the same night, on generated Vespi: «ты вообще не соблю�
 пропорции и вес тела».
 
 - **/plan hero.** The loggia poster and its video loop are gone (the four
-  webp sizes and four video files with them). The scene is one still picture:
-  a Renaissance study, books and an olive tree on the left, a calm wall with a
-  faded fresco garland in the middle under the heading, Florence and the Duomo
-  through the arched window on the right, and Vespi behind the desk, waving.
-  The room was generated empty; Vespi is the approved handmade figure
-  («welcome», handmade-v1.json), not redrawn: cut at its ledge and set with
-  that line on the desk's far edge, so the desk hides the rest. His helmet's
-  top stands at half the picture's height, as the loggia Vespi's did, so the
-  heading and the line under it stay over the wall. Recorded in
-  `design/illustrations/scenes-2026-11-22.json`. `design-media-switcher-review`
-  now holds the header to one still picture: no video, no canvas.
+  webp sizes and four video files with them). It took three tries, and the
+  owner's words set the rule each time. The approved Vespi pasted behind a
+  desk in an empty generated study: «Это пиздец, экспериментируй… иллюстрация
+  должна быть динамичной, живой, итальянской. Пропорции должны сохраняться».
+  A bright, rendered terrace over Rome: «нет, другую иллюстрацию в другом,
+  более таком реалисте… Вернись к этому стилю, который был раньше… все
+  иллюстрации, которые на сайте… сделай в таком же стиле». The site's manner
+  is an editorial photograph of a real Italian place with the cotton toy
+  standing in it (the Bologna arcade, the Florence belvedere, the loggias):
+  natural muted light, real stone, shallow depth of field. A scene with
+  movement is made the same way, with the same prompt formula and one of the
+  site's own pictures as the style reference.
+  The hero now: a stone terrace over Florence at golden hour, Vespi mid-step
+  launching a paper plane, three more gliding toward the Duomo, sheets
+  lifting off an iron table under a lemon tree. His face, helmet, collar and
+  proportions were checked against the references at full size. Two swallows
+  that flew where the heading stands and one plane that touched the paragraph
+  were painted out into the sky. The picture is not upscaled (the upscaler
+  turns cotton into plastic). Phones get their own square crop around Vespi
+  (the tile there is a tall strip of the scene): sharper at the 1200px
+  ceiling a phone is sent. Seven other scenes in the same manner are kept as
+  alternatives. Recorded in `design/illustrations/scenes-2026-11-22.json`.
+  `design-media-switcher-review` holds the header to one still picture: no
+  video, no canvas.
 - **The friends' test on the site.** /prices ends its column with a card under
   the main purchase: the red «Тест» pill, «Тестовый доступ для друзей»,
   «667 ₸ вместо 10 990 ₸», one line (a real payment and a real cabinet, the
