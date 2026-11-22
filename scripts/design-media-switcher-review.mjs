@@ -47,12 +47,13 @@ const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', 
           await page.reload({ waitUntil:'networkidle' });
           assert.equal(await page.locator('[data-editorial-atmosphere]').count(), 0);
           assert.equal(await page.locator('[data-section=plan-header]').evaluate(element => getComputedStyle(element).backgroundColor), 'rgba(0, 0, 0, 0)');
-          // Owner, 6–7 Nov: Vespi does something, animated, in the plan header;
-          // the text sits in the middle over the scene, the scene softly blurred behind it.
+          // Owner, 6–7 Nov: Vespi in the plan header, the text in the middle over
+          // the scene. 22 Nov: «анимацию убери, поставь какую-то другую, но
+          // нормальную иллюстрацию» — one still picture, no loop.
           const scene = page.locator('[data-section=plan-header] [data-plan-hero-scene]');
-          assert.equal(await scene.count(), 1, 'The plan header has its living scene');
-          assert.equal(await scene.locator('img[data-plan-scene=loggia]').evaluate(element => element.naturalWidth > 0), true);
-          assert.equal(await scene.locator('video[data-living-landscape=plan-loggia]').count(), 1);
+          assert.equal(await scene.count(), 1, 'The plan header has its scene');
+          assert.equal(await scene.locator('img[data-plan-scene=study]').evaluate(element => element.naturalWidth > 0), true);
+          assert.equal(await scene.locator('video, canvas').count(), 0, 'The plan header is a still picture, not an animation');
           assert.equal(await scene.evaluate(element => getComputedStyle(element.parentElement).borderRadius), width <= 640 ? '24px' : '28px');
           const [tile, title] = await Promise.all([scene.boundingBox(), page.locator('[data-section=plan-header] h1').boundingBox()]);
           assert(title.y > tile.y && title.y + title.height < tile.y + tile.height * .6, 'The heading sits inside the scene, above Vespi');

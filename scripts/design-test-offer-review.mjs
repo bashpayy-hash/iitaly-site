@@ -7,8 +7,10 @@ import { extname, join, relative, resolve, sep } from 'node:path';
 // The friends' test purchase. Owner, 22 Nov: «Сделай еще тестовое отдельное
 // отделение моим друзьям за 667 тенге, пометь что оно тестовое». /test sells
 // the server's «Тестовый доступ · для друзей» (bashpayy-hash/iitaly, 667 ₸,
-// the same cabinet). It says it is a test before anything else, no page links
-// to it, it is not in the sitemap and search engines are asked not to index it.
+// the same cabinet). It says it is a test before anything else, it is not in
+// the sitemap and search engines are asked not to index it. Then, same night:
+// «сам сайт неси, а не отдельной ссылкой» — /prices sells it under the main
+// purchase and the footer links to /test.
 const require = createRequire(import.meta.url);
 const { chromium } = require(resolve(process.env.REVIEW_TOOLS, 'playwright'));
 const root = resolve('out');
@@ -22,7 +24,7 @@ const walk = async dir => { for (const entry of await readdir(dir, { withFileTyp
 await walk(root);
 const linking = [];
 for (const file of pages) if (!file.endsWith(`${sep}test.html`) && /href="\/test(?:[?#"])/.test(await readFile(file, 'utf8'))) linking.push(relative(root, file));
-assert.deepEqual(linking, [], 'No page links to /test');
+for (const page of ['index.html', 'prices.html', 'plan.html']) assert(linking.includes(page), `${page} links to /test from the footer`);
 
 const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.txt':'text/plain', '.svg':'image/svg+xml', '.webp':'image/webp', '.png':'image/png', '.woff2':'font/woff2' };
 const server = createServer(async (req, res) => {
@@ -78,6 +80,25 @@ try {
     await dialog.getByRole('button', { name: 'Перейти к оплате', exact: true }).click();
     await dialog.getByRole('alert').waitFor();
     assert.deepEqual(orders.map(body => body.product), [PRODUCT], `/test ${width}: the order names the test product`);
+    // On /prices, under the main purchase: the badge first, the price against the full one, the same order.
+    await page.goto(origin + '/prices', { waitUntil: 'load' });
+    const inline = page.locator('[data-test-offer-card]');
+    await inline.scrollIntoViewIfNeeded();
+    assert.deepEqual(await inline.evaluate(node => [...node.querySelectorAll('[data-test-badge], h2')].map(element => element.tagName)), ['P', 'H2'], `/prices ${width}: the badge comes before the card's heading`);
+    assert.match(flat(await inline.innerText()), /667 ₸ вместо 10 990 ₸/);
+    assert.equal(await inline.locator('a[href="/test"]').count(), 1, `/prices ${width}: the card leads to /test`);
+    const mainBuy = await page.locator('[data-pricing-buy=package]').boundingBox(), cardBox = await inline.boundingBox();
+    assert(cardBox.y > mainBuy.y, `/prices ${width}: the test stands under the main purchase`);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0, `/prices ${width}: no sideways scroll`);
+    await inline.locator('[data-test-buy]').click();
+    const priceDialog = page.getByRole('dialog');
+    assert.match(flat(await priceDialog.innerText()), new RegExp(`${PRODUCT} 667 ₸`), `/prices ${width}: the dialog sells the test product`);
+    await priceDialog.getByLabel('Имя', { exact: true }).fill('Друг');
+    await priceDialog.getByLabel('Фамилия', { exact: true }).fill('Тестов');
+    await priceDialog.getByLabel('Телефон', { exact: true }).fill('+7 700 000 00 00');
+    await priceDialog.getByRole('button', { name: 'Перейти к оплате', exact: true }).click();
+    await priceDialog.getByRole('alert').waitFor();
+    assert.deepEqual(orders.map(body => body.product), [PRODUCT, PRODUCT], `/prices ${width}: the order names the test product`);
     assert.deepEqual(errors, [], `No page errors at ${width}`);
     results.push({ width, passed: true });
     await context.close();

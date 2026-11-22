@@ -16,7 +16,6 @@ import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import workspace from "./plan-workspace.module.css";
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
-import { LivingLandscape } from "@/components/motion/LivingLandscape";
 
 /* The university chosen in the catalogue, above both free tools (the plan and,
    since 20 Nov, the separate document check page /check). */
@@ -106,21 +105,20 @@ export function PlanExplorer() {
       <section data-section="plan-header" className={workspace.header}>
         {/* Owner, 7 Nov: «текст должен быть посередине, а на фоне Веспи, чуть
            заблюрено; фон менее кричащий, более исторический, детализированный».
-           Одна плитка: спокойная ренессансная лоджия старого университета,
-           Веспи пишет план за столом внизу по центру, текст — над ним по
-           центру. Размытие за текстом вшито в постер и в петлю (мягкий овал),
-           поэтому не стоит ничего на телефоне; светлая вуаль держит контраст.
-           Картинка — постер и вся сцена при «меньше движения». */}
+           Then, 22 Nov: «анимацию убери, поставь какую-то другую, но нормальную
+           иллюстрацию». The scene is one still picture now: a Renaissance study
+           (books, a fresco garland on a calm wall, Florence through the window)
+           and Vespi behind the desk, waving. The room is generated empty; Vespi
+           is the approved handmade figure (design/mascot/vespi/handmade-v1.json,
+           «welcome»), set behind the desk's far edge, so his proportions, eyes
+           and cape are the canon's. Text stands over the wall, the veil keeps
+           it legible. */}
         <div className={workspace.hero}>
           <div className={workspace.heroScene} data-plan-hero-scene aria-hidden="true">
-            <img className={workspace.heroArt} src="/illustrations/scenes/plan-loggia-1920.webp"
-              srcSet="/illustrations/scenes/plan-loggia-960.webp 960w, /illustrations/scenes/plan-loggia-1200.webp 1200w, /illustrations/scenes/plan-loggia-1920.webp 1920w, /illustrations/scenes/plan-loggia-2560.webp 2560w"
-              sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1080} alt=""
-              decoding="async" fetchPriority="high" draggable={false} data-plan-scene="loggia" />
-            {/* Starts at frame 104, just before Vespi turns the page: from frame 0 he
-                barely moved for 3.7 s (owner, 17 Nov: «какое-то время просто стоят»).
-                The poster is that frame. */}
-            <LivingLandscape className={workspace.heroArt} base="/illustrations/motion/plan-loggia" label="plan-loggia" widths={[960, 1600, 2560]} webmWidths={[960]} startAt={104.5 / 30} />
+            <img className={workspace.heroArt} src="/illustrations/scenes/plan-study-1920.webp"
+              srcSet="/illustrations/scenes/plan-study-960.webp 960w, /illustrations/scenes/plan-study-1200.webp 1200w, /illustrations/scenes/plan-study-1920.webp 1920w, /illustrations/scenes/plan-study-2560.webp 2560w"
+              sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={956} alt=""
+              decoding="async" fetchPriority="high" draggable={false} data-plan-scene="study" />
             <span className={workspace.heroVeil} />
           </div>
           <div className={workspace.heroCopy} data-role="heading">
