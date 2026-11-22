@@ -211,6 +211,10 @@
   cursor: pointer;
 }
 @media (hover: hover) and (pointer: fine) { .textButton:hover { color: var(--login-action); } }
+/* The ways out of the form were 17–22px tall under a finger (intuitiveness
+   pass, 21 Nov). The hit area is 44px; the lines stand where they stood. */
+.textButton, .foot a { display: inline-block; padding-block: 11px; margin-block: -11px; }
+.foot + .foot { margin-top: 22px; }
 .cardTitle:focus { outline: none; }
 .notice {
   margin-top: 24px;

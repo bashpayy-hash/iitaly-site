@@ -110,6 +110,8 @@
 .dropzone:has(input:disabled) { cursor:wait; }
 .dropzone:has(input:disabled) .fileAction { background:var(--color-warm-stone); color:var(--color-cloud-body); }
 .dropzone > small { font-size:13px; color:var(--color-cloud-body); line-height:1.5; }
+/* Перетащить файл можно мышью; на телефоне и планшете этих слов нет. */
+@media (hover:none) and (pointer:coarse) { .dropHint { display:none; } }
 .example { min-height:44px; padding:10px 0; margin-top:8px; text-decoration:underline; text-underline-offset:4px; font-size:14px; }
 .exampleResult { margin-top:16px; padding:20px; border-radius:20px; background:white; font-size:14px; line-height:1.6; }
 .exampleResult h3 { font-weight:600; font-size:17px; margin-bottom:6px; }
@@ -120,6 +122,22 @@
 .resultHead p { font-size:14px; line-height:1.6; color:var(--color-cloud-body); }
 .footer { margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; line-height:1.6; color:var(--color-cloud-meta); }
 .footer button { min-height:44px; white-space:nowrap; text-decoration:underline; text-underline-offset:4px; }
+/* «Начать заново» спрашивает, прежде чем стереть (21 Nov). */
+.confirm { display:flex; align-items:center; flex-wrap:wrap; gap:0 18px; color:#241F1C; }
+.confirm span { font-weight:600; }
+@media(max-width:440px) { .confirm span { flex-basis:100%; margin-top:8px; } }
+.headingAction { min-height:44px; color:var(--i-link,#141413); font-size:14px; text-decoration:underline; text-underline-offset:4px; }
+.confirm button[data-danger] { color:#A33421; font-weight:600; }
+/* «Изменить ответы»: десять ответов одним списком, как строки маршрута. */
+.answers { margin:20px 0 0; padding:6px 24px; list-style:none; border:1px solid var(--color-warm-line); border-radius:28px; background:white; box-shadow:var(--shadow-warm-card); }
+.answers li + li { border-top:1px solid var(--color-warm-line); }
+.answers button { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; column-gap:16px; width:100%; min-height:64px; padding:11px 0; text-align:left; }
+.answers small { grid-column:1; color:#6B625A; font:500 13px/1.4 var(--font-sans); }
+.answers b { grid-column:1; color:#241F1C; font:600 16px/1.35 var(--font-sans); overflow-wrap:anywhere; }
+.answers span { grid-column:2; grid-row:1 / span 2; color:var(--i-link,#141413); font-size:14px; text-decoration:underline; text-underline-offset:4px; }
+.answers button:focus-visible { outline:2px solid #141413; outline-offset:2px; border-radius:10px; }
+@media (hover:hover) and (pointer:fine) { .answers button:hover span { color:#A33421; } }
+@media (max-width:440px) { .answers { padding:4px 18px; border-radius:22px; } }
 @keyframes question-enter { from { opacity:.4; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 @media(max-width:700px) { .tools { padding:24px 20px 48px; } .questionnaire { scroll-margin-top:104px; margin-bottom:44px; } .document { scroll-margin-top:104px; } .panel { padding:20px; border-radius:28px; } .question { padding:36px 20px 0; border-radius:28px; } .questionReason { font-size:16px; } .option { flex-basis:100%; } .heading h2 { font-size:22px; } .workbench { grid-template-columns:1fr; padding:24px 20px; gap:24px; border-radius:28px; } .auditContext h2 { font-size:26px; } .auditScope { grid-template-columns:1fr 1fr; gap:14px; } .dropzone { min-height:240px; } }
 @media(max-width:440px) { .options { margin-top:22px; } .questionArt { width:min(70%,240px); padding:22px 0 26px; } .auditScope { grid-template-columns:1fr; } .footer { align-items:flex-start; flex-direction:column; gap:4px; } }

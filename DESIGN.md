@@ -3027,3 +3027,47 @@ file or smaller and not upscaled; cabinet tiles the same; a topic and a step
 fetch one cartouche of 360px and no stage page; a 1× desktop takes 240px
 tiles. It fails on the previous build.
 
+## Nothing typed is lost; the way on is one control · 22 November 2026
+
+Owner, 21 Nov, about the design skills from a reel: «И что из этого реально
+поможет сайту чтобы юзеру было максимально интуитивно без потери данных».
+The answer was a pass with `impeccable` (critique) and `break-ui` over the
+phone flows: home → questionnaire → plan → purchase, the document check, a
+guide, the cabinet's sign-in. An independent reviewer walked the live site at
+390 and 320px; every finding was then checked in code before it was touched.
+
+What was wrong and what stands now:
+
+| Place | Before | Now |
+|---|---|---|
+| /plan, «Начать заново» | one tap erased all ten answers, no question, no way back | the button asks «Стереть все ответы?»; «Оставить» has the focus, «Стереть» erases |
+| /plan, «Изменить ответы» | dropped to question 1 and hid the plan; the way back was ten taps through answers already given | a list of the ten answers; a tap opens one question, the choice returns to the list; «Вернуться к плану» stands beside the heading and under the list. The draft stays complete, so a reload lands on the plan |
+| /plan, questionnaire | after «Назад» the only way forward was to tap the same answer again | an answered question has «Далее» |
+| /plan, hand-off | the first step's title broke as «12-/й год» | the same non-breaking form as in the route |
+| Purchase sheet | Escape or a tap beside the sheet wiped name, surname, phone and e-mail | the typed fields stay for the next opening, in memory only; a finished order starts clean |
+| /check | «или перетащи сюда» on a phone; the example opened below the fold and the button looked dead; «не связано с оплатой» said twice when the service is down | the drag hint only where there is a mouse; the example scrolls into view; the payment note is said once, in the notice |
+| Cabinet sign-in | «восстановить» 88×22, «Ввести код» 71×22, «Посмотреть тарифы» 132×17 under a finger | 44px hit areas, the lines stand where they stood, the two do not overlap |
+| Cabinet, university step | «Как выполнить этот шаг» carried two plus signs, one over the other | one sign, the shared one |
+| /prices at 320px | «Спросить Веспи» lay over «Проверка экспертом» | the chat button steps aside for the links under the price |
+| Guides road at 320px | «Сейчас · 0 из 8» stood 19px outside the tile, «0 из 9» past its edge | the count goes under the badge on a phone that narrow |
+
+The list of answers is built from what the questionnaire already has: the
+short titles of the question tiles («Набор», «Образование»…), the white paper
+card and hairlines of the plan, one word of action per row. No new colour,
+shape or picture.
+
+Left for the owner, because they change the offer, copy or the purchase form
+rather than how a control behaves:
+
+- the plan result shows the paid offer before the free «Начни здесь» step;
+- e-mail at purchase is optional, so a lost code cannot always be sent back;
+- the refund condition sits low on /prices and names no contact channel;
+- the questionnaire is «~2 минуты» on /plan and «за 10 минут» in the home FAQ;
+- three different step counts (11 / 19 / 28) and two product names across pages;
+- in a free guide the offer stands before the steps.
+
+`design-intuitive-review` (new, in CI) walks all of the above at 1440, 390 and
+320px. On the previous build it stops in the questionnaire (no «Далее»), and
+the measures it holds read there: one link covered by the chat button, two
+road labels outside their tile, 22px and 17px targets, the drag hint shown on
+touch, the payment note twice.

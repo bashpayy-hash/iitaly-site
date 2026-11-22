@@ -15,7 +15,7 @@ import { DSU_CHECKED, DSU_CHECKED_NOTE, DSU_LABELS, DSU_QUESTION } from "./dsuCh
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { PlainTermNotes } from "@/components/ui/PlainTerms";
-import { displayStepTitle } from "@/lib/portalNavigation";
+import { stepTitleText } from "./planRoute";
 
 /** Русское склонение счётного существительного по числу (5 → форма "много" и т.п.). */
 function ruPlural(n: number, one: string, few: string, many: string): string {
@@ -119,7 +119,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
                 <p className="text-[13px] font-semibold text-crimson">
                   Уже готово по твоим ответам
                 </p>
-                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white">{preview.steps[0] && displayStepTitle(preview.steps[0].t)}</p>
+                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white" data-plan-preview-title>{preview.steps[0] && stepTitleText(preview.steps[0].t)}</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.summary || preview.steps[0]?.p}</p>
                 {preview.steps[0]?.action && <p className="mt-3 text-apple-body-sm text-cloud-white">{preview.steps[0].action}</p>}
                 <p className="mt-2 text-apple-caption text-cloud-meta">
@@ -205,6 +205,16 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
         >
           Назад
         </button>
+        {/* Intuitiveness pass (21 Nov): after «Назад» the only way forward was
+            to tap the same answer again. An answered question can be passed. */}
+        {!finished && answers[WIZ[step].id] && <button
+          type="button"
+          data-plan-next
+          onClick={() => { stepChanged.current = true; onDraftChange({ ...draft, step: step + 1 }); }}
+          className="min-h-11 px-1 text-apple-body-sm text-cloud-body hover:text-cloud-white"
+        >
+          Далее
+        </button>}
       </div>
     </div>
   );
@@ -214,7 +224,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
    центру, ответы — кнопки-капсулы, внизу своя риzo-вещь. Светлые и тёмные
    плитки чередуются от вопроса к вопросу. */
 
-function WizStep({
+export function WizStep({
   question,
   index,
   total,

@@ -20,6 +20,10 @@
   .guideRoad [data-road-status] { flex-wrap:nowrap; white-space:nowrap; }
   .tail { height:0; }
 }
+/* 21 Nov, intuitiveness pass: on a 320px phone «Сейчас · 0 из 8» in one line
+   is wider than the column beside the circle and stood 19px outside the tile.
+   There the count goes under the badge. */
+@media (max-width:360px) { .guideRoad [data-road-status] { flex-wrap:wrap; row-gap:2px; } }
 
 /* Owner, 19 Nov: дорога «чуть будто бы недоделанная, сыровато». Линия
    выложена прямоугольными кусочками, как пол Галереи, вместо бледной

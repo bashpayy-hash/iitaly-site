@@ -150,10 +150,13 @@ try {
     assert.equal(await first.getAttribute('href'), '/plan/1');
     assert(await page.locator('[data-plan-path]').isVisible(), 'The whole route is visible');
     await capture(page, `public-result-${width}`);
+    // Since 21 Nov «Изменить ответы» opens the list of answers; one opens on a tap.
     await page.getByRole('button', { name: 'Изменить ответы', exact: true }).click();
+    await page.locator('[data-plan-answer=intake]').click();
     assert.equal(await page.locator('[data-plan-question]').getAttribute('data-plan-question'), 'intake');
-    await page.locator('[data-plan-wizard] button[aria-pressed]').nth(1).click();
+    await page.locator('[data-plan-answer-edit] button[aria-pressed]').nth(1).click();
     assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).answers.intake), '2026/27', 'Editing the first answer updates the persisted draft');
+    assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).complete), true, 'The plan stays ready while an answer is edited');
     results.push({ surface: 'public', width, directPreview: true, reloadWithoutTransition: true, editableAnswers: true });
     await context.close();
   }
