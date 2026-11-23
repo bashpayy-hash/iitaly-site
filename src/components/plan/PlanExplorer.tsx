@@ -15,6 +15,7 @@ import { GuidePlanContext } from "@/components/guides/GuidePlanContext";
 import workspace from "./plan-workspace.module.css";
 import { revealElement } from "@/components/motion/scroll";
 import disclosure from "@/components/ui/disclosure.module.css";
+import swap from "@/components/motion/swap.module.css";
 
 /* The university chosen in the catalogue, above both free tools (the plan and,
    since 20 Nov, the separate document check page /check). */
@@ -50,7 +51,7 @@ function DraftFooter({ onRestart }: { onRestart: () => void }) {
   return <div className={workspace.footer} data-plan-footer>
     <p>Ответы сохраняются на этом устройстве. Телефон и файлы в черновик не записываются.</p>
     {asking
-      ? <div className={workspace.confirm} role="group" aria-labelledby={question} data-plan-restart-confirm>
+      ? <div className={`${workspace.confirm} ${swap.fade}`} role="group" aria-labelledby={question} data-plan-restart-confirm>
         <span id={question}>Стереть все ответы?</span>
         <button ref={keep} type="button" onClick={() => { refocus.current = true; setAsking(false); }}>Оставить</button>
         <button type="button" data-danger onClick={() => { setAsking(false); onRestart(); }}>Стереть</button>
@@ -67,6 +68,11 @@ export function PlanExplorer() {
   // leads here instead of restarting the questionnaire (22 Nov).
   const [reviewing, setReviewing] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("answers") === "1");
   const review = !!plan && reviewing;
+  // The plan and the list of answers arrive (motion/swap.module.css) when the
+  // visitor brings them up; a saved plan opened by a page load is just there.
+  const [arrived, setArrived] = useState(false);
+  // The heading changes its words only between the plan and the list.
+  const [retitled, setRetitled] = useState(false);
 
   // The document check has its own page since 20 Nov. Old links and
   // bookmarks to /plan#document-check land there.
@@ -86,6 +92,8 @@ export function PlanExplorer() {
   }
 
   function showPlan() {
+    setArrived(true);
+    setRetitled(true);
     setReviewing(false);
     // Leave the address without the list's mark, so a reload shows the plan.
     const url = new URL(window.location.href);
@@ -94,6 +102,7 @@ export function PlanExplorer() {
   }
 
   function handleDone(answers: WizAnswers) {
+    setArrived(true);
     setReviewing(false);
     updateDraft({ answers, step: WIZ.length, complete: true });
     focusPlan();
@@ -153,17 +162,17 @@ export function PlanExplorer() {
           <div id="questionnaire" tabIndex={-1} className={workspace.questionnaire}>
             <GuidePlanContext target="plan" />
             <div className={workspace.heading}>
-              <h2>{review ? "Твои ответы" : "Твой план поступления"}</h2>
+              <h2 key={review ? "answers" : "plan"} className={retitled ? swap.fade : undefined}>{review ? "Твои ответы" : "Твой план поступления"}</h2>
               {/* «Персональный трек» was a third name for the route (22 Nov). */}
               {!plan && <span className={workspace.badge}>~2 минуты</span>}
               {/* The same place as «Изменить ответы» beside «Твой маршрут»: the
                   way back is where the way in was. */}
-              {review && <button type="button" className={workspace.headingAction} onClick={showPlan} data-plan-answers-back>Вернуться к плану</button>}
+              {review && <button type="button" className={`${workspace.headingAction} ${swap.fade}`} onClick={showPlan} data-plan-answers-back>Вернуться к плану</button>}
             </div>
             {review ? (
               <PlanAnswers answers={draft.answers} onChange={(id, value) => updateDraft({ ...draft, answers: { ...draft.answers, [id]: value } })} onDone={showPlan} />
             ) : plan ? (
-              <PlanResult plan={plan} onReset={() => { setReviewing(true); focusPlan(); }} />
+              <PlanResult plan={plan} arriving={arrived} onReset={() => { setArrived(true); setRetitled(true); setReviewing(true); focusPlan(); }} />
             ) : (
               <Wizard draft={draft} onDraftChange={updateDraft} onDone={handleDone} />
             )}

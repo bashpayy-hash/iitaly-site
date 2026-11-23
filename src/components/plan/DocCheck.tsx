@@ -25,6 +25,7 @@ import portalStyles from "@/components/portal/portal-document.module.css";
 import styles from "./plan-workspace.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { revealElement } from "@/components/motion/scroll";
+import swap from "@/components/motion/swap.module.css";
 
 const DOC_CHECK_ART = cartoucheFrame("doc-check");
 const MARK: Record<string, string> = { ok: "✓", warn: "!", error: "✕", unknown: "?" };
@@ -332,7 +333,9 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
           <small><span className={styles.dropHint}>или перетащи сюда<br /></span>{portalInspector ? "PDF, DOCX, TXT, RTF до 5 МБ. Фото сжимаются автоматически." : "Фото, PDF, Word до 5 МБ"}</small>
         </label>
       ) : (
-        <div className="mt-5 flex items-start gap-3 rounded-[20px] border border-white/15 p-4 sm:items-center sm:gap-4">
+        // Motion pass, 23 Nov: the chosen file, the status line, the error
+        // and the result each cut in; they now arrive (motion/swap.module.css).
+        <div className={`mt-5 flex items-start gap-3 rounded-[20px] border border-white/15 p-4 sm:items-center sm:gap-4 ${swap.rise}`}>
           {preview ? (
             <img
               src={preview}
@@ -377,7 +380,7 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
       )}
 
       {state.step !== "checking" && state.step !== "reading" && state.step !== "done" && <button type="button" className={styles.example} aria-expanded={showExample} onClick={() => setShowExample(!showExample)}>Проверить пример справки</button>}
-      {showExample && <section ref={exampleRef} className={styles.exampleResult} data-document-example aria-label="Пример разбора, не проверка твоего файла">
+      {showExample && <section ref={exampleRef} className={`${styles.exampleResult} ${swap.rise}`} data-document-example aria-label="Пример разбора, не проверка твоего файла">
         <h3>Пример разбора справки</h3>
         <p>Демонстрация интерфейса. Это вымышленный пример, файл не отправлялся на ИИ-анализ.</p>
         <p><b>Нужно уточнить.</b> В примере не указан конкурс. Нельзя определить нужный год доходов.</p>
@@ -392,13 +395,13 @@ export function DocCheck({ onComplete, academicYear, portalInspector = false, in
 
       <div aria-live="polite" className="mt-5">
         {(state.step === "error" || state.step === "retry") && !unavailable && (
-          <div role="alert" className="rounded-[16px] border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red">
+          <div role="alert" className={`rounded-[16px] border border-red bg-red/5 px-4 py-3 text-apple-body-sm font-semibold text-red ${swap.fade}`}>
             {state.message}
             {state.step === "retry" && <p className="mt-2 font-normal">Файл остался выбран. Попробуй проверить его ещё раз.</p>}
           </div>
         )}
         {(state.step === "checking" || state.step === "reading") && (
-          <div role="status" className="flex items-start gap-3 text-apple-body-sm text-cloud-body" data-document-review-pending>
+          <div role="status" className={`flex items-start gap-3 text-apple-body-sm text-cloud-body ${swap.fade}`} data-document-review-pending>
             <span aria-hidden className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-crimson motion-safe:animate-pulse" />
             <p>{
               state.step === "reading"
@@ -438,7 +441,7 @@ export function DocResult({ result, onCta, portalStatus = false, applicationYear
   const locked = !paid && (fixCount > 0 || Boolean(result.nextSteps?.length));
   const fixWall = useWallPurchase("document-fixes", locked);
   return (
-    <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className="rounded-[20px] border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson">
+    <div ref={resultRef} tabIndex={-1} role="region" aria-labelledby={headingId} className={`rounded-[20px] border border-white/15 p-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-crimson ${swap.rise}`}>
       <header className={styles.resultHead} data-document-assistant="done">
         <div className="flex flex-wrap items-center gap-2.5">
           

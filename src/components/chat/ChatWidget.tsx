@@ -23,6 +23,7 @@ import { VESPI_NAME, VespiAvatar } from "@/components/mascot/Vespi";
 import { VespiVideoAvatar } from "@/components/mascot/VespiVideoAvatar";
 import { GUIDE_HELP, isGuideId, type GuideId } from "@/components/guides/guideJourney";
 import placement from "./chat-placement.module.css";
+import swap from "@/components/motion/swap.module.css";
 import { paidDeviceNow } from "@/components/access/usePaidDevice";
 import { useWallPurchase } from "@/components/access/useWallPurchase";
 
@@ -455,10 +456,12 @@ export function ChatWidget() {
                   </div>
                 </div>
               )}
-              {(calmMode ? messages.slice(1) : messages).map((m, i) => (
+              {/* Motion pass, 23 Nov: a new message and the «печатает» row cut
+                  in. The newest message rises into place; older ones stay. */}
+              {(calmMode ? messages.slice(1) : messages).map((m, i, list) => (
                 <div
                   key={i}
-                  className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
+                  className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${i === list.length - 1 ? swap.rise : ""} ${
                     calmMode
                       ? m.who === "user" ? "ml-auto bg-[#f5f1eb] text-[#141413]" : "bg-[#faf8f5] text-[#141413]"
                       : m.who === "user"
@@ -471,7 +474,7 @@ export function ChatWidget() {
                 </div>
               ))}
               {typing && (
-                <div className={`flex w-fit items-center gap-2 rounded-lg px-3 py-2 ${calmMode ? "bg-[#faf8f5]" : "bg-cream"}`}>
+                <div className={`flex w-fit items-center gap-2 rounded-lg px-3 py-2 ${swap.fade} ${calmMode ? "bg-[#faf8f5]" : "bg-cream"}`}>
                   <span className="sr-only" role="status">Веспи готовит ответ</span>
                   <span className="flex items-center gap-1.5" aria-hidden="true">
                     <span

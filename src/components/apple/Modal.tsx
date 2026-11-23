@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { leaveBehind } from "@/components/motion/leave";
+import swap from "@/components/motion/swap.module.css";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
@@ -24,6 +26,7 @@ export function AppleModal({
   children: React.ReactNode;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrimRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
   const onCloseRef = useRef(onClose);
 
@@ -70,7 +73,15 @@ export function AppleModal({
     document.addEventListener("keydown", onKeyDown, true);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // The dialog fades out as a picture of itself (motion/leave.ts).
+    const scrim = scrimRef.current;
+    const host = scrim?.parentElement ?? null;
+    let scrolled = 0;
+    const keepScroll = () => { scrolled = panel?.scrollTop ?? 0; };
+    panel?.addEventListener("scroll", keepScroll, { passive: true });
     return () => {
+      panel?.removeEventListener("scroll", keepScroll);
+      leaveBehind(scrim, host, scrolled);
       document.removeEventListener("keydown", onKeyDown, true);
       document.body.style.overflow = previousOverflow;
       if (triggerRef.current instanceof HTMLElement) triggerRef.current.focus();
@@ -81,8 +92,10 @@ export function AppleModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 p-3 sm:items-center sm:p-5"
+      ref={scrimRef}
+      className={`fixed inset-0 z-[100] flex items-end justify-center bg-black/60 p-3 sm:items-center sm:p-5 ${swap.scrim}`}
       data-lenis-prevent
+      data-dialog-scrim
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -93,7 +106,7 @@ export function AppleModal({
         aria-modal="true"
         aria-labelledby={labelledBy}
         tabIndex={-1}
-        className={`max-h-[calc(100dvh-24px)] w-full overflow-y-auto overscroll-contain rounded-apple-card border border-ink/10 bg-white shadow-[var(--shadow-warm-card)] ${className || "max-w-md"}`}
+        className={`max-h-[calc(100dvh-24px)] w-full overflow-y-auto overscroll-contain rounded-apple-card border border-ink/10 bg-white shadow-[var(--shadow-warm-card)] ${swap.dialog} ${className || "max-w-md"}`}
       >
         <div className="flex justify-end px-4 pt-2">
           <button type="button" onClick={() => onCloseRef.current()} className="min-h-11 rounded-apple-card px-3 text-apple-body-sm font-medium text-cloud-body hover:text-cloud-white" aria-label="Закрыть окно">Закрыть</button>

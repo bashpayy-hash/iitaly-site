@@ -58,6 +58,7 @@ export function TrustFAQ() {
               <details
                 key={item.q}
                 className={styles.item}
+                data-disclosure="css"
                 onToggle={(e) => {
                   const details = e.currentTarget;
                   if (!details.open) return;

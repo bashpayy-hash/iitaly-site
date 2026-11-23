@@ -111,15 +111,27 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           скринридера остаётся невидимый progressbar. */}
       <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
 
-      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={finished ? styles.panel : styles.stage} data-fab-yield>
+      <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={finished ? styles.panel : styles.stage} data-plan-finished={finished ? "" : undefined} data-fab-yield>
         {finished ? (
           <>
+            {/* Owner, 23 Nov: «после опроса оно сразу выдает, куда тебя
+                бросает. А я хочу… кружочек зеленый, и то, что вот эта вот
+                галочка появляется, все это было, ну, с анимацией чуть-чуть».
+                The last answer is met by a mark: a green circle settles, the
+                check draws itself, one ring goes out; the line that stood as
+                a small label in the box below is its caption, and the box,
+                the button and the rest follow 60ms apart. Nothing waits for
+                it: the button works from the first frame (CRO audit, 20 Nov:
+                no hand-off screen between the answers and the plan). */}
+            <div className={styles.done} data-plan-done>
+              <span className={styles.doneMark} aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M6.6 12.6l3.5 3.5 7.3-8.1" pathLength={1} /></svg>
+              </span>
+              <p className={styles.doneLabel}>Уже готово по твоим ответам</p>
+            </div>
             {preview && (
               <div className="mb-6 rounded-apple-card border border-white/15 bg-frost p-4">
-                <p className="text-[13px] font-semibold text-crimson">
-                  Уже готово по твоим ответам
-                </p>
-                <p className="mt-2 text-apple-body-sm font-semibold text-cloud-white" data-plan-preview-title>{preview.steps[0] && stepTitleText(preview.steps[0].t)}</p>
+                <p className="text-apple-body-sm font-semibold text-cloud-white" data-plan-preview-title>{preview.steps[0] && stepTitleText(preview.steps[0].t)}</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">{preview.steps[0]?.summary || preview.steps[0]?.p}</p>
                 {/* Funnel analysis (owner, 22 Nov: «что ещё по воронке продаж
                     повторяется, или есть неконсистенции»). This screen printed
@@ -280,7 +292,7 @@ export function WizStep({
           {question.hint ? <>{question.hint}.</> : QUESTION_CONTEXT[question.id]}
         </p>
         {question.hint && QUESTION_CONTEXT[question.id] && <details className={styles.questionWhy} data-question-why>
-          <summary>Зачем спрашиваю</summary>
+          <summary data-smooth>Зачем спрашиваю</summary>
           <p>{QUESTION_CONTEXT[question.id]}</p>
         </details>}
       </div>

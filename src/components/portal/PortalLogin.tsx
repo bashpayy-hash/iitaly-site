@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import marketing from "@/components/marketing/marketing.module.css";
 import styles from "./portal-login.module.css";
+import swap from "@/components/motion/swap.module.css";
 import { PAY_WA } from "@/lib/payment";
 import { isValidPhone } from "@/lib/phone";
 import { requestPortalCode } from "@/lib/portalRecovery";
@@ -38,6 +39,9 @@ export function PortalLogin({
      as the fallback: on an older server, on a network failure, and when
      nothing arrives. */
   const [mode, setMode] = useState<"login" | "recover">("login");
+  // Motion pass, 23 Nov: «Вход» and «Не помню код» replaced each other in one
+  // frame. After a switch the card arrives; on a page load it is just there.
+  const [switched, setSwitched] = useState(false);
   const [phone, setPhone] = useState("");
   const [recoverState, setRecoverState] = useState<"idle" | "sending" | "sent" | "manual">("idle");
   const [recoverError, setRecoverError] = useState<string | null>(null);
@@ -64,6 +68,7 @@ export function PortalLogin({
     setLocalError(null);
     setRecoverError(null);
     setRecoverState("idle");
+    setSwitched(true);
     setMode("recover");
   }
 
@@ -172,7 +177,7 @@ export function PortalLogin({
 
         {mode === "recover" ? (
         <form
-          className={styles.card}
+          className={`${styles.card} ${switched ? swap.rise : ""}`}
           onSubmit={recover}
           noValidate
           aria-labelledby="portal-recover-heading"
@@ -187,7 +192,7 @@ export function PortalLogin({
           </div>
 
           {recoverState === "sent" || recoverState === "manual" ? (
-            <div ref={recoverStatusRef} tabIndex={-1} role="status" className={styles.notice} data-portal-recover-status={recoverState}>
+            <div ref={recoverStatusRef} tabIndex={-1} role="status" className={`${styles.notice} ${swap.fade}`} data-portal-recover-status={recoverState}>
               {recoverState === "sent" ? <>
                 <p className={styles.noticeTitle}>Запрос принят</p>
                 <p>Если кабинет с такими фамилией и телефоном есть, код уже в Telegram или на почте, которые к нему подключены. Не пришёл за пару минут&nbsp;— напиши нам, пришлём вручную.</p>
@@ -234,19 +239,19 @@ export function PortalLogin({
                 />
               </label>
             </div>
-            {recoverError && <p id={recoverErrorId} role="alert" className={styles.error}>{recoverError}</p>}
+            {recoverError && <p id={recoverErrorId} role="alert" className={`${styles.error} ${swap.fade}`}>{recoverError}</p>}
             <button type="submit" className={styles.submit} disabled={recoverState === "sending"}>
               {recoverState === "sending" ? "Отправляю…" : "Прислать код"}
             </button>
           </>}
           <p className={styles.foot}>
             Код нашёлся?{" "}
-            <button type="button" className={styles.textButton} onClick={() => setMode("login")} data-portal-recover-back>Ввести код</button>
+            <button type="button" className={styles.textButton} onClick={() => { setSwitched(true); setMode("login"); }} data-portal-recover-back>Ввести код</button>
           </p>
         </form>
         ) : (
         <form
-          className={styles.card}
+          className={`${styles.card} ${switched ? swap.rise : ""}`}
           onSubmit={submit}
           noValidate
           aria-labelledby="portal-login-heading"
@@ -296,7 +301,7 @@ export function PortalLogin({
             </label>
           </div>
 
-          {shownError && <p id={errorId} role="alert" className={styles.error}>{shownError}</p>}
+          {shownError && <p id={errorId} role="alert" className={`${styles.error} ${swap.fade}`}>{shownError}</p>}
           <button type="submit" className={styles.submit} disabled={submitting}>
             {submitting ? "Проверяю…" : "Войти в кабинет"}
           </button>

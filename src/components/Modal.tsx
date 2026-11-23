@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { leaveBehind } from "@/components/motion/leave";
+import swap from "@/components/motion/swap.module.css";
 
 const FOCUSABLE =
   'a[href], summary, button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -19,6 +21,7 @@ export function Modal({
   children: React.ReactNode;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrimRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
   const onCloseRef = useRef(onClose);
 
@@ -61,7 +64,15 @@ export function Modal({
 
     document.addEventListener("keydown", onKeyDown, true);
     document.body.style.overflow = "hidden";
+    // The dialog fades out as a picture of itself (motion/leave.ts).
+    const scrim = scrimRef.current;
+    const host = scrim?.parentElement ?? null;
+    let scrolled = 0;
+    const keepScroll = () => { scrolled = panel?.scrollTop ?? 0; };
+    panel?.addEventListener("scroll", keepScroll, { passive: true });
     return () => {
+      panel?.removeEventListener("scroll", keepScroll);
+      leaveBehind(scrim, host, scrolled);
       document.removeEventListener("keydown", onKeyDown, true);
       document.body.style.overflow = previousOverflow;
       if (triggerRef.current instanceof HTMLElement) triggerRef.current.focus();
@@ -72,7 +83,9 @@ export function Modal({
 
   return (
     <div
-      className="scrim-ink fixed inset-0 z-[100] flex items-end justify-center bg-ink/50 p-0 sm:items-center sm:p-5"
+      ref={scrimRef}
+      className={`scrim-ink fixed inset-0 z-[100] flex items-end justify-center bg-ink/50 p-0 sm:items-center sm:p-5 ${swap.scrim}`}
+      data-dialog-scrim
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -84,7 +97,7 @@ export function Modal({
         aria-labelledby={labelledBy}
         tabIndex={-1}
         data-lenis-prevent
-        className={`max-h-[88vh] w-full overflow-y-auto overscroll-contain rounded-t-xl border border-ink/10 bg-paper shadow-[var(--shadow-warm-card)] sm:rounded-xl ${className || "max-w-lg"}`}
+        className={`max-h-[88vh] w-full overflow-y-auto overscroll-contain rounded-t-xl border border-ink/10 bg-paper shadow-[var(--shadow-warm-card)] sm:rounded-xl ${swap.dialog} ${className || "max-w-lg"}`}
       >
         {children}
       </div>

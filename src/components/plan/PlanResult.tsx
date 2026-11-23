@@ -11,6 +11,7 @@ import { usePaidDevice } from "@/components/access/usePaidDevice";
 import { RISK_LINE } from "@/components/access/offerCopy";
 import styles from "./plan-journey.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
+import swap from "@/components/motion/swap.module.css";
 
 /* Результат анкеты без повторов (owner, 5 Nov: «перепроверь перегрузы»):
    одна строка «что это», одна главная кнопка, шаги (с 20 Nov — короткий
@@ -19,12 +20,15 @@ import disclosure from "@/components/ui/disclosure.module.css";
    вторая заливная кнопка «Собрать документы» внизу — покупка и так стоит
    в каждом закрытом шаге. */
 
-export function PlanResult({ plan, onReset }: { plan: Plan; onReset: () => void }) {
+export function PlanResult({ plan, onReset, arriving = false }: { plan: Plan; onReset: () => void; arriving?: boolean }) {
   const paid = usePaidDevice();
   const wall = useWallPurchase("plan-result", !paid);
   const more = Math.max(plan.steps.length - 1, 0);
   return (
-    <div data-assessment-result>
+    // Owner, 23 Nov: «после опроса оно сразу выдает, куда тебя бросает». Opened
+    // from the questionnaire or from the list of answers, the plan arrives:
+    // its blocks rise one after another while the page glides up to it.
+    <div data-assessment-result className={arriving ? swap.cascade : undefined}>
       <p className={styles.ready} data-plan-ready>
         План собран по твоим ответам. Набор: {plan.intake}.
         Правила проверены {plan.reviewed}; допуск подтверждает выбранный вуз.

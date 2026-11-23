@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useDisclosureMotion } from "./useDisclosureMotion";
 
 /**
  * Единая точка чтения prefers-reduced-motion для всех motion-примитивов
@@ -24,6 +25,8 @@ export function MotionProvider({ children }: { children: ReactNode }) {
   // это тот самый "синхронизировать с внешней системой на маунте" случай,
   // а не что-то, что можно вычислить из пропсов/состояния React.
   const [reduced, setReduced] = useState(false);
+  // Mounted once for the whole site, so the «плюс» rows open the same everywhere.
+  useDisclosureMotion();
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");

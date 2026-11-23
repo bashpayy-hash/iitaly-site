@@ -3534,3 +3534,53 @@ Then, on the first new card (it carried «10 990 ₸ · разово» and «К�
   is the drawn file, and that the address carries its hash.
 - Messengers keep the preview of a link they have already seen. Telegram
   refreshes it when the link is sent to @WebpageBot.
+
+## Motion pass: what replaces something arrives; the questionnaire ends with a mark · 23 November 2026
+
+Owner: «добавить анимации в целом по сайту, которые будут как-то расплавнять
+все, а то как-то просто на сайте иногда все топорно именно по анимациям, по
+переходам выглядит. И после опроса оно сразу выдает, куда тебя бросает. А я
+хочу… кружочек зеленый, и то, что вот эта вот галочка появляется, все это
+было, ну, с анимацией чуть-чуть».
+
+An audit of the same day listed where the site changed state in one frame.
+Each place was weighed by how often a visitor meets it and what the motion
+is for; what happens on every keystroke (the guides' search) and on a first
+page load stays instant.
+
+- **The questionnaire's last screen.** A green circle (the brand's
+  `#087C55`) settles with the cabinet's «done» spring, a white check draws
+  itself, one ring goes out; «Уже готово по твоим ответам», which stood as a
+  small label inside the box, is the mark's caption, and the box, the button
+  and the rest follow 60ms apart. About 0.9s; the button works from the first
+  frame, so the CRO rule of 20 Nov (no hand-off screen between the answers
+  and the plan) holds.
+- **The plan after «Открыть мой план».** Its blocks rise one after another
+  (50ms apart) while the page glides up to it; the list of answers and the
+  way back arrive the same way. A saved plan opened by a page load does not
+  animate.
+- **Dialogs** (the purchase, a university's card, the comparison). The
+  backdrop fades in and the panel settles; on a phone the panel is a sheet
+  and comes up from the bottom edge. Closing: the dialog is gone at once, as
+  before, and a copy of it fades for 160ms (`motion/leave.ts`), so focus and
+  scrolling return without a wait.
+- **Rows with the «плюс» sign** (guarantees on /prices, «Напоминания о
+  сроках», the cabinet's rules, «Оставить номер для связи», «Зачем
+  спрашиваю»). The row grows to its open height in 280ms
+  (`motion/useDisclosureMotion.ts`). The home FAQ had this in CSS since
+  8 Nov, but through `interpolate-size`, which only Chromium has: on an
+  iPhone it snapped. The listener covers Safari and Firefox too.
+- **The phone menu** comes down from the header in 200ms.
+- **States that replace each other**: the order form, «Открываю Stripe…» and
+  «Заказ принят»; the upload zone and the chosen file, the status line, the
+  error and the result of a document check; «Вход» and «Не помню код» in the
+  cabinet; a new chat message and the «печатает» row; «Стереть все ответы?».
+- **A press is answered**: the site's button gives 2% under the finger (it
+  moved 1px in one frame, because `transform` was not eased); the home route
+  tiles, the guide chips and the step pager, which only answered a mouse,
+  answer a touch.
+
+One set of classes does the arriving (`motion/swap.module.css`): `.rise`,
+`.fade`, `.cascade`, `.scrim`, `.dialog`. Only `transform` and `opacity`
+move, once, on the site's curve `cubic-bezier(.22,1,.36,1)`. With reduced
+motion nothing moves and nothing waits.
