@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { WizAnswers, WizQuestion } from "@/data/wizard";
-import { wizardFor } from "@/data/wizardTracks";
+import { wizardAnswers, wizardFor } from "@/data/wizardTracks";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
@@ -75,7 +75,17 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   function choose(id: string, value: string) {
     stepChanged.current = true;
     if (step === 0) track("plan_started");
-    onDraftChange({ answers: { ...answers, [id]: value }, step: step + 1, complete: false });
+    /* Owner, 23 Nov, a phone screenshot of question 9 with «Уже в Италии»
+       marked: «Почему здесь по дефолту будто уже нажали». It was his own
+       earlier answer: after a changed level (or a «Назад») the questionnaire
+       led through every later question, and those already answered arrived
+       marked, as if chosen for him. An answer now leads to the next question
+       that has none, in the track this answer leaves the applicant on, or to
+       the end. A marked answer is seen only where he goes back himself. */
+    const next = wizardAnswers({ ...answers, [id]: value });
+    const left = wizardFor(next);
+    const unanswered = left.findIndex(question => !next[question.id]);
+    onDraftChange({ answers: next, step: unanswered < 0 ? left.length : unanswered, complete: false });
     track("wiz_step", { s: id });
     track("plan_step_completed", { step: step, of: questions.length });
   }

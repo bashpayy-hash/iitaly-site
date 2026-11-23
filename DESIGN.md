@@ -3852,6 +3852,15 @@ a school answer does not stay in a master's draft. The tiles, pictures and
 the list «Твои ответы» are the same components; the new question has the
 `folder` cartouche.
 
+**No answer arrives marked** (the same evening; owner, a phone screenshot of
+question 9 with «Уже в Италии» red: «Почему здесь по дефолту будто уже
+нажали»). It was his earlier answer: after a changed level the questionnaire
+led through every later question, and the answered ones arrived marked, as
+if chosen for him. An answer now leads to the next question that has none,
+or to the end: after «Магистратура» in the list of answers that is two
+questions, the diploma and its profile. A marked answer is seen only where
+the applicant goes back himself.
+
 **The plan.** The master's route (`buildPlan`, branch `master`):
 «Проверь доступ в магистратуру» (Laurea Magistrale: two years, 120 credits;
 the university judges the diploma, the transcript and the subjects; a
