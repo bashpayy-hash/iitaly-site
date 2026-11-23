@@ -19,6 +19,13 @@ const browser=await chromium.launch({executablePath:process.env.REVIEW_CHROMIUM,
 const errors=[],results=[];
 async function check(page,label){
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,label+' overflow');
+  // After an in-site navigation Next shows the new page first and streams its
+  // metadata, <title> included, right after (node_modules/next/dist/docs,
+  // generate-metadata.md, «Streaming metadata»). On a slow CI runner axe once
+  // ran in that gap on /plan (23 Nov, PR 288: «Document does not have a
+  // non-empty <title>»). Axe reads the settled page; a page that never gets a
+  // title still fails below.
+  await page.waitForFunction(()=>document.title.trim()!=='',null,{timeout:10000}).catch(()=>{});
   await page.addScriptTag({path:path.join(process.env.REVIEW_TOOLS,'axe-core/axe.min.js')});
   const violations=await page.evaluate(async()=>(await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary}))})));
   assert.deepEqual(violations,[],label+' accessibility');
