@@ -359,6 +359,9 @@ try {
       assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'The document workbench uses a utility icon, preserving the single mascot anchor');
     }
     await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
+    // The level is the second question since 23 Nov (the master's track);
+    // the baseline build still asks about the school second.
+    if (!baseline) await page.getByRole('button').filter({ hasText: 'Бакалавриат' }).click();
     if (!baseline) {
       const explanation = page.locator('[data-vespi-question-reason]');
       assert(await explanation.isVisible(), 'Each question gives a short reason');

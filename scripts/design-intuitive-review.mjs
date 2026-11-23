@@ -60,7 +60,8 @@ try {
     await next.waitFor();
     assert(await tall(next) >= 44, `«Дальше» is a full-size target at ${width}`);
     await next.click();
-    assert.equal(await question(), 'education', '«Дальше» goes to the next question');
+    // The second question is the level since 23 Nov (the master's track).
+    assert.equal(await question(), 'goal', '«Дальше» goes to the next question');
     assert.equal((await draft()).answers.intake, '2027/28', '…and keeps the answer');
     for (let index = 1; index < 10; index++) await answer();
     // The first step's title in the hand-off never breaks after a hyphen («12-/й год»).

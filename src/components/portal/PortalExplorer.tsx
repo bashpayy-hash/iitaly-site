@@ -42,7 +42,7 @@ import { track } from "@/lib/track";
 import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending } from "@/lib/portalShortlist";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
 import { taskQuestions } from "@/lib/portalStepCopy";
-import { WIZ } from "@/data/wizard";
+import { wizardAnswers, wizardFor } from "@/data/wizardTracks";
 import { EMPTY_PLAN_DRAFT, type PlanDraft } from "@/lib/usePlanDraft";
 import { LocalWorkspace } from "./LocalWorkspace";
 import { revealElement } from "@/components/motion/scroll";
@@ -197,11 +197,8 @@ export function PortalExplorer() {
       try { writeShortlist(key, remoteIds); } catch { /* The server remains the source of truth. */ }
     }
     const profileAnswers = { ...res.data.client.profile, intake: res.data.client.intakeYear === 2027 ? "2027/28" : res.data.client.intakeYear === 2026 ? "2026/27" : undefined };
-    const answers = Object.fromEntries(WIZ.flatMap(question => {
-      const value = profileAnswers[question.id as keyof typeof profileAnswers];
-      return typeof value === "string" && question.opts.some(option => option.v === value) ? [[question.id, value]] : [];
-    }));
-    setAssessmentDraft({ answers, step: Math.max(0, WIZ.findIndex(question => !answers[question.id])), complete: false });
+    const answers = wizardAnswers(profileAnswers);
+    setAssessmentDraft({ answers, step: Math.max(0, wizardFor(answers).findIndex(question => !answers[question.id])), complete: false });
     setActionError(null);
     setBusyTask(null);
     setRoadTravel(undefined);

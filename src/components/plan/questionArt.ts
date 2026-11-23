@@ -10,6 +10,8 @@ const ART: Record<string, string> = {
   education: "diploma",
   grades: "tests",
   goal: "cap",
+  // The master's track: whether the diploma's subjects fit the programme.
+  major: "folder",
   budget: "coins",
   field: "route-map",
   lang: "translation",

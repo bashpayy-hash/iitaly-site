@@ -8,6 +8,8 @@ export const QUESTION_CONTEXT: Record<string, string> = {
   education: "Допуск всё равно подтвердит выбранный вуз.",
   grades: "Это ориентир для твоего профиля, не прогноз поступления.",
   goal: "У бакалавриата и магистратуры разные требования к диплому. Начнём с нужного уровня.",
+  // The master's track (data/wizardTracks.ts, 23 Nov).
+  major: "У итальянской магистратуры есть свои требования к предметам первого диплома. Если профиль другой, их может не хватить.",
   budget: "Стипендию и средства на визу нужно проверять отдельно.",
   field: "От направления зависят тесты и условия конкурса. Точные требования проверим у программы.",
   lang: "От ответа зависит, что делать дальше: подтвердить язык или подготовиться к тесту.",
@@ -18,4 +20,4 @@ export const QUESTION_CONTEXT: Record<string, string> = {
 
 
 /** Ярлык плитки вопроса: «Вопрос 2 из 10 · Образование». */
-export const STEP_TITLES: Record<string, string> = { intake: "Набор", education: "Образование", grades: "Оценки", goal: "Цель", budget: "Бюджет", field: "Направление", lang: "Язык", age: "Возраст", residence: "Проживание", dsuRegion: "Стипендия" };
+export const STEP_TITLES: Record<string, string> = { intake: "Набор", education: "Образование", grades: "Оценки", goal: "Цель", major: "Профиль", budget: "Бюджет", field: "Направление", lang: "Язык", age: "Возраст", residence: "Проживание", dsuRegion: "Стипендия" };

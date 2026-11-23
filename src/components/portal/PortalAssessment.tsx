@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 import { AssessmentRoadmap } from "@/components/plan/AssessmentRoadmap";
 import { revealElement } from "@/components/motion/scroll";
 import { AssessmentTransition, useAssessmentTransition } from "@/components/plan/AssessmentTransition";
-import { WIZ } from "@/data/wizard";
+import { wizardAnswers, wizardFor } from "@/data/wizardTracks";
 import { DSU_CHECKED, DSU_CHECKED_CAPTION, DSU_QUESTION } from "@/components/plan/dsuChoice";
 import { buildPlan } from "@/lib/planBuilder";
 import type { PlanDraft } from "@/lib/usePlanDraft";
@@ -29,15 +29,15 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
   const stepChanged = useRef(false);
   // Accept only the supplied, enumerated answers. A stale draft must not skip
   // unanswered questions or infer eligibility from the account profile.
-  const answers = useMemo(() => Object.fromEntries(WIZ.flatMap(question =>
-    question.opts.some(option => option.v === draft.answers[question.id])
-      ? [[question.id, draft.answers[question.id]]]
-      : [])), [draft.answers]);
-  const missing = WIZ.findIndex(question => !answers[question.id]);
-  const limit = missing < 0 ? WIZ.length : missing;
+  // 23 Nov: the questions are those of the answered level's track
+  // (data/wizardTracks.ts): a master's applicant is not asked about school.
+  const answers = useMemo(() => wizardAnswers(draft.answers), [draft.answers]);
+  const questions = wizardFor(answers);
+  const missing = questions.findIndex(question => !answers[question.id]);
+  const limit = missing < 0 ? questions.length : missing;
   const step = Number.isInteger(draft.step) ? Math.max(0, Math.min(draft.step, limit)) : 0;
-  const finished = step === WIZ.length;
-  const question = WIZ[step];
+  const finished = step === questions.length;
+  const question = questions[step];
   const art = question ? questionArt(question.id) : undefined;
   const result = useMemo(() => finished ? buildPlan(answers) : null, [finished, answers]);
 
@@ -51,9 +51,9 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
   function moveTo(nextStep: number) {
     if (busy) return;
     stepChanged.current = true;
-    if (nextStep === WIZ.length) begin();
+    if (nextStep === questions.length) begin();
     else finish();
-    onDraftChange({ answers, step: nextStep, complete: nextStep === WIZ.length });
+    onDraftChange({ answers, step: nextStep, complete: nextStep === questions.length });
   }
 
   return <div className={styles.assessment} data-portal-assessment aria-busy={busy || undefined}>
@@ -78,9 +78,9 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
           «Продолжить», как раньше в кабинете). */}
       <div className={`${tile.question} ${styles.tile}`} data-tone={step % 2 ? "dark" : "light"} data-plan-tile={question.id}>
         <div className={tile.questionHead}>
-          <p className={tile.questionStep} aria-live="polite" aria-atomic="true">Вопрос {step + 1} из {WIZ.length} · {STEP_TITLES[question.id] || question.q}</p>
+          <p className={tile.questionStep} aria-live="polite" aria-atomic="true">Вопрос {step + 1} из {questions.length} · {STEP_TITLES[question.id] || question.q}</p>
           <h3 id={`${questionId}-heading`} ref={headingRef} tabIndex={-1} className={styles.tileHeading}>{question.q}</h3>
-          <p id={`${questionId}-hint`} className={tile.questionReason}>{question.hint && <>{question.hint}. </>}{QUESTION_CONTEXT[question.id]}</p>
+          <p id={`${questionId}-hint`} className={tile.questionReason}>{question.hint && <>{question.hint}. </>}{question.why ?? QUESTION_CONTEXT[question.id]}</p>
         </div>
         <fieldset className={`${tile.options} ${styles.tileOptions}`} disabled={busy} aria-labelledby={`${questionId}-heading`} aria-describedby={`${questionId}-hint`}>
           {/* Scholarship: general answers first, then the competitions whose rules

@@ -93,9 +93,9 @@ try {
     await peer.locator('[data-local-workspace]').waitFor();
     assert.match(await peer.locator('main').innerText(),/сентябрь 2027/,'Selected year appears in another tab');
     await peer.locator('[data-road-open]').click();
-    await peer.getByRole('heading',{name:'Что заканчиваешь?',exact:true}).waitFor();
+    await peer.getByRole('heading',{name:'Куда поступаешь?',exact:true}).waitFor();
     await peer.close();
-    for(const title of ['11 классов','4,7 и выше','Бакалавриат','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Пока не знаю']) {
+    for(const title of ['Бакалавриат','11 классов','4,7 и выше','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Пока не знаю']) {
       const button=page.locator('[data-plan-wizard] button').filter({hasText:title});
       await button.click();
     }

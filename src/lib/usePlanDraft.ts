@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import { WIZ, type WizAnswers } from "@/data/wizard";
+import type { WizAnswers } from "@/data/wizard";
+import { wizardAnswers, wizardFor } from "@/data/wizardTracks";
 
 export type PlanDraft = { answers: WizAnswers; step: number; complete: boolean };
 export const EMPTY_PLAN_DRAFT: PlanDraft = { answers: {}, step: 0, complete: false };
@@ -32,10 +33,13 @@ function subscribe(listener: () => void) {
 function decode(raw: string): PlanDraft {
   try {
     const data = JSON.parse(raw);
-    const answers = Object.fromEntries(WIZ.flatMap(q =>
-      q.opts.some(option => option.v === data?.answers?.[q.id]) ? [[q.id, data.answers[q.id]]] : []));
-    const missing = WIZ.findIndex(q => !answers[q.id]);
-    const limit = missing < 0 ? WIZ.length : missing;
+    // The questions are those of the saved level's track (wizardTracks.ts):
+    // after «Магистратура» a school answer is not kept, and the draft is
+    // complete only when every question of that track is answered.
+    const answers = wizardAnswers(data?.answers);
+    const questions = wizardFor(answers);
+    const missing = questions.findIndex(q => !answers[q.id]);
+    const limit = missing < 0 ? questions.length : missing;
     const step = Number.isInteger(data?.step) ? Math.max(0, Math.min(data.step, limit)) : 0;
     return { answers, step, complete: data?.complete === true && missing < 0 };
   } catch { return EMPTY_PLAN_DRAFT; }
