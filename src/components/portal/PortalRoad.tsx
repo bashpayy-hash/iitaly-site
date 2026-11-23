@@ -27,8 +27,15 @@ const PREVIEW_ART: PortalStageKey[] = ["start", "docs", "apply", "dsu", "visa", 
    laurel frame for all seven (frame B of the cartouches), the stage's thing
    in the middle (design/illustrations/road-2026-11-23.json). Round, they
    fill the disc and the disc's rim still tells the state. */
+/* Owner, 23 Nov (night): «вместо вот этих двух на паспорте должен быть паспорт
+   Казахстана, и на монетках там должен быть веспи начеканенный на монете, как
+   на древних римских монетах». The visa stage shows the sky-blue passport of
+   Kazakhstan with its gold emblem, the scholarship stage a gold coin with
+   Vespi minted in a laurel wreath. Redrawn pictures carry new names. */
+const MARK_FILE: Partial<Record<PortalStageKey, string>> = { visa: "visa-kz", dsu: "dsu-aureus" };
 function StageMark({ stage, locked = false }: { stage: PortalStageKey; locked?: boolean }) {
-  return <img src={`/illustrations/stages/${stage}-mosaic-128.webp`} srcSet={`/illustrations/stages/${stage}-mosaic-128.webp 128w, /illustrations/stages/${stage}-mosaic-256.webp 256w`} sizes="64px"
+  const file = MARK_FILE[stage] ?? stage;
+  return <img src={`/illustrations/stages/${file}-mosaic-128.webp`} srcSet={`/illustrations/stages/${file}-mosaic-128.webp 128w, /illustrations/stages/${file}-mosaic-256.webp 256w`} sizes="64px"
     width={128} height={128} alt="" aria-hidden="true" data-stage-object={stage} data-stage-mark={stage} data-stage-locked={locked || undefined} loading="lazy" decoding="async" draggable={false} />;
 }
 

@@ -125,7 +125,8 @@ async function railContract(page,data,compact){
   // Owner, 6 Nov (night): conceptual stage icons in the cabinet, physical objects in the guides.
   // Owner, 23 Nov: «вот этих, что в кругляшках milestones, делай тоже мозаичными» — the same
   // ideas as round mosaic medallions that fill the disc inside its rim.
-  for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+-mosaic-(128|256)\.webp$/,'Stage rows use the mosaic medallions');
+  // 23 Nov (night): the visa and scholarship medallions were redrawn under new names (visa-kz, dsu-aureus).
+  for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+(?:-[a-z]+)?-mosaic-(128|256)\.webp$/,'Stage rows use the mosaic medallions');
   for (const fit of await road(page).locator('[data-road-stage] img[data-stage-mark]').evaluateAll(els=>els.map(el=>{const img=el.getBoundingClientRect(),disc=el.parentElement.getBoundingClientRect();return {img:img.width,disc:disc.width,dx:Math.abs(img.left+img.width/2-disc.left-disc.width/2)};})))
     assert(fit.img>=fit.disc-10&&fit.img<=fit.disc-6&&fit.dx<1,`A stage medallion fills its disc inside the rim (${JSON.stringify(fit)})`);
   assert.equal(await road(page).locator('img:not([data-road-scenery-art])').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);

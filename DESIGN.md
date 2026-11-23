@@ -3972,3 +3972,55 @@ no master's data per university, and none is invented. The glossary lines
 settings at 1440 and 390px with a server that answers
 in the school leaver's words; `admissions-review` and
 `admissions-browser-review` hold the order, the wording and the plan.
+
+## Nothing cut by its container · 23 November 2026 (night)
+
+Owner, a screenshot of /plan/9: «Вот видишь, здесь, короче, неровность, и
+нужно вот такие неровности решать. Вот причеши весь сайт на такие вот…
+точка, она… обрезается, и это очень нехорошо». Then, on the cabinet road:
+«при наведении как-то вот страшно все это обрезается. Лучше бы был бы такой
+легкий блюр».
+
+**How it was found.** A detector (`scripts/review-clip-detector.js`) went
+over all 93 pages at 1440, 768 and 390px, empty and with a twelve-step plan,
+and over the paid cabinet: the page as it stands, every control under the
+keyboard and every `:hover` rule that moves or rings something. It reports
+a ring or soft shadow (box-shadow, outline, a ring drawn by a pseudo-element)
+or a small round mark that an ancestor's overflow cuts. A full-bleed band
+painted by a huge spread, and a card half out of a carousel, are left alone.
+
+**What it found and what changed.**
+- *The step path* (StoryPath: every step of the plan and of the guides). The
+  row scrolls sideways and a scroller clips on both axes; the current stop's
+  ring (5px round a circle scaled 1.08) and the keyboard's ring had 4px above
+  the circles and were cut flat on top, on 122 pages and widths. The scroller
+  now has 8px on every side and gives it back in its margins, so the row
+  stands where it stood.
+- *Twelve steps on a phone.* The plan of an 11-class leaver under 18 has
+  twelve steps; 35px stops made 420px in a 350px column and the last circle
+  stood cut in half at the edge. A dense row on a phone divides its own width
+  (container units): twelve fit at 390px (24px circles) and at 320px (19px).
+- *The keyboard's ring of the first and last chip* in the guides categories
+  (desktop) and the universities filters inside the cabinet: 6px of room.
+- *The cabinet road under the mouse.* A stage got a grey 1040px block: hard
+  edges, square against the current stage's rounded panel, over the road
+  line. It is now a soft warm glow round the medallion and the title that
+  fades out on every side (a radial gradient on `::before`, opacity only),
+  the road shows through, and the medallion rises 2px as a step's circle does.
+
+**The medallions** (the same night; owner: «вместо вот этих двух на паспорте
+должен быть паспорт Казахстана, и на монетках там должен быть веспи
+начеканенный на монете, как на древних римских монетах»). The visa stage
+shows the passport of Kazakhstan: the cover in the flag's sky blue with the
+gold state emblem (the shanyrak, two winged horses, a star) and the red check;
+the scholarship stage a gold coin with Vespi minted in a laurel wreath and a
+beaded rim, as on a Roman aureus, before a short stack of coins. New names
+(`visa-kz-mosaic`, `dsu-aureus-mosaic`); jobs in
+`design/illustrations/road-2026-11-23.json`.
+
+`design-clip-review` (new, portal group) runs the detector on the pages that
+carry each kind of row, at 1440 with hover and at 390 and 320px, and holds
+the owner's page, the road's glow and the two medallions. On the build before
+this change it fails with «the current step's ring has room above it
+(-2.4px)».
+

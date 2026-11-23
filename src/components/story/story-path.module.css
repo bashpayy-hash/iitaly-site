@@ -7,7 +7,13 @@
 .head { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:4px 16px; margin-bottom:14px; }
 .position { margin:0; color:#57514B; font-size:13px; font-weight:600; line-height:1.5; font-variant-numeric:tabular-nums; }
 .caption { margin:0; color:#57514B; font-size:13px; line-height:1.5; }
-.scroller { margin:0 -6px; padding:4px 6px 6px; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:#DCD3C3 transparent; }
+/* The row scrolls sideways, and a scroller clips on both axes: the current
+   stop's ring (5px, on a circle scaled 1.08) and the keyboard's ring (2px at
+   2px) need 6.4px round the circles. With 4px above them the ring was cut
+   flat on top (owner, 23 Nov, a screenshot of /plan/9: «точка… обрезается…
+   это очень нехорошо»). The box now has 8px on every side and gives the
+   extra back in its margins, so the row stands where it stood. */
+.scroller { margin:-4px -8px -2px; padding:8px; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin; scrollbar-color:#DCD3C3 transparent; }
 .road { position:relative; min-width:calc(var(--n) * var(--stop-min)); }
 .rail { position:absolute; top:calc(var(--node) / 2 - 2px); left:calc(100% / var(--n) / 2); right:calc(100% / var(--n) / 2); height:4px; border-radius:2px; background:#E4DCCF; }
 .fill { position:absolute; inset:0 auto 0 0; width:calc(var(--at) * 100%); border-radius:inherit; background:#B83A27; transition:width 480ms cubic-bezier(.22,1,.36,1); }
@@ -55,5 +61,15 @@
    350px column — it scrolled sideways with a circle cut in half at the screen
    edge and two documents out of sight. On phones a dense row fits the column
    from 360px; at 320px the circles step down to 26px so all nine still fit. */
-@media (max-width:600px) { .path[data-dense] { --stop-min:35px; } }
-@media (max-width:359px) { .path[data-dense] { --node:26px; --stop-min:31px; } }
+/* 23 Nov (the clipping pass): the plan of an 11-class leaver under 18 has
+   twelve steps, and twelve 35px stops made 420px in a 350px column, so the
+   row scrolled and the last circle stood cut in half at the edge. A dense row
+   on a phone now divides its own width (container units of the scroller):
+   stops up to 35px, circles up to 30px, both smaller only when the count
+   needs it, so twelve fit at 390px (24px circles) and at 320px (19px). */
+@media (max-width:600px) {
+  .path[data-dense] .scroller { container-type:inline-size; }
+  .path[data-dense] .road { --node:clamp(19px, calc(100cqw / var(--n) - 5px), 30px); min-width:calc(var(--n) * clamp(23px, calc(100cqw / var(--n)), 35px)); }
+  .path[data-dense] .node { font-size:12px; }
+  .path[data-dense] .node svg { width:56%; height:56%; }
+}

@@ -196,9 +196,23 @@
 .status[data-state=done] .badge { gap:5px; padding-left:4px; }
 .status small { color:var(--quiet); font-size:13px; font-variant-numeric:tabular-nums; }
 .row > a[aria-current=step] .text strong { color:var(--ink); }
+/* Hover on a stage (owner, 23 Nov, a screenshot of the road: «при наведении
+   как-то вот страшно все это обрезается. Лучше бы был бы такой легкий
+   блюр»). It was a grey 1040px block: hard-edged, square against the
+   current stage's rounded panel, and it covered the road line under it.
+   Now a soft warm glow gathers round the medallion and its title and fades
+   out on every side, so nothing ends on an edge and the road shows through;
+   the medallion rises a little, as a step's circle does. Opacity and
+   transform only. */
+.row > a::before { content:""; position:absolute; inset:-12px 0; z-index:-1; pointer-events:none; opacity:0;
+  background:radial-gradient(ellipse 300px 66px at calc(var(--center) + var(--x, 0) * var(--amp) + var(--glow, 150px)) 50%, rgba(214,186,148,.42), rgba(214,186,148,.16) 52%, transparent 100%); }
+.row > a[data-side=left] { --glow:-150px; }
+.row > a { isolation:isolate; }
 @media (hover:hover) and (pointer:fine) {
-  .row > a { border-radius:14px; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
-  .row > a:hover { background:#F6F1E8; }
+  .row > a::before { transition:opacity 200ms ease; }
+  .row > a .thumb { transition:transform 200ms cubic-bezier(.23,1,.32,1); }
+  .row > a:hover::before { opacity:1; }
+  .row > a:hover .thumb { transform:translateY(-2px); }
 }
 .row > a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:14px; }
 
@@ -267,6 +281,10 @@
      of 104px holds four lines, or the «Сейчас» chip and three. */
   .road { --center:50%; --amp:clamp(60px, calc(50% - 79px), 88px); --node:44px; --row:104px; --station:52px; --gap:14px; }
   .row > .unitHead { padding:20px 0; }
+  /* The title stands on the inner side of the bend here: the glow follows it. */
+  .row > a[data-side=right] { --glow:-90px; }
+  .row > a[data-side=left] { --glow:90px; }
+  .row > a::before { background:radial-gradient(ellipse 190px 60px at calc(var(--center) + var(--x, 0) * var(--amp) + var(--glow, 90px)) 50%, rgba(214,186,148,.42), rgba(214,186,148,.16) 52%, transparent 100%); }
   .row[data-road-unit-state=current] { margin:0 -10px; padding:0 10px 4px; border-radius:20px; }
   .step[data-node-state=current] .node { --size:calc(var(--node) + 8px); }
   .step[data-node-state=current] .node::after { inset:-5px; }
@@ -308,7 +326,7 @@
   .row[data-road-unit-state=current]:has(> .steps > .scenery[data-scenery-shape=panorama]:last-child),
   .row:last-child:has(> .steps > .scenery[data-scenery-shape=panorama]:last-child) { padding-bottom:4px; }
 }
-@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .step > a:active .node { transform:none; } @media (hover: hover) and (pointer: fine) { .step > a:hover .node { transform:none; } } }
+@media(prefers-reduced-motion:reduce) { .bar > span,.knobTrack,.node { transition:none !important; } .row > a:hover .thumb { transform:none; } .step > a:active .node { transform:none; } @media (hover: hover) and (pointer: fine) { .step > a:hover .node { transform:none; } } }
 @media(forced-colors:active) { .path,.feature { border:1px solid CanvasText; } .featureAction { border:1px solid ButtonText; } .bar { border:1px solid CanvasText; } .bar > span { background:Highlight; } .knob { background:Canvas; border:3px solid Highlight; box-shadow:none; } .tick { background:Canvas; } .badge { border:1px solid CanvasText; } .node { border:2px solid CanvasText; forced-color-adjust:none; } .trail path { stroke:CanvasText; } }
 /* 20 Nov (phone pass): beside a circle a caption is two or three short lines;
    balanced, they no longer end on a preposition («Воинский учёт в /
