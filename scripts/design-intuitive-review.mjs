@@ -60,9 +60,9 @@ try {
     await next.waitFor();
     assert(await tall(next) >= 44, `«Дальше» is a full-size target at ${width}`);
     await next.click();
-    // The second question is the level since 23 Nov (the master's track).
-    assert.equal(await question(), 'goal', '«Дальше» goes to the next question');
-    assert.equal((await draft()).answers.intake, '2027/28', '…and keeps the answer');
+    // The level is the first question since 23 Nov (the master's track).
+    assert.equal(await question(), 'intake', '«Дальше» goes to the next question');
+    assert.equal((await draft()).answers.goal, 'Бакалавриат', '…and keeps the answer');
     for (let index = 1; index < 10; index++) await answer();
     // The first step's title in the hand-off never breaks after a hyphen («12-/й год»).
     const title = await wizard.locator('[data-plan-preview-title]').textContent();
@@ -116,7 +116,7 @@ try {
     await confirm.getByRole('button', { name: 'Стереть', exact: true }).click();
     await wizard.waitFor();
     assert.deepEqual((await draft()).answers, {}, '«Стереть» starts the questionnaire again');
-    assert.equal(await question(), 'intake');
+    assert.equal(await question(), 'goal');
 
     // 4. The purchase sheet keeps what was typed when it is closed by mistake.
     await visit('/prices');

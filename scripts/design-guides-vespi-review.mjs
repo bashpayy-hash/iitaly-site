@@ -84,9 +84,9 @@ try {
 
     // A real partial local quiz draft must survive a reading detour.
     await visit('/plan');
-    await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
-    // The level is the second question since 23 Nov (the master's track).
+    // The level is the first question since 23 Nov (the master's track).
     await page.getByRole('button').filter({ hasText: 'Бакалавриат' }).click();
+    await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
     await page.getByRole('button').filter({ hasText: '11 классов' }).click();
     const draft = await page.evaluate(() => sessionStorage.getItem('iitaly_plan_draft_v1'));
     await visit('/guides');

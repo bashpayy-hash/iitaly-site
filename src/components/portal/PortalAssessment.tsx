@@ -78,7 +78,7 @@ export function PortalAssessment({ draft, onDraftChange, busy, onComplete, hasRe
           «Продолжить», как раньше в кабинете). */}
       <div className={`${tile.question} ${styles.tile}`} data-tone={step % 2 ? "dark" : "light"} data-plan-tile={question.id}>
         <div className={tile.questionHead}>
-          <p className={tile.questionStep} aria-live="polite" aria-atomic="true">Вопрос {step + 1} из {questions.length} · {STEP_TITLES[question.id] || question.q}</p>
+          <p className={tile.questionStep} aria-live="polite" aria-atomic="true">Вопрос {step + 1} из {questions.length} · {question.label ?? STEP_TITLES[question.id] ?? question.q}</p>
           <h3 id={`${questionId}-heading`} ref={headingRef} tabIndex={-1} className={styles.tileHeading}>{question.q}</h3>
           <p id={`${questionId}-hint`} className={tile.questionReason}>{question.hint && <>{question.hint}. </>}{question.why ?? QUESTION_CONTEXT[question.id]}</p>
         </div>

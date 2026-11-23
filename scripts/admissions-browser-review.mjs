@@ -43,7 +43,7 @@ try {
     }
     for (const route of ['/','/changes-2026-27','/plan']) await visit(route);
     assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'),'10');
-    const choices = ['Осенью 2027','Бакалавриат','11 классов','4,7 и выше','Без стипендии будет сложно',
+    const choices = ['Бакалавриат','Осенью 2027','11 классов','4,7 и выше','Без стипендии будет сложно',
       'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
@@ -141,8 +141,13 @@ try {
     // The master's track. Owner, 23 Nov: «подруга сказала, что когда она нажала
     // на магистратуру, дальше идут все равно вопросы, будто она школьница…
     // сделать для магистратуры отдельный трек со всеми особенностями». A fresh
-    // visitor answers «Магистратура» second and is then asked about her
-    // diploma, its profile and her GPA; nothing about school or being 18.
+    // visitor answers «Магистратура» and is then asked about her diploma,
+    // its profile and her GPA; nothing about school or being 18.
+    // The same evening, on the first version: «если когда человек в вопросе
+    // первоначально нажимает на магистратуру, ты должен понять, что это уже
+    // магистратура… не должны быть такие детского формата вопросы, это уже
+    // серьезный человек, который закончил или заканчивает бакалавр». The
+    // level is the first tap, and every later screen is worded for a graduate.
     { const context = await browser.newContext({viewport:{width,height:900}, reducedMotion:'reduce', locale:'ru-RU'});
       await context.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
       const page = await context.newPage();
@@ -151,15 +156,20 @@ try {
       const tile = page.locator('[data-plan-tile]');
       const asked = [];
       const answer = async choice => {
-        asked.push({id:await tile.getAttribute('data-plan-tile'), question:(await tile.locator('h2').innerText()).replace(/\s+/g,' '), words:(await tile.innerText()).replace(/\s+/g,' ')});
+        // The folded «Зачем спрашиваю» is part of the screen: read the document.
+        asked.push({id:await tile.getAttribute('data-plan-tile'), question:(await tile.locator('h2').innerText()).replace(/\s+/g,' '), label:await tile.locator('[data-plan-step]').innerText(), words:(await tile.textContent()).replace(/\s+/g,' ')});
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1),false,`Master's question ${asked.length} overflow at ${width}`);
         await tile.getByRole('button').filter({hasText:choice}).click();
       };
-      for (const choice of ['Осенью 2027','Магистратура','Да, диплом на руках','Хочу сменить направление','3,0 – 3,4','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','В Казахстане','Пока не знаю']) await answer(choice);
-      assert.deepEqual(asked.map(item=>item.id),['intake','goal','education','major','grades','budget','field','lang','residence','dsuRegion'],'The master\'s ten questions, in order');
-      assert.deepEqual(asked.slice(2,5).map(item=>item.question),['Диплом бакалавра уже есть?','Магистратура по профилю твоего диплома?','Какой у тебя средний балл (GPA)?']);
-      assert.match(asked[4].words,/по шкале 4,0/,'Grades are asked on the university scale');
-      assert.doesNotMatch(asked.map(item=>item.words).join(' '),/11 классов|NIS|Колледж|будет 18|несовершеннолетн|4,7 и выше/,'Nothing about school or being 18');
+      for (const choice of ['Магистратура','Да, диплом на руках','Нет, меняю направление','Инженерия, IT','3,0 – 3,4','Осенью 2027','Есть IELTS, TOEFL или другой сертификат','До 3 млн ₸ в год','В Казахстане','Пока не знаю']) await answer(choice);
+      assert.deepEqual(asked.map(item=>item.id),['goal','education','major','field','grades','intake','lang','budget','residence','dsuRegion'],'The level first, then the master\'s own questions, in order');
+      assert.equal(asked[0].label,'Вопрос 1 из 10 · Уровень');
+      assert.equal(asked[1].label,'Вопрос 2 из 10 · Диплом','The second screen already speaks to a graduate');
+      assert.deepEqual(asked.slice(1,9).map(item=>item.question),['Диплом бакалавра уже получен?','Магистратура по профилю диплома?','Какое направление магистратуры?','Какой средний балл диплома (GPA)?','Когда планируешь начать магистратуру?','Чем подтверждаешь язык обучения?','Какой бюджет на год учёбы и жизни?','В какой стране живёшь постоянно?']);
+      assert.match(asked[4].words,/шкале 4,0/,'Grades are asked on the university scale');
+      assert.doesNotMatch(asked.slice(1).map(item=>item.words).join(' '),/11 классов|NIS|Колледж|школ|аттестат|будет 18|несовершеннолетн|4,7 и выше|отличник|хорошист|подтягивать|семья может|поможем выбрать/i,'After the first tap nothing is worded for a school leaver');
+      await page.getByRole('button',{name:'Открыть мой план',exact:true}).waitFor();
+      assert.doesNotMatch(await page.locator('[data-plan-finished]').textContent(),/меньше 18/,'A graduate is not asked to fill the form with a guardian');
       await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
       const stops = page.locator('[data-plan-path] [data-plan-path-step]');
       await stops.first().waitFor();
@@ -181,7 +191,7 @@ try {
       assert.equal(await page.locator('[data-plan-answer]').count(),10,'Ten answers of the master\'s track');
       assert.equal(await page.locator('[data-plan-answer=age]').count(),0);
       await page.locator('[data-plan-answer=goal]').click();
-      await page.locator('[data-plan-answer-edit=goal]').getByRole('button').filter({hasText:'первое высшее'}).click();
+      await page.locator('[data-plan-answer-edit=goal]').getByRole('button').filter({hasText:'после школы'}).click();
       await tile.waitFor();
       // «Диплом на руках» is an answer of both tracks, so it stays; the
       // bachelor's track still has to ask what the master's never does.
@@ -196,7 +206,7 @@ try {
       await page.goto(origin+'/plan',{waitUntil:'networkidle'});
       await tile.waitFor();
       assert.equal(await tile.getAttribute('data-plan-tile'),'education','A school answer is asked again as the master\'s question');
-      assert.match(await tile.innerText(),/Диплом бакалавра уже есть\?/);
+      assert.match(await tile.innerText(),/Диплом бакалавра уже получен\?/);
       // Owner, 23 Nov, a phone screenshot of question 9 with «Уже в Италии»
       // marked: «Почему здесь по дефолту будто уже нажали». It was an earlier
       // answer: after a changed level the questionnaire led through every

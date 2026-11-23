@@ -1,4 +1,4 @@
-import type { PortalData, PortalTask } from "./portalApi";
+import type { PortalData, PortalProfile, PortalTask } from "./portalApi";
 import { DOC_TASKS, fmtDate, TASK_META } from "./portalMeta";
 import { portalProgress, portalTaskDone } from "./portalProgress";
 
@@ -35,6 +35,47 @@ const STEP_TITLE_ALIASES: Record<string, string> = {
 export function displayStepTitle(title: string): string {
   return STEP_TITLE_ALIASES[title] ?? title;
 }
+
+/* The master's wording of the cabinet (owner, 23 Nov 2026: «не должны быть
+   такие детского формата вопросы, это уже серьезный человек, который закончил
+   или заканчивает бакалавр»). The roadmap's texts are written for a school
+   leaver: «вступительный тест (TOLC, IMAT…)», «аттестат». For a profile whose
+   level is the master's the cabinet shows its own words for those steps.
+   Presentation only: ids, order, availability, dates and completion come
+   from the roadmap unchanged. */
+export const MASTER_GOAL = "Магистратура";
+const MASTER_STEPS: Record<string, { t: string; plain: string; explain: string; short: string; question: string }> = {
+  test: {
+    t: "Выполнить условия отбора программы",
+    plain: "Узнай, как программа отбирает в магистратуру, и выполни её условия.",
+    explain: "В магистратуру отбирает сама программа: по диплому, выписке с оценками и документам. У части программ есть минимальный средний балл, собеседование, портфолио, GMAT или GRE. Тесты для бакалавриата здесь не нужны.",
+    short: "У каждой программы свои условия отбора: документы, средний балл, собеседование или тест.",
+    question: "Как программа отбирает в магистратуру?",
+  },
+};
+const masterWords = (text: string) => text
+  .replace(/аттестат или диплом/g, "диплом и приложение")
+  .replace(/Аттестат или диплом/g, "Диплом и приложение")
+  .replace(/признание аттестата/g, "признание диплома");
+export const isMasterProfile = (data: PortalData) => data.client.profile?.goal === MASTER_GOAL;
+/** The roadmap as the cabinet shows it to this profile. */
+export function trackRoadmap(data: PortalData): PortalData {
+  if (!isMasterProfile(data)) return data;
+  const words = <T extends string | null | undefined>(value: T) => (value ? masterWords(value) : value) as T;
+  return { ...data, roadmap: data.roadmap.map(stage => ({ ...stage, tasks: stage.tasks.map(task => {
+    const own = MASTER_STEPS[task.id];
+    return own
+      ? { ...task, t: own.t, explain: own.explain, short_explainer: own.short, assistant_question: own.question, note: words(task.note), warn: words(task.warn) }
+      : { ...task, t: masterWords(task.t), explain: words(task.explain), note: words(task.note), warn: words(task.warn) };
+  }) })) };
+}
+/** The saved education answer as the cabinet names it: a master's profile
+ *  reads about the diploma, not «Студент вуза КЗ» and a path of 12 years. */
+export function masterDiploma(profile: PortalProfile): string | undefined {
+  if (profile.goal !== MASTER_GOAL) return undefined;
+  return profile.education === "Бакалавр" ? "Уже получен" : profile.education === "Студент вуза КЗ" ? "Будет до начала магистратуры" : "Не заполнено";
+}
+const masterStep = (task: PortalTask) => MASTER_STEPS[task.id]?.t === task.t ? MASTER_STEPS[task.id] : undefined;
 
 export function taskTitle(task: PortalTask): string {
   const titles: Record<string, string> = {
@@ -110,7 +151,7 @@ export function taskExplanation(task: PortalTask): string {
     questura: "Подготовься к визиту в миграционную службу (Questura).",
   };
   const source = task.explain || TASK_META[task.id]?.why || "Открой шаг, чтобы узнать, что подготовить.";
-  return explanations[task.id] || directTaskCopy(source.split(/(?<=[.!?])\s+(?=[А-ЯЁA-Z])/)[0]);
+  return masterStep(task)?.plain || explanations[task.id] || directTaskCopy(source.split(/(?<=[.!?])\s+(?=[А-ЯЁA-Z])/)[0]);
 }
 
 // Describe the existing completion mechanism, never an admission outcome.

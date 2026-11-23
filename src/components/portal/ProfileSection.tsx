@@ -3,7 +3,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import type { PortalData } from "@/lib/portalApi";
-import { taskBlockedReason, taskTitle } from "@/lib/portalNavigation";
+import { masterDiploma, taskBlockedReason, taskTitle } from "@/lib/portalNavigation";
 import { portalTaskDone } from "@/lib/portalProgress";
 import navigation from "./portal-navigation.module.css";
 import settings from "./portal-settings.module.css";
@@ -62,6 +62,8 @@ export function ProfileSection({
     }
   }
 
+  // A master's profile: the diploma instead of the school and its 12th year.
+  const diploma = masterDiploma(profile);
   const pathLabel = profile.educationPath === "foundation"
     ? "Foundation year"
     : profile.educationPath === "university_kz"
@@ -86,10 +88,10 @@ export function ProfileSection({
           <h3 id="settings-profile-title" className={settings.tileTitle}>Данные для маршрута</h3>
           <dl className={settings.profileList}>
             <div><dt>Поступление</dt><dd>сентябрь {data.client.intakeYear || "—"}</dd></div>
-            <div><dt>Образование</dt><dd>{profile.education || "Не заполнено"}</dd></div>
+            {diploma ? <div><dt>Диплом бакалавра</dt><dd>{diploma}</dd></div> : <div><dt>Образование</dt><dd>{profile.education || "Не заполнено"}</dd></div>}
             <div><dt>Цель</dt><dd>{profile.goal || "Не заполнено"}</dd></div>
             <div><dt>Бюджет</dt><dd>{profile.budget || "Не заполнено"}</dd></div>
-            <div><dt>Путь 12 лет</dt><dd>{pathLabel}</dd></div>
+            {!diploma && <div><dt>Путь 12 лет</dt><dd>{pathLabel}</dd></div>}
           </dl>
           <a href="/portal?view=settings#profile" className={settings.pill} onClick={(event) => { event.preventDefault(); onEditProfile(); }}>Изменить профиль</a>
         </section>

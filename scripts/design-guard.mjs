@@ -358,8 +358,20 @@ const approvedRevisions = {
   // sources for the master's steps. Every value the server keeps (education,
   // goal, budget) stays within its lists; no request, endpoint or stored key
   // of the cabinet changes, and «major» lives only in the device's draft.
-  'src/data/wizard.ts': '550a90be3846ade23316b7020ec4c38208f0466d2ce36408e0c3963c7dc08fd9',
-  'src/data/wizardTracks.ts': 'f7394b6cc29edbceeaf0bb6f96fe4965d2e27ad255c7602866c95e48f54f3c39',
+  // 2026-11-23, evening (owner, on that first version: «Нет, ты уже в вопросе
+  // должен понять, что типа вот человек магистр, и… перенаправлять его
+  // автоматически на магистрский трек… если когда человек в вопросе
+  // первоначально нажимает на магистратуру, ты должен понять, что это уже
+  // магистратура… Не должны быть такие детского формата вопросы, это уже
+  // серьезный человек, который закончил или заканчивает бакалавр»).
+  // wizard.ts: the level is the first question, its two answers say whom
+  // each is for, and a question may carry its own short label.
+  // wizardTracks.ts: after «Магистратура» every question but the scholarship
+  // one is the master's own, in its own order and wording. The ids, the
+  // answer values and the count of ten are the same; so is every value the
+  // server keeps.
+  'src/data/wizard.ts': '1dc55189a5628032c01ad6162eeca8f3a61ce17c668f0b177e5726a6100709bd',
+  'src/data/wizardTracks.ts': 'baeeb1a44182194302163c52af69b0828aae530f9f939f7bde8a9943cc7b6ca1',
   'src/lib/usePlanDraft.ts': '23f51637d0515994d499556d5d6ddd5d1f8f8b0cbea4d00881233c209946f480',
   'src/data/admissions.ts': 'aad30e121af9988947a2360bc476432d847d10a61c8a0f306fea6108cbd207a7',
 };

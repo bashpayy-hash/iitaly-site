@@ -15,7 +15,7 @@ import styles from "./portal-focus.module.css";
 import { PortalBreadcrumbs, PortalPageLink, usePortalPageFocus, usePortalParameter, navigatePortal } from "./PortalPageNavigation";
 import { plainClick } from "./PortalStageLineup";
 import { PlainTerms } from "./PlainTerms";
-import { STAGE_PLAIN, stepActionLabel } from "./plainWords";
+import { stagePlain, stepActionLabel } from "./plainWords";
 import { Bento, BentoCell, bento } from "@/components/ui/Bento";
 import path from "./portal-path.module.css";
 
@@ -272,7 +272,7 @@ export function PortalFocus({ data: savedData, selectedStageId, shortlist, busy,
         <div className={styles.stageSummaryCopy}>
           <p className={styles.stageCount}><strong>{savedStampCount} из {ordered.length}</strong> <span>{doneWord(ordered.length)}</span></p>
           <h1 id="portal-overview-heading" tabIndex={-1}>{selected.title}</h1>
-          <p className={bento.text}>{STAGE_PLAIN[stageKey(selected.id)]}</p>
+          <p className={bento.text}>{stagePlain(data, stageKey(selected.id))}</p>
         </div>
       </BentoCell>}
       <BentoCell span={{ md: 6, lg: 8, rowsLg: stageDocs.length ? 2 : 1 }} className={styles.stageStep} data-stage-step>

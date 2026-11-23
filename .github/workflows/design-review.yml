@@ -78,6 +78,7 @@ jobs:
               design-permesso-transfer-review design-brand-review admissions-browser-review
               design-guides-vespi-review design-guides-access-review launch-document-review
               design-text-review design-funnel-review design-keyboard-touch-review
+              design-master-cabinet-review
           - group: portal
             reviews: >-
               design-portal-focus-review design-portal-route-action-review design-media-switcher-review

@@ -57,7 +57,7 @@ export function PlanAnswers({ answers, onChange, onDone }: { answers: WizAnswers
     <ul ref={list} className={styles.answers} data-fab-yield>
       {questions.map((question, index) => <li key={question.id}>
         <button type="button" data-plan-answer={question.id} onClick={() => setOpen(index)}>
-          <small>{STEP_TITLES[question.id] || question.q}</small>
+          <small>{question.label ?? STEP_TITLES[question.id] ?? question.q}</small>
           <b>{question.opts.find(option => option.v === answers[question.id])?.t}</b>
           <span>Изменить</span>
         </button>
