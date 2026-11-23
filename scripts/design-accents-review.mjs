@@ -75,7 +75,31 @@ function serve(root, port) {
 }
 const servers = [await serve('out', 4175), await serve(process.env.BASELINE_OUT, 4176)];
 const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? {executablePath:process.env.REVIEW_CHROMIUM,args:["--no-sandbox","--disable-dev-shm-usage"]} : {});
+// A page is not left while it still waits for something it asked for.
+// 23 Nov: with the styles grouped by route, /guides at 320px was still
+// prefetching a guide step when the review went on to the next page. Every
+// request here passes through context.route, and a routed request that a
+// navigation cancels is reported neither as finished nor as failed: the next
+// page's «networkidle» then waited for it until the 30 s timeout
+// («Timeout… navigating to /plan, waiting until networkidle», three runs of
+// three). The same shape as the intermittent goto timeouts of the portal
+// group. So the requests in flight are counted, and the review leaves a page
+// when there are none (or after 5 s, for a request that never ends).
+const inFlight = new WeakMap();
+async function quiet(page) {
+  if (!inFlight.has(page)) {
+    const open = new Set(); inFlight.set(page, open);
+    page.on('request', request => open.add(request));
+    page.on('requestfinished', request => open.delete(request));
+    page.on('requestfailed', request => open.delete(request));
+    return;
+  }
+  const open = inFlight.get(page);
+  for (const deadline = Date.now() + 5000; open.size && Date.now() < deadline;) await new Promise(done => setTimeout(done, 25));
+  open.clear();
+}
 async function settle(page, port, route = '/') {
+  await quiet(page);
   const response = await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: 'networkidle' });
   assert.equal(response.status(), 200);
   await page.evaluate(async () => {

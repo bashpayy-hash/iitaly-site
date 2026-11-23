@@ -87,6 +87,7 @@ jobs:
             reviews: >-
               design-portal-pages-review portal-targeted-model-review design-portal-targeted-review
               design-portal-document-clarity-review design-ux-review design-warm-palette-review
+              design-media-names-review
               design-vespi-handmade-review design-portal-login-review design-review design-accents-review
               design-intuitive-review
           - group: workspace
