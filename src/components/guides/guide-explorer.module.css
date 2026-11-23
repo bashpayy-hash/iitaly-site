@@ -6,7 +6,10 @@
    the gutter with a strip of paper to its right. */
 .categories { display:flex; gap:8px; overflow:auto; padding:12px 0 20px; scrollbar-width:thin; }
 @media (max-width:767px) { .categories { margin-inline:-20px; padding-inline:20px; scroll-padding-inline:20px; scrollbar-width:none; } .categories::-webkit-scrollbar { display:none; } }
-.categories button { flex-shrink:0; min-height:44px; padding:10px 16px; border:1px solid #DCD3C3; border-radius:999px; background:transparent; color:#57514B; font-size:13px; }
+/* Motion pass, 23 Nov: a chip turned black in one frame and gave nothing to a tap. */
+.categories button { flex-shrink:0; min-height:44px; padding:10px 16px; border:1px solid #DCD3C3; border-radius:999px; background:transparent; color:#57514B; font-size:13px; transition:background-color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), transform 160ms cubic-bezier(.22,1,.36,1); }
+.categories button:active { transform:scale(.97); }
+@media (prefers-reduced-motion:reduce) { .categories button { transition:none; } .categories button:active { transform:none; } }
 .categories button[aria-pressed=true] { border-color:#141413; background:#141413; color:#FFFDF9; }
 .resultRow { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:4px 20px; margin:-8px 0 16px; }
 .resultCount { margin:0 0 16px; color:#57514B; font-size:14px; line-height:1.5; }

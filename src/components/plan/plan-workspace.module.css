@@ -186,3 +186,31 @@
 .questionWhy summary::-webkit-details-marker { display:none; }
 .questionWhy p { margin:0 0 4px; }
 .question[data-tone=dark] .questionWhy { color:#CFC6BA; }
+
+/* The questionnaire's last screen opens with a mark (owner, 23 Nov:
+   «кружочек зеленый, и… галочка появляется… с анимацией чуть-чуть»): the
+   brand's green circle settles with the cabinet's own «done» spring
+   (portal-focus checkPop), the check draws itself, one ring goes out, and the
+   caption, the box and the button follow 60ms apart. About 0.9s in all, and
+   nothing waits for it. With reduced motion the mark is simply there. */
+.done { display:flex; flex-direction:column; align-items:center; gap:12px; margin:4px 0 20px; text-align:center; }
+.doneMark { position:relative; display:grid; place-items:center; width:56px; height:56px; border-radius:50%; background:#087C55; color:#fff; }
+.doneMark::after { content:""; position:absolute; inset:0; border:2px solid #087C55; border-radius:50%; opacity:0; pointer-events:none; }
+.doneMark svg { width:34px; height:34px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.doneMark path { stroke-dasharray:1; stroke-dashoffset:0; }
+.doneLabel { margin:0; color:var(--color-cloud-white); font:600 17px/1.3 var(--font-apple-display); letter-spacing:-.015em; text-wrap:balance; }
+@media (prefers-reduced-motion: no-preference) {
+  .doneMark { animation:done-pop 420ms cubic-bezier(.34,1.56,.64,1) backwards; }
+  .doneMark path { animation:done-draw 340ms 200ms cubic-bezier(.22,1,.36,1) backwards; }
+  .doneMark::after { animation:done-ring 640ms 240ms cubic-bezier(.22,1,.36,1) backwards; }
+  .panel[data-plan-finished] { animation:question-enter 420ms cubic-bezier(.22,1,.36,1); }
+  .doneLabel { animation:answer-in 360ms 100ms cubic-bezier(.22,1,.36,1) backwards; }
+  .panel[data-plan-finished] > :not(.done) { animation:answer-in 360ms 140ms cubic-bezier(.22,1,.36,1) backwards; }
+  .panel[data-plan-finished] > :nth-child(3) { animation-delay:200ms; }
+  .panel[data-plan-finished] > :nth-child(4) { animation-delay:260ms; }
+  .panel[data-plan-finished] > :nth-child(n+5) { animation-delay:320ms; }
+}
+@keyframes done-pop { from { opacity:0; transform:scale(.7); } }
+@keyframes done-draw { from { stroke-dashoffset:1; } }
+@keyframes done-ring { from { opacity:.5; transform:scale(1); } to { opacity:0; transform:scale(1.6); } }
+@media (forced-colors:active) { .doneMark { background:CanvasText; color:Canvas; } .doneMark::after { display:none; } }

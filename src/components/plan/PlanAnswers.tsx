@@ -7,6 +7,7 @@ import { revealElement } from "@/components/motion/scroll";
 import { STEP_TITLES } from "./questionCopy";
 import { WizStep } from "./Wizard";
 import styles from "./plan-workspace.module.css";
+import swap from "@/components/motion/swap.module.css";
 
 /* «Изменить ответы» on a ready plan. Intuitiveness pass (owner, 21 Nov:
    «чтобы юзеру было максимально интуитивно без потери данных»): the button
@@ -49,7 +50,7 @@ export function PlanAnswers({ answers, onChange, onDone }: { answers: WizAnswers
     </div>;
   }
 
-  return <div data-plan-answers>
+  return <div data-plan-answers className={swap.cascade}>
     <ul ref={list} className={styles.answers} data-fab-yield>
       {WIZ.map((question, index) => <li key={question.id}>
         <button type="button" data-plan-answer={question.id} onClick={() => setOpen(index)}>

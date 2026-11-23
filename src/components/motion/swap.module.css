@@ -1,0 +1,40 @@
+/* Content that takes another's place arrives instead of cutting in.
+
+   Owner, 23 Nov: «добавить анимации в целом по сайту, которые будут как-то
+   расплавнять все, а то… иногда все топорно именно по анимациям, по
+   переходам». The audit of that day found the same cut in many places: a
+   block is swapped for another in one frame (the questionnaire for the plan,
+   the upload zone for the file card, the order form for «Заказ принят», the
+   sign-in card for «Не помню код»).
+
+   - .rise: one block rises 8px and fades in.
+   - .fade: a line of text (an error, a status) fades in; it does not move,
+     because the eye is already on that spot.
+   - .cascade: a container's blocks rise one after another, 50ms apart.
+   - .scrim, .dialog: a dialog's backdrop fades in and its panel settles; on
+     a phone the panel is a sheet and comes up from the bottom edge.
+
+   All of it runs once, when the block appears; only transform and opacity
+   move; durations and curves are the site's tokens (globals.css). With
+   reduced motion nothing moves and nothing waits: the block is simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: swap-rise var(--duration-normal) var(--ease-reveal) backwards; }
+  .fade { animation: swap-fade 200ms var(--ease-standard) backwards; }
+  .cascade > :not([data-dialog-scrim]) { animation: swap-rise 360ms var(--ease-reveal) backwards; }
+  .cascade > :nth-child(2) { animation-delay: 50ms; }
+  .cascade > :nth-child(3) { animation-delay: 100ms; }
+  .cascade > :nth-child(4) { animation-delay: 150ms; }
+  .cascade > :nth-child(5) { animation-delay: 200ms; }
+  .cascade > :nth-child(n+6) { animation-delay: 250ms; }
+  /* A dialog rendered inside such a container keeps its own entrance. */
+  .cascade > [data-dialog-scrim] { animation-delay: 0ms; }
+  .scrim { animation: swap-fade 200ms var(--ease-standard) backwards; }
+  .dialog { animation: dialog-in 240ms var(--ease-reveal) backwards; }
+  @media (max-width: 639px) {
+    .dialog { animation: sheet-in 340ms cubic-bezier(.32, .72, 0, 1) backwards; }
+  }
+}
+@keyframes swap-rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes swap-fade { from { opacity: 0; } }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+@keyframes sheet-in { from { transform: translateY(calc(100% + 16px)); } }

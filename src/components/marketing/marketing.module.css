@@ -98,8 +98,11 @@
 }
 @media (max-width: 767px) { .footerMark { margin-top: 32px; } }
 @media (forced-colors: active) { .footerMark { display: none; } }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 999px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1); }
-.button:active { transform: translateY(1px); }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 24px; border-radius: 999px; font-size: 16px; font-weight: 500; line-height: 1.35; letter-spacing: -.015em; text-align: center; text-decoration: none; transition: background-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1), transform 160ms cubic-bezier(.22,1,.36,1); }
+/* Motion pass, 23 Nov: the press moved the button 1px in one frame, because
+   `transform` was not among the properties it eases. It now gives 2% under
+   the finger and comes back, like the questionnaire's answers. */
+.button:active { transform: scale(.98); }
 .button:disabled { opacity: .65; pointer-events: none; }
 .buttonSmall { min-height: 44px; padding: 10px 20px; font-size: 15px; }
 .filled { background: var(--i-action, #141413); color: #fff; border: 1px solid transparent; }
@@ -336,6 +339,9 @@
   .mobileMenu summary span { font-size: 23px; transition: transform 160ms cubic-bezier(.22,1,.36,1); }
   .mobileMenu[open] summary span { transform: rotate(45deg); }
   .mobileMenu nav { position: absolute; top: 100%; inset-inline: 0; display: grid; padding: 12px 24px 24px; background: #fefaf4; border-bottom: 1px solid var(--i-line); }
+  /* Motion pass, 23 Nov: the phone menu appeared in one frame. It comes down
+     from the header it belongs to, 200ms. */
+  .mobileMenu[open] nav { animation: menu-in 200ms cubic-bezier(.22,1,.36,1) backwards; }
   .mobileMenu nav a { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--i-line); font-size: 18px; }
   .mobileMenu nav [aria-current="page"] { color: var(--i-link); font-weight:600; border-bottom-color:var(--i-signal); }
   .mobileMenu nav button { min-height: 44px; margin-top: 16px; color: var(--i-link); text-align: left; }
@@ -378,7 +384,9 @@
   .surface [data-section="plan-header"], .surface [data-section="prices-header"] { padding-top: 40px; padding-bottom: 24px; }
   .finePrint > a { flex-shrink: 1; }
 }
+@keyframes menu-in { from { opacity: 0; transform: translateY(-8px); } }
 @media (prefers-reduced-motion: reduce) {
+  .mobileMenu[open] nav { animation: none; }
   .surface *, .surface *::before, .surface *::after { scroll-behavior: auto !important; transition: none !important; }
   .howHeading { position: static; }
 }

@@ -8,8 +8,11 @@
 .card { min-width:0; }
 .cardLink {
   --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421;
-  position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:16px; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:var(--tile-bg); color:var(--tile-ink); text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1);
+  position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:16px; aspect-ratio:4 / 5; min-width:0; overflow:hidden; border-radius:20px; background:var(--tile-bg); color:var(--tile-ink); text-decoration:none; transition:background-color 160ms cubic-bezier(.4,0,.2,1), transform 160ms cubic-bezier(.22,1,.36,1);
 }
+/* Motion pass, 23 Nov: on a phone the tile gave nothing back to a tap (its
+   only response was the hover lift, which a touch screen has not). */
+.cardLink:active { transform:scale(.985); }
 .card:nth-child(2) .cardLink,.cardsAlt .card:nth-child(odd) .cardLink { --tile-bg:#2A2420; --tile-ink:#FAF6EE; --tile-quiet:#CFC6BA; --tile-label:#F29A89; }
 .cardsAlt .card:nth-child(2) .cardLink { --tile-bg:#FFFDF9; --tile-ink:#241F1C; --tile-quiet:#57514B; --tile-label:#A33421; }
 /* A panel of the Galleria floor (owner, 22 Nov: «слишком plain white…

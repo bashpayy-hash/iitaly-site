@@ -41,6 +41,8 @@
 article:has([data-guide-step-locked]) .pagerCard { background:transparent; color:#2A2420; box-shadow:inset 0 0 0 1px #CFC6B7; }
 article:has([data-guide-step-locked]) .pagerCard small { color:#6B625A; }
 @media (hover: hover) and (pointer: fine) { .pagerCard:hover { transform:translateY(-2px); } }
+/* Motion pass, 23 Nov: the cards lifted under a mouse and did nothing under a finger. */
+.pagerCard:active { transform:scale(.98); transition-duration:160ms; }
 .pagerCard:focus-visible { outline:2px solid #A33421; outline-offset:3px; }
 @media(max-width:700px) {
   .header { grid-template-columns:minmax(0,1fr) 120px; gap:12px; }

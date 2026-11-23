@@ -5,6 +5,7 @@ import { AppleModal } from "@/components/apple/Modal";
 import { AppleButton } from "@/components/apple/Button";
 import { track } from "@/lib/track";
 import styles from "@/components/marketing/marketing.module.css";
+import swap from "@/components/motion/swap.module.css";
 import { PRODUCT_ID, PRODUCT_TITLE } from "@/components/access/offerCopy";
 import {
   STRIPE_ENABLED,
@@ -153,8 +154,11 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
     <AppleModal open={!!product} onClose={close} labelledBy="buy-modal-title" className="max-w-md">
       {product && (
         <div className="px-6 pt-1 pb-6">
+          {/* Motion pass, 23 Nov: the three states of the order (the form,
+              «Открываю Stripe…», «Заказ принят») replaced each other in one
+              frame; each now fades in where the last one stood. */}
           {step === "form" && (
-            <form noValidate onSubmit={(event) => { event.preventDefault(); void submit(); }}>
+            <form noValidate className={swap.fade} onSubmit={(event) => { event.preventDefault(); void submit(); }}>
               <h3 id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {product.name === PRODUCT_ID ? PRODUCT_TITLE : product.name}
               </h3>
@@ -210,7 +214,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
               </label>
               <p id="checkout-email-hint" className="mt-1 text-apple-caption text-cloud-meta">Пришлём сюда код доступа к кабинету, если потеряешь его.</p>
 
-              {error && <p id="checkout-error" role="alert" className="mt-3 text-apple-caption font-semibold text-red">{error}</p>}
+              {error && <p id="checkout-error" role="alert" className={`mt-3 text-apple-caption font-semibold text-red ${swap.fade}`}>{error}</p>}
 
               <AppleButton type="submit" variant="filled" className="mt-5 w-full">
                 {STRIPE_ENABLED ? "Перейти к оплате" : "Оформить заказ"}
@@ -229,7 +233,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           )}
 
           {step === "sending" && (
-            <div role="status" aria-live="polite" className="flex flex-col items-center gap-3 py-10 text-center">
+            <div role="status" aria-live="polite" className={`flex flex-col items-center gap-3 py-10 text-center ${swap.fade}`}>
               <span aria-hidden className="h-7 w-7 animate-spin rounded-full border-2 border-white/15 border-t-crimson motion-reduce:animate-none" />
               <p id="buy-modal-title" className="font-apple-display text-apple-subheading font-semibold text-cloud-white">
                 {STRIPE_ENABLED ? "Открываю Stripe…" : "Оформляю заказ…"}
@@ -239,7 +243,7 @@ export function BuyModal({ product, onClose }: { product: BuyProduct | null; onC
           )}
 
           {step === "manual" && (
-            <div>
+            <div className={swap.rise}>
               <div className="text-center">
                 <p id="buy-modal-title" className="mt-2 font-apple-display text-apple-subheading font-semibold text-cloud-white">Заказ принят</p>
                 <p className="mt-1 text-apple-body-sm text-cloud-body">
