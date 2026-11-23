@@ -16,7 +16,7 @@
 .headLinks { display:flex; flex-wrap:wrap; gap:0 18px; margin-top:4px; }
 .headLinks a { display:inline-flex; align-items:center; min-height:44px; color:#8b2939; font-size:13px; text-decoration:none; }
 @media (hover: hover) and (pointer: fine) { .headLinks a:hover { text-decoration:underline; text-underline-offset:3px; } }
-.workbar { position:sticky; top:64px; z-index:30; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:24px; padding:10px 0; border-block:1px solid #ddd9d1; background:#FAF8F5; }
+.workbar { position:sticky; top:var(--header-stick, 64px); z-index:30; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:24px; padding:10px 0; border-block:1px solid #ddd9d1; background:#FAF8F5; }
 .scenarios { display:flex; padding:3px; border:1px solid #d7d3ca; border-radius:999px; background:#efeeeb; }
 .light .scenarios button { min-height:38px; border:0; border-radius:999px; padding:8px 12px; background:transparent; font-size:13px; color:#66635d; white-space:nowrap; }
 .light .scenarios button[aria-pressed="true"] { background:#fffdf9; color:#242321; }
@@ -48,7 +48,7 @@
 .contextLine { display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px 18px; padding:9px 0 12px; color:#726c64; font-size:11px; line-height:1.5; }
 .exampleNotice { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-block:0 12px; padding:10px 14px; border:1px solid #ded4c4; border-radius:8px; background:#f6f0e6; color:#66553e; font-size:13px; }
 .light .exampleNotice button { flex-shrink:0; min-height:44px; border:0; padding:8px; background:transparent; color:#8b2939; font-size:13px; text-decoration:underline; text-underline-offset:3px; }
-.light .inspector { top:140px; padding:22px; }
+.light .inspector { top:calc(var(--header-stick, 64px) + 76px); padding:22px; }
 .quick { margin-top:16px; }
 .light .fieldNav { grid-template-columns:1fr auto 1.5fr; align-items:center; gap:8px; margin-top:20px; }
 .light .fieldNav button:first-child { border-color:transparent; background:transparent; }

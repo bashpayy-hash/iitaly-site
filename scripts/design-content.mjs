@@ -15,6 +15,15 @@ const approvedRemovedUiLabels = new Set(['Веспи · сверим до под
   'Сверка с правилами твоего вуза, DSU и визы на твой учебный год.',
 ]);
 const approvedUiCopyChanges = new Map([
+  // 2026-11-23, owner with a phone screenshot of the comparison: «когда идет
+  // сравнение именно на телефоне… там до конца непонятно, типа что да как».
+  // In the phone's two columns «10–30 секунд» broke at its dash; the range
+  // now carries a no-break character (U+2060) after the dash. The same words.
+  ['В любое время, обычно за 10–30 секунд', 'В любое время, обычно за 10–\u206030 секунд'],
+  // Same request: the agency's sum may end a line at its dash (the range with
+  // its «₸» is wider than a phone's column), so the no-break character after
+  // the dash is gone. The same words and figures.
+  ['Сопровождение — обычно 500 000–\u20601 000 000 ₸', 'Сопровождение — обычно 500 000–1 000 000 ₸'],
   // 2026-11-22, night, owner about the installed marketing skills: «примени и
   // если реально полезно имплементи на сайте». The copy-editing skill's sweeps
   // found three lines on /prices worth changing: the hero line was a list of

@@ -28,13 +28,16 @@ export type FieldPreview={field:EditorField;anchor:HTMLElement;touch:boolean;pin
 type Props={preview:FieldPreview;answer:FieldAnswer;onClose:()=>void;onEnter:()=>void;onLeave:()=>void;onEdit:()=>void};
 const clamp=(n:number,low:number,high:number)=>Math.max(low,Math.min(n,high));
 const overlap=(a:{x:number;y:number;width:number;height:number},b:DOMRect)=>Math.max(0,Math.min(a.x+a.width,b.right)-Math.max(a.x,b.left))*Math.max(0,Math.min(a.y+a.height,b.bottom)-Math.max(a.y,b.top));
-/** Нижний край липкой «шапки» экрана: шапка сайта и прилипшая панель бланка.
+/** Нижний край «шапки» экрана: шапка сайта и прилипшая панель бланка.
     Карточка поля не встаёт поверх них — раньше на телефоне она закрывала
-    логотип, сценарий и номера страниц. */
+    логотип, сценарий и номера страниц.
+    С 23 ноября шапка сайта на телефоне не прилипает и уезжает со страницей:
+    она считается, пока видна у верхнего края, в каком бы положении ни стояла;
+    панель бланка — только когда прилипла. */
 function chromeEdge(){
  let edge=0;
  const bars=Array.from(document.querySelectorAll<HTMLElement>('[data-marketing-surface] > header, [data-workbench-bar]'))
-  .filter(el=>{const position=getComputedStyle(el).position;return position==="sticky"||position==="fixed";})
+  .filter(el=>{const position=getComputedStyle(el).position;return el.tagName==="HEADER"||position==="sticky"||position==="fixed";})
   .map(el=>el.getBoundingClientRect()).filter(r=>r.height).sort((a,b)=>a.top-b.top);
  for(const r of bars)if(r.top<=edge+2&&r.bottom>edge)edge=r.bottom;
  return edge;
