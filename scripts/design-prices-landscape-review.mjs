@@ -85,6 +85,13 @@ async function preservedPricingCopy(base, head) {
   // Owner 2026-11-06 («убери маленькие стрелки»): the decorative «→» between
   // the free and paid cards is gone; every word stays.
   const arrow=before.indexOf('→'); if(arrow>=0) before.splice(arrow,1);
+  // Owner 2026-11-23 («убери теперь опцию для друзей, сайт запустили!!»): the
+  // friends' 667 ₸ test card under the main purchase is gone, word for word;
+  // every other line stays.
+  if(await base.locator('[data-test-offer-card]').count()) for(const value of await textInventory(base,'[data-test-offer-card]')) {
+    const index=before.indexOf(value); if(index>=0) before.splice(index,1);
+  }
+  assert.equal(await head.locator('[data-test-offer-card]').count(),0,'No friends\' test card under the purchase');
   assert(!after.includes('→'),'No decorative arrow between the price cards');
   assertContentPreserved(before.map(value=>value.replaceAll(basePrice,'10 990 ₸')).map(value=>wallCopy.get(value)??value),after,'Pricing copy outside the approved repeated header, launch price and wall cards');
   const packageCard=head.locator('#main-package');

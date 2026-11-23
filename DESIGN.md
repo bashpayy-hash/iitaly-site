@@ -4024,3 +4024,17 @@ the owner's page, the road's glow and the two medallions. On the build before
 this change it fails with «the current step's ring has room above it
 (-2.4px)».
 
+## The launch: no friends' test purchase · 23 November 2026 (night)
+
+Owner: «убери теперь опцию для друзей, сайт запустили!!».
+
+The 667 ₸ «Тестовый доступ · для друзей» of 22 November is gone: the /test
+page, its card under the main purchase on /prices, the footer's «Тест для
+друзей» and the `TestOffer` components are deleted, and the server's
+catalogue no longer has the product (bashpayy-hash/iitaly), so it cannot be
+bought by a direct request either. Cabinets already opened by test purchases
+stay as they are. `design-test-offer-review` became
+`design-launch-offer-review`: no page links to /test or names the 667 ₸ test,
+/test answers 404, and the purchase on /prices sells «Поступление под ключ»
+at 10 990 ₸. `design-keyboard-touch-review` no longer reads the «Тест» badge.
+
