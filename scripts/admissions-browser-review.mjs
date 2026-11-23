@@ -197,6 +197,40 @@ try {
       await tile.waitFor();
       assert.equal(await tile.getAttribute('data-plan-tile'),'education','A school answer is asked again as the master\'s question');
       assert.match(await tile.innerText(),/Диплом бакалавра уже есть\?/);
+      // Owner, 23 Nov, a phone screenshot of question 9 with «Уже в Италии»
+      // marked: «Почему здесь по дефолту будто уже нажали». It was an earlier
+      // answer: after a changed level the questionnaire led through every
+      // later question, and the answered ones arrived marked. Now only the
+      // questions without an answer are asked, and none arrives marked.
+      await page.evaluate(()=>localStorage.setItem('iitaly_plan_draft_v1',JSON.stringify({answers:{intake:'2027/28',goal:'Бакалавриат',education:'11 классов',grades:'отличник',budget:'До 3 млн ₸/год',field:'Инженерия и IT',lang:'есть сертификат',age:'adult',residence:'italy',dsuRegion:'other'},step:10,complete:true})));
+      await page.goto(origin+'/plan?answers=1',{waitUntil:'networkidle'});
+      await page.locator('[data-plan-answer=goal]').click();
+      await page.locator('[data-plan-answer-edit=goal]').getByRole('button').filter({hasText:'Магистратура'}).click();
+      const arrived = [];
+      for (let guard=0; guard<10 && await tile.count(); guard++) {
+        const id = await tile.getAttribute('data-plan-tile');
+        arrived.push(id);
+        assert.equal(await tile.locator('button[aria-pressed=true]').count(),0,`«${id}» arrives with no answer marked`);
+        await tile.locator('button[aria-pressed]').first().click();
+        await page.waitForFunction(previous=>document.querySelector('[data-plan-tile]')?.getAttribute('data-plan-tile')!==previous,id);
+      }
+      assert.deepEqual(arrived,['education','major'],'Only the master\'s own questions are asked after the level changes');
+      await page.getByRole('button',{name:'Открыть мой план',exact:true}).waitFor();
+      const after = await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).answers);
+      assert.equal(after.residence,'italy','An answer both tracks share is kept');
+      assert.equal(after.age,undefined,'The other track\'s answer is not');
+      // The same within a first run: back to an earlier question, a new answer, and on to where the applicant was.
+      await page.evaluate(()=>localStorage.setItem('iitaly_plan_draft_v1',JSON.stringify({answers:{intake:'2027/28',goal:'Бакалавриат',education:'11 классов',grades:'отличник'},step:4,complete:false})));
+      await page.goto(origin+'/plan',{waitUntil:'networkidle'});
+      await tile.waitFor();
+      assert.equal(await tile.getAttribute('data-plan-tile'),'budget');
+      await page.getByRole('button',{name:'Назад',exact:true}).click();
+      await page.getByRole('button',{name:'Назад',exact:true}).click();
+      assert.equal(await tile.getAttribute('data-plan-tile'),'education');
+      assert.equal(await tile.locator('button[aria-pressed=true]').count(),1,'Going back shows the answer given');
+      await tile.locator('button[aria-pressed=false]').first().click();
+      await page.waitForFunction(()=>document.querySelector('[data-plan-tile]')?.getAttribute('data-plan-tile')==='budget');
+      assert.equal(await tile.locator('button[aria-pressed=true]').count(),0,'A changed answer leads to the next question without one');
       if (width===390) await page.screenshot({path:resolve(output,'master-390.png')});
       await context.close(); }
   }
