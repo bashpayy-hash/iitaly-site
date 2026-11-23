@@ -34,6 +34,8 @@ async function axe(page,label){
 }
 async function open(viewport,mode='partial',options={}){
   const data=fixture(mode),calls=[],fileCalls=[];let failTask=Boolean(options.failTask);
+  // A slow server for the save of a mark (ms); the review sets it for one case.
+  const server={taskDelay:0};
   if(options.docsCurrent){data.client.name='Demo';data.client.profile={...data.client.profile,universityIds:['unipd','luiss']};data.done={profile:true,shortlist:true,chances:true};for(const row of data.roadmap.find(s=>s.id==='docs').tasks){row.deadline='2027-01-31';row.time='1–3 недели';}for(const row of data.roadmap.find(s=>s.id==='docs').tasks)row.t=({apostille:'Поставить апостиль на аттестат или диплом',translate:'Сделать официальный перевод на итальянский',notary:'Заверить перевод у нотариуса',checkDocs:'Проверить комплект документов'})[row.id]||row.t;}
   if(options.translationCurrent){data.done.apostille=true;data.done.kit=true;data.done.codice=true;Object.assign(data.roadmap.find(s=>s.id==='docs').tasks.find(t=>t.id==='translate'),{time:'~3–7 дней',daysLeft:98});data.roadmap.find(s=>s.id==='arrival').tasks.forEach(t=>{t.t=({kit:'Подготовить Kit Giallo',codice:'Получить codice fiscale',questura:'Прийти в Questura'})[t.id];});}
   const context=await browser.newContext({viewport,reducedMotion:options.motion?'no-preference':'reduce',locale:'ru-RU'});
@@ -45,6 +47,7 @@ async function open(viewport,mode='partial',options={}){
     if(url.pathname==='/api/portal/TEST-01/task'){
       const body=req.postDataJSON();calls.push(body);assert.equal(body.surname,'Testov');
       if(failTask){failTask=false;return route.fulfill({status:503,json:{ok:false,error:'Синтетический сбой сохранения'}});}
+      if(server.taskDelay)await new Promise(done=>setTimeout(done,server.taskDelay));
       data.done[body.task]=body.value;return json({ok:true,done:data.done,progress:upstreamProgress(data)});
     }
     if(url.pathname==='/api/check-document'){fileCalls.push('check');return json({ok:true,result:{verdict:'ok',summary:'Синтетическая справка прошла внутреннюю проверку.',checks:[],problems:[],nextSteps:[]}});}
@@ -66,7 +69,7 @@ async function open(viewport,mode='partial',options={}){
   await page.getByLabel('Фамилия',{exact:true}).fill('Testov');await page.getByLabel('Код доступа',{exact:true}).fill('TEST-01');
   await page.getByRole('button',{name:'Войти в кабинет',exact:true}).click();
   await page.locator(mode==='onboarding'?'[data-portal-profile]':'[data-portal-overview]').waitFor({state:'attached'});
-  await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls};
+  await page.evaluate(()=>document.fonts.ready);return {page,context,data,calls,fileCalls,server};
 }
 try {
   for (const width of [1440,390]) {
@@ -276,6 +279,31 @@ try {
       }
     }
     assert.equal(calls.length,0);results.push({width,compactHeight:card.height,checkboxes:5,instructionsOnlyInDetail:true,singleVisibleMascot:true,axeOtherRules:true,consistentFonts:true});await context.close();
+  }
+  // A mark saved late does not pull the reader back. With a slow answer
+  // from the server, someone who marked a step and opened «Обзор» at once was
+  // returned to the stage page when the answer came (23 Nov: this review
+  // failed that way on a slow CI runner, PR 290). The same with the server's
+  // answer held for 700 ms: the reader stays on «Обзор», and the mark is saved.
+  { const {page,context,calls,data,server}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true});
+    await page.locator('[data-road-stage][aria-current=step]').click();
+    await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
+    server.taskDelay=700;
+    await page.locator('[data-task-check=translate]').click();
+    await portalDestination(page,'Обзор');
+    await page.waitForFunction(()=>document.querySelector('[data-portal-road]')?.getAttribute('data-road-done')==='4');
+    assert.equal(calls.length,1);assert.equal(data.done.translate,true,'The mark is saved');
+    await page.waitForTimeout(400);
+    assert.equal(await page.locator('[data-portal-page=overview]').count(),1,'A late answer leaves the reader on «Обзор»');
+    assert.equal(new URL(page.url()).search,'','…and at its address');
+    // Still on the step, the saved mark returns to the stage as before.
+    server.taskDelay=0;
+    await portalStage(page,'docs');
+    await page.locator('[data-stage-switcher] [data-story-pill="1"]').click();
+    await page.locator('[data-task-check=apostille]').click();
+    await page.waitForFunction(()=>document.querySelector('[data-portal-page=stage]')&&new URLSearchParams(location.search).get('stage')==='docs'&&!new URLSearchParams(location.search).get('step'));
+    assert.equal(data.done.apostille,true);
+    results.push({lateSaveKeepsThePage:true});await context.close();
   }
   for(const failTask of [false,true]) {
     const {page,context,calls,data}=await open({width:1440,height:900},'screenshot-parent',{docsCurrent:true,motion:true,failTask});

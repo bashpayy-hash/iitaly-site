@@ -3861,6 +3861,14 @@ or to the end: after «Магистратура» in the list of answers that is
 questions, the diploma and its profile. A marked answer is seen only where
 the applicant goes back himself.
 
+**A mark saved late does not pull the reader back** (the same evening, found
+by CI on that fix). In the cabinet, someone who marked a step and opened
+«Обзор» at once was returned to the stage page when the server's answer
+came: the return ran whatever page the reader was on by then. It happens
+only if the reader is still where the mark was made. On a fast connection
+nobody saw it; a slow CI runner did, and `design-portal-focus-review` now
+holds the case with the server's answer delayed by 700 ms.
+
 **The plan.** The master's route (`buildPlan`, branch `master`):
 «Проверь доступ в магистратуру» (Laurea Magistrale: two years, 120 credits;
 the university judges the diploma, the transcript and the subjects; a

@@ -401,6 +401,9 @@ export function PortalExplorer() {
     const version = sessionVersion.current;
     const actionTask = tasksWithStages(data).find(({ task }) => task.id === taskId)?.task;
     const actionTitle = actionTask ? taskTitle(actionTask) : "Шаг маршрута";
+    // Where the mark was made: the saved answer returns the reader to the
+    // stage only if they are still there (see below).
+    const pressedAt = window.location.pathname + window.location.search;
     setBusyTask(taskId);
     setActionError(null);
     try {
@@ -413,7 +416,15 @@ export function PortalExplorer() {
         completionFocusPending.current = true;
         setRoadTravel({ fromDone: portalProgress(data).done, id: ++travelSequence.current });
       } else setRoadTravel(undefined);
-      if (selectedStageId) selectStage(selectedStageId); else changeSection("today");
+      /* 23 Nov 2026: a mark saved late pulled the reader back. With a slow
+         answer from the server, someone who marked a step and opened «Обзор»
+         (or any other page) at once was returned to the stage page when the
+         answer came. Found as a CI failure of design-portal-focus-review on
+         a slow runner (PR 290): the review does exactly that. The return now
+         happens only if the reader has not gone anywhere since the mark. */
+      if (window.location.pathname + window.location.search === pressedAt) {
+        if (selectedStageId) selectStage(selectedStageId); else changeSection("today");
+      }
       track("portal_task", { done: value });
       return true;
     } catch (error) {
