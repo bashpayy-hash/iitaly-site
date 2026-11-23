@@ -72,8 +72,20 @@
 #   перерисованный картуш получает новое имя, то же правило. Owner, 19 Nov:
 #   «сайт иногда долго загружает эти иконки на мобильной версии» — без кэша
 #   телефон переспрашивал сервер о каждом картуше на каждой странице.
-# Остальные картинки и видео в /illustrations сюда не входят намеренно: их не
-# раз перерисовывали под тем же именем, и долгий кэш показывал бы старую версию.
+# - Остальные картинки, текстуры и видео (с 23 ноября, owner: «в целом
+#   оптимизируй сайт, чтобы все быстрее прогружалось»). Раньше они шли с
+#   max-age=0, потому что их перерисовывали под тем же именем: при каждом
+#   открытии страницы браузер спрашивал сервер о каждой из 20–50 картинок и
+#   видео, прежде чем показать её из своего кэша. Теперь имя файла не
+#   меняет содержимого: перерисованная картинка получает новое имя, и это
+#   проверяет scripts/design-media-names-review.mjs (изменённый под старым
+#   именем файл не проходит). Поэтому 30 дней; не год и без immutable, чтобы
+#   ошибку можно было исправить переименованием и она не жила дольше месяца.
+#   Папки перечислены по одной: общее правило /illustrations/* сложилось бы
+#   с правилом картушей в один заголовок с двумя разными сроками. Проверка
+#   сверяет этот список с папками public/.
+#   Не входят: файлы в корне /illustrations и /og.jpg (у него версия в
+#   адресе, см. src/app/pageMeta.ts).
 [[headers]]
   for = "/_next/static/*"
   [headers.values]
@@ -88,3 +100,83 @@
   for = "/illustrations/cartouche/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/illustrations/editorial/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/landscapes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/motion/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/objects/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/public-paper/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/scenery/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/scenes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/illustrations/stages/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/textures/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/mascot/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/brand/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/sky/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/sketchbook/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/permesso/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/zhol/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"

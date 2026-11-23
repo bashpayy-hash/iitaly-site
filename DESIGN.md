@@ -3584,3 +3584,50 @@ One set of classes does the arriving (`motion/swap.module.css`): `.rise`,
 `.fade`, `.cascade`, `.scrim`, `.dialog`. Only `transform` and `opacity`
 move, once, on the site's curve `cubic-bezier(.22,1,.36,1)`. With reduced
 motion nothing moves and nothing waits.
+
+## Speed pass: fewer styles before the first paint, pictures kept by the browser · 23 November 2026
+
+Owner: «в целом оптимизируй сайт, чтобы все быстрее прогружалось, быстрее
+работало, и не было других проблем».
+
+Measured first, on the built site: a phone profile (4× slower processor,
+1.6 Mbit/s, 150 ms latency, text compressed as the host does), medians of
+seven loads, the same script before and after
+(the method is in the pull request). Three things were found and changed.
+
+- **Styles.** The bundler merged the styles of the cabinet, the guides and
+  the questionnaire into two files that every page loaded before it could
+  draw: the home page fetched 325 KB of styles and used 45% of them. The
+  documented `cssChunking: "graph"` groups styles by the routes that import
+  them. Compressed styles before the first paint: home 53 → 30 KB, /plan
+  63 → 35, /prices 53 → 37, /check 63 → 35, /universities 59 → 35, /guides
+  66 → 34. The cabinet keeps its weight (64 → 60 KB) in 15 small files
+  instead of 7; they are cached for a year after the first visit.
+  First paint on the phone profile: home 1.32 → 0.98 s, /plan 1.07 → 0.89 s,
+  /check 1.48 → 1.28 s, /prices 1.30 → 1.14 s.
+- **The first picture of /plan.** The same frames in AVIF stand first in the
+  `<picture>`, a third lighter at the same measured likeness to the master
+  (the phone's 1170px: 128 → 86 KB); WebP stays for browsers without AVIF.
+  The page's largest picture arrives in 2.75 s instead of 3.22 s.
+- **Pictures, textures and video are kept by the browser for 30 days.** They
+  were served with `max-age=0`, because pictures used to be redrawn under the
+  same name: on every page load the browser asked the server about each of
+  20–50 files before showing it from its own cache. On a return visit to the
+  home page that was 24 questions; now 11 (the page and its data). The rule
+  that makes it safe: a redrawn picture gets a new name.
+  `design-media-names-review` fails a file changed under its name, a name
+  given to a different file, and a new folder of `public/` with no cache rule.
+
+Tried and left as it was:
+
+- A higher `requestCost` for the style grouping (40 000, 70 000): one file
+  fewer per page, 7–9 KB more styles on every public page. The default stays.
+- AVIF for the home page's first picture: it is the first frame of the video
+  that replaces it, and a different encoder would show at the swap.
+- AVIF for the cabinet's first picture (185 KB on a phone): its master is
+  not in the repository. It is the heaviest first picture left.
+- The four typefaces loaded first (110 KB): all four set words on the first
+  screen. The home page's second scene already loads lazily.
+
+Other problems looked for: the 94 built pages reference 4037 local files and
+pages, and none is missing; no page logs an error while loading.

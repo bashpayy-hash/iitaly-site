@@ -133,9 +133,18 @@ export function PlanExplorer() {
                 its own square crop around Vespi: at the 1200px ceiling a phone
                 is sent (design-image-fit-review) he is 1.8 times sharper than
                 in the wide frame, in fewer bytes. */}
+            {/* 23 Nov (owner: «оптимизируй сайт, чтобы все быстрее
+                прогружалось»): the same frames in AVIF come first, a third
+                lighter at the same likeness to the master (the phone's
+                1170px: 128 → 86 KB); WebP stays for browsers without AVIF
+                (design/illustrations/source/scenes/plan-terrace-avif.py). */}
             <picture>
+              <source media="(max-width: 640px)" type="image/avif" sizes="calc(100vw - 24px)"
+                srcSet="/illustrations/scenes/plan-terrace-phone-780.avif 780w, /illustrations/scenes/plan-terrace-phone-1170.avif 1170w" />
               <source media="(max-width: 640px)" sizes="calc(100vw - 24px)"
                 srcSet="/illustrations/scenes/plan-terrace-phone-780.webp 780w, /illustrations/scenes/plan-terrace-phone-1170.webp 1170w" />
+              <source type="image/avif" sizes="(max-width: 1240px) calc(100vw - 24px), 1200px"
+                srcSet="/illustrations/scenes/plan-terrace-960.avif 960w, /illustrations/scenes/plan-terrace-1200.avif 1200w, /illustrations/scenes/plan-terrace-1920.avif 1920w, /illustrations/scenes/plan-terrace-2560.avif 2560w" />
               <img className={workspace.heroArt} src="/illustrations/scenes/plan-terrace-1920.webp"
                 srcSet="/illustrations/scenes/plan-terrace-960.webp 960w, /illustrations/scenes/plan-terrace-1200.webp 1200w, /illustrations/scenes/plan-terrace-1920.webp 1920w, /illustrations/scenes/plan-terrace-2560.webp 2560w"
                 sizes="(max-width: 1240px) calc(100vw - 24px), 1200px" width={1920} height={1043} alt=""

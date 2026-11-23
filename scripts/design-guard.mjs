@@ -281,7 +281,17 @@ const approvedRevisions = {
   // a year and immutable for /illustrations/cartouche/*, whose file names now
   // carry the master's hash. Every other header, redirect and build setting is
   // unchanged.
-  'netlify.toml': '8105a9ee295694f22f99c12e7fa5cfae195f2883d4e218d7415085b0e01d9e89',
+  // 2026-11-23 (owner: «в целом оптимизируй сайт, чтобы все быстрее
+  // прогружалось, быстрее работало»). netlify.toml: sixteen more cache rules,
+  // 30 days for the folders of pictures, textures and video, whose names are
+  // now final (design-media-names-review fails a file changed under its
+  // name). Every other header, redirect and build setting is unchanged.
+  'netlify.toml': '1b69c6f3ec3d500955613478497ae7d2b0fd8b4f074492eba34515a2c40b722a',
+  // Same request. next.config.ts: `experimental.cssChunking: "graph"`, the
+  // documented Turbopack strategy that stops a page from loading the styles
+  // of routes it does not import (the home page: 325 KB of styles → 144 KB).
+  // `output: "export"` is unchanged; no other option is set.
+  'next.config.ts': '5128001eac15045706230fa2ee3cc9ecf64a4e99ea03ebb160fe34956d6d8663',
   // package.json and package-lock.json: the 2026-11-11 revision above.
   'package.json': 'd74d6adecb14d27226f9cd938b5dbaeda9c6febdfa6c3bef273e40a640a02728',
   'package-lock.json': '9c0180c872d7a336ad95c28dd0f272fb9f770c0f71b535a25e38e9b99d5942e0',
