@@ -163,12 +163,19 @@ try{
     }));
     assert(panels.every(panel=>panel.ground&&panel.band),`Home ${width}: every card has the tesserae ground and the mosaic border (${JSON.stringify(panels)})`);
     assert(panels.every(panel=>panel.inside),`Home ${width}: words and cartouche stay inside the border (${JSON.stringify(panels)})`);
-    // Owner, 22 Nov, after a reel of effects: «давай имплементни, что считаешь
-    // нужным». On a phone the three tiles of a scene stack under the header,
-    // each 12px lower; side by side they stay in place.
-    const stack=await page.locator('[data-scene-card] ul').first().locator('li').evaluateAll(items=>items.map(item=>({position:getComputedStyle(item).position,top:parseFloat(getComputedStyle(item).top)})));
-    if(width<=640){assert(stack.every(item=>item.position==='sticky'),`Home ${width}: the route tiles stack (${JSON.stringify(stack)})`);assert.deepEqual(stack.map(item=>item.top-stack[0].top),[0,12,24],`Home ${width}: each stacked tile 12px lower`);}
-    else assert(stack.every(item=>item.position!=='sticky'),`Home ${width}: tiles side by side do not stack`);
+    // For a day (22 Nov, after a reel of effects) the three tiles of a scene
+    // stuck under the header on a phone and slid over one another. Owner,
+    // 23 Nov, with an iPhone screenshot of a dark tile across a light one:
+    // «почему вот эти вот штуки друг на друга наслаиваются». At every width
+    // the tiles stay where they stand, and on a phone none covers another.
+    const stack=await page.locator('[data-scene-card] ul').first().locator('li').evaluateAll(items=>items.map(item=>({position:getComputedStyle(item).position,top:item.getBoundingClientRect().top,bottom:item.getBoundingClientRect().bottom})));
+    assert(stack.every(item=>item.position!=='sticky'&&item.position!=='fixed'),`Home ${width}: the route tiles do not stick (${JSON.stringify(stack)})`);
+    if(width<=640)assert(stack.every((item,index)=>!index||item.top>=stack[index-1].bottom-1),`Home ${width}: no tile lies over the one before it (${JSON.stringify(stack)})`);
+    // The same day: on a phone the site header is the top of the page and
+    // scrolls away with it («вот эта вот плашка, она следует за сайтом всегда,
+    // это тоже надо пофиксить»); from the tablet up it still sticks.
+    const headerPosition=await page.locator('header').first().evaluate(node=>getComputedStyle(node).position);
+    assert.equal(headerPosition,width<=767?'relative':'sticky',`Home ${width}: the header ${width<=767?'scrolls away with the page':'sticks'}`);
     // Four headings reveal word by word on scroll, in CSS: the words are in the
     // HTML as plain text and the heading reads as before.
     for(const heading of ['Один шаг. Понятный маршрут.','После визы путь продолжается.','Одна Италия. Твой собственный выбор.','Можно ли нам доверять']){

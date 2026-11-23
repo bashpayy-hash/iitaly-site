@@ -34,7 +34,7 @@
 .compare td { text-wrap: pretty; }
 /* Ширины колонок заданы: иначе строка с ценой агентства раздвигала свою
    колонку и «10–30 секунд» у IITALY рвалось после тире. */
-@media (min-width: 560px) {
+@media (min-width: 600px) {
   .compare { table-layout: fixed; }
   .compare thead th:first-child { width: 28%; }
   .compare thead th:nth-child(2) { width: 32%; }
@@ -97,11 +97,48 @@
    /prices the scene, the facts and the comparison stood 20px inside the
    column every other card fills (40px from the screen edge, not 20). */
 @media (max-width: 767px) { .compact { padding: 24px 0 0; } }
-/* На телефоне таблица в три колонки тесная: строка сравнения встаёт столбиком. */
-@media (max-width: 559px) {
+/* The comparison on a phone: two columns under their names.
+   Until 23 Nov a row stood as three lines of text, the second and third
+   opening with «Агентство: » and «IITALY: » in the line itself. Owner, with a
+   screenshot of it: «когда идет сравнение именно на телефоне, вот это вот
+   типа Италии, там до конца непонятно, типа что да как». Now the names of the
+   two sides stand once at the top, as in the wide table; each row is its
+   question across the card and the two answers side by side under it, the
+   agency's quiet on stone, IITALY's dark on a warm tint. The same words.
+   Up to 599px: at 560–599px the three-column table left its agency column
+   4px short of «Сопровождение —». */
+@media (max-width: 599px) {
+  .bento [data-document-check-compare] { padding: 18px 14px 16px; }
+  .compare caption { padding-inline: 4px; }
+  .compare, .compare caption, .compare thead, .compare tbody { display: block; }
+  .compare thead tr, .compare tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; }
+  .compare thead th:first-child { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+  .compare thead th { padding: 0 10px 10px; border-top: 0; font-size: 13px; letter-spacing: 0; }
+  .compare tbody tr { row-gap: 8px; padding: 14px 0; border-top: 1px solid rgba(53, 43, 40, .1); }
+  .compare tbody tr:last-child { padding-bottom: 0; }
+  .compare tbody th { grid-column: 1 / -1; padding: 0 4px; border-top: 0; font-size: 15px; line-height: 1.35; }
+  .compare tbody td { padding: 10px; border-top: 0; border-radius: 12px; line-height: 1.4; }
+  .compare tbody td:first-of-type { background: #F3EEE6; }
+  .compare tbody td:last-child { background: #FBEBDD; font-weight: 600; }
+}
+/* Under 400px two answers side by side leave about 120px each, less than
+   «Сопровождение —» needs: there they stand one under the other, each under
+   the name of its side. */
+@media (max-width: 399px) {
   .compare thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .compare tbody tr { display: grid; gap: 4px; padding: 12px 0; border-top: 1px solid rgba(53, 43, 40, .1); }
-  .compare tbody th, .compare tbody td { width: auto; padding: 0; border-top: 0; }
-  .compare tbody td:first-of-type::before { content: "Агентство: "; color: #6B6761; }
-  .compare tbody td:last-child::before { content: "IITALY: "; color: #A33421; font-weight: 600; }
+  .compare tbody tr { grid-template-columns: minmax(0, 1fr); }
+  .compare tbody td::before { display: block; margin-bottom: 2px; font-size: 12px; font-weight: 600; }
+  .compare tbody td:first-of-type::before { content: "Агентство"; color: #6B6761; }
+  .compare tbody td:last-child::before { content: "IITALY"; color: #A33421; }
+}
+/* The four facts stand two in a row on a phone (23 Nov, owner: «иногда идет
+   именно в мобильном приложении перенасыщение… информации»): four full-width
+   tiles were a screen of scrolling for eight short lines. Under 360px a value
+   such as «10–30 секунд» no longer fits half a row, so they stay one per row. */
+@media (min-width: 360px) and (max-width: 559px) {
+  .bento > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bento > div > * { grid-column: 1 / -1; }
+  .bento > div > .fact { grid-column: auto; flex-direction: column; gap: 0; padding: 14px 16px 16px; }
+  .bento > div > .fact dd:first-of-type { font-size: 18px; }
+  .bento > div > .fact dt { font-size: 13.5px; line-height: 1.35; }
 }

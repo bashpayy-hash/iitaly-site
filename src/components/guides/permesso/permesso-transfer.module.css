@@ -15,7 +15,7 @@
 .progress::-webkit-progress-value { background: #373734; border-radius: 3px; }
 .progress::-moz-progress-bar { background: #373734; }
 .stepLayout { display: grid; grid-template-columns: 150px minmax(0,1fr); align-items: start; gap: 32px; }
-.locator { margin: 0; position: sticky; top: 172px; }
+.locator { margin: 0; position: sticky; top: calc(var(--header-stick, 64px) + 108px); }
 .locator svg { display: block; width: 100%; height: auto; aspect-ratio: 595 / 842; border: 1px solid #d7d5ce; background: #fff; }
 .locator figcaption { margin-top: 10px; color: #66635d; font-size: 11px; line-height: 1.5; }
 .mapFallback { font-size: 12px; padding: 12px; background: #efeeeb; }

@@ -37,6 +37,10 @@
 .surface :where(button:disabled) { cursor: wait; }
 .surface :where(a) { text-underline-offset: 4px; }
 .surface :where([id]) { scroll-margin-top: 88px; }
+/* How far below the top of the screen a thing may stick: under the site
+   header where the header itself sticks, at the very top where it does not
+   (a phone, see .header below). */
+.surface { --header-stick: 64px; }
 .surface :where(a, button, summary, input, textarea, select):focus-visible { outline: 2px solid var(--i-link); outline-offset: 4px; }
 .surface :where(input, textarea, select) { font-size: 16px; }
 .surface :where([class~="border-white/10"], [class~="border-white/15"], [class~="border-white/20"], [class~="border-white/25"]) { border-color: var(--i-line); }
@@ -331,6 +335,16 @@
   .howInner { gap: 48px; }
 }
 @media (max-width: 767px) {
+  /* Owner, 23 Nov, with an iPhone screenshot from Telegram's browser (the
+     header strip lying across the home picture, the picture showing above and
+     below it): «вот эта вот плашка, она следует за сайтом всегда, это тоже
+     надо пофиксить». On a phone the header is the top of the page and scrolls
+     away with it; the menu is one swipe up, and the footer repeats its links.
+     What used to stop under it (a jump to a section, a guide's toolbar) now
+     stops at the top of the screen. */
+  .header { position: relative; }
+  .surface { --header-stick: 0px; }
+  .surface [id], .surface [tabindex="-1"], .anchorTarget { scroll-margin-top: 16px; }
   .navInner { height: 60px; padding: 0 20px; }
   .desktopNav, .portalLink { display: none; }
   .mobileMenu { display: block; }

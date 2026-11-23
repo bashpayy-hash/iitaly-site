@@ -3634,3 +3634,48 @@ Tried and left as it was:
 
 Other problems looked for: the 94 built pages reference 4037 local files and
 pages, and none is missing; no page logs an error while loading.
+
+## The phone: nothing travels with the page; the comparison in two sides · 23 November 2026 (later)
+
+Owner, with three iPhone screenshots from Telegram's browser: «все еще есть
+какие-то лаги… почему вот эти вот штуки друг на друга наслаиваются. Затем,
+когда идет сравнение именно на телефоне, вот это вот типа Италии, там до
+конца непонятно, типа что да как… и в целом вот эта вот плашка, она следует
+за сайтом всегда, это тоже надо пофиксить. И вот иногда идет именно в
+мобильном приложении перенасыщение… информации».
+
+- **The route tiles do not stack.** For a day the three tiles of a home
+  scene stuck under the header on a phone and each next one slid over the
+  one before (a reel's «stacking scroll cards»). On the screenshot a dark
+  tile lies across a light one, and it was read as a glitch. The tiles stand
+  one under another and stay there.
+- **The header is the top of the page on a phone** (up to 767px) and scrolls
+  away with it. In Telegram's browser the page shows above a sticky header
+  as well as below it, so the strip lay across the home picture with the
+  picture on both sides. From the tablet up it sticks as before. The menu is
+  one swipe up, and the footer repeats its links. What used to stop under
+  the header stops at the top of the screen: the guide's bars and a jump to
+  a section read their offset from `--header-stick` (64px where the header
+  sticks, 0 on a phone).
+- **«Проверка у агентства и здесь» on a phone.** A row was three lines of
+  text, two of them opening with «Агентство: » and «IITALY: » inside the
+  line. Now: the row's question across the card and the two answers under
+  it, the agency's quiet on stone, IITALY's dark on a warm tint. From 400px
+  the answers stand side by side under the two names, as in the wide table;
+  under 400px (a column there is narrower than «Сопровождение —») one under
+  the other, each under the name of its side. The same words and figures;
+  «₸» no longer starts a line and «10–30 секунд» no longer breaks at its
+  dash.
+- **The four facts of the document check stand two in a row** on a phone
+  (from 360px): four full-width tiles were a screen of scrolling for eight
+  short lines.
+
+Measured for the last point: words per phone screen on the main pages. The
+home page holds about 40 words a screen, /prices 65–90 on every screen of
+its eight: that page is where a phone is fullest. Left as it is for now:
+its guarantees, the package list and «Что система делает сама, а где
+решаешь ты» are statements a buyer checks before paying, and none repeats
+another on the page.
+
+Not touched: the chat button. It also stays on the screen while the page
+scrolls; on /prices it carries its label by the owner's request of 18 Oct.

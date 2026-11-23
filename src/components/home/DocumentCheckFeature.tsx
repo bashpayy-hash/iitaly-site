@@ -49,6 +49,16 @@ const COMPARE = [
   { row: "Сколько стоит", agency: "Отдельный договор с агентством", agencyPrice: `Сопровождение\u00A0— обычно ${fmtPrice(AGENCY_SUPPORT.from)}–⁠${priceLabel(AGENCY_SUPPORT.to)}`, us: `Входит в ${priceLabel(PRICE_MAIN)} за весь путь, первая проверка бесплатно` },
 ] as const;
 
+/* The same words, kept whole: «₸» never starts a line and a range such as
+   «10–30» never breaks at its dash (23 Nov: in the phone's two columns the
+   cells are 120px wide, and «обычно за 10– / 30 секунд» and a lone «₸» on
+   the next line were the result). No-break characters only. */
+const whole = (text: string) => text.replace(/ ₸/g, "\u00A0₸").replace(/(\d)–(\d)/g, "$1–\u2060$2");
+/* A sum of two prices is the one place a line may end at the dash: the range
+   with its «₸» is wider than a phone's column, and «500 000– / 1 000 000 ₸»
+   reads better than a sum that leaves its cell. */
+const sum = (text: string) => text.replace(/ ₸/g, "\u00A0₸").replace(/\u2060/g, "");
+
 /* Owner, 20 Nov, on the home section: «саму кнопку «Проверь документы», она
    должна быть главной, и эти блоки должны быть снизу… блок «Проверь
    документы» должен быть вот такой большой». The invitation comes first, full
@@ -93,7 +103,7 @@ export function DocumentCheckFeature({ compact = false }: { compact?: boolean })
         <table className={styles.compare}>
           <caption className={bento.heading}>Проверка у агентства и здесь</caption>
           <thead><tr><th scope="col"><span className={styles.srOnly}>Что сравниваем</span></th><th scope="col">Агентство</th><th scope="col">IITALY</th></tr></thead>
-          <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{item.agency}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{item.agencyPrice}</span>}</td><td>{item.us}</td></tr>)}</tbody>
+          <tbody>{COMPARE.map(item => <tr key={item.row}><th scope="row">{item.row}</th><td>{whole(item.agency)}{"agencyPrice" in item && <span className={styles.agencyPrice} data-document-check-agency-price>{sum(item.agencyPrice)}</span>}</td><td>{whole(item.us)}</td></tr>)}</tbody>
         </table>
       </BentoCell>
     </Bento>
