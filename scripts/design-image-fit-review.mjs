@@ -33,7 +33,8 @@ await new Promise(done => server.listen(0, '127.0.0.1', done));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch(process.env.REVIEW_CHROMIUM ? { executablePath: process.env.REVIEW_CHROMIUM, args: ['--no-sandbox', '--disable-dev-shm-usage'] } : {});
 const results = [];
-const fileWidth = url => Number((url.match(/-(\d{3,4})\.webp$/) || [])[1] || 0);
+// The width is in the file's name; since 23 Nov a cover may come as AVIF (/plan).
+const fileWidth = url => Number((url.match(/-(\d{3,4})\.(?:webp|avif)$/) || [])[1] || 0);
 
 try {
   for (const [name, device] of [['Pixel 5', devices['Pixel 5']], ['iPhone 13', devices['iPhone 13']]]) {
