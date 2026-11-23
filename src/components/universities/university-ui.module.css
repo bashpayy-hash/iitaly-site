@@ -155,7 +155,9 @@
   .filters { flex-wrap: nowrap; gap: 8px; margin: -8px -18px; padding: 8px 18px; overflow-x: auto; scroll-padding-inline: 18px; scrollbar-width: none; }
   .filters::-webkit-scrollbar { display: none; }
   /* In the cabinet the workspace has no padding of its own to run into. */
-  .embedded .filters { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+  /* In the cabinet's card the row has no gutter to borrow; 6px of room keeps
+     the keyboard's ring (2px at 2px) of the first and last chip whole. */
+  .embedded .filters { margin-inline: -6px; padding-inline: 6px; scroll-padding-inline: 6px; }
   .filterGroup { flex: none; flex-wrap: nowrap; }
   .filterButton { flex: none; }
   .mapGrid { margin-top: 24px; gap: 24px; }

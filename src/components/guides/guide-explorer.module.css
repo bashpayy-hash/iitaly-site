@@ -4,7 +4,9 @@
 /* 12px under the search field (21 Nov pass: 5px, the chips looked glued to
    it). On a phone the rail runs to the screen's edge instead of being cut at
    the gutter with a strip of paper to its right. */
-.categories { display:flex; gap:8px; overflow:auto; padding:12px 0 20px; scrollbar-width:thin; }
+/* The row scrolls, so it clips: the first chip's keyboard ring (2px at 3px)
+   was cut on the left. 6px of room on each side, given back in the margin. */
+.categories { display:flex; gap:8px; overflow:auto; margin-inline:-6px; padding:12px 6px 20px; scrollbar-width:thin; }
 @media (max-width:767px) { .categories { margin-inline:-20px; padding-inline:20px; scroll-padding-inline:20px; scrollbar-width:none; } .categories::-webkit-scrollbar { display:none; } }
 /* Motion pass, 23 Nov: a chip turned black in one frame and gave nothing to a tap. */
 .categories button { flex-shrink:0; min-height:44px; padding:10px 16px; border:1px solid #DCD3C3; border-radius:999px; background:transparent; color:#57514B; font-size:13px; transition:background-color 160ms cubic-bezier(.4,0,.2,1), border-color 160ms cubic-bezier(.4,0,.2,1), color 160ms cubic-bezier(.4,0,.2,1), transform 160ms cubic-bezier(.22,1,.36,1); }
