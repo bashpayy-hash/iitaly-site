@@ -7,7 +7,8 @@ export const QUESTION_CONTEXT: Record<string, string> = {
   intake: "Так я не смешаю правила разных наборов.",
   education: "Допуск всё равно подтвердит выбранный вуз.",
   grades: "Это ориентир для твоего профиля, не прогноз поступления.",
-  goal: "У бакалавриата и магистратуры разные требования к диплому. Начнём с нужного уровня.",
+  // The first question since 23 Nov: the level decides every later one.
+  goal: "От уровня зависят все следующие вопросы: у бакалавриата они про школу, у магистратуры про диплом.",
   // The master's track (data/wizardTracks.ts, 23 Nov).
   major: "У итальянской магистратуры есть свои требования к предметам первого диплома. Если профиль другой, их может не хватить.",
   budget: "Стипендию и средства на визу нужно проверять отдельно.",
@@ -19,5 +20,6 @@ export const QUESTION_CONTEXT: Record<string, string> = {
 };
 
 
-/** Ярлык плитки вопроса: «Вопрос 2 из 10 · Образование». */
-export const STEP_TITLES: Record<string, string> = { intake: "Набор", education: "Образование", grades: "Оценки", goal: "Цель", major: "Профиль", budget: "Бюджет", field: "Направление", lang: "Язык", age: "Возраст", residence: "Проживание", dsuRegion: "Стипендия" };
+/** Ярлык плитки вопроса: «Вопрос 2 из 10 · Образование». У вопроса трека
+ *  может быть свой (WizQuestion.label): «Диплом», «Средний балл». */
+export const STEP_TITLES: Record<string, string> = { intake: "Набор", education: "Образование", grades: "Оценки", goal: "Уровень", major: "Профиль", budget: "Бюджет", field: "Направление", lang: "Язык", age: "Возраст", residence: "Проживание", dsuRegion: "Стипендия" };

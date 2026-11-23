@@ -37,7 +37,7 @@ import {
 import { preparePayload } from "@/lib/docPayload";
 import { checkDocument, DocCheckError, type DocCheckResult, type DocumentReviewContext } from "@/lib/checkDocument";
 import { DOC_TASKS, TASK_META } from "@/lib/portalMeta";
-import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, taskActionHint, taskDate, taskExplanation, taskHelpDetails, taskReadOnlyReason, taskTitle, trackRoadmap } from "@/lib/portalNavigation";
 import { track } from "@/lib/track";
 import { portalShortlistKey, readShortlist, shortlistNames, writeShortlist, validShortlist, shortlistPending, markShortlistPending } from "@/lib/portalShortlist";
 import { portalProgress, portalTaskDone, portalTaskStageOpen } from "@/lib/portalProgress";
@@ -113,7 +113,10 @@ export function PortalExplorer() {
   const router = useRouter();
   const [code, setCode] = useState<string | null>(null);
   const [surname, setSurname] = useState<string | null>(null);
-  const [data, setData] = useState<PortalData | null>(null);
+  // What the server sent; `data` is the same roadmap in the words of the
+  // profile's track (a master's applicant: portalNavigation.ts).
+  const [served, setData] = useState<PortalData | null>(null);
+  const data = useMemo(() => served && trackRoadmap(served), [served]);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [restoringSession, setRestoringSession] = useState(true);
   const [loginRequested, setLoginRequested] = useState(false);

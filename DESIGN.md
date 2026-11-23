@@ -3884,9 +3884,91 @@ No minor's step, no Foundation. The first document is «Диплом бакал�
 hosts were closed to the working environment that day, so they were read
 through search results; `NEXT_CHAT.md` asks to open and re-read them.
 
-**Not done, needs the owner:** the paid cabinet's route is built on the
-server and has no master's wording yet (`NEXT_CHAT.md`).
+**Not done then:** the paid cabinet's route had no master's wording. It has
+since the same night, on the site's side (the next entry).
 
 `admissions-review` holds the two tracks, the values the server accepts and
 the master's plan; `admissions-browser-review` walks the master's
 questionnaire at 1440, 390 and 320px.
+
+## The master's from the first tap · 23 November 2026 (night)
+
+Owner, on the track above: «Нет, ты уже в вопросе должен понять, что типа
+вот человек магистр, и… перенаправлять его автоматически на магистрский
+трек… если когда человек в вопросе первоначально нажимает на магистратуру,
+ты должен понять, что это уже магистратура, так что все это нужно оформить.
+Не должны быть такие детского формата вопросы, это уже серьезный человек,
+который закончил или заканчивает бакалавр».
+
+**What there was.** The level was the second question, after «Когда хочешь
+начать учёбу?». Five of the master's ten questions were still the school
+leaver's: «Как у тебя с английским?» with «Нужно подтягивать», the marks
+captioned «почти отличник» and «хорошист», «поможем выбрать», a budget hint
+about the family's help, «Где ты обычно законно проживаешь?». The paid
+cabinet's profile form asked about school first («11 классов», «NIS Grade
+12»), then the level, then «Какой бюджет комфортен семье?»; its route named
+«вступительный тест» and «аттестат».
+
+**The questionnaire.** «Куда поступаешь?» is question 1 for everyone, and
+each answer says whom it is for: «после школы или колледжа», «диплом
+бакалавра есть или скоро будет». After «Магистратура» nine screens follow in
+the master's own order and wording (`src/data/wizardTracks.ts`):
+
+| № | Label | Question | Answers |
+|---|---|---|---|
+| 2 | Диплом | Диплом бакалавра уже получен? | on hand · finishing |
+| 3 | Профиль | Магистратура по профилю диплома? | same or adjacent · changing · not known |
+| 4 | Направление | Какое направление магистратуры? | four fields · «Ещё выбираю» |
+| 5 | Средний балл | Какой средний балл диплома (GPA)? | four bands of the 4.0 scale, no captions |
+| 6 | Набор | Когда планируешь начать магистратуру? | the shared three |
+| 7 | Язык | Чем подтверждаешь язык обучения? | certificate · level without one · below B2 · a programme in Italian |
+| 8 | Бюджет | Какой бюджет на год учёбы и жизни? | the server's four, in her words |
+| 9 | Проживание | В какой стране живёшь постоянно? | the shared three |
+| 10 | Стипендия | the shared scholarship question | |
+
+A question may carry its own short label (`WizQuestion.label`): «Вопрос 2 из
+10 · Диплом». The line «Если тебе меньше 18, заполняй вместе с законным
+представителем» under the phone field is not shown to a master's applicant.
+The bachelor's track keeps its wording; only the level moved before the
+intake.
+
+**The plan.** A final-year student is told to settle the date of graduation
+and the exact name of the degree; the sentence about a school certificate
+stays only for an answer that is not a university's. The master's list of
+documents gains «CV и мотивационное письмо» (conditional: if the programme
+asks), after the four the local cabinet reads by their place.
+
+**The cabinet, both the paid and the guest one.**
+- The profile form (`PortalOnboarding.tsx`) asks the level first and shows
+  nothing else before that tap. A master's applicant is then asked «Диплом
+  бакалавра уже получен?» and «Какой бюджет на год учёбы и жизни?»; a school
+  answer left from the other level is neither shown marked nor sent. The
+  values sent are the server's own («Бакалавр», «Студент вуза КЗ»).
+- «И все данные потом через код ты и пополни»: someone who answered the
+  questionnaire on the site before buying is not asked from zero. An empty
+  profile opens with the level, the education and the budget this device
+  already holds (in the server's values), under the line «Отметили ответы из
+  твоей анкеты на сайте. Проверь их и поправь, если что-то изменилось».
+  Nothing is saved until «Построить маршрут»; a profile the server already
+  holds is never replaced by the device's answers.
+- The route comes from the server in a school leaver's words, and the server
+  is not changed. For a profile whose level is the master's the site shows
+  its own words for those steps (`trackRoadmap` in
+  `src/lib/portalNavigation.ts`): «Выполнить условия отбора программы»
+  instead of «…вступительный тест (TOLC, IMAT…)», «диплом и приложение»
+  instead of «аттестат или диплом»; the stage lines «Поступление» and
+  «Документы» have a master's wording (`stagePlain` in `plainWords.ts`). Ids,
+  order, availability, dates and completion are the server's.
+- Settings and the saved answers show «Диплом бакалавра: уже получен / будет
+  до начала магистратуры», not «Студент вуза КЗ» and «Путь 12 лет».
+
+**Left as it is.** The university cards and the comparison still show the
+bachelor's entrance test of each university («Экзамен»): the catalogue has
+no master's data per university, and none is invented. The glossary lines
+(«CIMEA оценивает твой аттестат или диплом») are shared.
+
+`design-master-cabinet-review` (new, guides group) walks the profile form
+(empty, and opened with the questionnaire's answers), the master's route and
+settings at 1440 and 390px with a server that answers
+in the school leaver's words; `admissions-review` and
+`admissions-browser-review` hold the order, the wording and the plan.

@@ -358,10 +358,15 @@ try {
       assert.equal(await page.locator('[data-plan-question] img').count(),0,'Questionnaire content stays portrait-free');
       assert.equal(await page.locator('#document-check [data-vespi]').count(), 0, 'The document workbench uses a utility icon, preserving the single mascot anchor');
     }
-    await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
-    // The level is the second question since 23 Nov (the master's track);
-    // the baseline build still asks about the school second.
-    if (!baseline) await page.getByRole('button').filter({ hasText: 'Бакалавриат' }).click();
+    // The level is the first question since 23 Nov (the master's track); a
+    // baseline build asks it second, or not at all.
+    if (baseline) {
+      await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
+      if (await page.getByRole('heading', { name: 'Куда поступаешь?', exact: true }).count()) await page.getByRole('button').filter({ hasText: 'Бакалавриат' }).click();
+    } else {
+      await page.getByRole('button').filter({ hasText: 'Бакалавриат' }).click();
+      await page.getByRole('button').filter({ hasText: 'Осенью 2027' }).click();
+    }
     if (!baseline) {
       const explanation = page.locator('[data-vespi-question-reason]');
       assert(await explanation.isVisible(), 'Each question gives a short reason');

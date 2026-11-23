@@ -52,10 +52,17 @@ try {
   const {wizardFor, wizardAnswers} = require(join(temporary, 'data/wizardTracks.js'));
   const masterQuestions = wizardFor({goal:'Магистратура'});
   const master = overrides => buildPlan({...Object.fromEntries(masterQuestions.map(q => [q.id, q.opts[0].v])), goal:'Магистратура', ...overrides});
-  assert.equal(WIZ[1].id, 'goal', 'The level is asked before the school');
+  // The same evening, on the first version: «если когда человек в вопросе
+  // первоначально нажимает на магистратуру, ты должен понять, что это уже
+  // магистратура… не должны быть такие детского формата вопросы».
+  assert.equal(WIZ[0].id, 'goal', 'The level is the first question');
   assert.equal(wizardFor({goal:'Бакалавриат'}), WIZ);
   assert.equal(wizardFor({}), WIZ);
-  assert.deepEqual(masterQuestions.map(q => q.id), ['intake','goal','education','major','grades','budget','field','lang','residence','dsuRegion'], 'A graduate is asked about the diploma and its profile, not about school or being 18');
+  assert.deepEqual(masterQuestions.map(q => q.id), ['goal','education','major','field','grades','intake','lang','budget','residence','dsuRegion'], 'A graduate is asked about the diploma and its profile, not about school or being 18');
+  // After the first tap nothing is worded for a school leaver.
+  const masterWords = masterQuestions.slice(1).map(q => [q.q, q.hint, q.why, q.label, ...q.opts.flatMap(o => [o.t, o.s])].join(' ')).join(' ');
+  assert.doesNotMatch(masterWords, /отличник|хорошист|бывает по-разному|подтягивать|семья может|поможем выбрать|школ|аттестат|\b18\b/i, 'The master\'s questions are not worded for a school leaver');
+  assert.deepEqual(masterQuestions.filter(q => WIZ.includes(q)).map(q => q.id), ['goal','dsuRegion'], 'Every other master\'s question is its own');
   assert.equal(masterQuestions.length, WIZ.length, 'Both tracks have ten questions');
   // The cabinet's server keeps education, goal and budget and accepts only its own values.
   const serverValues = {education:['11 классов','НИШ / 12 лет','Студент вуза КЗ','Бакалавр'], goal:['Бакалавриат','Магистратура'], budget:['Только со стипендией','До 1 млн ₸/год','До 3 млн ₸/год','Без ограничений']};
@@ -64,7 +71,11 @@ try {
   assert.deepEqual(wizardAnswers({goal:'Бакалавриат', education:'11 классов', major:'same'}), {goal:'Бакалавриат', education:'11 классов'});
   assert.match(master({}).steps[0].p, /120 кредитов/);
   assert.match(master({education:'Студент вуза КЗ'}).steps[0].summary, /до выпуска/);
-  assert.match(master({education:'Студент вуза КЗ'}).steps[0].p, /школьный аттестат его не заменяет/);
+  assert.match(master({education:'Студент вуза КЗ'}).steps[0].p, /дату выпуска/);
+  assert.doesNotMatch(text(master({education:'Студент вуза КЗ'})), /школьн/, 'A final-year student is not told about school');
+  // The master's own papers stand after the four the local cabinet reads by place.
+  assert.deepEqual(master({}).docs.slice(0, 5).map(d => d.n), ['Диплом бакалавра и приложение с оценками','Подтверждение языка и условий вуза','Банковские и спонсорские документы','Жильё и страховка','CV и мотивационное письмо']);
+  assert(!plan({}).docs.some(d => /CV/.test(d.n)), 'A school leaver\'s list has no CV');
   assert(master({major:'change'}).steps.some(s => s.t === 'Сверь предметы диплома с программой'));
   assert(!master({major:'same'}).steps.some(s => s.t === 'Сверь предметы диплома с программой'));
   assert(master({}).steps.some(s => s.t === 'Выбери программу и узнай, как она отбирает'));

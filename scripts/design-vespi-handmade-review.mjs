@@ -85,7 +85,10 @@ try {
       assert.deepEqual(calls,[],'Choosing file does not start checking');
       await form.getByRole('button',{name:'Проверить документ',exact:true}).click();await form.locator('[data-document-operation=checking]').waitFor();
       assert(await form.locator('[data-document-operation=checking]').isVisible());
-      finishCheck();await page.waitForFunction(()=>!document.querySelector('[data-document-operation=checking]'));assert.deepEqual(calls,['check','save']);
+      // The save is sent after the check's answer is read: wait for it, so the
+      // count is read once both calls are made (the review lost that race on a busy machine).
+      const saved=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/portal/TEST-01/doc');
+      finishCheck();await page.waitForFunction(()=>!document.querySelector('[data-document-operation=checking]'));await saved;assert.deepEqual(calls,['check','save']);
       assert.match(await report.innerText(),/Нужно уточнить/,'Acknowledging a saved report never changes its verdict');
       assert.deepEqual(await summary(page),progress,'Saving clarification leaves completion unchanged');
       await layout(page,'saved '+width);

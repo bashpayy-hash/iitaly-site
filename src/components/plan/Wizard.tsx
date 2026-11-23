@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { WizAnswers, WizQuestion } from "@/data/wizard";
-import { wizardAnswers, wizardFor } from "@/data/wizardTracks";
+import { isMasterTrack, wizardAnswers, wizardFor } from "@/data/wizardTracks";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
@@ -210,7 +210,8 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
               <a href="/privacy" className="font-semibold text-crimson">
                 Как мы работаем с данными
               </a>
-              . Если тебе меньше 18, заполняй вместе с законным представителем.
+              .{/* A master's applicant is a graduate: the line for a minor is not hers. */}
+              {!isMasterTrack(answers) && " Если тебе меньше 18, заполняй вместе с законным представителем."}
             </p>
             </details>
           </>
@@ -298,7 +299,7 @@ export function WizStep({
   return (
     <div className={styles.question} data-tone={tone} data-plan-tile={question.id}>
       <div className={styles.questionHead} data-plan-question={question.id}>
-        <p className={styles.questionStep} data-plan-step>Вопрос {index + 1} из {total} · {STEP_TITLES[question.id] || question.q}</p>
+        <p className={styles.questionStep} data-plan-step>Вопрос {index + 1} из {total} · {question.label ?? STEP_TITLES[question.id] ?? question.q}</p>
         <h2>{question.q}</h2>
         {/* CRO audit (20 Nov): about 520 words across ten questions took the
             whole two minutes a cold visitor gives the site. One short line

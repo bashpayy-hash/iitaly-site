@@ -13,7 +13,7 @@ import { usePlanDraft } from "@/lib/usePlanDraft";
 import { buildLocalWorkspace, localWorkspaceScope, useLocalWorkspace } from "@/lib/localWorkspace";
 import { buildPlan } from "@/lib/planBuilder";
 import { documentOutcome } from "@/lib/portalDocument";
-import { portalPosition, taskReadOnlyReason, taskTitle } from "@/lib/portalNavigation";
+import { portalPosition, taskReadOnlyReason, taskTitle, trackRoadmap } from "@/lib/portalNavigation";
 import { DOC_TASKS } from "@/lib/portalMeta";
 import type { PortalDoc, PortalTask } from "@/lib/portalApi";
 import type { DocCheckResult } from "@/lib/checkDocument";
@@ -71,7 +71,8 @@ export function LocalWorkspace() {
   const travelSequence = useRef(0);
   const feedback = usePortalFeedback();
   const [storageError, setStorageError] = useState("");
-  const data = useMemo(() => buildLocalWorkspace(draft, local, reports), [draft, local, reports]);
+  // A master's applicant reads her own wording of the shared steps (portalNavigation.ts).
+  const data = useMemo(() => trackRoadmap(buildLocalWorkspace(draft, local, reports)), [draft, local, reports]);
   /* Стена доступа (owner, 5 Nov): анкета, выбор вузов и первый шаг маршрута
      открыты; остальные шаги видны по названию и дате, но инструкция,
      проверка и отметка «Готово» — за оплатой. Это только показ: в

@@ -302,7 +302,7 @@ try {
       }
       else if (route === '/plan') {
         assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'), '10');
-        assert(await page.getByRole('heading', {name: 'Когда хочешь начать учёбу?'}).isVisible());
+        assert(await page.getByRole('heading', {name: 'Куда поступаешь?'}).isVisible());
       } else {
         assert.match(await page.locator('main').innerText(), /Выбрать маршрут/);
         assert.match(await page.locator('main').innerText(), /2026/);

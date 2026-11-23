@@ -1,5 +1,6 @@
 import type { PortalData, PortalTask } from "@/lib/portalApi";
 import { DOC_TASKS } from "@/lib/portalMeta";
+import { isMasterProfile } from "@/lib/portalNavigation";
 import type { PortalStageKey } from "./portalStageArt";
 
 /* Простые слова для кабинета (owner, 5 Nov: «думай как человек, который
@@ -20,6 +21,17 @@ export const STAGE_PLAIN: Record<PortalStageKey, string> = {
   visa: "Получаешь студенческую визу и готовишься к переезду.",
   arrival: "Приезжаешь, оформляешь вид на жительство и устраиваешься.",
 };
+
+/* A master's applicant (owner, 23 Nov: «это уже серьезный человек, который
+   закончил или заканчивает бакалавр») reads her own line where the shared
+   one speaks of a school certificate and an entrance exam. */
+const STAGE_PLAIN_MASTER: Partial<Record<PortalStageKey, string>> = {
+  apply: "Узнаёшь, как программа отбирает в магистратуру, выполняешь её условия и подаёшь заявку.",
+  docs: "Готовишь диплом и приложение с оценками для Италии: апостиль, перевод и проверку.",
+};
+export function stagePlain(data: PortalData, key: PortalStageKey): string {
+  return (isMasterProfile(data) && STAGE_PLAIN_MASTER[key]) || STAGE_PLAIN[key];
+}
 
 type Term = { term: string; pattern: RegExp; plain: string };
 

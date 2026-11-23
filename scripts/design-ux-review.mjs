@@ -74,8 +74,8 @@ try {
     await page.waitForFunction(()=>!document.querySelector('input[type="file"]').disabled);
     await page.getByRole('link',{name:'Составить план',exact:true}).click();
     await page.waitForURL(/\/plan#questionnaire$/);
+    await page.getByRole('button').filter({hasText:'Бакалавриат'}).click(); // the level is the first question since 23 Nov
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
-    await page.getByRole('button').filter({hasText:'Бакалавриат'}).click(); // the level is the second question since 23 Nov
     await page.getByRole('button').filter({hasText:'11 классов'}).click();
     await visit('/guides');
     const search = page.getByLabel('Найти тему');
@@ -153,7 +153,7 @@ try {
     await page.getByRole('button',{name:'Начать заново',exact:true}).click();
     assert.equal(await page.evaluate(()=>Object.keys(JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')).answers).length),10,'Nothing is erased before the confirmation');
     await page.getByRole('button',{name:'Стереть',exact:true}).click();
-    assert.equal(await page.getByRole('button').filter({hasText:'Осенью 2027'}).getAttribute('aria-pressed'),'false');
+    assert.equal(await page.getByRole('button').filter({hasText:'Бакалавриат'}).getAttribute('aria-pressed'),'false');
     await page.goto(origin+'/check');
     // /check asks the service whether it is available on arrival; the picker unlocks after the answer.
     await page.waitForFunction(()=>document.querySelector('#document-check input[type="file"]')?.disabled===false);

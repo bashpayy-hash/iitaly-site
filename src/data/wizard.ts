@@ -11,28 +11,34 @@ export interface WizQuestion {
   /** The reason shown with the question, when a track's own differs from
    *  the shared one (components/plan/questionCopy.ts). */
   why?: string;
+  /** The short name in «Вопрос 2 из 10 · Диплом», when a track's own differs
+   *  from the shared one (components/plan/questionCopy.ts). */
+  label?: string;
   opts: WizOption[];
 }
 
 export const WIZ: WizQuestion[] = [
+  // 23 Nov 2026 (owner: «когда она нажала на магистратуру, дальше идут все
+  // равно вопросы, будто она школьница… сделать для магистратуры отдельный
+  // трек»; the same evening: «если когда человек в вопросе первоначально
+  // нажимает на магистратуру, ты должен понять, что это уже магистратура»).
+  // The level is the first question: from that tap a master's applicant is
+  // asked only her own questions (wizardTracks.ts), and each answer says
+  // whom it is for.
+  {
+    id: "goal",
+    q: "Куда поступаешь?",
+    opts: [
+      { v: "Бакалавриат", t: "Бакалавриат", s: "после школы или колледжа" },
+      { v: "Магистратура", t: "Магистратура", s: "диплом бакалавра есть или скоро будет" },
+    ],
+  },
   {
     id: "intake", q: "Когда хочешь начать учёбу?", hint: "Даты и справки привязаны к учебному году",
     opts: [
       { v: "2027/28", t: "Осенью 2027", s: "приём на часть программ уже начался" },
       { v: "2026/27", t: "В 2026/27", s: "проверим, какие сроки ещё доступны" },
       { v: "later", t: "Позже или пока не знаю", s: "без неподтверждённых будущих дат" },
-    ],
-  },
-  // 23 Nov 2026 (owner: «когда она нажала на магистратуру, дальше идут все
-  // равно вопросы, будто она школьница… сделать для магистратуры отдельный
-  // трек»). The level is asked second, before the school: a master's
-  // applicant then gets her own questions (wizardTracks.ts).
-  {
-    id: "goal",
-    q: "Куда поступаешь?",
-    opts: [
-      { v: "Бакалавриат", t: "Бакалавриат", s: "первое высшее" },
-      { v: "Магистратура", t: "Магистратура", s: "после диплома бакалавра" },
     ],
   },
   {

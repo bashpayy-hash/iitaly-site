@@ -1,10 +1,12 @@
 import type { PortalProfile } from "@/lib/portalApi";
 import { wizardFor } from "@/data/wizardTracks";
+import { masterDiploma } from "@/lib/portalNavigation";
 import styles from "./portal-step.module.css";
 
 export function SavedProfileAnswers({ profile, answers, onEdit }: { profile: PortalProfile; answers?: Record<string, string>; onEdit: () => void }) {
+  const diploma = masterDiploma(profile);
   const rows = answers ? wizardFor(answers).filter(question => answers[question.id]).map(question => [question.q, question.opts.find(option => option.v === answers[question.id])?.t || answers[question.id]]) : [
-    ["Этап учёбы", profile.education], ["Цель", profile.goal], ["Бюджет", profile.budget],
+    diploma ? ["Диплом бакалавра", diploma] : ["Этап учёбы", profile.education], ["Цель", profile.goal], ["Бюджет", profile.budget],
     ["Путь", profile.educationPath === "university_kz" ? "Год в вузе Казахстана" : profile.educationPath === "foundation" ? "Подготовительная программа" : undefined],
   ].filter((row): row is [string, string] => Boolean(row[1]));
   return <section data-saved-profile aria-label="Сохранённые ответы">

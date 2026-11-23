@@ -224,7 +224,8 @@ try {
       await dialog.waitFor({ state: 'hidden' });
     }
     await assessment.getByRole('button', { name: 'Изменить ответы', exact: true }).click();
-    assert.equal(await assessment.locator('[data-assessment-question]').getAttribute('data-assessment-question'), 'intake');
+    // The level is the first question since 23 Nov (the master's track).
+    assert.equal(await assessment.locator('[data-assessment-question]').getAttribute('data-assessment-question'), 'goal');
     assert.equal(await assessment.getByRole('radio').first().isChecked(), true, 'Returning to edit preserves supplied answers');
     for (let index = 0; index < 10; index++) {
       const id = await assessment.locator('[data-assessment-question]').getAttribute('data-assessment-question');

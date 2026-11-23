@@ -86,16 +86,18 @@ try {
     assert.equal(calls.length,0,'Example never calls AI or creates a review');
     await capture('workbench-example');
     await page.getByRole('link',{name:'Составить план',exact:true}).click();
+    // The level is the first question since 23 Nov (the master's track).
+    await page.getByRole('button').filter({hasText:'Бакалавриат'}).click();
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
     const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')));
-    assert.equal(stored.answers.intake,'2027/28');assert.equal(stored.step,1);
+    assert.equal(stored.answers.intake,'2027/28');assert.equal(stored.step,2);
     const peer=await context.newPage();await peer.goto(origin+'/portal',{waitUntil:'networkidle'});
     await peer.locator('[data-local-workspace]').waitFor();
     assert.match(await peer.locator('main').innerText(),/сентябрь 2027/,'Selected year appears in another tab');
     await peer.locator('[data-road-open]').click();
-    await peer.getByRole('heading',{name:'Куда поступаешь?',exact:true}).waitFor();
+    await peer.getByRole('heading',{name:'Что заканчиваешь?',exact:true}).waitFor();
     await peer.close();
-    for(const title of ['Бакалавриат','11 классов','4,7 и выше','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Пока не знаю']) {
+    for(const title of ['11 классов','4,7 и выше','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','Да, 18 или больше','В Казахстане','Пока не знаю']) {
       const button=page.locator('[data-plan-wizard] button').filter({hasText:title});
       await button.click();
     }

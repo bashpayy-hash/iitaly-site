@@ -7,7 +7,7 @@ import { portalProgress, portalProgressGroups, portalTaskDone } from "@/lib/port
 import styles from "./portal-path.module.css";
 import { plainClick } from "./PortalStageLineup";
 import { stageKey, type PortalStageKey } from "./portalStageArt";
-import { STAGE_PLAIN } from "./plainWords";
+import { stagePlain } from "./plainWords";
 import { taskTitle } from "@/lib/portalNavigation";
 import { navigatePortal } from "./PortalPageNavigation";
 
@@ -406,7 +406,7 @@ export function PortalRoad({ data, current, stage, onSelectStage, travel, onTrav
           <a className={styles.unitHead} style={{ "--x": snake(station) } as CSSProperties} data-side={outside(station)} href={`/portal?stage=${encodeURIComponent(row.id)}`} data-road-stage={row.id} data-road-stage-state={state} aria-current={isCurrent ? "step" : undefined}
             onClick={event => { if (!plainClick(event) || !onSelectStage) return; event.preventDefault(); onSelectStage(row.id); }}>
             <span className={styles.thumb} data-road-point={state === "future" && !opened ? "station-later" : `station-${state}`}><StageMark stage={art} /></span>
-            <span className={styles.text}><strong>{title}</strong><span>{STAGE_PLAIN[key]}</span></span>
+            <span className={styles.text}><strong>{title}</strong><span>{stagePlain(data, key)}</span></span>
             <span className={styles.status} data-state={state} data-ahead={ahead || undefined}>
               <span className={styles.badge}>{status}</span>
               <small>{stageDone} из {row.tasks.length}</small>
