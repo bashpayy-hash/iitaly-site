@@ -57,7 +57,9 @@
 .controls[data-variant=row] .round { width:44px; height:44px; }
 @media (hover: hover) and (pointer: fine) { .round:hover:not(:disabled) { background:#4A4038; } }
 .round:disabled { opacity:.35; cursor:default; }
-.dot:focus-visible,.round:focus-visible,.track:focus-visible { outline:2px solid #FAF6EE; outline-offset:2px; }
+/* Named through the carousel (23 Nov): a page shell's own ring for buttons
+   outranked the plain class, and on the dark band it was a dark ring. */
+.carousel .dot:focus-visible,.carousel .round:focus-visible,.carousel .track:focus-visible { outline:2px solid #FAF6EE; outline-offset:2px; }
 
 /* Fit (owner, 3 Nov: «всё должно перераспределяться по всей длине в
    зависимости от масштаба», nothing cut halfway): whole cards share the
@@ -84,12 +86,17 @@
 /* On paper (topic step row): the same controls in warm greys. */
 .carousel[data-tone=light] .round { background:#E8E1D5; color:#241F1C; }
 @media (hover: hover) and (pointer: fine) { .carousel[data-tone=light] .round:hover:not(:disabled) { background:#DCD3C3; } }
-.carousel[data-tone=light] :is(.dot,.round,.track):focus-visible { outline-color:#A33421; }
+.carousel[data-tone=light] :is(.dot,.round,.track):focus-visible,.carousel[data-tone=light] .dot:focus-visible,.carousel[data-tone=light] .round:focus-visible,.carousel[data-tone=light] .track:focus-visible { outline-color:#A33421; }
 
 @media(max-width:760px) {
   .track { --bleed-start:20px; column-gap:12px; }
   .controls { margin-top:28px; }
 }
+/* Under a finger the strip of dots only shows the place: the cards are
+   swiped. A dozen dots stand 14px apart on a phone, so a thumb landed on the
+   neighbour (noted on 22 Nov; taste-skill's tap-size on 23 Nov). A mouse and
+   the keyboard still choose a card by its dot. */
+@media (pointer: coarse) { .dot { pointer-events:none; } }
 @media(max-width:480px) {
   .dots { padding:0 8px; }
   .dot { width:14px; }

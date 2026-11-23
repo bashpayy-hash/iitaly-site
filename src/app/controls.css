@@ -18,3 +18,15 @@ select {
   background-size: 12px 8px !important;
   padding-right: 36px !important;
 }
+
+/* The keyboard's focus ring has its colour again.
+   globals.css draws the ring of every focused control in var(--color-rosso).
+   That name left the theme when the site's reds became one, and a declaration
+   whose variable does not exist is dropped whole: the rule gave no ring at
+   all. Whatever had no ring of its own lost it: the chat button, the cities
+   of the universities' map, links outside the marketing surface. Found on
+   23 Nov by running the site through taste-skill's checker (owner: «прогони
+   через этот плагин»), which reported «it shows no change when focused».
+   The name gets the site's accent, which stands at least 3.4:1 off every
+   ground of the site, paper and dark alike. */
+:root { --color-rosso: #E63946; }
