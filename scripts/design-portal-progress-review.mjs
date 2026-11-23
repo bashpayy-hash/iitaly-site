@@ -117,11 +117,17 @@ async function railContract(page,data,compact){
   for(const scene of await road(page).locator('[data-road-scenery]').all()){
     assert.equal(await scene.getAttribute('aria-hidden'),'true','Scenery is decorative');
     assert.equal(await scene.locator('a,button,[tabindex]').count(),0,'Scenery is never a control');
-    assert.match(await scene.locator('img').getAttribute('src'),/^\/illustrations\/scenery\/[a-z-]+-280\.webp$/,'Scenery comes from the landmark set');
+    // 23 Nov: a panorama (the first piece, Vespi on the map of Italy) is drawn from 560 and 1120px files.
+    const shape=await scene.getAttribute('data-scenery-shape');
+    assert.match(await scene.locator('img').getAttribute('src'),shape==='panorama'?/^\/illustrations\/scenery\/[a-z-]+-560\.webp$/:/^\/illustrations\/scenery\/[a-z-]+-280\.webp$/,'Scenery comes from the landmark set');
     assert.equal(await scene.locator('img').getAttribute('alt'),'','Scenery has empty alt text');
   }
   // Owner, 6 Nov (night): conceptual stage icons in the cabinet, physical objects in the guides.
-  for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+-(128|256)\.webp$/,'Stage rows use the conceptual icon set');
+  // Owner, 23 Nov: «вот этих, что в кругляшках milestones, делай тоже мозаичными» — the same
+  // ideas as round mosaic medallions that fill the disc inside its rim.
+  for (const src of await road(page).locator('img[data-stage-object]').evaluateAll(els=>els.map(el=>new URL(el.currentSrc||el.src).pathname))) assert.match(src,/^\/illustrations\/stages\/[a-z0-9]+-mosaic-(128|256)\.webp$/,'Stage rows use the mosaic medallions');
+  for (const fit of await road(page).locator('[data-road-stage] img[data-stage-mark]').evaluateAll(els=>els.map(el=>{const img=el.getBoundingClientRect(),disc=el.parentElement.getBoundingClientRect();return {img:img.width,disc:disc.width,dx:Math.abs(img.left+img.width/2-disc.left-disc.width/2)};})))
+    assert(fit.img>=fit.disc-10&&fit.img<=fit.disc-6&&fit.dx<1,`A stage medallion fills its disc inside the rim (${JSON.stringify(fit)})`);
   assert.equal(await road(page).locator('img:not([data-road-scenery-art])').evaluateAll(nodes=>nodes.filter(n=>/mascot|vespi/i.test(n.getAttribute('src')||'')).length),0);
   for(const link of await road(page).locator('[data-road-stage]').all()){
     const id=await link.getAttribute('data-road-stage'),stage=data.roadmap.find(row=>row.id===id);
