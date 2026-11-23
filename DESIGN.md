@@ -3781,3 +3781,43 @@ with Italian terms; the WhatsApp number (it is the real contact).
 
 `design-keyboard-touch-review` (new, guides group) holds 1–5 at 1440 and
 390px, the chips at 320px too; it fails on the build before this pass.
+
+## The cabinet road: mosaic medallions in the stage circles, Vespi on the map of Italy · 23 November 2026 (evening)
+
+Owner, with a screenshot of the road at «Выбор программы»: «вот этих, что в
+кругляшках milestones, делай, короче, тоже мозаичными. И вот та самая первая
+иллюстрация, где Веспи смотрит на карту, она слишком простая. Вот играй с тем
+свободным пространством и сделай ее более такой, ну, в целом итальянской, и в
+целом более креативной… so it would look so much more immersive.»
+
+**The stage circles.** The seven stage things (map and compass, books and
+diploma, clipped papers, postbox, coins with a sprout, passport, house and
+key) were soft 3D objects at 70% of the disc. They are round floor medallions
+of the Galleria mosaic now, the site's cartouche style, all in one frame:
+frame B of the cartouches (a cream disc in a thin ochre ring, a slim laurel
+ring with terracotta berries, an ochre rosette above, a terracotta bow below),
+the stage's thing in the middle. Round, the medallion fills the disc 4px
+inside its rim, so the rim still says done (green), current (terracotta) or
+ahead (sand). Of three frames tried, a band of running waves left the emblem
+a third of the disc at 64px and an ochre disc in a dotted blue ring was loud
+beside the road's calm circles. Files `stages/<stage>-mosaic-128/256.webp`,
+9–30 KB each. The guide roads keep their studio objects.
+
+**The first scene.** Vespi by the scooter with a map (280×200) became a
+panorama of the stage itself: Vespi kneels at the edge of a huge unfolded map
+with a pencil, and the Italy of the road rises out of the paper (felt Tuscan
+hills and cypresses, the Colosseum, Florence's dome, a Venetian bridge over a
+resin canal, a leaning tower), a dotted red route running from his pencil
+across it, as the road's own dotted line runs on. It takes the empty half of
+the first bend: up to 560×246 on a wide screen (box 260px high, centred on the
+gap between the circles), 300px wide on a phone in a strip of its own. Of four
+concepts drawn, the other three were landscapes (a white road to a hill town,
+a belvedere with a lemon tree, a cypress avenue), as the old piece was; their
+jobs are in `design/illustrations/road-2026-11-23.json`. 51 KB at 560px, 165 KB
+at 1120 for sharp screens, lazy; the grey copy for a closed road is drawn with
+the recipe of 7 Nov. The guide road and the universities comparison keep the
+old `vespi-map`.
+
+`design-portal-progress-review` holds the medallion files, that each fills its
+disc inside the rim, the panorama's files, and that nothing on the road
+overlaps.

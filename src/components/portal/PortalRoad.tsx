@@ -20,9 +20,15 @@ const PREVIEW_ART: PortalStageKey[] = ["start", "docs", "apply", "dsu", "visa", 
    на книгах, листы со скрепкой и галочкой, конверт в почтовом ящике, монеты
    с ростком, паспорт со штампом, ключ с домиком. Мягкий 3D, тёплая палитра,
    прозрачный фон без ореола (design/illustrations/objects-2026-11-06.json).
-   В гайдах остаются физические студийные предметы. */
+   В гайдах остаются физические студийные предметы.
+   Owner, 23 Nov, on the cabinet road: «вот этих, что в кругляшках
+   milestones, делай тоже мозаичными». The same ideas are laid as round
+   floor medallions of the Galleria mosaic, the site's cartouche style: one
+   laurel frame for all seven (frame B of the cartouches), the stage's thing
+   in the middle (design/illustrations/road-2026-11-23.json). Round, they
+   fill the disc and the disc's rim still tells the state. */
 function StageMark({ stage, locked = false }: { stage: PortalStageKey; locked?: boolean }) {
-  return <img src={`/illustrations/stages/${stage}-128.webp`} srcSet={`/illustrations/stages/${stage}-128.webp 128w, /illustrations/stages/${stage}-256.webp 256w`} sizes="56px"
+  return <img src={`/illustrations/stages/${stage}-mosaic-128.webp`} srcSet={`/illustrations/stages/${stage}-mosaic-128.webp 128w, /illustrations/stages/${stage}-mosaic-256.webp 256w`} sizes="64px"
     width={128} height={128} alt="" aria-hidden="true" data-stage-object={stage} data-stage-mark={stage} data-stage-locked={locked || undefined} loading="lazy" decoding="async" draggable={false} />;
 }
 
@@ -142,7 +148,13 @@ function useRouteLine(wrap: RefObject<HTMLDivElement | null>, line: RefObject<SV
    пути — в цвете, ещё закрытая — серая, как и сама дорога. Картинки
    декоративные: не ссылки, не в кружках шагов, скрыты от чтения с экрана. */
 const SCENERY = [
-  { name: "vespi-map", width: 560, height: 459 },
+  // Owner, 23 Nov, on the first piece (Vespi with a map by the scooter): «она
+  // слишком простая… играй с тем свободным пространством… более итальянской…
+  // более креативной… immersive». Vespi kneels on a huge unfolded map and the
+  // Italy of the road rises out of the paper (the Colosseum, Florence's dome,
+  // the Rialto, Pisa), a dotted red route starting at his pencil. A panorama:
+  // it takes the empty half of the first stage's bend, up to 560px wide.
+  { name: "vespi-atlas", width: 1120, height: 493 },
   { name: "colosseum", width: 560, height: 401 },
   { name: "vespi-trevi", width: 560, height: 448 },
   { name: "duomo", width: 560, height: 439 },
@@ -179,10 +191,13 @@ function Scenery({ place, reached, as: Tag = "li" }: { place: SceneryPlace; reac
   // Beside closed road the piece is a pre-rendered warm grey (`-grey` files,
   // same frame), not a CSS filter: nothing is recoloured per frame.
   const file = reached ? name : `${name}-grey`;
+  // A panorama (twice as wide as tall) is drawn twice as large: files of 560
+  // and 1120px instead of 280 and 560.
+  const panorama = width >= height * 2, [small, large] = panorama ? [560, 1120] : [280, 560];
   return <Tag className={styles.scenery} aria-hidden="true" data-road-scenery={name} data-side={place.side} data-scenery-state={reached ? "reached" : "ahead"}
-    data-scenery-shape={height > width ? "tall" : "wide"}>
-    <img src={`/illustrations/scenery/${file}-280.webp`} srcSet={`/illustrations/scenery/${file}-280.webp 280w, /illustrations/scenery/${file}-560.webp 560w`}
-      sizes="(max-width: 640px) 168px, 260px" width={width} height={height} alt="" loading="lazy" decoding="async" draggable={false} data-road-scenery-art />
+    data-scenery-shape={height > width ? "tall" : panorama ? "panorama" : "wide"}>
+    <img src={`/illustrations/scenery/${file}-${small}.webp`} srcSet={`/illustrations/scenery/${file}-${small}.webp ${small}w, /illustrations/scenery/${file}-${large}.webp ${large}w`}
+      sizes={panorama ? "(max-width: 640px) 300px, 560px" : "(max-width: 640px) 168px, 260px"} width={width} height={height} alt="" loading="lazy" decoding="async" draggable={false} data-road-scenery-art />
   </Tag>;
 }
 

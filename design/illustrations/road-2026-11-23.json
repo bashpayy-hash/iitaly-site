@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-23",
+  "request": "Owner, 23 Nov, a screenshot of the cabinet road (/portal, «Выбор программы»): «вот этих, что в кругляшках milestones, делай, короче, тоже мозаичными. И вот та самая первая иллюстрация, где Веспи смотрит на карту, она слишком простая. Вот играй с тем свободным пространством и сделай ее более такой, ну, в целом итальянской, и в целом более креативной… playing with the open space there, so it would look so much more immersive.»",
+  "use": {
+    "medallions": "PortalRoad stage circles (StageMark): public/illustrations/stages/<stage>-mosaic-128.webp and -256.webp, shown filling the disc 4px inside its rim. The guide roads keep the studio objects (<stage>-128.webp).",
+    "vespi-atlas": "PortalRoad, the first roadside scene (in place of vespi-map), a panorama up to 560px wide. The guide road and the universities comparison keep vespi-map."
+  },
+  "model": "Higgsfield gpt_image_2_6, quality high, transparent background",
+  "processing": "design/illustrations/source/scenery/road-2026-11-23.py",
+  "vespi-atlas": {
+    "job": "aa62574f-9421-43eb-8929-7489810854d5",
+    "settings": "2k, 16:9",
+    "references": ["ab833075-dfc7-4e28-824c-7e299aad556c (Vespi, handmade-v1 welcome)", "a448f972-9035-4be6-b0ca-1f0f7800f1a5", "0f6d7ac4-4e85-4761-9765-753f578eec1e", "ee72350f-7627-4ed2-98ea-eb9bf1aef589 (the old vespi-map, for the series' look)"],
+    "scene": "Vespi kneels at the edge of a huge unfolded paper map with a pencil; the Italy of the road rises out of the paper as a handmade model (felt Tuscan hills and cypresses, a clay Colosseum, Florence's dome, a Venetian bridge over a resin canal, a leaning tower, olive trees) and a dotted terracotta route runs from his pencil across it; his red scooter at the map's left edge.",
+    "files": ["public/illustrations/scenery/vespi-atlas-560.webp", "public/illustrations/scenery/vespi-atlas-1120.webp", "public/illustrations/scenery/vespi-atlas-grey-560.webp", "public/illustrations/scenery/vespi-atlas-grey-1120.webp", "design/illustrations/source/scenery/vespi-atlas.webp"],
+    "other_concepts": [
+      {"job": "e8fa9371-a77f-4a96-ba32-9b71019b13c9", "scene": "Tuscan crossroads: Vespi with the map by the scooter, a white road winding through cypresses to a hill town, a blank signpost"},
+      {"job": "71745a5a-7d42-43ac-8cd9-fc2efe13ded0", "scene": "a hilltop belvedere: Vespi leans on a stone balustrade with the map, a lemon tree in a pot, the valley below"},
+      {"job": "bb26c7bf-7751-4a66-b995-d46ce1e83d48", "scene": "a cypress avenue: Vespi on the scooter with the map on the handlebars at the start of the road"}
+    ],
+    "why": "The map that becomes Italy is the stage itself (choosing where to study) and draws the road's own dotted route; the other three are landscapes, as the old piece was."
+  },
+  "medallions": {
+    "settings": "1k, 1:1",
+    "frame": "frame B of the cartouches (cartouche-2026-11-19.json): a cream disc in a thin ochre ring, a slim laurel ring with terracotta berries, an ochre rosette above, a terracotta bow below",
+    "trials": [
+      {"job": "44f29b98-15d7-4eb9-9a95-5e9183373d4e", "frame": "laurel wreath, after exemplar 43918d71 and the route-map cartouche 310138f0", "kept": "as the reference of the set"},
+      {"job": "ddd6bf43-e85d-4858-b366-997d8beb2abe", "frame": "running-wave band with a shell and acanthus", "why_not": "the emblem was a third of the disc at 64px"},
+      {"job": "4f543b1b-6eaa-465a-8b28-24990f8b7d7c", "frame": "ochre disc in a dotted slate-blue ring", "why_not": "loud yellow beside the road's calm discs"}
+    ],
+    "items": [
+      {"stage": "start", "job": "e6f56d99-69dc-483d-ba25-b32bd7c2cb10", "motif": "an unfolded map with a dotted route to a pin, and a compass", "rejected": [{"job": "17e33ee7-a9aa-4288-a547-7244668c0b20", "why": "the map ran over the laurel ring"}]},
+      {"stage": "education12", "job": "f3731576-5efe-46d4-8e09-3dd8ba6eff63", "motif": "two stacked books with a rolled diploma tied with a ribbon"},
+      {"stage": "docs", "job": "36810450-fe30-445f-a49d-be20866a734d", "motif": "two sheets clipped together, a green check badge"},
+      {"stage": "apply", "job": "e693f89f-77ba-48be-aa2c-5c00e2e57ad0", "motif": "a green postbox with a sealed envelope in its slot"},
+      {"stage": "dsu", "job": "473273f5-480b-4dd4-9ac5-ec3c45e56173", "motif": "a stack of gold coins with a sprout"},
+      {"stage": "visa", "job": "9ad5f0f2-7f49-44d9-93e1-e2d9b28798df", "motif": "a navy passport with a round stamp and a check"},
+      {"stage": "arrival", "job": "1337353d-440e-4254-9780-f172f931ab97", "motif": "a small house with a terracotta roof and a key on a ring"}
+    ]
+  }
+}
