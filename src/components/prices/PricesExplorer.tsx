@@ -18,8 +18,6 @@ import disclosure from "@/components/ui/disclosure.module.css";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
 import { PhoneFold } from "@/components/ui/PhoneFold";
-import { TestOfferCard } from "@/components/access/TestOffer";
-import { TEST_OFFER_ON_SITE, TEST_PRODUCT } from "@/components/access/testOffer";
 
 const PLAN_STEPS = `${buildPlan({ dsuRegion: "none", age: "adult" }).steps.length}–${buildPlan({ dsuRegion: "other", budget: "Только со стипендией", age: "minor" }).steps.length}`;
 
@@ -237,10 +235,6 @@ export function PricesExplorer() {
               </button>
             ))}
           </div>
-
-          {/* The friends' test purchase on the site itself (owner, 22 Nov: «сам
-              сайт неси, а не отдельной ссылкой»). */}
-          {TEST_OFFER_ON_SITE && <TestOfferCard onBuy={() => openBuy(TEST_PRODUCT.name, TEST_PRODUCT.price)} />}
         </div>
       </section>
 

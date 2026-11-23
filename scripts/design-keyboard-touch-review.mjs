@@ -13,8 +13,9 @@ import { extname, resolve, sep } from 'node:path';
 //   2. On the dark band of /guides the ring of «Подробнее» was the page
 //      shell's dark one, 1.11:1 off the ground.
 //   3. Five filter chips of /universities broke into three lines on a phone.
-//   4. Two links stood lower than a thumb (44px), a dozen carousel dots stood
-//      14px apart under it, and the «Тест» badge read 4.1:1.
+//   4. Two links stood lower than a thumb (44px) and a dozen carousel dots stood
+//      14px apart under it. (The «Тест» badge it also held, 4.1:1, left the
+//      site with the friends' test purchase on 23 Nov, at the launch.)
 const require = createRequire(import.meta.url);
 const { chromium } = require(resolve(process.env.REVIEW_TOOLS, 'playwright'));
 const root = resolve('out'), output = resolve('design-review/keyboard-touch');
@@ -76,7 +77,7 @@ try {
 
     // 1. The global ring has its colour on every shell of the site, and a
     //    control with no ring of its own shows it.
-    for (const path of ['/', '/prices', '/universities', '/guides', '/portal', '/test']) {
+    for (const path of ['/', '/prices', '/universities', '/guides', '/portal']) {
       await visit(path);
       assert.notEqual(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-rosso').trim()), '', `${path} ${width}: the focus ring's colour is defined`);
     }
@@ -108,12 +109,10 @@ try {
     const dot = page.locator('[data-carousel-dot]').first();
     if (await dot.count()) assert.equal(await dot.evaluate(node => getComputedStyle(node).pointerEvents), phone ? 'none' : 'auto', `/guides ${width}: the carousel dots ${phone ? 'do not take a tap' : 'take a click'}`);
 
-    // 4. The «Тест» badge reads; on a phone both links of the purchase stand as tall as a thumb.
+    // 4. On a phone the link under the purchase stands as tall as a thumb.
     await visit('/prices');
-    const badge = await page.locator('[data-test-offer-card] [data-test-badge]').evaluate(node => { const style = getComputedStyle(node); return { ink: style.color, ground: style.backgroundColor }; });
-    assert(contrast(badge.ink, badge.ground) >= 4.5, `/prices ${width}: the «Тест» badge reads ${contrast(badge.ink, badge.ground).toFixed(2)}:1, 4.5:1 needed`);
     if (phone) {
-      for (const [name, selector] of [['«Подробнее о тесте»', '[data-test-offer-card] a[href="/test"]'], ['the WhatsApp link under the purchase', '[data-pricing-refund] a']]) {
+      for (const [name, selector] of [['the WhatsApp link under the purchase', '[data-pricing-refund] a']]) {
         const height = await page.locator(selector).first().evaluate(node => node.getBoundingClientRect().height);
         assert(height >= 44, `/prices ${width}: ${name} is ${Math.round(height)}px tall, 44px needed`);
       }

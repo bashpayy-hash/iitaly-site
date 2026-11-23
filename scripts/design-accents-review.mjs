@@ -292,6 +292,11 @@ try {
     for (const route of ['/guides', '/plan', '/prices']) {
       await settle(page, 4176, route);
       const beforeText = await textInventory(page);
+      // Owner 2026-11-23 («убери теперь опцию для друзей, сайт запустили!!»):
+      // the friends' 667 ₸ test card on /prices is gone, word for word.
+      if (route === '/prices' && await page.locator('[data-test-offer-card]').count()) {
+        for (const value of await textInventory(page, '[data-test-offer-card]')) { const index = beforeText.indexOf(value); if (index >= 0) beforeText.splice(index, 1); }
+      }
       await settle(page, 4175, route);
       const afterText = await textInventory(page);
       if (route === '/prices') {
