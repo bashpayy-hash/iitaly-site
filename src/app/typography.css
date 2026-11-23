@@ -20,3 +20,10 @@
   :where(h1, h2, h3, h4, h5, h6) { text-wrap: balance; }
   :where(p, li, dd, dt, blockquote, figcaption, summary, td, th, caption) { text-wrap: pretty; }
 }
+
+/* A phone turned on its side keeps the type it was given.
+   mobile-native baseline (23 Nov, owner: «используй любой дизайн скилл при
+   надобности»): Safari on an iPhone enlarges text in landscape unless told
+   not to, and blocks of one size come out in two. The size the user set in
+   the system still applies; zoom is untouched. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }

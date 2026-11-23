@@ -3679,3 +3679,37 @@ another on the page.
 
 Not touched: the chat button. It also stays on the screen while the page
 scrolls; on /prices it carries its label by the owner's request of 18 Oct.
+
+## The phone, second layer: one telling, one tinted answer, a long paragraph folded · 23 November 2026 (later)
+
+Owner, after the first phone pass: «Используй любой дизайн скилл при
+надобности». Two were read against the phone pages: mobile-native (what
+makes a site feel like a site on a phone) and impeccable's distill (remove
+what does not earn its place).
+
+mobile-native: the baseline was already in place from 5 Nov (no tap
+highlight, no ungated hover in any stylesheet, no double-tap wait, 16px
+fields, `svh` heights). One line was missing: a phone turned on its side
+enlarged some text and not other (`text-size-adjust`, now in
+typography.css).
+
+distill, on /prices, the fullest page on a phone (65–90 words a screen):
+
+- **One telling.** «Проверяй снова без доплаты» was said five times on the
+  page: the fact «Без лимита», the comparison's «Сразу и сколько угодно
+  раз», the price card, the package list, and the note «Можно исправить и
+  проверить снова», a card inside the package card. On a phone the note is
+  not shown.
+- **One tinted answer in a comparison row.** The first pass gave both
+  answers a box; two boxes in every row were cards inside the card. The
+  agency's answer is plain text now, IITALY's stands on its warm tint.
+- **A long paragraph folds.** «Что система делает сама, а где решаешь ты»
+  ran eleven lines on a phone; four are shown and «Показать полностью»
+  opens the rest (`ui/PhoneFold`). The words are always in the page, so a
+  screen reader and a search read all of them; from the tablet up nothing is
+  folded.
+
+Left as it is, on purpose: the refund line under the price (its conditions
+were added on 22 Nov so that «Возврат 7 дней» is not a bare promise), the
+package list, the guarantees. `design-text-review` holds the three changes
+at 390px and their absence at 820 and 1440px.

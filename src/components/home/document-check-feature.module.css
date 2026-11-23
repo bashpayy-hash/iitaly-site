@@ -104,7 +104,7 @@
    типа Италии, там до конца непонятно, типа что да как». Now the names of the
    two sides stand once at the top, as in the wide table; each row is its
    question across the card and the two answers side by side under it, the
-   agency's quiet on stone, IITALY's dark on a warm tint. The same words.
+   agency's quiet, IITALY's dark on a warm tint. The same words.
    Up to 599px: at 560–599px the three-column table left its agency column
    4px short of «Сопровождение —». */
 @media (max-width: 599px) {
@@ -118,7 +118,8 @@
   .compare tbody tr:last-child { padding-bottom: 0; }
   .compare tbody th { grid-column: 1 / -1; padding: 0 4px; border-top: 0; font-size: 15px; line-height: 1.35; }
   .compare tbody td { padding: 10px; border-top: 0; border-radius: 12px; line-height: 1.4; }
-  .compare tbody td:first-of-type { background: #F3EEE6; }
+  /* One tinted answer in a row, IITALY's; the agency's is plain text beside
+     it (two boxes in every row were cards inside the card). */
   .compare tbody td:last-child { background: #FBEBDD; font-weight: 600; }
 }
 /* Under 400px two answers side by side leave about 120px each, less than

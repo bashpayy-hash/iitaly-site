@@ -344,6 +344,10 @@
      stops at the top of the screen. */
   .header { position: relative; }
   .surface { --header-stick: 0px; }
+  /* A block a phone does not show because the page says the same elsewhere
+     (the component's own display rule is unlayered, so a utility class
+     cannot hide it). */
+  .notOnPhone { display: none !important; }
   .surface [id], .surface [tabindex="-1"], .anchorTarget { scroll-margin-top: 16px; }
   .navInner { height: 60px; padding: 0 20px; }
   .desktopNav, .portalLink { display: none; }
