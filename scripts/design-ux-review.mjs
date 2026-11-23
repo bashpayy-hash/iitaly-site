@@ -75,6 +75,7 @@ try {
     await page.getByRole('link',{name:'Составить план',exact:true}).click();
     await page.waitForURL(/\/plan#questionnaire$/);
     await page.getByRole('button').filter({hasText:'Осенью 2027'}).click();
+    await page.getByRole('button').filter({hasText:'Бакалавриат'}).click(); // the level is the second question since 23 Nov
     await page.getByRole('button').filter({hasText:'11 классов'}).click();
     await visit('/guides');
     const search = page.getByLabel('Найти тему');
@@ -110,7 +111,8 @@ try {
     await page.getByRole('heading',{name:'Какой средний балл?'}).waitFor();
     await page.reload({waitUntil:'networkidle'});
     await page.getByRole('heading',{name:'Какой средний балл?'}).waitFor();
-    const choices=['4,7 и выше','Бакалавриат','Без стипендии будет сложно','Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
+    // The level was answered second, before the detour (the master's track, 23 Nov).
+    const choices=['4,7 и выше','Без стипендии будет сложно','Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     assert.equal(await page.getByRole('textbox',{name:'Номер телефона для WhatsApp'}).isVisible(),false,'Phone is optional disclosure');
     await page.getByText('Оставить номер для связи',{exact:true}).click();

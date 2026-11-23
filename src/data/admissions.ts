@@ -19,6 +19,12 @@ export const ADMISSION_SOURCES = {
   international: { label: "Universitaly · иностранные студенты", href: "https://www.universitaly.it/en/studenti-stranieri", scope: "Национальные визовые сроки · 2026/27 и 2027/28" },
   faq: { label: "Universitaly · разъяснения к процедуре", href: "https://universitaly-private.cineca.it/uploads/universitaly-pubblico/FAQ.pdf", scope: "Документы и специальные визовые случаи · 2026–2028" },
   qualifications: { label: "Universitaly · иностранные квалификации", href: "https://universitaly-private.cineca.it/uploads/universitaly-pubblico/Allegato_1-Circolare_2026_2027.pdf", scope: "Компенсация школьных лет и право доступа" },
+  // The master's track, 23 Nov 2026. These three pages were read through
+  // search results: their hosts were closed to the working environment that
+  // day. Open them and re-check when a review of the sources is next made.
+  system: { label: "МИД Италии · система высшего образования", href: "https://studyinitaly.esteri.it/Static/SistemaItaEducazione", scope: "Циклы, кредиты и доступ в докторантуру" },
+  curricular: { label: "CUN · доступ в магистратуру", href: "https://cun.mur.gov.it/sites/cun/files/2026-01/Guida_2026_2027.pdf", scope: "Требования программы к первому диплому и проверка подготовки; документ для вузов, на итальянском" },
+  gmat: { label: "Bocconi · GMAT и GRE для MSc", href: "https://www.unibocconi.it/en/applying-bocconi/master-science-and-ma-programs/application-and-admissions/gmat-and-gre-test", scope: "Правило одного вуза; у других программ свои условия" },
   kazakhstan: { label: "Ca’ Foscari · квалификации Казахстана", href: "https://www.unive.it/pag/41327/", scope: "Правила конкретного университета; не гарантия приёма в другие вузы" },
   apostille: { label: "Казахстан · апостилирование образования", href: "https://www.gov.kz/situations/110/intro?lang=ru", scope: "Госуслуга Казахстана; выбрать услугу для своего уровня образования" },
   translation: { label: "Посольство в Астане · переводы", href: "https://ambastana.esteri.it/it/servizi-consolari-e-visti/servizi-per-il-cittadino-italiano/traduzione-e-legalizzazione-dei-documenti/", scope: "Обновление 30.09.2026 · Казахстан и Кыргызстан" },

@@ -139,7 +139,7 @@ npx serve out -l 4321  # посмотреть ровно то, что увиди
 src/app/                   18 страниц:
   page.tsx                 /            кафе-hero с Веспи, плитки тем, FAQ
   universities/            /universities  карта, фильтры, сравнение (защищено)
-  plan/                    /plan        анкета плитками, вердикт, план
+  plan/                    /plan        анкета плитками (треки: бакалавриат, магистратура), вердикт, план
   prices/                  /prices
   portal/                  /portal      кабинет-дорога
   guides/                  /guides, stages/[stage], [topic], [topic]/[step],

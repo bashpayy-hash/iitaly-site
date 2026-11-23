@@ -10,8 +10,10 @@ type Cartouche = "diploma" | "folder" | "tests" | "doc-check" | "alarm" | "coins
 
 const RULES: { test: RegExp; label: string; art: Cartouche }[] = [
   { test: /магистратур|11-летн|NIS|IB \/ A-levels|колледж|год университета|квалификац/i, label: "Образование", art: "diploma" },
+  // The master's track (23 Nov): the diploma's subjects against the programme.
+  { test: /предметы диплома/i, label: "Профиль диплома", art: "tests" },
   { test: /DoV|CIMEA/, label: "Подтверждение документов", art: "folder" },
-  { test: /программу, тест и язык/i, label: "Программа", art: "tests" },
+  { test: /программу, тест и язык|программу и узнай/i, label: "Программа", art: "tests" },
   { test: /язык и академические/i, label: "Требования вуза", art: "doc-check" },
   { test: /календарь/i, label: "Сроки", art: "alarm" },
   { test: /DSU/, label: "Стипендия", art: "coins" },
@@ -30,7 +32,7 @@ const RULES: { test: RegExp; label: string; art: Cartouche }[] = [
    кабинете; порядок шагов задаёт planBuilder, этап лишь группирует подряд
    идущие шаги. */
 const PHASES: Record<string, string> = {
-  "Образование": "Документы", "Подтверждение документов": "Документы",
+  "Образование": "Документы", "Профиль диплома": "Документы", "Подтверждение документов": "Документы",
   "Программа": "Поступление", "Требования вуза": "Поступление", "Сроки": "Поступление",
   "Стипендия": "Стипендия DSU",
   "Статус в Италии": "Виза", "Консульство": "Виза", "Виза D": "Виза", "Финансы": "Виза", "Бюджет": "Виза", "До 18 лет": "Виза", "Призыв": "Виза",

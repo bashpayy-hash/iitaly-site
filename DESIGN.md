@@ -3821,3 +3821,55 @@ old `vespi-map`.
 `design-portal-progress-review` holds the medallion files, that each fills its
 disc inside the rim, the panorama's files, and that nothing on the road
 overlaps.
+
+## The questionnaire's second track: the master's · 23 November 2026 (evening)
+
+Owner: «что у нас там по магистратуре… подруга сказала, что типа, когда она
+нажала на магистратуру, дальше идут все равно вопросы, будто она школьница.
+Вот, тогда нужно сделать типа и для магистратуры, типа вот кларифайнуть, и
+сделать типа отдельный трек со всеми особенностями».
+
+**What there was.** The level was the fourth question. Before it the applicant
+had already said what school she finishes and what her marks are on the
+five-point scale; after it she was asked whether she will be 18. The plan
+had one master's step; the rest was the school route (CEnT-S, the 11-year
+school, Foundation).
+
+**The questionnaire.** The level is the second question. After «Магистратура»
+the ten questions are her own (`src/data/wizardTracks.ts`):
+
+| № | Bachelor's | Master's |
+|---|---|---|
+| 3 | Что заканчиваешь? (school, NIS, IB, college, a university year) | Диплом бакалавра уже есть? (on hand · still studying) |
+| 4 | Какой средний балл? (4,7 и выше…) | Магистратура по профилю твоего диплома? (same · changing · not sure) |
+| 5 | budget | Какой у тебя средний балл (GPA)? on the 4.0 scale |
+| 7 | Какое направление? | Какое направление магистратуры? (medicine: «на врача в Италии учатся шесть лет с первого курса») |
+| 8 | На момент отъезда тебе будет 18? | not asked |
+
+Both tracks have ten questions, so «10 вопросов» stays true everywhere. A
+changed level keeps the answers both tracks share and asks the rest again:
+a school answer does not stay in a master's draft. The tiles, pictures and
+the list «Твои ответы» are the same components; the new question has the
+`folder` cartouche.
+
+**The plan.** The master's route (`buildPlan`, branch `master`):
+«Проверь доступ в магистратуру» (Laurea Magistrale: two years, 120 credits;
+the university judges the diploma, the transcript and the subjects; a
+separate wording for someone still studying), «Сверь предметы диплома с
+программой» when the field changes, «Выбери программу и узнай, как она
+отбирает» (no school tests; Laurea Magistrale is not Master universitario;
+the six-year medical programme is entered from school), then the shared
+steps: DoV/CIMEA, language, calendar, DSU, visa, money, the draft, arrival.
+No minor's step, no Foundation. The first document is «Диплом бакалавра и
+приложение с оценками».
+
+**Sources.** Three were added (`system`, `curricular`, `gmat`). The official
+hosts were closed to the working environment that day, so they were read
+through search results; `NEXT_CHAT.md` asks to open and re-read them.
+
+**Not done, needs the owner:** the paid cabinet's route is built on the
+server and has no master's wording yet (`NEXT_CHAT.md`).
+
+`admissions-review` holds the two tracks, the values the server accepts and
+the master's plan; `admissions-browser-review` walks the master's
+questionnaire at 1440, 390 and 320px.

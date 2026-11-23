@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { useUniversityChoice } from "@/lib/useUniversityChoice";
 import { WIZ, type WizAnswers } from "@/data/wizard";
+import { wizardFor } from "@/data/wizardTracks";
 import { buildPlan } from "@/lib/planBuilder";
 import { EMPTY_PLAN_DRAFT, usePlanDraft } from "@/lib/usePlanDraft";
 import { Wizard } from "./Wizard";
@@ -104,7 +105,11 @@ export function PlanExplorer() {
   function handleDone(answers: WizAnswers) {
     setArrived(true);
     setReviewing(false);
-    updateDraft({ answers, step: WIZ.length, complete: true });
+    // A level changed in the list of answers leads through the other track's
+    // questions and ends here: the address forgets the list as well.
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("answers")) { url.searchParams.delete("answers"); window.history.replaceState(window.history.state, "", url); }
+    updateDraft({ answers, step: wizardFor(answers).length, complete: true });
     focusPlan();
   }
 

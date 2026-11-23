@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WIZ, type WizAnswers } from "@/data/wizard";
+import type { WizAnswers } from "@/data/wizard";
+import { wizardFor } from "@/data/wizardTracks";
 import { AppleButton } from "@/components/apple/Button";
 import { revealElement } from "@/components/motion/scroll";
 import { STEP_TITLES } from "./questionCopy";
@@ -21,6 +22,8 @@ export function PlanAnswers({ answers, onChange, onDone }: { answers: WizAnswers
   const stage = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLUListElement>(null);
   const back = useRef<string | null>(null);
+  // The answers of the applicant's own track (wizardTracks.ts).
+  const questions = wizardFor(answers);
 
   // Focus follows the view: the opened question, then the row it came from.
   useEffect(() => {
@@ -37,11 +40,11 @@ export function PlanAnswers({ answers, onChange, onDone }: { answers: WizAnswers
   }, [open]);
 
   if (open !== null) {
-    const question = WIZ[open];
+    const question = questions[open];
     const close = () => { back.current = question.id; setOpen(null); };
     return <div className={styles.wizard} data-plan-answer-edit={question.id}>
       <div ref={stage} tabIndex={-1} className={styles.stage} data-fab-yield>
-        <WizStep key={question.id} question={question} index={open} total={WIZ.length} tone={open % 2 ? "dark" : "light"}
+        <WizStep key={question.id} question={question} index={open} total={questions.length} tone={open % 2 ? "dark" : "light"}
           value={answers[question.id]} onChoose={value => { onChange(question.id, value); close(); }} />
       </div>
       <div className="mt-4">
@@ -52,7 +55,7 @@ export function PlanAnswers({ answers, onChange, onDone }: { answers: WizAnswers
 
   return <div data-plan-answers className={swap.cascade}>
     <ul ref={list} className={styles.answers} data-fab-yield>
-      {WIZ.map((question, index) => <li key={question.id}>
+      {questions.map((question, index) => <li key={question.id}>
         <button type="button" data-plan-answer={question.id} onClick={() => setOpen(index)}>
           <small>{STEP_TITLES[question.id] || question.q}</small>
           <b>{question.opts.find(option => option.v === answers[question.id])?.t}</b>

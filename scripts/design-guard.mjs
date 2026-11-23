@@ -345,6 +345,23 @@ const approvedRevisions = {
   // unchanged; portalApi.ts stays byte-exact.
   'src/lib/portalRecovery.ts': '87b0c849b379bf208ae25605debdb7e219ed26d53d2634f2f66121d4b8be9a66',
   'src/lib/payment.ts': '20712613eb27d25f6d8a6a0b4c8a5bc160fbb6d521b144dca7b15d4df233262d',
+  // 2026-11-23 (owner: «подруга сказала, что типа, когда она нажала на
+  // магистратуру, дальше идут все равно вопросы, будто она школьница. Вот,
+  // тогда нужно сделать типа и для магистратуры, типа вот кларифайнуть, и
+  // сделать типа отдельный трек со всеми особенностями»). The questionnaire
+  // has two tracks. wizard.ts: the level is the second question, the
+  // bachelor's «Бакалавр» answer is reworded, a question may carry its own
+  // reason; still ten questions with the same ids. wizardTracks.ts is new:
+  // the master's questions (the diploma, its profile, GPA; no question about
+  // being 18) and the reader of saved answers for the track the saved level
+  // names. usePlanDraft.ts reads a draft through it. admissions.ts: three
+  // sources for the master's steps. Every value the server keeps (education,
+  // goal, budget) stays within its lists; no request, endpoint or stored key
+  // of the cabinet changes, and «major» lives only in the device's draft.
+  'src/data/wizard.ts': '550a90be3846ade23316b7020ec4c38208f0466d2ce36408e0c3963c7dc08fd9',
+  'src/data/wizardTracks.ts': 'f7394b6cc29edbceeaf0bb6f96fe4965d2e27ad255c7602866c95e48f54f3c39',
+  'src/lib/usePlanDraft.ts': '23f51637d0515994d499556d5d6ddd5d1f8f8b0cbea4d00881233c209946f480',
+  'src/data/admissions.ts': 'aad30e121af9988947a2360bc476432d847d10a61c8a0f306fea6108cbd207a7',
 };
 const approvedRevision = path => path in approvedRevisions && existsSync(path) && approvedRevisions[path] === createHash('sha256').update(readFileSync(path)).digest('hex');
 // 2026-11-12 (owner: «Да, сделай» to deferring the chat and the scroll

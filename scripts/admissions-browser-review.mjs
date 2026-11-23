@@ -43,7 +43,7 @@ try {
     }
     for (const route of ['/','/changes-2026-27','/plan']) await visit(route);
     assert.equal(await page.getByRole('progressbar').getAttribute('aria-valuemax'),'10');
-    const choices = ['Осенью 2027','11 классов','4,7 и выше','Бакалавриат','Без стипендии будет сложно',
+    const choices = ['Осенью 2027','Бакалавриат','11 классов','4,7 и выше','Без стипендии будет сложно',
       'Экономика, бизнес','Есть IELTS или TOEFL','Ещё не будет 18','В Казахстане','Уже знаю регион или вуз','Пьемонт · EDISU'];
     for (const choice of choices) await page.getByRole('button').filter({hasText:choice}).click();
     await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
@@ -137,9 +137,71 @@ try {
       }
     }
     await context.close();
+
+    // The master's track. Owner, 23 Nov: «подруга сказала, что когда она нажала
+    // на магистратуру, дальше идут все равно вопросы, будто она школьница…
+    // сделать для магистратуры отдельный трек со всеми особенностями». A fresh
+    // visitor answers «Магистратура» second and is then asked about her
+    // diploma, its profile and her GPA; nothing about school or being 18.
+    { const context = await browser.newContext({viewport:{width,height:900}, reducedMotion:'reduce', locale:'ru-RU'});
+      await context.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
+      const page = await context.newPage();
+      page.on('pageerror', e=>errors.push(e.message));
+      await page.goto(origin+'/plan',{waitUntil:'networkidle'});
+      const tile = page.locator('[data-plan-tile]');
+      const asked = [];
+      const answer = async choice => {
+        asked.push({id:await tile.getAttribute('data-plan-tile'), question:(await tile.locator('h2').innerText()).replace(/\s+/g,' '), words:(await tile.innerText()).replace(/\s+/g,' ')});
+        assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth > innerWidth+1),false,`Master's question ${asked.length} overflow at ${width}`);
+        await tile.getByRole('button').filter({hasText:choice}).click();
+      };
+      for (const choice of ['Осенью 2027','Магистратура','Да, диплом на руках','Хочу сменить направление','3,0 – 3,4','До 3 млн ₸ в год','Инженерия, IT','Есть IELTS или TOEFL','В Казахстане','Пока не знаю']) await answer(choice);
+      assert.deepEqual(asked.map(item=>item.id),['intake','goal','education','major','grades','budget','field','lang','residence','dsuRegion'],'The master\'s ten questions, in order');
+      assert.deepEqual(asked.slice(2,5).map(item=>item.question),['Диплом бакалавра уже есть?','Магистратура по профилю твоего диплома?','Какой у тебя средний балл (GPA)?']);
+      assert.match(asked[4].words,/по шкале 4,0/,'Grades are asked on the university scale');
+      assert.doesNotMatch(asked.map(item=>item.words).join(' '),/11 классов|NIS|Колледж|будет 18|несовершеннолетн|4,7 и выше/,'Nothing about school or being 18');
+      await page.getByRole('button',{name:'Открыть мой план',exact:true}).click();
+      const stops = page.locator('[data-plan-path] [data-plan-path-step]');
+      await stops.first().waitFor();
+      const route = (await stops.allInnerTexts()).join(' ').replace(/\s+/g,' ');
+      assert.match(route,/Проверь доступ в магистратуру/);
+      assert.match(route,/Сверь предметы диплома с программой/,'Changing the field adds its own step');
+      assert.match(route,/Выбери программу и узнай, как она отбирает/);
+      assert.doesNotMatch(route,/11-летн|тест и язык|до 18 лет/,'No school steps on the master\'s route');
+      await page.goto(origin+'/plan/1',{waitUntil:'networkidle'});
+      const first = page.locator('[data-plan-step]');
+      await first.waitFor();
+      // The conditions and sources are a folded part of the page: read the document, not the screen.
+      assert.match(await first.textContent(),/120 кредитов/,'The first step opens in full');
+      assert(await first.locator('a[href^="https://"]').count()>0,'Its official sources are linked');
+      // The level changed in the list of answers leads through the other
+      // track's own questions; answers both tracks share are kept.
+      await page.goto(origin+'/plan?answers=1',{waitUntil:'networkidle'});
+      await page.locator('[data-plan-answers]').waitFor();
+      assert.equal(await page.locator('[data-plan-answer]').count(),10,'Ten answers of the master\'s track');
+      assert.equal(await page.locator('[data-plan-answer=age]').count(),0);
+      await page.locator('[data-plan-answer=goal]').click();
+      await page.locator('[data-plan-answer-edit=goal]').getByRole('button').filter({hasText:'первое высшее'}).click();
+      await tile.waitFor();
+      // «Диплом на руках» is an answer of both tracks, so it stays; the
+      // bachelor's track still has to ask what the master's never does.
+      assert.equal(await tile.getAttribute('data-plan-tile'),'age','The bachelor\'s own question is asked once the level changes');
+      const kept = await page.evaluate(()=>JSON.parse(localStorage.getItem('iitaly_plan_draft_v1')));
+      assert.equal(await page.locator('[data-plan-path]').count(),0,'The plan waits for the new track\'s answers');
+      assert.equal(kept.answers.goal,'Бакалавриат');
+      assert.equal(kept.answers.budget,'До 3 млн ₸/год','A shared answer is kept');
+      assert.equal(kept.answers.education,'Бакалавр','The diploma is an answer of both tracks');
+      // And back: a school answer does not stay in a master's draft.
+      await page.evaluate(()=>localStorage.setItem('iitaly_plan_draft_v1',JSON.stringify({answers:{intake:'2027/28',goal:'Магистратура',education:'11 классов',grades:'отличник',age:'minor',budget:'До 3 млн ₸/год'},step:9,complete:true})));
+      await page.goto(origin+'/plan',{waitUntil:'networkidle'});
+      await tile.waitFor();
+      assert.equal(await tile.getAttribute('data-plan-tile'),'education','A school answer is asked again as the master\'s question');
+      assert.match(await tile.innerText(),/Диплом бакалавра уже есть\?/);
+      if (width===390) await page.screenshot({path:resolve(output,'master-390.png')});
+      await context.close(); }
   }
   assert.deepEqual(errors,[],'Browser runtime errors');
-  console.log('Admissions browser review passed at 1440, 390 and 320px: quiz, sources, deep links, annual calculator, no overflow/runtime errors.');
+  console.log('Admissions browser review passed at 1440, 390 and 320px: quiz, the master\'s track, sources, deep links, annual calculator, no overflow/runtime errors.');
 } finally {
   await browser.close();
   await new Promise(done=>server.close(done));

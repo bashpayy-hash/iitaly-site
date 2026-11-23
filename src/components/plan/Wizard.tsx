@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { WIZ, type WizAnswers } from "@/data/wizard";
+import type { WizAnswers, WizQuestion } from "@/data/wizard";
+import { wizardFor } from "@/data/wizardTracks";
 import { track } from "@/lib/track";
 import { isValidPhone, submitLead } from "@/lib/lead";
 import { buildPlan } from "@/lib/planBuilder";
@@ -40,7 +41,9 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
   const previewTracked = useRef(false);
   const stepChanged = useRef(false);
 
-  const finished = step >= WIZ.length;
+  // The track's own questions: a bachelor's or a master's (wizardTracks.ts).
+  const questions = wizardFor(answers);
+  const finished = step >= questions.length;
 
   useEffect(() => {
     if (!stepChanged.current) return;
@@ -74,7 +77,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
     if (step === 0) track("plan_started");
     onDraftChange({ answers: { ...answers, [id]: value }, step: step + 1, complete: false });
     track("wiz_step", { s: id });
-    track("plan_step_completed", { step: step, of: WIZ.length });
+    track("plan_step_completed", { step: step, of: questions.length });
   }
 
   async function finish(withPhone: boolean) {
@@ -109,7 +112,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
       {/* Owner, 4 Nov: «прогресс-бар вообще убери» — над плиткой вопроса ничего
           нет; номер вопроса стоит ярлыком внутри самой плитки, а для
           скринридера остаётся невидимый progressbar. */}
-      <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={WIZ.length} aria-valuenow={Math.min(step, WIZ.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${WIZ.length}`} className="sr-only" />
+      <div role="progressbar" aria-label="Готовность плана" aria-valuemin={0} aria-valuemax={questions.length} aria-valuenow={Math.min(step, questions.length)} aria-valuetext={finished ? "Все вопросы пройдены" : `Вопрос ${step + 1} из ${questions.length}`} className="sr-only" />
 
       <div ref={liveRef} tabIndex={-1} aria-live="polite" aria-atomic="true" className={finished ? styles.panel : styles.stage} data-plan-finished={finished ? "" : undefined} data-fab-yield>
         {finished ? (
@@ -203,13 +206,13 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
           </>
         ) : (
           <WizStep
-            key={WIZ[step].id}
-            question={WIZ[step]}
+            key={questions[step].id}
+            question={questions[step]}
             index={step}
-            total={WIZ.length}
+            total={questions.length}
             tone={step % 2 ? "dark" : "light"}
-            value={answers[WIZ[step].id]}
-            onChoose={(v) => choose(WIZ[step].id, v)}
+            value={answers[questions[step].id]}
+            onChoose={(v) => choose(questions[step].id, v)}
           />
         )}
       </div>
@@ -224,7 +227,7 @@ export function Wizard({ draft, onDraftChange, onDone }: { draft: PlanDraft; onD
         </button>
         {/* Intuitiveness pass (21 Nov): after «Назад» the only way forward was
             to tap the same answer again. An answered question can be passed. */}
-        {!finished && answers[WIZ[step].id] && <button
+        {!finished && answers[questions[step].id] && <button
           type="button"
           data-plan-next
           onClick={() => { stepChanged.current = true; onDraftChange({ ...draft, step: step + 1 }); }}
@@ -249,7 +252,7 @@ export function WizStep({
   value,
   onChoose,
 }: {
-  question: (typeof WIZ)[number];
+  question: WizQuestion;
   index: number;
   total: number;
   tone: "light" | "dark";
@@ -257,6 +260,8 @@ export function WizStep({
   onChoose: (v: string) => void;
 }) {
   const art = questionArt(question.id);
+  // A track's own reason (the master's direction) comes before the shared one.
+  const why = question.why ?? QUESTION_CONTEXT[question.id];
   const dsu = question.id === DSU_QUESTION;
   // Scholarship: general answers first; the checked competitions only once the
   // student says they know their region (see dsuChoice.ts).
@@ -289,11 +294,11 @@ export function WizStep({
             whole two minutes a cold visitor gives the site. One short line
             stays; why the question matters is one tap away. */}
         <p className={styles.questionReason} data-vespi-question-reason>
-          {question.hint ? <>{question.hint}.</> : QUESTION_CONTEXT[question.id]}
+          {question.hint ? <>{question.hint}.</> : why}
         </p>
-        {question.hint && QUESTION_CONTEXT[question.id] && <details className={styles.questionWhy} data-question-why>
+        {question.hint && why && <details className={styles.questionWhy} data-question-why>
           <summary data-smooth>Зачем спрашиваю</summary>
-          <p>{QUESTION_CONTEXT[question.id]}</p>
+          <p>{why}</p>
         </details>}
       </div>
       <div className={styles.options} ref={optionsRef} data-dsu-checked={dsu && known ? "" : undefined}>
@@ -318,7 +323,7 @@ export function WizStep({
       {/* Owner, 14 Nov 2026 («дай тогда расшифровку терминам»): the words a school
          student meets here for the first time (DSU, ISEE, CIMEA…) get one plain
          line under the answers, from the cabinet's glossary. */}
-      <PlainTermNotes tone={tone === "dark" ? "dark" : "light"} text={[question.q, question.hint, QUESTION_CONTEXT[question.id], ...question.opts.map(o => `${o.t} ${o.s ?? ""}`)].join(" ")} />
+      <PlainTermNotes tone={tone === "dark" ? "dark" : "light"} text={[question.q, question.hint, why, ...question.opts.map(o => `${o.t} ${o.s ?? ""}`)].join(" ")} />
       {/* eslint-disable-next-line @next/next/no-img-element -- local riso art with explicit dimensions */}
       {art && <img className={styles.questionArt} src={art.src} srcSet={art.srcSet} sizes="(max-width: 600px) 60vw, 300px" width={art.width} height={art.height} alt="" loading="lazy" decoding="async" data-plan-question-art />}
     </div>
