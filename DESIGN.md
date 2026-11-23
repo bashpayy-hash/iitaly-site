@@ -3617,6 +3617,9 @@ seven loads, the same script before and after
   that makes it safe: a redrawn picture gets a new name.
   `design-media-names-review` fails a file changed under its name, a name
   given to a different file, and a new folder of `public/` with no cache rule.
+  It also fails a built page or stylesheet that refers to a file which does
+  not exist (a browser keeps «not found» for a cached folder as long as it
+  keeps a picture, so a broken reference would stay broken for a month).
 
 Tried and left as it was:
 
