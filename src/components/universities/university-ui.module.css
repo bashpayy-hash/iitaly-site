@@ -146,7 +146,18 @@
   .filterSummary { gap: 2px; }
   .filterButton { min-height: 44px; padding: 9px 13px; font-size: 13px; }
   .filterDivider { display: none; }
-  .filters { gap: 10px; }
+  /* 23 Nov: five chips in two groups broke into three lines on a phone, the
+     last chip alone (taste-skill's tab-wrap). One row that is swiped
+     sideways, as the topics on /guides; it runs to the card's edges, so a
+     chip cut by the edge says there are more. A row that scrolls sideways
+     also clips what stands above and below it, so it keeps 8px of its own
+     room there for the keyboard's ring (2px, 4px off the chip). */
+  .filters { flex-wrap: nowrap; gap: 8px; margin: -8px -18px; padding: 8px 18px; overflow-x: auto; scroll-padding-inline: 18px; scrollbar-width: none; }
+  .filters::-webkit-scrollbar { display: none; }
+  /* In the cabinet the workspace has no padding of its own to run into. */
+  .embedded .filters { margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+  .filterGroup { flex: none; flex-wrap: nowrap; }
+  .filterButton { flex: none; }
   .mapGrid { margin-top: 24px; gap: 24px; }
   /* As tall as its words (was 390px with about 110px of empty card above and below them). */
   .emptyCity { min-height: 0; padding: 36px 20px; }

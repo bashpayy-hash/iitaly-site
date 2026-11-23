@@ -3713,3 +3713,71 @@ Left as it is, on purpose: the refund line under the price (its conditions
 were added on 22 Nov so that «Возврат 7 дней» is not a bare promise), the
 package list, the guarantees. `design-text-review` holds the three changes
 at 390px and their absence at 820 and 1440px.
+
+## The site through taste-skill's checker: the keyboard's ring, a row of chips, a thumb's room · 23 November 2026 (evening)
+
+Owner: «прогони через этот плагин» (`/design-taste-frontend`). Its three
+checkers were run over the built site: `consistency.mjs` on /, /prices,
+/check, /plan, /universities, /guides, /portal and /test at 390px with its
+320px walk (the home page at 1440 too), `copy-lint.mjs` and `perf.mjs`. Each
+script was read first for what it touches: a server on 127.0.0.1, its own
+headless Chrome with a temporary profile, a report folder.
+
+**How the report is read.** The checker holds a page against the skill's
+own page model: one section per screen, equal container edges, one heading
+scale, one button style, body text at 7:1. That model is not this site's
+(this file decides how IITALY looks), and it makes most of the count: on
+/prices 51 FAIL, about 35 of them these. They are listed, not acted on.
+The rest was checked by hand, one by one.
+
+**Real, fixed:**
+
+1. **The keyboard's ring had no colour.** `globals.css` draws the ring of
+   every focused control in `var(--color-rosso)`. The name left the theme
+   when the reds became one, and a declaration whose variable does not exist
+   is dropped whole. Whatever had no ring of its own had none: the chat
+   button, the thirty cities of the map. The name is defined again
+   (`controls.css`) as the accent `#E63946`: 3.9:1 on paper, 4.5:1 on the
+   dark map.
+2. **A dark ring on the dark band.** On /guides the page shell's ring for
+   links outranked the band's own light one: «Подробнее» showed 1.11:1. The
+   band's and the carousel's rules are named through their container and
+   win.
+3. **Five filter chips in three lines.** On /universities a phone showed the
+   chips as 2 + 2 + 1. Up to 480px they are one row swiped sideways, running
+   to the card's edges, so a chip cut by the edge says there are more; the
+   row keeps 8px above and below for the ring. In the cabinet the same row
+   stays inside its column.
+4. **A thumb's room.** «Подробнее о тесте» (22px tall) and the WhatsApp link
+   under the purchase (43px) are 44 and 45px now. The carousel's dots on /guides,
+   a dozen of them 14px apart, do not take a tap under a finger: the cards
+   are swiped, the dots show the place; a mouse and the keyboard still pick
+   a card by its dot.
+5. **The «Тест» badge** read 4.1:1 (cream on `#E63946`, 14px). The badge
+   alone is `#D52B3B`, 4.9:1; the accent itself is unchanged.
+
+**Checked and left, the checker was wrong here:** «the focus lands on
+something you cannot see» (it reads 60 ms after Tab, while the page still
+scrolls to the control); «link goes to a page that does not exist» and
+«broken requests» (its server does not know that /plan is plan.html);
+overlapping words in `PhoneFold` (the folded lines are clipped on purpose);
+`:focus { outline: none }` (it stands with `:focus-visible`); the faint ring
+of «Крупнее» (measured against paper; on the map it is 8.8:1); `lang="ru"`
+with Italian terms; the WhatsApp number (it is the real contact).
+
+**Reported to the owner, not changed:**
+
+- `copy-lint`: three headings of the home page are two fragments each
+  («Проверка документов. Пункт за пунктом — в любое время.», «Одна Италия.
+  Твой собственный выбор.», «Один шаг. Понятный маршрут.»). Words change
+  only on request. Its count of dashes is an English rule.
+- `perf`: paint and stability pass (layout shift 0, blocking time 26 ms on
+  a wide screen, 0 on a phone). A full scroll of the home page downloads
+  3.4 MB on a wide screen, 2.2 MB of it the two living pictures; 1.7 MB and
+  0.85 MB on a phone. They start after their still picture, only near the
+  screen, never on Save-Data, 2g or reduced motion.
+- Phone covers are enlarged by height: /plan about 1.6× on a 3× phone,
+  /check about 1.24×. A taller source needs a new picture.
+
+`design-keyboard-touch-review` (new, guides group) holds 1–5 at 1440 and
+390px, the chips at 320px too; it fails on the build before this pass.

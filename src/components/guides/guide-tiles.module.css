@@ -39,7 +39,10 @@
 .primary { display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:999px; font-size:15px; font-weight:500; line-height:1.2; text-decoration:none; }
 .primary { padding:10px 22px; background:#FAF6EE; color:#2A2420; transition:background-color 160ms cubic-bezier(.4,0,.2,1); }
 @media (hover: hover) and (pointer: fine) { .primary:hover { background:#EAD7BB; } }
-.primary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
+/* 23 Nov: the guides shell draws a dark ring on every link (guide-pages), and
+   that rule outranked this one, so on the dark band the ring of «Подробнее»
+   stood 1.11:1 off the ground. Named through the band, this one wins. */
+.band .primary:focus-visible,.band .stage:focus-visible,.primary:focus-visible,.stage:focus-visible { outline:2px solid #FAF6EE; outline-offset:3px; }
 
 @media(max-width:760px) {
   .band { padding:40px 0 34px; }
