@@ -140,6 +140,33 @@ try {
       });
       assert(header.share > .95 && header.titleBesideArt && header.introUnder, `A topic on a phone: the title stands beside the cartouche, the intro runs under both (${JSON.stringify(header)})`);
     }
+    // 6. A phone shows less of /prices at once. Owner, 23 Nov: «иногда идет
+    //    именно в мобильном приложении перенасыщение… информации»; measured
+    //    that day, the page held 65–90 words on each of its eight phone
+    //    screens. On a phone: the long paragraph shows four lines and opens on
+    //    «Показать полностью»; the fifth telling of «проверяй снова без
+    //    доплаты» (a card inside the card) is not shown; a comparison row
+    //    carries one tinted answer, IITALY's. From the tablet up the page is
+    //    as it was. No word leaves the page: the text is always in it.
+    await visit('/prices');
+    const fold = page.locator('[data-phone-fold]').first(), more = page.locator('[data-phone-fold-more]');
+    const line = await fold.evaluate(node => parseFloat(getComputedStyle(node).lineHeight));
+    const notice = page.getByText('Можно исправить и проверить снова', { exact: true }).first();
+    assert.match(await fold.evaluate(node => node.textContent), /Подбор программ[\s\S]*подаёшь и решаешь ты\./, '/prices: the folded paragraph keeps every word in the page');
+    if (width < 768) {
+      assert((await fold.boundingBox()).height <= line * 4 + 2, `/prices at ${width}: the long paragraph shows four lines`);
+      assert(await more.first().isVisible() && (await more.first().boundingBox()).height >= 44, `/prices at ${width}: «Показать полностью» is there and 44px tall`);
+      assert(await notice.isHidden(), `/prices at ${width}: the repeated «Можно исправить и проверить снова» is not shown`);
+      const answers = await page.locator('[data-document-check-compare] tbody tr').first().locator('td').evaluateAll(cells => cells.map(cell => getComputedStyle(cell).backgroundColor));
+      assert.equal(answers[0], 'rgba(0, 0, 0, 0)', `/prices at ${width}: the agency's answer is plain text`);
+      assert.notEqual(answers[1], 'rgba(0, 0, 0, 0)', `/prices at ${width}: IITALY's answer stands on its tint`);
+      await more.first().click();
+      assert((await fold.boundingBox()).height > line * 4 + 2 && await more.count() === 0, `/prices at ${width}: the paragraph opens whole and the button goes`);
+    } else {
+      assert.equal(await more.first().isHidden(), true, `/prices at ${width}: nothing is folded`);
+      assert((await fold.boundingBox()).height >= line * 2 && await fold.evaluate(node => node.scrollHeight <= node.clientHeight + 1), `/prices at ${width}: the paragraph is shown whole`);
+      assert(await notice.isVisible(), `/prices at ${width}: the note in the package is shown`);
+    }
     assert.deepEqual(errors, [], `No page errors at ${width}`);
     results.push({ width, passed: true });
     await context.close();

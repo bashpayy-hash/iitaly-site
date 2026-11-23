@@ -17,6 +17,7 @@ import styles from "@/components/marketing/marketing.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
 import { VespiAssistant } from "@/components/mascot/VespiAssistant";
 import { DocumentCheckFeature } from "@/components/home/DocumentCheckFeature";
+import { PhoneFold } from "@/components/ui/PhoneFold";
 import { TestOfferCard } from "@/components/access/TestOffer";
 import { TEST_OFFER_ON_SITE, TEST_PRODUCT } from "@/components/access/testOffer";
 
@@ -147,7 +148,12 @@ export function PricesExplorer() {
               layout="editorial-callout"
               appearance="none"
               label=""
-              className="mt-6"
+              // 23 Nov, phone pass (owner: «перенасыщение… информации» on
+              // phones). On this page the same thing is said by the fact «Без
+              // лимита», the comparison's «Сразу и сколько угодно раз», the
+              // price card and the list above; on a phone this fifth telling,
+              // a card inside the card, is not shown.
+              className={`mt-6 ${styles.notOnPhone}`}
               title="Можно исправить и проверить снова"
               message="Проверяй документы и исправленные версии без доплаты. Решение о приёме принимает вуз или консульство."
             />
@@ -188,15 +194,17 @@ export function PricesExplorer() {
           </div>
 
           <div className={`${styles.summaryCard} mt-6 p-6 sm:p-8`}>
-            <b className="block text-apple-body-sm font-semibold text-cloud-white">Что система делает сама, а где решаешь ты</b>
-            <p className="mt-2 text-apple-body-sm text-cloud-body">
+            <b className="block text-apple-body-sm font-semibold text-cloud-white [text-wrap:balance]">Что система делает сама, а где решаешь ты</b>
+            {/* Eleven lines on a phone: four are shown there, the rest opens
+                on «Показать полностью» (ui/PhoneFold). The same words. */}
+            <PhoneFold className="mt-2 text-apple-body-sm text-cloud-body">
               Подбор программ, сроки, чек-листы, черновики и проверку
               документов система делает целиком. Но есть места, где случай
               бывает нестандартным: спорная ситуация с двенадцатью годами
               образования, необычный состав семьи при расчёте ISEEU, отказ
               CIMEA, сложный визовый случай. Там ИИ подскажет, что делать, но
               подаёшь и решаешь ты.
-            </p>
+            </PhoneFold>
           </div>
 
           <p id="expert-review" className={`${styles.anchorTarget} mt-10 text-[13px] font-semibold text-cloud-meta`}>

@@ -1,0 +1,8 @@
+/* See PhoneFold.tsx. Folded only on a phone; whole everywhere else. */
+.more { display: none; }
+@media (max-width: 767px) {
+  .fold[data-phone-fold=folded] { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--fold-lines, 4); line-clamp: var(--fold-lines, 4); overflow: hidden; }
+  .more { display: inline-flex; align-items: center; min-height: 44px; margin-top: 2px; padding: 0; border: 0; background: none; color: var(--i-link, #141413); font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+  .more:focus-visible { outline: 2px solid var(--i-link, #141413); outline-offset: 4px; border-radius: 4px; }
+}
+@media print { .fold[data-phone-fold=folded] { display: block; overflow: visible; } .more { display: none; } }
