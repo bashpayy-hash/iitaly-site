@@ -159,7 +159,8 @@ try {
     assert.equal(await panel.getAttribute('data-telegram-status'), 'disconnected');
     assert.equal(await panel.evaluate(element => element.open), false, 'Telegram starts as a single quiet settings row');
     await panel.locator('summary').filter({ hasText: 'Напоминания выключены' }).click();
-    assert.match(await panel.innerText(), /Telegram получает только напоминания/);
+    // 23 Nov: the line names all the bot sends — the Monday summary, 7/3/1 days, the code on request.
+    assert.match(await panel.innerText(), /Telegram получает только то, что касается твоего маршрута: сводку по понедельникам, напоминания за 7, 3 и 1 день/);
     assert.doesNotMatch(await panel.innerText(), /Почта|email|SMS/i);
     assert.equal(writes.length, 0, 'Viewing settings must not opt users in');
     assert.equal(await panel.getByRole('link', { name: /провер/i }).count(), 0, 'No connection check before a handoff URL exists');
@@ -177,8 +178,9 @@ try {
     await confirm.click();
     await panel.getByRole('status').filter({ hasText: 'Подключение пока не подтверждено' }).waitFor();
 
+    // Back from Telegram the page checks by itself (23 Nov): no tap needed.
     linked = true; notify = true;
-    await confirm.click();
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
     await page.locator('#notifications[data-telegram-status="connected"]').waitFor();
     await panel.getByRole('status').filter({ hasText: 'Telegram подключён' }).waitFor();
 
