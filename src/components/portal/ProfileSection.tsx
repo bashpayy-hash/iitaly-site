@@ -101,7 +101,7 @@ export function ProfileSection({
           <div id="portal-notification-settings" tabIndex={-1} className={`${navigation.notifications} ${navigation.focusTarget}`}>
             {notifications}
           </div>
-          <p className={settings.quietOnDark}>Напомню за 7, 3 и 1 день до важных дат маршрута.</p>
+          <p className={settings.quietOnDark}>Сводка по понедельникам и напоминания за 7, 3 и 1 день до важных дат маршрута.</p>
         </section>
 
         <section className={settings.tile} data-settings-tile="checklist" aria-labelledby="settings-checklist-title">

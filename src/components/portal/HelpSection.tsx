@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PortalClient } from "@/lib/portalApi";
 import settings from "./portal-settings.module.css";
 import disclosure from "@/components/ui/disclosure.module.css";
@@ -47,6 +47,18 @@ export function HelpSection({
       : { text: res.error || "Не удалось сохранить.", bad: true });
   }
 
+  /* Back from Telegram (owner, 23 Nov: «проверь в целом телеграм»): the
+     connection used to wait for a tap on «Проверить подключение». When the
+     page comes back into view with a link handed out, it checks by itself;
+     the button stays for anyone who wants to check again. */
+  const refreshRef = useRef<() => Promise<void>>(async () => {});
+  useEffect(() => {
+    if (!telegramUrl) return;
+    const onVisible = () => { if (document.visibilityState === "visible") void refreshRef.current(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [telegramUrl]);
+
   async function refreshTelegram() {
     if (telegramBusy) return;
     setTelegramBusy(true);
@@ -60,11 +72,14 @@ export function HelpSection({
         : { text: "Подключение пока не подтверждено. В Telegram нажми «Запустить».", bad: false });
     if (res.linked) setTelegramUrl(null);
   }
+  useEffect(() => { refreshRef.current = refreshTelegram; });
 
   return (
     <details id="notifications" className={settings.reminders} data-telegram-status={tgEnabled ? "connected" : "disconnected"}>
       <summary className={disclosure.row}>{tgEnabled ? "Напоминания включены" : "Напоминания выключены"}</summary>
-      <p>Telegram получает только напоминания по твоему маршруту — за 7, 3 и 1 день до важных дат.</p>
+      {/* The bot sends the Monday summary too, and the access code on request
+          («Не помню код»); the line said only 7, 3 and 1 day (23 Nov). */}
+      <p>Telegram получает только то, что касается твоего маршрута: сводку по понедельникам, напоминания за 7, 3 и 1 день до важных дат и код доступа, если ты его забудешь.</p>
       <div>
         {!tgEnabled && !telegramUrl && (
           <button type="button" onClick={() => { void createTgLink(); }} disabled={telegramBusy} className={settings.primaryAction}>
