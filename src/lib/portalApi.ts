@@ -75,32 +75,20 @@ export interface PortalData {
 export type PortalResult = { ok: true; data: PortalData } | { ok: false; error: string };
 
 /* Вход в кабинет идёт через POST /api/portal/lookup: код и фамилия лежат
-   в теле запроса, а не в адресе. В прежнем GET /api/portal/:code?surname=
-   учётные данные кабинета попадали в путь и query-строку, а значит — в
-   журналы Railway, CDN и всех прокси по дороге.
+   в теле запроса, а не в адресе. Адрес запроса попадает в журналы хостинга
+   и всех прокси по дороге, тело — нет.
 
-   Откат на старый GET нужен потому, что фронтенд и бэкенд выкатываются
-   порознь: если сайт обновится раньше сервера, новый адрес вернёт 404, и
-   без этого отката кабинет перестал бы открываться до выката бэкенда. */
+   Запасного перехода на старый GET /api/portal/:code?surname= больше нет
+   (проход по безопасности, 27 ноября): сервер этот адрес удалил, а при
+   сбое на пути к серверу сайт сам отправил бы код и фамилию в адресе. */
 export async function fetchPortal(code: string, surname: string): Promise<PortalResult> {
   if (!BACKEND_URL) return { ok: false, error: "Кабинет заработает после подключения сервера." };
   try {
-    let r = await fetch(`${BACKEND_URL}/api/portal/lookup`, {
+    const r = await fetch(`${BACKEND_URL}/api/portal/lookup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, surname }),
     });
-    if (r.status === 404 || r.status === 405) {
-      // 404 здесь двусмысленный: это либо «нет такого маршрута» на старом
-      // сервере, либо «не нашли бронь» на новом. Различаем по телу: новый
-      // отвечает JSON с полем error, старый — HTML-страницей Express.
-      const legacy = await r.clone().json().catch(() => null);
-      if (!legacy || typeof legacy.ok !== "boolean") {
-        r = await fetch(
-          `${BACKEND_URL}/api/portal/${encodeURIComponent(code)}?surname=${encodeURIComponent(surname)}`,
-        );
-      }
-    }
     const d = await r.json().catch(() => null);
     if (!d || !d.ok) return { ok: false, error: (d && d.error) || "Не нашли бронь." };
     return { ok: true, data: d as PortalData };
